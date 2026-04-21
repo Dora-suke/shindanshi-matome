@@ -1,0 +1,2507 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IE（時間研究）まとめ｜中小企業診断士 運営管理</title>
+<style>
+:root {
+  --bg: #f0f4f8; --card: #fff; --ink: #1a202c; --muted: #64748b; --line: #e2e8f0;
+  --accent: #0d9488; --accent-light: #ccfbf1;
+  --orange: #ea580c; --orange-light: #fff7ed;
+  --blue: #2563eb; --blue-light: #eff6ff;
+  --red: #dc2626; --red-light: #fef2f2;
+  --purple: #7c3aed; --purple-light: #f5f3ff;
+  --yellow: #d97706; --yellow-light: #fffbeb;
+  --green: #059669; --green-light: #ecfdf5;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --radius: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans JP", sans-serif;
+  background: var(--bg); color: var(--ink); line-height: 1.85; font-size: 15.5px;
+}
+
+/* ===== Header ===== */
+.page-header {
+  background: linear-gradient(135deg, #1a365d 0%, #2a4a7f 50%, #0d9488 100%);
+  color: #fff; text-align: center; padding: 40px 20px 32px;
+  position: relative; overflow: hidden;
+}
+.page-header::before {
+  content: ''; position: absolute; top: -60%; left: -20%;
+  width: 140%; height: 200%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(13,148,136,0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+.page-header::after {
+  content:''; position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);
+  width:120%; height:60px; background:var(--bg); border-radius:50%;
+}
+.page-header .header-icon { font-size: 2.8rem; display: block; margin-bottom: 6px; position: relative; }
+.page-header h1 { font-size: clamp(1.5rem, 4vw, 1.9rem); margin-bottom: 6px; letter-spacing: 0.05em; position: relative; font-weight: 800; }
+.page-header .subtitle { font-size: 1rem; opacity: 0.85; position: relative; }
+.version-badge {
+  display: inline-block; background: #fbbf24; color: #1a202c;
+  font-weight: 800; font-size: 0.75rem; padding: 3px 12px;
+  border-radius: 999px; margin-left: 8px; vertical-align: middle;
+}
+.header-badges {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  margin-top: 14px; position: relative;
+}
+.header-badges span {
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 999px; padding: 4px 14px; font-size: 0.8rem;
+}
+
+/* ===== Tab Nav ===== */
+.tab-nav-wrapper {
+  background: #1a365d; position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.tab-nav { display: flex; max-width: 960px; margin: 0 auto; justify-content: center; overflow-x: auto; }
+.tab-btn {
+  flex: 1; max-width: 200px; background: transparent;
+  color: rgba(255,255,255,0.7); border: none;
+  padding: 14px 8px; font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  border-bottom: 3px solid transparent; font-family: inherit; text-align: center;
+}
+.tab-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.tab-btn.active {
+  color: #1a365d; background: #fff;
+  border-bottom: 3px solid #e53e3e; border-radius: 6px 6px 0 0;
+}
+.tab-content { display: none; max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+.tab-content.active { display: block; animation: fadeUp .35s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+/* ===== Card ===== */
+.card {
+  background: var(--card); border-radius: 14px; margin-bottom: 24px;
+  box-shadow: var(--shadow); overflow: hidden;
+}
+.card-header {
+  padding: 16px 22px; font-size: 1.15rem; font-weight: 700;
+  color: #fff; display: flex; align-items: center; gap: 10px;
+}
+.card-header .card-num {
+  background: rgba(255,255,255,0.25);
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; font-weight: 800; flex-shrink: 0;
+}
+.card-body { padding: 22px 24px; }
+.card-body p { margin-bottom: 12px; }
+.card-body ul, .card-body ol { margin: 8px 0 14px 22px; }
+.card-body li { margin-bottom: 6px; }
+.card-body h3 {
+  color: #1a365d; font-size: 1.1rem; margin: 22px 0 10px;
+  padding-left: 12px; border-left: 4px solid #1a365d;
+}
+.card-body h3:first-child { margin-top: 0; }
+
+.bg-navy { background: linear-gradient(135deg, #1a365d, #2a4a7f); }
+.bg-teal { background: linear-gradient(135deg, #134e4a, #0d9488); }
+.bg-orange { background: linear-gradient(135deg, #9a3412, #ea580c); }
+.bg-red { background: linear-gradient(135deg, #991b1b, #dc2626); }
+.bg-purple { background: linear-gradient(135deg, #4c1d95, #7c3aed); }
+.bg-green { background: linear-gradient(135deg, #064e3b, #059669); }
+.bg-blue { background: linear-gradient(135deg, #1e3a5f, #2563eb); }
+.bg-yellow { background: linear-gradient(135deg, #92400e, #d97706); }
+.bg-amber { background: linear-gradient(135deg, #b45309, #d97706); }
+.bg-slate { background: linear-gradient(135deg, #475569, #334155); }
+
+/* ===== Highlight / Keyword ===== */
+.hl { background: linear-gradient(transparent 60%, #fef08a 60%); font-weight: 700; padding: 0 2px; }
+.kw { display: inline-block; font-weight: 700; color: #fff; background: #dc2626; border-radius: 4px; padding: 1px 8px; font-size: 0.85rem; margin: 0 2px; }
+.kw.blue { background: #2563eb; }
+.kw.green { background: #059669; }
+.kw.purple { background: #7c3aed; }
+.kw.orange { background: #ea580c; }
+.kw.teal { background: #0d9488; }
+.kw-red { display: inline-block; background: #fee2e2; color: #b91c1c; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+.kw-green { display: inline-block; background: #d1fae5; color: #065f46; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+.kw-purple { display: inline-block; background: #ede9fe; color: #5b21b6; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+.kw-orange { display: inline-block; background: #ffedd5; color: #9a3412; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+.kw-blue { display: inline-block; background: #dbeafe; color: #1e40af; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+
+/* ===== Highlight Box ===== */
+.hl-box {
+  border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8;
+}
+.hl-box.yellow { background: #fffbeb; border: 2px solid #f59e0b; }
+.hl-box.blue { background: #eff6ff; border: 2px solid #3b82f6; }
+.hl-box.green { background: #ecfdf5; border: 2px solid #10b981; }
+.hl-box.red { background: #fef2f2; border: 2px solid #ef4444; }
+.hl-box.purple { background: #f5f3ff; border: 2px solid #8b5cf6; }
+.hl-box.teal { background: #f0fdfa; border: 2px solid #14b8a6; }
+.hl-teal { background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-orange { background: var(--orange-light); border-left: 4px solid var(--orange); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-blue { background: var(--blue-light); border-left: 4px solid var(--blue); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-red { background: var(--red-light); border-left: 4px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-purple { background: var(--purple-light); border-left: 4px solid var(--purple); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-yellow { background: var(--yellow-light); border-left: 4px solid var(--yellow); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-green { background: var(--green-light); border-left: 4px solid var(--green); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+
+/* ===== One Point ===== */
+.one-point {
+  background: linear-gradient(135deg, #fffff0 0%, #fefcbf 100%);
+  border: 2px solid #d69e2e; border-radius: 10px;
+  padding: 16px 20px; margin: 14px 0 6px;
+  text-align: center; font-weight: 700; font-size: 1.05rem; color: #744210;
+}
+.one-point::before {
+  content: "ひとことで言うと...";
+  display: block; font-size: 0.8rem; font-weight: 600; color: #b7791f; margin-bottom: 6px;
+}
+
+/* ===== Exam Point ===== */
+.exam-point {
+  background: #fff5f5; border: 2px solid #e53e3e; border-radius: 8px;
+  padding: 18px 22px; margin: 20px 0 12px;
+}
+.exam-point-title { color: #e53e3e; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
+.exam-point ul { padding-left: 1.3em; margin-bottom: 0; }
+.exam-point li { color: #c53030; margin-bottom: 4px; }
+
+/* ===== Tree ===== */
+.tree {
+  background: #f8fafc; border: 1px solid var(--line); border-radius: 14px;
+  padding: 20px 22px; margin: 14px 0; font-size: 0.9rem; line-height: 1.6;
+}
+.tree .t-root { font-weight: 800; font-size: 1rem; color: #0f172a; margin-bottom: 8px; }
+.tree .t-branch { margin-left: 18px; padding-left: 18px; border-left: 2.5px solid #94a3b8; }
+.tree .t-item { position: relative; padding: 5px 0 5px 16px; font-weight: 600; }
+.tree .t-item::before { content:''; position:absolute; left:-18px; top:50%; width:16px; height:0; border-top:2.5px solid #94a3b8; }
+.tree .t-item .t-label { display: inline-block; padding: 3px 10px; border-radius: 8px; font-size: 0.85rem; margin-right: 6px; }
+.tree .t-note { font-weight: 400; font-size: 0.82rem; color: var(--muted); }
+.t-blue { background: #dbeafe; color: #1d4ed8; }
+.t-green { background: #d1fae5; color: #065f46; }
+.t-red { background: #fee2e2; color: #b91c1c; }
+.t-purple { background: #ede9fe; color: #5b21b6; }
+.t-amber { background: #fef3c7; color: #92400e; }
+.t-teal { background: #ccfbf1; color: #0f766e; }
+
+/* ===== Flow ===== */
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.flow-box { background: #fff; border: 2px solid var(--blue); border-radius: 10px; padding: 10px 16px; text-align: center; font-size: 0.88rem; font-weight: 600; }
+.flow-arrow { font-size: 1.3rem; color: var(--blue); font-weight: 700; }
+
+/* ===== VS Grid ===== */
+.vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.vs-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 14px 0; }
+@media(max-width:640px){ .vs-grid, .vs-grid3 { grid-template-columns: 1fr; } }
+.vs-card {
+  border-radius: 12px; padding: 16px; border: 2px solid; font-size: 0.9rem;
+}
+.vs-card.blue { background: #ebf8ff; border-color: #90cdf4; }
+.vs-card.red { background: #fff5f5; border-color: #feb2b2; }
+.vs-card.green { background: #f0fff4; border-color: #9ae6b4; }
+.vs-card.orange { background: #fffff0; border-color: #fbd38d; }
+.vs-card.purple { background: #faf5ff; border-color: #d6bcfa; }
+.vs-card.teal { background: #f0fdfa; border-color: #81e6d9; }
+.vs-card h4 { text-align: center; margin-bottom: 8px; font-size: 0.95rem; }
+
+/* ===== Table ===== */
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 0.93rem; }
+th, td { border: 1px solid #cbd5e0; padding: 10px 14px; text-align: left; vertical-align: top; }
+th { background: #1a365d; color: #fff; font-weight: 600; white-space: nowrap; }
+th.th-green { background: #276749; }
+th.th-orange { background: #c05621; }
+th.th-red { background: #c53030; }
+th.th-purple { background: #6b46c1; }
+th.th-teal { background: #0d9488; }
+tbody tr:nth-child(even) { background: #f0f4f8; }
+tbody tr:nth-child(odd) { background: #fff; }
+tbody tr:hover { background: #e2e8f0; }
+
+/* ===== Bubble ===== */
+.bubble-wrap { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0; }
+.bubble-icon {
+  flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.bubble-icon.owner { background: #fef3c7; }
+.bubble-icon.sensei { background: #dbeafe; }
+.bubble-icon.staff { background: #fce7f3; }
+.bubble-icon.worker { background: #e0e7ff; }
+.bubble-text {
+  background: #f7fafc; border: 1px solid var(--line);
+  border-radius: 0 14px 14px 14px; padding: 14px 18px;
+  font-size: 0.93rem; line-height: 1.8; flex: 1;
+}
+.bubble-text .name { font-weight: 700; font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+
+/* ===== Disc-log (Agent Discussion) ===== */
+.disc-log {
+  background: #f8fafc; border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; margin: 16px 0; font-size: 0.85rem; line-height: 1.7;
+}
+.disc-log .role {
+  display: inline-block; padding: 2px 8px; border-radius: 6px;
+  font-weight: 700; font-size: 0.78rem; margin-right: 6px; color: #fff;
+}
+.disc-log .role-pm { background: #4f46e5; }
+.disc-log .role-plan { background: #0891b2; }
+.disc-log .role-create { background: #059669; }
+.disc-log .role-critic { background: #dc2626; }
+.disc-log p { margin: 8px 0; }
+
+/* ===== Quiz ===== */
+.quiz-box { margin: 18px 0; }
+.quiz-q { background: #f1f5f9; border-radius: 12px; padding: 16px 18px; font-weight: 600; margin-bottom: 12px; line-height: 1.7; }
+.quiz-choices { list-style: none; padding: 0; margin: 0; }
+.quiz-choices li {
+  background: #fff; border: 2px solid var(--line); border-radius: 10px;
+  padding: 12px 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+  font-size: 0.93rem; line-height: 1.7;
+}
+.quiz-choices li:hover { border-color: var(--accent); background: var(--accent-light); }
+.quiz-choices li.correct { border-color: var(--green); background: var(--green-light); pointer-events: none; }
+.quiz-choices li.wrong { border-color: var(--red); background: var(--red-light); opacity: 0.7; pointer-events: none; }
+.quiz-explanation {
+  display: none; margin-top: 12px; padding: 16px 18px;
+  background: var(--blue-light); border-radius: 12px; border-left: 4px solid var(--blue);
+  font-size: 0.92rem; line-height: 1.8;
+}
+.quiz-explanation.show { display: block; animation: fadeUp .3s ease; }
+
+/* ===== Story / Example ===== */
+.story-intro {
+  font-size: 0.95rem; color: var(--muted); line-height: 1.8;
+  padding: 0 4px 16px; border-bottom: 1px dashed var(--line); margin-bottom: 24px;
+}
+.example-box {
+  background: #f0fff4; border-left: 4px solid #38a169;
+  padding: 14px 18px; border-radius: 0 10px 10px 0;
+  margin: 12px 0; font-size: 0.93rem; line-height: 1.8;
+}
+.tip-box {
+  background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px;
+  padding: 14px 18px; margin: 14px 0; font-size: 0.92rem; line-height: 1.75;
+  border-left: 4px solid var(--yellow);
+}
+
+/* ===== Tutor Comment ===== */
+.tutor-comment {
+  background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px;
+  padding: 12px 16px; margin: 12px 0; font-size: 0.9rem;
+  display: flex; gap: 10px; align-items: flex-start; line-height: 1.7;
+}
+.tutor-comment .tc-icon { font-size: 1.2rem; flex-shrink: 0; }
+.tutor-comment.warn { background: #fff5f5; border-color: #feb2b2; }
+.tutor-comment.idea { background: #faf5ff; border-color: #d6bcfa; }
+
+/* ===== Goro (mnemonic) ===== */
+.goro-scene {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #d97706; border-radius: 14px;
+  padding: 18px 20px; margin: 14px 0; display: flex; gap: 16px;
+  align-items: center; flex-wrap: wrap;
+}
+.goro-img {
+  flex-shrink: 0; width: 100px; height: 100px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem; background: #fff; border: 2px dashed #d97706;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.goro-text { flex: 1; min-width: 200px; }
+.goro-text .goro-title { font-weight: 800; font-size: 0.95rem; color: #92400e; margin-bottom: 6px; }
+.goro-text .goro-phrase {
+  font-weight: 700; font-size: 1.1rem; color: #1a202c; margin-bottom: 6px;
+  background: rgba(255,255,255,0.7); padding: 4px 10px; border-radius: 8px; display: inline-block;
+}
+.goro-text .goro-explain { font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* ===== Fill-in-the-blank ===== */
+.fill-card { background: var(--card); border-radius: 14px; margin-bottom: 18px; box-shadow: var(--shadow-sm); overflow: hidden; }
+.fill-card .fill-header { padding: 12px 18px; font-weight: 700; font-size: .95rem; color: #fff; display: flex; align-items: center; gap: 8px; }
+.fill-card .fill-body { padding: 18px 20px; }
+.fill-q { font-size: .95rem; line-height: 2; margin-bottom: 10px; }
+.fill-blank {
+  display: inline-block; min-width: 100px; border-bottom: 2.5px solid #94a3b8;
+  text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: .95rem;
+}
+.fill-blank.show { color: #dc2626; background: #fef2f2; border-color: #dc2626; }
+.fill-reveal-btn {
+  display: inline-block; background: #1a365d; color: #fff; border: none;
+  border-radius: 8px; padding: 8px 18px; font-size: .85rem; font-weight: 600;
+  cursor: pointer; margin-top: 8px; font-family: inherit;
+}
+.fill-reveal-btn:hover { background: #2a4a7f; }
+
+/* ===== Formula ===== */
+.formula-box {
+  background: #f8fafc; border: 2px solid #1a365d; border-radius: 10px;
+  padding: 12px 18px; margin: 10px 0; font-size: 1.05rem; font-weight: 700;
+  text-align: center; color: #1a365d;
+}
+
+/* ===== Responsive ===== */
+@media(max-width:640px) {
+  .page-header h1 { font-size: 1.4rem; }
+  .tab-btn { font-size: 0.68rem; padding: 12px 4px; }
+  .card-body { padding: 16px 14px; }
+  .flow-row { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  table { font-size: 0.8rem; }
+  th, td { padding: 7px 8px; }
+  .tree .t-branch { margin-left: 10px; padding-left: 12px; }
+  .goro-scene { flex-direction: column; text-align: center; }
+  .goro-img { width: 80px; height: 80px; font-size: 2.4rem; }
+}
+strong { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="page-header">
+  <span class="header-icon">&#x23F1;</span>
+  <h1>IE（時間研究）完全攻略 <span class="version-badge">ver.01</span></h1>
+  <p class="subtitle">中小企業診断士 運営管理｜作業研究・時間研究・標準時間を体系的にマスター</p>
+  <div class="header-badges">
+    <span>&#x1F3AF; 出題頻度A</span>
+    <span>&#x1F4D6; 生産管理 3-5章</span>
+    <span>&#x1F916; 4エージェント討議版</span>
+  </div>
+</header>
+
+<!-- ===== TAB NAV ===== -->
+<nav class="tab-nav-wrapper">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">&#x1F331; ゼロから理解</button>
+    <button class="tab-btn" onclick="switchTab(1)">&#x1F530; 重要入門</button>
+    <button class="tab-btn" onclick="switchTab(2)">&#x1F476; 超やさしい基礎</button>
+    <button class="tab-btn" onclick="switchTab(3)">&#x1F4CB; 基本事項</button>
+    <button class="tab-btn" onclick="switchTab(4)">&#x1F4DD; 計算方法</button>
+    <button class="tab-btn" onclick="switchTab(5)">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" onclick="switchTab(6)">&#x1F3ED; シミュレーション</button>
+    <button class="tab-btn" onclick="switchTab(7)">&#x1F9E9; 実例クイズ</button>
+    <button class="tab-btn" onclick="switchTab(8)">&#x1F4D6; 実例で覚える</button>
+  </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- TAB 0: ゼロから理解                                            -->
+<!-- ============================================================ -->
+<div class="tab-content active" id="tab0">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「IE（時間研究）は用語が多くて体系が見えにくい。まず"なぜIEが必要か"を日常の言葉で伝えよう。」</p>
+    <p><span class="role role-plan">計画</span>「3つだけに絞ります。&#x2460;IEとは何か &#x2461;作業を分ける &#x2462;時間を測る。これだけ。」</p>
+    <p><span class="role role-create">作成</span>「料理の例でIE全体を説明し、ツリー図で体系を見せます。」</p>
+    <p><span class="role role-critic">批評</span>「数式は入れない。ゼロからなので"感覚で理解"がゴール。」</p>
+  </div>
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・IE（インダストリアル・エンジニアリング）って何？<br>
+    ・「作業のムダを見つける」→ 2つのアプローチ<br>
+    ・全体の地図（これだけ押さえれば他のタブが読める）
+  </div>
+
+  <!-- Card 1 -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">1</span>IEって何？ ― 「仕事のムダ取り」の技術</div>
+    <div class="card-body">
+      <p><strong>IE</strong>とは、工場や職場の作業を科学的に分析して<strong>ムダをなくす技術</strong>です。</p>
+
+      <div class="one-point">IE ＝ 「どうすればもっと速く・ラクに・正確にできるか？」を数字で考える方法</div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span>IEは工場だけじゃないよ！<strong>コンビニのレジ配置</strong>や<strong>病院の診察順</strong>にも使われている。「ムダを見つけて改善する」はどんな仕事でも共通！</span>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：回転寿司のレーン</strong> ― 「どのネタを何皿流すか」「皿を回収するタイミング」も実はIEの考え方。注文データ（＝作業測定）とレーン配置（＝方法研究）の組合せ！</span>
+      </div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F373; 料理で例えると</strong><br>
+        夕食を作るとき「野菜を切る→煮る→味付け」と作業がありますよね。<br>
+        ・<strong>方法を調べる</strong>＝どの順番で切れば速い？ 無駄な動きは？（<span class="kw-blue">方法研究</span>）<br>
+        ・<strong>時間を測る</strong>＝「野菜を切るのに何分かかる？」を計測（<span class="kw-green">作業測定</span>）<br>
+        この2つがIEの柱です。
+      </div>
+
+      <div class="vs-grid">
+        <div class="vs-card red">
+          <h4>&#x274C; IE導入前</h4>
+          <p>「だいたい1時間くらいかな」<br>「前もこのやり方だった」<br>→ <strong>勘と経験</strong>で管理</p>
+        </div>
+        <div class="vs-card green">
+          <h4>&#x2705; IE導入後</h4>
+          <p>「1個あたり62.1秒」<br>「運搬が全体の40%」<br>→ <strong>数字</strong>で管理</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">2</span>IEの全体マップ ― たった2つの柱</div>
+    <div class="card-body">
+      <div class="tree">
+        <div class="t-root">IE（インダストリアル・エンジニアリング）</div>
+        <div class="t-branch">
+          <div class="t-item">
+            <span class="t-label t-blue">方法研究</span>
+            <span class="t-note">＝「やり方」を調べる</span>
+          </div>
+          <div class="t-branch">
+            <div class="t-item"><span class="t-label t-blue">工程分析</span> <span class="t-note">作業の流れ全体を見る</span></div>
+            <div class="t-item"><span class="t-label t-blue">動作研究</span> <span class="t-note">手や体の細かい動きを見る</span></div>
+          </div>
+          <div class="t-item">
+            <span class="t-label t-green">作業測定</span>
+            <span class="t-note">＝「時間」を測る</span>
+          </div>
+          <div class="t-branch">
+            <div class="t-item"><span class="t-label t-green">時間研究</span> <span class="t-note">ストップウォッチで計測</span></div>
+            <div class="t-item"><span class="t-label t-green">稼働分析</span> <span class="t-note">「働いてる？休んでる？」を調べる</span></div>
+            <div class="t-item"><span class="t-label t-green">PTS法</span> <span class="t-note">動作ごとの標準時間表から計算</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span>試験では「方法研究＝やり方」「作業測定＝時間」この2つの柱を区別できればOK！<br>今回のテーマ「時間研究」は<strong>作業測定の中の1つ</strong>だよ。</span>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>試験の引っかけ</strong>：「工程分析は作業測定に含まれる」→ &#x274C; 工程分析は<strong>方法研究</strong>の方！名前に「分析」が付くと作業測定と混同しやすいので注意。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">3</span>「時間を測る」って具体的にどういうこと？</div>
+    <div class="card-body">
+      <p>工場で「ネジを1本締める」のに何秒かかるかを知りたい。そのために3つの方法があります。</p>
+
+      <div class="vs-grid3">
+        <div class="vs-card blue">
+          <h4>&#x23F1; 時間研究</h4>
+          <p>ストップウォッチで<br><strong>実際に計測</strong><br>一番オーソドックス</p>
+          <p style="font-size:0.8rem; color:var(--muted); margin:4px 0 0;">使う場面：繰返し作業</p>
+        </div>
+        <div class="vs-card green">
+          <h4>&#x1F4CA; 稼働分析</h4>
+          <p>ランダムに観察して<br><strong>「稼働率」を推定</strong><br>（ワークサンプリング）</p>
+          <p style="font-size:0.8rem; color:var(--muted); margin:4px 0 0;">使う場面：稼働率の把握</p>
+        </div>
+        <div class="vs-card purple">
+          <h4>&#x1F4D0; PTS法</h4>
+          <p>動作ごとの<br><strong>標準時間表</strong>から計算<br>実測不要</p>
+          <p style="font-size:0.8rem; color:var(--muted); margin:4px 0 0;">使う場面：新製品の事前見積り</p>
+        </div>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：学校のテスト</strong> ― 時間研究＝実際にテストを解いて何分かかるか計る。稼働分析＝授業中に何回「集中」「ぼんやり」してるか数える。PTS法＝問題の難易度表から予想時間を計算。</span>
+      </div>
+
+      <div class="exam-point">
+        <div class="exam-point-title">&#x1F6A8; ゼロから理解のまとめ</div>
+        <ul>
+          <li>IE ＝ 作業のムダを科学的に見つけて改善する技術</li>
+          <li>2つの柱：<strong>方法研究</strong>（やり方）と<strong>作業測定</strong>（時間）</li>
+          <li>作業測定には<strong>時間研究・稼働分析・PTS法</strong>の3つがある</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ゼロから理解 穴埋めチェック -->
+  <div class="card" style="margin-top:28px;">
+    <div class="card-header bg-slate"><span class="card-num">&#x270D;</span>このタブの穴埋めチェック</div>
+    <div class="card-body">
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:14px;">赤い空欄をクリックすると答えが見えます。</p>
+      <div style="text-align:center;margin-bottom:16px;">
+        <button class="fill-reveal-btn" onclick="revealAll('tab0')" style="margin-right:8px;">&#x1F441; 全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAll('tab0')" style="background:#e53e3e;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-teal">Q1. IEの2つの柱</div>
+        <div class="fill-body">
+          <div class="fill-q">IE ＝ <span class="fill-blank">方法研究</span>（やり方を改善）＋ <span class="fill-blank">作業測定</span>（時間を測る）</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-blue">Q2. 時間を測る目的</div>
+        <div class="fill-body">
+          <div class="fill-q">作業の<span class="fill-blank">標準時間</span>を決めるため</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 1: 重要入門                                                -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab1">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「ゼロからタブの上に肉付け。ここでは標準時間・レイティング・余裕率の概念を入れよう。」</p>
+    <p><span class="role role-plan">計画</span>「&#x2460;標準時間とは &#x2461;どうやって求めるか（流れ） &#x2462;余裕率の外掛け・内掛け &#x2463;稼働分析・PTS法の概要 この4つで。」</p>
+    <p><span class="role role-create">作成</span>「各カードにたとえ話を入れつつ、公式はシンプルに見せます。」</p>
+    <p><span class="role role-critic">批評</span>「外掛け・内掛けは名前が紛らわしいので"覚え方"を必ず入れて。公式だけ並べても覚えられない。」</p>
+  </div>
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・標準時間の意味と求め方の流れ<br>
+    ・レイティング＝「普通の人なら何秒か？」への補正<br>
+    ・余裕率（外掛け・内掛け）の違いと覚え方<br>
+    ・稼働分析（ワークサンプリング）とPTS法の概要
+  </div>
+
+  <!-- Card 1: 標準時間 -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">1</span>標準時間って何？</div>
+    <div class="card-body">
+      <p><strong>標準時間</strong>＝「普通の熟練度の作業者が、普通のペースで、決められた方法で作業したときにかかる時間」です。</p>
+
+      <div class="one-point">標準時間 ＝ 「この作業、普通なら何分で終わる？」の答え</div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：映画館のポップコーン作り</strong> ― 「1杯のポップコーンを作るのに標準2分」と決めておけば、上映前の60分で何杯作れるか逆算できる。標準時間がないと人員配置も在庫準備もできない！</span>
+      </div>
+
+      <div class="hl-box blue">
+        <strong>&#x1F3C3; なぜ必要？</strong><br>
+        ・生産計画の基礎（1日に何個作れるか計算できる）<br>
+        ・原価計算の基礎（1個あたりの人件費がわかる）<br>
+        ・公平な評価（「遅い」「速い」の基準になる）
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: 標準時間の求め方 -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">2</span>標準時間の求め方 ― 3ステップ</div>
+    <div class="card-body">
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--accent);">&#x2460; ストップウォッチで<br><strong>観測時間</strong>を計測</div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--blue);">&#x2461; レイティングで<br><strong>正味時間</strong>に補正</div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--green);">&#x2462; 余裕時間を足して<br><strong>標準時間</strong>完成</div>
+      </div>
+
+      <div class="formula-box">正味時間 ＝ 観測時間 &times; レイティング係数</div>
+      <div class="formula-box">標準時間 ＝ 正味時間 ＋ 余裕時間</div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F373; 料理で例えると</strong><br>
+        &#x2460; ベテラン料理人が玉ねぎを切る時間を測定 → <strong>30秒</strong>（観測時間）<br>
+        &#x2461; ベテランは速いから普通の人なら1.2倍 → 30秒&times;1.2＝<strong>36秒</strong>（正味時間）<br>
+        &#x2462; 包丁を研ぐ・手を拭く等の余裕4秒を足す → <strong>40秒</strong>（標準時間）
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: レイティング -->
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">3</span>レイティングって何？</div>
+    <div class="card-body">
+      <p><strong>レイティング</strong>＝「観測した作業者のペースが、標準ペースと比べてどうか？」を数値化すること。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>観測した人</th><th>レイティング係数</th><th>意味</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ベテラン（速い）</td><td><strong>1.2</strong></td><td>普通の人より速いので正味時間を<strong>増やす</strong></td></tr>
+            <tr><td>標準的な人</td><td><strong>1.0</strong></td><td>そのまま</td></tr>
+            <tr><td>新人（遅い）</td><td><strong>0.8</strong></td><td>普通の人より遅いので正味時間を<strong>減らす</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="goro-scene">
+        <div class="goro-img">&#x1F3AF;&#x2696;</div>
+        <div class="goro-text">
+          <div class="goro-title">&#x1F9E0; 覚え方！</div>
+          <div class="goro-phrase">「レイティング ＝ <strong>普通の人に換算する補正</strong>」</div>
+          <div class="goro-explain">速い人を測ったら係数＞1（増やす）、遅い人なら係数＜1（減らす）</div>
+        </div>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>最大の混乱ポイント！</strong>「速い人なのになぜ係数が1より大きい？」→ 速い人は観測時間が<strong>短い</strong>。普通の人に戻すには<strong>時間を増やす</strong>必要がある。だから係数＞1！</span>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：スポーツ</strong> ― ウサイン・ボルトの100m走を計測して9.58秒。普通の人（レイティング1.3）に換算すると 9.58&times;1.3＝約12.5秒。「速い人の記録 &times; 1以上の係数 ＝ 普通の人の時間」！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: 余裕率 -->
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">4</span>余裕率 ― 外掛けと内掛け</div>
+    <div class="card-body">
+      <p><strong>余裕時間</strong>＝トイレ休憩、疲労回復、機械の調整など、作業以外に必要な時間。</p>
+      <p>余裕率の計算には<strong>外掛け法</strong>と<strong>内掛け法</strong>の2種類があります。</p>
+
+      <div class="vs-grid">
+        <div class="vs-card blue">
+          <h4>外掛け法</h4>
+          <p>余裕率 ＝ 余裕時間 / <strong>正味時間</strong><br><br>
+          標準時間 ＝ 正味時間 &times; <strong>(1 + 余裕率)</strong></p>
+        </div>
+        <div class="vs-card orange">
+          <h4>内掛け法</h4>
+          <p>余裕率 ＝ 余裕時間 / <strong>（余裕時間＋正味時間）</strong><br><br>
+          標準時間 ＝ 正味時間 / <strong>(1 - 余裕率)</strong></p>
+        </div>
+      </div>
+
+      <!-- 外掛け法・内掛け法 バー図 -->
+      <div style="margin:20px auto; max-width:360px;">
+        <svg viewBox="0 0 360 260" xmlns="http://www.w3.org/2000/svg" style="width:100%; font-family:sans-serif;">
+          <!-- 外掛け法 -->
+          <text x="180" y="22" text-anchor="middle" font-size="16" font-weight="bold">&lt;外掛け法&gt;</text>
+          <!-- バー -->
+          <rect x="60" y="35" width="160" height="36" fill="#e3eaff" stroke="#333" stroke-width="2"/>
+          <rect x="220" y="35" width="80" height="36" fill="#fff0e0" stroke="#333" stroke-width="2"/>
+          <text x="140" y="58" text-anchor="middle" font-size="15" font-weight="bold">正</text>
+          <text x="260" y="58" text-anchor="middle" font-size="15" font-weight="bold">余</text>
+          <!-- 赤矢印：余裕率＝余裕/正味 → 正味の範囲 -->
+          <path d="M60,85 Q160,110 260,85" fill="none" stroke="#d00" stroke-width="3"/>
+          <polygon points="260,85 252,78 254,90" fill="#d00"/>
+          <!-- 青矢印：余裕の範囲 -->
+          <path d="M300,85 Q280,100 260,85" fill="none" stroke="#00c" stroke-width="3"/>
+          <polygon points="260,85 268,78 266,90" fill="#00c"/>
+
+          <!-- 内掛け法 -->
+          <text x="180" y="152" text-anchor="middle" font-size="16" font-weight="bold">&lt;内掛け法&gt;</text>
+          <!-- バー -->
+          <rect x="60" y="165" width="160" height="36" fill="#e3eaff" stroke="#333" stroke-width="2"/>
+          <rect x="220" y="165" width="80" height="36" fill="#fff0e0" stroke="#333" stroke-width="2"/>
+          <text x="140" y="188" text-anchor="middle" font-size="15" font-weight="bold">正</text>
+          <text x="260" y="188" text-anchor="middle" font-size="15" font-weight="bold">余</text>
+          <!-- 赤矢印：全体（余裕＋正味）の範囲 -->
+          <path d="M60,215 Q180,245 300,215" fill="none" stroke="#d00" stroke-width="3"/>
+          <polygon points="300,215 292,208 294,220" fill="#d00"/>
+          <!-- 青矢印：余裕の範囲 -->
+          <path d="M220,215 Q260,235 300,215" fill="none" stroke="#00c" stroke-width="3"/>
+          <polygon points="220,215 228,208 226,220" fill="#00c"/>
+        </svg>
+      </div>
+
+      <div class="goro-scene">
+        <div class="goro-img">&#x1F4A1;&#x1F9EE;</div>
+        <div class="goro-text">
+          <div class="goro-title">&#x1F9E0; 最強の覚え方！</div>
+          <div class="goro-phrase">「<strong>外は正味</strong>（分母）、<strong>内は全体</strong>（分母＝余裕＋正味）」</div>
+          <div class="goro-explain">外掛け → 正味時間が基準 → 掛け算（&times;）<br>内掛け → 全体（余裕＋正味）が基準 → 割り算（&divide;）</div>
+        </div>
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span>試験で「外掛け法で計算せよ」と言われたら <strong>(1+余裕率) を掛ける</strong>。<br>「内掛け法で」と言われたら <strong>(1-余裕率) で割る</strong>。これだけ覚えれば解ける！</span>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>「外」「内」の名前の由来</strong>：余裕を正味時間の<strong>外側に足す</strong>＝外掛け。余裕が標準時間の<strong>内側に含まれる</strong>＝内掛け。「外に足す」「中に入ってる」とイメージすると区別しやすい！</span>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>例：ECサイトの送料計算</strong> ― 外掛け＝商品代金の<strong>外側に</strong>送料500円を足す（1000円+500円＝1500円）。内掛け＝「税込1500円」の<strong>中に</strong>すでに送料が含まれている。方式が違うだけで結果も変わる！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: 稼働分析 -->
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">5</span>稼働分析（ワークサンプリング）</div>
+    <div class="card-body">
+      <p><strong>ワークサンプリング</strong>＝ランダムな時刻に観察して「今、働いてる？ 休んでる？」を記録し、<strong>稼働率</strong>を推定する方法。</p>
+
+      <div class="hl-box green">
+        <strong>&#x1F3B2; イメージ</strong><br>
+        1日の中でランダムに100回見に行って、80回「作業中」なら → 稼働率 <strong>80%</strong><br>
+        統計的に有効な手法で、長時間の連続観測が不要なのがメリット。
+      </div>
+
+      <div class="vs-grid">
+        <div class="vs-card green">
+          <h4>&#x2705; メリット</h4>
+          <p>&#x2022; 一人で複数の対象を同時に観察可<br>&#x2022; 長期間の連続計測が不要<br>&#x2022; 観察者の負担が少ない</p>
+        </div>
+        <div class="vs-card red">
+          <h4>&#x26A0; デメリット</h4>
+          <p>&#x2022; 細かい時間は測れない<br>&#x2022; 観測回数が少ないと精度が低い<br>&#x2022; 作業改善の具体策は得にくい</p>
+        </div>
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>例：料理の「味見」</strong> ― カレーを煮込みながら、30分ごとにランダムに味見する。10回中8回「ちょうどいい味」なら味の安定率80%。全部味見し続ける必要がないから楽！これがワークサンプリングの発想。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: PTS法 -->
+  <div class="card">
+    <div class="card-header bg-amber"><span class="card-num">6</span>PTS法（既定時間標準法）</div>
+    <div class="card-body">
+      <p><strong>PTS法</strong>（Predetermined Time Standard）＝人間の基本動作（手を伸ばす、つかむ、運ぶ…）に<strong>あらかじめ決められた標準時間</strong>を当てはめて合計する方法。</p>
+
+      <div class="hl-box purple">
+        <strong>&#x1F4D0; 特徴</strong><br>
+        ・ストップウォッチ不要（実測なし）<br>
+        ・<strong>レイティング不要</strong>（すでに標準ペースで設定済み）<br>
+        ・ただし<strong>余裕時間は別途加える必要あり</strong>（動作時間表は正味時間のみ）<br>
+        ・代表例：<strong>MTM法</strong>（Methods-Time Measurement）、<strong>WF法</strong>（Work Factor）
+      </div>
+
+      <!-- 時間研究 vs PTS法 比較図 -->
+      <div style="margin:18px 0;">
+        <svg viewBox="0 0 520 260" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:540px; display:block; margin:auto; font-family:sans-serif;">
+          <!-- 時間研究の流れ -->
+          <text x="260" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#555">&#x25BC; 時間研究（ストップウォッチ法）</text>
+          <rect x="10" y="30" width="90" height="38" rx="6" fill="#e3eaff" stroke="#4a6fa5" stroke-width="1.5"/>
+          <text x="55" y="54" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">実測</text>
+          <text x="115" y="53" text-anchor="middle" font-size="16" fill="#999">&#x27A1;</text>
+          <rect x="130" y="30" width="90" height="38" rx="6" fill="#fff3cd" stroke="#d4a017" stroke-width="1.5"/>
+          <text x="175" y="49" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">レイティング</text>
+          <text x="175" y="62" text-anchor="middle" font-size="9" fill="#888">（補正が必要）</text>
+          <text x="235" y="53" text-anchor="middle" font-size="16" fill="#999">&#x27A1;</text>
+          <rect x="250" y="30" width="90" height="38" rx="6" fill="#d4edda" stroke="#28a745" stroke-width="1.5"/>
+          <text x="295" y="54" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">正味時間</text>
+          <text x="355" y="53" text-anchor="middle" font-size="16" fill="#999">&#x27A1;</text>
+          <rect x="370" y="30" width="140" height="38" rx="6" fill="#fde8e8" stroke="#e53e3e" stroke-width="1.5"/>
+          <text x="440" y="49" text-anchor="middle" font-size="10" font-weight="bold" fill="#c53030">＋余裕時間</text>
+          <text x="440" y="62" text-anchor="middle" font-size="9" fill="#888">（別途計算が必要）</text>
+          <!-- 結果 -->
+          <text x="260" y="88" text-anchor="middle" font-size="12" fill="#333">&#x25BC;</text>
+          <rect x="180" y="92" width="160" height="30" rx="6" fill="#f0f0f0" stroke="#333" stroke-width="1.5"/>
+          <text x="260" y="112" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">標準時間</text>
+
+          <!-- PTS法の流れ -->
+          <text x="260" y="152" text-anchor="middle" font-size="13" font-weight="bold" fill="#555">&#x25BC; PTS法（既定時間標準法）</text>
+          <rect x="10" y="162" width="160" height="38" rx="6" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="90" y="181" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">動作を分解して</text>
+          <text x="90" y="194" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">標準時間表から合計</text>
+          <!-- ×印：レイティング不要 -->
+          <text x="220" y="176" text-anchor="middle" font-size="10" fill="#999" text-decoration="line-through">レイティング</text>
+          <text x="220" y="192" text-anchor="middle" font-size="14" fill="#e53e3e" font-weight="bold">&#x2716; 不要</text>
+          <text x="310" y="181" text-anchor="middle" font-size="16" fill="#999">&#x27A1;</text>
+          <!-- 正味時間 -->
+          <rect x="325" y="162" width="80" height="38" rx="6" fill="#d4edda" stroke="#28a745" stroke-width="1.5"/>
+          <text x="365" y="186" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">正味時間</text>
+          <text x="420" y="181" text-anchor="middle" font-size="16" fill="#999">&#x27A1;</text>
+          <!-- 余裕時間は必要 -->
+          <rect x="435" y="162" width="80" height="38" rx="6" fill="#fde8e8" stroke="#e53e3e" stroke-width="1.5"/>
+          <text x="475" y="180" text-anchor="middle" font-size="9" font-weight="bold" fill="#c53030">＋余裕時間</text>
+          <text x="475" y="193" text-anchor="middle" font-size="8" fill="#888">（別途必要！）</text>
+          <!-- 結果 -->
+          <text x="260" y="220" text-anchor="middle" font-size="12" fill="#333">&#x25BC;</text>
+          <rect x="180" y="224" width="160" height="30" rx="6" fill="#f0f0f0" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="260" y="244" text-anchor="middle" font-size="12" font-weight="bold" fill="#7c3aed">標準時間</text>
+        </svg>
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span>時間研究では「実測→レイティング→余裕時間を足す」と3ステップ必要。PTS法は<strong>実測とレイティングが不要</strong>になるが、<strong>余裕時間は別途加える</strong>必要がある。省略できるのは最初の2ステップだけ！</span>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span>試験頻出：「PTS法は<strong>レイティング不要</strong>」「<strong>実測せずに標準時間を設定できる</strong>」。ただし動作時間表が与えるのは<strong>正味時間</strong>なので、<strong>余裕時間は別途加える</strong>点に注意！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 重要入門 穴埋めチェック -->
+  <div class="card" style="margin-top:28px;">
+    <div class="card-header bg-slate"><span class="card-num">&#x270D;</span>このタブの穴埋めチェック</div>
+    <div class="card-body">
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:14px;">赤い空欄をクリックすると答えが見えます。</p>
+      <div style="text-align:center;margin-bottom:16px;">
+        <button class="fill-reveal-btn" onclick="revealAll('tab1')" style="margin-right:8px;">&#x1F441; 全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAll('tab1')" style="background:#e53e3e;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-teal">Q1. 標準時間の公式</div>
+        <div class="fill-body">
+          <div class="fill-q">標準時間 ＝ <span class="fill-blank">正味時間</span> ＋ <span class="fill-blank">余裕時間</span> ／ 正味時間 ＝ <span class="fill-blank">観測時間</span> &times; <span class="fill-blank">レイティング係数</span></div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-blue">Q2. レイティング</div>
+        <div class="fill-body">
+          <div class="fill-q">標準的な作業者の速さを<span class="fill-blank">100</span>として評価する</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-green">Q3. 余裕率</div>
+        <div class="fill-body">
+          <div class="fill-q">正味時間に余裕を加える ＝ <span class="fill-blank">外掛け</span>法 ／ 稼働時間全体に対する余裕の割合 ＝ <span class="fill-blank">内掛け</span>法</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-purple">Q4. 稼働分析</div>
+        <div class="fill-body">
+          <div class="fill-q">瞬間的に観測して稼働率を求める手法 ＝ <span class="fill-blank">ワークサンプリング</span> ／ 動作を時間値のデータベースから求める手法 ＝ <span class="fill-blank">PTS法</span></div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 2: 超やさしい基礎（基本事項の入門）                          -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab2">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「基本事項タブの前に、用語の意味がわかるレベルの超基礎が必要だ。」</p>
+    <p><span class="role role-plan">計画</span>「"3つの時間の違い""レイティングの意味""余裕とは""外掛け/内掛け""最小の計算"の5段階で。」</p>
+    <p><span class="role role-create">作成</span>「全部を図・表・ステップ図で見せます。文章は最小限。」</p>
+    <p><span class="role role-critic">批評</span>「"なぜベテランなのに係数が大きい？"の疑問を最優先で解消して。」</p>
+  </div>
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・基本事項タブに出てくる用語の意味<br>
+    ・「3つの時間」の違いを図で理解<br>
+    ・最もかんたんな計算を1問だけ解いてみる
+  </div>
+
+  <!-- Card 1: 3つの時間 -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">1</span>まず「3つの時間」を区別しよう</div>
+    <div class="card-body">
+      <p>基本事項で出てくる時間は<strong>3種類だけ</strong>。名前は似ていますが役割が違います。</p>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--accent); min-width:120px;">
+          <strong>観測時間</strong><br>
+          <span style="font-size:0.8rem; color:var(--muted);">ストップウォッチで<br>実際に測った時間</span>
+        </div>
+        <span class="flow-arrow" style="color:var(--orange);">&#x00D7; 補正</span>
+        <div class="flow-box" style="border-color:var(--blue); min-width:120px;">
+          <strong>正味時間</strong><br>
+          <span style="font-size:0.8rem; color:var(--muted);">「普通の人」の<br>速さに直した時間</span>
+        </div>
+        <span class="flow-arrow" style="color:var(--green);">&#xFF0B; 休憩</span>
+        <div class="flow-box" style="border-color:var(--green); min-width:120px;">
+          <strong>標準時間</strong><br>
+          <span style="font-size:0.8rem; color:var(--muted);">トイレ・休憩込みの<br>会社の公式タイム</span>
+        </div>
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>例：マラソンの記録</strong> ― 観測時間＝選手のタイム。正味時間＝「一般ランナーなら？」に換算。標準時間＝給水・トイレ休憩も込みの完走時間。</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>名前</th><th>何のこと？</th><th>日常の例え</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>観測時間</strong></td><td>実際に測った生のデータ</td><td>料理番組の「プロが切った時間」</td></tr>
+            <tr><td><strong>正味時間</strong></td><td>普通の人の速さに補正済み</td><td>「あなたが切ったら何分？」</td></tr>
+            <tr><td><strong>標準時間</strong></td><td>休憩・準備も含めた公式時間</td><td>レシピに書いてある「調理時間」</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: レイティング -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">2</span>「レイティング」＝ 普通の人に合わせる補正</div>
+    <div class="card-body">
+      <p>工場では<strong>誰を計測するかで時間が変わる</strong>。だから「普通の人のペース」に揃えます。</p>
+
+      <div class="vs-grid3">
+        <div class="vs-card green">
+          <h4>&#x1F3C3; ベテラン</h4>
+          <p>速い → 時間が<strong>短い</strong><br>
+          係数 <strong>1.2</strong><br>
+          短い &times; 1.2 ＝ 普通に戻す</p>
+        </div>
+        <div class="vs-card blue">
+          <h4>&#x1F6B6; 普通の人</h4>
+          <p>基準 → そのまま<br>
+          係数 <strong>1.0</strong><br>
+          補正不要</p>
+        </div>
+        <div class="vs-card orange">
+          <h4>&#x1F476; 新人</h4>
+          <p>遅い → 時間が<strong>長い</strong><br>
+          係数 <strong>0.8</strong><br>
+          長い &times; 0.8 ＝ 普通に戻す</p>
+        </div>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>最大の混乱ポイント！</strong>「速い人なのに係数が1より大きい？」<br>→ 速い人の記録は<strong>短い</strong>。普通に戻すには時間を<strong>伸ばす</strong>。だから掛け算で<strong>増やす</strong>！</span>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：100m走</strong> ― ボルト9.58秒 &times; 1.3 ＝ 12.5秒（普通の人）。新人15秒 &times; 0.8 ＝ 12秒（普通の人）。誰を測っても<strong>だいたい同じ時間</strong>に揃うのがレイティング！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: 余裕って何？ -->
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">3</span>「余裕」＝ サボりではない！必要な休憩の時間</div>
+    <div class="card-body">
+      <p>人間は機械じゃないので<strong>休憩・準備・トラブル対応</strong>の時間が必要。これが「余裕時間」。</p>
+
+      <div class="vs-grid">
+        <div class="vs-card teal" style="text-align:center;">
+          <h4>&#x1F6BB; 人的余裕</h4>
+          <p>トイレ・水分補給<br><span style="font-size:0.8rem; color:var(--muted);">（自分の体のため）</span></p>
+        </div>
+        <div class="vs-card purple" style="text-align:center;">
+          <h4>&#x1F634; 疲労余裕</h4>
+          <p>疲れた時の休憩<br><span style="font-size:0.8rem; color:var(--muted);">（回復のため）</span></p>
+        </div>
+      </div>
+      <div class="vs-grid">
+        <div class="vs-card orange" style="text-align:center;">
+          <h4>&#x1F527; 作業余裕</h4>
+          <p>工具交換・清掃<br><span style="font-size:0.8rem; color:var(--muted);">（作業の準備）</span></p>
+        </div>
+        <div class="vs-card blue" style="text-align:center;">
+          <h4>&#x1F3E2; 職場余裕</h4>
+          <p>朝礼・材料待ち<br><span style="font-size:0.8rem; color:var(--muted);">（職場の環境）</span></p>
+        </div>
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>覚え方</strong>：上2つは<strong>人間の事情</strong>（体・疲れ）、下2つは<strong>仕事の事情</strong>（作業・職場）。2&times;2で覚える！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: 外掛け vs 内掛け -->
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">4</span>「外掛け」と「内掛け」のたった1つの違い</div>
+    <div class="card-body">
+      <p>余裕を「どう計算に入れるか」の方式が2つあります。<strong>やることは同じ</strong>、計算式が違うだけ。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th>外掛け法</th><th>内掛け法</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>イメージ</strong></td><td>正味の<strong>外側に</strong>余裕を足す</td><td>標準時間の<strong>中に</strong>余裕が入ってる</td></tr>
+            <tr><td><strong>分母</strong></td><td><span class="kw blue">正味時間</span></td><td><span class="kw orange">余裕時間＋正味時間</span></td></tr>
+            <tr><td><strong>計算</strong></td><td>正味 <strong>&times;</strong> (1+余裕率)</td><td>正味 <strong>&divide;</strong> (1-余裕率)</td></tr>
+            <tr><td><strong>覚え方</strong></td><td>「<strong>外</strong>は<strong>正</strong>味」で掛ける</td><td>「<strong>内</strong>は<strong>全体</strong>」で割る</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：お弁当の値段</strong><br>外掛け＝おかず代500円の<strong>外側に</strong>容器代100円を足す → 600円<br>内掛け＝「600円のお弁当」の<strong>中に</strong>すでに容器代が含まれている<br>どちらも結果は同じ600円、計算の出発点が違うだけ！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: 最小の計算例 -->
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">5</span>1問だけ解いてみよう！（外掛け法）</div>
+    <div class="card-body">
+      <div class="hl-box yellow">
+        <strong>&#x1F4DD; 問題</strong><br>
+        ベテランの観測時間＝<strong>50秒</strong>、レイティング係数＝<strong>1.2</strong>、余裕率＝<strong>20%</strong>（外掛け法）<br>
+        標準時間はいくらか？
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--accent); background:#f0fdfa;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 1</span><br>
+          <strong>観測時間を確認</strong><br>
+          50秒
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--blue); background:#eff6ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 2　正味時間</span><br>
+          50 &times; <strong>1.2</strong><br>
+          ＝ <strong>60秒</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--green); background:#ecfdf5;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 3　標準時間</span><br>
+          60 &times; <strong>(1+0.2)</strong><br>
+          ＝ <strong>72秒</strong>
+        </div>
+      </div>
+
+      <div class="formula-box" style="background:#ecfdf5; border-color:var(--green); color:var(--green);">
+        答え：標準時間 ＝ 72秒
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span>たった<strong>2回の掛け算</strong>で解ける！Step2で「普通の人に補正」、Step3で「休憩を足す」。これだけ。</span>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>もし内掛け法なら？</strong> Step3が「60 &divide; (1-0.2) ＝ 60 &divide; 0.8 ＝ <strong>75秒</strong>」になる。外掛け72秒と内掛け75秒 ― <strong>同じ余裕率でも答えが違う</strong>のがポイント！</span>
+      </div>
+
+      <div class="exam-point">
+        <div class="exam-point-title">&#x1F6A8; この先「基本事項」タブに進む前のチェック</div>
+        <ul>
+          <li>3つの時間（観測→正味→標準）の順番が言える</li>
+          <li>レイティング ＝ 普通の人に合わせる補正 と説明できる</li>
+          <li>余裕 ＝ 休憩やトイレの時間 と理解している</li>
+          <li>外掛け＝掛ける、内掛け＝割る の違いがわかる</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 超やさしい基礎 穴埋めチェック -->
+  <div class="card" style="margin-top:28px;">
+    <div class="card-header bg-slate"><span class="card-num">&#x270D;</span>このタブの穴埋めチェック</div>
+    <div class="card-body">
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:14px;">赤い空欄をクリックすると答えが見えます。</p>
+      <div style="text-align:center;margin-bottom:16px;">
+        <button class="fill-reveal-btn" onclick="revealAll('tab2')" style="margin-right:8px;">&#x1F441; 全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAll('tab2')" style="background:#e53e3e;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-teal">Q1. 3つの時間</div>
+        <div class="fill-body">
+          <div class="fill-q">ストップウォッチで測った時間 ＝ <span class="fill-blank">観測時間</span> ／ レイティング補正後 ＝ <span class="fill-blank">正味時間</span> ／ 余裕を加えた完成形 ＝ <span class="fill-blank">標準時間</span></div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-blue">Q2. レイティング</div>
+        <div class="fill-body">
+          <div class="fill-q">速い作業者の観測時間にレイティング係数<span class="fill-blank">100超</span>を掛けると正味時間は<span class="fill-blank">大きく</span>なる。遅い作業者は<span class="fill-blank">100未満</span>を掛ける</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-green">Q3. 外掛け法の公式</div>
+        <div class="fill-body">
+          <div class="fill-q">標準時間 ＝ 正味時間 &times;（1 ＋ <span class="fill-blank">余裕率</span>）</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 3: 基本事項                                                -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab3">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「ここが試験対策の本丸。体系的に整理して、比較表をしっかり作ろう。」</p>
+    <p><span class="role role-plan">計画</span>「&#x2460;IE全体の体系図 &#x2461;方法研究（工程分析・動作研究） &#x2462;作業測定（時間研究・稼働分析・PTS法） &#x2463;標準時間の計算詳細 &#x2464;余裕の種類 &#x2465;各手法の比較表」</p>
+    <p><span class="role role-create">作成</span>「比較表は"いつ使う？"の列を入れて実践的に。」</p>
+    <p><span class="role role-critic">批評</span>「工程分析の4つの記号（&#x25CB;&#x25B7;&#x25BD;&#x25A1;）は頻出。必ず入れて。動作研究のサーブリッグも触れたい。」</p>
+  </div>
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・IE全体の体系（方法研究と作業測定）<br>
+    ・工程分析の4つの記号と動作研究<br>
+    ・時間研究・稼働分析・PTS法の詳細<br>
+    ・標準時間・余裕率の計算公式<br>
+    ・余裕の4分類<br>
+    ・各手法の比較一覧
+  </div>
+
+  <!-- Card 1: 体系図 -->
+  <div class="card">
+    <div class="card-header bg-navy"><span class="card-num">1</span>IE（作業研究）の体系</div>
+    <div class="card-body">
+      <div class="tree">
+        <div class="t-root">IE（作業研究）</div>
+        <div class="t-branch">
+          <div class="t-item">
+            <span class="t-label t-blue">方法研究</span>
+            <span class="t-note">最善の方法を見つける</span>
+          </div>
+          <div class="t-branch">
+            <div class="t-item"><span class="t-label t-blue">工程分析</span> <span class="t-note">作業の流れ全体（マクロ）</span></div>
+            <div class="t-branch">
+              <div class="t-item"><span class="t-label t-teal">単純工程分析</span> <span class="t-note">1つの対象の流れ</span></div>
+              <div class="t-item"><span class="t-label t-teal">多品種工程分析</span> <span class="t-note">複数品種の比較</span></div>
+              <div class="t-item"><span class="t-label t-teal">流れ線図</span> <span class="t-note">レイアウト上に動線を描く</span></div>
+            </div>
+            <div class="t-item"><span class="t-label t-blue">動作研究</span> <span class="t-note">手や体の細かい動き（ミクロ）</span></div>
+            <div class="t-branch">
+              <div class="t-item"><span class="t-label t-teal">サーブリッグ分析</span> <span class="t-note">18種の基本動作に分解</span></div>
+              <div class="t-item"><span class="t-label t-teal">微動作研究</span> <span class="t-note">ビデオ撮影で分析</span></div>
+            </div>
+          </div>
+          <div class="t-item">
+            <span class="t-label t-green">作業測定</span>
+            <span class="t-note">標準時間を設定する</span>
+          </div>
+          <div class="t-branch">
+            <div class="t-item"><span class="t-label t-green">時間研究</span> <span class="t-note">ストップウォッチ法</span></div>
+            <div class="t-item"><span class="t-label t-green">稼働分析</span> <span class="t-note">ワークサンプリング法</span></div>
+            <div class="t-item"><span class="t-label t-green">PTS法</span> <span class="t-note">既定時間標準法（MTM法等）</span></div>
+            <div class="t-item"><span class="t-label t-green">標準時間資料法</span> <span class="t-note">過去のデータから設定</span></div>
+            <div class="t-item"><span class="t-label t-green">実績資料法</span> <span class="t-note">過去の実績記録を利用</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: 工程分析 -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">2</span>工程分析 ― 4つの記号</div>
+    <div class="card-body">
+      <p>工程分析では作業を<strong>4つの記号</strong>で表します。試験頻出です。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>記号</th><th>名称</th><th>意味</th><th>例</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="font-size:1.5rem; text-align:center;">&#x25CB;</td><td><strong>加工</strong></td><td>材料に変化を与える</td><td>切る、削る、組み立てる</td></tr>
+            <tr><td style="font-size:1.5rem; text-align:center;">&#x25B7;</td><td><strong>運搬</strong></td><td>場所を移動させる</td><td>コンベアで運ぶ、台車で移す</td></tr>
+            <tr><td style="font-size:1.5rem; text-align:center;">&#x25BD;</td><td><strong>貯蔵（停滞）</strong></td><td>計画的に保管する</td><td>倉庫に保管、在庫として置く</td></tr>
+            <tr><td style="font-size:1.5rem; text-align:center;">&#x25A1;</td><td><strong>検査</strong></td><td>品質や数量を調べる</td><td>寸法測定、外観チェック</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="hl-box yellow">
+        <strong>&#x26A0; 「滞留（D）」との違い</strong><br>
+        &#x25BD;（貯蔵）は<strong>計画的な保管</strong>。「D」は意図しない待ち（手待ち・滞留）。<br>
+        工程図では&#x25BD;と<strong>D</strong>を使い分けます。
+      </div>
+
+      <div class="goro-scene">
+        <div class="goro-img">&#x25CB;&#x25B7;&#x25BD;&#x25A1;</div>
+        <div class="goro-text">
+          <div class="goro-title">&#x1F9E0; 語呂で覚える！</div>
+          <div class="goro-phrase">「<strong>丸</strong>く<strong>加工</strong>、<strong>三角</strong>で<strong>運</strong>んで、<strong>逆三角</strong>で<strong>貯め</strong>て、<strong>四角</strong>で<strong>検査</strong>」</div>
+          <div class="goro-explain">&#x25CB;加工 &#x25B7;運搬 &#x25BD;貯蔵 &#x25A1;検査 ― この4つだけ！</div>
+        </div>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：ラーメン店で工程分析してみよう！</strong><br>
+        &#x25CB;麺を茹でる → &#x25B7;丼まで運ぶ → &#x25CB;スープを注ぐ → &#x25A1;盛付け確認 → &#x25B7;客席へ運ぶ<br>
+        改善ポイント：&#x25B7;運搬を減らす＝厨房のレイアウト変更！</span>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>試験の引っかけ</strong>：「&#x25CB;は加工と検査の両方を含む」→ &#x274C; 検査は&#x25A1;で別記号！記号を混同する問題が頻出。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: 動作研究 -->
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">3</span>動作研究 ― サーブリッグ分析</div>
+    <div class="card-body">
+      <p>ギルブレス（Gilbreth）が提唱。人間の動作を<strong>18種類の基本動作</strong>（サーブリッグ）に分解して分析する手法。</p>
+
+      <div class="hl-box purple">
+        <strong>&#x1F50E; 18種類の例</strong><br>
+        「探す」「見出す」「選ぶ」「つかむ」「運ぶ（空荷）」「運ぶ（荷あり）」「位置決め」「組み合わせる」「分解する」「使う」「離す」「検査する」「前置き」「避けられない遅れ」「避けられる遅れ」「休む」「保持」「考える」
+      </div>
+
+      <div class="vs-grid3">
+        <div class="vs-card green">
+          <h4>&#x2705; 第1類（必要）</h4>
+          <p>つかむ、運ぶ、使う、組み合わせる等<br><strong>→ 効率化</strong></p>
+        </div>
+        <div class="vs-card orange">
+          <h4>&#x1F504; 第2類（補助）</h4>
+          <p>探す、見出す、選ぶ、位置決め、前置き等<br><strong>→ 削減を目指す</strong></p>
+        </div>
+        <div class="vs-card red">
+          <h4>&#x274C; 第3類（ムダ）</h4>
+          <p>避けられる遅れ、休む等<br><strong>→ 排除を目指す</strong></p>
+        </div>
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span>サーブリッグ（Therblig）は<strong>Gilbrethの逆綴り</strong>。試験では「18種類の基本動作」「ギルブレスが提唱」が問われます。</span>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：コンビニのレジ打ち</strong> ― 商品を「つかむ」→バーコードを「位置決め」→スキャン（「使う」）→袋に「運ぶ」→「離す」。この動作の繰返し。「探す」「選ぶ」が減るようにバーコードの位置を統一するのが改善！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: 時間研究の詳細 -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">4</span>時間研究（ストップウォッチ法）の手順</div>
+    <div class="card-body">
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:#1a365d;">作業を<br><strong>要素作業</strong>に分解</div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--accent);">ストップウォッチで<br><strong>観測時間</strong>を計測</div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--blue);"><strong>異常値を除外</strong><br>代表値を算出</div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--orange);"><strong>レイティング</strong><br>で正味時間を算出</div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--green);"><strong>余裕時間</strong>を加え<br>標準時間を設定</div>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：料理レシピの開発</strong> ― &#x2460;「玉ねぎを切る」「炒める」に工程分解 → &#x2461;実際に作って時間計測 → &#x2462;味が変なデータは除外 → &#x2463;普通の人の腕前に補正 → &#x2464;手を洗う等の余裕時間を足す ＝ レシピの「調理時間：30分」が完成！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: 余裕の種類 -->
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">5</span>余裕の4分類</div>
+    <div class="card-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>余裕の種類</th><th>内容</th><th>例</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="kw blue">人的余裕</span></td><td>作業者自身の生理的ニーズ</td><td>トイレ、水分補給</td></tr>
+            <tr><td><span class="kw green">疲労余裕</span></td><td>疲労回復のための時間</td><td>重作業後の休憩</td></tr>
+            <tr><td><span class="kw orange">作業余裕</span></td><td>作業に付随する不規則な作業</td><td>工具交換、清掃</td></tr>
+            <tr><td><span class="kw purple">職場余裕</span></td><td>職場環境に起因する遅延</td><td>朝礼、打合せ、材料待ち</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>例：学校の授業</strong> ― 人的余裕＝トイレ休憩。疲労余裕＝5分間の休み時間。作業余裕＝ノートのページ替え。職場余裕＝校内放送で中断。全部「授業以外だけど必要な時間」！</span>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>試験の引っかけ</strong>：「材料待ちは作業余裕」→ &#x274C; 材料待ちは<strong>職場余裕</strong>！作業余裕は作業者自身の付随作業（工具交換等）、職場余裕は環境要因（材料待ち・朝礼等）。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: 標準時間の計算 -->
+  <div class="card">
+    <div class="card-header bg-red"><span class="card-num">6</span>標準時間の計算公式（外掛け法 vs 内掛け法）</div>
+    <div class="card-body">
+      <div class="formula-box">正味時間 ＝ 観測時間 &times; レイティング係数</div>
+
+      <div class="vs-grid">
+        <div class="vs-card blue">
+          <h4>外掛け法</h4>
+          <div class="formula-box">余裕率 ＝ 余裕時間 / 正味時間</div>
+          <div class="formula-box">標準時間 ＝ 正味 &times; (1 + 余裕率)</div>
+        </div>
+        <div class="vs-card orange">
+          <h4>内掛け法</h4>
+          <div class="formula-box">余裕率 ＝ 余裕時間 /（余裕時間＋正味時間）</div>
+          <div class="formula-box">標準時間 ＝ 正味 / (1 - 余裕率)</div>
+        </div>
+      </div>
+
+      <div class="hl-box red">
+        <strong>&#x1F4DD; 計算例</strong><br>
+        観測時間 50秒、レイティング係数 1.1、余裕率 20%（外掛け法）のとき<br><br>
+        &#x2460; 正味時間 ＝ 観測時間 &times; レイティング係数 ＝ 50 &times; 1.1 ＝ <strong>55秒</strong><br>
+        &#x2461; 標準時間 ＝ 正味時間 &times; (1 + 余裕率) ＝ 55 &times; (1 + 0.2) ＝ 55 &times; 1.2 ＝ <strong>66秒</strong><br><br>
+        <span style="font-size:0.93em; color:#555;">※ 余裕率が直接与えられているので、使う公式は上の2つだけ。<br>
+        「余裕率 ＝ 余裕時間 / 正味時間」や「余裕率 ＝ 余裕時間 /（余裕時間＋正味時間）」は、余裕率ではなく余裕<strong>時間</strong>（秒）が与えられた場合に率を求めるための式。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 7: 各手法比較 -->
+  <div class="card">
+    <div class="card-header bg-slate"><span class="card-num">7</span>作業測定の手法 ― 比較一覧表</div>
+    <div class="card-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>手法</th><th>方法</th><th>レイティング</th><th>余裕時間の考慮</th><th>向いている場面</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>時間研究</strong></td><td>ストップウォッチで実測</td><td><span class="kw">必要</span></td><td><span class="kw">必要</span></td><td>繰返し作業の標準時間設定</td></tr>
+            <tr><td><strong>稼働分析</strong>（WS法）</td><td>ランダム観察で稼働率推定</td><td>不要</td><td>―</td><td>稼働率・余裕率の把握</td></tr>
+            <tr><td><strong>PTS法</strong></td><td>動作ごとの標準時間表で合計</td><td><span class="kw green">不要</span></td><td><span class="kw">必要</span></td><td>新製品の事前見積り</td></tr>
+            <tr><td><strong>標準時間資料法</strong></td><td>過去のデータを組み合わせ</td><td>不要</td><td>必要</td><td>類似作業の標準時間設定</td></tr>
+            <tr><td><strong>実績資料法</strong></td><td>過去の実績記録を利用</td><td>不要</td><td>必要</td><td>精度は低いが簡便</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="exam-point">
+        <div class="exam-point-title">&#x1F6A8; 頻出ポイント</div>
+        <ul>
+          <li><strong>PTS法はレイティング不要</strong>（既に標準ペースで設定済み）。ただし<strong>余裕時間は別途加える</strong>必要あり</li>
+          <li><strong>ワークサンプリングは統計的手法</strong>（観測回数で精度が決まる）</li>
+          <li>外掛け法の分母は<strong>正味時間</strong>、内掛け法の分母は<strong>余裕時間＋正味時間</strong></li>
+          <li>工程分析の4記号：&#x25CB;加工 &#x25B7;運搬 &#x25BD;貯蔵 &#x25A1;検査</li>
+          <li>サーブリッグ＝ギルブレスが提唱した18種の基本動作</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基本事項 穴埋めチェック -->
+  <div class="card" style="margin-top:28px;">
+    <div class="card-header bg-slate"><span class="card-num">&#x270D;</span>このタブの穴埋めチェック</div>
+    <div class="card-body">
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:14px;">赤い空欄をクリックすると答えが見えます。</p>
+      <div style="text-align:center;margin-bottom:16px;">
+        <button class="fill-reveal-btn" onclick="revealAll('tab3')" style="margin-right:8px;">&#x1F441; 全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAll('tab3')" style="background:#e53e3e;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-teal">Q1. 工程分析の4つの記号</div>
+        <div class="fill-body">
+          <div class="fill-q">&#x25CB;＝<span class="fill-blank">加工</span> ／ &#x2192;＝<span class="fill-blank">運搬</span> ／ &#x25B3;＝<span class="fill-blank">停滞（貯蔵）</span> ／ &#x25A1;＝<span class="fill-blank">検査</span></div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-blue">Q2. 余裕の4分類</div>
+        <div class="fill-body">
+          <div class="fill-q"><span class="fill-blank">人的余裕</span>（用達・疲労・職場）＋ <span class="fill-blank">管理余裕</span>（作業・職場）</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-green">Q3. 外掛け法と内掛け法</div>
+        <div class="fill-body">
+          <div class="fill-q">外掛け法：標準時間 ＝ 正味時間 &times;（1 ＋ <span class="fill-blank">余裕率</span>） ／ 内掛け法：標準時間 ＝ 正味時間 /（1 − <span class="fill-blank">余裕率</span>）</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-purple">Q4. PTS法の特徴</div>
+        <div class="fill-body">
+          <div class="fill-q">ストップウォッチが<span class="fill-blank">不要</span> ／ レイティングが<span class="fill-blank">不要</span> ／ 作業前に標準時間を<span class="fill-blank">設定できる</span></div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 4: 計算方法                                                -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab4">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「計算問題を1か所にまとめよう。公式だけでなく"どう使うか"をステップで見せたい。」</p>
+    <p><span class="role role-plan">計画</span>「&#x2460;標準時間（外掛け法） &#x2461;標準時間（内掛け法） &#x2462;ワークサンプリングからの余裕率算出 &#x2463;PTS法 の4パターンで網羅。」</p>
+    <p><span class="role role-create">作成</span>「すべてステップ図＋具体的な数値例で。」</p>
+    <p><span class="role role-critic">批評</span>「計算の"分岐点"を明確に。外掛け/内掛けの使い分け、ワークサンプリングとの組み合わせも入れて。」</p>
+  </div>
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4DD; このタブで学ぶこと</strong><br>
+    ・標準時間の計算（外掛け法・内掛け法）のステップ別解法<br>
+    ・余裕時間が与えられた場合の余裕率の求め方<br>
+    ・ワークサンプリングのデータから余裕率・標準時間を求める方法<br>
+    ・PTS法での標準時間の求め方
+  </div>
+
+  <!-- ===== 計算の全体像 ===== -->
+  <div class="card">
+    <div class="card-header bg-slate"><span class="card-num">0</span>計算パターンの全体像</div>
+    <div class="card-body">
+      <p>試験で出る計算は大きく<strong>3パターン</strong>。まず「何が与えられているか」を確認するのがコツ。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>パターン</th><th>与えられるもの</th><th>求めるもの</th><th>使う公式</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>A. 余裕率が直接与えられる</strong></td><td>観測時間、レイティング係数、余裕率</td><td>標準時間</td><td>正味時間 &times; (1+余裕率) or &divide; (1-余裕率)</td></tr>
+            <tr><td><strong>B. 余裕時間が与えられる</strong></td><td>観測時間、レイティング係数、余裕時間</td><td>余裕率 → 標準時間</td><td>まず余裕率を計算してからAと同じ</td></tr>
+            <tr><td><strong>C. ワークサンプリング</strong></td><td>観察回数と内訳</td><td>稼働率・余裕率</td><td>各カテゴリの回数 &divide; 総観察回数</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Card 1: 外掛け法 ===== -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">1</span>標準時間の計算 ― 外掛け法</div>
+    <div class="card-body">
+
+      <div class="hl-box blue">
+        <strong>&#x1F4D0; 公式</strong><br>
+        &#x2460; 正味時間 ＝ 観測時間 &times; レイティング係数<br>
+        &#x2461; 余裕率 ＝ 余裕時間 / <strong>正味時間</strong>（余裕率が直接与えられていない場合）<br>
+        &#x2462; 標準時間 ＝ 正味時間 &times; <strong>（1 ＋ 余裕率）</strong>
+      </div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F4DD; 例題A：余裕率が与えられている場合</strong><br>
+        観測時間＝<strong>50秒</strong>、レイティング係数＝<strong>1.2</strong>、余裕率＝<strong>20%</strong>（外掛け法）
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--blue); background:#eff6ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 1　正味時間</span><br>
+          50 &times; <strong>1.2</strong><br>
+          ＝ <strong>60秒</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--green); background:#ecfdf5;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 2　標準時間</span><br>
+          60 &times; <strong>(1 + 0.2)</strong><br>
+          ＝ 60 &times; 1.2<br>
+          ＝ <strong>72秒</strong>
+        </div>
+      </div>
+
+      <div class="formula-box" style="background:#ecfdf5; border-color:var(--green); color:var(--green);">
+        答え：標準時間 ＝ 72秒
+      </div>
+
+      <div class="hl-box yellow" style="margin-top:20px;">
+        <strong>&#x1F4DD; 例題B：余裕時間（秒）が与えられている場合</strong><br>
+        観測時間＝<strong>40秒</strong>、レイティング係数＝<strong>1.25</strong>、余裕時間＝<strong>10秒</strong>（外掛け法）
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--blue); background:#eff6ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 1　正味時間</span><br>
+          40 &times; <strong>1.25</strong><br>
+          ＝ <strong>50秒</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--orange); background:#fff7ed;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 2　余裕率</span><br>
+          10 &divide; <strong>50</strong><br>
+          ＝ <strong>0.2（20%）</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--green); background:#ecfdf5;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 3　標準時間</span><br>
+          50 &times; <strong>(1 + 0.2)</strong><br>
+          ＝ <strong>60秒</strong>
+        </div>
+      </div>
+
+      <div class="formula-box" style="background:#ecfdf5; border-color:var(--green); color:var(--green);">
+        答え：標準時間 ＝ 60秒
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span>外掛け法のポイント：余裕率の<strong>分母は正味時間</strong>。標準時間は<strong>「掛ける」</strong>。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Card 2: 内掛け法 ===== -->
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">2</span>標準時間の計算 ― 内掛け法</div>
+    <div class="card-body">
+
+      <div class="hl-box orange">
+        <strong>&#x1F4D0; 公式</strong><br>
+        &#x2460; 正味時間 ＝ 観測時間 &times; レイティング係数<br>
+        &#x2461; 余裕率 ＝ 余裕時間 / <strong>（余裕時間 ＋ 正味時間）</strong>（余裕率が直接与えられていない場合）<br>
+        &#x2462; 標準時間 ＝ 正味時間 / <strong>（1 − 余裕率）</strong>
+      </div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F4DD; 例題A：余裕率が与えられている場合</strong><br>
+        観測時間＝<strong>50秒</strong>、レイティング係数＝<strong>1.2</strong>、余裕率＝<strong>20%</strong>（内掛け法）
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--blue); background:#eff6ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 1　正味時間</span><br>
+          50 &times; <strong>1.2</strong><br>
+          ＝ <strong>60秒</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--green); background:#ecfdf5;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 2　標準時間</span><br>
+          60 &divide; <strong>(1 − 0.2)</strong><br>
+          ＝ 60 &divide; 0.8<br>
+          ＝ <strong>75秒</strong>
+        </div>
+      </div>
+
+      <div class="formula-box" style="background:#fff7ed; border-color:var(--orange); color:#c05621;">
+        答え：標準時間 ＝ 75秒
+      </div>
+
+      <div class="hl-box yellow" style="margin-top:20px;">
+        <strong>&#x1F4DD; 例題B：余裕時間（秒）が与えられている場合</strong><br>
+        観測時間＝<strong>40秒</strong>、レイティング係数＝<strong>1.25</strong>、余裕時間＝<strong>10秒</strong>（内掛け法）
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--blue); background:#eff6ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 1　正味時間</span><br>
+          40 &times; <strong>1.25</strong><br>
+          ＝ <strong>50秒</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--orange); background:#fff7ed;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 2　余裕率</span><br>
+          10 &divide; <strong>(10 + 50)</strong><br>
+          ＝ 10 &divide; 60<br>
+          ＝ <strong>0.167（16.7%）</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--green); background:#ecfdf5;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 3　標準時間</span><br>
+          50 &divide; <strong>(1 − 0.167)</strong><br>
+          ＝ 50 &divide; 0.833<br>
+          ＝ <strong>60秒</strong>
+        </div>
+      </div>
+
+      <div class="formula-box" style="background:#fff7ed; border-color:var(--orange); color:#c05621;">
+        答え：標準時間 ＝ 60秒
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>外掛けと内掛けの比較</strong>：同じ条件（正味60秒・余裕率20%）でも、外掛け＝<strong>72秒</strong>、内掛け＝<strong>75秒</strong>。同じ余裕率でも方式が違えば答えが変わる！問題文の指定を必ず確認。</span>
+      </div>
+
+      <!-- 外掛け vs 内掛け バー図 -->
+      <div style="margin:20px auto; max-width:360px;">
+        <svg viewBox="0 0 360 260" xmlns="http://www.w3.org/2000/svg" style="width:100%; font-family:sans-serif;">
+          <!-- 外掛け法 -->
+          <text x="180" y="22" text-anchor="middle" font-size="16" font-weight="bold">&lt;外掛け法&gt;</text>
+          <rect x="60" y="35" width="160" height="36" fill="#e3eaff" stroke="#333" stroke-width="2"/>
+          <rect x="220" y="35" width="80" height="36" fill="#fff0e0" stroke="#333" stroke-width="2"/>
+          <text x="140" y="58" text-anchor="middle" font-size="15" font-weight="bold">正</text>
+          <text x="260" y="58" text-anchor="middle" font-size="15" font-weight="bold">余</text>
+          <path d="M60,85 Q160,110 260,85" fill="none" stroke="#d00" stroke-width="3"/>
+          <polygon points="260,85 252,78 254,90" fill="#d00"/>
+          <path d="M300,85 Q280,100 260,85" fill="none" stroke="#00c" stroke-width="3"/>
+          <polygon points="260,85 268,78 266,90" fill="#00c"/>
+          <text x="160" y="115" text-anchor="middle" font-size="11" fill="#d00">余裕率＝余裕/正味</text>
+
+          <!-- 内掛け法 -->
+          <text x="180" y="152" text-anchor="middle" font-size="16" font-weight="bold">&lt;内掛け法&gt;</text>
+          <rect x="60" y="165" width="160" height="36" fill="#e3eaff" stroke="#333" stroke-width="2"/>
+          <rect x="220" y="165" width="80" height="36" fill="#fff0e0" stroke="#333" stroke-width="2"/>
+          <text x="140" y="188" text-anchor="middle" font-size="15" font-weight="bold">正</text>
+          <text x="260" y="188" text-anchor="middle" font-size="15" font-weight="bold">余</text>
+          <path d="M60,215 Q180,245 300,215" fill="none" stroke="#d00" stroke-width="3"/>
+          <polygon points="300,215 292,208 294,220" fill="#d00"/>
+          <path d="M220,215 Q260,235 300,215" fill="none" stroke="#00c" stroke-width="3"/>
+          <polygon points="220,215 228,208 226,220" fill="#00c"/>
+          <text x="180" y="250" text-anchor="middle" font-size="11" fill="#d00">余裕率＝余裕/（余裕＋正味）</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Card 3: ワークサンプリング ===== -->
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">3</span>ワークサンプリングの計算</div>
+    <div class="card-body">
+
+      <div class="hl-box green">
+        <strong>&#x1F4D0; 公式</strong><br>
+        ・稼働率 ＝ 稼働回数 / 総観察回数<br>
+        ・各作業の比率 ＝ 該当回数 / 総観察回数<br>
+        ・余裕率（内掛け法） ＝ 余裕回数 / 総観察回数<br>
+        　<span style="font-size:0.9em; color:#555;">※ ワークサンプリングの余裕率は「全体に対する割合」なので内掛け法と同じ考え方</span>
+      </div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F4DD; 例題1：稼働率・余裕率の算出</strong><br>
+        ある工場で200回のランダム観察を行った結果：<br>
+        主作業 <strong>140回</strong>、付随作業 <strong>30回</strong>、余裕（休憩・待ち等） <strong>30回</strong>
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--blue); background:#eff6ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 1　主作業率</span><br>
+          140 &divide; 200<br>
+          ＝ <strong>70%</strong>
+        </div>
+        <div class="flow-box" style="border-color:var(--orange); background:#fff7ed;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 2　付随作業率</span><br>
+          30 &divide; 200<br>
+          ＝ <strong>15%</strong>
+        </div>
+        <div class="flow-box" style="border-color:var(--accent); background:#f0fdfa;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 3　余裕率</span><br>
+          30 &divide; 200<br>
+          ＝ <strong>15%</strong>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:16px;">
+        <table>
+          <thead>
+            <tr><th>区分</th><th>回数</th><th>比率</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>主作業</strong></td><td>140回</td><td><strong>70%</strong></td></tr>
+            <tr><td><strong>付随作業</strong></td><td>30回</td><td><strong>15%</strong></td></tr>
+            <tr><td><strong>余裕</strong>（休憩・待ち等）</td><td>30回</td><td><strong>15%</strong></td></tr>
+            <tr style="background:#f0f0f0;"><td><strong>合計</strong></td><td>200回</td><td><strong>100%</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="formula-box" style="background:#ecfdf5; border-color:var(--green); color:var(--green);">
+        稼働率（主作業＋付随作業）＝ 70% + 15% ＝ 85%　／　余裕率 ＝ 15%
+      </div>
+
+      <div class="hl-box yellow" style="margin-top:24px;">
+        <strong>&#x1F4DD; 例題2：ワークサンプリング結果から標準時間を求める</strong><br>
+        1日の実働時間＝<strong>480分</strong>（8時間）、ワークサンプリングの結果：<br>
+        稼働率＝<strong>80%</strong>、余裕率＝<strong>20%</strong><br>
+        1日の生産量＝<strong>120個</strong>、レイティング係数＝<strong>1.1</strong>
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--blue); background:#eff6ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 1　稼働時間</span><br>
+          480 &times; <strong>0.8</strong><br>
+          ＝ <strong>384分</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--orange); background:#fff7ed;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 2　1個あたり観測時間</span><br>
+          384 &divide; <strong>120個</strong><br>
+          ＝ <strong>3.2分</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--purple); background:#faf5ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 3　正味時間</span><br>
+          3.2 &times; <strong>1.1</strong><br>
+          ＝ <strong>3.52分</strong>
+        </div>
+      </div>
+
+      <div class="flow-row" style="margin-top:8px;">
+        <div class="flow-box" style="border-color:var(--green); background:#ecfdf5; max-width:280px;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 4　標準時間（内掛け法）</span><br>
+          3.52 &divide; <strong>(1 − 0.2)</strong> ＝ 3.52 &divide; 0.8 ＝ <strong>4.4分</strong>
+        </div>
+      </div>
+
+      <div class="formula-box" style="background:#ecfdf5; border-color:var(--green); color:var(--green);">
+        答え：1個あたりの標準時間 ＝ 4.4分
+      </div>
+
+      <div class="tutor-comment idea">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <span><strong>ワークサンプリングの余裕率は内掛け法と同じ考え方</strong>：全体（＝稼働＋余裕）の中に余裕が「含まれている」ので、分母は全体。これは内掛け法の「余裕率＝余裕時間 /（余裕時間＋正味時間）」と同じ構造！</span>
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>注意</strong>：ワークサンプリング単独では標準時間は求められない。稼働率・余裕率の<strong>把握</strong>が主目的。標準時間を求めるには、別途「1日の生産量」や「実働時間」の情報が必要。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Card 4: PTS法 ===== -->
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">4</span>PTS法での標準時間の求め方</div>
+    <div class="card-body">
+
+      <div class="hl-box purple">
+        <strong>&#x1F4D0; 公式</strong><br>
+        &#x2460; 各動作の標準時間を時間表から読み取る<br>
+        &#x2461; 正味時間 ＝ 各動作の標準時間の<strong>合計</strong>（実測もレイティングも不要）<br>
+        &#x2462; 標準時間 ＝ 正味時間 ＋ 余裕時間（余裕は別途加える）
+      </div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F4DD; 例題：ピッキング作業の標準時間</strong><br>
+        PTS法（MTM法）の標準時間表より、1回のピッキング動作：
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>動作</th><th>内容</th><th>標準時間</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Reach（手を伸ばす）</td><td>30cm先の棚へ</td><td><strong>8 TMU</strong></td></tr>
+            <tr><td>Grasp（つかむ）</td><td>商品をつかむ</td><td><strong>4 TMU</strong></td></tr>
+            <tr><td>Move（運ぶ）</td><td>手前の箱へ</td><td><strong>10 TMU</strong></td></tr>
+            <tr><td>Position（位置決め）</td><td>箱に合わせる</td><td><strong>6 TMU</strong></td></tr>
+            <tr><td>Release（離す）</td><td>商品を離す</td><td><strong>2 TMU</strong></td></tr>
+            <tr style="background:#f0f0f0;"><td colspan="2"><strong>合計（＝正味時間）</strong></td><td><strong>30 TMU</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-size:0.88em; color:#555; margin:8px 0;">※ 1 TMU（Time Measurement Unit）＝ 0.036秒 ＝ 0.0006分</p>
+
+      <div class="flow-row">
+        <div class="flow-box" style="border-color:var(--purple); background:#faf5ff;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 1　正味時間</span><br>
+          30 TMU<br>
+          ＝ 30 &times; 0.036<br>
+          ＝ <strong>1.08秒</strong>
+        </div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box" style="border-color:var(--green); background:#ecfdf5;">
+          <span style="font-size:0.75rem; color:var(--muted);">Step 2　標準時間（余裕率20%・外掛け）</span><br>
+          1.08 &times; <strong>(1 + 0.2)</strong><br>
+          ＝ <strong>1.30秒</strong>
+        </div>
+      </div>
+
+      <div class="formula-box" style="background:#faf5ff; border-color:var(--purple); color:var(--purple);">
+        答え：1回のピッキングの標準時間 ＝ 1.30秒
+      </div>
+
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;</span>
+        <span><strong>時間研究との違い</strong>：PTS法では「実測」と「レイティング」が不要。しかし<strong>余裕時間は別途加える</strong>必要がある！動作時間表が与えるのは正味時間だけ。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Card 5: まとめ比較 ===== -->
+  <div class="card">
+    <div class="card-header bg-red"><span class="card-num">5</span>計算方法の比較まとめ</div>
+    <div class="card-body">
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th>時間研究<br>（外掛け法）</th><th>時間研究<br>（内掛け法）</th><th>PTS法</th><th>ワーク<br>サンプリング</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>実測</strong></td><td>必要</td><td>必要</td><td style="color:#28a745; font-weight:bold;">不要</td><td>観察のみ</td></tr>
+            <tr><td><strong>レイティング</strong></td><td>必要</td><td>必要</td><td style="color:#28a745; font-weight:bold;">不要</td><td>不要</td></tr>
+            <tr><td><strong>余裕時間</strong></td><td>必要</td><td>必要</td><td>必要</td><td>結果から算出可</td></tr>
+            <tr><td><strong>余裕率の分母</strong></td><td>正味時間</td><td>余裕＋正味</td><td>―</td><td>総観察回数</td></tr>
+            <tr><td><strong>標準時間の式</strong></td><td>正味 &times; (1+余裕率)</td><td>正味 &divide; (1-余裕率)</td><td>動作合計 + 余裕</td><td>直接は求まらない</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="exam-point">
+        <div class="exam-point-title">&#x1F6A8; 計算問題の解き方チェックリスト</div>
+        <ul>
+          <li>&#x2460; 問題文で「<strong>外掛け法</strong>」か「<strong>内掛け法</strong>」かを確認 → 公式が変わる</li>
+          <li>&#x2461; 「余裕<strong>率</strong>」か「余裕<strong>時間</strong>」かを確認 → 時間なら先に率を計算</li>
+          <li>&#x2462; PTS法は<strong>レイティング不要</strong>だが<strong>余裕は必要</strong></li>
+          <li>&#x2463; ワークサンプリングは<strong>稼働率・余裕率の把握</strong>が主目的。標準時間には追加情報が必要</li>
+          <li>&#x2464; 同じ余裕率でも外掛け・内掛けで<strong>答えが変わる</strong>ことに注意</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 計算方法 穴埋めチェック -->
+  <div class="card" style="margin-top:28px;">
+    <div class="card-header bg-slate"><span class="card-num">&#x270D;</span>このタブの穴埋めチェック</div>
+    <div class="card-body">
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:14px;">赤い空欄をクリックすると答えが見えます。</p>
+      <div style="text-align:center;margin-bottom:16px;">
+        <button class="fill-reveal-btn" onclick="revealAll('tab4')" style="margin-right:8px;">&#x1F441; 全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAll('tab4')" style="background:#e53e3e;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-teal">Q1. 外掛け法の計算</div>
+        <div class="fill-body">
+          <div class="fill-q">観測時間<span class="fill-blank">10分</span>・レイティング係数<span class="fill-blank">110</span>・余裕率15%の場合：正味時間＝10&times;(110/100)＝<span class="fill-blank">11分</span> ／ 標準時間＝11&times;(1+0.15)＝<span class="fill-blank">12.65分</span></div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-blue">Q2. 内掛け法の計算</div>
+        <div class="fill-body">
+          <div class="fill-q">正味時間<span class="fill-blank">11分</span>・余裕率20%の場合：標準時間＝11/(1−0.20)＝<span class="fill-blank">13.75分</span></div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+      <div class="fill-card">
+        <div class="fill-header bg-orange">Q3. 外掛け vs 内掛け</div>
+        <div class="fill-body">
+          <div class="fill-q">同じ正味時間・同じ余裕率なら、<span class="fill-blank">内掛け</span>法の方が標準時間は大きくなる</div>
+          <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 5: 穴埋めチェック                                          -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab5">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「タブ0〜2の重要ポイントを穴埋め形式で総復習しよう。」</p>
+    <p><span class="role role-plan">計画</span>「体系→公式→記号→手法比較の順で出題。クリックで個別に答えが見える形式。」</p>
+    <p><span class="role role-create">作成</span>「全10問で網羅します。」</p>
+    <p><span class="role role-critic">批評</span>「一括表示・一括リセットボタンも忘れずに。」</p>
+  </div>
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; 穴埋めチェック</strong><br>
+    赤い空欄をクリックすると個別に答えが見えます。「答えを見る」で一括表示も可能。
+  </div>
+
+  <div style="text-align:center; margin-bottom:18px;">
+    <button class="fill-reveal-btn" onclick="revealAll()" style="margin-right:8px;">&#x1F441; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAll()" style="background:#e53e3e;">&#x1F504; リセット</button>
+  </div>
+
+  <!-- Q1 -->
+  <div class="fill-card">
+    <div class="fill-header bg-teal">Q1. IEの2つの柱</div>
+    <div class="fill-body">
+      <div class="fill-q">IEは<span class="fill-blank">方法研究</span>と<span class="fill-blank">作業測定</span>の2つに大別される。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="fill-card">
+    <div class="fill-header bg-blue">Q2. 方法研究の分類</div>
+    <div class="fill-body">
+      <div class="fill-q">方法研究は、作業の流れ全体を見る<span class="fill-blank">工程分析</span>と、手や体の動きを分析する<span class="fill-blank">動作研究</span>に分かれる。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="fill-card">
+    <div class="fill-header bg-navy">Q3. 工程分析の4つの記号</div>
+    <div class="fill-body">
+      <div class="fill-q">&#x25CB; ＝ <span class="fill-blank">加工</span>　&#x25B7; ＝ <span class="fill-blank">運搬</span>　&#x25BD; ＝ <span class="fill-blank">貯蔵（停滞）</span>　&#x25A1; ＝ <span class="fill-blank">検査</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="fill-card">
+    <div class="fill-header bg-purple">Q4. サーブリッグ分析</div>
+    <div class="fill-body">
+      <div class="fill-q">サーブリッグ分析は<span class="fill-blank">ギルブレス</span>が提唱。人間の動作を<span class="fill-blank">18</span>種類の基本動作に分解して分析する。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="fill-card">
+    <div class="fill-header bg-green">Q5. 標準時間の公式</div>
+    <div class="fill-body">
+      <div class="fill-q">正味時間 ＝ <span class="fill-blank">観測時間</span> &times; <span class="fill-blank">レイティング係数</span><br>標準時間 ＝ <span class="fill-blank">正味時間</span> + <span class="fill-blank">余裕時間</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="fill-card">
+    <div class="fill-header bg-orange">Q6. 外掛け法と内掛け法</div>
+    <div class="fill-body">
+      <div class="fill-q">外掛け法：余裕率 ＝ 余裕時間 / <span class="fill-blank">正味時間</span>　→　標準時間 ＝ 正味 &times; <span class="fill-blank">(1 + 余裕率)</span><br>内掛け法：余裕率 ＝ 余裕時間 / <span class="fill-blank">（余裕時間＋正味時間）</span>　→　標準時間 ＝ 正味 / <span class="fill-blank">(1 - 余裕率)</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      <div class="tutor-comment warn" style="margin-top:12px;">
+        <span class="tc-icon">&#x26A0;</span>
+        <span>ここは最も間違えやすい！「外は正味、内は全体（余裕＋正味）」＝分母を覚える。掛け算と割り算を逆にするミスが超頻出。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="fill-card">
+    <div class="fill-header bg-red">Q7. 余裕の4分類</div>
+    <div class="fill-body">
+      <div class="fill-q"><span class="fill-blank">人的余裕</span>（トイレ等）、<span class="fill-blank">疲労余裕</span>（疲労回復）、<span class="fill-blank">作業余裕</span>（工具交換等）、<span class="fill-blank">職場余裕</span>（朝礼・打合せ等）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="fill-card">
+    <div class="fill-header bg-amber">Q8. PTS法の特徴</div>
+    <div class="fill-body">
+      <div class="fill-q">PTS法は<span class="fill-blank">既定時間標準法</span>とも呼ばれ、<span class="fill-blank">レイティング</span>が不要。ただし<span class="fill-blank">余裕時間</span>は別途加える必要あり。代表例は<span class="fill-blank">MTM法</span>と<span class="fill-blank">WF法</span>。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="fill-card">
+    <div class="fill-header bg-slate">Q9. ワークサンプリング</div>
+    <div class="fill-body">
+      <div class="fill-q">ワークサンプリング法は<span class="fill-blank">ランダム</span>な時刻に観察し、<span class="fill-blank">稼働率</span>を統計的に推定する方法。<br>連続観測が<span class="fill-blank">不要</span>で、一人で<span class="fill-blank">複数</span>の対象を同時に観察できるのがメリット。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="fill-card">
+    <div class="fill-header bg-teal">Q10. 計算問題</div>
+    <div class="fill-body">
+      <div class="fill-q">観測時間40秒、レイティング係数1.25、余裕率20%（外掛け法）のとき<br>正味時間 ＝ 40 &times; 1.25 ＝ <span class="fill-blank">50秒</span><br>標準時間 ＝ 50 &times; (1+0.2) ＝ <span class="fill-blank">60秒</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 6: シミュレーション                                         -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab6">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「中小企業の現場でIEがどう使われるか、会話形式でシミュレーションしよう。」</p>
+    <p><span class="role role-plan">計画</span>「3つのケースを用意。&#x2460;標準時間の設定 &#x2461;稼働率の改善 &#x2462;工程分析による改善。」</p>
+    <p><span class="role role-create">作成</span>「社長と診断士の会話形式で、悩み→解決策→結果の流れで。」</p>
+    <p><span class="role role-critic">批評</span>「計算の具体例を必ず入れて。"ふわっとした助言"だけだと印象に残らない。」</p>
+  </div>
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・中小企業の現場でIEの手法をどう適用するか<br>
+    ・標準時間・稼働分析・工程分析の活用シーン
+  </div>
+
+  <!-- シナリオ1 -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">1</span>ケース：町工場の「見積りが適当」問題</div>
+    <div class="card-body">
+      <div class="hl-box teal">
+        <strong>&#x1F3ED; 設定</strong><br>
+        金属プレス加工の中村製作所（従業員15名）。受注品の見積りが「勘」で作られており、赤字の案件が頻発している。
+      </div>
+
+      <div class="bubble-wrap">
+        <div class="bubble-icon owner">&#x1F468;&#x200D;&#x1F527;</div>
+        <div class="bubble-text">
+          <div class="name">中村社長</div>
+          見積りがいつも外れる。値段を安くしすぎて赤字になったり、高すぎて失注したり...。作業にどのくらい時間がかかるか、正直わかってないんです。
+        </div>
+      </div>
+
+      <div class="bubble-wrap">
+        <div class="bubble-icon sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+        <div class="bubble-text">
+          <div class="name">診断士・田中先生</div>
+          それは<strong>標準時間</strong>が設定されていないのが原因ですね。<br>
+          まず主要な作業を<strong>時間研究（ストップウォッチ法）</strong>で計測しましょう。<br><br>
+          <strong>&#x1F4DD; 具体的にやること：</strong><br>
+          &#x2460; プレス加工を<strong>要素作業に分解</strong>（材料セット→プレス→取出し→検査）<br>
+          &#x2461; 各要素をストップウォッチで10回計測<br>
+          &#x2462; <strong>レイティング</strong>で標準ペースに補正<br>
+          &#x2463; <strong>余裕率</strong>（外掛け法20%）を加えて標準時間を設定
+        </div>
+      </div>
+
+      <div class="hl-box blue">
+        <strong>&#x1F4CA; 計算例</strong><br>
+        プレス1回の観測時間（平均）：<strong>45秒</strong><br>
+        ベテランが作業 → レイティング係数 <strong>1.15</strong><br>
+        正味時間 ＝ 45 &times; 1.15 ＝ <strong>51.75秒</strong><br>
+        標準時間 ＝ 51.75 &times; (1 + 0.2) ＝ <strong>62.1秒 ≒ 約1分</strong><br><br>
+        → 1個あたり約1分 → 1時間で約60個 → 見積りの根拠が明確に！
+      </div>
+
+      <div class="tip-box">
+        <strong>&#x1F4A1; このケースのまとめ</strong><br>
+        &#x2022; 標準時間がないと正確な見積りはできない<br>
+        &#x2022; 時間研究の手順：要素作業分解→計測→レイティング→余裕率<br>
+        &#x2022; 標準時間があれば原価計算・生産計画・人員計画の基礎になる
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>試験での問われ方</strong>：「見積りが不正確な中小企業に対する助言として最も適切なものは？」→ 答えは<strong>時間研究による標準時間の設定</strong>。「勘から数字へ」がキーワード！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- シナリオ2 -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">2</span>ケース：「機械が止まってばかり」の食品工場</div>
+    <div class="card-body">
+      <div class="hl-box blue">
+        <strong>&#x1F36B; 設定</strong><br>
+        和菓子メーカー・花月堂（従業員30名）。生産ラインの機械がよく止まっていて、予定数量を達成できない日が続いている。
+      </div>
+
+      <div class="bubble-wrap">
+        <div class="bubble-icon owner">&#x1F469;&#x200D;&#x1F373;</div>
+        <div class="bubble-text">
+          <div class="name">佐藤工場長</div>
+          機械はあるのに生産が追いつかない。残業が増える一方です...。
+        </div>
+      </div>
+
+      <div class="bubble-wrap">
+        <div class="bubble-icon sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+        <div class="bubble-text">
+          <div class="name">診断士・田中先生</div>
+          まず<strong>ワークサンプリング</strong>で機械の稼働率を把握しましょう。<br><br>
+          1日の中でランダムに<strong>50回</strong>観察して、「稼働中か停止中か」を記録します。
+        </div>
+      </div>
+
+      <div class="hl-box green">
+        <strong>&#x1F4CA; 調査結果</strong><br>
+        50回中：稼働 <strong>30回</strong>、停止 <strong>20回</strong><br>
+        稼働率 ＝ 30/50 ＝ <strong>60%</strong>（低い！）<br><br>
+        停止の内訳：材料待ち <strong>8回</strong>、段取替え <strong>7回</strong>、故障 <strong>5回</strong><br>
+        → <strong>材料供給の改善</strong>と<strong>段取替えの短縮（シングル段取り化）</strong>が最優先！
+      </div>
+
+      <div class="tip-box">
+        <strong>&#x1F4A1; このケースのまとめ</strong><br>
+        &#x2022; ワークサンプリングで稼働率を「見える化」<br>
+        &#x2022; 停止原因の内訳から優先的に改善すべき箇所が明確になる<br>
+        &#x2022; 連続計測が不要で、現場の負担が少ない
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>豆知識</strong>：観測回数が多いほど精度が上がる（統計の法則）。50回はやや少なめ。実務では<strong>数百〜千回</strong>観測することも。試験では「観測回数と精度の関係」が問われることがあるよ！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- シナリオ3 -->
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">3</span>ケース：「歩き回りすぎ」の組立工場</div>
+    <div class="card-body">
+      <div class="hl-box yellow">
+        <strong>&#x1F3ED; 設定</strong><br>
+        電子機器組立のテクノ精工（従業員20名）。作業者が部品棚と組立台の間を何度も行き来しており、組立に時間がかかりすぎている。
+      </div>
+
+      <div class="bubble-wrap">
+        <div class="bubble-icon owner">&#x1F468;&#x200D;&#x1F4BC;</div>
+        <div class="bubble-text">
+          <div class="name">山田社長</div>
+          作業者は一生懸命やっているのに、なぜか生産性が上がらない。
+        </div>
+      </div>
+
+      <div class="bubble-wrap">
+        <div class="bubble-icon sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+        <div class="bubble-text">
+          <div class="name">診断士・田中先生</div>
+          <strong>工程分析</strong>と<strong>流れ線図</strong>で作業の流れを「見える化」しましょう。<br><br>
+          &#x25CB;加工 &#x25B7;運搬 &#x25BD;貯蔵 &#x25A1;検査 の記号で作業を記録すると...<br>
+          運搬（&#x25B7;）が全体の<strong>40%</strong>を占めていることが判明！<br><br>
+          対策：部品棚を組立台の横に移設（レイアウト変更）<br>
+          結果：運搬時間が<strong>70%削減</strong>、生産性が<strong>25%向上</strong>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <strong>&#x1F4A1; このケースのまとめ</strong><br>
+        &#x2022; 工程分析で「ムダな運搬」を発見<br>
+        &#x2022; 流れ線図でレイアウトの問題を可視化<br>
+        &#x2022; 加工以外（運搬・貯蔵・検査）を減らすことが生産性向上の鍵
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>試験での問われ方</strong>：「工程分析の結果、運搬が全体の40%を占めていた。最も効果的な改善策は？」→ 答えは<strong>レイアウト変更</strong>。「運搬のムダ＝レイアウト問題」のパターンを覚えておこう！</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 7: 実例クイズ                                               -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab7">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「実際の中小企業の事例を使って出題しよう。身近に感じてもらえるように。」</p>
+    <p><span class="role role-plan">計画</span>「5問。答えの選択肢はA〜Dにバラバラに配置。」</p>
+    <p><span class="role role-create">作成</span>「各問にリアルな企業設定を入れます。」</p>
+    <p><span class="role role-critic">批評</span>「正解がBばかりにならないよう注意。A,C,D,A,Cの順で配置。」</p>
+  </div>
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・実例ベースの4択クイズで知識を定着<br>
+    ・計算問題の解き方と引っかけパターンを体験
+  </div>
+
+  <div class="tutor-comment">
+    <span class="tc-icon">&#x1F4AC;</span>
+    <span>答えはA〜Dにバラバラに配置しています。「なんとなくB」で選ぶクセがある人は要注意！</span>
+  </div>
+
+  <!-- Quiz 1 -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">Q1</span>自動車部品工場の標準時間</div>
+    <div class="card-body">
+      <div id="q1" class="quiz-box">
+        <div class="quiz-q">
+          自動車部品メーカーA社では、新しいプレス工程の標準時間を設定したい。ベテラン作業者の観測時間は平均48秒、レイティング係数は1.2、余裕率は外掛け法で25%とする。標準時間はいくらか。
+        </div>
+        <ul class="quiz-choices">
+          <li onclick="checkAnswer('q1',this,true)">A. 72秒</li>
+          <li onclick="checkAnswer('q1',this,false)">B. 60秒</li>
+          <li onclick="checkAnswer('q1',this,false)">C. 57.6秒</li>
+          <li onclick="checkAnswer('q1',this,false)">D. 76.8秒</li>
+        </ul>
+        <div id="q1-exp" class="quiz-explanation">
+          <strong>正解：A</strong><br>
+          正味時間 ＝ 48 &times; 1.2 ＝ 57.6秒<br>
+          標準時間 ＝ 57.6 &times; (1 + 0.25) ＝ 57.6 &times; 1.25 ＝ <strong>72秒</strong><br>
+          外掛け法なので (1+余裕率) を掛けます。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz 2 -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">Q2</span>食品加工工場のワークサンプリング</div>
+    <div class="card-body">
+      <div id="q2" class="quiz-box">
+        <div class="quiz-q">
+          食品加工会社B社でワークサンプリングを行ったところ、200回の観察中、主作業140回、付随作業30回、余裕30回であった。この結果から読み取れることとして最も適切なものはどれか。
+        </div>
+        <ul class="quiz-choices">
+          <li onclick="checkAnswer('q2',this,false)">A. 稼働率は70%であり、改善の余地が大きい</li>
+          <li onclick="checkAnswer('q2',this,false)">B. 余裕率は30%であり、標準の範囲を大幅に超えている</li>
+          <li onclick="checkAnswer('q2',this,true)">C. 主作業率70%、付随作業率15%、余裕率15%であり、付随作業の削減が改善ポイントである</li>
+          <li onclick="checkAnswer('q2',this,false)">D. このデータからは標準時間を直接算出できるため、時間研究は不要である</li>
+        </ul>
+        <div id="q2-exp" class="quiz-explanation">
+          <strong>正解：C</strong><br>
+          主作業率＝140/200＝70%、付随作業率＝30/200＝15%、余裕率＝30/200＝15%。<br>
+          ワークサンプリングは<strong>稼働率の把握</strong>に有効ですが、標準時間を直接算出するには時間研究やPTS法が別途必要です（Dは誤り）。付随作業を減らすことで生産性を向上できます。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz 3 -->
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">Q3</span>新製品の事前見積り</div>
+    <div class="card-body">
+      <div id="q3" class="quiz-box">
+        <div class="quiz-q">
+          電子部品メーカーC社は、まだ生産を開始していない新製品の標準時間を設定する必要がある。最も適切な手法はどれか。
+        </div>
+        <ul class="quiz-choices">
+          <li onclick="checkAnswer('q3',this,false)">A. ストップウォッチ法（時間研究）</li>
+          <li onclick="checkAnswer('q3',this,false)">B. ワークサンプリング法</li>
+          <li onclick="checkAnswer('q3',this,false)">C. 実績資料法</li>
+          <li onclick="checkAnswer('q3',this,true)">D. PTS法</li>
+        </ul>
+        <div id="q3-exp" class="quiz-explanation">
+          <strong>正解：D</strong><br>
+          まだ生産を開始していないため、ストップウォッチで計測できません（A誤り）。ワークサンプリングも実際の作業がないと使えません（B誤り）。実績資料法も過去のデータがありません（C誤り）。<strong>PTS法</strong>なら、動作を設計段階で想定し、標準時間表から事前に見積りできます。レイティングも不要です。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz 4 -->
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">Q4</span>工程分析の記号</div>
+    <div class="card-body">
+      <div id="q4" class="quiz-box">
+        <div class="quiz-q">
+          印刷会社D社が工程分析を行った。「印刷済みの紙を品質チェック係がキズや汚れがないか確認する」工程を表す記号として正しいものはどれか。
+        </div>
+        <ul class="quiz-choices">
+          <li onclick="checkAnswer('q4',this,true)">A. &#x25A1;（検査）</li>
+          <li onclick="checkAnswer('q4',this,false)">B. &#x25CB;（加工）</li>
+          <li onclick="checkAnswer('q4',this,false)">C. &#x25B7;（運搬）</li>
+          <li onclick="checkAnswer('q4',this,false)">D. &#x25BD;（貯蔵）</li>
+        </ul>
+        <div id="q4-exp" class="quiz-explanation">
+          <strong>正解：A</strong><br>
+          品質の確認は<strong>&#x25A1;（検査）</strong>に該当します。&#x25CB;（加工）は材料に物理的・化学的変化を与える工程です。品質チェックは材料を変化させていないので検査です。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz 5 -->
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">Q5</span>内掛け法の計算</div>
+    <div class="card-body">
+      <div id="q5" class="quiz-box">
+        <div class="quiz-q">
+          金属加工会社E社の旋盤作業で、正味時間が80秒、内掛け法による余裕率が20%のとき、標準時間として正しいものはどれか。
+        </div>
+        <ul class="quiz-choices">
+          <li onclick="checkAnswer('q5',this,false)">A. 96秒</li>
+          <li onclick="checkAnswer('q5',this,false)">B. 64秒</li>
+          <li onclick="checkAnswer('q5',this,true)">C. 100秒</li>
+          <li onclick="checkAnswer('q5',this,false)">D. 104秒</li>
+        </ul>
+        <div id="q5-exp" class="quiz-explanation">
+          <strong>正解：C</strong><br>
+          内掛け法：標準時間 ＝ 正味時間 / (1 - 余裕率) ＝ 80 / (1 - 0.2) ＝ 80 / 0.8 ＝ <strong>100秒</strong><br>
+          ※外掛け法なら 80 &times; 1.2 ＝ 96秒（Aの選択肢）。間違えやすいので注意！
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 8: 実例で覚える                                             -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab8">
+
+  <div class="disc-log">
+    <p><span class="role role-pm">PM</span>「実際の有名企業の事例を使って、IEの手法が"生きた知識"として記憶に残るようにしよう。」</p>
+    <p><span class="role role-plan">計画</span>「トヨタ・セブンイレブン・アマゾンの3つ。知名度が高く、IEとの接点がわかりやすい企業を選定。」</p>
+    <p><span class="role role-create">作成</span>「各事例の後に"試験とのつながり"を明示します。」</p>
+    <p><span class="role role-critic">批評</span>「読み物として面白くしつつ、最後に試験ポイントを必ず入れて。」</p>
+  </div>
+
+  <div class="story-intro">
+    表とにらめっこして覚えるのもいいですが、正直なところ飽きてきちゃいますよね。<br>
+    少しでも覚えやすくなるようにいくつか実例を探してきました！<br>
+    読んでいただきながら、「<strong>どうしてその手法を選択したのか。</strong>」に思いをはせると理解が深まるかと思います。
+  </div>
+
+  <!-- 実例1: トヨタ -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">1</span>トヨタ生産方式と時間研究 ― 「1秒のムダも許さない」文化</div>
+    <div class="card-body">
+      <p>世界の製造業の手本とされる<strong>トヨタ生産方式（TPS）</strong>。その根底にあるのがIEの考え方です。</p>
+
+      <div class="example-box">
+        <strong>&#x1F697; 実例</strong><br>
+        トヨタでは組立ラインの全作業に<strong>標準作業</strong>が設定されています。1つのボルト締めが何秒、部品のピッキングが何秒と、<strong>秒単位で標準時間</strong>が決まっており、それを「<strong>標準作業票</strong>」として現場に掲示。<br><br>
+        さらに有名なのが<strong>「動作のムダ」の7つの分類</strong>。作業者が部品を探す動作、手待ちの時間、不要な運搬...これらを<strong>サーブリッグ分析</strong>の考え方で徹底的に排除しました。<br><br>
+        結果、トヨタは「<strong>1台の車を組み立てる時間</strong>」を他社の半分近くに短縮し、世界一の自動車メーカーに成長しました。
+      </div>
+
+      <div class="tip-box">
+        <strong>&#x1F4D6; 試験とのつながり</strong><br>
+        &#x2022; <span class="kw-blue">標準時間</span>＝観測時間&times;レイティング係数＋余裕時間<br>
+        &#x2022; <span class="kw-purple">動作研究</span>＝サーブリッグ分析（18種の基本動作）<br>
+        &#x2022; <span class="kw-green">7つのムダ</span>＝加工・在庫・造りすぎ・手待ち・動作・運搬・不良のムダ
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>なぜ時間研究？</strong> トヨタは「全員が同じ品質・同じ速度」を実現するために標準時間を使った。勘やセンスではなく<strong>数字で管理</strong>するから世界中の工場で再現できた！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 実例2: セブンイレブン -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">2</span>セブンイレブンのレジ作業改善 ― ワークサンプリングの威力</div>
+    <div class="card-body">
+      <p>コンビニチェーンの店舗運営でもIEが活躍しています。</p>
+
+      <div class="example-box">
+        <strong>&#x1F3EA; 実例</strong><br>
+        セブンイレブンでは、スタッフの作業を<strong>ワークサンプリング</strong>で調査しました。レジ打ち、品出し、清掃、発注作業...ランダムな時間にスタッフの行動を記録したところ、<strong>「レジ待ち（手待ち）」が勤務時間の約25%</strong>を占めていることが判明。<br><br>
+        この結果を受けて、レジ待ち時間に<strong>前出し（商品を棚の前面に出す作業）</strong>や<strong>フェイスアップ</strong>を組み込むことで、スタッフの稼働率が大幅に改善。さらにセルフレジの導入で、レジ作業自体を削減する施策も打ち出しました。
+      </div>
+
+      <div class="tip-box">
+        <strong>&#x1F4D6; 試験とのつながり</strong><br>
+        &#x2022; <span class="kw-green">ワークサンプリング</span>＝ランダム観察で稼働率を推定<br>
+        &#x2022; 連続計測が不要で、複数の対象を同時に観察可能<br>
+        &#x2022; 稼働率を把握することで「手待ちのムダ」を発見→改善
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>なぜワークサンプリング？</strong> 全スタッフを8時間張り付きで観察するのは現実的に無理。ランダムに見るだけで全体像がわかるから、<strong>多店舗展開するチェーン店</strong>に最適！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 実例3: アマゾン -->
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">3</span>アマゾン倉庫のPTS法 ― 「歩かない倉庫」の設計思想</div>
+    <div class="card-body">
+      <p>EC最大手アマゾンのフルフィルメントセンター（物流倉庫）は、IEの結晶です。</p>
+
+      <div class="example-box">
+        <strong>&#x1F4E6; 実例</strong><br>
+        アマゾンは倉庫の新設時、<strong>PTS法の考え方</strong>を使って作業を事前に設計しています。商品のピッキング動作を「棚に手を伸ばす（Reach）」「商品をつかむ（Grasp）」「手前に運ぶ（Move）」「箱に入れる（Position）」...と<strong>基本動作に分解</strong>し、各動作の時間を合計して<strong>1注文あたりの処理時間</strong>を算出。<br><br>
+        さらに<strong>Kiva（キバ）ロボット</strong>を導入し、作業者が歩く代わりに<strong>棚がロボットで移動</strong>してくる仕組みに。工程分析でいう<strong>&#x25B7;（運搬）を劇的に削減</strong>し、処理速度を4倍に向上させました。
+      </div>
+
+      <div class="tip-box">
+        <strong>&#x1F4D6; 試験とのつながり</strong><br>
+        &#x2022; <span class="kw-purple">PTS法</span>＝動作ごとの標準時間表で事前に見積り（レイティング不要）<br>
+        &#x2022; <span class="kw-blue">工程分析</span>＝&#x25CB;加工 &#x25B7;運搬 &#x25BD;貯蔵 &#x25A1;検査 で分析<br>
+        &#x2022; 運搬（&#x25B7;）の削減が生産性向上の王道
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>なぜPTS法？</strong> 新しい倉庫は「まだ作業が存在しない」。ストップウォッチでは測れないから、動作を<strong>設計段階で分解して時間を予測</strong>するPTS法がピッタリ！</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 実例4: 星野リゾート -->
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">4</span>星野リゾートの「マルチタスク」― 工程分析でサービス業を改革</div>
+    <div class="card-body">
+      <p>製造業だけでなく、サービス業でもIEの手法は有効です。</p>
+
+      <div class="example-box">
+        <strong>&#x1F3E8; 実例</strong><br>
+        星野リゾートでは、スタッフ全員が「フロント・客室清掃・レストラン・調理補助」を<strong>マルチタスク</strong>でこなします。この仕組みの設計に使われたのが<strong>工程分析</strong>の手法。<br><br>
+        1日の作業を時間帯ごとに&#x25CB;（加工＝接客・調理）、&#x25B7;（運搬＝移動）、&#x25BD;（貯蔵＝待機）に分けて分析。チェックアウト後の清掃時間帯はフロントが手薄になるため、その時間にフロントスタッフが清掃を手伝い、レストラン営業時にはフロントに戻る、というシフトを設計。<br><br>
+        結果、<strong>人件費を30%削減</strong>しつつ、顧客満足度を維持・向上させました。
+      </div>
+
+      <div class="tip-box">
+        <strong>&#x1F4D6; 試験とのつながり</strong><br>
+        &#x2022; <span class="kw-blue">工程分析</span>は製造業だけでなくサービス業にも適用可能<br>
+        &#x2022; 手待ち時間（&#x25BD;停滞）を削減するためのマルチタスク化<br>
+        &#x2022; 中小企業診断士の現場では「サービス業へのIE適用」が増加中
+      </div>
+
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4AC;</span>
+        <span><strong>なぜ工程分析？</strong> ホテルは時間帯によって忙しい部署が違う。工程分析で「いつ・どこで・手待ちが発生するか」を見える化したから、マルチタスクの設計ができた！</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(i) {
+  document.querySelectorAll('.tab-btn').forEach((b, j) => b.classList.toggle('active', j === i));
+  document.querySelectorAll('.tab-content').forEach((c, j) => c.classList.toggle('active', j === i));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function revealBlanks(btn){
+  var card = btn.closest('.fill-card');
+  card.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  btn.textContent = '\u2705 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAll(tabId){
+  var sel=tabId?'#'+tabId:'#tab5';
+  document.querySelectorAll(sel+' .fill-blank').forEach(function(el){ el.classList.add('show'); });
+  document.querySelectorAll(sel+' .fill-reveal-btn').forEach(function(b){ b.textContent = '\u2705 表示済み'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAll(tabId){
+  var sel=tabId?'#'+tabId:'#tab5';
+  document.querySelectorAll(sel+' .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  document.querySelectorAll(sel+' .fill-reveal-btn').forEach(function(b){ b.innerHTML = '\uD83D\uDC41 答えを見る'; b.disabled = false; b.style.opacity = '1'; });
+}
+// 個別の穴埋めをクリックで表示/非表示
+document.addEventListener('click', function(e){
+  var el = e.target;
+  if(el.classList && el.classList.contains('fill-blank')){
+    el.classList.toggle('show');
+  }
+});
+
+function checkAnswer(qId, el, ok) {
+  const box = document.getElementById(qId);
+  if (box.dataset.answered) return;
+  box.dataset.answered = 'true';
+  const items = box.querySelectorAll('.quiz-choices li');
+  items.forEach(li => {
+    li.style.pointerEvents = 'none';
+    if (li !== el) li.style.opacity = '0.5';
+  });
+  if (ok) {
+    el.classList.add('correct');
+    el.innerHTML = '&#x2B55; ' + el.innerHTML;
+  } else {
+    el.classList.add('wrong');
+    el.innerHTML = '&#x274C; ' + el.innerHTML;
+    items.forEach(li => {
+      if (li.getAttribute('onclick') && li.getAttribute('onclick').includes('true')) {
+        li.classList.add('correct');
+        li.innerHTML = '&#x2B55; ' + li.innerHTML;
+        li.style.opacity = '1';
+      }
+    });
+  }
+  const exp = document.getElementById(qId + '-exp');
+  if (exp) exp.classList.add('show');
+}
+</script>
+
+</body>
+</html>

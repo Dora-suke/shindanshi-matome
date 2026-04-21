@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>効率的ポートフォリオ シミュレーション - 中小企業診断士</title>
+<style>
+:root {
+  --blue: #2980b9; --blue-light: #d6eaf8; --blue-dark: #1a5276;
+  --green: #27ae60; --green-light: #d5f5e3;
+  --orange: #e67e22; --orange-light: #fdebd0;
+  --red: #e74c3c; --red-light: #fadbd8;
+  --purple: #8e44ad; --purple-light: #e8daef;
+  --gray: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf;
+  --white: #ffffff; --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: #f0f4f8; color: var(--gray); line-height: 1.7;
+}
+.header {
+  background: linear-gradient(135deg, #1a5276 0%, #2980b9 50%, #5dade2 100%);
+  color: white; padding: 1.2rem 1rem 0.8rem; text-align: center;
+}
+.header h1 { font-size: 1.4rem; font-weight: 800; }
+.header p { font-size: 0.82rem; opacity: 0.9; margin-top: 0.15rem; }
+.main { max-width: 1100px; margin: 0.8rem auto; padding: 0 0.6rem; }
+
+/* ===== Top Section: Graph + Controls side by side ===== */
+.top-layout {
+  display: grid; grid-template-columns: 1fr 340px; gap: 0.8rem;
+  align-items: start; margin-bottom: 0.8rem;
+}
+
+/* ===== Canvas ===== */
+.canvas-wrap {
+  background: var(--white); border-radius: var(--radius); padding: 0.8rem;
+  box-shadow: var(--shadow);
+}
+.canvas-wrap h2 {
+  font-size: 0.95rem; font-weight: 800; color: var(--blue-dark); margin-bottom: 0.4rem;
+  text-align: center;
+}
+canvas { width: 100%; border-radius: 8px; border: 1px solid #e0e0e0; display: block; }
+.canvas-legend {
+  font-size: 0.7rem; color: var(--gray-mid); margin-top: 0.3rem; text-align: center;
+}
+
+/* ===== Right Panel ===== */
+.right-panel {
+  display: flex; flex-direction: column; gap: 0.6rem;
+}
+.sim-panel {
+  background: var(--white); border-radius: var(--radius); padding: 0.8rem 1rem;
+  box-shadow: var(--shadow);
+}
+.sim-panel h3 {
+  font-size: 0.88rem; font-weight: 700; color: var(--blue-dark); margin-bottom: 0.5rem;
+}
+.asset-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.5rem;
+}
+.asset-mini {
+  padding: 0.4rem 0.6rem; border-radius: 8px; font-size: 0.78rem;
+  border-left: 3px solid var(--blue);
+  background: var(--blue-light);
+}
+.asset-mini.ab { border-left-color: var(--orange); background: var(--orange-light); }
+.asset-mini strong { font-size: 0.82rem; }
+.slider-group { margin: 0.4rem 0; }
+.slider-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem; font-weight: 600; margin-bottom: 0.2rem;
+}
+.slider-value {
+  background: var(--blue); color: white; padding: 0.1rem 0.5rem;
+  border-radius: 16px; font-size: 0.8rem; font-weight: 700; min-width: 46px; text-align: center;
+}
+.slider-value.neg { background: var(--red); }
+.slider-value.zero { background: var(--gray-mid); }
+.slider-value.pos { background: var(--green); }
+input[type="range"] {
+  width: 100%; height: 6px; -webkit-appearance: none; appearance: none;
+  background: linear-gradient(90deg, var(--red) 0%, var(--gray-light) 50%, var(--green) 100%);
+  border-radius: 3px; outline: none; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--white); border: 3px solid var(--blue); cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+input[type="range"].weight-slider {
+  background: linear-gradient(90deg, var(--orange) 0%, var(--blue) 100%);
+}
+.slider-ticks {
+  display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--gray-light);
+}
+
+/* ===== Result Cards (compact) ===== */
+.result-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem; }
+.rc {
+  background: var(--white); border-radius: 8px; padding: 0.5rem 0.3rem;
+  text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-top: 3px solid var(--gray-light);
+}
+.rc.rc-ret { border-top-color: var(--green); }
+.rc.rc-risk { border-top-color: var(--red); }
+.rc.rc-eff { border-top-color: var(--purple); }
+.rc .rc-label { font-size: 0.65rem; color: var(--gray-mid); font-weight: 600; }
+.rc .rc-num { font-size: 1.15rem; font-weight: 800; }
+.rc .rc-sub { font-size: 0.6rem; color: var(--gray-light); }
+
+/* ===== Comment Box ===== */
+.comment-box {
+  background: linear-gradient(135deg, #e8f5e9, #fff); border: 1.5px solid #a5d6a7;
+  border-radius: 8px; padding: 0.5rem 0.7rem; font-size: 0.78rem; line-height: 1.6;
+}
+.comment-box strong { color: #1b5e20; }
+
+/* ===== Below Section ===== */
+.bottom-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem; }
+
+/* ===== Compare Bars ===== */
+.compare-bars { }
+.compare-bar-item { margin: 0.35rem 0; }
+.compare-bar-label { font-size: 0.72rem; font-weight: 600; margin-bottom: 0.1rem; }
+.compare-bar-track {
+  height: 22px; background: #ecf0f1; border-radius: 11px; overflow: hidden;
+}
+.compare-bar-fill {
+  height: 100%; border-radius: 11px; display: flex; align-items: center;
+  padding-left: 0.5rem; font-size: 0.7rem; color: white; font-weight: 700;
+  transition: width 0.4s ease;
+}
+
+/* ===== Scenario Table ===== */
+.scenario-table {
+  width: 100%; border-collapse: collapse; font-size: 0.78rem;
+}
+.scenario-table th { background: var(--blue); color: white; padding: 0.4rem; font-size: 0.75rem; }
+.scenario-table td { padding: 0.35rem 0.4rem; text-align: center; border-bottom: 1px solid #e0e0e0; }
+.scenario-table tr:nth-child(even) { background: var(--blue-light); }
+
+/* ===== Explanation Section ===== */
+.explain-section {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-bottom: 0.8rem;
+}
+.ex-card {
+  border-radius: var(--radius); padding: 0.8rem 0.9rem; font-size: 0.82rem; line-height: 1.7;
+}
+.ex-card h4 { font-size: 0.88rem; margin-bottom: 0.3rem; }
+.ex-green { background: linear-gradient(135deg, #e8f5e9, #fff); border: 1.5px solid #a5d6a7; }
+.ex-green h4 { color: #1b5e20; }
+.ex-red { background: linear-gradient(135deg, #fce4ec, #fff); border: 1.5px solid #ef9a9a; }
+.ex-red h4 { color: #b71c1c; }
+.ex-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 1.5px solid #ce93d8; }
+.ex-purple h4 { color: #6c3483; }
+
+.footer { text-align: center; padding: 1rem; color: var(--gray-light); font-size: 0.75rem; }
+
+@media (max-width: 800px) {
+  .top-layout { grid-template-columns: 1fr; }
+  .bottom-layout { grid-template-columns: 1fr; }
+  .explain-section { grid-template-columns: 1fr; }
+  .header h1 { font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>効率的ポートフォリオ シミュレーション</h1>
+  <p>スライダーを動かして、相関係数と分散効果を体感しよう</p>
+</div>
+
+<div class="main">
+
+  <!-- ===== TOP: Graph (left) + Controls (right) ===== -->
+  <div class="top-layout">
+
+    <!-- LEFT: Canvas -->
+    <div class="canvas-wrap">
+      <h2>&#x1F4C8; 効率的フロンティア（リスク-リターン図）</h2>
+      <canvas id="frontier" width="600" height="420"></canvas>
+      <div class="canvas-legend">
+        横軸：リスク（&#x03C3;）&#x3000;縦軸：期待収益率&#x3000;
+        <span style="color:var(--red);">&#x25CF;</span> P = 現在のポートフォリオ&#x3000;
+        <span style="color:var(--green);">&#x25CF;</span> 最小リスク点
+      </div>
+    </div>
+
+    <!-- RIGHT: Controls + Results -->
+    <div class="right-panel">
+
+      <!-- Asset Info -->
+      <div class="sim-panel">
+        <h3>&#x1F4CA; 資産の設定</h3>
+        <div class="asset-row">
+          <div class="asset-mini">
+            <strong style="color:var(--blue);">&#x1F535; A（株式型）</strong><br>
+            収益率 10% / リスク 20%
+          </div>
+          <div class="asset-mini ab">
+            <strong style="color:var(--orange);">&#x1F7E0; B（債券型）</strong><br>
+            収益率 4% / リスク 8%
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>&#x1F517; 相関係数（&#x03C1;）</span>
+            <span class="slider-value" id="rhoDisplay">0.00</span>
+          </div>
+          <input type="range" id="rhoSlider" min="-100" max="100" value="0" oninput="update()">
+          <div class="slider-ticks"><span>-1</span><span>0</span><span>+1</span></div>
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>&#x2696; 資産Aの比率</span>
+            <span class="slider-value" id="weightDisplay" style="background:var(--blue);">50%</span>
+          </div>
+          <input type="range" class="weight-slider" id="weightSlider" min="0" max="100" value="50" oninput="update()">
+          <div class="slider-ticks"><span>B100%</span><span>50:50</span><span>A100%</span></div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="result-row">
+        <div class="rc rc-ret">
+          <div class="rc-label">期待収益率</div>
+          <div class="rc-num" id="resultReturn" style="color:var(--green);">7.00%</div>
+          <div class="rc-sub">配分x収益率</div>
+        </div>
+        <div class="rc rc-risk">
+          <div class="rc-label">リスク</div>
+          <div class="rc-num" id="resultRisk" style="color:var(--red);">10.77%</div>
+          <div class="rc-sub">分散効果込み</div>
+        </div>
+        <div class="rc rc-eff">
+          <div class="rc-label">分散効果</div>
+          <div class="rc-num" id="resultEffect" style="color:var(--purple);">-3.23%</div>
+          <div class="rc-sub">加重平均との差</div>
+        </div>
+      </div>
+
+      <!-- Comment -->
+      <div class="comment-box" id="commentBox">
+        <strong>&#x1F4A1; いま何が起きている？</strong><br>
+        <span id="commentText">相関係数 = 0。無関係な資産の組合せでも分散効果でリスクが下がっています！</span>
+      </div>
+
+      <!-- Risk Bars -->
+      <div class="sim-panel" style="padding:0.6rem 0.8rem;">
+        <h3 style="font-size:0.82rem;margin-bottom:0.3rem;">&#x1F4CA; リスク比較</h3>
+        <div class="compare-bars">
+          <div class="compare-bar-item">
+            <div class="compare-bar-label">A単独 20%</div>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill" style="width:100%;background:var(--blue);">20%</div>
+            </div>
+          </div>
+          <div class="compare-bar-item">
+            <div class="compare-bar-label">B単独 8%</div>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill" style="width:40%;background:var(--orange);">8%</div>
+            </div>
+          </div>
+          <div class="compare-bar-item">
+            <div class="compare-bar-label">加重平均（効果なし）</div>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill" id="barWeighted" style="width:70%;background:var(--gray-mid);">14.0%</div>
+            </div>
+          </div>
+          <div class="compare-bar-item">
+            <div class="compare-bar-label" style="color:var(--green);font-weight:700;">&#x2705; 実際のリスク</div>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill" id="barActual" style="width:54%;background:linear-gradient(90deg,var(--green),#2ecc71);">10.77%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== BOTTOM: Scenario Table + Explanation ===== -->
+  <div class="bottom-layout">
+    <div class="sim-panel">
+      <h3>&#x1F50D; 相関係数シナリオ比較（A50%:B50%）</h3>
+      <table class="scenario-table">
+        <tr><th>&#x03C1;</th><th>リスク</th><th>分散効果</th><th>イメージ</th></tr>
+        <tr id="row_neg1"><td><strong>-1.0</strong></td><td id="sc_neg1_risk">--</td><td id="sc_neg1_eff">--</td><td>完全に逆</td></tr>
+        <tr id="row_neg05"><td><strong>-0.5</strong></td><td id="sc_neg05_risk">--</td><td id="sc_neg05_eff">--</td><td>だいたい逆</td></tr>
+        <tr id="row_0"><td><strong>0</strong></td><td id="sc_0_risk">--</td><td id="sc_0_eff">--</td><td>無関係</td></tr>
+        <tr id="row_05"><td><strong>+0.5</strong></td><td id="sc_05_risk">--</td><td id="sc_05_eff">--</td><td>だいたい同じ</td></tr>
+        <tr id="row_1"><td><strong>+1.0</strong></td><td id="sc_1_risk">--</td><td id="sc_1_eff">--</td><td>完全に同じ</td></tr>
+      </table>
+    </div>
+
+    <div class="sim-panel">
+      <h3>&#x1F35E; パン屋さんで理解</h3>
+      <p style="font-size:0.8rem;line-height:1.7;">
+        <strong>効率的フロンティア</strong> = 同じコストで最高の満足度を出せる「最強の品揃えライン」。<br>
+        <span style="color:var(--blue);">&#x25CF; 青い曲線</span>の上側が効率的。下側は「同じコストなのに不味いパンを出してる」状態。<br><br>
+        <strong>&#x1F517; 相関が低いほど曲線が左に膨らむ</strong> = 同じ品揃えでもリスクが下がる。<br>
+        <strong>&#x03C1;=+1だと直線</strong> = 食パンとミニ食パンだけ（同じ客層で分散効果なし）。<br>
+        <strong>&#x03C1;=-1だとリスクゼロ可能</strong> = 雨の日パン+晴れの日パンの完璧な組み合わせ。
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== Exam Points ===== -->
+  <div class="explain-section">
+    <div class="ex-card ex-green">
+      <h4>&#x1F950; 効率的フロンティアとは</h4>
+      同じリスクで<strong>最大リターン</strong>の組み合わせの集合。グラフの<strong>左上の曲線</strong>。
+    </div>
+    <div class="ex-card ex-red">
+      <h4>&#x26A0; 試験の引っかけ</h4>
+      &#x2022; &#x03C1;=+1でも分散効果がある → <strong>&#x274C;</strong><br>
+      &#x2022; 曲線の下側も効率的 → <strong>&#x274C;</strong><br>
+      &#x2022; リスクは加重平均になる → <strong>&#x274C;</strong>
+    </div>
+    <div class="ex-card ex-purple">
+      <h4>&#x1F3AF; スライダーで確認</h4>
+      &#x2022; &#x03C1;を-1にして曲線の膨らみを見る<br>
+      &#x2022; &#x03C1;を+1にして直線になるのを確認<br>
+      &#x2022; 比率を動かしてP点を追いかける
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">財務・会計 ポートフォリオ理論 シミュレーション</div>
+
+<script>
+const RA = 10, RB = 4, SA = 20, SB = 8;
+
+function calcPortfolio(wA, rho) {
+  const wB = 1 - wA;
+  const ret = wA * RA + wB * RB;
+  const var_p = (wA*SA)**2 + (wB*SB)**2 + 2*wA*wB*SA*SB*rho;
+  const risk = Math.sqrt(Math.max(var_p, 0));
+  const weighted = wA * SA + wB * SB;
+  return { ret, risk, weighted, effect: risk - weighted };
+}
+
+function update() {
+  const rho = parseInt(document.getElementById('rhoSlider').value) / 100;
+  const wA = parseInt(document.getElementById('weightSlider').value) / 100;
+  const p = calcPortfolio(wA, rho);
+
+  const rhoEl = document.getElementById('rhoDisplay');
+  rhoEl.textContent = rho.toFixed(2);
+  rhoEl.className = 'slider-value ' + (rho < -0.01 ? 'neg' : rho > 0.01 ? 'pos' : 'zero');
+
+  document.getElementById('weightDisplay').textContent = Math.round(wA * 100) + '%';
+  document.getElementById('resultReturn').textContent = p.ret.toFixed(2) + '%';
+  document.getElementById('resultRisk').textContent = p.risk.toFixed(2) + '%';
+  document.getElementById('resultEffect').textContent = p.effect.toFixed(2) + '%';
+
+  const maxR = 22;
+  document.getElementById('barWeighted').style.width = (p.weighted / maxR * 100) + '%';
+  document.getElementById('barWeighted').textContent = p.weighted.toFixed(1) + '%';
+  document.getElementById('barActual').style.width = (p.risk / maxR * 100) + '%';
+  document.getElementById('barActual').textContent = p.risk.toFixed(2) + '%';
+
+  let c = '';
+  if (rho <= -0.8) c = '&#x03C1;がほぼ-1！分散効果が最大級。リスクが劇的に下がっています。グラフの曲線が大きく左に膨らんでいるのを確認！';
+  else if (rho <= -0.2) c = '&#x03C1;がマイナス。逆方向に動くため、リスクがかなり下がっています。';
+  else if (rho <= 0.2) c = '&#x03C1;がほぼゼロ（無関係）。それでも分散効果でリスクは下がります！';
+  else if (rho <= 0.7) c = '&#x03C1;がプラス。同じ方向に動きやすく、分散効果は控えめです。';
+  else c = '&#x03C1;がほぼ+1。同じ動きなので分散効果ゼロ。グラフが直線になっているのを確認！';
+  document.getElementById('commentText').innerHTML = c;
+
+  [[-1,'neg1'],[-0.5,'neg05'],[0,'0'],[0.5,'05'],[1,'1']].forEach(([r, id]) => {
+    const s = calcPortfolio(0.5, r);
+    document.getElementById('sc_' + id + '_risk').textContent = s.risk.toFixed(2) + '%';
+    document.getElementById('sc_' + id + '_eff').textContent = s.effect.toFixed(2) + '%';
+    document.getElementById('row_' + id).style.background = (Math.abs(r - rho) < 0.05) ? '#fff9c4' : '';
+  });
+
+  drawFrontier(rho, wA);
+}
+
+function drawFrontier(rho, currentWA) {
+  const canvas = document.getElementById('frontier');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  const pad = { top: 25, right: 25, bottom: 40, left: 50 };
+  const gW = W - pad.left - pad.right, gH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const xMin = 0, xMax = 24, yMin = 2, yMax = 12;
+  const toX = v => pad.left + (v - xMin) / (xMax - xMin) * gW;
+  const toY = v => pad.top + (1 - (v - yMin) / (yMax - yMin)) * gH;
+
+  // Grid
+  ctx.strokeStyle = '#ecf0f1'; ctx.lineWidth = 1;
+  for (let x = 0; x <= 24; x += 4) { ctx.beginPath(); ctx.moveTo(toX(x), pad.top); ctx.lineTo(toX(x), H - pad.bottom); ctx.stroke(); }
+  for (let y = 2; y <= 12; y += 2) { ctx.beginPath(); ctx.moveTo(pad.left, toY(y)); ctx.lineTo(W - pad.right, toY(y)); ctx.stroke(); }
+
+  // Axes
+  ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad.left, pad.top); ctx.lineTo(pad.left, H - pad.bottom); ctx.lineTo(W - pad.right, H - pad.bottom); ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#5d6d7e'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  for (let x = 0; x <= 24; x += 4) ctx.fillText(x + '%', toX(x), H - pad.bottom + 14);
+  ctx.textAlign = 'right';
+  for (let y = 2; y <= 12; y += 2) ctx.fillText(y + '%', pad.left - 6, toY(y) + 3);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#2c3e50'; ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('リスク (σ)', W / 2, H - 4);
+  ctx.save(); ctx.translate(12, H / 2); ctx.rotate(-Math.PI / 2); ctx.fillText('期待収益率', 0, 0); ctx.restore();
+
+  // rho=+1 reference
+  ctx.setLineDash([4, 4]); ctx.strokeStyle = '#d5d8dc'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i <= 100; i++) { const w = i/100, pp = calcPortfolio(w, 1); i === 0 ? ctx.moveTo(toX(pp.risk), toY(pp.ret)) : ctx.lineTo(toX(pp.risk), toY(pp.ret)); }
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Current rho curve
+  const pts = [];
+  for (let i = 0; i <= 100; i++) { const w = i/100, pp = calcPortfolio(w, rho); pts.push({ x: toX(pp.risk), y: toY(pp.ret), risk: pp.risk, ret: pp.ret }); }
+  let minIdx = 0;
+  pts.forEach((p, i) => { if (p.risk < pts[minIdx].risk) minIdx = i; });
+
+  // Fill area (subtle)
+  ctx.fillStyle = 'rgba(41,128,185,0.06)';
+  ctx.beginPath();
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.closePath(); ctx.fill();
+
+  // Inefficient (below min)
+  ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i <= minIdx; i++) { i === 0 ? ctx.moveTo(pts[i].x, pts[i].y) : ctx.lineTo(pts[i].x, pts[i].y); }
+  ctx.stroke();
+
+  // Efficient (above min)
+  ctx.strokeStyle = '#2980b9'; ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = minIdx; i < pts.length; i++) { i === minIdx ? ctx.moveTo(pts[i].x, pts[i].y) : ctx.lineTo(pts[i].x, pts[i].y); }
+  ctx.stroke();
+
+  // Labels on curve
+  const eLbl = Math.min(minIdx + Math.floor((100 - minIdx) * 0.55), 99);
+  ctx.fillStyle = '#2980b9'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('効率的フロンティア', pts[eLbl].x + 6, pts[eLbl].y - 6);
+  if (minIdx > 5) { ctx.fillStyle = '#bdc3c7'; ctx.font = '9px sans-serif'; ctx.fillText('(非効率)', pts[Math.floor(minIdx*0.4)].x + 6, pts[Math.floor(minIdx*0.4)].y + 12); }
+
+  // Asset A
+  ctx.fillStyle = '#2980b9'; ctx.beginPath(); ctx.arc(toX(SA), toY(RA), 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('A', toX(SA), toY(RA) + 3);
+  // Asset B
+  ctx.fillStyle = '#e67e22'; ctx.beginPath(); ctx.arc(toX(SB), toY(RB), 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.fillText('B', toX(SB), toY(RB) + 3);
+
+  // Current point
+  const cur = calcPortfolio(currentWA, rho);
+  ctx.fillStyle = '#e74c3c'; ctx.beginPath(); ctx.arc(toX(cur.risk), toY(cur.ret), 8, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 9px sans-serif'; ctx.fillText('P', toX(cur.risk), toY(cur.ret) + 3);
+
+  // Min risk
+  ctx.fillStyle = '#27ae60'; ctx.beginPath(); ctx.arc(pts[minIdx].x, pts[minIdx].y, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#2c3e50'; ctx.font = '9px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('最小リスク', pts[minIdx].x + 8, pts[minIdx].y + 3);
+
+  // Legend
+  ctx.font = '9px sans-serif'; ctx.textAlign = 'left';
+  const lx = W - pad.right - 110, ly = pad.top + 6;
+  ctx.setLineDash([3,3]); ctx.strokeStyle = '#d5d8dc'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx+14, ly); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#5d6d7e'; ctx.fillText('&#x03C1;=+1', lx+18, ly+3);
+  ctx.fillStyle = '#2980b9'; ctx.fillRect(lx, ly+12, 14, 3);
+  ctx.fillStyle = '#5d6d7e'; ctx.fillText('現在の&#x03C1;', lx+18, ly+16);
+}
+
+update();
+window.addEventListener('resize', update);
+</script>
+</body>
+</html>

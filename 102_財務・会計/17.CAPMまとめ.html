@@ -1,0 +1,2452 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAPM（資本資産価格モデル） - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef;
+  --teal-dark: #0e6655; --teal-main: #1abc9c; --teal-light: #d1f2eb; --teal-bg: #e8f8f5;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--blue-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-main) 50%, #5dade2 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem;
+}
+
+/* ===== Speech Bubbles ===== */
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.avatar-pm { background: linear-gradient(135deg, #8e44ad, #6c3483); }
+.avatar-critic { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before {
+  left: -14px; border-right-color: var(--white);
+}
+.bubble-wrap.right .bubble-body::before {
+  right: -14px; border-left-color: var(--white);
+}
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-body.b-purple { background: #f3e5f5; border: 1px solid #ce93d8; }
+.bubble-body.b-purple::before { border-right-color: #f3e5f5; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-purple::before { border-right-color: transparent; border-left-color: #f3e5f5; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-body strong { color: #e65100; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+
+/* ===== Tabs ===== */
+.tab-container { max-width: 920px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.75rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="teal"] { color: var(--teal-main); }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn.active[data-color="teal"] { border-bottom-color: var(--teal-main); background: var(--teal-light); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-teal { background: var(--teal-bg); }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+.tab-panel.theme-purple { background: #f5eef8; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== Section Titles ===== */
+.section-title {
+  font-size: 1.2rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); color: white; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); color: white; }
+.st-icon { font-size: 1.1rem; }
+
+/* ===== Cards ===== */
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card-teal { border-left-color: var(--teal-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+/* ===== Alert / Tip boxes ===== */
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-box strong { color: inherit; }
+
+/* ===== Diagram / Flow ===== */
+.diagram {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram-title {
+  text-align: center; font-weight: 700; font-size: 1rem;
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0;
+}
+.dt-blue { color: var(--blue-dark); }
+.dt-teal { color: var(--teal-dark); }
+.dt-green { color: var(--green-dark); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.88rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); box-shadow: 0 2px 6px rgba(41,128,185,0.3); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); box-shadow: 0 2px 6px rgba(231,76,60,0.3); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); box-shadow: 0 2px 6px rgba(39,174,96,0.3); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); box-shadow: 0 2px 6px rgba(230,126,34,0.3); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); box-shadow: 0 2px 6px rgba(142,68,173,0.3); }
+.fb-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); box-shadow: 0 2px 6px rgba(26,188,156,0.3); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+
+/* ===== Tables ===== */
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.9rem; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-teal th { background: var(--teal-main); color: white; }
+.tbl-teal tr:nth-child(even) { background: var(--teal-light); }
+.tbl-red th { background: var(--red-main); color: white; }
+.tbl-red tr:nth-child(even) { background: var(--red-light); }
+
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.8rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 0.95rem; font-weight: 600; text-align: center;
+}
+
+.point-box {
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0;
+}
+.pb-teal { background: linear-gradient(135deg, var(--teal-light), #fff); border: 2px solid #76d7c4; }
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #ce93d8; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+
+/* ===== Mnemonic ===== */
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.5rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.15em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+
+/* ===== Scene ===== */
+.scene {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center;
+}
+.scene-img { font-size: 3rem; margin-bottom: 0.3rem; }
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+
+/* ===== Quiz ===== */
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0; transition: border-color 0.3s;
+}
+.quiz-num {
+  display: inline-block; background: var(--orange-main); color: white;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-teal { background: var(--teal-main); }
+.qc-purple { background: var(--purple-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.9rem;
+}
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation {
+  display: none; margin-top: 0.7rem; padding: 0.8rem;
+  border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7;
+}
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score {
+  text-align: center; padding: 1rem; background: var(--orange-pale);
+  border-radius: var(--radius); margin-top: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none;
+}
+
+/* ===== VS Box ===== */
+.vs-box {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;
+  margin: 0.8rem 0;
+}
+.vs-side {
+  background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center;
+  box-shadow: var(--shadow);
+}
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+
+/* ===== Sim Slider ===== */
+.sim-panel {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1rem 1.2rem; margin: 0.8rem 0; box-shadow: var(--shadow);
+}
+.sim-panel h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.6rem; color: var(--green-dark); }
+.slider-group { margin: 0.5rem 0; }
+.slider-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; }
+.slider-value { color: white; padding: 0.1rem 0.5rem; border-radius: 16px; font-size: 0.8rem; font-weight: 700; }
+input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; appearance: none; border-radius: 3px; outline: none; cursor: pointer; background: linear-gradient(90deg, #ecf0f1, var(--blue-main)); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--white); border: 3px solid var(--blue-main); cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.sim-result { margin-top: 0.8rem; padding: 0.8rem; background: var(--green-light); border-radius: var(--radius-sm); font-size: 0.9rem; text-align: center; }
+.sim-result .big-num { font-size: 1.4rem; font-weight: 800; color: var(--green-dark); }
+
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+
+@media (max-width: 700px) {
+  .two-col, .vs-box { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.68rem; padding: 0.7rem 0.3rem; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 78%; }
+  #tab3 [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CAPM（資本資産価格モデル）</h1>
+  <div class="subtitle">中小企業診断士 財務・会計 | ファイナンス理論</div>
+  <div class="badge">全6タブ構成 学習サイト</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="teal" onclick="switchTab(0)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(1)">&#x1F476; ゼロから</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本事項</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F3E2; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(4)">&#x270F;&#xFE0F; 実践クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F4F0; 実例で学ぶ</button>
+  </nav>
+
+  <!-- ==================== TAB 1: 入門 (TEAL) ==================== -->
+  <div class="tab-panel active theme-teal" id="tab0">
+
+    <div class="point-box pb-teal">
+      <h4>&#x1F331; CAPMって何？ ― これだけわかればOK！</h4>
+      <p>このタブでは<strong>最低限おさえたいポイントだけ</strong>をまとめています。まずはここから始めましょう。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        CAPMって名前からしてむずかしそう...何のためのものなの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ひとことで言うと、<strong>「この株に投資するなら、最低でもこのくらいのリターンは欲しいよね」</strong>を計算する道具だよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F3AF;</span> CAPMの核心 ― たった3つの材料</h2>
+
+    <div class="diagram">
+      <div class="diagram-title dt-teal">CAPMの計算式</div>
+      <div class="formula-box">
+        期待収益率 = リスクフリーレート + ベータ &times; （市場全体の収益率 &minus; リスクフリーレート）
+      </div>
+      <p style="text-align:center; font-size:0.85rem; color:var(--gray-mid); margin-top:0.5rem;">
+        ※試験での表記：E(R<sub>i</sub>) = R<sub>f</sub> + &beta;<sub>i</sub> &times; (E(R<sub>m</sub>) &minus; R<sub>f</sub>)
+      </p>
+    </div>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x1F3E6;</div>
+          <div class="label"><strong>安全利子率</strong><br>（リスクフリーレート）<br>国債の利回り<br>＝安全な利息</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4C8;</div>
+          <div class="label"><strong>ベータ（&beta;）</strong><br>市場と比べて<br>どれだけ揺れるか<br>＝値動きの激しさ<br><small style="color:var(--gray-mid);">連動性↑→β↑<br>市場の不安定さ↑→β↓</small></div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F30D;</div>
+          <div class="label"><strong>市場の上乗せ分</strong><br>（リスクプレミアム）<br>市場全体の収益率 &minus; 安全利子率<br>＝リスクを取るご褒美</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近なたとえ</div>
+        <strong>銀行の定期預金</strong>（リスクフリーレート）は安全だけど利息は少ない。<strong>株式投資</strong>はリスクがあるぶん、定期預金より高いリターンを求めるよね。<br>
+        その<strong>「上乗せ分」がどれくらいか</strong>を決めるのがCAPM。<strong>値動きが激しい株（ベータが大きい）ほど、上乗せ分も大きくなる</strong>という考え方だよ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        お給料でたとえるとわかりやすいよ。<strong>基本給＝リスクフリーレート</strong>、<strong>危険手当＝リスクプレミアム</strong>。高所作業（ベータが大きい）ほど危険手当は増える。CAPMは「この仕事の危険手当はいくらが妥当？」を決める式なんだ。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-teal">CAPMの計算フロー</div>
+      <div class="flow-row">
+        <div class="flow-box fb-teal">基本給<small>安全利子率</small></div>
+        <span class="flow-arrow">+</span>
+        <div class="flow-box fb-purple">危険度<small>&beta;</small></div>
+        <span class="flow-arrow">&times;</span>
+        <div class="flow-box fb-blue">危険手当の相場<small>市場の上乗せ分</small></div>
+        <span class="flow-arrow">=</span>
+        <div class="flow-box fb-orange">あなたの給与<small>期待収益率</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F522;</span> 超カンタン計算例</h2>
+
+    <div class="card card-teal">
+      <h4>&#x1F4DD; 例：国債利回り2%、市場リターン8%、ベータ1.5の株</h4>
+      <ul>
+        <li>&#x2460; リスクフリーレート = <strong>2%</strong></li>
+        <li>&#x2461; 市場リスクプレミアム = 8% &minus; 2% = <strong>6%</strong></li>
+        <li>&#x2462; ベータ &times; リスクプレミアム = 1.5 &times; 6% = <strong>9%</strong></li>
+        <li>&#x2705; 期待収益率 = 2% + 9% = <strong style="color:var(--teal-dark);font-size:1.1rem;">11%</strong></li>
+      </ul>
+      <p style="font-size:0.85rem;margin-top:0.5rem;color:var(--gray-mid);">「この株に投資するなら最低11%はリターンが欲しい」という意味！</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">回転寿司でたとえ</div>
+        100円の皿（国債）は安全だけど利益は小さい。500円の大トロ（ハイベータ株）は仕入れリスクが高いぶん、<strong>売値に見合う利益が出なきゃ置かない</strong>。CAPMは「このネタの値段は妥当？」を判断する道具だよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x2B50;</span> ベータの目安</h2>
+
+    <table class="tbl-teal">
+      <tr><th>&beta;の値</th><th>意味</th><th>たとえ</th></tr>
+      <tr><td><strong>&beta; = 0</strong></td><td>市場が動いても全く影響なし</td><td>国債（安全資産）</td></tr>
+      <tr><td><strong>&beta; = 1</strong></td><td>市場と同じだけ動く</td><td>日経平均に連動するインデックス投信</td></tr>
+      <tr><td><strong>&beta; &gt; 1</strong></td><td>市場より大きく動く（ハイリスク）</td><td>新興IT企業の株</td></tr>
+      <tr><td><strong>&beta; &lt; 1</strong></td><td>市場より小さく動く（ローリスク）</td><td>電力・ガスなどインフラ株</td></tr>
+      <tr><td><strong>&beta; &lt; 0</strong></td><td>市場と<strong>逆方向</strong>に動く</td><td>金（ゴールド）など。株が下がると上がる傾向</td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ベータが大きくなる・小さくなる仕組み</div>
+        ベータの公式は「<strong>個別株と市場の共分散 &divide; 市場の分散</strong>」。つまり…<br>
+        &#x2460; <strong>分子（共分散）が大きい＝市場との連動性が高い</strong> → ベータは<strong>大きく</strong>なる<br>
+        &#x2461; <strong>分母（市場の分散）が大きい＝市場全体が不安定</strong> → ベータは<strong>小さく</strong>なる<br>
+        <span style="color:var(--gray-mid);font-size:0.82rem;">同じ株でも、市場が荒れて分散が大きくなるとベータは下がる。「自分の揺れ」と「市場の揺れ」の<strong>相対的な比率</strong>がベータだよ。</span>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">&#x26A0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">試験の引っかけ</div>
+        「ベータが1より大きい＝リスクが高い」は正しいが、「ベータが0＝リスクがゼロ」は<strong>少し違う</strong>。ベータ0は「市場リスクがゼロ」であって固有リスクはあり得る。この区別が試験で狙われるよ！
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>試験のコツ：</strong>CAPMの式は必ず書けるようにしよう。<strong>「リスクフリー + ベータ &times; プレミアム」</strong>の3点セットを覚えれば、計算問題は解ける！
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F4CA;</span> CAPMと証券市場線（SML）</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        SMLってグラフが出てくるけど、どう読めばいいの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        SMLは<strong>横軸がベータ、縦軸が期待収益率</strong>の直線グラフだよ。CAPMの式をそのままグラフにしたもの。<strong>線の上にある株は割安、下にある株は割高</strong>と判断できるんだ。
+      </div>
+    </div>
+
+    <div class="diagram" style="padding:1rem;">
+      <div class="diagram-title dt-teal">証券市場線（SML）のイメージ ― スライダーで動かしてみよう</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;align-items:start;">
+        <div style="padding:0.4rem;">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>安全利子率（R<sub>f</sub>）</span>
+              <span class="slider-value" id="introRfVal" style="background:var(--teal-main);">2.0%</span>
+            </div>
+            <input type="range" id="introRfSlider" min="0" max="6" step="0.5" value="2" oninput="updateIntroSML()">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>市場リスクプレミアム</span>
+              <span class="slider-value" id="introMrpVal" style="background:var(--blue-main);">6.0%</span>
+            </div>
+            <input type="range" id="introMrpSlider" min="1" max="12" step="0.5" value="6" oninput="updateIntroSML()">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>株Aのベータ（&beta;）</span>
+              <span class="slider-value" id="introStockABetaVal" style="background:var(--purple-main);">0.8</span>
+            </div>
+            <input type="range" id="introStockABetaSlider" min="0" max="2.5" step="0.1" value="0.8" oninput="updateIntroSML()">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>株Aの実際の期待収益率</span>
+              <span class="slider-value" id="introStockARetVal" style="background:var(--green-main);">9.0%</span>
+            </div>
+            <input type="range" id="introStockARetSlider" min="0" max="25" step="0.5" value="9" oninput="updateIntroSML()">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>株Bのベータ（&beta;）</span>
+              <span class="slider-value" id="introStockBBetaVal" style="background:#e67e22;">1.5</span>
+            </div>
+            <input type="range" id="introStockBBetaSlider" min="0" max="2.5" step="0.1" value="1.5" oninput="updateIntroSML()">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>株Bの実際の期待収益率</span>
+              <span class="slider-value" id="introStockBRetVal" style="background:var(--red-main);">8.0%</span>
+            </div>
+            <input type="range" id="introStockBRetSlider" min="0" max="25" step="0.5" value="8" oninput="updateIntroSML()">
+          </div>
+          <div class="sim-result" style="background:var(--teal-light);">
+            <div id="introSmlComment" style="font-size:0.82rem;color:var(--gray-dark);line-height:1.6;">
+              株A：CAPM理論値 <strong id="introTheoA">6.8%</strong> → 実際 <strong>9.0%</strong> → <span style="color:var(--green-dark);font-weight:700;">★ 割安</span><br>
+              株B：CAPM理論値 <strong id="introTheoB">11.0%</strong> → 実際 <strong>8.0%</strong> → <span style="color:var(--red-dark);font-weight:700;">☆ 割高</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <canvas id="introSmlCanvas" width="400" height="340" style="width:100%;display:block;border-radius:8px;"></canvas>
+          <p style="text-align:center;font-size:0.72rem;color:var(--gray-mid);margin-top:0.3rem;">
+            <span style="color:#2980b9;">&#x2500;</span> SML ／
+            <span style="color:#27ae60;">&#x25CF;</span> 市場(β=1) ／
+            <span style="color:var(--purple-main);">&#x2605;</span> 株A ／
+            <span style="color:#e67e22;">&#x2605;</span> 株B
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>頻出ポイント：</strong>SMLの<strong>傾き = 市場の上乗せ分（リスクプレミアム）</strong>、<strong>切片 = 安全利子率</strong>。安全利子率が上がるとSMLは上にシフトし、市場の上乗せ分が大きくなるとSMLの傾きが急になる。
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ECサイトでたとえ</div>
+        SML＝<strong>価格.comの相場ライン</strong>。相場より安い商品（SMLの上）＝お買い得（割安株）。相場より高い商品（SMLの下）＝割高。CAPMは「この株は相場と比べてお買い得？」を教えてくれるんだ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x26A0;</span> CAPMの前提と限界</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        「こんな非現実的な前提で意味あるの？」と思うよね。でも料理のレシピと同じ。<strong>「無風・常温」前提のレシピ</strong>があるから応用が効く。前提を外すと式が複雑になるだけで、考え方は変わらないよ。
+      </div>
+    </div>
+
+    <div class="card card-teal">
+      <h4>CAPMが成り立つための前提条件</h4>
+      <ul>
+        <li>投資家は全員<strong>合理的</strong>に行動する</li>
+        <li>すべての投資家が<strong>同じ情報・予想</strong>を持つ</li>
+        <li><strong>取引コスト・税金がゼロ</strong></li>
+        <li>リスクフリーレートで<strong>自由に借入・貸出</strong>できる</li>
+      </ul>
+      <p style="font-size:0.85rem;margin-top:0.5rem;color:var(--gray-mid);">現実にはこれらの前提は完全には成立しないが、CAPMは株式の期待収益率を見積もる実務的なツールとして広く使われている。</p>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 1b: ゼロから (RED) ==================== -->
+  <div class="tab-panel theme-red" id="tab1">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F476; このタブで学ぶこと</h4>
+      <ul>
+        <li>CAPMに出てくる<strong>用語の意味</strong>を日常語で理解する</li>
+        <li>「投資」「リスク」「リターン」の<strong>本当の意味</strong>を知る</li>
+        <li>CAPMの<strong>いちばんカンタンな計算</strong>を3ステップでやってみる</li>
+      </ul>
+    </div>
+
+    <!-- ===== Section 1: 投資って何？ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4B0;</span> そもそも「投資」って何？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        投資ってギャンブルと同じじゃないの？貯金じゃダメなの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        全然違うよ！<strong>貯金＝金庫に入れる</strong>、<strong>投資＝畑に種をまく</strong>、<strong>ギャンブル＝宝くじを買う</strong>。投資は「育てて増やす」行為なんだ。
+      </div>
+    </div>
+
+    <table class="tbl-red">
+      <tr><th></th><th>貯金</th><th>投資</th><th>ギャンブル</th></tr>
+      <tr><td><strong>目的</strong></td><td>お金を守る</td><td>お金を育てる</td><td>一発当てる</td></tr>
+      <tr><td><strong>リスク</strong></td><td>ほぼゼロ</td><td>中くらい</td><td>とても大きい</td></tr>
+      <tr><td><strong>たとえ</strong></td><td>タンス預金</td><td>畑に種まき</td><td>宝くじ</td></tr>
+      <tr><td><strong>期待</strong></td><td>減らなければOK</td><td>時間をかけて増やす</td><td>当たれば大儲け</td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">日常のたとえ</div>
+        <strong>料理教室に通う</strong>のも自分への投資。お金と時間を使って、将来もっと美味しい料理が作れるようになる。投資とは「今のリソースを使って、将来の価値を増やす」こと。
+      </div>
+    </div>
+
+    <!-- ===== Section 2: リスクって何？ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F3B2;</span> 「リスク」の本当の意味</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        リスクって「損をすること」でしょ？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        日常会話ではそうだけど、投資の世界では違う！<strong>リスク＝結果の振れ幅（ばらつき）</strong>なんだ。上にも下にもブレること全体をリスクと呼ぶよ。
+      </div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side">
+        <h4 style="color:var(--green-dark);">低リスク</h4>
+        <p style="font-size:2rem;">&#x1F4B4;</p>
+        <p style="font-size:0.82rem;">定期預金<br>結果：<strong>+0.1%〜+0.3%</strong><br>ほぼ動かない。安心。</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side">
+        <h4 style="color:var(--red-dark);">高リスク</h4>
+        <p style="font-size:2rem;">&#x1F4C8;</p>
+        <p style="font-size:0.82rem;">新興企業の株<br>結果：<strong>&minus;30%〜+50%</strong><br>大きく上下する。ドキドキ。</p>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>超重要：</strong>リスクが高い＝必ず損するではない。<strong>「結果が読みにくい」</strong>という意味。だからリスクが高い投資には、<strong>「不安定さに耐える見返り」として高いリターンが求められる</strong>。これがCAPMの根本的な考え方！
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">天気予報でたとえ</div>
+        毎日晴れの砂漠＝<strong>低リスク</strong>（結果が安定）。日本の春＝<strong>高リスク</strong>（晴れたり雨だったり予測しにくい）。リスクとは<strong>「予測のしにくさ」</strong>のことだよ。
+      </div>
+    </div>
+
+    <!-- ===== Section 3: 投資の世界の登場人物 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F3AD;</span> 投資の世界の登場人物</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        国債？株式？市場？…登場人物が多すぎて混乱する！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        3つだけ覚えればいい！<strong>国債＝超安全な貸付</strong>、<strong>株式＝会社のオーナー権</strong>、<strong>市場＝全部まとめたもの</strong>。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--red-dark);">投資の世界の3大キャラクター</div>
+      <div class="flow-row" style="gap:0.5rem; flex-wrap:wrap;">
+        <div class="flow-box fb-teal" style="min-width:140px;">&#x1F3E6; 国債<small>国にお金を貸す</small><small>超安全・利息は少ない</small></div>
+        <div class="flow-box fb-blue" style="min-width:140px;">&#x1F4C8; 株式<small>会社のオーナーになる</small><small>リスクあり・利益も大きい</small></div>
+        <div class="flow-box fb-purple" style="min-width:140px;">&#x1F30D; 市場全体<small>全ての株を混ぜたもの</small><small>日経平均やTOPIX</small></div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">学校でたとえ</div>
+        <strong>国債＝先生に教科書を貸す</strong>（必ず返してくれる。お礼に飴1個＝利息）。<strong>株式＝友だちの文化祭の出店に出資する</strong>（儲かったら分け前、でも赤字になるかも）。<strong>市場＝文化祭の全出店をまとめた成績</strong>。
+      </div>
+    </div>
+
+    <!-- ===== Section 4: 紛らわしい用語 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4D6;</span> 紛らわしい用語をスッキリ整理</h2>
+
+    <table class="tbl-red">
+      <tr><th>用語</th><th>意味</th><th>日常のたとえ</th></tr>
+      <tr><td><strong>収益率（リターン）</strong></td><td>投資で得た利益の割合</td><td>テストで何点取れたか（得点率）</td></tr>
+      <tr><td><strong>期待収益率</strong></td><td>将来もらえそうなリターンの予想値</td><td>「次のテストは80点くらい取れそう」</td></tr>
+      <tr><td><strong>リスクフリーレート</strong></td><td>リスクほぼゼロの投資の利回り</td><td>銀行の定期預金の利息</td></tr>
+      <tr><td><strong>リスクプレミアム</strong></td><td>リスクを取る見返りの上乗せ分</td><td>危険な仕事の危険手当</td></tr>
+      <tr><td><strong>ベータ（&beta;）</strong></td><td>市場全体と比べた値動きの大きさ。<strong>連動性が高い→大</strong>、<strong>市場が不安定→小</strong></td><td>クラスの平均点と自分の点の連動度</td></tr>
+    </table>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        「収益率」と「リターン」は同じ意味だよ。「利回り」もほぼ同じ。試験では<strong>「期待収益率」</strong>という言い方が一番多いから、これだけ覚えておけばOK！
+      </div>
+    </div>
+
+    <!-- ===== Section 5: なぜCAPMが必要？ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x2753;</span> CAPMは何を解決してくれるの？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        結局CAPMって何の役に立つの？日常で使うことあるの？
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--red-dark);">CAPMが解決する問題</div>
+      <div class="flow-row">
+        <div class="flow-box fb-red">この投資<br>やるべき？<small>悩み</small></div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box fb-orange">CAPMで<br>計算！<small>道具</small></div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box fb-green">最低○%の<br>リターンが必要<small>答え</small></div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        たとえばあなたが社長で「新しい店を出そうか迷っている」とする。CAPMは<strong>「リスクを考えたら、最低でも○%のリターンがないと割に合わないよ」</strong>と教えてくれる。これが<strong>ハードルレート</strong>だよ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">コンビニでたとえ</div>
+        新商品を仕入れるか悩むコンビニ店長。<strong>「棚代（リスク）を考えたら、最低これだけ売れないと置く意味がない」</strong>＝ハードルレート。CAPMはこの<strong>「仕入れ判断の基準」</strong>を計算する道具なんだ。
+      </div>
+    </div>
+
+    <!-- ===== Section 6: いちばんカンタンな計算 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F522;</span> いちばんカンタンな計算を3ステップで</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        CAPMの計算は<strong>たった3ステップの足し算・かけ算</strong>だよ。難しい公式に見えるけど、分解すれば小学生でもできる！
+      </div>
+    </div>
+
+    <div class="card card-red">
+      <h4>&#x1F4DD; お題：安全な利息が1%、市場の上乗せが5%、ベータが2の株</h4>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--red-dark);">CAPMの3ステップ計算</div>
+
+      <div class="card card-teal" style="margin:0.5rem 0;">
+        <h4>Step1 &#x2460; 安全な利息を確認する</h4>
+        <p>リスクフリーレート = <strong>1%</strong></p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">国債の利回り。これが「最低ライン」の基準。</p>
+      </div>
+
+      <div style="text-align:center;font-size:1.3rem;font-weight:700;color:var(--gray-mid);">&#x2B07;</div>
+
+      <div class="card card-blue" style="margin:0.5rem 0;">
+        <h4>Step2 &#x2461; 上乗せ分を計算する</h4>
+        <p>ベータ &times; 市場の上乗せ = <strong>2 &times; 5% = 10%</strong></p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">「この株はどれくらい危険手当がいるか」を計算。</p>
+      </div>
+
+      <div style="text-align:center;font-size:1.3rem;font-weight:700;color:var(--gray-mid);">&#x2B07;</div>
+
+      <div class="card card-green" style="margin:0.5rem 0;">
+        <h4>Step3 &#x2462; 足し算で答えを出す</h4>
+        <p>1% + 10% = <strong style="color:var(--red-main);font-size:1.2rem;">11%</strong></p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">「この株に投資するなら、最低11%は欲しい」が答え！</p>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      期待収益率 = 1%（安全な利息）+ 2（ベータ）&times; 5%（上乗せ）= <strong>11%</strong>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        えっ、これだけ？足し算とかけ算だけじゃん！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        そう！CAPMは<strong>足し算とかけ算だけ</strong>で解ける。怖がる必要はないよ。数字が変わっても同じ3ステップを繰り返すだけ！
+      </div>
+    </div>
+
+    <!-- ===== もう1問練習 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x270D;</span> もう1問やってみよう</h2>
+
+    <div class="card card-red">
+      <h4>&#x1F4DD; お題：安全な利息2%、市場の上乗せ6%、ベータ0.5の株</h4>
+      <ul>
+        <li>Step1: リスクフリーレート = <strong>2%</strong></li>
+        <li>Step2: 0.5 &times; 6% = <strong>3%</strong></li>
+        <li>Step3: 2% + 3% = <strong style="color:var(--red-main);font-size:1.1rem;">5%</strong></li>
+      </ul>
+      <p style="font-size:0.85rem;margin-top:0.4rem;color:var(--gray-mid);">ベータが小さい（0.5）→ 上乗せ分も小さい → 期待収益率は控えめ。安定した電力会社のようなイメージ！</p>
+    </div>
+
+    <!-- ===== 次のステップ ===== -->
+    <div class="alert-exam">
+      <strong>ここまで理解できたら「入門タブ」へ！</strong>入門タブでは、ここで学んだ用語を使ってCAPMをもう少し詳しく学ぶよ。SML（証券市場線）やベータの目安表など、試験に出るポイントを押さえよう。
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: 基本事項 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab2">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F4D6; このタブで学ぶこと</h4>
+      <ul>
+        <li>CAPMの<strong>公式を正確に</strong>理解する</li>
+        <li><strong>ベータの計算方法</strong>と意味を押さえる</li>
+        <li><strong>SMLとCMLの違い</strong>を区別できる</li>
+        <li>CAPMを<strong>企業価値評価（WACC）</strong>に活用する方法を知る</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4D0;</span> CAPM の公式を深掘り</h2>
+
+    <div class="formula-box">
+      期待収益率 = 安全利子率 + &beta; &times; （市場全体の収益率 &minus; 安全利子率）
+    </div>
+
+    <table class="tbl-blue">
+      <tr><th>日本語</th><th>試験の記号</th><th>意味</th><th>具体例</th></tr>
+      <tr><td><strong>期待収益率</strong></td><td>E(R<sub>i</sub>)</td><td>この株に求められるリターン</td><td>トヨタ株の期待リターン</td></tr>
+      <tr><td><strong>安全利子率</strong></td><td>R<sub>f</sub></td><td>リスクほぼゼロの利回り</td><td>10年国債利回り（例：1.5%）</td></tr>
+      <tr><td><strong>ベータ</strong></td><td>&beta;</td><td>市場と比べた値動きの激しさ<br><small style="color:var(--gray-mid);">連動性↑→β↑ ／ 市場が不安定↑→β↓</small></td><td>トヨタのベータ=1.2</td></tr>
+      <tr><td><strong>市場全体の収益率</strong></td><td>E(R<sub>m</sub>)</td><td>市場ポートフォリオのリターン</td><td>TOPIX全体（例：7%）</td></tr>
+      <tr><td><strong>市場の上乗せ分</strong></td><td>E(R<sub>m</sub>)&minus;R<sub>f</sub></td><td>リスクを取るご褒美</td><td>7% &minus; 1.5% = 5.5%</td></tr>
+    </table>
+
+    <div class="alert-tip">
+      <strong>記号と日本語の対応：</strong>試験では E(R<sub>i</sub>)、R<sub>f</sub>、E(R<sub>m</sub>) などの記号で出題される。この表で「日本語↔記号」をセットで覚えておこう！
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9EE;</span> ベータの計算方法</h2>
+
+    <div class="formula-box">
+      &beta; = 個別株と市場の共分散 &divide; 市場の分散
+    </div>
+    <p style="text-align:center; font-size:0.82rem; color:var(--gray-mid); margin-top:0.2rem;">※試験の記号：&beta;<sub>i</sub> = Cov(R<sub>i</sub>, R<sub>m</sub>) &divide; Var(R<sub>m</sub>)</p>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ベータは<strong>「個別株と市場がどれだけ一緒に動くか（共分散）を、市場のばらつき（分散）で割った値」</strong>だよ。ポートフォリオ理論で学んだ共分散・分散がここで使われるんだ。<br>
+        <strong style="color:var(--blue-dark);">ここが重要！</strong>分子の共分散は<strong>市場との連動性</strong>を表す。連動性が高いほどベータは大きくなる。一方、分母の市場の分散は<strong>市場の不安定さ</strong>。市場全体が荒れると分母が大きくなるのでベータは小さくなる。同じ株でもベータの値は市場環境で変わるんだ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">共分散のたとえ</div>
+        <strong>アイスの売上と気温</strong>の関係を思い浮かべて。気温が上がるとアイスも売れる＝<strong>共分散がプラス</strong>。逆に「おでんの売上と気温」は気温が上がると売れない＝<strong>共分散がマイナス</strong>。「一緒に動く度合い」が共分散だよ。
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F4DD; 計算例：ベータを求める</h4>
+      <ul>
+        <li>個別株Aと市場の共分散 = <strong>0.0045</strong></li>
+        <li>市場の分散 = <strong>0.0030</strong></li>
+        <li>&beta; = 0.0045 &divide; 0.0030 = <strong style="color:var(--blue-dark);font-size:1.1rem;">1.5</strong></li>
+      </ul>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">ベータ1.5 → 市場が10%上がると、この株は15%上がる傾向がある。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        共分散を相関係数で書き換えられるって聞いたけど...？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        いい質問！順を追って変換してみよう。まず大事な関係式から。
+      </div>
+    </div>
+
+    <!-- ===== Step-by-step derivation ===== -->
+    <div class="card card-blue" style="margin-top:0.5rem;">
+      <h4>&#x1F4D6; Step 1：共分散を分解する</h4>
+      <p style="font-size:0.88rem;margin-bottom:0.6rem;">統計学には次の関係式がある。これは定義なのでそのまま覚えてOK！</p>
+      <div class="formula-box" style="font-size:0.95rem;">
+        共分散 ＝ <span style="color:var(--blue-main);font-weight:700;">相関係数</span> &times; <span style="color:var(--purple-main);font-weight:700;">自分の標準偏差</span> &times; <span style="color:var(--red-main);font-weight:700;">市場の標準偏差</span>
+      </div>
+      <p style="text-align:center; font-size:0.82rem; color:var(--gray-mid); margin-top:0.2rem;">※試験の記号で書くと：Cov(R<sub>i</sub>, R<sub>m</sub>) = &rho;<sub>i,m</sub> &times; &sigma;<sub>i</sub> &times; &sigma;<sub>m</sub></p>
+      <div class="bubble-wrap" style="margin-top:0.6rem;">
+        <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+        <div class="bubble-body b-green">
+          <div class="bubble-name">日常のたとえ</div>
+          「一緒に動く度合い（共分散）」は、「どれくらい似た動きか（相関係数）」&times;「自分の揺れ幅」&times;「相手の揺れ幅」で決まる。<br>
+          友達と一緒にジェットコースターに乗ったとき、<strong>二人とも絶叫するタイプ（相関係数が高い）</strong>で、<strong>二人とも声が大きい（標準偏差が大きい）</strong>なら、「一緒に叫ぶ量（共分散）」は大きくなるイメージ！
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-blue" style="margin-top:0.5rem;">
+      <h4>&#x1F4D6; Step 2：ベータの式に当てはめる</h4>
+      <p style="font-size:0.88rem;margin-bottom:0.5rem;">さっきのベータの式の「共分散」を、Step 1 の分解で置き換えてみよう。</p>
+
+      <div class="formula-box" style="font-size:0.95rem;line-height:2;">
+        ベータ = <span style="border-bottom:2px solid var(--blue-main);">共分散</span> &divide; <span style="border-bottom:2px solid var(--red-main);">市場の分散</span>
+      </div>
+
+      <p style="text-align:center;font-size:0.82rem;color:var(--gray-mid);margin:0.4rem 0;">&#x25BC; 共分散を分解し、分散も「標準偏差 &times; 標準偏差」に書き直す</p>
+
+      <!-- 日本語の分数表記 -->
+      <div style="background:var(--gray-pale);border-radius:var(--radius-sm);padding:1rem;margin:0.5rem 0;text-align:center;font-size:0.92rem;line-height:2;">
+        <div style="display:inline-block;text-align:center;">
+          <div style="border-bottom:2.5px solid var(--gray-dark);padding:0.2rem 0.8rem;">
+            <span style="color:var(--blue-main);font-weight:700;">相関係数</span> &times;
+            <span style="color:var(--purple-main);font-weight:700;">自分の標準偏差</span> &times;
+            <span style="color:var(--red-main);font-weight:700;">市場の標準偏差</span>
+          </div>
+          <div style="padding:0.2rem 0.8rem;">
+            <span style="color:var(--red-main);font-weight:700;">市場の標準偏差</span> &times;
+            <span style="color:var(--red-main);font-weight:700;">市場の標準偏差</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble-wrap" style="margin:0.6rem 0;">
+        <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+        <div class="bubble-body b-orange">
+          <div class="bubble-name">先生</div>
+          よく見て！分子にも分母にも<strong style="color:var(--red-main);">「市場の標準偏差」</strong>があるよね？<br>
+          これは分数の約分と同じで、<strong>1個ずつ消せる</strong>んだ！
+        </div>
+      </div>
+
+      <!-- 約分の視覚化 -->
+      <div style="background:var(--gray-pale);border-radius:var(--radius-sm);padding:1rem;margin:0.5rem 0;text-align:center;font-size:0.92rem;line-height:2;">
+        <div style="display:inline-block;text-align:center;">
+          <div style="border-bottom:2.5px solid var(--gray-dark);padding:0.2rem 0.8rem;">
+            <span style="color:var(--blue-main);font-weight:700;">相関係数</span> &times;
+            <span style="color:var(--purple-main);font-weight:700;">自分の標準偏差</span> &times;
+            <span style="color:var(--red-main);font-weight:700;text-decoration:line-through;opacity:0.5;">市場の標準偏差</span>
+          </div>
+          <div style="padding:0.2rem 0.8rem;">
+            <span style="color:var(--red-main);font-weight:700;text-decoration:line-through;opacity:0.5;">市場の標準偏差</span> &times;
+            <span style="color:var(--red-main);font-weight:700;">市場の標準偏差</span>
+          </div>
+        </div>
+        <span style="margin:0 0.8rem;font-size:0.85rem;color:var(--gray-mid);">← 1個ずつ消す！</span>
+      </div>
+
+      <p style="text-align:center;font-size:1.2rem;font-weight:800;color:var(--green-dark);margin:0.5rem 0;">&#x25BC; 約分するとスッキリ！</p>
+
+      <div class="formula-box" style="font-size:0.95rem;background:linear-gradient(135deg,var(--blue-light),var(--green-light));border:2px solid var(--blue-main);line-height:2;">
+        ベータ =
+        <span style="color:var(--blue-main);font-weight:800;">相関係数</span> &times;
+        <span style="color:var(--purple-main);font-weight:800;">自分の標準偏差</span> &divide;
+        <span style="color:var(--red-main);font-weight:800;">市場の標準偏差</span>
+      </div>
+      <p style="text-align:center; font-size:0.82rem; color:var(--gray-mid); margin-top:0.2rem;">※試験の記号で書くと：&beta;<sub>i</sub> = &rho;<sub>i,m</sub> &times; &sigma;<sub>i</sub> &divide; &sigma;<sub>m</sub></p>
+
+      <div class="bubble-wrap" style="margin-top:0.6rem;">
+        <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+        <div class="bubble-body b-green">
+          <div class="bubble-name">約分のイメージ</div>
+          <span style="font-size:0.9rem;">
+            6 &divide; 4 を計算するとき、 <sup>2 &times; 3</sup>&frasl;<sub>2 &times; 2</sub> にして「2」を約分 → <sup>3</sup>&frasl;<sub>2</sub> にするよね。<br>
+            それと全く同じ！「<strong style="color:var(--red-main);">市場の標準偏差</strong>」が分母にも分子にも1個ずつあるから消えて、式がシンプルになるんだ。
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-blue" style="margin-top:0.5rem;">
+      <h4>&#x1F4D6; Step 3：なぜ「共分散」を使わなくなったの？</h4>
+      <div class="bubble-wrap">
+        <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+        <div class="bubble-body b-blue">
+          <div class="bubble-name">受験生</div>
+          結局どっちの式を使えばいいの？わざわざ変換する意味は？
+        </div>
+      </div>
+      <div class="bubble-wrap right">
+        <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+        <div class="bubble-body b-orange">
+          <div class="bubble-name">先生</div>
+          相関係数版のほうが<strong>直感的に読みやすい</strong>んだ。3つのパーツの意味がハッキリわかるからね。<br>
+          <strong style="color:var(--blue-main);">相関係数</strong>：市場との連動性。1に近いほど一緒に動く → ベータ↑<br>
+          <strong style="color:var(--purple-main);">自分の標準偏差</strong>：自分の揺れ幅。大きいほど → ベータ↑<br>
+          <strong style="color:var(--red-main);">市場の標準偏差</strong>：市場の揺れ幅。大きい（不安定）ほど → ベータ↓<br>
+          共分散版だと「連動性」と「揺れ幅」がごちゃ混ぜだったのが、相関係数版では<strong>きれいに分離</strong>されるんだ。
+        </div>
+      </div>
+      <div class="bubble-wrap">
+        <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+        <div class="bubble-body b-green">
+          <div class="bubble-name">まとめ：2つの公式の使い分け</div>
+          <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+            <tr style="border-bottom:1px solid #ccc;">
+              <td style="padding:0.3rem;font-weight:700;">共分散版</td>
+              <td style="padding:0.3rem;">&beta; = Cov(R<sub>i</sub>, R<sub>m</sub>) &divide; Var(R<sub>m</sub>)</td>
+              <td style="padding:0.3rem;color:var(--gray-mid);">共分散・分散が<strong>そのまま与えられた</strong>ときに使う</td>
+            </tr>
+            <tr>
+              <td style="padding:0.3rem;font-weight:700;">相関係数版</td>
+              <td style="padding:0.3rem;">&beta; = &rho; &times; &sigma;<sub>i</sub> &divide; &sigma;<sub>m</sub></td>
+              <td style="padding:0.3rem;color:var(--gray-mid);">相関係数・標準偏差が<strong>与えられた</strong>ときに使う</td>
+            </tr>
+          </table>
+          <p style="font-size:0.82rem;margin-top:0.4rem;">試験では<strong>問題文で与えられるデータに合わせて</strong>使い分けよう。どちらも同じ結果になるから安心！</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">ベータの公式 変換フロー（上の Step 1〜3 のまとめ）</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">共分散版<small>Cov &divide; Var</small></div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box fb-purple">共分散を分解<small>&rho; &times; &sigma;<sub>i</sub> &times; &sigma;<sub>m</sub></small></div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box fb-orange">&sigma;<sub>m</sub>を約分<small>分母分子で1個ずつ消す</small></div>
+        <span class="flow-arrow">&#x27A1;</span>
+        <div class="flow-box fb-green">相関係数版<small>&rho; &times; &sigma;<sub>i</sub> &divide; &sigma;<sub>m</sub></small></div>
+      </div>
+      <p style="text-align:center;font-size:0.82rem;color:var(--gray-mid);margin-top:0.5rem;">試験では両方の形で出題される。どちらからでも変換できるようにしておこう！</p>
+      <div class="alert-tip" style="margin-top:0.6rem;">
+        <strong>公式の読み方のコツ：</strong>どちらの公式も<strong>分子＝連動性、分母＝市場の揺れ</strong>という構造は同じ。<br>
+        &#x25B6; <strong style="color:var(--blue-main);">&rho;（連動性）↑</strong> → &beta;↑ ／
+        <strong style="color:var(--purple-main);">&sigma;<sub>i</sub>（自分の揺れ）↑</strong> → &beta;↑ ／
+        <strong style="color:var(--red-main);">&sigma;<sub>m</sub>（市場の不安定さ）↑</strong> → &beta;↓
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x2696;</span> SML vs CML ― 試験で超頻出！</h2>
+
+    <div class="vs-box">
+      <div class="vs-side">
+        <h4 style="color:var(--blue-dark);">SML（証券市場線）</h4>
+        <p style="font-size:0.85rem;">横軸：<strong>ベータ（&beta;）</strong><br>
+        対象：<strong>個別証券も含む全て</strong><br>
+        リスク指標：<strong>システマティックリスク</strong></p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side">
+        <h4 style="color:var(--red-dark);">CML（資本市場線）</h4>
+        <p style="font-size:0.85rem;">横軸：<strong>標準偏差（ばらつきの大きさ）</strong><br>
+        対象：<strong>効率的ポートフォリオのみ</strong><br>
+        リスク指標：<strong>トータルリスク</strong></p>
+      </div>
+    </div>
+
+    <!-- SML vs CML side-by-side graphs -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin:0.8rem 0;">
+      <div class="diagram" style="padding:0.6rem;margin:0;">
+        <div class="diagram-title dt-blue" style="font-size:0.85rem;margin-bottom:0.4rem;">SML（証券市場線）</div>
+        <canvas id="smlCompareCanvas" width="360" height="260" style="width:100%;display:block;border-radius:8px;"></canvas>
+        <p style="text-align:center;font-size:0.72rem;color:var(--gray-mid);margin-top:0.3rem;">横軸＝<strong>ベータ</strong> ／ 個別株も全てSML上にのる</p>
+      </div>
+      <div class="diagram" style="padding:0.6rem;margin:0;">
+        <div class="diagram-title dt-red" style="font-size:0.85rem;margin-bottom:0.4rem;">CML（資本市場線）</div>
+        <canvas id="cmlCompareCanvas" width="360" height="260" style="width:100%;display:block;border-radius:8px;"></canvas>
+        <p style="text-align:center;font-size:0.72rem;color:var(--gray-mid);margin-top:0.3rem;">横軸＝<strong>標準偏差</strong> ／ 効率的ポートフォリオだけがCML上にのる</p>
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>混同注意！</strong>SMLとCMLの違いは毎年のように出題される！<br>
+      <strong>SML＝ベータが横軸（個別株もOK）</strong>、<strong>CML＝標準偏差が横軸（効率的ポートフォリオだけ）</strong>と覚えよう。
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">S は B（ベータ）、C は S（シグマ）</div>
+      <div class="desc">SML → <strong>B</strong>eta / CML → <strong>S</strong>igma（標準偏差）。「<strong>SはB、CはS</strong>」で横軸を覚えよう！</div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>CMLの落とし穴：</strong>CMLの線の上にのるのは<strong>効率的ポートフォリオだけ</strong>。個別株はCMLの下に位置する。一方、SMLには<strong>全ての証券がのる</strong>（均衡状態）。「個別株がCMLの上にある」は誤り！
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">回転寿司でたとえ</div>
+        <strong>CML</strong>＝ベルトコンベアの上に乗れるのは「厳選されたおすすめセット」だけ。<strong>SML</strong>＝メニュー表には全ネタ（個別のお皿）が載っている。「一皿だけ」をベルトに乗せようとしても乗らない！
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3E2;</span> CAPMをWACCに活用する</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        CAPMは<strong>WACC（加重平均資本コスト）</strong>を求めるときに使うのが最も重要な実務的活用だよ。株主資本コスト（＝株主が要求するリターン）をCAPMで計算するんだ。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">WACC の構成</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">WACC</div>
+        <span class="flow-arrow">=</span>
+        <div class="flow-box fb-green">株主資本コスト<small>CAPMで計算！</small></div>
+        <span class="flow-arrow">&times;</span>
+        <div class="flow-box fb-teal">株主資本比率</div>
+        <span class="flow-arrow">+</span>
+        <div class="flow-box fb-red">負債コスト<small>&times;(1&minus;税率)</small></div>
+        <span class="flow-arrow">&times;</span>
+        <div class="flow-box fb-orange">負債比率</div>
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F4DD; WACC計算例</h4>
+      <ul>
+        <li>株主資本コスト（CAPMで計算）= <strong>10%</strong></li>
+        <li>株主資本比率 = <strong>60%</strong></li>
+        <li>負債コスト = <strong>3%</strong>、税率 = <strong>30%</strong></li>
+        <li>負債比率 = <strong>40%</strong></li>
+      </ul>
+      <div class="formula-box" style="margin-top:0.5rem;">
+        WACC = 10% &times; 60% + 3% &times; (1&minus;30%) &times; 40% = 6% + 0.84% = <strong>6.84%</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">&#x26A0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">なぜ(1&minus;税率)を掛ける？</div>
+        借入の利息は<strong>経費になる → 法人税が減る → 実質コストが下がる</strong>。これを「タックスシールド（節税効果）」と呼ぶ。株主への配当は経費にならないから、株主資本コストにはこの恩恵がない！
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ECサイトのたとえ</div>
+        <strong>WACC＝送料の加重平均</strong>と同じ。宅配便（株主資本コスト）は高いけど6割使い、メール便（借入コスト）は安くて4割使う。全体の平均送料＝WACCだよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CA;</span> ポートフォリオのベータ</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ポートフォリオ全体のベータは、各銘柄のベータを<strong>投資比率で加重平均</strong>するだけ！
+      </div>
+    </div>
+
+    <div class="formula-box">
+      ポートフォリオの &beta; = 銘柄1の比率 &times; &beta;<sub>1</sub> + 銘柄2の比率 &times; &beta;<sub>2</sub> + ...
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4DD; 例：2銘柄ポートフォリオ</h4>
+      <ul>
+        <li>銘柄A：ベータ=1.2、投資比率=70%</li>
+        <li>銘柄B：ベータ=0.6、投資比率=30%</li>
+        <li>ポートフォリオの &beta; = 1.2 &times; 0.7 + 0.6 &times; 0.3 = 0.84 + 0.18 = <strong style="color:var(--blue-dark);font-size:1.1rem;">1.02</strong></li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">ベータ1.02 ≒ 市場とほぼ同じ動き。大きなリスクを取っていない穏やかなポートフォリオだとわかる。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">学校のテストでたとえ</div>
+        クラス平均と同じ点数を取る生徒＝<strong>ベータ1</strong>。ポートフォリオのベータ1.02は「<strong>ほぼクラス平均と同じ成績</strong>」。飛び抜けていないが、落ちこぼれてもいない安定した位置だよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x26A0;</span> システマティックリスク vs アンシステマティックリスク</h2>
+
+    <div class="vs-box">
+      <div class="vs-side">
+        <h4 style="color:var(--red-dark);">システマティックリスク<br>（市場リスク）</h4>
+        <p style="font-size:0.85rem;">
+          分散投資で<strong>消せない</strong><br>
+          景気・金利・為替など<br>
+          <strong>ベータで測定</strong>
+        </p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side">
+        <h4 style="color:var(--green-dark);">アンシステマティックリスク<br>（固有リスク）</h4>
+        <p style="font-size:0.85rem;">
+          分散投資で<strong>消せる</strong><br>
+          個別企業の事故・不祥事など<br>
+          <strong>CAPMでは報酬なし</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">リスクの分類ツリー</div>
+      <div class="flow-row" style="margin-bottom:0.5rem;">
+        <div class="flow-box fb-blue">トータルリスク<small>（全体のリスク）</small></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box fb-red">システマティック<small>消せない / &beta;で測定</small></div>
+        <span class="flow-arrow">+</span>
+        <div class="flow-box fb-green">アンシステマティック<small>消せる / 分散で除去</small></div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">スポーツでたとえ</div>
+        サッカーの試合で<strong>雨が降る（システマティック）</strong>＝全チームに影響、練習では消せない。<strong>選手がケガする（アンシステマティック）</strong>＝控え選手を増やせば（分散すれば）チームへの影響を減らせる。
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>CAPMの重要な考え方：</strong>分散投資で消せるリスク（アンシステマティックリスク）には報酬はつかない。投資家が報酬をもらえるのは<strong>消せないリスク（システマティックリスク）だけ</strong>。だからCAPMではベータ（市場リスクへの感応度）のみを使う。<br>
+      <span style="font-size:0.85rem;">なお、ベータの大きさは<strong>市場との連動性が高いほど大きく</strong>なり、<strong>市場自体が不安定なほど小さく</strong>なる。リーマンショックのように市場全体の分散が急増すると、同じ株でもベータが下がることがあるのはこのためだよ。</span>
+    </div>
+
+    <div class="alert-exam">
+      <strong>過去問頻出：</strong>「CAPMでは非システマティックリスクは考慮しない」→ 正しい。「ベータが0の資産の期待収益率はリスクフリーレートに等しい」→ 正しい。
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">&#x26A0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">試験の引っかけ</div>
+        「分散投資を十分に行えば、ポートフォリオのリスクはゼロにできる」→ <strong>誤り</strong>！消せるのはアンシステマティックリスクだけ。システマティックリスクは分散しても残る。ここは毎年のように出る引っかけ！
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: シミュレーション (GREEN) ==================== -->
+  <div class="tab-panel theme-green" id="tab3">
+
+    <div class="point-box pb-green">
+      <h4>&#x1F3E2; このタブで学ぶこと</h4>
+      <ul>
+        <li>中小企業の社長が<strong>実際に悩む場面</strong>でCAPMを使ってみる</li>
+        <li><strong>スライダーで数値を変えて</strong>感覚をつかむ</li>
+        <li>CAPMが<strong>経営判断にどう役立つか</strong>を体験する</li>
+      </ul>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4CA; 業種別ベータの目安</h4>
+      <div class="flow-row" style="gap:0.4rem; flex-wrap:wrap;">
+        <div class="flow-box fb-teal" style="font-size:0.78rem;">食品・飲食<small>&beta;=0.7〜0.9</small></div>
+        <div class="flow-box fb-green" style="font-size:0.78rem;">電力・ガス<small>&beta;=0.3〜0.5</small></div>
+        <div class="flow-box fb-blue" style="font-size:0.78rem;">製造業<small>&beta;=1.0〜1.2</small></div>
+        <div class="flow-box fb-orange" style="font-size:0.78rem;">小売業<small>&beta;=0.8〜1.0</small></div>
+        <div class="flow-box fb-purple" style="font-size:0.78rem;">IT・テック<small>&beta;=1.3〜1.8</small></div>
+        <div class="flow-box fb-red" style="font-size:0.78rem;">不動産<small>&beta;=0.5〜0.8</small></div>
+      </div>
+      <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.4rem;">中小企業診断士の試験では業種と一緒にベータが与えられることが多い。目安を知っていると「この数字はおかしい」と気づける！</p>
+      <p style="font-size:0.82rem;color:var(--blue-dark);margin-top:0.3rem;">&#x1F4AC; IT・テックのベータが高いのは<strong>市場との連動性が高い</strong>（景気に敏感）から。電力・ガスが低いのは<strong>連動性が低い</strong>（景気に関係なく使う）から。また、市場全体が大荒れの時期はどの業種もベータが相対的に下がる傾向がある（分母の市場の分散が増えるため）。</p>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4AC;</span> ケース1：新規出店の投資判断</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">町のパン屋 鈴木社長</div>
+        2号店を出したいんだけど、投資額3,000万円に対して年間利益が250万円の見込み。これってやるべき？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">コンサルタント</div>
+        CAPMを使って<strong>最低限必要なリターン（ハードルレート）</strong>を計算してみましょう！
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4CA; 鈴木社長のケースでCAPM計算</h4>
+      <ul>
+        <li>リスクフリーレート（国債利回り）= <strong>1.5%</strong></li>
+        <li>飲食業のベータ = <strong>0.8</strong>（景気に左右されにくい＝市場との連動性が低めなのでβ&lt;1）</li>
+        <li>市場リスクプレミアム = <strong>6%</strong></li>
+      </ul>
+      <div class="formula-box">
+        期待収益率 = 1.5% + 0.8 &times; 6% = 1.5% + 4.8% = <strong>6.3%</strong>
+      </div>
+      <ul style="margin-top:0.5rem;">
+        <li>2号店の予想リターン = 250万 &divide; 3,000万 = <strong style="color:var(--red-main);">8.3%</strong></li>
+        <li>ハードルレート（6.3%）を<strong style="color:var(--green-main);">上回っている → 投資GOサイン！</strong></li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ポイント</div>
+        予想リターン（8.3%）＞ CAPMのハードルレート（6.3%）なので、<strong>この投資はリスクに見合ったリターンが得られる</strong>と判断できる。逆にリターンが5%しか見込めなかったら、リスクに見合わないのでやめたほうがいい。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">コンビニでたとえ</div>
+        新しいおにぎりを仕入れるかの判断と同じ。<strong>仕入れコスト（ハードルレート）より売上利益（予想リターン）が高ければ仕入れる</strong>。CAPMは「この商品を棚に置く価値があるか？」の判断基準なんだ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3AE;</span> シミュレーター：数値を動かして体感しよう</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;align-items:start;">
+      <div class="sim-panel" style="margin:0;">
+        <h4>&#x1F4CA; CAPMシミュレーター</h4>
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>安全利子率</span>
+            <span class="slider-value" id="rfVal" style="background:var(--teal-main);">1.5%</span>
+          </div>
+          <input type="range" id="rfSlider" min="0" max="5" step="0.1" value="1.5" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>市場の上乗せ分</span>
+            <span class="slider-value" id="mrpVal" style="background:var(--blue-main);">6.0%</span>
+          </div>
+          <input type="range" id="mrpSlider" min="1" max="12" step="0.5" value="6" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>ベータ（&beta;）</span>
+            <span class="slider-value" id="betaVal" style="background:var(--purple-main);">1.0</span>
+          </div>
+          <input type="range" id="betaSlider" min="0" max="2.5" step="0.1" value="1.0" oninput="updateSim()">
+        </div>
+        <div class="sim-result">
+          <div>この株に求められる期待収益率</div>
+          <div class="big-num" id="simResult">7.5%</div>
+          <div id="simComment" style="font-size:0.82rem; margin-top:0.3rem; color:var(--gray-mid);"></div>
+        </div>
+      </div>
+      <div class="diagram" style="padding:0.6rem;margin:0;">
+        <div class="diagram-title dt-green" style="font-size:0.9rem;margin-bottom:0.5rem;">証券市場線（SML）</div>
+        <canvas id="smlCanvas" width="400" height="300" style="width:100%;display:block;border-radius:8px;"></canvas>
+        <p style="text-align:center;font-size:0.72rem;color:var(--gray-mid);margin-top:0.3rem;"><span style="color:#e74c3c;">&#x25CF;</span> 現在位置 ／ <span style="color:#2980b9;">&#x2500;</span> SML ／ <span style="color:#27ae60;">&#x25CF;</span> 市場</p>
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4C9;</span> 分散投資の効果 ― 銘柄を増やすとリスクはどうなる？</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;align-items:start;">
+      <div class="sim-panel" style="margin:0;">
+        <h4>&#x1F4CA; 分散効果シミュレーター</h4>
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>1銘柄あたりのリスク（標準偏差%）</span>
+            <span class="slider-value" id="singleRiskVal" style="background:var(--red-main);">40%</span>
+          </div>
+          <input type="range" id="singleRiskSlider" min="10" max="60" step="1" value="40" oninput="updateDiversify()">
+        </div>
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>銘柄間の平均相関</span>
+            <span class="slider-value" id="corrVal" style="background:var(--orange-main);">0.30</span>
+          </div>
+          <input type="range" id="corrSlider" min="0" max="0.9" step="0.05" value="0.3" oninput="updateDiversify()">
+        </div>
+        <div class="sim-result" style="background:var(--blue-light);">
+          <div style="font-size:0.82rem;">システマティックリスク（消せない部分）</div>
+          <div class="big-num" id="sysRiskResult" style="color:var(--red-main);">21.9%</div>
+          <div id="divComment" style="font-size:0.82rem; margin-top:0.3rem; color:var(--gray-mid);"></div>
+        </div>
+      </div>
+      <div class="diagram" style="padding:0.6rem;margin:0;">
+        <div class="diagram-title dt-green" style="font-size:0.9rem;margin-bottom:0.5rem;">銘柄数とポートフォリオリスク</div>
+        <canvas id="divCanvas" width="400" height="300" style="width:100%;display:block;border-radius:8px;"></canvas>
+        <p style="text-align:center;font-size:0.72rem;color:var(--gray-mid);margin-top:0.3rem;">横軸＝銘柄数 ／ 縦軸＝ポートフォリオのリスク（%）</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">このグラフが教えてくれること</div>
+        銘柄を増やすとリスクは急速に下がるが、<strong>ある水準より下にはいかない</strong>。この「底」が<strong>システマティックリスク（市場リスク）</strong>。CAPMはこの「消せないリスク」だけにリターンを認めるモデルなんだ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4AC;</span> ケース2：設備投資 vs 株式投資</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">製造業 田中社長</div>
+        工場の新しい機械に5,000万円かけるか、そのお金を株で運用するか迷ってるんだ。機械を入れたら年間利益が600万円増える見込みなんだけど...
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">コンサルタント</div>
+        比較してみましょう！CAPMで<strong>株式投資の期待リターン</strong>を出して、<strong>設備投資のリターンと比べる</strong>のが正攻法です。
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>&#x1F3ED; 設備投資（機械導入）</h4>
+        <ul>
+          <li>投資額：5,000万円</li>
+          <li>年間利益増：600万円</li>
+          <li>リターン = <strong>12%</strong></li>
+        </ul>
+      </div>
+      <div class="card card-blue">
+        <h4>&#x1F4C8; 株式投資（CAPM）</h4>
+        <ul>
+          <li>安全利子率=1.5%, &beta;=1.3, 上乗せ分=6%</li>
+          <li>1.5% + 1.3 &times; 6% = <strong>9.3%</strong></li>
+          <li>期待リターン = <strong>9.3%</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      設備投資のリターン（12%）＞ 株式の期待リターン（9.3%）。<strong>設備投資を選ぶべき</strong>。ただし、設備投資には「機械が壊れるリスク」「需要が減るリスク」など固有リスクもある。CAPMはあくまで市場リスクだけの目安なので、<strong>総合判断が必要</strong>。
+      <br><span style="font-size:0.82rem;">※ここでは税引前ベースで統一して比較しています。</span>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">映画でたとえ</div>
+        映画の製作費5億円に対して、<strong>興行収入6億円が見込めるか</strong>がハードルレート。「他の投資先（株式）なら9.3%稼げるのに、この映画は12%稼げそう＝映画を作るべき！」と判断するのがCAPMの使い方だよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4AC;</span> ケース3：銀行から融資を受けるべき？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">IT企業 佐藤社長</div>
+        新サービス開発に1億円必要。銀行から年利3%で借りるか、増資（株式発行）で集めるか...どっちがいい？
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F4CA; CAPMで株主資本コストを計算</h4>
+      <ul>
+        <li>IT業界のベータ = <strong>1.5</strong>（値動きが大きい＝市場との連動性が高いのでβ&gt;1）</li>
+        <li>安全利子率 = 1.5%、市場の上乗せ分 = 6%</li>
+        <li>株主資本コスト = 1.5% + 1.5 &times; 6% = <strong style="color:var(--red-main);">10.5%</strong></li>
+      </ul>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side">
+        <h4 style="color:var(--green-dark);">銀行借入</h4>
+        <p style="font-size:0.85rem;">
+          コスト：<strong>3%</strong><br>
+          （税効果あり：実質2.1%）<br>
+          &#x2705; コストが安い
+        </p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side">
+        <h4 style="color:var(--red-dark);">株式発行（増資）</h4>
+        <p style="font-size:0.85rem;">
+          コスト：<strong>10.5%</strong><br>
+          （CAPMで計算）<br>
+          &#x26A0; コストが高い
+        </p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">コンサルタント</div>
+        コストだけ見れば借入のほうが安い。でも借入を増やしすぎると<strong>財務リスクが上がってベータも上昇</strong>する。バランスが大切！これがまさに<strong>最適資本構成</strong>の問題だよ。
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>「最適資本構成」</strong>は借入と自己資本のベストバランスを探す理論。別の単元で詳しく学ぶので、ここでは「借入を増やしすぎるとリスクが上がる」ことだけ押さえておこう。
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">料理でたとえ</div>
+        借入＝スパイス、自己資本＝ベースの出汁。<strong>スパイスを入れすぎると味が壊れる</strong>（財務リスク増大）。ちょうどいい配合＝最適資本構成。CAPMはこの「味見」をする道具の1つなんだ。
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: 実践クイズ (ORANGE) ==================== -->
+  <div class="tab-panel theme-orange" id="tab4">
+
+    <div class="point-box pb-orange">
+      <h4>&#x1F3AF; このタブで学ぶこと</h4>
+      <ul>
+        <li>タブ1〜3の内容を<strong>全8問のクイズ</strong>で総チェック</li>
+        <li>身近な事例で出題するから<strong>イメージしやすい</strong></li>
+        <li>まちがえたらタブに戻って<strong>ピンポイント復習</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> 理解度チェック</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        全8問！身近なシチュエーションで出題するよ。まちがえたらタブに戻って復習しよう！
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div><span class="quiz-cat qc-teal">入門</span>
+      <div class="quiz-question">あなたは友人に「CAPMって何？」と聞かれました。もっとも適切な説明はどれ？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q1', 2)">
+        <li data-idx="0">A. 企業の売上を予測するモデル</li>
+        <li data-idx="1">B. 株式の過去の値動きを分析するモデル</li>
+        <li data-idx="2">C. 個別証券の期待収益率をリスクとの関係で求めるモデル</li>
+        <li data-idx="3">D. 債券の満期利回りを計算するモデル</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>&#x2705; 正解：C</strong><br>
+        CAPMは「リスク（ベータ）に見合った期待収益率はいくらか」を計算するモデル。売上予測や債券利回りとは違う目的のモデルだよ。
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div><span class="quiz-cat qc-blue">基本</span>
+      <div class="quiz-question">リスクフリーレート2%、市場リスクプレミアム5%、ベータ1.4のとき、CAPMによる期待収益率は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q2', 3)">
+        <li data-idx="0">A. 7.0%</li>
+        <li data-idx="1">B. 8.0%</li>
+        <li data-idx="2">C. 8.4%</li>
+        <li data-idx="3">D. 9.0%</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>&#x2705; 正解：D</strong><br>
+        E(R) = 2% + 1.4 &times; 5% = 2% + 7% = <strong>9.0%</strong>。式に当てはめるだけ！<br>
+        <strong>&#x26A0; 引っかけ注意：</strong>問題文が「市場リスクプレミアム5%」と直接与えている場合、R<sub>m</sub>からR<sub>f</sub>を引く必要はない。「市場リターン7%」と書かれていたら7%&minus;2%=5%と自分で引き算する！
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div><span class="quiz-cat qc-teal">入門</span>
+      <div class="quiz-question">近所のラーメン屋が「うちの株のベータは0.5だよ」と言いました。これが意味するのは？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q3', 0)">
+        <li data-idx="0">A. 市場全体が10%下がっても、この株は5%程度の下落で済む傾向がある</li>
+        <li data-idx="1">B. この株は市場の2倍動く</li>
+        <li data-idx="2">C. この株のリスクはゼロに近い</li>
+        <li data-idx="3">D. この株は国債と同じリターンが期待できる</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>&#x2705; 正解：A</strong><br>
+        ベータ0.5は「市場の動きの半分だけ動く」という意味。市場が10%下がれば約5%の下落。リスクがゼロ（ベータ0）とは違うし、市場の2倍はベータ2.0だよ。<br>
+        <span style="color:var(--gray-mid);font-size:0.85rem;">補足：ベータ0.5ということは市場との連動性が低い＝景気にあまり左右されないビジネス。ただし、もし市場全体が大荒れ（分散↑）になると、同じ連動性でもベータはさらに下がることがある点も押さえておこう。</span>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div><span class="quiz-cat qc-blue">基本</span>
+      <div class="quiz-question">SML（証券市場線）の横軸と縦軸の正しい組み合わせはどれ？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q4', 1)">
+        <li data-idx="0">A. 横軸：標準偏差、縦軸：期待収益率</li>
+        <li data-idx="1">B. 横軸：ベータ、縦軸：期待収益率</li>
+        <li data-idx="2">C. 横軸：期待収益率、縦軸：ベータ</li>
+        <li data-idx="3">D. 横軸：共分散、縦軸：分散</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>&#x2705; 正解：B</strong><br>
+        SMLは横軸がベータ、縦軸が期待収益率。横軸が標準偏差なのはCML（資本市場線）だよ。「SはB（ベータ）、CはS（シグマ）」で覚えよう！
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div><span class="quiz-cat qc-green">シミュレーション</span>
+      <div class="quiz-question">町の美容室オーナーが新店舗出店を検討中。CAPMで求めたハードルレートが8%、新店舗の予想リターンが6%のとき、CAPMの観点からの判断は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q5', 0)">
+        <li data-idx="0">A. リスクに見合うリターンが得られないので、投資を見送るべき</li>
+        <li data-idx="1">B. 6%でもプラスなので投資すべき</li>
+        <li data-idx="2">C. ベータを下げれば問題ない</li>
+        <li data-idx="3">D. リスクフリーレートより高いので投資すべき</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>&#x2705; 正解：A</strong><br>
+        予想リターン（6%）＜ ハードルレート（8%）なので、リスクに見合ったリターンが得られない。「プラスならOK」ではなく、<strong>リスクに見合うかどうか</strong>がCAPMの判断基準！
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div><span class="quiz-cat qc-blue">基本</span>
+      <div class="quiz-question">CAPMにおいて、分散投資で消すことができないリスクを何というか？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q6', 2)">
+        <li data-idx="0">A. アンシステマティックリスク</li>
+        <li data-idx="1">B. 固有リスク</li>
+        <li data-idx="2">C. システマティックリスク</li>
+        <li data-idx="3">D. 信用リスク</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>&#x2705; 正解：C</strong><br>
+        システマティックリスク（市場リスク）は分散投資でも消せない。景気全体や金利変動など市場全体に影響するリスクだから。アンシステマティックリスク（固有リスク）は分散で消せるよ。
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="quiz-item" id="q7">
+      <div class="quiz-num">7</div><span class="quiz-cat qc-purple">応用</span>
+      <div class="quiz-question">銘柄Xのベータは1.2、市場との相関係数は0.8、銘柄Xの標準偏差は15%。このとき市場ポートフォリオの標準偏差は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q7', 1)">
+        <li data-idx="0">A. 8%</li>
+        <li data-idx="1">B. 10%</li>
+        <li data-idx="2">C. 12%</li>
+        <li data-idx="3">D. 15%</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        <strong>&#x2705; 正解：B</strong><br>
+        <strong>解き方のステップ：</strong>&#x2460; まず公式を書く &beta; = &rho; &times; &sigma;<sub>i</sub> &divide; &sigma;<sub>m</sub>　&#x2461; 求めたいもの（&sigma;<sub>m</sub>）を左辺に移す　&#x2462; 数値を代入<br>
+        &sigma;<sub>m</sub> = &rho; &times; &sigma;<sub>i</sub> &divide; &beta; = 0.8 &times; 15% &divide; 1.2 = <strong>10%</strong>。公式を変形する練習が大事！
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="quiz-item" id="q8">
+      <div class="quiz-num">8</div><span class="quiz-cat qc-green">シミュレーション</span>
+      <div class="quiz-question">中小企業のIT社長が株式発行（増資）と銀行借入で迷っています。CAPMで計算した株主資本コストが11%、銀行の貸出金利が4%（税率30%）。資本コストが低いのはどちら？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q8', 3)">
+        <li data-idx="0">A. 株式発行（11%）</li>
+        <li data-idx="1">B. 銀行借入（4%）</li>
+        <li data-idx="2">C. 両方同じ</li>
+        <li data-idx="3">D. 銀行借入（税引後2.8%）</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        <strong>&#x2705; 正解：D</strong><br>
+        銀行借入の税引後コスト = 4% &times; (1 &minus; 30%) = <strong>2.8%</strong>。株主資本コスト11%よりはるかに安い。借入には<strong>節税効果（タックスシールド）</strong>があるから実質コストが下がるんだ。
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">復習ガイド</div>
+        <strong>Q1・Q3</strong>を間違えた → 入門タブへ<br>
+        <strong>Q2・Q4・Q6</strong>を間違えた → 基本事項タブへ<br>
+        <strong>Q5・Q8</strong>を間違えた → シミュレーションタブへ<br>
+        <strong>Q7</strong>を間違えた → 基本事項タブの「ベータの計算方法」へ
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 5: 実例で学ぶ (PURPLE) ==================== -->
+  <div class="tab-panel theme-purple" id="tab5">
+
+    <div class="point-box pb-purple">
+      <h4>&#x1F4F0; 実例で学ぶCAPM</h4>
+      <p>表とにらめっこして覚えるのもいいですが、正直なところ飽きてきちゃいますよね。少しでも覚えやすくなるように実例を集めてみました！「<strong>なぜその判断をしたのか</strong>」に思いを馳せると、理解が深まります。</p>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F30D;</span> 実例1：ソフトバンクグループの投資判断</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F4F1; 10兆円ファンドの裏側にあるCAPMの考え方</h4>
+      <p>ソフトバンクグループの「ビジョン・ファンド」は2017年に約10兆円規模で設立され、世界中のテック企業に投資しています。</p>
+      <p style="margin-top:0.5rem;">投資先のWeWorkやUberなどは<strong>ベータが非常に高い</strong>（値動きが激しい）企業。CAPMで考えると、ベータが高い＝期待収益率も高くないと割に合わない。つまり<strong>「ハイリスクだからこそ、何倍にもなるリターンを求めた」</strong>というのはCAPMの考え方そのものです。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">CAPMの視点で見ると</div>
+        仮に安全利子率=2%、市場の上乗せ分=6%、テック新興企業のベータ=2.0とすると、<br>
+        期待収益率 = 2% + 2.0 &times; 6% = <strong>14%</strong>。<br>
+        つまり年14%以上のリターンが見込めなければ、そもそも投資する意味がない。ソフトバンクが「何倍にもなる投資先」にこだわるのはCAPM的に合理的なんです。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">豆知識</div>
+        WeWorkへの投資は結果的に巨額損失となった。ハイベータ投資は期待リターンも高いが<strong>失敗リスクも大きい</strong>。CAPMは「求めるべきリターン」を教えてくれるが、「確実にそのリターンが得られる」とは約束してくれない！
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3E6;</span> 実例2：GPIFの運用方針とベータ</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F4B0; 世界最大の年金基金GPIFの資産配分</h4>
+      <p>GPIF（年金積立金管理運用独立行政法人）は約200兆円を運用する世界最大級の機関投資家です。2020年に基本ポートフォリオを変更し、国内外の株式比率を引き上げました。</p>
+      <p style="margin-top:0.5rem;">GPIFの基本配分：<strong>国内債券25%・外国債券25%・国内株式25%・外国株式25%</strong>。</p>
+      <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.3rem;">※債券のベータは厳密にはゼロではなく、わずかに変動するが、株式に比べると無視できるほど小さいため≒0として扱う。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">CAPMの視点</div>
+        GPIFのポートフォリオ全体のベータを考えてみよう。<br>
+        <strong>債券部分（ベータ≒0）が50%、株式部分（ベータ≒1）が50%</strong>なので、<br>
+        全体のベータ ≒ 0 &times; 0.5 + 1 &times; 0.5 = <strong>0.5</strong>。<br>
+        つまりGPIFは市場の半分程度のリスクで、安定的にリスクプレミアムの半分を狙う設計。年金だから<strong>ローリスク・ミドルリターン</strong>が合理的なんだね。
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3ED;</span> 実例3：トヨタ vs メルカリ ― ベータで見る企業の性格</h2>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>&#x1F697; トヨタ自動車</h4>
+        <ul>
+          <li>ベータ：約 <strong>0.7〜0.9</strong></li>
+          <li>世界的大企業で安定的な収益</li>
+          <li>景気に左右されるが、ブランド力で底堅い</li>
+          <li>CAPMの期待収益率 ≒ 1.5% + 0.8 &times; 6% = <strong>6.3%</strong></li>
+        </ul>
+        <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.2rem;">※ベータは過去データから算出するため、時期により変動する。</p>
+      </div>
+      <div class="card card-red">
+        <h4>&#x1F4F1; メルカリ</h4>
+        <ul>
+          <li>ベータ：約 <strong>1.5〜2.0</strong></li>
+          <li>成長期のテック企業で値動きが激しい</li>
+          <li>市場全体が下がると大きく下落しやすい</li>
+          <li>CAPMの期待収益率 ≒ 1.5% + 1.8 &times; 6% = <strong>12.3%</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>なぜこの差が生まれるの？</strong> トヨタは「安定の大企業」でベータが低く、期待収益率も控えめ。メルカリは「成長中のテック企業」でベータが高く、投資家はより高いリターンを要求する。<strong>リスクとリターンは表裏一体</strong>というCAPMの本質がここに表れている！
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3E0;</span> 実例4：不動産投資とCAPM</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F3E2; J-REIT（不動産投資信託）の期待リターン</h4>
+      <p>J-REIT（不動産投資信託）は、オフィスビルや商業施設などの不動産に投資する商品です。不動産は株式より値動きが小さいことが多く、<strong>ベータは0.3〜0.7程度</strong>。</p>
+      <p style="margin-top:0.5rem;">
+        仮に住宅系REITのベータ=0.4とすると、<br>
+        期待収益率 = 1.5% + 0.4 &times; 6% = <strong>3.9%</strong>。<br>
+        一方、実際のJ-REITの分配金利回りは4〜5%程度あることが多い。CAPMで計算した期待収益率を上回っている＝<strong>SMLの上にある（割安）</strong>と判断できるケースもある。
+      </p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">中小企業の社長へ</div>
+        自社ビルを持つか、賃貸にするか。自社ビルを「投資」と考えれば、そのリターン（家賃節約額 &divide; ビル購入額）がCAPMのハードルレートを上回るかで判断できる。<strong>不動産投資も同じフレームワーク</strong>で考えられるんだよ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">&#x26A0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">SMLの上下 おさらい</div>
+        SMLの<strong>上にある＝実際のリターンが理論値より高い＝割安</strong>。<strong>下にある＝実際のリターンが理論値より低い＝割高</strong>。入門タブのSMLの図を見ると、星印の位置関係がわかりやすいよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4B4;</span> 実例5：リスクフリーレートの変化と経営への影響</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F3E6; 日銀のマイナス金利政策とCAPM</h4>
+      <p>2016年〜2024年、日本銀行はマイナス金利政策をとっていました。これはCAPMにどう影響したのでしょう？</p>
+      <ul style="margin-top:0.5rem;">
+        <li>リスクフリーレートが<strong>ほぼ0%</strong>に低下</li>
+        <li>CAPMの式で安全利子率≒0なので、期待収益率 ≒ &beta; &times; 市場の上乗せ分</li>
+        <li>ハードルレートが下がる → <strong>以前なら却下された投資案件もGOサインが出やすくなった</strong></li>
+        <li>2024年にマイナス金利解除 → 安全利子率が上昇 → <strong>ハードルレートも上昇 → 投資判断が厳しくなった</strong></li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        金利政策が変わるとCAPMのリスクフリーレートが変わり、<strong>すべての企業の資本コストに影響する</strong>。「金利が上がると株価が下がる」と言われるのも、ハードルレートが上がって企業価値が下がる（＝株価が下がる）というCAPMの論理で説明できるんだ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">日常でたとえ</div>
+        金利が上がるとローン（住宅・車）の返済が増える＝<strong>個人の「ハードルレート」が上がる</strong>。「金利が上がったからマイホーム購入を見送る」という判断は、まさにCAPM的な考え方を日常でやっている例だよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F5FA;</span> ベータの大きさマップ</h2>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--purple-dark);">小 &#x2190; ベータ &#x2192; 大</div>
+      <div class="flow-row" style="gap:0.3rem; flex-wrap:wrap;">
+        <div class="flow-box fb-green" style="font-size:0.78rem;">金（ゴールド）<small>&beta;&lt;0</small></div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-teal" style="font-size:0.78rem;">国債<small>&beta;&#x2248;0</small></div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-blue" style="font-size:0.78rem;">J-REIT<small>&beta;=0.4</small></div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-orange" style="font-size:0.78rem;">トヨタ<small>&beta;=0.8</small></div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-purple" style="font-size:0.78rem;">メルカリ<small>&beta;=1.8</small></div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-red" style="font-size:0.78rem;">VF投資先<small>&beta;=2.0</small></div>
+      </div>
+      <p style="text-align:center;font-size:0.82rem;color:var(--gray-mid);margin-top:0.5rem;">ベータが大きいほど期待収益率も高くなる＝リスクとリターンは比例する</p>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4DD;</span> まとめ：実例から学ぶCAPMの本質</h2>
+
+    <table class="tbl-blue">
+      <tr><th>実例</th><th>CAPMのキーポイント</th></tr>
+      <tr><td>ソフトバンク・ビジョンファンド</td><td>高ベータ → 高い期待収益率が必要 → ハイリターン狙い</td></tr>
+      <tr><td>GPIFの資産配分</td><td>ポートフォリオのベータ管理で全体のリスク・リターンを設計</td></tr>
+      <tr><td>トヨタ vs メルカリ</td><td>ベータの違いが期待収益率の差を生む</td></tr>
+      <tr><td>J-REIT</td><td>CAPMの理論値と実際のリターンの比較で割安・割高を判断</td></tr>
+      <tr><td>マイナス金利政策</td><td>安全利子率の変化がすべての投資判断に影響</td></tr>
+    </table>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="teal" onclick="switchTab(0)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(1)">&#x1F476; ゼロから</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本事項</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F3E2; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(4)">&#x270F;&#xFE0F; 実践クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F4F0; 実例で学ぶ</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 ファイナンス理論 CAPM 学習まとめ</div>
+
+<script>
+function switchTab(idx) {
+  const numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % numTabs === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Redraw canvases when their tab becomes visible
+  if (idx === 0) { setTimeout(updateIntroSML, 50); }
+  if (idx === 2) { setTimeout(drawSmlCmlCompare, 50); }
+  if (idx === 3) { setTimeout(function(){ updateSim(); updateDiversify(); }, 50); }
+}
+
+let answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 6 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+
+// ===== SML vs CML Comparison Graphs =====
+function drawSmlCmlCompare() {
+  drawSmlCompare();
+  drawCmlCompare();
+}
+
+function drawSmlCompare() {
+  var c = document.getElementById('smlCompareCanvas'); if (!c) return;
+  var dpr = window.devicePixelRatio || 1;
+  var rect = c.parentElement.getBoundingClientRect();
+  var w = Math.min(360, Math.floor(rect.width - 12));
+  var h = Math.round(w * 260 / 360);
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.width = w + 'px'; c.style.height = h + 'px';
+  var ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+
+  var pad = {l:44, r:14, t:16, b:34}, gw = w - pad.l - pad.r, gh = h - pad.t - pad.b;
+  var maxB = 2.0, maxY = 18, rf = 2, mrp = 6;
+  function bx(b) { return pad.l + (b / maxB) * gw; }
+  function yy(v) { return pad.t + gh - (v / maxY) * gh; }
+
+  ctx.fillStyle = '#f8fafb'; ctx.fillRect(0, 0, w, h);
+  // Grid
+  ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 1;
+  for (var i = 0; i <= 4; i++) { var gv = (maxY / 4) * i; ctx.beginPath(); ctx.moveTo(pad.l, yy(gv)); ctx.lineTo(w - pad.r, yy(gv)); ctx.stroke(); }
+  // Axes
+  ctx.strokeStyle = '#5d6d7e'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+  // Labels
+  ctx.fillStyle = '#5d6d7e'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+  for (var k = 0; k <= 4; k++) { ctx.fillText(((maxB / 4) * k).toFixed(1), bx((maxB / 4) * k), h - pad.b + 12); }
+  ctx.font = 'bold 10px sans-serif'; ctx.fillText('ベータ（β）', pad.l + gw / 2, h - 4);
+  ctx.textAlign = 'right'; ctx.font = '9px sans-serif';
+  for (var m = 0; m <= 4; m++) { var yl = (maxY / 4) * m; ctx.fillText(yl.toFixed(0) + '%', pad.l - 4, yy(yl) + 3); }
+  ctx.save(); ctx.translate(11, pad.t + gh / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.font = '9px sans-serif'; ctx.fillText('期待収益率', 0, 0); ctx.restore();
+  // Rf
+  ctx.setLineDash([4, 3]); ctx.strokeStyle = '#1abc9c'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, yy(rf)); ctx.lineTo(w - pad.r, yy(rf)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#1abc9c'; ctx.font = '8px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('Rf=' + rf + '%', pad.l + 2, yy(rf) - 3);
+  // SML line
+  ctx.strokeStyle = '#2980b9'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(bx(0), yy(rf)); ctx.lineTo(bx(maxB), yy(rf + maxB * mrp)); ctx.stroke();
+  ctx.fillStyle = '#2980b9'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'right';
+  ctx.fillText('SML', w - pad.r - 2, yy(rf + maxB * mrp) - 5);
+  // Market
+  ctx.fillStyle = '#27ae60'; ctx.beginPath(); ctx.arc(bx(1), yy(rf + mrp), 5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#1e8449'; ctx.font = '8px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('市場', bx(1) + 7, yy(rf + mrp) + 3);
+  // Individual stocks ON the line
+  var stocks = [{b: 0.5, label: '電力株'}, {b: 1.3, label: 'IT株'}, {b: 0.8, label: '食品株'}];
+  stocks.forEach(function(s) {
+    var sy = rf + s.b * mrp;
+    ctx.fillStyle = '#8e44ad'; ctx.beginPath(); ctx.arc(bx(s.b), yy(sy), 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#6c3483'; ctx.font = '8px sans-serif'; ctx.textAlign = s.b > 1 ? 'right' : 'left';
+    ctx.fillText(s.label, s.b > 1 ? bx(s.b) - 6 : bx(s.b) + 6, yy(sy) - 6);
+  });
+  // Label
+  ctx.fillStyle = 'rgba(39,174,96,0.5)'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('全ての証券がSML上にのる', pad.l + gw * 0.5, pad.t + 14);
+}
+
+function drawCmlCompare() {
+  var c = document.getElementById('cmlCompareCanvas'); if (!c) return;
+  var dpr = window.devicePixelRatio || 1;
+  var rect = c.parentElement.getBoundingClientRect();
+  var w = Math.min(360, Math.floor(rect.width - 12));
+  var h = Math.round(w * 260 / 360);
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.width = w + 'px'; c.style.height = h + 'px';
+  var ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+
+  var pad = {l:44, r:14, t:16, b:34}, gw = w - pad.l - pad.r, gh = h - pad.t - pad.b;
+  var maxS = 30, maxY = 18, rf = 2, mktRet = 8, mktSigma = 15;
+  function sx(s) { return pad.l + (s / maxS) * gw; }
+  function yy(v) { return pad.t + gh - (v / maxY) * gh; }
+
+  ctx.fillStyle = '#f8fafb'; ctx.fillRect(0, 0, w, h);
+  // Grid
+  ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 1;
+  for (var i = 0; i <= 4; i++) { var gv = (maxY / 4) * i; ctx.beginPath(); ctx.moveTo(pad.l, yy(gv)); ctx.lineTo(w - pad.r, yy(gv)); ctx.stroke(); }
+  // Axes
+  ctx.strokeStyle = '#5d6d7e'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+  // Labels
+  ctx.fillStyle = '#5d6d7e'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+  for (var k = 0; k <= 5; k++) { ctx.fillText(((maxS / 5) * k).toFixed(0) + '%', sx((maxS / 5) * k), h - pad.b + 12); }
+  ctx.font = 'bold 10px sans-serif'; ctx.fillText('標準偏差（σ）', pad.l + gw / 2, h - 4);
+  ctx.textAlign = 'right'; ctx.font = '9px sans-serif';
+  for (var m = 0; m <= 4; m++) { var yl = (maxY / 4) * m; ctx.fillText(yl.toFixed(0) + '%', pad.l - 4, yy(yl) + 3); }
+  ctx.save(); ctx.translate(11, pad.t + gh / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.font = '9px sans-serif'; ctx.fillText('期待収益率', 0, 0); ctx.restore();
+  // Rf
+  ctx.setLineDash([4, 3]); ctx.strokeStyle = '#1abc9c'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, yy(rf)); ctx.lineTo(w - pad.r, yy(rf)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#1abc9c'; ctx.font = '8px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('Rf=' + rf + '%', pad.l + 2, yy(rf) - 3);
+
+  // Efficient frontier (curve)
+  ctx.strokeStyle = '#aeb6bf'; ctx.lineWidth = 1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  for (var t = 0; t <= 100; t++) {
+    var angle = (Math.PI * 0.4) + (Math.PI * 0.55) * (t / 100);
+    var es = 15 + 12 * Math.cos(angle);
+    var er = 9 + 6 * Math.sin(angle);
+    if (t === 0) ctx.moveTo(sx(es), yy(er)); else ctx.lineTo(sx(es), yy(er));
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#aeb6bf'; ctx.font = '8px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('効率的フロンティア', sx(22), yy(6));
+
+  // CML line
+  var slope = (mktRet - rf) / mktSigma;
+  ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(sx(0), yy(rf)); ctx.lineTo(sx(maxS), yy(rf + slope * maxS)); ctx.stroke();
+  ctx.fillStyle = '#e74c3c'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'right';
+  ctx.fillText('CML', w - pad.r - 2, yy(rf + slope * maxS) - 5);
+
+  // Market portfolio (tangent point)
+  ctx.fillStyle = '#27ae60'; ctx.beginPath(); ctx.arc(sx(mktSigma), yy(mktRet), 5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#1e8449'; ctx.font = '8px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('市場PF', sx(mktSigma) + 7, yy(mktRet) + 3);
+
+  // Efficient portfolios ON CML
+  var pfs = [{s: 7, label: '安定型PF'}, {s: 22, label: '積極型PF'}];
+  pfs.forEach(function(p) {
+    var py = rf + slope * p.s;
+    ctx.fillStyle = '#2980b9'; ctx.beginPath(); ctx.arc(sx(p.s), yy(py), 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#1a5276'; ctx.font = '8px sans-serif'; ctx.textAlign = p.s > 15 ? 'right' : 'left';
+    ctx.fillText(p.label, p.s > 15 ? sx(p.s) - 6 : sx(p.s) + 6, yy(py) - 6);
+  });
+
+  // Individual stocks BELOW CML
+  var indivs = [{s: 12, r: 5, label: '個別株A'}, {s: 20, r: 7, label: '個別株B'}];
+  indivs.forEach(function(st) {
+    ctx.fillStyle = '#e67e22'; ctx.beginPath(); ctx.arc(sx(st.s), yy(st.r), 4, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(sx(st.s), yy(st.r), 4, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#d35400'; ctx.font = '8px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText(st.label, sx(st.s) + 6, yy(st.r) + 3);
+  });
+
+  // Annotation
+  ctx.fillStyle = 'rgba(231,76,60,0.5)'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('個別株はCMLの下に位置する', pad.l + gw * 0.5, h - pad.b - 8);
+}
+
+// ===== Intro SML Interactive Graph =====
+function updateIntroSML() {
+  var rf = parseFloat(document.getElementById('introRfSlider').value);
+  var mrp = parseFloat(document.getElementById('introMrpSlider').value);
+  var aBeta = parseFloat(document.getElementById('introStockABetaSlider').value);
+  var aRet = parseFloat(document.getElementById('introStockARetSlider').value);
+  var bBeta = parseFloat(document.getElementById('introStockBBetaSlider').value);
+  var bRet = parseFloat(document.getElementById('introStockBRetSlider').value);
+
+  document.getElementById('introRfVal').textContent = rf.toFixed(1) + '%';
+  document.getElementById('introMrpVal').textContent = mrp.toFixed(1) + '%';
+  document.getElementById('introStockABetaVal').textContent = aBeta.toFixed(1);
+  document.getElementById('introStockARetVal').textContent = aRet.toFixed(1) + '%';
+  document.getElementById('introStockBBetaVal').textContent = bBeta.toFixed(1);
+  document.getElementById('introStockBRetVal').textContent = bRet.toFixed(1) + '%';
+
+  var theoA = rf + aBeta * mrp;
+  var theoB = rf + bBeta * mrp;
+  document.getElementById('introTheoA').textContent = theoA.toFixed(1) + '%';
+  document.getElementById('introTheoB').textContent = theoB.toFixed(1) + '%';
+
+  var commentEl = document.getElementById('introSmlComment');
+  var labelA = aRet > theoA ? '<span style="color:#1e8449;font-weight:700;">★ 割安</span>' :
+               aRet < theoA ? '<span style="color:#922b21;font-weight:700;">☆ 割高</span>' :
+               '<span style="color:#5d6d7e;font-weight:700;">● 適正価格</span>';
+  var labelB = bRet > theoB ? '<span style="color:#1e8449;font-weight:700;">★ 割安</span>' :
+               bRet < theoB ? '<span style="color:#922b21;font-weight:700;">☆ 割高</span>' :
+               '<span style="color:#5d6d7e;font-weight:700;">● 適正価格</span>';
+  commentEl.innerHTML =
+    '株A：CAPM理論値 <strong>' + theoA.toFixed(1) + '%</strong> → 実際 <strong>' + aRet.toFixed(1) + '%</strong> → ' + labelA + '<br>' +
+    '株B：CAPM理論値 <strong>' + theoB.toFixed(1) + '%</strong> → 実際 <strong>' + bRet.toFixed(1) + '%</strong> → ' + labelB;
+
+  drawIntroSML(rf, mrp, aBeta, aRet, bBeta, bRet);
+}
+
+function drawIntroSML(rf, mrp, aBeta, aRet, bBeta, bRet) {
+  var c = document.getElementById('introSmlCanvas'); if (!c) return;
+  var dpr = window.devicePixelRatio || 1;
+  var rect = c.parentElement.getBoundingClientRect();
+  var w = Math.min(440, Math.floor(rect.width - 12));
+  var h = Math.round(w * 340 / 440);
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.width = w + 'px'; c.style.height = h + 'px';
+  var ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+
+  var pad = {l:52, r:18, t:20, b:40}, gw = w - pad.l - pad.r, gh = h - pad.t - pad.b;
+  var maxB = 2.5;
+  var maxY = Math.max(rf + maxB * mrp + 3, aRet + 3, bRet + 3, 22);
+  function bx(b) { return pad.l + (b / maxB) * gw; }
+  function yy(v) { return pad.t + gh - (v / maxY) * gh; }
+
+  // Background
+  ctx.fillStyle = '#f8fafb'; ctx.fillRect(0, 0, w, h);
+
+  // Grid
+  ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 1;
+  for (var i = 0; i <= 5; i++) { var gv = (maxY / 5) * i; ctx.beginPath(); ctx.moveTo(pad.l, yy(gv)); ctx.lineTo(w - pad.r, yy(gv)); ctx.stroke(); }
+  for (var j = 0; j <= 5; j++) { var bv = (maxB / 5) * j; ctx.beginPath(); ctx.moveTo(bx(bv), pad.t); ctx.lineTo(bx(bv), h - pad.b); ctx.stroke(); }
+
+  // Axes
+  ctx.strokeStyle = '#5d6d7e'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+
+  // X labels
+  ctx.fillStyle = '#5d6d7e'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  for (var k = 0; k <= 5; k++) { ctx.fillText(((maxB / 5) * k).toFixed(1), bx((maxB / 5) * k), h - pad.b + 14); }
+  ctx.fillText('β（ベータ）', pad.l + gw / 2, h - 4);
+
+  // Y labels
+  ctx.textAlign = 'right';
+  for (var m = 0; m <= 5; m++) { var yl = (maxY / 5) * m; ctx.fillText(yl.toFixed(0) + '%', pad.l - 5, yy(yl) + 4); }
+  ctx.save(); ctx.translate(13, pad.t + gh / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.fillText('期待収益率', 0, 0); ctx.restore();
+
+  // Shade: 割安ゾーン (above SML) / 割高ゾーン (below SML)
+  var smlEndY = rf + maxB * mrp;
+  ctx.fillStyle = 'rgba(39,174,96,0.07)';
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(w - pad.r, pad.t);
+  ctx.lineTo(bx(maxB), yy(smlEndY)); ctx.lineTo(pad.l, yy(rf)); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(231,76,60,0.06)';
+  ctx.beginPath(); ctx.moveTo(pad.l, yy(rf)); ctx.lineTo(bx(maxB), yy(smlEndY));
+  ctx.lineTo(w - pad.r, h - pad.b); ctx.lineTo(pad.l, h - pad.b); ctx.closePath(); ctx.fill();
+
+  ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(39,174,96,0.55)'; ctx.fillText('割安ゾーン（SMLの上）', pad.l + gw * 0.3, pad.t + 18);
+  ctx.fillStyle = 'rgba(231,76,60,0.5)'; ctx.fillText('割高ゾーン（SMLの下）', pad.l + gw * 0.7, h - pad.b - 10);
+
+  // Rf dashed line
+  ctx.setLineDash([5, 3]); ctx.strokeStyle = '#1abc9c'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l, yy(rf)); ctx.lineTo(w - pad.r, yy(rf)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#1abc9c'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('Rf = ' + rf.toFixed(1) + '%', pad.l + 4, yy(rf) - 5);
+
+  // SML line
+  ctx.strokeStyle = '#2980b9'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(bx(0), yy(rf)); ctx.lineTo(bx(maxB), yy(smlEndY)); ctx.stroke();
+  if (smlEndY <= maxY) {
+    ctx.fillStyle = '#2980b9'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText('SML', w - pad.r - 4, yy(smlEndY) - 7);
+  }
+
+  // Market point (β=1)
+  var mktY = rf + mrp;
+  ctx.fillStyle = '#27ae60'; ctx.beginPath(); ctx.arc(bx(1), yy(mktY), 6, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(bx(1), yy(mktY), 6, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = '#1e8449'; ctx.font = '9px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('市場(' + mktY.toFixed(1) + '%)', bx(1) + 9, yy(mktY) + 3);
+
+  // Helper: draw stock point with dashed guide lines
+  function drawStock(beta, ret, theoRet, color, label) {
+    var px = bx(beta), py = yy(ret);
+    var theoY = yy(theoRet);
+    // Dashed vertical line from x-axis to SML point
+    ctx.setLineDash([3,3]); ctx.strokeStyle = '#aeb6bf'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px, h - pad.b); ctx.lineTo(px, theoY); ctx.stroke();
+    // Dashed horizontal line from y-axis to SML point
+    ctx.beginPath(); ctx.moveTo(pad.l, theoY); ctx.lineTo(px, theoY); ctx.stroke();
+    ctx.setLineDash([]);
+    // Arrow from SML to actual position
+    if (Math.abs(ret - theoRet) > 0.3) {
+      ctx.strokeStyle = ret > theoRet ? '#27ae60' : '#e74c3c';
+      ctx.lineWidth = 2; ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.moveTo(px, theoY); ctx.lineTo(px, py); ctx.stroke();
+      ctx.setLineDash([]);
+      // Arrowhead
+      var dir = ret > theoRet ? -1 : 1;
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px - 4, py + dir * 8); ctx.lineTo(px + 4, py + dir * 8); ctx.closePath(); ctx.fill();
+    }
+    // Star point
+    drawStar(ctx, px, py, 5, 9, 4, color);
+    // Label
+    ctx.fillStyle = color; ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = beta > 1.8 ? 'right' : 'left';
+    var lx = beta > 1.8 ? px - 12 : px + 12;
+    ctx.fillText(label + ' ' + ret.toFixed(1) + '%', lx, py - 8);
+  }
+
+  var theoA = rf + aBeta * mrp;
+  var theoB = rf + bBeta * mrp;
+  drawStock(aBeta, aRet, theoA, '#8e44ad', '株A');
+  drawStock(bBeta, bRet, theoB, '#e67e22', '株B');
+}
+
+function drawStar(ctx, cx, cy, spikes, outerR, innerR, color) {
+  var rot = -Math.PI / 2;
+  ctx.beginPath();
+  for (var i = 0; i < spikes; i++) {
+    ctx.lineTo(cx + Math.cos(rot + (Math.PI * 2 * i / spikes)) * outerR,
+               cy + Math.sin(rot + (Math.PI * 2 * i / spikes)) * outerR);
+    ctx.lineTo(cx + Math.cos(rot + (Math.PI * 2 * i / spikes) + Math.PI / spikes) * innerR,
+               cy + Math.sin(rot + (Math.PI * 2 * i / spikes) + Math.PI / spikes) * innerR);
+  }
+  ctx.closePath();
+  ctx.fillStyle = color; ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+}
+
+// Simulator + SML Graph
+function updateSim() {
+  var rf = parseFloat(document.getElementById('rfSlider').value);
+  var mrp = parseFloat(document.getElementById('mrpSlider').value);
+  var beta = parseFloat(document.getElementById('betaSlider').value);
+  var result = rf + beta * mrp;
+
+  document.getElementById('rfVal').textContent = rf.toFixed(1) + '%';
+  document.getElementById('mrpVal').textContent = mrp.toFixed(1) + '%';
+  document.getElementById('betaVal').textContent = beta.toFixed(1);
+  document.getElementById('simResult').textContent = result.toFixed(1) + '%';
+
+  var comment = document.getElementById('simComment');
+  if (beta === 0) {
+    comment.textContent = 'ベータ0 ＝ 安全資産。期待収益率は安全利子率と同じ。';
+  } else if (beta < 0.5) {
+    comment.textContent = 'ベータが低い → 安定型の銘柄（電力・ガスなど）のイメージ。';
+  } else if (beta < 1.2) {
+    comment.textContent = '市場と同じくらいの動き。インデックス投信に近い水準。';
+  } else if (beta < 2.0) {
+    comment.textContent = '市場より大きく動く。成長株やIT系に多い水準。';
+  } else {
+    comment.textContent = 'ベータ2以上はかなりハイリスク。レバレッジETFのような値動き！';
+  }
+  drawSML(rf, mrp, beta, result);
+}
+
+function initCanvas(id, baseW, baseH) {
+  var c = document.getElementById(id); if (!c) return null;
+  var dpr = window.devicePixelRatio || 1;
+  var rect = c.parentElement.getBoundingClientRect();
+  var w = Math.min(baseW, Math.floor(rect.width - 12));
+  var h = Math.round(w * baseH / baseW);
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.width = w + 'px'; c.style.height = h + 'px';
+  var ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+  return {ctx:ctx, w:w, h:h};
+}
+
+function drawSML(rf, mrp, beta, result) {
+  var o = initCanvas('smlCanvas', 400, 300); if (!o) return;
+  var ctx=o.ctx, w=o.w, h=o.h;
+  var pad={l:50,r:16,t:18,b:36}, gw=w-pad.l-pad.r, gh=h-pad.t-pad.b;
+  var maxB=2.5, maxY=Math.max(rf+maxB*mrp+2, result+3, 20);
+  function bx(b){return pad.l+(b/maxB)*gw;} function yy(v){return pad.t+gh-(v/maxY)*gh;}
+
+  ctx.fillStyle='#f8fafb'; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#e8e8e8'; ctx.lineWidth=1;
+  for(var i=0;i<=5;i++){var gv=(maxY/5)*i;ctx.beginPath();ctx.moveTo(pad.l,yy(gv));ctx.lineTo(w-pad.r,yy(gv));ctx.stroke();}
+  for(var j=0;j<=5;j++){var bv=(maxB/5)*j;ctx.beginPath();ctx.moveTo(bx(bv),pad.t);ctx.lineTo(bx(bv),h-pad.b);ctx.stroke();}
+
+  ctx.strokeStyle='#5d6d7e'; ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,h-pad.b);ctx.lineTo(w-pad.r,h-pad.b);ctx.stroke();
+
+  ctx.fillStyle='#5d6d7e'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+  for(var k=0;k<=5;k++){ctx.fillText(((maxB/5)*k).toFixed(1),bx((maxB/5)*k),h-pad.b+14);}
+  ctx.fillText('ベータ',pad.l+gw/2,h-4);
+  ctx.textAlign='right';
+  for(var m=0;m<=5;m++){var yl=(maxY/5)*m;ctx.fillText(yl.toFixed(0)+'%',pad.l-5,yy(yl)+4);}
+  ctx.save();ctx.translate(12,pad.t+gh/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText('期待収益率',0,0);ctx.restore();
+
+  // Shade
+  ctx.fillStyle='rgba(39,174,96,0.05)';
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(w-pad.r,pad.t);ctx.lineTo(bx(maxB),yy(rf+maxB*mrp));ctx.lineTo(pad.l,yy(rf));ctx.closePath();ctx.fill();
+  ctx.font='9px sans-serif';ctx.textAlign='center';
+  ctx.fillStyle='rgba(39,174,96,0.5)';ctx.fillText('割安ゾーン',pad.l+gw*0.25,pad.t+22);
+  ctx.fillStyle='rgba(231,76,60,0.4)';ctx.fillText('割高ゾーン',pad.l+gw*0.75,h-pad.b-12);
+
+  // Rf line
+  ctx.setLineDash([5,3]);ctx.strokeStyle='#1abc9c';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,yy(rf));ctx.lineTo(w-pad.r,yy(rf));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#1abc9c';ctx.font='bold 10px sans-serif';ctx.textAlign='left';
+  ctx.fillText('安全利子率 '+rf.toFixed(1)+'%',pad.l+3,yy(rf)-4);
+
+  // SML
+  ctx.strokeStyle='#2980b9';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(bx(0),yy(rf));ctx.lineTo(bx(maxB),yy(rf+maxB*mrp));ctx.stroke();
+  var smlEnd=rf+maxB*mrp;
+  if(smlEnd<=maxY){ctx.fillStyle='#2980b9';ctx.font='bold 10px sans-serif';ctx.textAlign='right';ctx.fillText('SML',w-pad.r-3,yy(smlEnd)-6);}
+
+  // Market
+  var mktY=rf+mrp;
+  ctx.fillStyle='#27ae60';ctx.beginPath();ctx.arc(bx(1),yy(mktY),5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#1e8449';ctx.font='9px sans-serif';ctx.textAlign='left';ctx.fillText('市場('+mktY.toFixed(1)+'%)',bx(1)+8,yy(mktY)+3);
+
+  // Current
+  ctx.fillStyle='#e74c3c';ctx.beginPath();ctx.arc(bx(beta),yy(result),7,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(bx(beta),yy(result),7,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle='#c0392b';ctx.font='bold 11px sans-serif';
+  ctx.textAlign=beta>1.8?'right':'left';
+  ctx.fillText('現在 '+result.toFixed(1)+'%',beta>1.8?bx(beta)-8:bx(beta)+10,yy(result)-10);
+}
+
+// Diversification graph
+function updateDiversify() {
+  var singleRisk = parseFloat(document.getElementById('singleRiskSlider').value);
+  var corr = parseFloat(document.getElementById('corrSlider').value);
+  document.getElementById('singleRiskVal').textContent = singleRisk + '%';
+  document.getElementById('corrVal').textContent = corr.toFixed(2);
+
+  var sysRisk = singleRisk * Math.sqrt(corr);
+  document.getElementById('sysRiskResult').textContent = sysRisk.toFixed(1) + '%';
+
+  var comment = document.getElementById('divComment');
+  if (corr < 0.1) comment.textContent = '相関がほぼゼロ → 分散でリスク激減！でも現実ではここまで低い相関は稀。';
+  else if (corr < 0.3) comment.textContent = '相関が低め → 分散効果が大きい。異なる業種を組み合わせたイメージ。';
+  else if (corr < 0.6) comment.textContent = '相関は中程度。同じ国の株同士だとこのくらい。';
+  else comment.textContent = '相関が高い → 分散してもリスクがあまり下がらない。似た業種ばかりだとこうなる。';
+
+  drawDiversify(singleRisk, corr);
+}
+
+function drawDiversify(singleRisk, corr) {
+  var o = initCanvas('divCanvas', 400, 300); if (!o) return;
+  var ctx=o.ctx, w=o.w, h=o.h;
+  var pad={l:50,r:16,t:18,b:36}, gw=w-pad.l-pad.r, gh=h-pad.t-pad.b;
+  var maxN=30, maxR=Math.max(singleRisk+5, 50);
+  function nx(n){return pad.l+((n-1)/(maxN-1))*gw;} function ry(v){return pad.t+gh-(v/maxR)*gh;}
+
+  ctx.fillStyle='#f8fafb'; ctx.fillRect(0,0,w,h);
+
+  // Grid
+  ctx.strokeStyle='#e8e8e8'; ctx.lineWidth=1;
+  for(var i=0;i<=5;i++){var gv=(maxR/5)*i;ctx.beginPath();ctx.moveTo(pad.l,ry(gv));ctx.lineTo(w-pad.r,ry(gv));ctx.stroke();}
+
+  // Axes
+  ctx.strokeStyle='#5d6d7e'; ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,h-pad.b);ctx.lineTo(w-pad.r,h-pad.b);ctx.stroke();
+
+  // Y labels
+  ctx.fillStyle='#5d6d7e'; ctx.font='10px sans-serif'; ctx.textAlign='right';
+  for(var m=0;m<=5;m++){var yl=(maxR/5)*m;ctx.fillText(yl.toFixed(0)+'%',pad.l-5,ry(yl)+4);}
+  ctx.save();ctx.translate(12,pad.t+gh/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText('ポートフォリオのリスク（%）',0,0);ctx.restore();
+
+  // X labels
+  ctx.textAlign='center';
+  var xLabels=[1,5,10,15,20,25,30];
+  for(var k=0;k<xLabels.length;k++){ctx.fillText(xLabels[k],nx(xLabels[k]),h-pad.b+14);}
+  ctx.fillText('銘柄数',pad.l+gw/2,h-4);
+
+  // System risk line (dashed)
+  var sysRisk = singleRisk * Math.sqrt(corr);
+  ctx.setLineDash([6,4]);ctx.strokeStyle='#e74c3c';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,ry(sysRisk));ctx.lineTo(w-pad.r,ry(sysRisk));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#e74c3c';ctx.font='bold 9px sans-serif';ctx.textAlign='left';
+  ctx.fillText('システマティックリスク '+sysRisk.toFixed(1)+'%',pad.l+3,ry(sysRisk)-4);
+
+  // Shade unsystematic region
+  // Calculate curve points
+  var points = [];
+  for(var n=1;n<=maxN;n++){
+    var risk = singleRisk * Math.sqrt((1/n) + corr * (1 - 1/n));
+    points.push({n:n, r:risk});
+  }
+
+  // Fill area between curve and system risk
+  ctx.fillStyle='rgba(231,76,60,0.08)';
+  ctx.beginPath();ctx.moveTo(nx(1),ry(points[0].r));
+  for(var p=1;p<points.length;p++) ctx.lineTo(nx(points[p].n),ry(points[p].r));
+  ctx.lineTo(nx(maxN),ry(sysRisk));ctx.lineTo(nx(1),ry(sysRisk));ctx.closePath();ctx.fill();
+
+  // Fill below system risk
+  ctx.fillStyle='rgba(41,128,185,0.06)';
+  ctx.beginPath();ctx.moveTo(pad.l,ry(sysRisk));ctx.lineTo(w-pad.r,ry(sysRisk));ctx.lineTo(w-pad.r,ry(0));ctx.lineTo(pad.l,ry(0));ctx.closePath();ctx.fill();
+
+  // Labels
+  ctx.font='9px sans-serif';ctx.textAlign='center';
+  var midCurveY = (points[0].r + sysRisk) / 2;
+  ctx.fillStyle='rgba(231,76,60,0.6)';ctx.fillText('アンシステマティックリスク',pad.l+gw*0.6,ry(midCurveY));
+  ctx.fillText('（分散で消せる）',pad.l+gw*0.6,ry(midCurveY)+12);
+  ctx.fillStyle='rgba(41,128,185,0.5)';ctx.fillText('システマティックリスク（消せない）',pad.l+gw*0.5,ry(sysRisk/2));
+
+  // Curve
+  ctx.strokeStyle='#2980b9';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(nx(1),ry(points[0].r));
+  for(var q=1;q<points.length;q++) ctx.lineTo(nx(points[q].n),ry(points[q].r));
+  ctx.stroke();
+
+  // Highlight points
+  var highlights=[{n:1,c:'#e74c3c'},{n:5,c:'#e67e22'},{n:10,c:'#f39c12'},{n:20,c:'#27ae60'},{n:30,c:'#2980b9'}];
+  for(var g=0;g<highlights.length;g++){
+    var hn=highlights[g].n, hr=points[hn-1].r;
+    ctx.fillStyle=highlights[g].c;ctx.beginPath();ctx.arc(nx(hn),ry(hr),4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#2c3e50';ctx.font='bold 9px sans-serif';ctx.textAlign='center';
+    ctx.fillText(hr.toFixed(1)+'%',nx(hn),ry(hr)-8);
+  }
+}
+
+updateIntroSML();
+drawSmlCmlCompare();
+updateSim();
+updateDiversify();
+window.addEventListener('resize', function() { updateIntroSML(); drawSmlCmlCompare(); updateSim(); updateDiversify(); });
+</script>
+</body>
+</html>

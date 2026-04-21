@@ -1,0 +1,2334 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>株式の理論価格・株価指標まとめ - 中小企業診断士 財務・会計</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef; --purple-bg: #f5eef8;
+  --pink-main: #e91e63; --pink-light: #fce4ec;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, var(--purple-dark) 0%, var(--blue-main) 50%, var(--orange-main) 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: 0.04em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.9rem; opacity: 0.95; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.25);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.78rem; margin-top: 0.5rem;
+}
+
+/* ===== Speech Bubbles ===== */
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-pm { background: linear-gradient(135deg, #8e44ad, #6c3483); }
+.avatar-plan { background: linear-gradient(135deg, #2980b9, #1a5276); }
+.avatar-make { background: linear-gradient(135deg, #27ae60, #1e8449); }
+.avatar-critic { background: linear-gradient(135deg, #e74c3c, #922b21); }
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before { left: -14px; border-right-color: var(--white); }
+.bubble-wrap.right .bubble-body::before { right: -14px; border-left-color: var(--white); }
+.bubble-body.b-purple { background: #f3e5f5; border: 1px solid #ce93d8; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-wrap:not(.right) .bubble-body.b-purple::before { border-right-color: #f3e5f5; }
+.bubble-wrap:not(.right) .bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-wrap:not(.right) .bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-wrap:not(.right) .bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-wrap:not(.right) .bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-purple::before { border-right-color: transparent; border-left-color: #f3e5f5; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-body strong { color: #c2185b; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+
+/* ===== Agent panel (4-agent discussion) ===== */
+.agent-panel {
+  background: linear-gradient(135deg, #fff 0%, #f8f5fc 100%);
+  border: 2px dashed var(--purple-main);
+  border-radius: var(--radius);
+  padding: 0.9rem 0.8rem 0.6rem; margin: 1rem 0;
+}
+.agent-panel-title {
+  font-weight: 800; font-size: 0.85rem; color: var(--purple-dark);
+  margin-bottom: 0.5rem; text-align: center; letter-spacing: 0.04em;
+}
+.agent-panel-title small { font-weight: 500; color: var(--gray-mid); display: block; font-size: 0.72rem; margin-top: 0.1rem;}
+
+/* ===== Tabs ===== */
+.tab-container { max-width: 960px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; flex-wrap: wrap; gap: 2px; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; box-shadow: var(--shadow);
+  position: sticky; top: 0; z-index: 100; padding: 2px;
+}
+.tab-btn {
+  flex: 1 1 auto; min-width: 95px; padding: 0.7rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.72rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center; border-radius: 4px 4px 0 0;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="pink"] { color: var(--pink-main); }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn.active[data-color="pink"] { border-bottom-color: var(--pink-main); background: var(--pink-light); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-pink { background: var(--pink-light); }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-purple { background: var(--purple-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.section-title {
+  font-size: 1.15rem; font-weight: 800; margin: 1.3rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; color: white;
+}
+.section-title:first-child { margin-top: 0; }
+.st-pink { background: linear-gradient(135deg, var(--pink-main), #f06292); }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); }
+
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card-pink { border-left-color: var(--pink-main); }
+.card h4 { font-size: 0.98rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.9rem; background: white; border-radius: var(--radius-sm); overflow: hidden; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) td { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) td { background: var(--green-light); }
+.tbl-purple th { background: var(--purple-main); color: white; }
+.tbl-purple tr:nth-child(even) td { background: var(--purple-light); }
+.tbl-pink th { background: var(--pink-main); color: white; }
+.tbl-pink tr:nth-child(even) td { background: var(--pink-light); }
+
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.9rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 1rem; font-weight: 600; text-align: center;
+  letter-spacing: 0.02em;
+}
+.formula-box .big { font-size: 1.2rem; display: block; margin: 0.3rem 0; color: #ffeb3b; }
+
+.point-box { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #ce93d8; }
+.pb-pink { background: linear-gradient(135deg, var(--pink-light), #fff); border: 2px solid #f48fb1; }
+.point-box h4 { font-size: 0.98rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.1rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.35rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.08em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+
+.scene { background: var(--white); border-radius: var(--radius); padding: 1.1rem; margin: 0.8rem 0; box-shadow: var(--shadow); }
+.scene-row { display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+.scene-caption { font-size: 0.85rem; color: var(--gray-mid); text-align: center; margin-top: 0.6rem; }
+
+/* ===== Critical alert (超重要！) ===== */
+.critical-box {
+  background: linear-gradient(135deg, #ffebee 0%, #fff 70%);
+  border: 4px solid #d32f2f; border-radius: 14px;
+  padding: 1.5rem 1.2rem 1.2rem; margin: 1.2rem 0;
+  box-shadow: 0 6px 20px rgba(211,47,47,0.22);
+  position: relative;
+}
+.critical-box::before {
+  content: "⚠️ 最重要！ここで差がつく";
+  position: absolute; top: -14px; left: 14px;
+  background: linear-gradient(135deg, #d32f2f, #b71c1c);
+  color: white; padding: 0.3rem 0.9rem;
+  border-radius: 20px; font-size: 0.85rem; font-weight: 800;
+  box-shadow: 0 3px 8px rgba(211,47,47,0.4);
+  letter-spacing: 0.05em;
+}
+.critical-box h4 {
+  font-size: 1.2rem !important; color: #b71c1c !important;
+  margin-bottom: 0.7rem !important; line-height: 1.5;
+  font-weight: 800;
+}
+.critical-box .big-point {
+  font-size: 1.15rem; font-weight: 800; color: #c62828;
+  background: #fff9c4; padding: 0.7rem 1rem; border-radius: 8px;
+  margin: 0.7rem 0; border-left: 6px solid #f57c00;
+  line-height: 1.7; text-align: center;
+}
+.critical-box .big-point.yellow {
+  background: linear-gradient(135deg, #fff59d, #fffde7);
+}
+/* inline highlight */
+.hl-red { background: linear-gradient(transparent 60%, #ffcdd2 60%); font-weight: 800; color: #b71c1c; padding: 0 2px; }
+.hl-yellow { background: linear-gradient(transparent 60%, #fff59d 60%); font-weight: 800; padding: 0 2px; }
+.hl-blue { background: linear-gradient(transparent 60%, #bbdefb 60%); font-weight: 800; color: #0d47a1; padding: 0 2px; }
+.hl-green { background: linear-gradient(transparent 60%, #c8e6c9 60%); font-weight: 800; color: #1b5e20; padding: 0 2px; }
+.big-text { font-size: 1.15rem; font-weight: 800; }
+.huge-text { font-size: 1.4rem; font-weight: 800; line-height: 1.5; }
+
+/* ===== Beginner intro block (超初心者向け) ===== */
+.beginner-box {
+  background: linear-gradient(135deg, #fff9c4 0%, #fffde7 100%);
+  border: 3px dashed #f57c00; border-radius: 14px;
+  padding: 1rem 1.2rem; margin: 0.5rem 0 1.2rem;
+}
+.beginner-box h4 {
+  color: #e65100; font-size: 1.02rem; font-weight: 800;
+  margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem;
+}
+.beginner-box .b-row { display: flex; gap: 0.5rem; margin: 0.35rem 0; font-size: 0.92rem; line-height: 1.7; }
+.beginner-box .b-label {
+  background: #f57c00; color: white; font-weight: 700; font-size: 0.78rem;
+  padding: 0.1rem 0.5rem; border-radius: 4px; flex-shrink: 0; align-self: flex-start;
+  margin-top: 0.2rem; min-width: 74px; text-align: center;
+}
+.beginner-box .b-text { flex: 1; }
+.beginner-box strong { color: #bf360c; }
+
+/* ===== Quiz ===== */
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0; transition: border-color 0.3s;
+}
+.quiz-num {
+  display: inline-block; background: var(--orange-main); color: white;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-purple { background: var(--purple-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.9rem;
+}
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation { display: none; margin-top: 0.7rem; padding: 0.8rem; border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7; }
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score { text-align: center; padding: 1rem; background: var(--orange-pale); border-radius: var(--radius); margin-top: 1rem; font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none; }
+
+/* ===== Fill-in-the-blank ===== */
+.fill-card { background: var(--white); border-radius: 14px; margin-bottom: 18px; box-shadow: var(--shadow); overflow: hidden; }
+.fill-header { padding: 12px 18px; font-weight: 700; font-size: .95rem; color: #fff; display: flex; align-items: center; gap: 8px; }
+.fill-header.h-blue { background: var(--blue-main); }
+.fill-header.h-green { background: var(--green-main); }
+.fill-header.h-purple { background: var(--purple-main); }
+.fill-header.h-pink { background: var(--pink-main); }
+.fill-header.h-red { background: var(--red-main); }
+.fill-body { padding: 16px 20px; }
+.fill-group { margin-bottom: 6px; font-size: .95rem; line-height: 2.1; }
+.fill-blank {
+  display: inline-block; min-width: 90px; border-bottom: 2.5px solid #94a3b8;
+  text-align: center; padding: 2px 10px; margin: 0 3px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: .92rem;
+}
+.fill-blank.show { color: #dc2626; background: #fef2f2; border-color: #dc2626; }
+.fill-reveal-btn {
+  display: inline-block; background: #1a365d; color: #fff; border: none;
+  border-radius: 8px; padding: 7px 16px; font-size: .82rem; font-weight: 600;
+  cursor: pointer; margin-top: 8px; font-family: inherit;
+}
+.fill-reveal-btn:hover { background: #2a4a7f; }
+.fill-control { text-align: center; margin: 0.8rem 0 1.2rem; }
+.fill-control button {
+  margin: 0 0.3rem; padding: 8px 18px; border-radius: 8px; border: none;
+  font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: inherit;
+}
+.fill-control .btn-all { background: var(--orange-main); color: white; }
+.fill-control .btn-reset { background: var(--gray-light); color: white; }
+
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+
+@media (max-width: 600px) {
+  .two-col { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 0.68rem; padding: 0.7rem 0.25rem; }
+  .header h1 { font-size: 1.25rem; }
+  .bubble-body { max-width: 78%; font-size: 0.85rem; }
+}
+
+/* Sub-tabs inside 基本事項 */
+.sub-tab-nav {
+  display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.8rem 0 1rem;
+  background: white; padding: 0.4rem; border-radius: var(--radius-sm); box-shadow: var(--shadow);
+}
+.sub-tab-btn {
+  flex: 1; min-width: 90px; padding: 0.55rem 0.5rem; border: 2px solid #e0e0e0;
+  background: white; color: var(--gray-mid); font-size: 0.78rem; font-weight: 700;
+  cursor: pointer; border-radius: var(--radius-sm); transition: all 0.2s;
+  font-family: inherit; white-space: nowrap;
+}
+.sub-tab-btn.active { background: var(--blue-main); color: white; border-color: var(--blue-main); }
+.sub-tab-btn:hover { opacity: 0.85; }
+.sub-panel { display: none; }
+.sub-panel.active { display: block; animation: fadeIn 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>株式の理論価格・株価指標</h1>
+  <div class="subtitle">中小企業診断士 財務・会計 | ファイナンス分野</div>
+  <div class="badge">🤖 4エージェント討議版 | 指標別タブ構成</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">🌟 超入門</button>
+    <button class="tab-btn" data-color="pink" onclick="switchTab(1)">🌱 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">📘 基本事項</button>
+    <button class="tab-btn" data-color="pink" onclick="switchTab(3)">💴 配当利回り</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(4)">🎁 配当性向</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(5)">📊 ゼロ成長DDM</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">💹 定率成長DDM</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(7)">📈 ROE</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(8)">💰 PER/EPS</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(9)">🏦 PBR/BPS</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(10)">💘 DOE</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(11)">🗺 関連マップ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(12)">✍️ 穴埋め</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(13)">🏢 シミュレーション</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(14)">🧩 実例クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(15)">📖 実例で覚える</button>
+  </nav>
+
+  <!-- ==================== TAB 0: 超入門 (GREEN) ==================== -->
+  <div class="tab-panel active theme-green" id="tab0">
+
+    <div class="point-box pb-green">
+      <h4>📖 このタブで学ぶこと</h4>
+      <ul>
+        <li>「株」「配当」「純資産」って何？をイラストで</li>
+        <li>なぜ株価に"理論価格"があるのか</li>
+        <li>最小の計算1問だけで感覚をつかむ</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green">📘 1. 用語を日本語で</h2>
+
+    <table class="tbl-green">
+      <tr><th style="width:28%;">用語</th><th>かみくだくと…</th></tr>
+      <tr><td><strong>株（かぶ）</strong></td><td>会社にお金を出した<strong>引換券</strong>。持っていると株主になれる。</td></tr>
+      <tr><td><strong>株主</strong></td><td>会社の<strong>オーナーの1人</strong>。会社が儲かるとおこづかい（配当）がもらえる。</td></tr>
+      <tr><td><strong>配当（はいとう）</strong></td><td>会社が稼いだ利益のうち、<strong>株主に配るおこづかい</strong>。</td></tr>
+      <tr><td><strong>純資産（じゅんしさん）</strong></td><td>会社の<strong>正味の財産</strong>（資産 − 借金）。解散したら株主に分けるお金。</td></tr>
+      <tr><td><strong>株価</strong></td><td>株1枚の市場での値段。</td></tr>
+      <tr><td><strong>期待収益率</strong></td><td>「この株に投資するなら<strong>最低これくらい儲けたい</strong>」という望みの利回り。</td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例</div>
+        株＝<strong>ラーメン屋の共同オーナー券</strong>。出した人数が10人なら1人10分の1の持ち分。毎年の儲けの一部がおこづかい（配当）。店を畳んだら残った財産（純資産）を山分け。
+      </div>
+    </div>
+
+    <h2 class="section-title st-green">📘 2. なぜ「理論価格」を計算するの？</h2>
+
+    <div class="card card-green">
+      <h4>🤔 悩み</h4>
+      <p>株価はニュースで毎日変わる。<strong>「今の株価、高いの？安いの？」</strong>の物差しがないと買っていいか分からない。</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>💡 答え</h4>
+      <p>「<strong>理論上いくらであるべきか</strong>」を計算すれば、<strong>市場の株価と比べて割安／割高を判断できる</strong>。これが理論価格。</p>
+    </div>
+
+    <div class="diagram" style="background:white; border-radius:var(--radius); padding:1rem; box-shadow:var(--shadow);">
+      <div style="text-align:center; font-weight:700; color:var(--green-dark); margin-bottom:0.6rem;">🔍 理論価格の使い方フロー</div>
+      <div class="flow-row" style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
+        <div class="flow-box fb-blue">計算した<br>理論価格<small>例：200円</small></div>
+        <div class="flow-arrow" style="font-size:1.3rem; margin:0 0.4rem;">⇄</div>
+        <div class="flow-box fb-orange">市場の<br>実際の株価<small>例：150円</small></div>
+        <div class="flow-arrow" style="font-size:1.3rem; margin:0 0.4rem;">→</div>
+        <div class="flow-box fb-green">判断<small>150円＜200円<br>＝割安！</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-green">📘 3. いちばん簡単な例</h2>
+
+    <div class="card card-orange">
+      <h4>🏠 物語</h4>
+      <p>大家さんが毎年<strong>家賃10万円</strong>もらえる家を持っている。あなたは年<strong>5%</strong>の利回りが欲しい。この家はいくらなら買う？</p>
+    </div>
+
+    <div class="formula-box">
+      家の値段 ＝ 毎年もらえるお金 ÷ 欲しい利回り
+      <span class="big">＝ 10万円 ÷ 0.05 ＝ 200万円</span>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">👨‍🏫</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        これが<strong>株式のゼロ成長モデル</strong>とまったく同じ考え方！家を「株」、家賃を「配当」、欲しい利回りを「期待収益率」に置き換えるだけ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-green">📘 4. 3つの基本ルール</h2>
+
+    <div class="diagram" style="background:white; border-radius:var(--radius); padding:1rem; box-shadow:var(--shadow);">
+      <div style="text-align:center; font-weight:700; color:var(--green-dark); margin-bottom:0.6rem;">📚 基本ルール（分類ツリー）</div>
+      <div class="flow-row" style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
+        <div class="flow-box fb-blue">① 集める<small>将来の配当を予想</small></div>
+        <div class="flow-arrow" style="font-size:1.3rem; margin:0 0.3rem;">→</div>
+        <div class="flow-box fb-purple">② 割る<small>欲しい利回りで割る</small></div>
+        <div class="flow-arrow" style="font-size:1.3rem; margin:0 0.3rem;">→</div>
+        <div class="flow-box fb-green">③ 比べる<small>実際の株価と比較</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-green">📘 5. 最小の計算ステップ</h2>
+
+    <div class="card card-green">
+      <h4>🧮 問題：毎年の配当20円、欲しい利回り5%。理論株価は？</h4>
+      <p><strong>Step1</strong>　数字を確認：配当＝20円、利回り＝5%（＝0.05）</p>
+      <p><strong>Step2</strong>　計算する：20 ÷ 0.05</p>
+      <p><strong>Step3</strong>　結果を読む：<strong style="color:var(--green-dark); font-size:1.15rem;">400円</strong> → もし市場で350円なら買い、450円なら待つ</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ひとことまとめ</div>
+        理論価格は<strong>「毎年もらえるお金 ÷ 欲しい利回り」</strong>。これだけ押さえたら入門タブへ！
+      </div>
+    </div>
+
+    <table class="tbl-green">
+      <tr><th>日本語の式</th><th>英略語での書き方</th></tr>
+      <tr><td><strong>株価 ＝ 配当 ÷ 期待収益率</strong></td><td>P ＝ D ÷ r（ゼロ成長モデル）</td></tr>
+      <tr><td>株価 ＝ 来期の配当 ÷（期待収益率 − 成長率）</td><td>P ＝ D₁ ÷（r − g）</td></tr>
+      <tr><td>株価収益率 ＝ 株価 ÷ 1株あたり利益</td><td>PER ＝ 株価 ÷ EPS</td></tr>
+      <tr><td>株価純資産倍率 ＝ 株価 ÷ 1株あたり純資産</td><td>PBR ＝ 株価 ÷ BPS</td></tr>
+    </table>
+
+    <div class="alert-tip">
+      <strong>🎯 超入門のゴール：</strong>「毎年もらえるお金を、欲しい利回りで割れば株の値段になる」——この1行だけ持って入門タブへ進もう！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 1: 入門 (PINK) ==================== -->
+  <div class="tab-panel theme-pink" id="tab1">
+
+    <div class="point-box pb-pink">
+      <h4>📖 このタブで学ぶこと</h4>
+      <ul>
+        <li>株価＝将来配当の現在価値、という発想</li>
+        <li>ゼロ成長／定率成長モデルの式</li>
+        <li>PER・PBR・配当利回りの3指標</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-pink">🌱 まずは1枚のイメージから</h2>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item"><div class="emoji">💰</div><div class="label">株を買う</div></div>
+        <div class="scene-item"><div class="emoji">➡️</div><div class="label"></div></div>
+        <div class="scene-item"><div class="emoji">🎁</div><div class="label">毎年の配当</div></div>
+        <div class="scene-item"><div class="emoji">➕</div><div class="label"></div></div>
+        <div class="scene-item"><div class="emoji">📈</div><div class="label">値上がり益</div></div>
+      </div>
+      <div class="scene-caption">株主がもらえるのは「<strong>配当</strong>」と「<strong>売却益</strong>」。<br>理論価格は<strong>将来もらえる配当を、今の価値にしたもの</strong>。</div>
+    </div>
+
+    <div class="point-box pb-pink">
+      <h4>✨ これだけは！3つの公式</h4>
+      <div class="formula-box">
+        ① 配当がずっと同じ額のとき（ゼロ成長モデル）<br>
+        <span class="big">株価 ＝ 配当 ÷ 期待収益率</span>
+      </div>
+      <div class="formula-box">
+        ② 配当が毎年少しずつ増えるとき（定率成長モデル）<br>
+        <span class="big">株価 ＝ 来期の配当 ÷（期待収益率 − 成長率）</span>
+      </div>
+      <p style="font-size:0.85rem; color:var(--gray-mid); text-align:center;">※「期待収益率」＝自分が求める利回り／「成長率」＝配当が毎年増える割合</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">直感で覚える</div>
+        配当が毎年10円、必要な利回りが5%なら → 10 ÷ 0.05 ＝ <strong>200円</strong>。<br>
+        「<strong>分子は配当、分母は利回り</strong>」だけ覚えればOK。
+      </div>
+    </div>
+
+    <div class="card card-pink">
+      <h4>🍣 実例：回転寿司の1皿</h4>
+      <p>永遠に1皿100円をもらえるクーポンがあるとする。年5%の利回りで考えたら、クーポンの価値は100÷0.05＝<strong>2,000円</strong>。これがゼロ成長モデル！</p>
+    </div>
+
+    <h2 class="section-title st-pink">🏷 株価指標は3つだけ</h2>
+
+    <table class="tbl-pink">
+      <tr><th style="width:22%;">名前</th><th>意味（ひとこと）</th><th style="width:28%;">式</th></tr>
+      <tr><td><strong>株価収益率</strong><br><small>（PER）</small></td><td>利益の何倍で買われているか（<strong>割高・割安</strong>の目安）</td><td>株価 ÷ 1株あたり利益</td></tr>
+      <tr><td><strong>株価純資産倍率</strong><br><small>（PBR）</small></td><td>純資産の何倍で買われているか（<strong>1倍</strong>が解散価値の基準）</td><td>株価 ÷ 1株あたり純資産</td></tr>
+      <tr><td><strong>配当利回り</strong></td><td>株価に対して配当が<strong>何％</strong>もらえるか</td><td>1株あたり配当 ÷ 株価</td></tr>
+    </table>
+
+    <div class="mnemonic">
+      <div class="big">PER＝利益 / PBR＝純資産</div>
+      <div class="desc"><strong>E</strong>＝Earnings（利益）、<strong>B</strong>＝Book value（純資産）。<br>真ん中の文字でどっちが分母か決まる！</div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近に言い換え</div>
+        PERは<strong>「何年分の利益で元が取れるか」</strong>。PER15倍＝15年分。<br>
+        PBRは<strong>「会社を畳んだら元が取れるか」</strong>。1倍未満は解散価値以下。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え（PER）</div>
+        PER15倍＝「<strong>コンビニのバイト代15年分で開業資金が回収できる</strong>」と同じ感覚。短いほどオトク。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">試験の引っかけ</div>
+        PBRは「<strong>株価÷1株純資産</strong>」。分母分子を入れ替えた選択肢が出たら即アウト！
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-pink">
+        <h4>📊 比較図：PER vs PBR</h4>
+        <p><strong>PER</strong> = 株価 ÷ <span style="color:var(--pink-main);">利益</span>（E）<br>
+        <strong>PBR</strong> = 株価 ÷ <span style="color:var(--blue-main);">純資産</span>（B）<br>
+        <small>真ん中の文字が分母を決める！</small></p>
+      </div>
+      <div class="card card-green">
+        <h4>🎯 覚え方</h4>
+        <p>「<strong>E</strong>arnings＝利益 → PER」<br>「<strong>B</strong>ook value＝簿価 → PBR」<br><small>英単語1文字で一発</small></p>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>入門タブのゴール</strong>：<br>
+      ① 株価＝将来の配当の合計（現在価値）<br>
+      ② PER・PBR・配当利回りの<strong>分母・分子</strong>を言える<br>
+      この2つだけ。あとは基本タブへ！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 1: 基本事項 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab2">
+
+    <div class="point-box pb-blue">
+      <h4>📖 このタブで学ぶこと</h4>
+      <ul>
+        <li>最初に<strong>覚えるべき式7つ</strong>を一覧で見る</li>
+        <li>指標ごとに優しい解説（目次クリックで各指標へ）</li>
+        <li>最後にビジュアル関連マップで全体をつなぐ</li>
+      </ul>
+    </div>
+
+    <!-- ========== まずはこれ！7つの式 ========== -->
+    <h2 class="section-title st-blue">⭐ まずは「これ！」覚えるべき7つの式</h2>
+
+    <div class="card card-orange" style="background:linear-gradient(135deg, #fff8e1, #fff); border:3px solid var(--orange-main);">
+      <h4 style="color:var(--orange-dark); text-align:center; font-size:1.05rem;">📌 今回覚えるべきはこの7つだけ！</h4>
+      <table class="tbl-blue" style="margin-top:0.6rem;">
+        <tr><th style="width:36%;">指標（名前）</th><th>式</th></tr>
+        <tr><td><strong>① 理論株価</strong><br><small>（定率成長モデル）</small></td><td>配当額 ÷（還元率（資本コスト） − 成長率）<br><small style="color:var(--gray-mid);">1株なら ÷ 発行済株式数</small></td></tr>
+        <tr><td><strong>② 配当利回り</strong></td><td>1株あたり配当 ÷ 株価</td></tr>
+        <tr><td><strong>③ 配当性向</strong></td><td>配当総額 ÷ 当期純利益</td></tr>
+        <tr><td><strong>④ ROE</strong><br><small>（自己資本利益率）</small></td><td>当期純利益 ÷ 自己資本</td></tr>
+        <tr><td><strong>⑤ PER（株価収益率）</strong><br><small>／EPS（1株利益）</small></td><td>株価 ÷ EPS ／ EPS＝当期純利益 ÷ 発行済株式数</td></tr>
+        <tr><td><strong>⑥ PBR（株価純資産倍率）</strong><br><small>／BPS（1株純資産）</small></td><td>株価 ÷ BPS ／ BPS＝純資産 ÷ 発行済株式数</td></tr>
+        <tr><td><strong>⑦ DOE（自己資本配当率）</strong></td><td>ROE × 配当性向</td></tr>
+      </table>
+    </div>
+
+    <!-- 指標別ミニタブ（目次） -->
+    <div class="card card-blue">
+      <h4>📑 目次：指標ごとの優しい解説へジャンプ</h4>
+      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.4rem;">
+        <a href="#sec-riron" style="background:var(--orange-main); color:white; padding:0.3rem 0.7rem; border-radius:20px; text-decoration:none; font-size:0.82rem; font-weight:700;">① 理論株価</a>
+        <a href="#sec-rimawari" style="background:var(--pink-main); color:white; padding:0.3rem 0.7rem; border-radius:20px; text-decoration:none; font-size:0.82rem; font-weight:700;">② 配当利回り</a>
+        <a href="#sec-seikou" style="background:var(--red-main); color:white; padding:0.3rem 0.7rem; border-radius:20px; text-decoration:none; font-size:0.82rem; font-weight:700;">③ 配当性向</a>
+        <a href="#sec-roe" style="background:var(--green-main); color:white; padding:0.3rem 0.7rem; border-radius:20px; text-decoration:none; font-size:0.82rem; font-weight:700;">④ ROE</a>
+        <a href="#sec-per" style="background:var(--blue-main); color:white; padding:0.3rem 0.7rem; border-radius:20px; text-decoration:none; font-size:0.82rem; font-weight:700;">⑤ PER/EPS</a>
+        <a href="#sec-pbr" style="background:var(--purple-main); color:white; padding:0.3rem 0.7rem; border-radius:20px; text-decoration:none; font-size:0.82rem; font-weight:700;">⑥ PBR/BPS</a>
+        <a href="#sec-doe" style="background:#d35400; color:white; padding:0.3rem 0.7rem; border-radius:20px; text-decoration:none; font-size:0.82rem; font-weight:700;">⑦ DOE</a>
+        <a href="#sec-map" style="background:#2c3e50; color:white; padding:0.3rem 0.7rem; border-radius:20px; text-decoration:none; font-size:0.82rem; font-weight:700;">🗺 関連マップ</a>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      👆 各指標の詳細・例題・穴埋めクイズは<strong>上部タブ</strong>から選んでください！
+    </div>
+
+  </div><!-- /tab2 -->
+
+  <!-- ==================== TAB 3: 配当利回り ==================== -->
+  <div class="tab-panel theme-pink" id="tab3">
+
+    <h2 class="section-title st-pink" id="sec-rimawari">💴 配当利回り ─ 銀行預金の利子率のイメージ</h2>
+
+    <div class="beginner-box">
+      <h4>🔰 超初心者向け：まず1分でわかる！</h4>
+      <div class="b-row"><span class="b-label">一言で</span><span class="b-text"><strong>株を買ったお金に対して、年いくら配当がもらえるかの％</strong>です。</span></div>
+      <div class="b-row"><span class="b-label">例えば</span><span class="b-text">1,000円の株で年30円の配当 → 30÷1,000＝<strong>3%</strong>。銀行の利子と同じ感覚！</span></div>
+      <div class="b-row"><span class="b-label">何が嬉しい</span><span class="b-text">高いほど「配当がいっぱいもらえておトク」。不労所得狙いの投資家が一番見る数字。</span></div>
+      <div class="b-row"><span class="b-label">言葉の意味</span><span class="b-text"><strong>配当</strong>＝会社の利益から株主に分配されるお金（おこづかい）／<strong>株価</strong>＝株1枚の値段。</span></div>
+    </div>
+
+    <div class="formula-box">配当利回り ＝ 1株あたり配当 ÷ 株価 × 100（％）</div>
+
+    <div class="card card-pink">
+      <h4>📖 定義</h4>
+      <p>投資家から見た<strong>「買った株価に対して、年間どれだけ配当がもらえるか」</strong>の利回り。預金の利子率と同じ発想で、高いほど配当収入の効率が良い。</p>
+    </div>
+
+    <div class="card card-pink">
+      <h4>🍰 やさしいイメージ</h4>
+      <p>100万円を銀行に預けて年2万円の利子がつくと「利回り2%」と呼びますね。株も同じ。<strong>株価1,000円の株が年30円の配当をくれる</strong>なら、利回り＝30÷1,000＝<strong>3%</strong>。預金の利子感覚と同じです。</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>🧮 例題</h4>
+      <p>株価2,500円、1株あたり配当75円 → 配当利回り＝75÷2,500＝<strong>3.0%</strong></p>
+      <p style="font-size:0.85rem; color:var(--gray-mid);">💡 日本株の平均配当利回りは約2〜3%。高配当株の代表は銀行・商社・通信など。</p>
+    </div>
+
+    <div class="critical-box">
+      <h4>📊 判定ルールが他の指標と真逆！</h4>
+      <div class="big-point">
+        <span class="huge-text" style="color:#b71c1c;">配当利回りだけ</span>「高い＝<span class="hl-green">割安</span>」！
+      </div>
+      <table style="width:100%; margin:0.6rem 0; font-size:0.95rem;">
+        <tr style="background:#fff9c4;">
+          <th style="padding:0.5rem; border:1px solid #f57c00;">指標</th>
+          <th style="padding:0.5rem; border:1px solid #f57c00;">高い</th>
+          <th style="padding:0.5rem; border:1px solid #f57c00;">低い</th>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem; border:1px solid #e0e0e0; font-weight:700;">PER</td>
+          <td style="padding:0.5rem; border:1px solid #e0e0e0; background:#ffcdd2; text-align:center;"><span class="hl-red">割高</span></td>
+          <td style="padding:0.5rem; border:1px solid #e0e0e0; background:#c8e6c9; text-align:center;"><span class="hl-green">割安</span></td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem; border:1px solid #e0e0e0; font-weight:700;">PBR</td>
+          <td style="padding:0.5rem; border:1px solid #e0e0e0; background:#ffcdd2; text-align:center;"><span class="hl-red">割高</span></td>
+          <td style="padding:0.5rem; border:1px solid #e0e0e0; background:#c8e6c9; text-align:center;"><span class="hl-green">割安</span></td>
+        </tr>
+        <tr style="background:#fffde7;">
+          <td style="padding:0.5rem; border:2px solid #f57c00; font-weight:800; color:#e65100;">配当利回り</td>
+          <td style="padding:0.5rem; border:2px solid #f57c00; background:#c8e6c9; text-align:center;"><span class="hl-green">割安</span>🎁</td>
+          <td style="padding:0.5rem; border:2px solid #f57c00; background:#ffcdd2; text-align:center;"><span class="hl-red">割高</span></td>
+        </tr>
+      </table>
+      <p class="big-text" style="background:#fff3e0; padding:0.6rem; border-radius:6px; border-left:4px solid #f57c00; margin-top:0.5rem;">
+        💡 <strong>なぜ逆？</strong>分子が「もらえる配当」だから、大きいほど<span class="hl-green">トク＝割安</span>！
+      </p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方</div>
+        「<strong>利回り＝配当 ÷ 株価</strong>」。配当が分子（上）、株価が分母（下）。<strong>％表示</strong>だからパーセントの計算と同じ発想。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">罠</div>
+        配当利回りが高すぎる株は、<strong>業績悪化で株価が下がっているだけ</strong>かもしれない。「なぜ利回りが高いのか」を必ず確認！
+      </div>
+    </div>
+
+    <!-- 穴埋めクイズ -->
+    <div class="fill-card" style="margin-top:1.2rem;">
+      <div class="fill-header h-pink">✍️ 配当利回り 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① 配当利回り ＝ <span class="fill-blank">1株あたり配当</span> ÷ <span class="fill-blank">株価</span> × 100</div>
+        <div class="fill-group">② 株価1,000円、1株配当30円 → 利回り＝<span class="fill-blank">3.0%</span></div>
+        <div class="fill-group">③ 配当利回りは分子が<span class="fill-blank">配当</span>、分母が<span class="fill-blank">株価</span>。</div>
+        <div class="fill-group">④ PBRやPERは「高い＝割高」だが、配当利回りは「高い＝<span class="fill-blank">割安</span>」で逆になる。</div>
+        <div class="fill-group">⑤ 利回りが極端に高い株は、<span class="fill-blank">業績悪化</span>で株価が下がっている可能性あり。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab3 配当利回り -->
+
+  <!-- ==================== TAB 4: 配当性向 ==================== -->
+  <div class="tab-panel theme-red" id="tab4">
+
+    <h2 class="section-title st-red" id="sec-seikou">🎁 配当性向 ─ 利益の何％を株主に配るか</h2>
+
+    <div class="beginner-box">
+      <h4>🔰 超初心者向け：まず1分でわかる！</h4>
+      <div class="b-row"><span class="b-label">一言で</span><span class="b-text">会社が稼いだ利益のうち<strong>何％を株主に配当として渡したか</strong>の割合。</span></div>
+      <div class="b-row"><span class="b-label">例えば</span><span class="b-text">お小遣い帳で「月10万稼いで3万を家族に渡した」→ 配当性向30%。会社も同じ！</span></div>
+      <div class="b-row"><span class="b-label">何が嬉しい</span><span class="b-text">会社の<strong>株主への優しさ</strong>が分かる。残り70%は会社が貯金（内部留保）や投資に回す。</span></div>
+      <div class="b-row"><span class="b-label">言葉の意味</span><span class="b-text"><strong>当期純利益</strong>＝1年間で会社が稼いだ最終的な利益（いわゆる「手取り」）。</span></div>
+    </div>
+
+    <div class="formula-box">
+      配当性向 ＝ 配当総額 ÷ 当期純利益 × 100（％）<br>
+      <span style="font-size:0.9rem; color:#bbb;">＝ 1株あたり配当 ÷ EPS でも計算可</span>
+    </div>
+
+    <div class="card card-red">
+      <h4>📖 定義</h4>
+      <p>会社が稼いだ利益のうち、<strong>どれだけの割合を株主への配当に回したか</strong>の比率。会社の「株主還元」姿勢を示す。</p>
+    </div>
+
+    <div class="card card-red">
+      <h4>🍱 やさしいイメージ</h4>
+      <p>お母さんが10万円稼いで3万円をおこづかいとして子どもに渡すなら「配当性向30%」。会社も同じで、<strong>利益のうち株主に渡す割合</strong>が配当性向。高いほど株主に優しい、低いほど内部留保（貯金）が厚い。</p>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-orange" style="margin:0;"><h4>⬆️ 高配当性向</h4><p>利益の多くを配当へ。株主還元重視。成熟企業（花王、通信、商社など）。再投資先が少ない分、株主に還元。</p></div>
+      <div class="card card-blue" style="margin:0;"><h4>⬇️ 低配当性向</h4><p>利益を内部留保。成長投資重視。急成長企業（キーエンスなど）。再投資でさらに利益を伸ばす戦略。</p></div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🧮 例題</h4>
+      <p>当期純利益5億円、配当総額1.5億円 → 配当性向＝1.5÷5＝<strong>30%</strong></p>
+      <p style="font-size:0.85rem; color:var(--gray-mid);">💡 日本企業の平均配当性向は約30〜40%。米国企業は自社株買い重視で配当性向は低め。</p>
+    </div>
+
+    <div class="point-box pb-purple">
+      <h4>🔗 サステナブル成長率との関係</h4>
+      <div class="formula-box" style="margin:0.4rem 0;">g（成長率）＝ ROE ×（1 − 配当性向）</div>
+      <p>配当性向が<strong>低い</strong>ほど内部留保率（1−配当性向）が高く、再投資で成長率が上がる。配当性向と成長率は<strong>トレードオフ</strong>！</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">配当利回りとの違い</div>
+        <strong>分母が違う</strong>！配当利回り＝配当÷<strong>株価</strong>、配当性向＝配当÷<strong>利益</strong>。引っかけ頻出！
+      </div>
+    </div>
+
+    <!-- 穴埋めクイズ -->
+    <div class="fill-card" style="margin-top:1.2rem;">
+      <div class="fill-header h-red">✍️ 配当性向 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① 配当性向 ＝ 配当総額 ÷ <span class="fill-blank">当期純利益</span> × 100</div>
+        <div class="fill-group">② 利益5億、配当1.5億 → 配当性向＝<span class="fill-blank">30%</span></div>
+        <div class="fill-group">③ 高配当性向は<span class="fill-blank">成熟企業</span>、低配当性向は<span class="fill-blank">成長企業</span>に多い。</div>
+        <div class="fill-group">④ サステナブル成長率 g ＝ ROE ×（1 −<span class="fill-blank">配当性向</span>）</div>
+        <div class="fill-group">⑤ 配当利回りと配当性向の違い：分母が<span class="fill-blank">株価</span>か<span class="fill-blank">利益</span>か。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab4 配当性向 -->
+
+  <!-- ==================== TAB 5: ゼロ成長DDM ==================== -->
+  <div class="tab-panel theme-blue" id="tab5">
+
+    <h2 class="section-title st-blue">📊 配当割引モデル（DDM）／ ゼロ成長モデル</h2>
+
+    <div class="beginner-box">
+      <h4>🔰 超初心者向け：まず1分でわかる！</h4>
+      <div class="b-row"><span class="b-label">一言で</span><span class="b-text">「株は買う価値がいくら？」を<strong>将来もらえる配当</strong>から逆算して求める考え方。</span></div>
+      <div class="b-row"><span class="b-label">ゼロ成長とは</span><span class="b-text">配当が<strong>毎年ずっと同じ金額</strong>と仮定した場合（成長率0%）の、一番シンプルな式。</span></div>
+      <div class="b-row"><span class="b-label">例えば</span><span class="b-text">「毎年10,000円の利子がもらえる永久定期預金。年5%利回りが欲しいなら、いくらまで払う？」→ 200,000円。株も同じ発想！</span></div>
+      <div class="b-row"><span class="b-label">言葉の意味</span><span class="b-text"><strong>期待収益率</strong>＝投資家が「このリスクなら最低これくらい欲しい」と要求する利回り（％）。</span></div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>📚 用語ミニ辞書（全部同じ意味！）</strong><br>
+      <strong>期待収益率 ＝ 資本コスト ＝ 還元率 ＝ 要求利益率 ＝ 割引率 ＝ r</strong><br>
+      <small>教材や問題文によって呼び方が違うだけ。「投資家が要求する利回り」＝「会社側から見たら調達コスト」なので同じ数字です。</small>
+    </div>
+
+    <div class="formula-box">
+      理論株価 ＝ 配当 ÷ 期待収益率<br>
+      <span style="font-size:0.85rem; color:#ffecb3;">（文字式：P<sub>0</sub> ＝ D ÷ r　※P=株価、D=配当、r=期待収益率）</span>
+    </div>
+
+    <div class="card card-blue">
+      <h4>📖 定義</h4>
+      <p><strong>配当割引モデル（DDM：Dividend Discount Model）</strong>は、株の本来の価値＝<strong>将来もらえる配当すべてを現在価値に割り引いて合計した金額</strong>という考え方。<br>
+      そのうち、<strong>毎年の配当額が変わらない（成長率0%）</strong>と仮定したのが<strong>ゼロ成長モデル</strong>。式は一番シンプル。</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>🏦 やさしいイメージ（永久定期預金）</h4>
+      <p>毎年ずっと<strong>同じ金額の利子がもらえる「永久定期預金」</strong>をイメージ。年10,000円もらえて、あなたの「望む利回り5%」なら、いくらまで出せる？<br>
+      → 10,000 ÷ 0.05 ＝ <strong>200,000円</strong>。株も同じで、毎年配当10円・要求利回り5%なら理論株価＝200円。</p>
+    </div>
+
+    <div class="point-box pb-blue">
+      <h4>📐 導出の背景（無限等比数列の和）</h4>
+      <p>毎年<strong>配当</strong>が永久に続くとき、その現在価値は各年の配当を割引率で割引いて合計したもの：</p>
+      <p style="text-align:center; font-family:monospace; font-size:0.9rem;">理論株価 ＝ 配当/(1+期待収益率) + 配当/(1+期待収益率)² + 配当/(1+期待収益率)³ + …</p>
+      <p>これは初項 配当/(1+期待収益率)、公比 1/(1+期待収益率)の無限等比数列。和の公式を適用すると…<br>
+      → <strong>理論株価 ＝ 配当 ÷ 期待収益率</strong>（文字式：P<sub>0</sub> ＝ D ÷ r）</p>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🧮 例題①</h4>
+      <p>毎年20円の配当が永久に続く。期待収益率＝8%のとき、理論株価は？<br>
+      → 理論株価 ＝ 配当 ÷ 期待収益率 ＝ 20 ÷ 0.08 ＝ <strong>250円</strong></p>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🧮 例題②</h4>
+      <p>配当50円・期待収益率10% → 理論株価 ＝ 50 ÷ 0.1 ＝ <strong>500円</strong><br>
+      配当50円・期待収益率5% → 理論株価 ＝ 50 ÷ 0.05 ＝ <strong>1,000円</strong><br>
+      <span style="font-size:0.85rem; color:var(--gray-mid);">💡 期待収益率（＝投資家の要求利回り）が低いほど、同じ配当でも株価は高くなる。低金利＝株高の論理！</span></p>
+    </div>
+
+    <div class="point-box pb-red">
+      <h4>⚠️ 3つのDDMモデルの比較 ─ 何が違うの？</h4>
+      <p style="font-size:0.92rem; margin-bottom:0.6rem;">全部「株の適正価格を計算する式」ですが、<strong>「保有期間」と「配当の増え方」の前提</strong>が違います。同じ配当30円の会社でも、どのモデルを使うかで答えが変わります。</p>
+
+      <div class="bubble-wrap">
+        <div class="bubble-avatar avatar-teacher">👨‍🏫</div>
+        <div class="bubble-body b-orange">
+          <div class="bubble-name">先生の一言</div>
+          問題文の<strong>「いつまで持つか」「配当がどう変わるか」</strong>を読んで、3つから選ぶ！式を覚えるより<strong>場面分け</strong>が大事。
+        </div>
+      </div>
+
+      <!-- モデル1 -->
+      <div style="background:white; border-radius:10px; padding:0.9rem; margin:0.7rem 0; border-left:5px solid var(--blue-main);">
+        <div style="font-weight:800; color:var(--blue-dark); margin-bottom:0.4rem;">① 1期間モデル ─ 「1年だけ持って売る」人向け</div>
+        <div style="background:#f0f7ff; padding:0.6rem; border-radius:6px; margin:0.4rem 0; font-size:0.88rem; line-height:2;">
+          <strong>📅 時間軸：</strong><br>
+          <span style="color:var(--blue-main);">今（期首）</span> ───1年後に受け取る金額───▶ <span style="color:var(--green-dark);">期末</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配当30円 ＋ 売却価格630円 ＝ 660円
+        </div>
+        <p style="font-size:0.88rem;"><strong>シーン：</strong>「この株を1年だけ持って、年末に売るつもり。今いくらで買うのがフェア？」</p>
+        <p style="font-size:0.88rem;"><strong>式：</strong>（配当＋売却価格）÷（1＋期待収益率）</p>
+        <p style="font-size:0.88rem;"><strong>計算例：</strong>（30＋630）÷（1＋0.05）＝ 660÷1.05 ＝ <strong>約628円</strong></p>
+      </div>
+
+      <!-- モデル2 -->
+      <div style="background:white; border-radius:10px; padding:0.9rem; margin:0.7rem 0; border-left:5px solid #1e8449;">
+        <div style="font-weight:800; color:#1e8449; margin-bottom:0.4rem;">② ゼロ成長モデル ─ 「ずっと持つ＆配当が毎年同じ」人向け</div>
+        <div style="background:#eafaf1; padding:0.6rem; border-radius:6px; margin:0.4rem 0; font-size:0.88rem; line-height:2;">
+          <strong>📅 時間軸（ずっと保有）：</strong><br>
+          年1: <strong>30円</strong>　年2: <strong>30円</strong>　年3: <strong>30円</strong>　…　年∞: <strong>30円</strong>（永久に同じ）
+        </div>
+        <p style="font-size:0.88rem;"><strong>シーン：</strong>「成熟した会社で、配当額は毎年ほぼ同じ。永久に持ち続けるならいくらが妥当？」</p>
+        <p style="font-size:0.88rem;"><strong>式：</strong>配当 ÷ 期待収益率</p>
+        <p style="font-size:0.88rem;"><strong>計算例：</strong>30 ÷ 0.05 ＝ <strong>600円</strong></p>
+      </div>
+
+      <!-- モデル3 -->
+      <div style="background:white; border-radius:10px; padding:0.9rem; margin:0.7rem 0; border-left:5px solid var(--orange-main);">
+        <div style="font-weight:800; color:var(--orange-dark); margin-bottom:0.4rem;">③ 定率成長モデル ─ 「ずっと持つ＆配当が毎年○%成長」人向け</div>
+        <div style="background:#fff8e1; padding:0.6rem; border-radius:6px; margin:0.4rem 0; font-size:0.88rem; line-height:2;">
+          <strong>📅 時間軸（ずっと保有＋毎年3%成長）：</strong><br>
+          年1: <strong>30円</strong>　年2: <strong>30.9円</strong>　年3: <strong>31.8円</strong>　…　年∞: じわじわ増える
+        </div>
+        <p style="font-size:0.88rem;"><strong>シーン：</strong>「成長企業で毎年配当が増えていく。永久保有ならいくらが妥当？」</p>
+        <p style="font-size:0.88rem;"><strong>式：</strong>次期配当 ÷（期待収益率 − 成長率）</p>
+        <p style="font-size:0.88rem;"><strong>計算例：</strong>30 ÷（0.05 − 0.03）＝ 30÷0.02 ＝ <strong>1,500円</strong>（成長期待があるぶん、ゼロ成長より高く評価される）</p>
+      </div>
+
+      <!-- 横並び比較 -->
+      <div style="background:#fff3e0; border:2px solid var(--orange-main); border-radius:8px; padding:0.8rem; margin-top:0.8rem;">
+        <div style="font-weight:800; text-align:center; color:var(--orange-dark); margin-bottom:0.5rem;">📊 同じ配当30円・同じ期待収益率5%でも、答えが全然違う！</div>
+        <table class="tbl-blue" style="margin:0; font-size:0.88rem;">
+          <tr><th>モデル</th><th>前提</th><th>理論株価</th></tr>
+          <tr><td>① 1期間</td><td>1年で売却（配当30＋売却630）</td><td style="text-align:right; font-weight:700;">約628円</td></tr>
+          <tr><td>② ゼロ成長</td><td>永久に配当30円</td><td style="text-align:right; font-weight:700;">600円</td></tr>
+          <tr><td>③ 定率成長</td><td>永久保有＆毎年3%成長</td><td style="text-align:right; font-weight:700; color:var(--red-dark);">1,500円</td></tr>
+        </table>
+        <p style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.4rem;">💡 <strong>成長期待が大きいほど、理論株価は高くなる</strong>。これが「成長株は高PERでも正当化される」理由！</p>
+      </div>
+
+      <!-- 選び方フローチャート -->
+      <div style="background:white; border:2px dashed var(--purple-main); border-radius:8px; padding:0.8rem; margin-top:0.8rem;">
+        <div style="font-weight:800; text-align:center; color:var(--purple-dark); margin-bottom:0.5rem;">🔀 問題文でどう見分ける？</div>
+        <div style="font-size:0.88rem; line-height:1.9;">
+          <strong>Q1. 問題文に「1年後に売る／売却予定価額」とある？</strong><br>
+          　└ はい → <strong style="color:var(--blue-dark);">① 1期間モデル</strong><br>
+          <strong>Q2. 「成長率 g」の記載がある？</strong><br>
+          　└ ある（g＞0） → <strong style="color:var(--orange-dark);">③ 定率成長モデル</strong><br>
+          　└ ない or g＝0 → <strong style="color:#1e8449;">② ゼロ成長モデル</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方</div>
+        ゼロ成長＝「<strong>成長率＝0</strong>」を定率成長モデル（次期配当÷(期待収益率−成長率)）に代入したもの。成長率が0なら次期配当＝当期配当になるので、式は <strong>配当 ÷ 期待収益率</strong>。<br>
+        <small style="color:var(--gray-mid);">※文字式：g＝0を D<sub>1</sub>÷(r−g) に代入 → D÷r</small>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">注意</div>
+        「ゼロ成長」でも分母は<strong>「期待収益率 − 0 ＝ 期待収益率」</strong>であり、<strong>「1＋期待収益率」ではない</strong>！1期間モデル（分母が1＋期待収益率）と混同しないように。
+      </div>
+    </div>
+
+    <!-- 穴埋めクイズ：ゼロ成長DDM -->
+    <div class="fill-card" style="margin-top:1.2rem;">
+      <div class="fill-header h-blue">✍️ ゼロ成長DDM 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① ゼロ成長モデル：理論株価 ＝ <span class="fill-blank">配当</span> ÷ <span class="fill-blank">期待収益率</span>　<small>（文字式：P<sub>0</sub>＝D÷r）</small></div>
+        <div class="fill-group">② 配当20円・期待収益率8% → 理論株価＝<span class="fill-blank">250円</span></div>
+        <div class="fill-group">③ 配当10円・期待収益率5% → 理論株価＝<span class="fill-blank">200円</span></div>
+        <div class="fill-group">④ ゼロ成長モデルは、定率成長モデルで成長率＝<span class="fill-blank">0</span>としたときの特殊ケース。</div>
+        <div class="fill-group">⑤ 分母は（期待収益率−0）＝<span class="fill-blank">期待収益率</span>。1期間モデルの（1＋期待収益率）とは違う。</div>
+        <div class="fill-group">⑥ 期待収益率（投資家の要求利回り）が<span class="fill-blank">低い</span>ほど、同じ配当でも理論株価は高くなる。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab5 ゼロ成長DDM -->
+
+  <!-- ==================== TAB 6: 定率成長DDM ==================== -->
+  <div class="tab-panel theme-orange" id="tab6">
+
+    <h2 class="section-title st-orange" id="sec-riron">💹 理論株価（定率成長配当モデル）</h2>
+
+    <div class="beginner-box">
+      <h4>🔰 超初心者向け：まず1分でわかる！</h4>
+      <div class="b-row"><span class="b-label">一言で</span><span class="b-text">配当が<strong>毎年少しずつ増えていく</strong>前提で、株の適正価格を計算するモデル。</span></div>
+      <div class="b-row"><span class="b-label">別名</span><span class="b-text"><strong>ゴードンモデル</strong>ともいう。試験で最頻出！</span></div>
+      <div class="b-row"><span class="b-label">例えば</span><span class="b-text">毎年3%ずつ家賃を上げられる賃貸アパート。値上げ幅を考慮した適正価格を出すイメージ。</span></div>
+      <div class="b-row"><span class="b-label">3大罠</span><span class="b-text">①分子は必ず<strong>次期の配当</strong>（現在の配当ではない）／②期待収益率＞成長率でないと成立しない／③「総額 vs 1株」で答えが変わる。</span></div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>📚 用語ミニ辞書（全部同じ意味！）</strong><br>
+      <strong>還元率 ＝ 資本コスト ＝ 期待収益率 ＝ 要求利益率 ＝ 割引率 ＝ r</strong><br>
+      <small>本タブでは主に「還元率」と表記。問題文で「期待収益率」や「資本コスト」と書かれていても、すべて同じものと考えてOK！</small>
+    </div>
+
+    <div class="card card-pink">
+      <h4>📖 このモデルは何？</h4>
+      <p>株価が本来いくらであるべきか（＝<strong>理論株価</strong>）を、「<strong>将来もらえる配当金</strong>」から逆算して求めるためのモデルです。</p>
+    </div>
+
+    <div class="formula-box">
+      📌 基本の計算式<br>
+      <span class="big">理論株価 ＝ 1年後（次期）の配当額 ÷（還元率（資本コスト） − 成長率）</span>
+      <span style="font-size:0.85rem; color:#ffecb3; display:block; margin-top:0.4rem;">（文字式：P<sub>0</sub> ＝ D<sub>1</sub> ÷（r − g）　※D<sub>1</sub>=次期配当、r=還元率（＝資本コスト／期待収益率）、g=成長率）</span>
+    </div>
+
+    <table class="tbl-pink">
+      <tr><th style="width:30%;">用語</th><th>意味</th></tr>
+      <tr><td><strong>還元率</strong><br>（＝資本コスト／期待収益率）</td><td>投資家が「最低限これくらいの利回りは欲しい！」と期待する割合</td></tr>
+      <tr><td><strong>成長率</strong></td><td>会社の業績が伸びて、配当が毎年増えていく割合</td></tr>
+    </table>
+
+    <div class="alert-tip">
+      <strong>💡 企業全体の価値 or 1株あたりの価値 ?</strong><br>
+      上の式は、<strong>分子に何を入れるか</strong>で出てくる答えが変わる：<br>
+      ・1株あたりの配当を入れる → <strong>1株の理論株価</strong><br>
+      ・企業全体の配当総額を入れる → <strong>時価総額 → ÷ 発行済株式数で1株へ</strong>
+    </div>
+
+    <div class="card card-orange">
+      <h4>🏠 やさしいイメージ（賃貸アパートのオーナーになろう！）</h4>
+      <p>毎年少しずつ家賃を値上げできる人気の賃貸アパートをイメージしてください。</p>
+      <ul>
+        <li><strong>家賃（配当）</strong>：1年後に入ってくる予定の家賃</li>
+        <li><strong>値上げ幅（成長率）</strong>：「毎年3%ずつ家賃を上げられそうだな」</li>
+        <li><strong>欲しい利回り（還元率（資本コスト））</strong>：「投資するなら年7%は欲しいな」</li>
+      </ul>
+      <p style="margin-top:0.4rem;">このアパートを買う適正価格 ＝ <strong>家賃 ÷（0.07 − 0.03）</strong>。株も同じで、「毎年配当が増える魔法の泉」にいくらまで出せるかを計算している！</p>
+    </div>
+
+    <h3 style="margin-top:1.2rem; font-size:1.05rem; color:var(--red-dark); border-left:4px solid var(--red-main); padding-left:0.6rem;">⚠️ 本試験で狙われる！2つの「ひっかけ」ポイント</h3>
+
+    <div class="critical-box">
+      <h4>① 「現在の配当」か「次期の配当」か？</h4>
+      <div class="big-point">
+        計算式の分子には、必ず<br>
+        <span class="huge-text" style="color:#b71c1c;">「1年後（次期）の配当」</span><br>
+        を使わなければなりません！
+      </div>
+      <p class="big-text" style="text-align:center; margin:0.6rem 0;">
+        👀 問題文の<span class="hl-red">「現在」「当期」「D<sub>0</sub>」</span>という言葉に要注意！
+      </p>
+      <p style="font-size:0.88rem; color:var(--gray-mid); text-align:center;">※文字式では、現在の配当＝D<sub>0</sub>、次期の配当＝D<sub>1</sub> と表記。</p>
+
+      <div class="two-col" style="margin-top:0.8rem;">
+        <div style="background:linear-gradient(135deg, #c8e6c9, #fff); border:3px solid #2e7d32; border-radius:10px; padding:0.9rem;">
+          <div style="font-size:1.05rem; font-weight:800; color:#1b5e20; margin-bottom:0.4rem;">✅ そのまま使える</div>
+          <div style="font-size:0.92rem; margin-bottom:0.3rem;">問題文：<span class="hl-green">「次期の配当は60円」</span></div>
+          <div style="font-size:1.05rem; font-weight:800; color:#1b5e20;">→ そのまま 60円 を分子へ</div>
+        </div>
+        <div style="background:linear-gradient(135deg, #ffcdd2, #fff); border:3px solid #c62828; border-radius:10px; padding:0.9rem;">
+          <div style="font-size:1.05rem; font-weight:800; color:#b71c1c; margin-bottom:0.4rem;">⚠️ 変換が必須！</div>
+          <div style="font-size:0.92rem; margin-bottom:0.3rem;">問題文：<span class="hl-red">「現在の配当は60円」</span></div>
+          <div style="font-size:1.05rem; font-weight:800; color:#b71c1c;">→ 60×(1＋g) ＝ <span class="huge-text">63円</span></div>
+          <div style="font-size:0.85rem; color:#666; margin-top:0.2rem;">成長率5%を掛けて次期に直す</div>
+        </div>
+      </div>
+
+      <div style="background:#fff3e0; border:2px dashed #e65100; border-radius:8px; padding:0.7rem; margin-top:0.8rem; text-align:center;">
+        <div class="big-text" style="color:#e65100;">🎯 合言葉：「現在を見たら<span class="hl-yellow">×(1＋g)</span>で次期に直す」</div>
+      </div>
+    </div>
+
+    <div class="critical-box">
+      <h4>② 還元率（資本コスト）＞ 成長率 でないと成立しない！</h4>
+      <div class="big-point yellow">
+        <span class="huge-text" style="color:#b71c1c;">r ＞ g</span><br>
+        <span style="font-size:1rem;">（資本コストが成長率を上回っていること）</span>
+      </div>
+      <p class="big-text" style="margin:0.5rem 0;">
+        分母の「<span class="hl-red">r − g</span>」は<span class="hl-yellow">必ずプラス</span>でなければならない！
+      </p>
+      <ul style="font-size:0.95rem; line-height:1.9;">
+        <li><span class="hl-red">r − g ＝ ゼロ</span> → ゼロで割れない → 計算不能</li>
+        <li><span class="hl-red">r − g ＜ ゼロ</span>（r ＜ g）→ 理論株価がマイナス → ありえない</li>
+      </ul>
+      <p style="font-size:0.9rem; background:#fff3e0; padding:0.6rem; border-radius:6px; border-left:4px solid #f57c00; margin-top:0.5rem;">
+        💡 <strong>現実的な意味：</strong>成長率が資本コストより高い状態が永久に続くのは非現実的（無限に大きな企業になる）。だから<span class="hl-red">r＞g</span>という条件が必要。
+      </p>
+      <p style="background:#ffebee; padding:0.5rem; border-radius:6px; margin-top:0.5rem; text-align:center; font-weight:800; color:#b71c1c;">
+        🎯 試験ではここを突く正誤問題が頻出！
+      </p>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🧮 例題で確認しよう</h4>
+      <p><strong>【問題】</strong>当社の1年後の配当総額は600万円と予想されている。投資家の求める還元率（資本コスト）は8%、配当の成長率は3%、発行済株式数は1万株である。1株あたりの理論株価は？</p>
+      <p style="margin-top:0.4rem;"><strong>【解き方】</strong></p>
+      <ul>
+        <li>Step1：企業全体の価値 ＝ 600万 ÷（0.08 − 0.03）＝ <strong>1億2,000万円</strong></li>
+        <li>Step2：1株あたり ＝ 1億2,000万 ÷ 1万株 ＝ <strong>12,000円</strong></li>
+      </ul>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.4rem;">💡 もし問題文が「<strong>現在の配当総額が600万円</strong>」だった場合は、まず 600万 × 1.03 ＝ <strong>618万</strong>を分子にして計算スタート！</p>
+    </div>
+
+    <!-- ========== 逆算：資本コストを求める問題 ========== -->
+    <h3 style="margin-top:1.2rem; font-size:1.05rem; color:var(--red-dark); border-left:4px solid var(--red-main); padding-left:0.6rem;">🔄 逆算パターン：株価と配当から「資本コスト」を求める</h3>
+
+    <div class="card card-red">
+      <h4>📖 どんな問題？</h4>
+      <p>試験ではモデルを<strong>逆から使う</strong>問題もよく出ます。<br>
+      ・<strong>分かっているもの</strong>：現在の株価、現在（または次期）の配当、成長率<br>
+      ・<strong>求めるもの</strong>：資本コスト（＝還元率・期待収益率・r）<br>
+      「株価が市場でこの値段なら、投資家は何%の利回りを期待しているのか？」を逆算する問題です。</p>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🧮 例題：資本コストを求める</h4>
+      <p><strong>【問題】</strong>当社の株価は<strong>1,000円</strong>である。<strong>現在の配当は60円</strong>、配当の<strong>成長率は5%</strong>で一定と予想される。定率成長モデルに基づき、資本コスト（期待収益率）を求めよ。</p>
+
+      <div class="point-box pb-red" style="margin-top:0.6rem;">
+        <h4>⚠️ 注目ポイント</h4>
+        <p style="font-size:0.9rem;">問題文は「<strong>現在</strong>の配当60円」と書かれている ≠ 次期配当。<br>
+        よって、まず次期配当（D<sub>1</sub>）に変換する必要あり！</p>
+      </div>
+
+      <p style="margin-top:0.4rem;"><strong>【解き方 ステップ】</strong></p>
+      <ul>
+        <li><strong>Step1</strong>：次期配当 D<sub>1</sub> ＝ 現在配当60 ×（1＋成長率0.05）＝ <strong>63円</strong></li>
+        <li><strong>Step2</strong>：定率成長モデルの式に代入<br>
+          <span style="display:inline-block; background:#f5f5f5; padding:0.3rem 0.6rem; border-radius:4px; margin:0.2rem 0; font-family:monospace;">1,000 ＝ 63 ÷（資本コスト − 0.05）</span></li>
+        <li><strong>Step3</strong>：分母を移項して整理<br>
+          <span style="display:inline-block; background:#f5f5f5; padding:0.3rem 0.6rem; border-radius:4px; margin:0.2rem 0; font-family:monospace;">資本コスト − 0.05 ＝ 63 ÷ 1,000 ＝ 0.063</span></li>
+        <li><strong>Step4</strong>：成長率を足し戻す<br>
+          <span style="display:inline-block; background:#fff3e0; padding:0.3rem 0.6rem; border-radius:4px; margin:0.2rem 0; font-weight:700; color:var(--red-dark);">資本コスト ＝ 0.063 ＋ 0.05 ＝ <strong>0.113（＝11.3%）</strong></span></li>
+      </ul>
+
+      <div style="background:#e8f5e9; border:2px solid #a5d6a7; border-radius:6px; padding:0.6rem; margin-top:0.6rem; font-size:0.88rem;">
+        💡 <strong>公式の変形覚え方：</strong><br>
+        定率成長モデル「株価 ＝ 次期配当 ÷（r − g）」を変形すると、<br>
+        <strong>r ＝（次期配当 ÷ 株価）＋ 成長率</strong><br>
+        つまり、<strong>資本コスト ＝ 配当利回り（次期ベース）＋ 成長率</strong> と覚えられる！
+      </div>
+    </div>
+
+    <div class="critical-box">
+      <h4>🎯 本試験で最も差がつく引っかけ！</h4>
+      <div class="big-point">
+        「現在の配当」と書いてあったら<br>
+        <span class="huge-text" style="color:#b71c1c;">必ず ×（1＋成長率）で次期に変換！</span>
+      </div>
+      <div class="two-col" style="margin-top:0.6rem;">
+        <div style="background:#ffcdd2; border:3px solid #c62828; border-radius:8px; padding:0.7rem;">
+          <div style="font-weight:800; color:#b71c1c;">❌ ミスる人の答え</div>
+          <div style="font-size:0.9rem; margin-top:0.3rem;">60÷1,000 ＋ 0.05 ＝ <span class="hl-red">11.0%</span></div>
+          <div style="font-size:0.8rem; color:#666;">現在配当60をそのまま使って失点</div>
+        </div>
+        <div style="background:#c8e6c9; border:3px solid #2e7d32; border-radius:8px; padding:0.7rem;">
+          <div style="font-weight:800; color:#1b5e20;">✅ 正しい答え</div>
+          <div style="font-size:0.9rem; margin-top:0.3rem;">63÷1,000 ＋ 0.05 ＝ <span class="hl-green">11.3%</span></div>
+          <div style="font-size:0.8rem; color:#666;">60×1.05＝63（次期）で計算</div>
+        </div>
+      </div>
+      <p class="big-text" style="text-align:center; margin-top:0.6rem; color:#b71c1c;">
+        たった0.3%の差でも、試験では<span class="hl-yellow">正誤の分かれ目</span>！
+      </p>
+    </div>
+
+    <!-- 穴埋め：逆算パターン -->
+    <div class="fill-card" style="margin-top:0.8rem;">
+      <div class="fill-header h-red">✍️ 逆算パターン 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① 株価1,000円、現在配当60円、成長率5% → 次期配当＝60×1.05＝<span class="fill-blank">63円</span></div>
+        <div class="fill-group">② 1,000＝63÷(r−0.05) → r−0.05＝63÷1,000＝<span class="fill-blank">0.063</span></div>
+        <div class="fill-group">③ よって資本コスト r ＝ 0.063＋<span class="fill-blank">0.05</span>＝<span class="fill-blank">0.113（11.3%）</span></div>
+        <div class="fill-group">④ 公式変形：資本コスト ＝ <span class="fill-blank">配当利回り（次期）</span>＋ 成長率</div>
+        <div class="fill-group">⑤ 「現在の配当」と書かれていたら、<span class="fill-blank">（1＋成長率）</span>倍して次期配当に直してから使う。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <!-- ========== 1期間モデル：現在価値 ========== -->
+    <h3 style="margin-top:1.2rem; font-size:1.05rem; color:var(--orange-dark); border-left:4px solid var(--orange-main); padding-left:0.6rem;">💡 1期間だけ保有する場合の現在価値</h3>
+
+    <div class="card card-orange">
+      <h4>📝 考え方</h4>
+      <p>1年だけ株を持って、<strong>今期末に売る</strong>ケース。得られるCFは次の2つの合計：</p>
+      <ul>
+        <li>① 今期末にもらう<strong>配当金</strong></li>
+        <li>② 今期末の<strong>売却可能価額</strong>（予想売却価格）</li>
+      </ul>
+      <p>これを<strong>要求利益率（資本コスト）（＝割引率）</strong>で1年分割り引けば、今（期首）の株式の現在価値になる。</p>
+    </div>
+
+    <div class="formula-box">
+      株式の現在価値 ＝（配当金 ＋ 売却可能価額）÷（1 ＋ 要求利益率（資本コスト））
+    </div>
+
+    <!-- 時間軸フロー図 -->
+    <div class="scene">
+      <div class="flow-row">
+        <div class="flow-box fb-blue">今（期首）<small>？円<br>これを求める</small></div>
+        <div class="flow-arrow">÷（1＋要求利益率（資本コスト））</div>
+        <div class="flow-box fb-green">今期末<small>配当20円<br>＋売却610円<br>＝630円</small></div>
+      </div>
+      <div class="scene-caption">将来の630円を、要求利益率（資本コスト）5%で1年分割り引くと「今の価値」になる</div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🧮 例題：商事株式会社</h4>
+      <p>商事株式会社の株式を<strong>1株保有</strong>することで得られる1期間CFは、配当金<strong>20円</strong>と今期末の売却可能価額<strong>610円</strong>の合計<strong>630円</strong>。<br>
+      投資家の要求利益率（資本コスト）<strong>5%</strong>を割引率として、期首時点の現在価値を求めると…</p>
+      <div class="formula-box" style="margin-top:0.5rem;">
+        株式の現在価値 ＝（20 ＋ 610）÷（1 ＋ 0.05）<br>
+        <span class="big">＝ 630 ÷ 1.05 ＝ 600円</span>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ポイント</div>
+        分子は<strong>配当＋売却額の合計CF</strong>、分母は<strong>（1＋要求利益率（資本コスト））</strong>。「将来の金額 ÷ （1＋要求利益率（資本コスト））」が現在価値の基本形！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">引っかけ</div>
+        配当だけで計算しない！<strong>期末の売却価額もCFに含める</strong>のが1期間モデル。ゼロ成長モデル（配当÷期待収益率）と混同しないこと。
+      </div>
+    </div>
+
+    <div class="point-box pb-orange">
+      <h4>🔗 3つのモデルの違い ─ 同じ数字で比べてみる</h4>
+      <p style="font-size:0.92rem; margin-bottom:0.5rem;">違いは<strong>「保有期間」と「配当の増え方」の前提</strong>。同じ配当30円・期待収益率5%でも、モデルが違えば答えは大きく変わります。</p>
+
+      <table class="tbl-blue" style="margin-top:0.4rem; font-size:0.9rem;">
+        <tr><th>モデル</th><th>前提（シーン）</th><th>式（日本語）</th><th>計算例</th></tr>
+        <tr>
+          <td><strong>① 1期間モデル</strong></td>
+          <td>1年だけ保有して売る<br><small>（配当30＋売却630）</small></td>
+          <td>（配当＋売却価額）÷（1＋期待収益率）</td>
+          <td style="text-align:right; font-weight:700;">約628円</td>
+        </tr>
+        <tr>
+          <td><strong>② ゼロ成長</strong></td>
+          <td>永久保有＆毎年同額配当<br><small>（ずっと30円）</small></td>
+          <td>配当 ÷ 期待収益率</td>
+          <td style="text-align:right; font-weight:700;">600円</td>
+        </tr>
+        <tr>
+          <td><strong>③ 定率成長</strong></td>
+          <td>永久保有＆毎年3%成長<br><small>（30→30.9→31.8…）</small></td>
+          <td>次期配当 ÷（期待収益率 − 成長率）</td>
+          <td style="text-align:right; font-weight:700; color:var(--red-dark);">1,500円</td>
+        </tr>
+      </table>
+      <p style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.4rem;">💡 <strong>成長前提が強いほど、理論株価は高くなる</strong>。成長株が高評価される理由はここ！<br>
+      ※文字式：期待収益率＝r、成長率＝g、配当＝D、次期配当＝D<sub>1</sub></p>
+
+      <!-- 選び方フローチャート -->
+      <div style="background:white; border:2px dashed var(--purple-main); border-radius:8px; padding:0.7rem; margin-top:0.6rem;">
+        <div style="font-weight:800; text-align:center; color:var(--purple-dark); margin-bottom:0.4rem; font-size:0.92rem;">🔀 問題文でどう見分ける？</div>
+        <div style="font-size:0.88rem; line-height:1.9;">
+          <strong>Q1. 「1年後に売る／売却予定価額」とある？</strong> → <strong style="color:var(--blue-dark);">① 1期間モデル</strong><br>
+          <strong>Q2. 「成長率 g」の記載がある（g＞0）？</strong> → <strong style="color:var(--orange-dark);">③ 定率成長モデル</strong><br>
+          <strong>Q3. どちらもない（or g＝0）？</strong> → <strong style="color:#1e8449;">② ゼロ成長モデル</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- 穴埋めクイズ：理論株価 -->
+    <div class="fill-card" style="margin-top:1.2rem;">
+      <div class="fill-header h-orange">✍️ 理論株価 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① 定率成長モデル：理論株価 ＝ <span class="fill-blank">次期配当</span> ÷（期待収益率 − <span class="fill-blank">成長率</span>）　<small>（文字式：P<sub>0</sub>＝D<sub>1</sub>÷(r−g)）</small></div>
+        <div class="fill-group">② モデルの成立条件は 期待収益率 <span class="fill-blank">＞</span> 成長率。分母がマイナスやゼロになると式が成立しない。</div>
+        <div class="fill-group">③ 問題文が「当期（現在）配当」の場合、次期配当 ＝ 当期配当 ×（1＋<span class="fill-blank">成長率</span>）に変換する。</div>
+        <div class="fill-group">④ ゼロ成長モデル：理論株価 ＝ 配当 ÷ <span class="fill-blank">期待収益率</span></div>
+        <div class="fill-group">⑤ 1期間モデル：現在価値 ＝（配当＋<span class="fill-blank">売却可能価額</span>）÷（1＋期待収益率）</div>
+        <div class="fill-group">⑥ 配当20円＋売却610円、期待収益率5% → 現在価値＝<span class="fill-blank">600円</span></div>
+        <div class="fill-group">⑦ 次期配当600万、期待収益率8%、成長率3%、株式数1万株 → 1株理論株価＝<span class="fill-blank">12,000円</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab6 定率成長DDM -->
+
+  <!-- ==================== TAB 7: ROE ==================== -->
+  <div class="tab-panel theme-green" id="tab7">
+
+    <h2 class="section-title st-green" id="sec-roe">📈 ROE（自己資本利益率）</h2>
+
+    <div class="beginner-box">
+      <h4>🔰 超初心者向け：まず1分でわかる！</h4>
+      <div class="b-row"><span class="b-label">一言で</span><span class="b-text"><strong>「株主が出したお金で、会社がどれだけ稼いだか」</strong>の効率。株主目線で一番大事な数字！</span></div>
+      <div class="b-row"><span class="b-label">読み方</span><span class="b-text">アールオーイー。Return on Equity の略（＝資本に対するリターン）。</span></div>
+      <div class="b-row"><span class="b-label">例えば</span><span class="b-text">100万円の元手で屋台を開業し、1年で15万円儲けた → ROE 15%。「自分のお金の働きっぷり」を表す。</span></div>
+      <div class="b-row"><span class="b-label">言葉の意味</span><span class="b-text"><strong>自己資本</strong>＝株主が出したお金＋これまでの貯金。会社が<strong>自分のお金（借金ではない）</strong>で持っている部分。</span></div>
+      <div class="b-row"><span class="b-label">目安</span><span class="b-text">日本企業の平均8〜10%。15%超なら優良、5%未満は要改善。</span></div>
+    </div>
+
+    <div class="formula-box">ROE ＝ 当期純利益 ÷ 自己資本 × 100（％）</div>
+
+    <div class="card card-green">
+      <h4>📖 定義</h4>
+      <p>株主が出したお金（自己資本）を使って、会社が<strong>1年間にどれだけ利益を生み出したか</strong>の効率を示す指標。Return on Equityの略。</p>
+    </div>
+
+    <div class="card card-green">
+      <h4>💪 やさしいイメージ</h4>
+      <p>あなたが<strong>100万円の元手</strong>で屋台を始めて、1年で<strong>15万円</strong>の利益が出たら「ROE 15%」。<strong>「自分のお金でどれだけ儲けられたか」</strong>の率。株主が知りたい最重要指標！</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>📊 目安</h4>
+      <p>日本企業の平均は約<strong>8〜10%</strong>。<strong>15%超</strong>は優良、<strong>5%未満</strong>は要改善。東証が「PBR1倍割れ」の改善要請を出した背景もROE低迷が主因。</p>
+    </div>
+
+    <div class="point-box pb-green">
+      <h4>🧩 デュポン分解（ROEの3要素）</h4>
+      <div class="formula-box" style="margin:0.4rem 0;">ROE ＝ 売上高純利益率 × 総資産回転率 × 財務レバレッジ</div>
+      <p>ROE向上には<strong>①利益率UP ②資産効率UP ③借入拡大</strong>の3通り。③のみだとリスク増大で本質的改善にあらず。</p>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🧮 例題</h4>
+      <p>当期純利益5億円、自己資本50億円 → ROE＝5÷50＝<strong>10%</strong></p>
+      <p>EPS÷BPSでも計算可：EPS100円÷BPS1,000円＝<strong>10%</strong>（同じ値に！）</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方</div>
+        <strong>R</strong>eturn <strong>o</strong>n <strong>E</strong>quity。「<strong>E</strong>quity＝自己資本」。Rはリターン（利益）。<strong>「資本の上に乗るリターン」</strong>でROE。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">注意</div>
+        自己資本＝純資産−新株予約権−非支配株主持分。広義では<strong>純資産で代用</strong>することも多い。
+      </div>
+    </div>
+
+    <!-- 穴埋めクイズ：ROE -->
+    <div class="fill-card" style="margin-top:1.2rem;">
+      <div class="fill-header h-green">✍️ ROE 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① ROE ＝ 当期純利益 ÷ <span class="fill-blank">自己資本</span> × 100</div>
+        <div class="fill-group">② ROE ＝ EPS ÷ <span class="fill-blank">BPS</span>（1株ベースでも計算できる）</div>
+        <div class="fill-group">③ 日本企業平均は約<span class="fill-blank">8〜10%</span>、15%超で優良。</div>
+        <div class="fill-group">④ デュポン分解：ROE＝売上高純利益率 × 総資産回転率 × <span class="fill-blank">財務レバレッジ</span></div>
+        <div class="fill-group">⑤ 純利益5億、自己資本50億 → ROE＝<span class="fill-blank">10%</span></div>
+        <div class="fill-group">⑥ サステナブル成長率 g ＝ <span class="fill-blank">ROE</span> ×（1−配当性向）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab7 ROE -->
+
+  <!-- ==================== TAB 8: PER/EPS ==================== -->
+  <div class="tab-panel theme-blue" id="tab8">
+
+    <h2 class="section-title st-blue" id="sec-per">💰 PER（株価収益率） ／ EPS（1株あたり利益）</h2>
+
+    <div class="beginner-box">
+      <h4>🔰 超初心者向け：まず1分でわかる！</h4>
+      <div class="b-row"><span class="b-label">一言で</span><span class="b-text">PER＝<strong>「株価が利益の何倍か？」</strong>を見る割高・割安の物差し。</span></div>
+      <div class="b-row"><span class="b-label">読み方</span><span class="b-text">ピーイーアール（Price Earnings Ratio）。株価 ÷ 1株利益。</span></div>
+      <div class="b-row"><span class="b-label">EPSとは</span><span class="b-text"><strong>1株あたりに換算した純利益</strong>。会社の利益総額を株数で割っただけ。</span></div>
+      <div class="b-row"><span class="b-label">例えば</span><span class="b-text">ラーメン屋1人前の利益100円、お店の権利書1,500円 → PER15倍＝「15年分の利益で元が取れる」目安。</span></div>
+      <div class="b-row"><span class="b-label">目安</span><span class="b-text">日本株平均は15倍前後。10倍以下＝割安傾向、25倍超＝成長期待織込み or 割高。</span></div>
+    </div>
+
+    <div class="formula-box">
+      EPS ＝ 当期純利益 ÷ 発行済株式数
+      <span style="display:block; font-size:0.83rem; color:#bbb; margin-top:0.2rem;">まずEPSを出す</span>
+    </div>
+    <div class="formula-box">PER ＝ 株価 ÷ EPS</div>
+
+    <div class="card card-blue">
+      <h4>📖 定義</h4>
+      <p><strong>EPS</strong>（Earnings Per Share）＝1株あたりの純利益。<br>
+      <strong>PER</strong>（Price Earnings Ratio）＝株価がEPSの何倍かを示す「収益倍率」。投資回収年数の目安としても使われる。</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>🍜 やさしいイメージ</h4>
+      <p>ラーメン屋の1人前の利益（EPS）が100円、その店の「権利書」が1,500円で売っているなら、PER＝1,500÷100＝<strong>15倍</strong>。<strong>「何年分の利益で元が取れるか」</strong>の目安。</p>
+    </div>
+
+    <div class="card card-red">
+      <h4>📏 目安</h4>
+      <p>日本株の平均PERは<strong>15倍前後</strong>。10倍以下＝割安傾向、25倍超＝成長期待または割高。<br>
+      米国S&P500は約20倍、成長株（GAFAM、キーエンス等）は30〜50倍も珍しくない。</p>
+    </div>
+
+    <div class="point-box pb-blue">
+      <h4>📊 判定ルール</h4>
+      <ul>
+        <li>PER<strong>が高い</strong> → 割高、または強い成長期待が織り込み済み</li>
+        <li>PER<strong>が低い</strong> → 割安、または業績悪化懸念</li>
+      </ul>
+      <p style="font-size:0.85rem; color:var(--gray-mid);">⚠️ 単独では判断不可。同業他社平均との比較が基本！</p>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🧮 例題</h4>
+      <p>当期純利益10億円、発行済株式数1,000万株、株価1,500円<br>
+      → EPS＝10億÷1,000万＝<strong>100円</strong>、PER＝1,500÷100＝<strong>15倍</strong></p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方</div>
+        <strong>P</strong>rice <strong>E</strong>arnings <strong>R</strong>atio。<strong>E</strong>は<strong>E</strong>arnings（利益）。真ん中のEが分母。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">罠</div>
+        赤字会社はEPSがマイナスになり、PERが計算できない（or 意味なし）。「N.M.（Not Meaningful）」と表示される。
+      </div>
+    </div>
+
+    <!-- 穴埋めクイズ：PER/EPS -->
+    <div class="fill-card" style="margin-top:1.2rem;">
+      <div class="fill-header h-blue">✍️ PER/EPS 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① EPS ＝ <span class="fill-blank">当期純利益</span> ÷ 発行済株式数</div>
+        <div class="fill-group">② PER ＝ 株価 ÷ <span class="fill-blank">EPS</span></div>
+        <div class="fill-group">③ 純利益10億、株式数1,000万株、株価1,500円 → EPS＝<span class="fill-blank">100円</span>、PER＝<span class="fill-blank">15倍</span></div>
+        <div class="fill-group">④ 日本株平均PERは<span class="fill-blank">15倍</span>前後。</div>
+        <div class="fill-group">⑤ PERは「何年分の<span class="fill-blank">利益</span>で元が取れるか」の目安。</div>
+        <div class="fill-group">⑥ PERが高い＝<span class="fill-blank">割高</span>または成長期待が織り込み済み。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab8 PER/EPS -->
+
+  <!-- ==================== TAB 9: PBR/BPS ==================== -->
+  <div class="tab-panel theme-purple" id="tab9">
+
+    <h2 class="section-title st-purple" id="sec-pbr">🏦 PBR（株価純資産倍率） ／ BPS（1株あたり純資産）</h2>
+
+    <div class="beginner-box">
+      <h4>🔰 超初心者向け：まず1分でわかる！</h4>
+      <div class="b-row"><span class="b-label">一言で</span><span class="b-text">PBR＝<strong>「株価が解散価値（会社を畳んだ時の取り分）の何倍か？」</strong>。</span></div>
+      <div class="b-row"><span class="b-label">読み方</span><span class="b-text">ピービーアール（Price Book-value Ratio）。株価 ÷ 1株純資産。</span></div>
+      <div class="b-row"><span class="b-label">BPSとは</span><span class="b-text"><strong>1株あたりに換算した純資産</strong>。会社の純資産総額を株数で割っただけ。</span></div>
+      <div class="b-row"><span class="b-label">例えば</span><span class="b-text">家の価値（建物＋土地）1,000万、売値800万 → PBR0.8倍＝「価値より安く売ってる」。</span></div>
+      <div class="b-row"><span class="b-label">1倍の意味</span><span class="b-text">PBR<strong>＝1倍</strong>が「株価＝解散価値」の境目。1倍未満は「会社を畳んだ方が得」の領域。</span></div>
+      <div class="b-row"><span class="b-label">言葉の意味</span><span class="b-text"><strong>純資産</strong>＝会社の資産から借金を引いた「正味の持ち分」。株主の取り分。</span></div>
+    </div>
+
+    <div class="formula-box">
+      BPS ＝ 純資産額 ÷ 発行済株式数
+      <span style="display:block; font-size:0.83rem; color:#bbb; margin-top:0.2rem;">まずBPSを出す</span>
+    </div>
+    <div class="formula-box">PBR ＝ 株価 ÷ BPS</div>
+    <div class="card card-purple">
+      <h4>🏠 やさしいイメージ</h4>
+      <p>家の「建物＋土地の価値」（＝BPS）が1,000万円、売値（＝株価）が800万円なら、PBR＝800÷1,000＝<strong>0.8倍</strong>。<strong>「いま会社を解散したら株主はいくら受け取れるか」</strong>に対する値段の倍率。</p>
+    </div>
+    <div class="critical-box">
+      <h4>🎯 PBR＝1倍 は「解散価値」の境界線！</h4>
+      <div class="big-point">
+        <span class="huge-text" style="color:#b71c1c;">PBR ＝ 1倍</span><br>
+        ＝ 株価と「会社を畳んだ時の取り分」が<u>同じ</u>
+      </div>
+      <div class="two-col" style="margin-top:0.6rem;">
+        <div style="background:#ffcdd2; border:3px solid #c62828; border-radius:8px; padding:0.7rem;">
+          <div style="font-weight:800; color:#b71c1c; font-size:1.05rem;">PBR ＜ 1倍</div>
+          <div style="font-size:0.92rem; margin-top:0.3rem;"><span class="hl-red">解散した方が得</span>の領域。市場が「この会社は資本を毀損する」と判断。</div>
+        </div>
+        <div style="background:#c8e6c9; border:3px solid #2e7d32; border-radius:8px; padding:0.7rem;">
+          <div style="font-weight:800; color:#1b5e20; font-size:1.05rem;">PBR ＞ 1倍</div>
+          <div style="font-size:0.92rem; margin-top:0.3rem;"><span class="hl-green">将来の成長期待</span>が織り込まれている領域。</div>
+        </div>
+      </div>
+      <p class="big-text" style="background:#fff3e0; padding:0.6rem; border-radius:6px; border-left:4px solid #f57c00; margin-top:0.6rem;">
+        🎯 東証が「PBR1倍割れ」の改善要請を出したのはこのため！
+      </p>
+    </div>
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方</div>
+        <strong>P</strong>rice <strong>B</strong>ook-value <strong>R</strong>atio。<strong>B</strong>は<strong>B</strong>ook value（簿価＝純資産）。真ん中のBが分母。
+      </div>
+    </div>
+
+    <!-- ====== 割安・割高の考え方（超丁寧版） ====== -->
+    <h3 style="margin-top:1.2rem; font-size:1.05rem; color:var(--purple-dark); border-left:4px solid var(--purple-main); padding-left:0.6rem;">🎯 超丁寧に解説：「割安」「割高」ってどう判断するの？</h3>
+
+    <div class="card card-pink">
+      <h4>📖 まず結論</h4>
+      <p><strong>ひとつの会社の数字だけを見て「割高／割安」は判断できません。</strong>必ず<strong>何かと比較</strong>する必要があります。比べる相手は大きく2つ：</p>
+      <ul>
+        <li>① <strong>同業他社の平均</strong>（業界平均PER・PBR・配当利回り）</li>
+        <li>② <strong>基準値</strong>（PBR＝1倍、PER＝15倍 など）</li>
+      </ul>
+    </div>
+
+    <!-- 基本ルール -->
+    <div class="point-box pb-purple">
+      <h4>📏 判断の基本ルール（これだけ！）</h4>
+      <table class="tbl-purple" style="margin-top:0.4rem;">
+        <tr><th>指標</th><th>比較対象より<strong>大きい</strong></th><th>比較対象より<strong>小さい</strong></th></tr>
+        <tr><td>PER</td><td style="background:#fce4ec;">割高</td><td style="background:#e8f5e9;">割安</td></tr>
+        <tr><td>PBR</td><td style="background:#fce4ec;">割高</td><td style="background:#e8f5e9;">割安</td></tr>
+        <tr><td>配当利回り</td><td style="background:#e8f5e9;">割安（オトク）</td><td style="background:#fce4ec;">割高</td></tr>
+      </table>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.4rem;">⚠️ <strong>配当利回りだけ逆</strong>！分子が配当（もらえる額）なので「大きいほどトク＝割安」になる。</p>
+    </div>
+
+    <!-- なぜそうなるか -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-teacher">👨‍🏫</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">なぜ？</div>
+        PBR・PERは「<strong>株価 ÷ 何か</strong>」。分子の株価が大きいほど数値も大きくなる。つまり<strong>「倍率が大きい＝株価が高すぎる＝割高」</strong>ということ！
+      </div>
+    </div>
+
+    <!-- 例題：I社ケース -->
+    <div class="card card-purple">
+      <h4>🧮 超丁寧に見る例題（I社のケース）</h4>
+      <p><strong>状況：</strong>同業他社の平均PBRは <strong>2.0倍</strong>。I社のPBRは <strong>3.0倍</strong> だった。</p>
+
+      <!-- ビジュアル比較 -->
+      <div style="background:white; border-radius:var(--radius-sm); padding:0.8rem; margin:0.6rem 0; border:2px dashed var(--purple-main);">
+        <div style="text-align:center; font-weight:700; margin-bottom:0.5rem;">📊 どっちが高い？を目で見る</div>
+        <div style="display:flex; align-items:flex-end; justify-content:center; gap:1.5rem; height:110px;">
+          <div style="text-align:center;">
+            <div style="background:linear-gradient(180deg, #90caf9, #2980b9); width:60px; height:66%; margin:auto; border-radius:6px 6px 0 0; display:flex; align-items:flex-start; justify-content:center; color:white; font-weight:800; padding-top:4px;">2.0</div>
+            <div style="font-size:0.82rem; margin-top:0.3rem; font-weight:700;">業界平均</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="background:linear-gradient(180deg, #ef9a9a, #c62828); width:60px; height:100%; margin:auto; border-radius:6px 6px 0 0; display:flex; align-items:flex-start; justify-content:center; color:white; font-weight:800; padding-top:4px;">3.0</div>
+            <div style="font-size:0.82rem; margin-top:0.3rem; font-weight:700; color:var(--red-dark);">I社</div>
+          </div>
+        </div>
+      </div>
+
+      <p><strong>判定ステップ：</strong></p>
+      <ul>
+        <li><strong>Step1</strong> 比較対象と比べる：I社 3.0倍 <strong>＞</strong> 平均 2.0倍</li>
+        <li><strong>Step2</strong> PBRルール適用：比較対象より大きい → <strong>割高</strong></li>
+        <li><strong>Step3</strong> 結論：「同業他社の平均PBRは2.0倍であり、これよりもI社のPBRは大きいので、<strong>I社の株価は同業他社より割高な水準にある</strong>」と言える</li>
+      </ul>
+    </div>
+
+    <!-- 覚え方 -->
+    <div class="mnemonic">
+      <div class="big">「高い倍率＝株価が高すぎ」</div>
+      <div class="desc">
+        PBR・PERが平均より<strong>大きい＝割高</strong>、<strong>小さい＝割安</strong>。<br>
+        <small>配当利回りだけは逆（大きいほどトクだから割安）</small>
+      </div>
+    </div>
+
+    <!-- 引っかけ -->
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">試験の引っかけ</div>
+        「PBRが高い＝優良企業」と書いた選択肢はバツ可能性大。高PBRは<strong>「割高」or「成長期待」</strong>の両方の可能性があり、優良かどうかとは別問題！
+      </div>
+    </div>
+
+    <!-- 身近な例え -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        スーパーでリンゴが<strong>1個200円</strong>、別のスーパーでは<strong>100円</strong>。周りの相場が150円なら、200円は「割高」、100円は「割安」。<strong>株も相場と比べて高いか安いかで判断する</strong>のが基本！
+      </div>
+    </div>
+
+    <!-- 穴埋めクイズ：PBR/BPS -->
+    <div class="fill-card" style="margin-top:1.2rem;">
+      <div class="fill-header h-purple">✍️ PBR/BPS 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① BPS ＝ <span class="fill-blank">純資産</span> ÷ 発行済株式数</div>
+        <div class="fill-group">② PBR ＝ 株価 ÷ <span class="fill-blank">BPS</span></div>
+        <div class="fill-group">③ PBR <span class="fill-blank">1倍</span> ＝ 株価と解散価値が同じ。1倍未満は「解散した方が得」の領域。</div>
+        <div class="fill-group">④ 重要関係式：PBR ＝ PER × <span class="fill-blank">ROE</span></div>
+        <div class="fill-group">⑤ 同業平均PBR 2.0倍、I社3.0倍 → I社は<span class="fill-blank">割高</span></div>
+        <div class="fill-group">⑥ PBRが低い理由は①解散価値未満の評価 ②<span class="fill-blank">ROE</span>が低い、の2つが代表的。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab9 PBR/BPS -->
+
+  <!-- ==================== TAB 10: DOE ==================== -->
+  <div class="tab-panel theme-orange" id="tab10">
+
+    <h2 class="section-title" id="sec-doe" style="background:linear-gradient(135deg, #d35400, #e67e22); color:white;">💘 DOE（自己資本配当率）</h2>
+
+    <div class="beginner-box">
+      <h4>🔰 超初心者向け：まず1分でわかる！</h4>
+      <div class="b-row"><span class="b-label">一言で</span><span class="b-text">DOE＝<strong>「株主が出したお金に対して、いくら配当が戻ってきたか」</strong>の率。</span></div>
+      <div class="b-row"><span class="b-label">読み方</span><span class="b-text">ディーオーイー（Dividend on Equity）。</span></div>
+      <div class="b-row"><span class="b-label">覚え方</span><span class="b-text">「<strong>どエロい・老夫婦の・配当</strong>」→ DOE＝ROE×配当性向。一度聞いたら忘れない！</span></div>
+      <div class="b-row"><span class="b-label">なぜ使う？</span><span class="b-text">配当性向だけだと<strong>利益連動で減配リスク</strong>あり。DOE基準なら<strong>安定配当</strong>を約束できるので、花王や武田薬品など採用企業が増加中。</span></div>
+      <div class="b-row"><span class="b-label">他指標との違い</span><span class="b-text">配当利回り（÷株価）、配当性向（÷利益）、DOE（÷自己資本）。分母がそれぞれ違う！</span></div>
+    </div>
+
+    <div class="formula-box">
+      DOE ＝ 配当総額 ÷ 自己資本 × 100（％）<br>
+      <span style="font-size:0.9rem; color:#bbb;">＝ ROE × 配当性向</span>
+    </div>
+
+    <div class="card card-orange">
+      <h4>📖 定義</h4>
+      <p>Dividend on Equityの略。<strong>自己資本に対して、株主にどれだけ配当が渡ったか</strong>を示す指標。ROEと配当性向を掛け合わせた「株主還元の実力指標」。</p>
+    </div>
+
+    <div class="card card-orange">
+      <h4>👴 やさしいイメージ</h4>
+      <p>ROE（稼ぐ力）が高くても配当性向が低ければ株主に渡る額は少ない。<strong>「自己資本に対して、株主にいくら配当が渡ったか」</strong>をダイレクトに示すのがDOE。</p>
+    </div>
+
+    <div class="point-box pb-orange">
+      <h4>🆚 配当利回り・配当性向との違い</h4>
+      <table class="tbl-blue" style="margin-top:0.4rem;">
+        <tr><th>指標</th><th>分子</th><th>分母</th><th>意味</th></tr>
+        <tr><td>配当利回り</td><td>配当</td><td>株価</td><td>投資家の受取利回り</td></tr>
+        <tr><td>配当性向</td><td>配当</td><td>利益</td><td>利益から配当に回した割合</td></tr>
+        <tr><td><strong>DOE</strong></td><td><strong>配当</strong></td><td><strong>自己資本</strong></td><td><strong>資本に対する還元水準</strong></td></tr>
+      </table>
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">どエロい 老夫婦の 配当</div>
+      <div class="desc">
+        <strong>どエロい</strong>＝DOE、<strong>老夫婦</strong>＝ROE、<strong>配当</strong>＝配当性向<br>
+        <small>DOE＝ROE×配当性向 の語呂！一度聞いたら忘れない</small>
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>🧮 例題</h4>
+      <p>ROE 10%、配当性向 40%の会社 → DOE ＝ 10% × 40% ＝ <strong>4%</strong><br>
+      「自己資本100に対して配当4が渡っている」＝株主還元の水準が見える。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-teacher">👨‍🏫</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">最近のトレンド</div>
+        日本企業でもDOEを<strong>株主還元の目標指標</strong>に採用する会社が増加中（花王、武田薬品など）。配当性向だけだと利益連動で減配リスクがあるが、DOE基準なら安定配当が可能。
+      </div>
+    </div>
+
+    <!-- 穴埋めクイズ：DOE -->
+    <div class="fill-card" style="margin-top:1.2rem;">
+      <div class="fill-header h-red">✍️ DOE 穴埋めクイズ</div>
+      <div class="fill-body">
+        <div class="fill-group">① DOE ＝ 配当総額 ÷ <span class="fill-blank">自己資本</span> × 100</div>
+        <div class="fill-group">② DOE ＝ <span class="fill-blank">ROE</span> × <span class="fill-blank">配当性向</span></div>
+        <div class="fill-group">③ ROE10%・配当性向40% → DOE ＝ <span class="fill-blank">4%</span></div>
+        <div class="fill-group">④ 語呂：「<span class="fill-blank">どエロい老夫婦の配当</span>」</div>
+        <div class="fill-group">⑤ 配当利回り・配当性向との違いは「分母が<span class="fill-blank">自己資本</span>」である点。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab10 DOE -->
+
+  <!-- ==================== TAB 11: 関連マップ ==================== -->
+  <div class="tab-panel theme-blue" id="tab11">
+
+    <h2 class="section-title st-blue" id="sec-map">🗺 全指標をビジュアルで関連付け</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-teacher">👨‍🏫</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ここまで7つの式を個別に見てきたね。最後は<strong>1社の数字で全部つながっている</strong>ことを目で確認しよう！
+      </div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>🏢 架空の会社「A商店」の数字</h4>
+      <p>株価<strong>1,500円</strong>／1株利益<strong>100円</strong>／1株純資産<strong>1,000円</strong>／1株配当<strong>30円</strong>／自己資本利益率（ROE）<strong>10%</strong></p>
+    </div>
+
+    <!-- 全式を一枚で見せるマップ -->
+    <div class="diagram" style="background:white;">
+      <div class="diagram-title dt-blue" style="text-align:center; font-weight:700; color:var(--blue-dark); margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:2px dashed #e0e0e0;">🌐 すべての式は「株価・利益・純資産・配当」の4つでつながる</div>
+
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.6rem; text-align:center; margin-bottom:0.8rem;">
+        <div class="flow-box fb-orange">株価<br>1,500円</div>
+        <div class="flow-box fb-blue">1株利益<br>100円</div>
+        <div class="flow-box fb-green">1株純資産<br>1,000円</div>
+      </div>
+
+      <div style="text-align:center; font-size:1.3rem; color:var(--blue-main); margin:0.3rem 0;">↕ 割り算でつなげる ↕</div>
+
+      <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:0.6rem; text-align:center;">
+        <div style="background:#fff8e1; border:2px solid #ffcc80; border-radius:var(--radius-sm); padding:0.7rem;">
+          <strong style="color:var(--orange-dark);">株価収益率（PER）</strong><br>
+          <span style="font-size:0.85rem;">株価 ÷ 1株利益</span><br>
+          <span style="font-size:1.1rem; color:var(--orange-dark); font-weight:800;">= 15倍</span>
+        </div>
+        <div style="background:#e8f5e9; border:2px solid #a5d6a7; border-radius:var(--radius-sm); padding:0.7rem;">
+          <strong style="color:var(--green-dark);">株価純資産倍率（PBR）</strong><br>
+          <span style="font-size:0.85rem;">株価 ÷ 1株純資産</span><br>
+          <span style="font-size:1.1rem; color:var(--green-dark); font-weight:800;">= 1.5倍</span>
+        </div>
+      </div>
+
+      <div style="text-align:center; font-size:1.3rem; color:var(--purple-main); margin:0.6rem 0;">✖ 掛け算でもつながる ✖</div>
+
+      <div style="background:linear-gradient(135deg, var(--purple-light), #fff); border:2px solid var(--purple-main); border-radius:var(--radius-sm); padding:0.8rem; text-align:center;">
+        <strong style="color:var(--purple-dark);">確認：PBR ＝ PER × ROE</strong><br>
+        <span style="font-size:0.9rem;">1.5倍 ＝ 15倍 × 10%  ✅ ピッタリ一致！</span>
+      </div>
+    </div>
+
+    <!-- 式のグループ分類ツリー -->
+    <div class="diagram" style="background:white;">
+      <div class="diagram-title dt-blue" style="text-align:center; font-weight:700; color:var(--blue-dark); margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:2px dashed #e0e0e0;">🌳 式は3つの家族に分類できる</div>
+
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.5rem;">
+        <div style="background:#fff3e0; border-top:4px solid var(--orange-main); border-radius:var(--radius-sm); padding:0.6rem;">
+          <div style="font-weight:800; color:var(--orange-dark); text-align:center; margin-bottom:0.4rem;">🏷 株価の倍率ファミリー</div>
+          <div style="font-size:0.82rem; line-height:1.6;">
+            ・株価収益率（PER）<br>
+            ・株価純資産倍率（PBR）<br>
+            ・配当利回り<br>
+            <small style="color:var(--gray-mid);">＝「株価を何で割るか」が違うだけ</small>
+          </div>
+        </div>
+        <div style="background:#e3f2fd; border-top:4px solid var(--blue-main); border-radius:var(--radius-sm); padding:0.6rem;">
+          <div style="font-weight:800; color:var(--blue-dark); text-align:center; margin-bottom:0.4rem;">👤 1株あたりファミリー</div>
+          <div style="font-size:0.82rem; line-height:1.6;">
+            ・1株あたり利益（EPS）<br>
+            ・1株あたり純資産（BPS）<br>
+            <small style="color:var(--gray-mid);">＝「会社の合計÷株数」に統一</small>
+          </div>
+        </div>
+        <div style="background:#f3e5f5; border-top:4px solid var(--purple-main); border-radius:var(--radius-sm); padding:0.6rem;">
+          <div style="font-weight:800; color:var(--purple-dark); text-align:center; margin-bottom:0.4rem;">📈 成長・効率ファミリー</div>
+          <div style="font-size:0.82rem; line-height:1.6;">
+            ・自己資本利益率（ROE）<br>
+            ・配当性向<br>
+            ・サステナブル成長率（g）<br>
+            <small style="color:var(--gray-mid);">＝「利益を何に使うか」の比率</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 式の連鎖図 -->
+    <div class="diagram" style="background:white;">
+      <div class="diagram-title dt-blue" style="text-align:center; font-weight:700; color:var(--blue-dark); margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:2px dashed #e0e0e0;">🔗 つなぎの呪文：2つのキーパーツ</div>
+
+      <div class="two-col">
+        <div class="card card-purple" style="margin:0;">
+          <h4>🔗 キー1：EPS で橋渡し</h4>
+          <div style="font-size:0.88rem; line-height:1.9;">
+            <strong>PER</strong> = 株価 / <span style="color:var(--red-main);">EPS</span><br>
+            <strong>ROE</strong> = <span style="color:var(--red-main);">EPS</span> / BPS<br>
+            ——————————————<br>
+            掛けると<span style="color:var(--red-main);">EPS</span>が消える → <strong>PBR</strong>
+          </div>
+        </div>
+        <div class="card card-orange" style="margin:0;">
+          <h4>🔗 キー2：1株配当で橋渡し</h4>
+          <div style="font-size:0.88rem; line-height:1.9;">
+            <strong>配当利回り</strong> = <span style="color:var(--red-main);">1株配当</span> / 株価<br>
+            <strong>配当性向</strong> = <span style="color:var(--red-main);">1株配当</span> / EPS<br>
+            ——————————————<br>
+            分子は同じ<span style="color:var(--red-main);">1株配当</span>。分母が<br>株価か利益かで役割が変わる
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DDM と PER の関係 -->
+    <div class="diagram" style="background:white;">
+      <div class="diagram-title dt-blue" style="text-align:center; font-weight:700; color:var(--blue-dark); margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:2px dashed #e0e0e0;">🧩 理論価格と株価指標もつながっている</div>
+
+      <div class="flow-row" style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
+        <div class="flow-box fb-blue">配当<small>毎年もらうお金</small></div>
+        <div class="flow-arrow" style="font-size:1.3rem; margin:0 0.3rem;">÷</div>
+        <div class="flow-box fb-purple">期待収益率 − 成長率<small>r − g</small></div>
+        <div class="flow-arrow" style="font-size:1.3rem; margin:0 0.3rem;">＝</div>
+        <div class="flow-box fb-orange">理論株価</div>
+      </div>
+      <div style="text-align:center; font-size:1.3rem; color:var(--green-main); margin:0.4rem 0;">↓</div>
+      <div class="flow-row" style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
+        <div class="flow-box fb-orange">理論株価</div>
+        <div class="flow-arrow" style="font-size:1.3rem; margin:0 0.3rem;">÷</div>
+        <div class="flow-box fb-blue">1株利益（EPS）</div>
+        <div class="flow-arrow" style="font-size:1.3rem; margin:0 0.3rem;">＝</div>
+        <div class="flow-box fb-green">理論PER</div>
+      </div>
+      <p style="text-align:center; font-size:0.85rem; color:var(--gray-mid); margin-top:0.5rem;">つまり<strong>成長率 g が高いほど、理論PERも高くなる</strong>。キーエンスの高PERも、成長期待が織り込まれた結果！</p>
+    </div>
+
+    <!-- 覚え方の呪文まとめ -->
+    <div class="mnemonic">
+      <div class="big">「株価は何かで割れば倍率になる」</div>
+      <div class="desc">
+        <strong>株価 ÷ 利益</strong> ＝ 収益の倍率（PER）<br>
+        <strong>株価 ÷ 純資産</strong> ＝ 純資産の倍率（PBR）<br>
+        <strong>配当 ÷ 株価</strong> ＝ 利回り（配当利回り）<br>
+        <small style="color:var(--gray-mid);">※PERとPBRは「分子が株価」、配当利回りだけ逆。ここが引っかけポイント！</small>
+      </div>
+    </div>
+
+    <!-- ビフォーアフター：覚える前後 -->
+    <div class="diagram" style="background:white;">
+      <div class="diagram-title dt-blue" style="text-align:center; font-weight:700; color:var(--blue-dark); margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:2px dashed #e0e0e0;">🔄 ビフォーアフター：バラバラ暗記 → 関連暗記</div>
+      <div class="two-col">
+        <div style="background:#fce4ec; border:2px solid #ef9a9a; border-radius:var(--radius-sm); padding:0.7rem;">
+          <div style="color:var(--red-dark); font-weight:700; text-align:center;">😵 BEFORE：10個をバラ暗記</div>
+          <div style="font-size:0.82rem; margin-top:0.4rem;">PER, PBR, EPS, BPS, ROE, 配当利回り, 配当性向, g, DDM, ゴードン…全部バラバラ</div>
+        </div>
+        <div style="background:#e8f5e9; border:2px solid #a5d6a7; border-radius:var(--radius-sm); padding:0.7rem;">
+          <div style="color:var(--green-dark); font-weight:700; text-align:center;">😊 AFTER：3家族＋2つの橋</div>
+          <div style="font-size:0.82rem; margin-top:0.4rem;">①倍率家族 ②1株家族 ③成長家族。橋渡しはEPSと1株配当。これだけで全部つながる！</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab11 関連マップ -->
+
+  <!-- ==================== TAB 12: 穴埋めチェック ==================== -->
+  <div class="tab-panel theme-purple" id="tab12">
+
+    <div class="point-box pb-purple">
+      <h4>📖 このタブで学ぶこと</h4>
+      <ul>
+        <li>入門＋基本の重要語句を穴埋めで確認</li>
+        <li>穴をクリックで個別に答え表示</li>
+        <li>1周目＝式、2周目＝言葉、で反復</li>
+      </ul>
+    </div>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAll()">👁 全部見る</button>
+      <button class="btn-reset" onclick="resetAll()">🔄 リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-pink">🌱 入門 ① 株価の正体</div>
+      <div class="fill-body">
+        <div class="fill-group">株主が得るCFは「<span class="fill-blank">配当</span>」と「<span class="fill-blank">売却益</span>」の2つ。</div>
+        <div class="fill-group">理論株価＝将来の配当を<span class="fill-blank">現在価値</span>に割引いた合計。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-blue">📘 基本 ① 配当割引モデル（DDM）</div>
+      <div class="fill-body">
+        <div class="fill-group">ゼロ成長モデル：理論株価 ＝ <span class="fill-blank">配当</span> ÷ <span class="fill-blank">期待収益率</span>　<small>（文字：P<sub>0</sub>＝D÷r）</small></div>
+        <div class="fill-group">定率成長モデル（ゴードン）：理論株価 ＝ <span class="fill-blank">次期配当</span> ÷（期待収益率 − <span class="fill-blank">成長率</span>）　<small>（文字：P<sub>0</sub>＝D<sub>1</sub>÷(r−g)）</small></div>
+        <div class="fill-group">条件として r <span class="fill-blank">＞</span> g でなければ成り立たない。</div>
+        <div class="fill-group">当期配当が与えられたら、次期配当 ＝ 当期配当 ×（1＋<span class="fill-blank">成長率</span>）に変換する。<small>（文字：D<sub>1</sub>＝D<sub>0</sub>×(1+g)）</small></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-green">📘 基本 ② 1株指標</div>
+      <div class="fill-body">
+        <div class="fill-group">EPS＝<span class="fill-blank">当期純利益</span> ÷ 発行済株式数</div>
+        <div class="fill-group">BPS＝<span class="fill-blank">純資産</span> ÷ 発行済株式数</div>
+        <div class="fill-group">ROE＝当期純利益 ÷ <span class="fill-blank">自己資本</span> ＝ EPS ÷ <span class="fill-blank">BPS</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-purple">📘 基本 ③ 株価指標（PER・PBR）</div>
+      <div class="fill-body">
+        <div class="fill-group">PER ＝ 株価 ÷ <span class="fill-blank">EPS（1株利益）</span>。「利益の何倍か」を見る指標。</div>
+        <div class="fill-group">PBR ＝ 株価 ÷ <span class="fill-blank">BPS（1株純資産）</span>。<span class="fill-blank">1倍</span>が解散価値の基準。</div>
+        <div class="fill-group">PBR ＝ PER × <span class="fill-blank">ROE</span>（覚えやすい重要関係式）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-red">📘 基本 ④ 配当関連指標</div>
+      <div class="fill-body">
+        <div class="fill-group">配当利回り ＝ <span class="fill-blank">1株配当</span> ÷ <span class="fill-blank">株価</span></div>
+        <div class="fill-group">配当性向 ＝ 1株配当 ÷ <span class="fill-blank">EPS</span>（利益の何％を配当に回すか）</div>
+        <div class="fill-group">サステナブル成長率 g ＝ ROE ×（1 − <span class="fill-blank">配当性向</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-blue">🧮 計算チェック</div>
+      <div class="fill-body">
+        <div class="fill-group">配当10円・r＝5% → 株価 ＝ <span class="fill-blank">200円</span></div>
+        <div class="fill-group">次期配当12円・期待収益率7%・成長率2% → 株価 ＝ <span class="fill-blank">240円</span><small>（D<sub>1</sub>÷(r−g)＝12÷0.05）</small></div>
+        <div class="fill-group">株価1,500円・EPS100円 → PER ＝ <span class="fill-blank">15倍</span></div>
+        <div class="fill-group">株価800円・BPS1,000円 → PBR ＝ <span class="fill-blank">0.8倍</span>（1倍未満＝割安サイン）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>使い方：</strong>穴埋め部分を<strong>クリック</strong>すると、その箇所だけ答えが表示されます。もう一度クリックで隠せる。全部見たい時は上の「👁 全部見る」ボタンを。
+    </div>
+
+    <div class="card card-purple">
+      <h4>🏫 実例：学校の小テスト感覚</h4>
+      <p>1周目は何も見ずに穴を埋めてみる → 間違えた所だけクリックで答え表示 → 2周目は全問正解を目指す。<strong>テストの直前復習</strong>と同じルーティーンが最強！</p>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: シミュレーション (GREEN) ==================== -->
+  <div class="tab-panel theme-green" id="tab13">
+
+    <div class="point-box pb-green">
+      <h4>📖 このタブで学ぶこと</h4>
+      <ul>
+        <li>実際の中小企業ケースでDDMを使う</li>
+        <li>ゼロ成長と定率成長で株価がどう変わるか</li>
+        <li>指標で業界平均と比較する視点</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green">🏢 ケース：和菓子屋「福寿堂」の事業承継</h2>
+
+    <div class="card card-pink">
+      <h4>🏬 実例：町のパン屋さんでイメージ</h4>
+      <p>年間純利益500万円の家族経営パン屋。息子に継がせるか、他社に売るか。どっちにしても「この店いくらで売れる？」の答えが必要。今回の和菓子屋も同じ発想！</p>
+    </div>
+
+    <div class="card card-green">
+      <h4>📝 状況</h4>
+      <ul>
+        <li>先代から続く老舗和菓子屋。社長が引退を検討。</li>
+        <li>発行済株式数：<strong>1万株</strong></li>
+        <li>当期純利益：<strong>500万円</strong>／純資産：<strong>8,000万円</strong></li>
+        <li>年間配当総額：<strong>200万円</strong>（安定配当）</li>
+        <li>娘さんへの承継か、他社への売却かで迷っている。</li>
+      </ul>
+    </div>
+
+    <h3 style="margin:1rem 0 0.5rem; color:var(--green-dark);">Step 1：1株当たりの数値を出す</h3>
+    <div class="card card-blue">
+      <ul>
+        <li>EPS ＝ 500万 ÷ 1万株 ＝ <strong>500円</strong></li>
+        <li>BPS ＝ 8,000万 ÷ 1万株 ＝ <strong>8,000円</strong></li>
+        <li>1株配当 ＝ 200万 ÷ 1万株 ＝ <strong>200円</strong></li>
+        <li>配当性向 ＝ 200 ÷ 500 ＝ <strong>40%</strong></li>
+        <li>ROE ＝ 500万 ÷ 8,000万 ＝ <strong>6.25%</strong></li>
+      </ul>
+    </div>
+
+    <h3 style="margin:1rem 0 0.5rem; color:var(--green-dark);">Step 2：ゼロ成長モデルでざっくり株価</h3>
+    <div class="card card-purple">
+      <p>期待収益率 r を <strong>8%</strong>と仮定（同業中小の目安）。</p>
+      <div class="formula-box">株価 ＝ 200 ÷ 0.08 ＝ <span class="big">2,500円</span></div>
+      <p style="font-size:0.87rem;">→ 福寿堂の1株の理論価格は約<strong>2,500円</strong>、会社全体では約2,500万円と概算。</p>
+    </div>
+
+    <h3 style="margin:1rem 0 0.5rem; color:var(--green-dark);">Step 3：成長を織り込む（ゴードンモデル）</h3>
+    <div class="card card-orange">
+      <p>サステナブル成長率 g ＝ ROE ×（1−配当性向）＝ 6.25% × 0.6 ＝ <strong>3.75%</strong></p>
+      <p>次期配当 D<sub>1</sub> ＝ 200 × 1.0375 ≒ <strong>208円</strong></p>
+      <div class="formula-box">株価 ＝ 208 ÷（0.08 − 0.0375）≒ <span class="big">4,894円</span></div>
+      <p style="font-size:0.87rem;">→ 成長を織り込むと<strong>約4,900円</strong>。成長期待の有無で株価はほぼ倍違う！</p>
+    </div>
+
+    <h3 style="margin:1rem 0 0.5rem; color:var(--green-dark);">Step 4：指標で割高／割安を判断</h3>
+    <div class="card card-pink">
+      <p>同業上場企業の平均 PER＝20倍、PBR＝1.2倍と仮定。</p>
+      <ul>
+        <li>福寿堂の参考PER（株価2,500円の場合）＝ 2,500 ÷ 500 ＝ <strong>5倍</strong></li>
+        <li>福寿堂の参考PBR（株価2,500円の場合）＝ 2,500 ÷ 8,000 ＝ <strong>0.31倍</strong></li>
+      </ul>
+      <p>→ 業界平均より大幅に低い＝<strong>非上場中小のディスカウントを織り込んだ水準</strong>。成長余地を説明できれば交渉材料になる。</p>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-purple">
+        <h4>🔻 ゼロ成長</h4>
+        <p style="text-align:center; font-size:1.3rem; font-weight:800; color:var(--purple-main);">2,500円</p>
+      </div>
+      <div class="card card-orange">
+        <h4>🔺 定率成長</h4>
+        <p style="text-align:center; font-size:1.3rem; font-weight:800; color:var(--orange-main);">4,894円</p>
+      </div>
+    </div>
+    <p style="text-align:center; font-size:0.87rem; color:var(--gray-mid);">同じ会社でも成長率 g を織り込むと約2倍に！</p>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">豆知識：なぜ r=8%？</div>
+        中小企業の資本コストは<strong>7〜10%</strong>が目安（上場大企業4〜6%に信用リスクプレミアムを上乗せ）。銀行借入金利より高くするのがポイント。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">試験の注意</div>
+        ゴードンモデルは<strong>r＞g</strong>が前提。r≦gだと分母が0以下になり式が破綻するので、必ず確認！
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>📌 結論：</strong>同じ会社でも「成長前提」「収益率前提」で株価は大きく変わる。事業承継では<strong>複数モデルで幅を見る</strong>のが実務の基本！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: 実例クイズ (RED) ==================== -->
+  <div class="tab-panel theme-red" id="tab14">
+
+    <div class="point-box pb-red">
+      <h4>📖 このタブで学ぶこと</h4>
+      <ul>
+        <li>有名企業を題材に計算力を試す</li>
+        <li>D₀／D₁・分母分子の引っかけに慣れる</li>
+        <li>正解はバラバラ配置（消去法に頼らない）</li>
+      </ul>
+    </div>
+
+    <div class="card card-red">
+      <h4>🎮 実例：ゲームのボス戦感覚</h4>
+      <p>各問は「選択肢に潜む引っかけ」がボスの攻撃。D₀/D₁、分母分子、成長率の掛け算…全部倒せば理解完成！</p>
+    </div>
+
+    <h2 class="section-title st-red">🧩 理解度チェック（全6問）</h2>
+
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div><span class="quiz-cat qc-blue">理論価格</span>
+      <div class="quiz-question">トヨタ株のように安定配当を続ける会社を想定。配当が毎年30円で一定、期待収益率5%のとき、ゼロ成長モデルによる理論株価は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q1', 3)">
+        <li data-idx="0">150円</li>
+        <li data-idx="1">300円</li>
+        <li data-idx="2">500円</li>
+        <li data-idx="3">600円</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>✅ 正解：D（600円）</strong><br>
+        株価 ＝ 配当 ÷ 期待収益率 ＝ 30 ÷ 0.05 ＝ <strong>600円</strong>。分母・分子の置き方を間違えないこと！<small>（文字式：P＝D÷r）</small>
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div><span class="quiz-cat qc-blue">定率成長</span>
+      <div class="quiz-question">ユニクロ（ファーストリテイリング）のような成長企業を想定。当期配当 D<sub>0</sub>＝50円、成長率 g＝4%、期待収益率 r＝9%。ゴードンモデルによる理論株価は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q2', 0)">
+        <li data-idx="0">1,040円</li>
+        <li data-idx="1">1,000円</li>
+        <li data-idx="2">1,250円</li>
+        <li data-idx="3">555円</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>✅ 正解：A（1,040円）</strong><br>
+        次期配当 D<sub>1</sub>＝50×1.04＝52円。52 ÷(0.09−0.04)＝52 ÷ 0.05＝<strong>1,040円</strong>。<br>
+        B（1,000円）は D<sub>0</sub>をそのまま使う引っかけ！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div><span class="quiz-cat qc-green">PER</span>
+      <div class="quiz-question">任天堂の株価が7,500円、EPSが500円のとき、PERはいくらか？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q3', 2)">
+        <li data-idx="0">0.067倍</li>
+        <li data-idx="1">10倍</li>
+        <li data-idx="2">15倍</li>
+        <li data-idx="3">20倍</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>✅ 正解：C（15倍）</strong><br>
+        PER ＝ 株価 ÷ EPS ＝ 7,500 ÷ 500 ＝ <strong>15倍</strong>。<br>
+        A（0.067倍）は分母分子を逆にした引っかけ！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div><span class="quiz-cat qc-green">PBR</span>
+      <div class="quiz-question">三菱UFJ銀行のような銀行株でよくあるケース。株価800円、BPS1,000円のときのPBRと、その意味として正しいものは？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q4', 1)">
+        <li data-idx="0">1.25倍・解散価値より割高</li>
+        <li data-idx="1">0.8倍・解散価値より割安の可能性</li>
+        <li data-idx="2">0.8倍・解散価値より割高</li>
+        <li data-idx="3">1.25倍・解散価値より割安</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>✅ 正解：B（0.8倍・割安の可能性）</strong><br>
+        PBR ＝ 800 ÷ 1,000 ＝ <strong>0.8倍</strong>。1倍未満は「今すぐ会社を解散した方が価値が高い」＝割安サイン。日本の銀行株でよく見られる状態。
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div><span class="quiz-cat qc-purple">関係式</span>
+      <div class="quiz-question">PBR・PER・ROEの関係として正しいものはどれか？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q5', 2)">
+        <li data-idx="0">PBR ＝ PER ÷ ROE</li>
+        <li data-idx="1">PER ＝ PBR × ROE</li>
+        <li data-idx="2">PBR ＝ PER × ROE</li>
+        <li data-idx="3">ROE ＝ PBR × PER</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>✅ 正解：C（PBR ＝ PER × ROE）</strong><br>
+        株価/BPS ＝（株価/EPS）×（EPS/BPS）＝ PER × ROE。<br>ROEが高い会社はPBRも高くなる傾向がある。
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div><span class="quiz-cat qc-red">成長率</span>
+      <div class="quiz-question">ソニーグループがROE15%、配当性向30%を維持するとき、サステナブル成長率 g は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q6', 3)">
+        <li data-idx="0">4.5%</li>
+        <li data-idx="1">12%</li>
+        <li data-idx="2">15%</li>
+        <li data-idx="3">10.5%</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>✅ 正解：D（10.5%）</strong><br>
+        g ＝ ROE ×（1 − 配当性向）＝ 15% ×（1 − 0.3）＝ 15% × 0.7 ＝ <strong>10.5%</strong>。<br>A（4.5%）は「ROE×配当性向」にした引っかけ！
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+  </div>
+
+  <!-- ==================== TAB 15: 実例で覚える ==================== -->
+  <div class="tab-panel theme-orange" id="tab15">
+
+    <div class="point-box pb-orange">
+      <h4>📖 このタブで学ぶこと</h4>
+      <ul>
+        <li>有名企業4ケースで指標の「読み方」を身につける</li>
+        <li>「なぜその指標か」を考えて理解を深める</li>
+        <li>数値の目安を直感でつかむ</li>
+      </ul>
+    </div>
+
+    <div class="card card-orange">
+      <h4>📊 日本株の目安ミニ表</h4>
+      <table class="tbl-blue" style="margin:0.3rem 0;">
+        <tr><th>指標</th><th>標準的な目安</th><th>割安判断</th></tr>
+        <tr><td>PER</td><td>15倍前後</td><td>10倍以下＝割安傾向</td></tr>
+        <tr><td>PBR</td><td>1倍前後</td><td>1倍未満＝割安 or 低収益</td></tr>
+        <tr><td>配当利回り</td><td>2%前後</td><td>4%以上＝高配当株</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-orange">📖 ケース1：高PERの代表 ─ キーエンス</h2>
+    <div class="card card-orange">
+      <p>センサー大手<strong>キーエンス</strong>は、長年PER30〜50倍という高水準で取引されてきました。営業利益率50%超、ROE10%超という圧倒的な収益性があり、市場は「今の利益」ではなく<strong>「将来も伸び続ける」という成長期待</strong>を株価に織り込んでいます。</p>
+      <p style="margin-top:0.5rem;">📝 <strong>学び：</strong>高PER＝割高ではない。成長率が高ければ、理論株価の式「次期配当÷（期待収益率−成長率）」の分母が小さくなり、理論株価＝PERは<strong>正当に高くなる</strong>。<small>（文字式：P＝D<sub>1</sub>÷(r−g)）</small></p>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">🎥 <strong>日常例：</strong>話題の映画のプレミアチケット。今の価値ではなく「これからの話題性」で値段がつくのと同じ感覚。</p>
+    </div>
+
+    <h2 class="section-title st-orange">📖 ケース2：PBR1倍割れの代名詞 ─ 銀行株</h2>
+    <div class="card card-blue">
+      <p>2023〜2024年、東証は<strong>「PBR1倍割れ企業」に改善要請</strong>を出し話題になりました。<strong>三菱UFJ、みずほ、三井住友</strong>など大手銀行は長らくPBR0.5〜0.8倍で取引されていました。純資産8,000億円の会社の時価総額が5,000億円＝「いま解散して資産を分配した方が得」という評価です。</p>
+      <p style="margin-top:0.5rem;">📝 <strong>学び：</strong>PBR1倍割れは市場が<strong>「この会社はROEが資本コストを下回る」</strong>と判断している証。ROE改善＝自社株買い・増配・事業再編で、近年は多くの銀行株が1倍回復へ動きました。</p>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">🛒 <strong>日常例：</strong>中古車屋で新品同様の車が原価割れ。理由は「走行距離を信用されていない」。会社の帳簿も同じで、PBR1倍未満は"信用不足"のサイン。</p>
+    </div>
+
+    <h2 class="section-title st-orange">📖 ケース3：定率成長モデルがハマる ─ 花王の連続増配</h2>
+    <div class="card card-green">
+      <p><strong>花王</strong>は長年にわたって連続増配を続ける日本株の代表銘柄。毎年数%ずつ配当を増やす＝まさに<strong>定率成長（ゴードン）モデル</strong>が素直に当てはまるケースです。<br>
+      仮に次期配当150円、期待収益率6%、成長率3%とすると、理論株価＝150 ÷（0.06−0.03）＝<strong>5,000円</strong>。</p>
+      <p style="margin-top:0.5rem;">📝 <strong>学び：</strong>連続増配株は<strong>安定配当企業の成長版</strong>。DDMの「配当が永続的に g% 成長する」という前提がリアルに成立する。</p>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">🍜 <strong>日常例：</strong>行きつけの定食屋が毎年10円ずつ値上げ。常連にとっては"配当成長"と同じで、店の価値も年々上がっている。</p>
+    </div>
+
+    <h2 class="section-title st-orange">📖 ケース4：吸収合併と株価 ─ 武田薬品×シャイアー</h2>
+    <div class="card card-purple">
+      <p>2019年、武田薬品工業はアイルランドの<strong>シャイアー</strong>を約<strong>6兆8,000億円</strong>で買収。日本企業による海外買収として過去最大級です。シャイアー買収で希少疾患領域とパイプラインを獲得、世界トップ10製薬入りを実現。2020年にはグループ内再編の一環として<strong>シャイアー・ジャパンを吸収合併</strong>（存続＝武田、消滅＝シャイアー・ジャパン）。</p>
+      <p style="margin-top:0.5rem;">📝 <strong>学び：</strong>買収は「被買収企業の将来配当現在価値 ＞ 買収額」のときに成立するのが理論。武田の株価も買収直後は<strong>のれん・債務増でPBR低下</strong>したが、<strong>シナジーで将来EPS回復</strong>を織り込む形で株価は戻っていった。株価指標は「今」と「将来期待」の綱引きの結果！</p>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">🍔 <strong>日常例：</strong>人気チェーンが地元の老舗を買収。一時的に借金は増えるが、「両方の客を取り込める」という期待が株価を支える。</p>
+    </div>
+
+    <div class="alert-tip">
+      <strong>🎯 4ケースの共通点：</strong>株価指標は<strong>「数字そのもの」より「なぜその数字になったか」</strong>を読むもの。背景ストーリーと一緒に覚えると忘れにくい！
+    </div>
+
+    <h2 class="section-title st-orange">📖 最後に：4エージェントからのメッセージ</h2>
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-pm">PM</div>
+      <div class="bubble-body b-purple"><div class="bubble-name">PM</div>金融の科目は<strong>物語で覚える</strong>と一気に定着します。お疲れさまでした！</div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-plan">計画</div>
+      <div class="bubble-body b-blue"><div class="bubble-name">計画</div>入門→基本→穴埋め→シミュ→クイズ→実例の順で回せば、<strong>一通り定着</strong>します。</div>
+    </div>
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-make">制作</div>
+      <div class="bubble-body b-green"><div class="bubble-name">制作</div>わからなくなったら<strong>入門タブ</strong>に戻ってください。3つの公式と3指標だけで8割は解けます。</div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-critic">批判</div>
+      <div class="bubble-body b-red"><div class="bubble-name">批判</div>試験では<strong>「D<sub>0</sub> か D<sub>1</sub> か」「分母と分子」</strong>の2点を常に疑え。ここで差がつく！</div>
+    </div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">🌟 超入門</button>
+    <button class="tab-btn" data-color="pink" onclick="switchTab(1)">🌱 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">📘 基本事項</button>
+    <button class="tab-btn" data-color="pink" onclick="switchTab(3)">💴 配当利回り</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(4)">🎁 配当性向</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(5)">📊 ゼロ成長DDM</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">💹 定率成長DDM</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(7)">📈 ROE</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(8)">💰 PER/EPS</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(9)">🏦 PBR/BPS</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(10)">💘 DOE</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(11)">🗺 関連マップ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(12)">✍️ 穴埋め</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(13)">🏢 シミュレーション</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(14)">🧩 実例クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(15)">📖 実例で覚える</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 ファイナンス｜株式の理論価格・株価指標｜4エージェント討議版</div>
+
+<script>
+function switchTab(idx) {
+  const numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % numTabs === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+let answered = 0, correct = 0, total = 6;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 4 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+
+// 穴埋め：ボタンでまとめて表示、クリックで個別トグル
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  while(grp && !(grp.classList && grp.classList.contains('fill-group'))){
+    grp = grp.previousElementSibling;
+  }
+  // グループ全体（直前のfill-group要素すべて）
+  var parent = btn.parentElement;
+  parent.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  btn.textContent = '✅ 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAll(){
+  document.querySelectorAll('#tab12 .fill-blank').forEach(function(el){ el.classList.add('show'); });
+  document.querySelectorAll('#tab12 .fill-reveal-btn').forEach(function(b){ b.textContent = '✅ 表示済み'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAll(){
+  document.querySelectorAll('#tab12 .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  document.querySelectorAll('#tab12 .fill-reveal-btn').forEach(function(b){ b.textContent = '👁 答えを見る'; b.disabled = false; b.style.opacity = '1'; });
+}
+// 個別の穴埋めをクリックで表示/非表示
+document.addEventListener('click', function(e){
+  var el = e.target;
+  if(el.classList && el.classList.contains('fill-blank')){
+    el.classList.toggle('show');
+  }
+});
+
+// サブタブ切替（基本事項タブ内）
+function switchSubTab(idx){
+  document.querySelectorAll('#tab2 .sub-tab-btn').forEach(function(b,i){ b.classList.toggle('active', i===idx); });
+  document.querySelectorAll('#tab2 .sub-panel').forEach(function(p,i){ p.classList.toggle('active', i===idx); });
+  var nav = document.querySelector('#tab2 .sub-tab-nav');
+  if(nav) nav.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function revealBasic(){
+  document.querySelectorAll('#sub8 .fill-blank').forEach(function(el){ el.classList.add('show'); });
+}
+function resetBasic(){
+  document.querySelectorAll('#sub8 .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+}
+</script>
+</body>
+</html>

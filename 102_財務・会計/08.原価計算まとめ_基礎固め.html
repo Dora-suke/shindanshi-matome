@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原価計算【基礎固め編】 - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef; --purple-bg: #f5eef8;
+  --teal-dark: #0e6655; --teal-main: #1abc9c; --teal-light: #d1f2eb; --teal-bg: #e8f8f5;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, #2e7d32 0%, #43a047 50%, #66bb6a 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem;
+}
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before { left: -14px; border-right-color: var(--white); }
+.bubble-wrap.right .bubble-body::before { right: -14px; border-left-color: var(--white); }
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-body strong { color: #e65100; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+.tab-container { max-width: 920px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.3rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.75rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="teal"] { color: var(--teal-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn.active[data-color="teal"] { border-bottom-color: var(--teal-main); background: var(--teal-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0; animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-teal { background: var(--teal-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-purple { background: var(--purple-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.section-title {
+  font-size: 1.15rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); color: white; }
+.st-icon { font-size: 1.1rem; }
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-box strong { color: inherit; }
+.vs-box {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center; margin: 0.8rem 0;
+}
+.vs-side {
+  background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center;
+  box-shadow: var(--shadow);
+}
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+.diagram {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram-title {
+  text-align: center; font-weight: 700; font-size: 1rem;
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0;
+}
+.dt-teal { color: var(--teal-dark); }
+.dt-green { color: var(--green-dark); }
+.dt-blue { color: var(--blue-dark); }
+.dt-red { color: var(--red-dark); }
+.dt-purple { color: var(--purple-dark); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.88rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); box-shadow: 0 2px 6px rgba(41,128,185,0.3); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); box-shadow: 0 2px 6px rgba(231,76,60,0.3); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); box-shadow: 0 2px 6px rgba(39,174,96,0.3); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); box-shadow: 0 2px 6px rgba(230,126,34,0.3); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); box-shadow: 0 2px 6px rgba(142,68,173,0.3); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.9rem; }
+th, td { padding: 0.55rem 0.7rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-red th { background: var(--red-main); color: white; }
+.tbl-red tr:nth-child(even) { background: var(--red-light); }
+.tbl-purple th { background: var(--purple-main); color: white; }
+.tbl-purple tr:nth-child(even) { background: var(--purple-light); }
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.8rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 0.95rem; font-weight: 600; text-align: center; line-height: 1.9;
+}
+.point-box { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.pb-teal { background: linear-gradient(135deg, var(--teal-light), #fff); border: 2px solid #76d7c4; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #bb8fce; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+.scene {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center;
+}
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.4rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.1em; }
+.mnemonic .desc { font-size: 0.85rem; color: var(--gray-mid); }
+.step-card {
+  background: var(--white); border-radius: var(--radius); padding: 1rem 1rem 1rem 3.5rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); position: relative;
+}
+.step-card .step-num {
+  position: absolute; left: 0.7rem; top: 0.8rem;
+  width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-weight: 800; font-size: 1.1rem; color: white;
+}
+.step-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+.step-result {
+  background: var(--gray-pale); border-radius: 6px; padding: 0.5rem 0.8rem;
+  margin: 0.4rem 0; font-size: 0.88rem;
+}
+.fill-card { background: var(--white); border-radius: var(--radius); margin-bottom: 1rem; box-shadow: var(--shadow); overflow: hidden; }
+.fill-card .fill-header { padding: 0.6rem 0.9rem; font-weight: 700; font-size: 0.9rem; color: #fff; }
+.fill-card .fill-body { padding: 0.8rem 1rem; }
+.fill-blank {
+  display: inline-block; min-width: 80px; border-bottom: 2.5px solid #94a3b8;
+  text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: 0.88rem;
+}
+.fill-blank.show { color: #dc2626 !important; background: #fef2f2 !important; border-color: #dc2626 !important; }
+.fill-reveal-btn {
+  display: inline-block; background: #1a365d; color: #fff; border: none;
+  border-radius: 8px; padding: 6px 14px; font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; margin-top: 6px; font-family: inherit;
+}
+.fill-reveal-btn:hover { background: #2a4a7f; }
+.fill-group { margin-bottom: 4px; font-size: 0.88rem; line-height: 2; }
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0;
+}
+.quiz-num {
+  display: inline-block; background: var(--green-main); color: white;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.7rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-teal { background: var(--teal-main); }
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-purple { background: var(--purple-main); }
+.quiz-question { font-weight: 600; font-size: 0.93rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.5rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.88rem;
+}
+.quiz-options li:hover { border-color: var(--green-main); background: var(--green-light); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation {
+  display: none; margin-top: 0.7rem; padding: 0.8rem;
+  border-radius: var(--radius-sm); font-size: 0.85rem; line-height: 1.7;
+}
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score {
+  text-align: center; padding: 1rem; background: var(--green-light);
+  border-radius: var(--radius); margin-top: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--green-dark); display: none;
+}
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+@media (max-width: 600px) {
+  .vs-box { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.62rem; padding: 0.7rem 0.1rem; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 80%; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>&#x1F331; 原価計算【基礎固め編】</h1>
+  <div class="subtitle">中小企業診断士 財務・会計</div>
+  <div class="badge">全9タブ &#x00B7; 初心者向けの次のステップ</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="teal" onclick="switchTab(0)">&#x1F4D6; 6分類</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(1)">&#x1F4DD; 3つの方法</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F522; 個別:配賦</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(3)">&#x1F35E; 総合:平均法</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">&#x1F4CB; 総合:先入先出</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(5)">&#x1F9F1; 標準:材料費</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(6)">&#x1F477; 標準:労務費</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴埋め</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(8)">&#x270F;&#xFE0F; クイズ</button>
+  </nav>
+
+  <!-- ==================== TAB 0: 原価の6分類 ==================== -->
+  <div class="tab-panel active theme-teal" id="tab0">
+
+    <div class="point-box pb-teal">
+      <h4>&#x1F4D6; このタブのゴール</h4>
+      <ul>
+        <li>原価の3要素（材料費・労務費・経費）を<strong>確実に</strong>おさえる</li>
+        <li>「直接費」と「間接費」の違いを理解して<strong>6分類</strong>に整理する</li>
+        <li>製造間接費の<strong>配賦（はいふ）</strong>の考え方がわかる</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F9F1;</span> おさらい：原価の3要素</h2>
+
+    <div class="diagram">
+      <div class="diagram-title dt-teal">原価 ＝ モノ ＋ ヒト ＋ その他</div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+        <div style="flex:1; min-width:130px; background:var(--blue-light); border-radius:12px; padding:1rem; text-align:center;">
+          <div style="font-size:2rem;">&#x1F9F1;</div>
+          <div style="font-weight:800; color:var(--blue-dark); font-size:1rem;">材料費</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid);">モノの値段</div>
+        </div>
+        <div style="font-size:1.5rem; display:flex; align-items:center;">+</div>
+        <div style="flex:1; min-width:130px; background:var(--orange-pale); border-radius:12px; padding:1rem; text-align:center;">
+          <div style="font-size:2rem;">&#x1F477;</div>
+          <div style="font-weight:800; color:var(--orange-dark); font-size:1rem;">労務費</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid);">ヒトの給料</div>
+        </div>
+        <div style="font-size:1.5rem; display:flex; align-items:center;">+</div>
+        <div style="flex:1; min-width:130px; background:var(--green-light); border-radius:12px; padding:1rem; text-align:center;">
+          <div style="font-size:2rem;">&#x1F4A1;</div>
+          <div style="font-weight:800; color:var(--green-dark); font-size:1rem;">経費</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid);">その他ぜんぶ</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x2702;&#xFE0F;</span> ここからが本番！直接費と間接費</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        3要素はわかった！でも「直接費」と「間接費」って何が違うの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>「どの製品にいくらかかったか、ハッキリわかるかどうか」</strong>で分けるんだよ。パン屋さんで考えてみよう。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-teal">パン屋さんで考える「直接」と「間接」</div>
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;">
+        <div style="flex:1; min-width:200px; background:var(--blue-light); border:2px solid var(--blue-main); border-radius:10px; padding:1rem;">
+          <div style="font-weight:700; color:var(--blue-dark); text-align:center; font-size:0.95rem; margin-bottom:0.5rem;">&#x1F3AF; 直接費</div>
+          <div style="font-size:0.85rem; text-align:center; color:var(--gray-mid); margin-bottom:0.5rem;">どのパンにいくら使ったか<strong>ハッキリわかる</strong></div>
+          <ul style="font-size:0.82rem;">
+            <li><strong>直接材料費</strong>：メロンパンの小麦粉200g</li>
+            <li><strong>直接労務費</strong>：メロンパンの成形30分</li>
+            <li><strong>直接経費</strong>：外注した包装デザイン費</li>
+          </ul>
+        </div>
+        <div style="flex:1; min-width:200px; background:var(--orange-pale); border:2px solid var(--orange-main); border-radius:10px; padding:1rem;">
+          <div style="font-weight:700; color:var(--orange-dark); text-align:center; font-size:0.95rem; margin-bottom:0.5rem;">&#x1F46B; 間接費</div>
+          <div style="font-size:0.85rem; text-align:center; color:var(--gray-mid); margin-bottom:0.5rem;">複数のパンで共用。<strong>直接わからない</strong></div>
+          <ul style="font-size:0.82rem;">
+            <li><strong>間接材料費</strong>：共用のサラダ油</li>
+            <li><strong>間接労務費</strong>：工場長の給料</li>
+            <li><strong>間接経費</strong>：工場の電気代・家賃</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x1F4CB; 原価の6分類（3要素 &times; 直接・間接）</h4>
+      <table class="tbl-purple">
+        <tr><th></th><th>直接費</th><th>間接費</th></tr>
+        <tr><td style="font-weight:700;">&#x1F9F1; 材料費</td><td>直接材料費<br><span style="font-size:0.78rem; color:var(--gray-mid);">主な原材料</span></td><td>間接材料費<br><span style="font-size:0.78rem; color:var(--gray-mid);">消耗品・補助材料</span></td></tr>
+        <tr><td style="font-weight:700;">&#x1F477; 労務費</td><td>直接労務費<br><span style="font-size:0.78rem; color:var(--gray-mid);">製品に直接かかった工賃</span></td><td>間接労務費<br><span style="font-size:0.78rem; color:var(--gray-mid);">工場長の給料・手待ち時間</span></td></tr>
+        <tr><td style="font-weight:700;">&#x1F4A1; 経費</td><td>直接経費<br><span style="font-size:0.78rem; color:var(--gray-mid);">外注加工費</span></td><td>間接経費<br><span style="font-size:0.78rem; color:var(--gray-mid);">電気代・家賃・減価償却費</span></td></tr>
+      </table>
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">3要素 &times; 直間 ＝ 6分類</div>
+      <div class="desc">間接材料費 + 間接労務費 + 間接経費 ＝ まとめて「<strong>製造間接費</strong>」と呼ぶ！</div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F4B0; 製造間接費の「配賦（はいふ）」</h4>
+      <p>間接費はどの製品にいくらかかったかわからない。だから<strong>「何かの基準で分ける」</strong>必要がある。これが<strong>配賦</strong>。</p>
+      <div class="formula-box">配賦額 ＝ 製造間接費 &times; その注文の基準量 &divide; 全体の基準量合計</div>
+      <p style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">基準の例：<strong>直接作業時間</strong>（試験で最頻出）、機械運転時間、直接材料費の額など</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        マンションの<strong>共益費の割り振り</strong>と同じ！エレベーターやロビーの電気代を部屋の広さ（基準）で按分する。工場でも電気代を作業時間（基準）で各製品に按分するよ。
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>&#x1F3AF; このタブのまとめ</strong><br>
+      &#x2022; 原価の3要素 &times; 直接・間接 ＝ <strong>6分類</strong><br>
+      &#x2022; 直接費 ＝ どの製品にいくらか<strong>わかる</strong> ／ 間接費 ＝ <strong>わからない</strong><br>
+      &#x2022; 間接材料費＋間接労務費＋間接経費 ＝ <strong>製造間接費</strong><br>
+      &#x2022; 配賦 ＝ 基準（作業時間など）で<strong>按分する</strong>こと
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 1: 3つの方法 ==================== -->
+  <div class="tab-panel theme-green" id="tab1">
+
+    <div class="point-box pb-green">
+      <h4>&#x1F4DD; このタブのゴール</h4>
+      <p>原価計算の<strong>3つの方法</strong>を、「いつ使う？」「何がポイント？」「公式は？」の3点でシンプルに整理する。</p>
+    </div>
+
+    <!-- ========== 方法1：個別原価計算 ========== -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3A8;</span> 方法1：個別原価計算</h2>
+
+    <div class="diagram">
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; align-items:stretch;">
+        <div style="flex:1; min-width:140px; background:var(--blue-light); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x2753;</div>
+          <div style="font-weight:700; color:var(--blue-dark); font-size:0.88rem;">いつ使う？</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;"><strong>1点モノ・受注生産</strong><br>注文住宅、船舶、<br>オーダースーツ</div>
+        </div>
+        <div style="flex:1; min-width:140px; background:var(--green-light); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x1F511;</div>
+          <div style="font-weight:700; color:var(--green-dark); font-size:0.88rem;">ポイント</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;"><strong>製造指図書</strong>を発行<br>注文ごとに原価を集計<br>間接費は<strong>配賦</strong>で按分</div>
+        </div>
+        <div style="flex:1; min-width:140px; background:var(--orange-pale); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x1F4DD;</div>
+          <div style="font-weight:700; color:var(--orange-dark); font-size:0.88rem;">公式</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">配賦率 ＝<br>間接費 &divide; 基準の合計<br><br>配賦額 ＝<br>配賦率 &times; その注文の基準量</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        <strong>居酒屋のテーブル会計</strong>。テーブルごとに食べたものを集計する。共通のお通し代（＝間接費）だけは人数や杯数で割り勘（＝配賦）する。
+      </div>
+    </div>
+
+    <!-- ========== 方法2：総合原価計算 ========== -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3ED;</span> 方法2：総合原価計算</h2>
+
+    <div class="diagram">
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; align-items:stretch;">
+        <div style="flex:1; min-width:140px; background:var(--blue-light); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x2753;</div>
+          <div style="font-weight:700; color:var(--blue-dark); font-size:0.88rem;">いつ使う？</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;"><strong>同じモノを大量生産</strong><br>パン、ビール、<br>文房具、食品</div>
+        </div>
+        <div style="flex:1; min-width:140px; background:var(--green-light); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x1F511;</div>
+          <div style="font-weight:700; color:var(--green-dark); font-size:0.88rem;">ポイント</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">合計 &divide; 個数で<strong>1個あたり原価</strong><br>つくりかけは<br><strong>完成品換算量</strong>で調整</div>
+        </div>
+        <div style="flex:1; min-width:140px; background:var(--orange-pale); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x1F4DD;</div>
+          <div style="font-weight:700; color:var(--orange-dark); font-size:0.88rem;">公式</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">1個あたり原価 ＝<br>総製造費用 &divide; 完成品換算量</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>最頻出の注意点！</strong><br>
+      &#x1F9F1; <strong>材料費</strong>（始点投入）→ 進捗度に関係なく <strong>100%</strong> で換算<br>
+      &#x1F477; <strong>加工費</strong> → <strong>進捗度をかけて</strong>換算<br>
+      例：月末仕掛品100個（進捗50%）→ 材料費は<strong>100個</strong>、加工費は<strong>50個</strong>として計算！
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--blue-main);">
+        <h4 style="color:var(--blue-main);">&#x1F4CB; 先入先出法</h4>
+        <p style="font-size:0.82rem;">月初を<strong>先に完成</strong>させる考え方</p>
+        <p style="font-size:0.78rem; color:var(--gray-mid); margin-top:0.2rem;">月末の単価 ＝<br><strong>当月投入額 &divide; 当月換算量</strong></p>
+        <p style="font-size:0.72rem; margin-top:0.2rem;">&#x1F4A1; コンビニのおにぎり<br>（古いのを先に売る）</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--green-main);">
+        <h4 style="color:var(--green-main);">&#x1F522; 平均法</h4>
+        <p style="font-size:0.82rem;">月初と当月を<strong>ぜんぶ混ぜて平均</strong></p>
+        <p style="font-size:0.78rem; color:var(--gray-mid); margin-top:0.2rem;">平均単価 ＝<br><strong>(月初+当月) &divide; 総換算量</strong></p>
+        <p style="font-size:0.72rem; margin-top:0.2rem;">&#x1F4A1; ガソリンの給油<br>（タンクで全部混ざる）</p>
+      </div>
+    </div>
+
+    <!-- ========== 方法3：標準原価計算 ========== -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4CF;</span> 方法3：標準原価計算</h2>
+
+    <div class="diagram">
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; align-items:stretch;">
+        <div style="flex:1; min-width:140px; background:var(--blue-light); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x2753;</div>
+          <div style="font-weight:700; color:var(--blue-dark); font-size:0.88rem;">いつ使う？</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;"><strong>コスト管理</strong>が目的<br>自動車、家電、<br>お弁当工場</div>
+        </div>
+        <div style="flex:1; min-width:140px; background:var(--green-light); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x1F511;</div>
+          <div style="font-weight:700; color:var(--green-dark); font-size:0.88rem;">ポイント</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">先に「あるべき原価」を<br>決めておき、実際との<br><strong>差異を分析</strong>する</div>
+        </div>
+        <div style="flex:1; min-width:140px; background:var(--orange-pale); border-radius:10px; padding:0.8rem; text-align:center;">
+          <div style="font-size:1.3rem;">&#x1F4DD;</div>
+          <div style="font-weight:700; color:var(--orange-dark); font-size:0.88rem;">やること</div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">予算オーバーの原因を<br><strong>「値段のせい」</strong>と<br><strong>「量のせい」</strong>に分ける</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        <strong>家計簿の予算チェック</strong>と同じ。「食費は月3万円の予定が3.5万円かかった。値段が上がったから？買いすぎたから？」を調べること。
+      </div>
+    </div>
+
+    <!-- ===== かける相手の理由 ===== -->
+    <div style="background:var(--white); border:2px solid #e0e0e0; border-radius:var(--radius); padding:1rem 1.2rem; margin:1rem 0; box-shadow:var(--shadow);">
+      <h4 style="margin-bottom:0.5rem;">&#x1F6D2; 「かける相手」のルール ── スーパーの買い物で理解する</h4>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-bottom:0.6rem;">りんご予算 @100円&times;5個＝500円 → 実際 @120円&times;7個＝840円（340円オーバー）</p>
+
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; background:#fff8e1; border:2px solid #ffcc80; border-radius:8px; padding:0.7rem;">
+          <div style="font-weight:700; color:var(--orange-dark); font-size:0.88rem;">&#x2460; 値段のせい（価格差異）</div>
+          <div style="font-size:0.82rem; margin-top:0.3rem; line-height:1.8;">
+            1個20円の値上がり &times; <strong style="color:var(--red-main);">実際の7個</strong> ＝ 140円<br>
+            <strong>なぜ実際？</strong> → 値上がり損は<strong>実際に買った数ぶん発生する</strong>から
+          </div>
+        </div>
+        <div style="flex:1; min-width:200px; background:#e3f2fd; border:2px solid #90caf9; border-radius:8px; padding:0.7rem;">
+          <div style="font-weight:700; color:var(--blue-dark); font-size:0.88rem;">&#x2461; 量のせい（数量差異）</div>
+          <div style="font-size:0.82rem; margin-top:0.3rem; line-height:1.8;">
+            2個の買いすぎ &times; <strong style="color:var(--blue-main);">もとの@100円</strong> ＝ 200円<br>
+            <strong>なぜ標準？</strong> → 量のムダだけ測りたい。<strong>値段変動を混ぜたくない</strong>から
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center; font-size:0.82rem; color:var(--gray-mid); margin-top:0.5rem;">&#x2705; 検算：140円＋200円＝340円（オーバー額と一致！）</div>
+    </div>
+
+    <!-- ===== 公式一覧 ===== -->
+    <div class="diagram">
+      <div class="diagram-title dt-green">差異分析の4パターン公式</div>
+      <table class="tbl-green" style="font-size:0.85rem;">
+        <tr><th style="width:22%;">差異名</th><th>公式</th><th style="width:30%;">かける相手と理由</th></tr>
+        <tr>
+          <td style="font-weight:700;">&#x2460; 価格差異</td>
+          <td>(標準単価&minus;実際単価)&times;実際数量</td>
+          <td><strong style="color:var(--red-main);">実際</strong>数量<br><span style="font-size:0.75rem;">買った分だけ損するから</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;">&#x2461; 数量差異</td>
+          <td>(標準数量&minus;実際数量)&times;標準単価</td>
+          <td><strong style="color:var(--blue-main);">標準</strong>単価<br><span style="font-size:0.75rem;">値段を混ぜたくないから</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;">&#x2462; 賃率差異</td>
+          <td>(標準賃率&minus;実際賃率)&times;実際時間</td>
+          <td><strong style="color:var(--red-main);">実際</strong>時間<br><span style="font-size:0.75rem;">&#x2460;と同じ理由</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;">&#x2463; 時間差異</td>
+          <td>(標準時間&minus;実際時間)&times;標準賃率</td>
+          <td><strong style="color:var(--blue-main);">標準</strong>賃率<br><span style="font-size:0.75rem;">&#x2461;と同じ理由</span></td>
+        </tr>
+      </table>
+      <div style="text-align:center; font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">プラス ＝ <strong style="color:var(--green-main);">有利差異</strong>（節約）&#x00B7; マイナス ＝ <strong style="color:var(--red-main);">不利差異</strong>（使いすぎ）</div>
+    </div>
+
+    <!-- ===== 3方法の比較表 ===== -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4CB;</span> 3つの方法を比較</h2>
+
+    <div class="diagram">
+      <table class="tbl-green" style="font-size:0.85rem;">
+        <tr><th></th><th>個別原価計算</th><th>総合原価計算</th><th>標準原価計算</th></tr>
+        <tr>
+          <td style="font-weight:700;">ひとことで</td>
+          <td>注文ごとに集計</td>
+          <td>合計&divide;個数</td>
+          <td>予算と比較</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;">使う場面</td>
+          <td>1点モノ<br>受注生産</td>
+          <td>同じモノ<br>大量生産</td>
+          <td>コスト管理<br>差異分析</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;">キーワード</td>
+          <td>製造指図書<br>配賦</td>
+          <td>完成品換算量<br>先入先出/平均</td>
+          <td>標準原価<br>有利/不利差異</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;">身近な例え</td>
+          <td>居酒屋の<br>テーブル会計</td>
+          <td>遠足代の割り勘</td>
+          <td>家計簿の<br>予算チェック</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="alert-exam">
+      <strong>&#x1F3AF; このタブのまとめ</strong><br>
+      &#x2022; <strong>個別</strong> ＝ 注文ごとに原価を集める。間接費は配賦で按分<br>
+      &#x2022; <strong>総合</strong> ＝ 合計&divide;個数。材料費は進捗度不問、加工費だけ進捗度をかける<br>
+      &#x2022; <strong>標準</strong> ＝ 予算と実際の差異を分析。値段系は実際、量系は標準をかける<br>
+      &#x2022; 各方法の<strong>計算の詳しい手順</strong>は次の3つのタブで学ぼう！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: 計算1 配賦 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab2">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F522; 計算してみよう 1：製造間接費の配賦</h4>
+      <p>個別原価計算のキモ ＝ <strong>「共通でかかった費用をどう分けるか」</strong><br>実際に数字を使って、ていねいに一歩ずつ解いてみよう！</p>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1FA91;</span> 設定：町の家具工房</h2>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x1FA91;</div>
+          <div class="label">木村家具工房</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4CB;</div>
+          <div class="label">注文A<br>ダイニングテーブル</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4DA;</div>
+          <div class="label">注文B<br>本棚</div>
+        </div>
+      </div>
+      <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.5rem;">2つの注文を同時に製作中。共通の電気代や家賃をどう分ける？</div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4DD;</span> 問題のデータ</h2>
+
+    <div class="card card-blue">
+      <h4>&#x1F4CB; 各注文の直接費</h4>
+      <table class="tbl-blue">
+        <tr><th>費目</th><th>注文A テーブル</th><th>注文B 本棚</th></tr>
+        <tr><td>&#x1F9F1; 直接材料費（木材）</td><td>8万円</td><td>5万円</td></tr>
+        <tr><td>&#x1F477; 直接労務費（工賃）</td><td>6万円（<strong>30時間</strong>）</td><td>4万円（<strong>20時間</strong>）</td></tr>
+        <tr><td>&#x1F4A1; 直接経費</td><td>1万円</td><td>0.5万円</td></tr>
+      </table>
+    </div>
+
+    <div class="card card-orange">
+      <h4>&#x1F46B; 製造間接費（共通でかかった費用）</h4>
+      <p style="font-size:1rem;"><strong>合計 5万円</strong>（電気代、家賃、工具の消耗品など）</p>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">配賦基準：<strong>直接作業時間</strong>（テーブルに30h、本棚に20h かかった）</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        直接費はそれぞれの注文にそのまま足せばいいよね。問題は<strong>間接費5万円をどう2つに分けるか</strong>。ここが配賦のポイントだよ！
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x2705;</span> 解き方（ステップごと）</h2>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--blue-main);">1</div>
+      <h4>配賦率を求める</h4>
+      <p>まず「1時間あたりいくらの間接費か」を計算する。</p>
+      <div class="step-result">
+        <strong>配賦率</strong> ＝ 製造間接費 &divide; 作業時間の合計<br>
+        ＝ 5万円 &divide;（30h ＋ 20h）<br>
+        ＝ 5万円 &divide; 50h ＝ <strong style="color:var(--blue-main); font-size:1.1rem;">@1,000円/時間</strong>
+      </div>
+      <p style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">&#x1F4A1; 「1時間の作業で1,000円ぶんの間接費がかかる」というイメージ</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--green-main);">2</div>
+      <h4>各注文に間接費を配賦する</h4>
+      <p>配賦率に、各注文の作業時間をかける。</p>
+      <div class="step-result">
+        <strong>注文A（テーブル）</strong>＝ @1,000円 &times; 30h ＝ <strong style="color:var(--blue-main);">3万円</strong><br>
+        <strong>注文B（本棚）</strong>＝ @1,000円 &times; 20h ＝ <strong style="color:var(--green-main);">2万円</strong>
+      </div>
+      <div class="step-result" style="background:#e8f5e9;">
+        &#x2705; 検算：3万 ＋ 2万 ＝ 5万円（間接費の合計と一致！）
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--orange-main);">3</div>
+      <h4>各注文の原価合計を求める</h4>
+      <p>直接費 ＋ 配賦された間接費 ＝ その注文の原価。</p>
+      <div class="step-result">
+        <strong>注文A テーブル</strong><br>
+        直接材料費8万 ＋ 直接労務費6万 ＋ 直接経費1万 ＋ 配賦3万<br>
+        ＝ <strong style="color:var(--blue-main); font-size:1.15rem;">18万円</strong>
+      </div>
+      <div class="step-result">
+        <strong>注文B 本棚</strong><br>
+        直接材料費5万 ＋ 直接労務費4万 ＋ 直接経費0.5万 ＋ 配賦2万<br>
+        ＝ <strong style="color:var(--green-main); font-size:1.15rem;">11.5万円</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">まとめ</div>
+        配賦の計算は<strong>たった2ステップ</strong>！<br>
+        &#x2460; <strong>配賦率</strong> ＝ 間接費 &divide; 基準の合計<br>
+        &#x2461; <strong>配賦額</strong> ＝ 配賦率 &times; その注文の基準量<br>
+        居酒屋の<strong>割り勘</strong>と同じ。「共通のお通し代を人数で分ける」のか「頼んだ杯数で分けるか」の違いだけ！
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>よくあるミス</strong><br>
+      &#x2718; 配賦率の計算で「各注文の作業時間」を使ってしまう → <strong>合計の作業時間</strong>で割る！<br>
+      &#x2718; 直接費にも配賦してしまう → 配賦するのは<strong>間接費だけ</strong>！
+    </div>
+
+    <div class="alert-exam">
+      <strong>試験では「配賦基準は直接作業時間」が頻出。機械運転時間や直接材料費額が使われることもある。問題文の指定を必ず確認しよう！</strong>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: 総合原価 平均法 ==================== -->
+  <div class="tab-panel theme-purple" id="tab3">
+
+    <div class="point-box pb-purple">
+      <h4>&#x1F35E; 総合原価計算：平均法</h4>
+      <p>月初と当月を<strong>全部混ぜて平均</strong>する方法。<br>計算に入る前に、まず「そもそも何をやるのか」を理解しよう！</p>
+    </div>
+
+    <!-- ===== そもそも何をする？ ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x2753;</span> そもそも何をやるの？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        総合原価計算って、結局なにをしたいの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        やりたいことは超シンプル。今月かかったお金を、<strong>「完成した製品」と「まだつくりかけの製品」に分ける</strong>。それだけ！
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-purple">総合原価計算のゴール</div>
+      <div style="max-width:450px; margin:0 auto;">
+        <div style="background:var(--purple-light); border-radius:8px; padding:0.6rem; text-align:center; font-weight:700; margin-bottom:0.5rem;">
+          今月かかったお金ぜんぶ（月初の分 ＋ 今月の分）
+        </div>
+        <div style="text-align:center; font-size:1.2rem; margin:0.3rem 0;">&#x2B07;&#xFE0F; これを2つに分ける</div>
+        <div style="display:flex; gap:0.5rem;">
+          <div style="flex:1; background:#e8f5e9; border:2px solid var(--green-main); border-radius:8px; padding:0.6rem; text-align:center;">
+            <div style="font-size:1.3rem;">&#x1F4E6;</div>
+            <div style="font-weight:700; color:var(--green-dark);">完成品の原価</div>
+            <div style="font-size:0.78rem; color:var(--gray-mid);">できあがった製品に<br>いくらかかったか</div>
+          </div>
+          <div style="flex:1; background:#fce4ec; border:2px solid var(--red-main); border-radius:8px; padding:0.6rem; text-align:center;">
+            <div style="font-size:1.3rem;">&#x1F3ED;</div>
+            <div style="font-weight:700; color:var(--red-dark);">月末仕掛品の原価</div>
+            <div style="font-size:0.78rem; color:var(--gray-mid);">まだつくりかけの製品に<br>いくらかかっているか</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 始点投入の説明 ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F9F1;</span> 「始点投入」って何？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        問題に「材料は始点投入」ってよく書いてあるけど、どういう意味？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>つくり始めるときに材料を全部入れてしまう</strong>ということ。パン工場でいうと、最初に小麦粉・水・イーストを全部混ぜちゃう。途中から追加はしない。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-purple">始点投入のイメージ</div>
+      <div style="max-width:450px; margin:0 auto;">
+        <div style="display:flex; height:45px; border-radius:8px; overflow:hidden; border:2px solid var(--purple-main); margin-bottom:0.3rem;">
+          <div style="width:100%; background:linear-gradient(90deg, var(--purple-light) 0%, var(--purple-light) 100%); display:flex; align-items:center; justify-content:space-between; padding:0 0.8rem;">
+            <span style="font-size:0.78rem; font-weight:700;">0%（始点）</span>
+            <span style="font-size:0.78rem;">加工中...</span>
+            <span style="font-size:0.78rem; font-weight:700;">100%（完成）</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.5rem; font-size:0.82rem;">
+          <div style="flex:1; background:var(--blue-light); border-radius:6px; padding:0.5rem; text-align:center;">
+            <strong style="color:var(--blue-dark);">&#x1F9F1; 材料費</strong><br>
+            最初に<strong>100%投入ずみ</strong><br>
+            進捗度50%でも<strong>材料は全部入ってる</strong><br>
+            &#x2192; 換算量に進捗度は<strong>かけない</strong>
+          </div>
+          <div style="flex:1; background:var(--orange-pale); border-radius:6px; padding:0.5rem; text-align:center;">
+            <strong style="color:var(--orange-dark);">&#x1F477; 加工費</strong><br>
+            作業が進むにつれて<strong>少しずつ発生</strong><br>
+            進捗度50%なら<strong>半分だけ加工ずみ</strong><br>
+            &#x2192; 換算量に進捗度を<strong>かける</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">たとえ話</div>
+        <strong>カレーづくり</strong>で考えると：<br>
+        &#x1F9F1; <strong>材料費</strong>（始点投入）＝ 肉・野菜・ルーを<strong>最初に鍋に全部入れた</strong>。煮込み途中でも材料は100%入ってる<br>
+        &#x1F477; <strong>加工費</strong> ＝ ガス代と人件費。<strong>煮込んだ時間に比例</strong>して増える。半分煮込んだなら加工費も半分
+      </div>
+    </div>
+
+    <!-- ===== 完成品換算量の説明 ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F522;</span> 「完成品換算量」って何？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        「完成品換算量」ってなに？なんでそんな面倒なことするの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        つくりかけの製品は<strong>「完成品何個ぶんの手間がかかっているか」</strong>に換算しないと、正しく原価を分けられないからだよ。例を見てみよう。
+      </div>
+    </div>
+
+    <div style="background:var(--white); border:2px solid var(--purple-main); border-radius:var(--radius); padding:1rem; margin:0.8rem 0; box-shadow:var(--shadow);">
+      <div style="font-weight:700; color:var(--purple-dark); margin-bottom:0.5rem;">例：月末仕掛品100個（加工進捗度50%）の換算量は？</div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; background:var(--blue-light); border-radius:8px; padding:0.6rem; text-align:center;">
+          <div style="font-weight:700; color:var(--blue-dark);">&#x1F9F1; 材料費の換算量</div>
+          <div style="font-size:0.88rem; margin:0.3rem 0;">始点投入だから材料は100%入ってる</div>
+          <div style="font-size:1.1rem; font-weight:700; color:var(--blue-main);">100個 &times; 100% ＝ 100個</div>
+          <div style="font-size:0.75rem; color:var(--gray-mid);">そのままの数！</div>
+        </div>
+        <div style="flex:1; min-width:200px; background:var(--orange-pale); border-radius:8px; padding:0.6rem; text-align:center;">
+          <div style="font-weight:700; color:var(--orange-dark);">&#x1F477; 加工費の換算量</div>
+          <div style="font-size:0.88rem; margin:0.3rem 0;">加工は50%しか進んでいない</div>
+          <div style="font-size:1.1rem; font-weight:700; color:var(--orange-main);">100個 &times; 50% ＝ 50個ぶん</div>
+          <div style="font-size:0.75rem; color:var(--gray-mid);">半分の手間しかかかっていない！</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 問題データ ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4DD;</span> では、実際に計算してみよう！</h2>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x1F35E;</div>
+          <div class="label">さくらベーカリー<br>食パン大量生産</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F3ED;</div>
+          <div class="label">月初に100個<br>つくりかけ（進捗50%）</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4E6;</div>
+          <div class="label">今月400個を完成<br>月末に100個がつくりかけ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x1F4CB; 原価データ</h4>
+      <table class="tbl-purple">
+        <tr><th></th><th>数量</th><th>材料費</th><th>加工費</th></tr>
+        <tr><td>月初仕掛品（進捗50%）</td><td>100個</td><td>50,000円</td><td>20,000円</td></tr>
+        <tr><td>当月投入</td><td>400個</td><td>200,000円</td><td>140,000円</td></tr>
+        <tr><td>完成品</td><td>400個</td><td colspan="2" style="color:var(--gray-mid);">← 求める</td></tr>
+        <tr><td>月末仕掛品（進捗50%）</td><td>100個</td><td colspan="2" style="color:var(--gray-mid);">← 求める</td></tr>
+      </table>
+      <p style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">材料は<strong>始点投入</strong>。<strong>平均法</strong>で計算。</p>
+    </div>
+
+    <!-- ===== 解き方 ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x2705;</span> 解き方（4ステップ）</h2>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--purple-main);">1</div>
+      <h4>総換算量を求める</h4>
+      <p>平均法では <strong>完成品 ＋ 月末仕掛品の換算量</strong> ＝ 総換算量。<br>
+      材料費と加工費で<strong>別々に</strong>計算する。</p>
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.5rem;">
+        <div style="flex:1; min-width:200px;">
+          <div style="font-weight:700; color:var(--blue-dark); margin-bottom:0.3rem;">&#x1F9F1; 材料費の総換算量</div>
+          <div class="step-result" style="border-left:3px solid var(--blue-main);">
+            完成品 <strong>400個</strong><br>
+            ＋ 月末仕掛品 100個 &times; <strong>100%</strong> ＝ <strong>100個</strong><br>
+            <span style="font-size:0.78rem; color:var(--gray-mid);">（始点投入→材料は全部入ってるので100%）</span><br>
+            合計 ＝ <strong style="color:var(--blue-main); font-size:1.1rem;">500個</strong>
+          </div>
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <div style="font-weight:700; color:var(--orange-dark); margin-bottom:0.3rem;">&#x1F477; 加工費の総換算量</div>
+          <div class="step-result" style="border-left:3px solid var(--orange-main);">
+            完成品 <strong>400個</strong><br>
+            ＋ 月末仕掛品 100個 &times; <strong>50%</strong> ＝ <strong>50個</strong><br>
+            <span style="font-size:0.78rem; color:var(--gray-mid);">（加工は50%しか進んでないので50%をかける）</span><br>
+            合計 ＝ <strong style="color:var(--orange-main); font-size:1.1rem;">450個</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>ここが最頻出ミス！</strong><br>
+      &#x1F9F1; 材料費で進捗度をかけてしまう → <strong>始点投入なら100%！進捗度は関係なし！</strong><br>
+      &#x1F477; 加工費で100%にしてしまう → <strong>加工費は必ず進捗度をかける！</strong><br>
+      この違いを間違えると、このあとの数字がぜんぶ狂います。
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--blue-main);">2</div>
+      <h4>平均単価を求める</h4>
+      <p>平均法のキモ：<strong>「月初の原価」と「当月の原価」を足してから</strong>、総換算量で割る。</p>
+      <div class="step-result" style="border-left:3px solid var(--blue-main);">
+        <strong>材料費の平均単価</strong><br>
+        ＝（月初 50,000円 ＋ 当月 200,000円）&divide; 500個<br>
+        ＝ 250,000 &divide; 500 ＝ <strong style="color:var(--blue-main); font-size:1.1rem;">@500円/個</strong>
+      </div>
+      <div class="step-result" style="border-left:3px solid var(--orange-main);">
+        <strong>加工費の平均単価</strong><br>
+        ＝（月初 20,000円 ＋ 当月 140,000円）&divide; 450個<br>
+        ＝ 160,000 &divide; 450 &#x2248; <strong style="color:var(--orange-main); font-size:1.1rem;">@355.6円/個</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        なんで月初の原価も足すの？当月の分だけじゃダメなの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>ガソリンの給油</strong>を想像してみて。タンクに前月の残り（月初）があって、そこに今月分（当月）を足す。タンクの中では全部混ざるよね？だから<strong>合計してから平均する</strong>。これが平均法の名前の由来だよ。<br><br>
+        ちなみに先入先出法は「月初を混ぜない」。次のタブで比べてみよう！
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--green-main);">3</div>
+      <h4>月末仕掛品の原価を求める</h4>
+      <p>さっき求めた平均単価に、<strong>月末仕掛品の換算量</strong>をかける。</p>
+      <div class="step-result" style="border-left:3px solid var(--blue-main);">
+        <strong>材料費</strong> ＝ @500 &times; 100個 ＝ <strong>50,000円</strong><br>
+        <span style="font-size:0.78rem; color:var(--gray-mid);">（始点投入なので換算量は100個そのまま）</span>
+      </div>
+      <div class="step-result" style="border-left:3px solid var(--orange-main);">
+        <strong>加工費</strong> ＝ @355.6 &times; 50個 ＝ <strong>17,780円</strong><br>
+        <span style="font-size:0.78rem; color:var(--gray-mid);">（進捗度50%なので換算量は50個）</span>
+      </div>
+      <div class="step-result" style="background:#fce4ec;">
+        <strong>月末仕掛品の合計</strong> ＝ 50,000 ＋ 17,780 ＝ <strong style="color:var(--red-main); font-size:1.1rem;">67,780円</strong>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--red-main);">4</div>
+      <h4>完成品原価を求める（差額で出す）</h4>
+      <p>原価の合計から月末仕掛品を引く。残りが完成品の原価。</p>
+      <div class="step-result">
+        <strong>原価の総合計</strong><br>
+        材料費：50,000 ＋ 200,000 ＝ 250,000円<br>
+        加工費：20,000 ＋ 140,000 ＝ 160,000円<br>
+        合計 ＝ <strong>410,000円</strong>
+      </div>
+      <div class="step-result" style="background:#e8f5e9;">
+        <strong>完成品原価</strong> ＝ 410,000 &minus; 67,780 ＝ <strong style="color:var(--green-main); font-size:1.1rem;">342,220円</strong><br>
+        <strong>1個あたり</strong> ＝ 342,220 &divide; 400個 &#x2248; <strong>855.6円</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">なぜ差額で出すの？</div>
+        「入った分の合計 ＝ 出た分の合計」は必ず一致する。だから<strong>月末仕掛品を先に計算して、残りを完成品にする</strong>のが一番確実で間違えにくい方法だよ。
+      </div>
+    </div>
+
+    <!-- ===== 全体像 ===== -->
+    <div class="diagram">
+      <div class="diagram-title dt-purple">今回の計算の全体像</div>
+      <div style="font-size:0.85rem; max-width:420px; margin:0 auto;">
+        <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; background:var(--purple-light); border-radius:6px 6px 0 0; font-weight:700;">
+          <span>【入った分】</span><span></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; border-left:2px solid var(--purple-main); border-right:2px solid var(--purple-main);">
+          <span>月初仕掛品（材＋加）</span><span style="font-weight:700;">70,000円</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; border-left:2px solid var(--purple-main); border-right:2px solid var(--purple-main);">
+          <span>当月投入（材＋加）</span><span style="font-weight:700;">340,000円</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; background:var(--gray-pale); font-weight:700; border-left:2px solid var(--purple-main); border-right:2px solid var(--purple-main);">
+          <span>合計</span><span>410,000円</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; background:var(--purple-light); font-weight:700; margin-top:0.3rem;">
+          <span>【出た分】</span><span></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; background:#e8f5e9; border-left:2px solid var(--purple-main); border-right:2px solid var(--purple-main);">
+          <span>&#x2192; 完成品原価</span><span style="font-weight:700; color:var(--green-main);">342,220円</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; background:#fce4ec; border-left:2px solid var(--purple-main); border-right:2px solid var(--purple-main); border-radius:0 0 6px 6px;">
+          <span>&#x2192; 月末仕掛品原価</span><span style="font-weight:700; color:var(--red-main);">67,780円</span>
+        </div>
+        <div style="text-align:center; font-size:0.78rem; color:var(--gray-mid); margin-top:0.4rem;">入った分の合計 ＝ 出た分の合計（必ず一致！）</div>
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>よくあるミス まとめ</strong><br>
+      &#x2718; 材料費で進捗度をかけてしまう → <strong>始点投入なら100%！</strong><br>
+      &#x2718; 月初原価を入れ忘れる → 平均法は<strong>月初＋当月の合計</strong>で割る！<br>
+      &#x2718; 完成品を直接計算しようとする → <strong>月末仕掛品を先に計算して差額</strong>が確実！
+    </div>
+
+    <div class="alert-tip">
+      <strong>次のタブで同じデータを先入先出法でも解くよ。違いを比べてみよう！</strong>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: 総合原価 先入先出法 ==================== -->
+  <div class="tab-panel theme-purple" id="tab4">
+
+    <div class="point-box pb-purple">
+      <h4>&#x1F4CB; 総合原価計算：先入先出法</h4>
+      <p>月初仕掛品を<strong>先に完成</strong>させる考え方。<br>前のタブと<strong>同じデータ</strong>で解いて、平均法との違いを体感しよう！</p>
+    </div>
+
+    <!-- ===== 平均法との違い ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x2753;</span> 平均法との違いは？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        平均法と先入先出法、何が違うの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        違いはたった1つ。<strong>単価を計算するとき、月初の原価を混ぜるか混ぜないか</strong>だけ！
+      </div>
+    </div>
+
+    <div style="background:var(--white); border:2px solid var(--purple-main); border-radius:var(--radius); padding:1rem; margin:0.8rem 0; box-shadow:var(--shadow);">
+      <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; background:#e8f5e9; border:2px solid var(--green-main); border-radius:8px; padding:0.7rem; text-align:center;">
+          <div style="font-size:1.2rem;">&#x26FD;</div>
+          <div style="font-weight:700; color:var(--green-dark);">平均法</div>
+          <div style="font-size:0.85rem; margin-top:0.3rem;">ガソリンの給油<br>タンクで<strong>全部混ざる</strong></div>
+          <div style="background:white; border-radius:6px; padding:0.4rem; margin-top:0.3rem; font-size:0.82rem;">
+            単価 ＝<br><strong>（月初＋当月）&divide; 総換算量</strong>
+          </div>
+        </div>
+        <div style="flex:1; min-width:200px; background:#e3f2fd; border:2px solid var(--blue-main); border-radius:8px; padding:0.7rem; text-align:center;">
+          <div style="font-size:1.2rem;">&#x1F3EA;</div>
+          <div style="font-weight:700; color:var(--blue-dark);">先入先出法</div>
+          <div style="font-size:0.85rem; margin-top:0.3rem;">コンビニのおにぎり<br><strong>古いのから先に</strong>出す</div>
+          <div style="background:white; border-radius:6px; padding:0.4rem; margin-top:0.3rem; font-size:0.82rem;">
+            単価 ＝<br><strong>当月投入額 &divide; 当月換算量</strong>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center; font-size:0.82rem; color:var(--gray-mid); margin-top:0.5rem;">
+        先入先出法は月初の原価を混ぜないので、<strong>「今月いくらかかったか」がより正確</strong>にわかる
+      </div>
+    </div>
+
+    <!-- ===== 問題データ ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4DD;</span> 問題データ（平均法と同じ）</h2>
+
+    <div class="card card-purple">
+      <table class="tbl-purple">
+        <tr><th></th><th>数量</th><th>材料費</th><th>加工費</th></tr>
+        <tr><td>月初仕掛品（進捗50%）</td><td>100個</td><td>50,000円</td><td>20,000円</td></tr>
+        <tr><td>当月投入</td><td>400個</td><td>200,000円</td><td>140,000円</td></tr>
+        <tr><td>完成品</td><td>400個</td><td colspan="2" style="color:var(--gray-mid);">← 求める</td></tr>
+        <tr><td>月末仕掛品（進捗50%）</td><td>100個</td><td colspan="2" style="color:var(--gray-mid);">← 求める</td></tr>
+      </table>
+      <p style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">材料は<strong>始点投入</strong>。<strong>先入先出法</strong>で計算。</p>
+    </div>
+
+    <!-- ===== 解き方 ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x2705;</span> 解き方（4ステップ）</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        先入先出法では<strong>「今月の作業でどれだけ進んだか」</strong>だけを数えるよ。月初にすでに終わっていた分は含めない。ここが平均法と違うポイント！
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--purple-main);">1</div>
+      <h4>当月投入分の換算量を求める</h4>
+      <p>「今月の作業で何個ぶん進んだか」を数える。3つの内訳に分けて考えよう。</p>
+    </div>
+
+    <!-- ===== 加工費の内訳を丁寧に説明 ===== -->
+    <div style="background:var(--white); border:2px solid var(--orange-main); border-radius:var(--radius); padding:1rem; margin:0.8rem 0; box-shadow:var(--shadow);">
+      <div style="font-weight:700; color:var(--orange-dark); margin-bottom:0.5rem;">&#x1F477; 加工費の当月換算量 ── 3つの内訳</div>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-bottom:0.5rem;">今月の作業は3種類ある。それぞれを「完成品何個ぶん」に換算して足す。</p>
+
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <div style="background:#fff3e0; border-radius:8px; padding:0.6rem; border-left:4px solid var(--orange-main);">
+          <div style="font-weight:700; font-size:0.88rem;">&#x2460; 月初仕掛品の「残り加工」</div>
+          <div style="font-size:0.85rem; margin-top:0.2rem;">
+            月初100個は先月すでに50%まで加工ずみ。<strong>残りの50%を今月やった</strong>。<br>
+            100個 &times;（100% &minus; 50%）＝ 100個 &times; 50% ＝ <strong>50個ぶん</strong>
+          </div>
+        </div>
+        <div style="background:#e3f2fd; border-radius:8px; padding:0.6rem; border-left:4px solid var(--blue-main);">
+          <div style="font-weight:700; font-size:0.88rem;">&#x2461; 今月スタートして今月完成した分</div>
+          <div style="font-size:0.85rem; margin-top:0.2rem;">
+            完成品400個のうち、月初からの100個を除く。<br>
+            400 &minus; 100 ＝ <strong>300個ぶん</strong>（100%加工済み）
+          </div>
+        </div>
+        <div style="background:#fce4ec; border-radius:8px; padding:0.6rem; border-left:4px solid var(--red-main);">
+          <div style="font-weight:700; font-size:0.88rem;">&#x2462; 月末仕掛品（今月途中まで加工）</div>
+          <div style="font-size:0.85rem; margin-top:0.2rem;">
+            月末100個は50%まで加工が進んだ。<br>
+            100個 &times; 50% ＝ <strong>50個ぶん</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-result" style="background:#e8f5e9; margin-top:0.5rem; text-align:center;">
+        <strong>加工費の当月換算量</strong> ＝ 50 ＋ 300 ＋ 50 ＝ <strong style="color:var(--orange-main); font-size:1.1rem;">400個</strong>
+      </div>
+    </div>
+
+    <div style="background:var(--white); border:2px solid var(--blue-main); border-radius:var(--radius); padding:1rem; margin:0.8rem 0; box-shadow:var(--shadow);">
+      <div style="font-weight:700; color:var(--blue-dark); margin-bottom:0.5rem;">&#x1F9F1; 材料費の当月換算量</div>
+      <p style="font-size:0.85rem;">材料は始点投入なので、月初100個の材料は先月にすでに100%投入ずみ。<br>
+      今月新しく材料を入れたのは<strong>当月投入の400個</strong>。そのうち：</p>
+      <div style="display:flex; flex-direction:column; gap:0.3rem; margin-top:0.4rem; font-size:0.85rem;">
+        <div style="background:var(--blue-light); border-radius:6px; padding:0.4rem 0.6rem;">
+          &#x2461; 今月完成した分 ＝ 400 &minus; 100 ＝ <strong>300個</strong>
+        </div>
+        <div style="background:var(--blue-light); border-radius:6px; padding:0.4rem 0.6rem;">
+          &#x2462; 月末仕掛品 ＝ 100個 &times; 100% ＝ <strong>100個</strong>（始点投入なので100%）
+        </div>
+      </div>
+      <div class="step-result" style="background:#e8f5e9; margin-top:0.5rem; text-align:center;">
+        <strong>材料費の当月換算量</strong> ＝ 300 ＋ 100 ＝ <strong style="color:var(--blue-main); font-size:1.1rem;">400個</strong>
+      </div>
+      <p style="font-size:0.78rem; color:var(--gray-mid); margin-top:0.3rem;">月初100個の材料は先月投入ずみなので、ここには含めない！</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--blue-main);">2</div>
+      <h4>当月投入の単価を求める</h4>
+      <p>先入先出法では<strong>当月の投入額だけ</strong>を当月換算量で割る。<strong>月初の原価は混ぜない！</strong></p>
+      <div class="step-result" style="border-left:3px solid var(--blue-main);">
+        <strong>材料費の当月単価</strong><br>
+        ＝ <strong>当月投入額</strong> 200,000 &divide; 当月換算量 400<br>
+        ＝ <strong style="color:var(--blue-main); font-size:1.1rem;">@500円</strong><br>
+        <span style="font-size:0.78rem; color:var(--gray-mid);">（月初の50,000円は入れない！）</span>
+      </div>
+      <div class="step-result" style="border-left:3px solid var(--orange-main);">
+        <strong>加工費の当月単価</strong><br>
+        ＝ <strong>当月投入額</strong> 140,000 &divide; 当月換算量 400<br>
+        ＝ <strong style="color:var(--orange-main); font-size:1.1rem;">@350円</strong><br>
+        <span style="font-size:0.78rem; color:var(--gray-mid);">（月初の20,000円は入れない！）</span>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        平均法は月初も足して割ったのに、先入先出法は当月だけで割る......ここだけ注意すればいい？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        その通り！<strong>違いは Step1（換算量）と Step2（割り算）だけ</strong>。Step3 と Step4 のやり方は平均法とまったく同じだよ。
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--green-main);">3</div>
+      <h4>月末仕掛品の原価を求める</h4>
+      <p>当月の単価 &times; 月末の換算量。平均法と同じやり方。</p>
+      <div class="step-result" style="border-left:3px solid var(--blue-main);">
+        <strong>材料費</strong> ＝ @500 &times; 100個 ＝ <strong>50,000円</strong>
+      </div>
+      <div class="step-result" style="border-left:3px solid var(--orange-main);">
+        <strong>加工費</strong> ＝ @350 &times; 50個 ＝ <strong>17,500円</strong>
+      </div>
+      <div class="step-result" style="background:#fce4ec;">
+        <strong>月末仕掛品の合計</strong> ＝ 50,000 ＋ 17,500 ＝ <strong style="color:var(--red-main); font-size:1.1rem;">67,500円</strong>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--red-main);">4</div>
+      <h4>完成品原価を求める（差額で出す）</h4>
+      <div class="step-result" style="background:#e8f5e9;">
+        <strong>完成品原価</strong> ＝ 410,000 &minus; 67,500 ＝ <strong style="color:var(--green-main); font-size:1.1rem;">342,500円</strong>（1個あたり約856円）
+      </div>
+    </div>
+
+    <!-- ===== 比較 ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F50D;</span> 平均法との比較</h2>
+
+    <div class="diagram">
+      <div class="diagram-title dt-purple">同じデータなのに答えが違う！</div>
+      <table class="tbl-purple">
+        <tr><th></th><th>平均法</th><th>先入先出法</th></tr>
+        <tr><td style="font-weight:700;">単価の計算</td><td>(月初+当月) &divide; 総換算量<br><span style="font-size:0.75rem;">月初を<strong>混ぜる</strong></span></td><td>当月投入額 &divide; 当月換算量<br><span style="font-size:0.75rem;">月初を<strong>混ぜない</strong></span></td></tr>
+        <tr><td style="font-weight:700;">材料費単価</td><td>@500円</td><td>@500円</td></tr>
+        <tr><td style="font-weight:700;">加工費単価</td><td>@355.6円</td><td>@350円</td></tr>
+        <tr><td style="font-weight:700;">月末仕掛品</td><td style="color:var(--red-main); font-weight:700;">67,780円</td><td style="color:var(--red-main); font-weight:700;">67,500円</td></tr>
+        <tr><td style="font-weight:700;">完成品原価</td><td style="color:var(--green-main); font-weight:700;">342,220円</td><td style="color:var(--green-main); font-weight:700;">342,500円</td></tr>
+      </table>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">なぜ答えが違う？</div>
+        月初の仕掛品は<strong>先月の原価</strong>で作られている。先入先出法はそれを混ぜないので、<strong>「今月いくらかかったか」がより正確</strong>にわかる。平均法は混ぜるから計算は簡単だけど、先月と今月のコストがぼやける。
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>先入先出法のよくあるミス</strong><br>
+      &#x2718; 平均法と同じく月初原価を足してしまう → <strong>当月投入額だけで割る！</strong><br>
+      &#x2718; 加工費の当月換算量で「月初の残り加工分」を忘れる → <strong>月初100個の（100%&minus;50%）＝50個ぶんを忘れずに！</strong><br>
+      &#x2718; 材料費の当月換算量に月初100個を入れてしまう → <strong>月初の材料は先月投入ずみなので入れない！</strong>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 5: 差異分析 直接材料費 ==================== -->
+  <div class="tab-panel theme-red" id="tab5">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F9F1; 直接材料費の差異分析</h4>
+      <p>予算オーバーの原因を<strong>「材料の値段のせい」と「使った量のせい」</strong>に分ける。<br>お弁当工場のお米で実際に計算してみよう！</p>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4DD;</span> 問題データ</h2>
+
+    <div class="card card-red">
+      <table class="tbl-red">
+        <tr><th></th><th>単価</th><th>数量</th><th>合計</th></tr>
+        <tr><td style="font-weight:700; color:var(--blue-main);">&#x1F4CF; 標準（予算）</td><td>@100円/kg</td><td>200kg</td><td style="font-weight:700;">20,000円</td></tr>
+        <tr><td style="font-weight:700; color:var(--red-main);">&#x1F4B8; 実際</td><td>@110円/kg</td><td>220kg</td><td style="font-weight:700;">24,200円</td></tr>
+      </table>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">総差異 ＝ 20,000 &minus; 24,200 ＝ <strong>&minus;4,200円（不利）</strong></p>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4B0;</span> &#x2460; 価格差異（値段のせい）</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        1kg あたり10円高かった。「10円 &times; 何kg」にすればいいけど、<strong>200kg と 220kg、どっち？</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>実際にお金を払ったのは220kg分</strong>。その220kgぜんぶが10円ずつ高かったんだから、<strong>220kgでかける</strong>のが正しい。200kgだと残り20kg分の値上がり損が消えちゃうよ。
+      </div>
+    </div>
+
+    <div style="background:#fff8e1; border:2px solid #ffe082; border-radius:var(--radius); padding:0.8rem 1rem; margin:0.5rem 0;">
+      <div style="font-weight:700; color:var(--orange-dark); margin-bottom:0.3rem;">&#x1F4B0; 価格差異の計算</div>
+      <div class="step-result">
+        （@100 &minus; @110）&times; <strong style="color:var(--red-main);">220kg</strong> ＝ &minus;10 &times; 220 ＝ <strong style="color:var(--red-main); font-size:1.1rem;">&minus;2,200円（不利）</strong>
+      </div>
+      <div class="step-result" style="background:#e8f5e9;">
+        &#x1F4A1; 値上がりの損は<strong>実際に買った分だけ発生</strong>する → だから<strong style="color:var(--red-main);">実際数量</strong>をかける<br>
+        &#x1F449; 対策：仕入先の見直し、まとめ買い交渉
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4E6;</span> &#x2461; 数量差異（量のせい）</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        20kg使いすぎた。「20kg &times; 何円」にすればいいけど、<strong>@100円 と @110円、どっち？</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>量のムダだけを測りたい</strong>んだよね。もし@110円でかけると値上がりの10円が混ざっちゃう。値段の影響は&#x2460;で計算ずみだから、<strong>二重カウントにならないよう@100円でかける</strong>んだ。
+      </div>
+    </div>
+
+    <div style="background:#e3f2fd; border:2px solid #90caf9; border-radius:var(--radius); padding:0.8rem 1rem; margin:0.5rem 0;">
+      <div style="font-weight:700; color:var(--blue-dark); margin-bottom:0.3rem;">&#x1F4E6; 数量差異の計算</div>
+      <div class="step-result">
+        （200kg &minus; 220kg）&times; <strong style="color:var(--blue-main);">@100</strong> ＝ &minus;20 &times; 100 ＝ <strong style="color:var(--red-main); font-size:1.1rem;">&minus;2,000円（不利）</strong>
+      </div>
+      <div class="step-result" style="background:#e8f5e9;">
+        &#x1F4A1; 量のムダを測るとき<strong>値段変動を混ぜたくない</strong> → だから<strong style="color:var(--blue-main);">標準単価</strong>をかける<br>
+        &#x1F449; 対策：盛り付け量の基準見直し、計量の徹底
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x2705;</span> 検算</h2>
+
+    <div style="background:#e8f5e9; border:2px solid #a5d6a7; border-radius:var(--radius); padding:0.8rem 1rem; margin:0.5rem 0; text-align:center;">
+      価格差異 &minus;2,200 ＋ 数量差異 &minus;2,000 ＝ <strong>&minus;4,200円</strong> &#x2705; 総差異と一致！
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">まとめ図</div>
+      <div style="max-width:400px; margin:0 auto; font-size:0.88rem;">
+        <div style="background:var(--gray-pale); border-radius:8px; padding:0.6rem; text-align:center; font-weight:700; margin-bottom:0.4rem;">総差異 &minus;4,200円（不利）</div>
+        <div style="display:flex; gap:0.5rem;">
+          <div style="flex:1; background:#fff3e0; border:2px solid #ffcc80; border-radius:8px; padding:0.5rem; text-align:center;">
+            <div style="font-weight:700; color:var(--orange-dark); font-size:0.85rem;">&#x1F4B0; 価格差異</div>
+            <div style="font-weight:700; color:var(--red-main);">&minus;2,200円</div>
+            <div style="font-size:0.72rem; color:var(--gray-mid);">値段が高かった</div>
+          </div>
+          <div style="flex:1; background:#e3f2fd; border:2px solid #90caf9; border-radius:8px; padding:0.5rem; text-align:center;">
+            <div style="font-weight:700; color:var(--blue-dark); font-size:0.85rem;">&#x1F4E6; 数量差異</div>
+            <div style="font-weight:700; color:var(--red-main);">&minus;2,000円</div>
+            <div style="font-size:0.72rem; color:var(--gray-mid);">使いすぎた</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>次のタブでは労務費の差異分析を同じ構造で解くよ。「単価→賃率」「数量→時間」に置き換えるだけ！</strong>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 6: 差異分析 直接労務費 ==================== -->
+  <div class="tab-panel theme-red" id="tab6">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F477; 直接労務費の差異分析</h4>
+      <p>材料費と<strong>まったく同じ構造</strong>！「単価→賃率（時給）」「数量→時間」に置き換えるだけ。<br>同じお弁当工場の<strong>作業員さんの人件費</strong>で計算してみよう。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        材料費の差異分析ができた人なら、労務費もすぐできる！<strong>言葉を置き換えるだけ</strong>だからね。
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4DD;</span> 問題データ</h2>
+
+    <div class="card card-red">
+      <h4>&#x1F477; お弁当工場の作業員データ</h4>
+      <table class="tbl-red">
+        <tr><th></th><th>賃率（時給）</th><th>作業時間</th><th>合計</th></tr>
+        <tr><td style="font-weight:700; color:var(--blue-main);">&#x1F4CF; 標準</td><td>@800円/時間</td><td>500時間</td><td style="font-weight:700;">400,000円</td></tr>
+        <tr><td style="font-weight:700; color:var(--red-main);">&#x1F4B8; 実際</td><td>@850円/時間</td><td>520時間</td><td style="font-weight:700;">442,000円</td></tr>
+      </table>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">総差異 ＝ 400,000 &minus; 442,000 ＝ <strong>&minus;42,000円（不利）</strong></p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">材料費と労務費の用語対応表</div>
+      <table class="tbl-red" style="font-size:0.85rem;">
+        <tr><th></th><th>材料費</th><th>労務費</th></tr>
+        <tr><td style="font-weight:700;">値段</td><td>単価（@100円/kg）</td><td><strong>賃率（@800円/時間）</strong></td></tr>
+        <tr><td style="font-weight:700;">量</td><td>数量（200kg）</td><td><strong>作業時間（500時間）</strong></td></tr>
+        <tr><td style="font-weight:700;">値段系の差異</td><td>価格差異</td><td><strong>賃率差異</strong></td></tr>
+        <tr><td style="font-weight:700;">量系の差異</td><td>数量差異</td><td><strong>時間差異</strong></td></tr>
+      </table>
+      <div style="text-align:center; font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">名前が違うだけで、<strong>公式の構造はまったく同じ</strong>！</div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4B0;</span> &#x2460; 賃率差異（時給のせい）</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        時給が50円高かった。材料費と同じ考え方なら......<strong>実際の作業時間をかければいい？</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        その通り！<strong>実際に働いた520時間ぜんぶ</strong>が50円ずつ高かったんだから、520時間でかける。材料費の価格差異とまったく同じ理由だね。
+      </div>
+    </div>
+
+    <div style="background:#fff8e1; border:2px solid #ffe082; border-radius:var(--radius); padding:0.8rem 1rem; margin:0.5rem 0;">
+      <div style="font-weight:700; color:var(--orange-dark); margin-bottom:0.3rem;">&#x1F4B0; 賃率差異の計算</div>
+      <div class="step-result">
+        （@800 &minus; @850）&times; <strong style="color:var(--red-main);">520時間</strong> ＝ &minus;50 &times; 520 ＝ <strong style="color:var(--red-main); font-size:1.1rem;">&minus;26,000円（不利）</strong>
+      </div>
+      <div class="step-result" style="background:#e8f5e9;">
+        &#x1F4A1; 時給アップの損は<strong>実際に働いた時間ぶん発生</strong> → <strong style="color:var(--red-main);">実際時間</strong>をかける<br>
+        &#x1F449; 対策：残業代の管理、パート比率の見直し
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x23F0;</span> &#x2461; 時間差異（作業時間のせい）</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        20時間多く働いた。これも材料費と同じで......<strong>標準の賃率をかける？</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        正解！<strong>時間のムダだけを測りたい</strong>から、時給の変動を混ぜないように標準賃率でかける。材料費の数量差異と同じ理由だね。
+      </div>
+    </div>
+
+    <div style="background:#e3f2fd; border:2px solid #90caf9; border-radius:var(--radius); padding:0.8rem 1rem; margin:0.5rem 0;">
+      <div style="font-weight:700; color:var(--blue-dark); margin-bottom:0.3rem;">&#x23F0; 時間差異の計算</div>
+      <div class="step-result">
+        （500h &minus; 520h）&times; <strong style="color:var(--blue-main);">@800</strong> ＝ &minus;20 &times; 800 ＝ <strong style="color:var(--red-main); font-size:1.1rem;">&minus;16,000円（不利）</strong>
+      </div>
+      <div class="step-result" style="background:#e8f5e9;">
+        &#x1F4A1; 時間のムダを測るとき<strong>賃率変動を混ぜたくない</strong> → <strong style="color:var(--blue-main);">標準賃率</strong>をかける<br>
+        &#x1F449; 対策：作業手順の効率化、段取りの改善
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x2705;</span> 検算</h2>
+
+    <div style="background:#e8f5e9; border:2px solid #a5d6a7; border-radius:var(--radius); padding:0.8rem 1rem; margin:0.5rem 0; text-align:center;">
+      賃率差異 &minus;26,000 ＋ 時間差異 &minus;16,000 ＝ <strong>&minus;42,000円</strong> &#x2705; 総差異と一致！
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4CB;</span> 材料費と労務費の差異分析 完全対比</h2>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">4つの差異を一覧で整理</div>
+      <table class="tbl-red" style="font-size:0.82rem;">
+        <tr><th></th><th>材料費</th><th>労務費</th><th>かける相手と理由</th></tr>
+        <tr>
+          <td style="font-weight:700;">値段系</td>
+          <td><strong>価格差異</strong><br>(標準単価&minus;実際単価)&times;実際数量</td>
+          <td><strong>賃率差異</strong><br>(標準賃率&minus;実際賃率)&times;実際時間</td>
+          <td><strong style="color:var(--red-main);">実際</strong><br><span style="font-size:0.72rem;">実際に買った/働いた分だけ損するから</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;">量系</td>
+          <td><strong>数量差異</strong><br>(標準数量&minus;実際数量)&times;標準単価</td>
+          <td><strong>時間差異</strong><br>(標準時間&minus;実際時間)&times;標準賃率</td>
+          <td><strong style="color:var(--blue-main);">標準</strong><br><span style="font-size:0.72rem;">値段変動を混ぜたくないから</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="alert-tip">
+      <strong>差異分析は「犯人探し」ではなく「改善のヒント」</strong><br>
+      &#x2022; 値段系の差異が大きい → <strong>仕入れ・人事の問題</strong>（値上がり？ 賃金体系？）<br>
+      &#x2022; 量系の差異が大きい → <strong>現場の問題</strong>（ムダ使い？ 作業効率？）
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 7: 穴埋めチェック ==================== -->
+  <div class="tab-panel theme-teal" id="tab7">
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x270D;&#xFE0F;</span> 穴埋めチェック【基礎固め】</h2>
+
+    <div style="background:var(--white);border-radius:var(--radius);padding:0.7rem;margin-bottom:0.8rem;box-shadow:var(--shadow);">
+      <p style="font-size:0.88rem;">各穴をクリックすると答えが表示されるよ。</p>
+    </div>
+
+    <div style="text-align:right;margin-bottom:0.8rem;">
+      <button class="fill-reveal-btn" onclick="revealAllFill()" style="background:#059669;">&#x1F50D; 全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFill()" style="background:#64748b;">&#x1F504; リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-teal">Q1. 原価の6分類</div>
+      <div class="fill-body">
+        <div class="fill-group">原価の3要素 &times; <span class="fill-blank">直接・間接</span> ＝ <span class="fill-blank">6</span>分類</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group"><span class="fill-blank">直接費</span> ＝ どの製品にいくらかかったか直接わかる費用<br><span class="fill-blank">間接費</span> ＝ 複数の製品で共用する費用</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-teal">Q2. 製造間接費と配賦</div>
+      <div class="fill-body">
+        <div class="fill-group">間接材料費 + 間接労務費 + 間接経費 ＝ <span class="fill-blank">製造間接費</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">配賦額 ＝ 製造間接費 &times; その注文の<span class="fill-blank">基準量</span> &divide; 全体の基準量合計<br>試験で最も多い配賦基準は<span class="fill-blank">直接作業時間</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-green">Q3. 個別原価計算</div>
+      <div class="fill-body">
+        <div class="fill-group">注文ごとに<span class="fill-blank">製造指図書</span>を発行し、原価を集計する。<br>直接費は<span class="fill-blank">直接ひもづけ</span>、間接費は<span class="fill-blank">配賦基準</span>で按分する。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-purple">Q4. 総合原価計算</div>
+      <div class="fill-body">
+        <div class="fill-group">製品1個あたり原価 ＝ 当期総製造費用 &divide; <span class="fill-blank">完成品換算量</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">材料費（始点投入）は進捗度に関係なく<span class="fill-blank">100%</span>換算<br>加工費は<span class="fill-blank">進捗度</span>をかけて換算する</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-purple">Q5. 先入先出法と平均法</div>
+      <div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">先入先出法</span>：当月投入分だけで単価計算<br><span class="fill-blank">平均法</span>：月初と当月を混ぜて平均単価を計算</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-red">Q6. 差異分析の公式（材料費）</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">価格差異</span> ＝ （標準単価 &minus; 実際単価）&times; <span class="fill-blank">実際数量</span><br>&#x2461; <span class="fill-blank">数量差異</span> ＝ （標準数量 &minus; 実際数量）&times; <span class="fill-blank">標準単価</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-red">Q7. 差異分析の公式（労務費）</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2462; <span class="fill-blank">賃率差異</span> ＝ （標準賃率 &minus; 実際賃率）&times; <span class="fill-blank">実際時間</span><br>&#x2463; <span class="fill-blank">時間差異</span> ＝ （標準時間 &minus; 実際時間）&times; <span class="fill-blank">標準賃率</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-red">Q8. 差異の覚え方</div>
+      <div class="fill-body">
+        <div class="fill-group">値段系（価格差異・賃率差異）は<span class="fill-blank">実際</span>をかける<br>量系（数量差異・時間差異）は<span class="fill-blank">標準</span>をかける</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">結果がプラス ＝ <span class="fill-blank">有利差異</span> ／ マイナス ＝ <span class="fill-blank">不利差異</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header st-green">Q9. 原価の流れと勘定科目</div>
+      <div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">材料</span> &rarr; <span class="fill-blank">仕掛品</span> &rarr; <span class="fill-blank">製品</span> &rarr; <span class="fill-blank">売上原価</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">材料・仕掛品・製品はB/Sの<span class="fill-blank">流動資産（棚卸資産）</span><br>売上原価はP/Lの<span class="fill-blank">費用</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 8: 理解度クイズ ==================== -->
+  <div class="tab-panel theme-orange" id="tab8">
+
+    <div class="point-box pb-orange">
+      <h4>&#x270F;&#xFE0F; 理解度クイズ &#x00B7; 全8問</h4>
+      <p>知識問題＋<strong>かんたんな計算問題</strong>の組み合わせ。基礎固めの総チェック！</p>
+    </div>
+
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div><span class="quiz-cat qc-teal">6分類</span>
+      <div class="quiz-question">工場全体の電気代のように、複数の製品にまたがって発生し、どの製品にいくらかかったか直接わからない費用を何というか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q1', 2)">
+        <li data-idx="0">直接材料費</li>
+        <li data-idx="1">直接経費</li>
+        <li data-idx="2">製造間接費</li>
+        <li data-idx="3">販売費</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>&#x2705; 正解：製造間接費</strong><br>
+        間接材料費+間接労務費+間接経費 ＝ <strong>製造間接費</strong>。配賦基準（作業時間等）で各製品に割り振る。「販売費」は製造原価に含まない点にも注意！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div><span class="quiz-cat qc-blue">配賦</span>
+      <div class="quiz-question">製造間接費15万円を、注文Xの作業時間50hと注文Yの作業時間100hで配賦する場合、注文Xへの配賦額はいくらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q2', 0)">
+        <li data-idx="0">5万円</li>
+        <li data-idx="1">7.5万円</li>
+        <li data-idx="2">10万円</li>
+        <li data-idx="3">15万円</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>&#x2705; 正解：5万円</strong><br>
+        配賦率 = 15万 &divide; (50+100)h = @1,000円/h<br>
+        注文X = @1,000 &times; 50h = <strong>5万円</strong><br>
+        作業時間の割合（50/150 = 1/3）で按分するだけ！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div><span class="quiz-cat qc-purple">総合原価</span>
+      <div class="quiz-question">総合原価計算で、月末仕掛品200個（加工進捗度40%）の<strong>加工費</strong>の完成品換算量は何個か。なお材料は始点投入である。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q3', 1)">
+        <li data-idx="0">200個</li>
+        <li data-idx="1">80個</li>
+        <li data-idx="2">120個</li>
+        <li data-idx="3">40個</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>&#x2705; 正解：80個</strong><br>
+        加工費の完成品換算量 = 200個 &times; 40% = <strong>80個</strong>。<br>
+        <strong>材料費</strong>（始点投入）なら進捗度に関係なく200個のまま。加工費だけ進捗度をかける！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div><span class="quiz-cat qc-purple">総合原価</span>
+      <div class="quiz-question">平均法で総合原価計算を行う場合、平均単価の計算方法として正しいものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q4', 2)">
+        <li data-idx="0">当月投入額 &divide; 当月投入換算量</li>
+        <li data-idx="1">月初仕掛品原価 &divide; 月初仕掛品換算量</li>
+        <li data-idx="2">（月初仕掛品原価 + 当月投入額）&divide; 総換算量</li>
+        <li data-idx="3">（月初仕掛品原価 + 当月投入額）&divide; 完成品数量</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>&#x2705; 正解：（月初仕掛品原価 + 当月投入額）&divide; 総換算量</strong><br>
+        平均法は月初と当月を<strong>全部混ぜて平均</strong>する。総換算量 ＝ 完成品数量 + 月末仕掛品の換算量。選択肢Aは先入先出法の当月単価の求め方。
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div><span class="quiz-cat qc-red">差異分析</span>
+      <div class="quiz-question">標準原価計算の直接材料費における「価格差異」の計算で、かける相手として正しいものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q5', 1)">
+        <li data-idx="0">標準数量</li>
+        <li data-idx="1">実際数量</li>
+        <li data-idx="2">標準単価</li>
+        <li data-idx="3">実際単価</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>&#x2705; 正解：実際数量</strong><br>
+        価格差異は「値段系」なので<strong>実際数量をかける</strong>。<br>
+        &#x2022; 値段系（価格差異・賃率差異）→ <strong>実際</strong><br>
+        &#x2022; 量系（数量差異・時間差異）→ <strong>標準</strong>
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div><span class="quiz-cat qc-red">差異分析</span>
+      <div class="quiz-question">標準材料費：@50円 &times; 100kg ＝ 5,000円に対し、実際は@60円 &times; 110kg ＝ 6,600円だった。数量差異はいくらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q6', 2)">
+        <li data-idx="0">&minus;1,100円（不利）</li>
+        <li data-idx="1">&minus;600円（不利）</li>
+        <li data-idx="2">&minus;500円（不利）</li>
+        <li data-idx="3">&minus;1,600円（不利）</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>&#x2705; 正解：&minus;500円（不利）</strong><br>
+        数量差異 ＝（標準100kg &minus; 実際110kg）&times; <strong>標準@50</strong><br>
+        ＝ &minus;10 &times; 50 ＝ <strong>&minus;500円</strong>（不利）<br>
+        ちなみに価格差異 ＝（@50 &minus; @60）&times; 実際110 ＝ &minus;1,100円。合計 &minus;1,600円 ＝ 総差異と一致 &#x2714;
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q7">
+      <div class="quiz-num">7</div><span class="quiz-cat qc-green">有利・不利</span>
+      <div class="quiz-question">差異分析で（標準 &minus; 実際）の結果がプラスになった場合、この差異の呼び方として正しいものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q7', 0)">
+        <li data-idx="0">有利差異（貸方差異）</li>
+        <li data-idx="1">不利差異（借方差異）</li>
+        <li data-idx="2">正常差異</li>
+        <li data-idx="3">異常差異</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        <strong>&#x2705; 正解：有利差異（貸方差異）</strong><br>
+        標準 &minus; 実際 ＝ <strong>プラス</strong> ＝ 予算より安く済んだ ＝ <strong>有利差異</strong><br>
+        マイナスなら不利差異。有利＝貸方、不利＝借方と覚えよう。
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q8">
+      <div class="quiz-num">8</div><span class="quiz-cat qc-green">勘定の流れ</span>
+      <div class="quiz-question">原価の流れとして正しい順番はどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q8', 2)">
+        <li data-idx="0">仕掛品 &rarr; 材料 &rarr; 製品 &rarr; 売上原価</li>
+        <li data-idx="1">材料 &rarr; 製品 &rarr; 仕掛品 &rarr; 売上原価</li>
+        <li data-idx="2">材料 &rarr; 仕掛品 &rarr; 製品 &rarr; 売上原価</li>
+        <li data-idx="3">製品 &rarr; 材料 &rarr; 仕掛品 &rarr; 売上原価</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        <strong>&#x2705; 正解：材料 &rarr; 仕掛品 &rarr; 製品 &rarr; 売上原価</strong><br>
+        倉庫の材料 &rarr; 作りかけ（仕掛品）&rarr; 完成（製品）&rarr; 売れた分（売上原価）。<br>
+        材料・仕掛品・製品はB/Sの<strong>棚卸資産</strong>、売上原価はP/Lの<strong>費用</strong>。
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+    <div class="alert-tip" style="margin-top:1.5rem;">
+      <strong>次のステップ</strong><br>
+      &#x2022; しっかり得点できたら → <strong>「08.原価計算まとめ.html」</strong>へ進もう<br>
+      &#x2022; まだ不安なら → <strong>「08.原価計算まとめ_初心者向け.html」</strong>で概念をおさらい
+    </div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="teal" onclick="switchTab(0)">&#x1F4D6; 6分類</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(1)">&#x1F4DD; 3つの方法</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F522; 個別:配賦</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(3)">&#x1F35E; 総合:平均法</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">&#x1F4CB; 総合:先入先出</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(5)">&#x1F9F1; 標準:材料費</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(6)">&#x1F477; 標準:労務費</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴埋め</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(8)">&#x270F;&#xFE0F; クイズ</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 原価計算【基礎固め編】 &#x00B7; 初心者向けと基本編のあいだ</div>
+
+<script>
+function switchTab(idx) {
+  var numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) { b.classList.toggle('active', i % numTabs === idx); });
+  document.querySelectorAll('.tab-panel').forEach(function(p, i) { p.classList.toggle('active', i === idx); });
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+var answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  var li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  var idx = parseInt(li.dataset.idx);
+  var expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    var s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '\u554F\u4E2D ' + correct + '\u554F\u6B63\u89E3\uFF01' + (correct === total ? ' \u30D1\u30FC\u30D5\u30A7\u30AF\u30C8\uFF01' : correct >= 6 ? ' \u3044\u3044\u8ABF\u5B50\uFF01\u57FA\u672C\u7DE8\u3078\u9032\u3082\u3046\uFF01' : ' \u5404\u30BF\u30D6\u3092\u5FA9\u7FD2\u3057\u3066\u518D\u30C1\u30E3\u30EC\u30F3\u30B8\uFF01');
+  }
+}
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  if(grp && grp.classList.contains('fill-group')){
+    grp.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  }
+  btn.textContent = '\u2705 \u8868\u793A\u6E08\u307F'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAllFill(){
+  document.querySelectorAll('#tab7 .fill-blank').forEach(function(el){ el.classList.add('show'); });
+  document.querySelectorAll('#tab7 .fill-reveal-btn').forEach(function(b){ b.textContent = '\u2705 \u8868\u793A\u6E08\u307F'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAllFill(){
+  document.querySelectorAll('#tab7 .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  document.querySelectorAll('#tab7 .fill-reveal-btn').forEach(function(b){ b.innerHTML = '\uD83D\uDC41 \u7B54\u3048\u3092\u898B\u308B'; b.disabled = false; b.style.opacity = '1'; });
+}
+document.addEventListener('click', function(e){
+  if(e.target.classList && e.target.classList.contains('fill-blank')){
+    e.target.classList.toggle('show');
+  }
+});
+</script>
+</body>
+</html>

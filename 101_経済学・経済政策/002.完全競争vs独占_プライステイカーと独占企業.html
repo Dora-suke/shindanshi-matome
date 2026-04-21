@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>完全競争 vs 独占 | 中小企業診断士 経済学</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif; background:#f0f2f5; color:var(--gray-dark); line-height:1.8; }
+
+.header { background:linear-gradient(135deg,#2c3e50 0%,#8e44ad 100%); color:#fff; text-align:center; padding:2rem 1rem 1.5rem; }
+.header h1 { font-size:1.9rem; margin-bottom:.3rem; }
+.header .subtitle { font-size:.95rem; opacity:.88; margin-bottom:.5rem; }
+.header .badge { display:inline-block; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3); padding:.25rem .9rem; border-radius:20px; font-size:.82rem; }
+
+.tab-container { max-width:960px; margin:0 auto; padding:.5rem 1rem 3rem; }
+
+/* ---- Top tab nav (sticky) ---- */
+.tab-nav { display:flex; flex-wrap:wrap; gap:4px; margin:0 -1rem .5rem; background:var(--white); border-radius:0 0 var(--radius) var(--radius); padding:6px 10px; box-shadow:var(--shadow); position:sticky; top:0; z-index:100; }
+.tab-btn { flex:1 1 auto; min-width:100px; padding:.55rem .4rem; border:none; background:none; border-bottom:3px solid transparent; font-size:.85rem; font-weight:600; cursor:pointer; border-radius:var(--radius-sm) var(--radius-sm) 0 0; transition:.2s; }
+.tab-btn:hover { background:var(--gray-pale); }
+.tab-btn[data-color="blue"]   { color:var(--blue-main); }
+.tab-btn[data-color="green"]  { color:var(--green-main); }
+.tab-btn[data-color="red"]    { color:var(--red-main); }
+.tab-btn[data-color="purple"] { color:var(--purple-main); }
+.tab-btn.active[data-color="blue"]   { border-bottom-color:var(--blue-main);   background:var(--blue-light); }
+.tab-btn.active[data-color="green"]  { border-bottom-color:var(--green-main);  background:var(--green-light); }
+.tab-btn.active[data-color="red"]    { border-bottom-color:var(--red-main);    background:var(--red-light); }
+.tab-btn.active[data-color="purple"] { border-bottom-color:var(--purple-main); background:var(--purple-light); }
+
+.tab-panel { display:none; padding:1.5rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-top:.5rem; }
+.tab-panel.active { display:block; }
+.tab-panel.theme-blue   { background:var(--blue-bg); }
+.tab-panel.theme-green  { background:var(--green-bg); }
+.tab-panel.theme-red    { background:var(--red-bg); }
+.tab-panel.theme-purple { background:#f5eef8; }
+
+/* ---- Section titles ---- */
+.section-title { padding:.7rem 1rem; border-radius:var(--radius-sm); font-size:1.1rem; font-weight:700; margin:1.5rem 0 .8rem; color:#fff; }
+.section-title:first-child { margin-top:0; }
+.st-blue   { background:linear-gradient(135deg,var(--blue-main),#2471a3); }
+.st-red    { background:linear-gradient(135deg,var(--red-main),#c0392b); }
+.st-green  { background:linear-gradient(135deg,var(--green-main),#229954); }
+.st-orange { background:linear-gradient(135deg,var(--orange-main),var(--orange-dark)); }
+.st-purple { background:linear-gradient(135deg,var(--purple-main),#9b59b6); }
+
+/* ---- Components ---- */
+.card { background:var(--white); border-radius:var(--radius); padding:1.2rem; margin:.8rem 0; box-shadow:var(--shadow); }
+.card h3 { font-size:1rem; margin-bottom:.5rem; color:var(--gray-dark); }
+
+.alert-box { border-radius:var(--radius-sm); padding:.8rem 1rem; margin:.7rem 0; font-size:.92rem; }
+.alert-tip  { background:#eafaf1; border-left:4px solid var(--green-main); }
+.alert-warn { background:#fef9e7; border-left:4px solid var(--orange-light); }
+.alert-info { background:var(--blue-light); border-left:4px solid var(--blue-main); }
+
+.pb-blue   { background:linear-gradient(135deg,var(--blue-light),#fff); border:2px solid var(--blue-main); border-radius:var(--radius); padding:1rem; margin:.7rem 0; }
+.pb-red    { background:linear-gradient(135deg,var(--red-light),#fff); border:2px solid var(--red-main); border-radius:var(--radius); padding:1rem; margin:.7rem 0; }
+.pb-green  { background:linear-gradient(135deg,var(--green-light),#fff); border:2px solid var(--green-main); border-radius:var(--radius); padding:1rem; margin:.7rem 0; }
+.pb-orange { background:linear-gradient(135deg,var(--orange-pale),#fff); border:2px solid var(--orange-main); border-radius:var(--radius); padding:1rem; margin:.7rem 0; }
+.pb-purple { background:linear-gradient(135deg,var(--purple-light),#fff); border:2px solid #bb8fce; border-radius:var(--radius); padding:1rem; margin:.7rem 0; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin:.8rem 0; }
+@media(max-width:700px){ .two-col { grid-template-columns:1fr; } }
+
+.formula-box { background:linear-gradient(135deg,#fef9e7,#fff); border:2px solid var(--orange-light); border-radius:var(--radius); padding:1rem; margin:.7rem 0; text-align:center; }
+.formula-box .formula { font-size:1.15rem; font-weight:700; color:var(--orange-dark); margin:.3rem 0; }
+.formula-box .desc { font-size:.85rem; color:var(--gray-mid); }
+
+table { width:100%; border-collapse:collapse; margin:.7rem 0; font-size:.9rem; }
+th,td { padding:.5rem .6rem; text-align:left; border:1px solid #ddd; }
+.tbl-purple th { background:var(--purple-main); color:#fff; }
+.tbl-purple tr:nth-child(even) { background:var(--purple-light); }
+
+/* Graph */
+.graph-pair { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1rem 0; }
+@media(max-width:700px){ .graph-pair { grid-template-columns:1fr; } }
+.graph-card { background:var(--white); border-radius:var(--radius); padding:1.2rem 1rem .8rem; box-shadow:var(--shadow); text-align:center; }
+.graph-card .graph-title { font-size:1rem; font-weight:700; color:var(--gray-dark); margin-bottom:.2rem; }
+.graph-card .graph-sub   { font-size:.82rem; color:var(--gray-mid); margin-bottom:.6rem; }
+.graph-card .graph-caption { font-size:.82rem; color:var(--gray-mid); margin-top:.5rem; line-height:1.6; }
+.graph-full { background:var(--white); border-radius:var(--radius); padding:1.2rem 1rem .8rem; box-shadow:var(--shadow); text-align:center; margin:.8rem 0; }
+
+/* Bubble */
+.bubble-wrap { margin:.8rem 0; }
+.bubble-wrap .bubble { display:flex; gap:.6rem; margin:.5rem 0; align-items:flex-start; }
+.bubble-wrap .bubble.right { flex-direction:row-reverse; }
+.bubble .icon { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+.bubble .text { background:var(--white); border-radius:12px; padding:.55rem .85rem; max-width:80%; box-shadow:0 1px 4px rgba(0,0,0,.06); font-size:.92rem; }
+.bubble.right .text { background:var(--blue-light); }
+
+/* Step list */
+.step-list { counter-reset:step; list-style:none; padding:0; margin:.5rem 0; }
+.step-list li { counter-increment:step; position:relative; padding:.5rem .5rem .5rem 2.5rem; margin:.4rem 0; background:var(--white); border-radius:var(--radius-sm); box-shadow:0 1px 4px rgba(0,0,0,.05); font-size:.92rem; }
+.step-list li::before { content:counter(step); position:absolute; left:.6rem; top:.55rem; width:1.5rem; height:1.5rem; background:var(--purple-main); color:#fff; border-radius:50%; font-size:.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+/* Translation box */
+.translate-box { display:grid; grid-template-columns:1fr auto 1fr; gap:.6rem; align-items:center; margin:.8rem 0; }
+.translate-box .t-before { background:var(--gray-pale); border:2px solid var(--gray-light); border-radius:var(--radius); padding:.8rem; font-size:.88rem; }
+.translate-box .t-arrow  { font-size:1.5rem; color:var(--green-main); font-weight:700; text-align:center; }
+.translate-box .t-after  { background:var(--green-light); border:2px solid var(--green-main); border-radius:var(--radius); padding:.8rem; font-size:.88rem; font-weight:600; }
+@media(max-width:600px){ .translate-box { grid-template-columns:1fr; } .translate-box .t-arrow { transform:rotate(90deg); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>完全競争 vs 独占</h1>
+  <div class="subtitle">中小企業診断士 経済学・経済政策 | プライステイカーと独占企業の違い</div>
+  <div class="badge">全4タブ構成 図解で理解する市場構造</div>
+</div>
+
+<div class="tab-container">
+
+<!-- ======== Tab Navigation ======== -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-color="blue"   onclick="switchTab(0)">&#x1F4D6; 基本の違い</button>
+  <button class="tab-btn"        data-color="green"  onclick="switchTab(1)">&#x1F4CA; 収入と P=MR</button>
+  <button class="tab-btn"        data-color="red"    onclick="switchTab(2)">&#x1F4C8; グラフで比較</button>
+  <button class="tab-btn"        data-color="purple" onclick="switchTab(3)">&#x1F9EE; 傾きと利潤最大化</button>
+</nav>
+
+
+<!-- ================================================================ -->
+<!--  TAB 0 : 基本の違い                                              -->
+<!-- ================================================================ -->
+<div class="tab-panel theme-blue active">
+
+<!-- --- 1-1 --- -->
+<div class="section-title st-blue">一番の違い:「自分で価格を動かせるか」</div>
+
+<div class="two-col">
+  <div class="pb-blue">
+    <h3>完全競争市場の企業(プライステイカー)</h3>
+    <p style="font-size:.92rem;">市場が決めた価格を<strong>黙って受け入れるだけ</strong>。自分では価格を動かせず、ただ「受け入れる(take)」しかない立場。だから <strong>price-taker</strong> と呼ばれる。</p>
+  </div>
+  <div class="pb-red">
+    <h3>独占企業</h3>
+    <p style="font-size:.92rem;">市場に自分しかいないので、<strong>「いくらで売るか」を自分で決められる</strong>。ただし「高くすれば客が減る」という需要曲線の制約を一人で背負う。</p>
+  </div>
+</div>
+
+<div class="alert-warn alert-box">
+  <strong>この一点の違いから、「収入の形」と「儲け方のルール」がガラリと変わります。</strong>
+</div>
+
+<!-- --- 1-2 プライステイカー詳細 --- -->
+<div class="section-title st-green">「プライステイカー」をもう少し丁寧に</div>
+
+<div class="card">
+  <p style="font-size:.92rem;">完全競争市場にはライバル企業が星の数ほどいるため、1つの企業が「うちだけ生産量を増やそう!」と頑張っても、市場全体のバランス(価格)には<strong>全く影響を与えません</strong>。</p>
+  <p style="font-size:.92rem; margin-top:.4rem;">企業は市場で決まった価格をただ受け入れるしかない<strong>「プライステイカー(価格受容者)」</strong>となるため、企業にとって<strong>「商品の価格は○○円で一定(固定)」</strong>という状態になります。</p>
+</div>
+
+<!-- --- 1-3 まとめ表 --- -->
+<div class="section-title st-purple">直感的なまとめ</div>
+
+<div class="card">
+  <table class="tbl-purple">
+    <thead>
+      <tr>
+        <th style="width:25%;"></th>
+        <th style="width:37%;">完全競争</th>
+        <th style="width:38%;">独占</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>価格を決めるのは</strong></td><td>市場</td><td>自分</td></tr>
+      <tr><td><strong>D・MR・Pの関係</strong></td><td>全部同じ1本の線</td><td>MRがDより下にズレる</td></tr>
+      <tr><td><strong>利潤最大化条件</strong></td><td>P = MC</td><td>MR = MC、ただし P > MR</td></tr>
+      <tr><td><strong>戦略のイメージ</strong></td><td>コストが価格に追いつくまで作る</td><td>わざと量を絞って高値で売る</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pb-purple" style="margin-top:.5rem;">
+  <p style="font-size:.95rem; text-align:center;">
+    完全競争の企業が<strong>「ひたすら追いかける」</strong>のに対して、<br>
+    独占企業は<strong>「出し惜しみして上から値段を被せる」</strong><br>
+    ── この2つの図を行き来すると、その違いがハッキリ見えてくるはずです。
+  </p>
+</div>
+
+</div><!-- /tab0 -->
+
+
+<!-- ================================================================ -->
+<!--  TAB 1 : 収入と P=MR                                            -->
+<!-- ================================================================ -->
+<div class="tab-panel theme-green">
+
+<!-- --- 2-1 TR比較 --- -->
+<div class="section-title st-blue">収入(TR)の形を比べる</div>
+
+<div class="graph-pair">
+  <div class="graph-card">
+    <div class="graph-title">完全競争(プライステイカー)</div>
+    <div class="graph-sub">収入は真っ直ぐな直線</div>
+    <svg viewBox="0 0 320 240" style="width:100%;max-width:320px;">
+      <line x1="50" y1="20" x2="50" y2="200" stroke="#333" stroke-width="2"/>
+      <line x1="50" y1="200" x2="300" y2="200" stroke="#333" stroke-width="2"/>
+      <text x="22" y="110" font-size="13" fill="#555" transform="rotate(-90,22,110)" text-anchor="middle" font-weight="600">収入 TR</text>
+      <text x="175" y="225" font-size="13" fill="#555" text-anchor="middle" font-weight="600">販売量 Q</text>
+      <line x1="50" y1="195" x2="275" y2="45" stroke="#2980b9" stroke-width="3"/>
+      <text x="268" y="38" font-size="14" fill="#2980b9" font-weight="700">TR</text>
+    </svg>
+    <div class="graph-caption">価格は固定 → 売るほど比例して伸びる</div>
+  </div>
+  <div class="graph-card">
+    <div class="graph-title">独占企業</div>
+    <div class="graph-sub">収入は山なりの曲線</div>
+    <svg viewBox="0 0 320 240" style="width:100%;max-width:320px;">
+      <line x1="50" y1="20" x2="50" y2="200" stroke="#333" stroke-width="2"/>
+      <line x1="50" y1="200" x2="300" y2="200" stroke="#333" stroke-width="2"/>
+      <text x="22" y="110" font-size="13" fill="#555" transform="rotate(-90,22,110)" text-anchor="middle" font-weight="600">収入 TR</text>
+      <text x="175" y="225" font-size="13" fill="#555" text-anchor="middle" font-weight="600">販売量 Q</text>
+      <path d="M50,195 Q100,120 160,50 Q200,40 220,50 Q260,90 290,195" stroke="#922b21" stroke-width="3" fill="none"/>
+      <text x="185" y="40" font-size="14" fill="#922b21" font-weight="700">TR</text>
+    </svg>
+    <div class="graph-caption">売りすぎると値下げで収入が減る</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:#d6eaf8;">&#x1F914;</div>
+      <div class="text">左は「100円で何個でも売れる世界」なので、売った分だけ素直に収入が伸びるんですね。</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:#fadbd8;">&#x1F4A1;</div>
+      <div class="text">右は「11個目を売るには既存の10個も値下げしないといけない世界」。ある量を超えると追加販売の損のほうが大きくなり、<strong>収入が逆に減ります</strong>。</div>
+    </div>
+  </div>
+</div>
+
+<!-- --- 2-2 なぜP=MR? --- -->
+<div class="section-title st-green">なぜ完全競争では「価格 = 限界収入」になるのか?</div>
+
+<div class="card">
+  <h3 style="color:var(--green-dark);">パンで理解するシミュレーション(1個100円で固定)</h3>
+  <p style="font-size:.92rem; margin-bottom:.6rem;">限界収入とは、<strong>「生産量(販売量)を1個増やしたときに、追加で増える売上」</strong>のことでした。価格が一定の世界で計算してみましょう。</p>
+  <table class="tbl-purple" style="max-width:480px; margin:0 auto;">
+    <thead>
+      <tr><th>販売量</th><th>売上(TR)</th><th>追加の売上(MR)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1個</td><td>100円</td><td>100円</td></tr>
+      <tr><td>2個</td><td>200円</td><td><strong>100円</strong></td></tr>
+      <tr><td>3個</td><td>300円</td><td><strong>100円</strong></td></tr>
+      <tr><td>4個</td><td>400円</td><td><strong>100円</strong></td></tr>
+      <tr><td>5個</td><td>500円</td><td><strong>100円</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="alert-tip alert-box" style="margin-top:.8rem;">
+    <strong>結論:</strong> 価格が100円で固定されている以上、「1個追加で売った時の売上(限界収入)」は、常に「商品の価格(100円)」と<strong>全く同じ</strong>。だから完全競争市場では <strong>P = MR</strong> が成立する!
+  </div>
+</div>
+
+<!-- --- 2-3 独占との違い復習 --- -->
+<div class="pb-orange">
+  <h3 style="color:var(--orange-dark);">独占市場との違い(復習)</h3>
+  <p style="font-size:.92rem;">独占市場では、このルールが成り立ちませんでした。独占企業がたくさん商品を売るためには<strong>「自ら価格を下げていかなければならない」</strong>ため、安くなった価格で全ての商品を売る羽目になり、追加の売上(限界収入)は価格よりも激しく減っていく ── <strong>限界収入曲線が需要曲線の2倍の傾きで下がる</strong>という現象が起きていました。</p>
+  <div class="alert-warn alert-box" style="margin-top:.5rem;">
+    <strong>「価格を変えられない完全競争市場」と「価格を自分で変える独占市場」の違いとして押さえておくとバッチリ!</strong>
+  </div>
+</div>
+
+</div><!-- /tab1 -->
+
+
+<!-- ================================================================ -->
+<!--  TAB 2 : グラフで比較                                            -->
+<!-- ================================================================ -->
+<div class="tab-panel theme-red">
+
+<!-- --- 3-1 P/MR/MC グラフ --- -->
+<div class="section-title st-red">価格 P・限界収入 MR・限界費用 MC を1つの図で</div>
+
+<div class="alert-info alert-box">
+  <strong>ここがいちばん大事!</strong> 完全競争では D・MR・P が同じ水平線上で1本に重なるので、左のグラフでは1本の青い線が3つの役割を兼ねています。「MR の線がない」のではなく「P の線と完全に同じ場所にいる」ということです。
+</div>
+
+<div class="graph-pair">
+  <!-- Left: Perfect Competition -->
+  <div class="graph-card">
+    <div class="graph-title">完全競争(プライステイカー)</div>
+    <div class="graph-sub">P = MR = MC で生産</div>
+    <svg viewBox="0 0 340 280" style="width:100%;max-width:340px;">
+      <line x1="55" y1="20" x2="55" y2="230" stroke="#333" stroke-width="2"/>
+      <line x1="55" y1="230" x2="310" y2="230" stroke="#333" stroke-width="2"/>
+      <text x="25" y="125" font-size="13" fill="#555" transform="rotate(-90,25,125)" text-anchor="middle" font-weight="600">価格</text>
+      <text x="185" y="255" font-size="13" fill="#555" text-anchor="middle" font-weight="600">数量</text>
+      <line x1="80" y1="210" x2="290" y2="50" stroke="#555" stroke-width="2.5"/>
+      <text x="285" y="42" font-size="14" fill="#555" font-weight="700">MC</text>
+      <line x1="55" y1="130" x2="280" y2="130" stroke="#2980b9" stroke-width="3"/>
+      <text x="285" y="135" font-size="12" fill="#2980b9" font-weight="700">D = MR = P</text>
+      <text x="42" y="127" font-size="13" fill="#333" font-weight="600" text-anchor="end">P*</text>
+      <circle cx="185" cy="130" r="5" fill="#2980b9"/>
+      <line x1="185" y1="130" x2="185" y2="230" stroke="#999" stroke-width="1.2" stroke-dasharray="5,4"/>
+      <text x="185" y="248" font-size="13" fill="#333" font-weight="600" text-anchor="middle">Q*</text>
+    </svg>
+    <div class="graph-caption">需要曲線が水平 → D・MR・Pが<br>1本の線にピッタリ重なる<br>この線とMCが交わる点で生産</div>
+  </div>
+  <!-- Right: Monopoly -->
+  <div class="graph-card">
+    <div class="graph-title">独占企業</div>
+    <div class="graph-sub">P > MR = MC で生産</div>
+    <svg viewBox="0 0 340 280" style="width:100%;max-width:340px;">
+      <line x1="55" y1="20" x2="55" y2="230" stroke="#333" stroke-width="2"/>
+      <line x1="55" y1="230" x2="310" y2="230" stroke="#333" stroke-width="2"/>
+      <text x="25" y="125" font-size="13" fill="#555" transform="rotate(-90,25,125)" text-anchor="middle" font-weight="600">価格</text>
+      <text x="185" y="255" font-size="13" fill="#555" text-anchor="middle" font-weight="600">数量</text>
+      <line x1="65" y1="210" x2="300" y2="55" stroke="#555" stroke-width="2.5"/>
+      <text x="295" y="48" font-size="14" fill="#555" font-weight="700">MC</text>
+      <line x1="80" y1="35" x2="300" y2="210" stroke="#2980b9" stroke-width="2.5"/>
+      <text x="300" y="222" font-size="14" fill="#2980b9" font-weight="700">D</text>
+      <line x1="80" y1="35" x2="210" y2="210" stroke="#c0392b" stroke-width="2.5"/>
+      <text x="205" y="225" font-size="14" fill="#c0392b" font-weight="700">MR</text>
+      <circle cx="148" cy="155" r="5" fill="#c0392b"/>
+      <line x1="148" y1="155" x2="148" y2="230" stroke="#999" stroke-width="1.2" stroke-dasharray="5,4"/>
+      <text x="148" y="248" font-size="13" fill="#333" font-weight="600" text-anchor="middle">Q*</text>
+      <line x1="148" y1="155" x2="148" y2="89" stroke="#999" stroke-width="1.2" stroke-dasharray="5,4"/>
+      <circle cx="148" cy="89" r="5" fill="#2980b9"/>
+      <line x1="55" y1="89" x2="148" y2="89" stroke="#999" stroke-width="1.2" stroke-dasharray="5,4"/>
+      <text x="42" y="93" font-size="13" fill="#333" font-weight="600" text-anchor="end">P*</text>
+      <line x1="55" y1="155" x2="148" y2="155" stroke="#999" stroke-width="1.2" stroke-dasharray="5,4"/>
+      <text x="42" y="159" font-size="11" fill="#333" font-weight="500" text-anchor="end">MR=MC</text>
+      <line x1="160" y1="89" x2="160" y2="155" stroke="#e67e22" stroke-width="2.5"/>
+      <line x1="155" y1="89" x2="165" y2="89" stroke="#e67e22" stroke-width="2"/>
+      <line x1="155" y1="155" x2="165" y2="155" stroke="#e67e22" stroke-width="2"/>
+      <text x="172" y="127" font-size="12" fill="#e67e22" font-weight="700">マークアップ</text>
+    </svg>
+    <div class="graph-caption">&#9312;MR=MCで生産量Q*を決め<br>&#9313;そのQ*に対して需要曲線まで<br>真上に上がった点が価格P*</div>
+  </div>
+</div>
+
+<!-- --- 3-2 図の読み方 --- -->
+<div class="section-title st-orange">図の読み方まとめ</div>
+
+<div class="two-col">
+  <div class="pb-blue">
+    <h3 style="color:var(--blue-dark);">左(完全競争)の読み方</h3>
+    <p style="font-size:.9rem;">青い線1本が<strong>「需要曲線」「限界収入」「価格」</strong>の3役を兼ねています。</p>
+    <p style="font-size:.9rem; margin-top:.4rem;">なぜ重なるか? 価格が市場で固定されているので、1個追加で売っても収入は必ず<strong>ちょうどその価格分だけ増える</strong>から。</p>
+    <p style="font-size:.9rem; margin-top:.4rem;">つまり「あと1個売って増えるお金(MR)」と「価格(P)」が常に等しい。</p>
+    <div class="formula-box" style="margin-top:.6rem;">
+      <div class="formula">利潤最大化条件: P = MC</div>
+      <div class="desc">シンプル! 価格とコストが等しくなるまで作る</div>
+    </div>
+  </div>
+  <div class="pb-red">
+    <h3 style="color:var(--red-dark);">右(独占)の読み方</h3>
+    <p style="font-size:.9rem;">需要曲線が右下がりなので、追加で1個売るには値下げが必要 → <strong>MR は需要曲線より下を、しかも倍の急さで下がっていく</strong>。</p>
+    <p style="font-size:.9rem; margin-top:.4rem;">これが MR が D の下に分かれて見える理由です。</p>
+    <div style="margin-top:.6rem;">
+      <strong style="font-size:.9rem;">独占企業の意思決定は2段階:</strong>
+      <ol class="step-list" style="margin-top:.4rem;">
+        <li><strong>MR と MC が交わる点</strong>を見て、生産量 Q* を決める(儲けが最大になる量)</li>
+        <li>その Q* から<strong>真上に上がって需要曲線にぶつかった高さ</strong>を価格 P* にする</li>
+      </ol>
+    </div>
+    <div class="formula-box" style="margin-top:.6rem;">
+      <div class="formula">利潤最大化条件: MR = MC(ただし P > MR)</div>
+      <div class="desc">P* と MR=MC の縦の隙間 = マークアップ(超過利潤の正体)</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /tab2 -->
+
+
+<!-- ================================================================ -->
+<!--  TAB 3 : 傾きと利潤最大化                                        -->
+<!-- ================================================================ -->
+<div class="tab-panel theme-purple">
+
+<div class="alert-info alert-box" style="margin-bottom:1rem;">
+  <strong>これは何の話?</strong> 「完全競争市場で一番儲かるのは P = MC のとき」というルールを、<strong>数学的な言葉(グラフの線の傾き)で言い換えただけ</strong>のものです。新しい話ではなく、同じことを別の角度から見ています。
+</div>
+
+<!-- --- 4-1 費用曲線の傾き --- -->
+<div class="section-title st-green">&#9312; 「費用曲線の接線の傾き」の正体</div>
+
+<div class="card">
+  <p style="font-size:.92rem;">資料には「限界費用は費用曲線の接線の傾きと等しくなります」と書かれています。つまり ──</p>
+  <div class="formula-box" style="margin-top:.5rem;">
+    <div class="formula">費用曲線の接線の傾き = 限界費用(MC)</div>
+    <div class="desc">「追加で1個作るときにかかるコスト」のこと</div>
+  </div>
+</div>
+
+<div class="graph-full">
+  <svg viewBox="0 0 360 230" style="width:100%;max-width:360px;">
+    <line x1="50" y1="15" x2="50" y2="195" stroke="#333" stroke-width="2"/>
+    <line x1="50" y1="195" x2="330" y2="195" stroke="#333" stroke-width="2"/>
+    <text x="20" y="105" font-size="12" fill="#555" transform="rotate(-90,20,105)" text-anchor="middle" font-weight="600">費用 TC</text>
+    <text x="190" y="220" font-size="12" fill="#555" text-anchor="middle" font-weight="600">生産量 Q</text>
+    <path d="M60,180 Q120,170 170,140 Q220,100 260,40" stroke="#27ae60" stroke-width="3" fill="none"/>
+    <text x="265" y="35" font-size="13" fill="#27ae60" font-weight="700">TC</text>
+    <line x1="120" y1="190" x2="250" y2="85" stroke="#e74c3c" stroke-width="2" stroke-dasharray="6,3"/>
+    <circle cx="175" cy="137" r="4.5" fill="#e74c3c"/>
+    <text x="255" y="82" font-size="11" fill="#e74c3c" font-weight="600">接線</text>
+    <text x="245" y="105" font-size="10" fill="#e74c3c">この傾き = MC</text>
+  </svg>
+</div>
+
+<div class="alert-tip alert-box">
+  <strong>イメージ:</strong> 費用曲線のある点に定規を当てたとき、その定規の角度(傾き)が、その生産量での「追加1個のコスト」を表している。生産量が増えるほどカーブが急になる = MCが上がっていく。
+</div>
+
+<!-- --- 4-2 収入曲線の傾き --- -->
+<div class="section-title st-orange">&#9313; 「収入曲線の傾き」の正体</div>
+
+<div class="card">
+  <p style="font-size:.92rem;">完全競争市場では、1個売ろうが100個売ろうが価格はずっと同じ(例:100円)。</p>
+  <p style="font-size:.92rem; margin-top:.4rem;">このとき売上のグラフ(収入曲線)を描くと、「1個売れば100円、2個売れば200円」という<strong>一定のペースで増えていく右上がりの直線</strong>になります。</p>
+</div>
+
+<div class="graph-full">
+  <svg viewBox="0 0 360 230" style="width:100%;max-width:360px;">
+    <line x1="50" y1="15" x2="50" y2="195" stroke="#333" stroke-width="2"/>
+    <line x1="50" y1="195" x2="330" y2="195" stroke="#333" stroke-width="2"/>
+    <text x="20" y="105" font-size="12" fill="#555" transform="rotate(-90,20,105)" text-anchor="middle" font-weight="600">収入 TR</text>
+    <text x="190" y="220" font-size="12" fill="#555" text-anchor="middle" font-weight="600">生産量 Q</text>
+    <line x1="50" y1="185" x2="300" y2="35" stroke="#2980b9" stroke-width="3"/>
+    <text x="300" y="28" font-size="13" fill="#2980b9" font-weight="700">TR</text>
+    <line x1="120" y1="133" x2="190" y2="133" stroke="#e67e22" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <line x1="190" y1="133" x2="190" y2="100" stroke="#e67e22" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="155" y="148" font-size="10" fill="#e67e22" font-weight="600">+Q</text>
+    <text x="196" y="120" font-size="10" fill="#e67e22" font-weight="600">+TR</text>
+    <circle cx="120" cy="133" r="3.5" fill="#e67e22"/>
+    <circle cx="190" cy="100" r="3.5" fill="#e67e22"/>
+  </svg>
+</div>
+
+<div class="formula-box">
+  <div class="formula">収入曲線の傾き = 価格(P) = 限界収入(MR)</div>
+  <div class="desc">直線だから、どこでも傾き(変化のペース)は同じ = 常に価格と等しい</div>
+</div>
+
+<div class="alert-tip alert-box">
+  <strong>ポイント:</strong> 直線の傾きはどこを取っても一定。完全競争では価格が固定なので、収入曲線は直線になり、その傾きは常に「商品の価格」= 「限界収入」と同じになる。
+</div>
+
+<!-- --- 4-3 なぜ等しいと最大? --- -->
+<div class="section-title st-purple">&#9314; なぜ2つの傾きが等しくなると「利潤最大」なのか?</div>
+
+<div class="card">
+  <h3 style="color:var(--purple-dark);">難しい文を翻訳してみよう</h3>
+  <p style="font-size:.92rem; margin-bottom:.6rem;">&#9312;&#9313;で正体がわかったので、元の文を「翻訳」できます:</p>
+  <div class="translate-box">
+    <div class="t-before">
+      <strong>元の文:</strong><br>
+      「費用曲線の接線の傾き」が「収入曲線の傾き」に等しくなるとき利潤が最大化される
+    </div>
+    <div class="t-arrow">→</div>
+    <div class="t-after">
+      <strong>翻訳後:</strong><br>
+      「限界費用(追加のコスト)」が「限界収入(追加の売上 = 価格)」に等しくなるとき利潤が最大化される
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="color:var(--purple-dark);">追加の1個を作るべきかどうか?</h3>
+  <p style="font-size:.92rem;">企業の儲け(利潤) = 収入 - 費用 です。追加の1個を作ろうか迷ったとき ──</p>
+  <div class="two-col" style="margin-top:.6rem;">
+    <div class="pb-green">
+      <p style="font-size:.88rem; text-align:center;"><strong>追加の売上 > 追加のコスト</strong></p>
+      <p style="font-size:.85rem; text-align:center; color:var(--green-dark);">→ 作れば作るほど利潤が増える<br>(まだ作った方がいい!)</p>
+    </div>
+    <div class="pb-red">
+      <p style="font-size:.88rem; text-align:center;"><strong>追加の売上 < 追加のコスト</strong></p>
+      <p style="font-size:.85rem; text-align:center; color:var(--red-dark);">→ 作れば作るほど損をする<br>(作りすぎ!)</p>
+    </div>
+  </div>
+  <div class="formula-box" style="margin-top:.8rem;">
+    <div class="formula">追加の売上 = 追加のコスト(MR = MC)になる瞬間<br>= これ以上利潤を増やせない「利潤最大化」のゴール地点</div>
+  </div>
+</div>
+
+<div class="graph-full">
+  <svg viewBox="0 0 400 260" style="width:100%;max-width:400px;">
+    <line x1="55" y1="15" x2="55" y2="215" stroke="#333" stroke-width="2"/>
+    <line x1="55" y1="215" x2="370" y2="215" stroke="#333" stroke-width="2"/>
+    <text x="22" y="115" font-size="12" fill="#555" transform="rotate(-90,22,115)" text-anchor="middle" font-weight="600">利潤</text>
+    <text x="210" y="245" font-size="12" fill="#555" text-anchor="middle" font-weight="600">生産量 Q</text>
+    <path d="M65,200 Q130,140 190,50 Q220,35 240,50 Q290,130 340,200" stroke="#8e44ad" stroke-width="3" fill="none"/>
+    <text x="205" y="28" font-size="13" fill="#8e44ad" font-weight="700">利潤</text>
+    <circle cx="218" cy="38" r="5" fill="#e74c3c"/>
+    <line x1="160" y1="38" x2="276" y2="38" stroke="#e74c3c" stroke-width="2" stroke-dasharray="6,3"/>
+    <text x="282" y="42" font-size="10" fill="#e74c3c" font-weight="600">傾き = 0</text>
+    <line x1="218" y1="38" x2="218" y2="215" stroke="#999" stroke-width="1.2" stroke-dasharray="5,4"/>
+    <text x="218" y="232" font-size="12" fill="#333" font-weight="600" text-anchor="middle">Q*(最適)</text>
+    <text x="130" y="130" font-size="11" fill="#27ae60" font-weight="600">まだ増やせる</text>
+    <text x="130" y="144" font-size="10" fill="#27ae60">MR &gt; MC</text>
+    <text x="278" y="130" font-size="11" fill="#e74c3c" font-weight="600">作りすぎ</text>
+    <text x="278" y="144" font-size="10" fill="#e74c3c">MR &lt; MC</text>
+  </svg>
+</div>
+
+<div class="pb-purple">
+  <h3 style="color:var(--purple-dark);">補足:数学的な理由</h3>
+  <p style="font-size:.88rem;">「グラフが最大値(頂点)となるときの接線の傾きは0になる(微分すると0)」という性質を使います。</p>
+  <div style="margin-top:.5rem; font-size:.88rem; line-height:1.9;">
+    <strong>利潤 = 収入 - 費用</strong> を微分すると:<br>
+    <span style="display:inline-block; background:var(--white); padding:.3rem .7rem; border-radius:var(--radius-sm); margin:.3rem 0; font-weight:600;">
+      利潤の傾き = 収入の傾き - 費用の傾き = 0
+    </span><br>
+    式を整理すると:<br>
+    <span style="display:inline-block; background:var(--orange-pale); padding:.3rem .7rem; border-radius:var(--radius-sm); margin:.3rem 0; font-weight:700; color:var(--orange-dark);">
+      収入の傾き(MR) = 費用の傾き(MC)
+    </span><br>
+    数学的にも、両者の傾きが等しくなる地点が利潤の最大値であることが証明されます。
+  </div>
+</div>
+
+</div><!-- /tab3 -->
+
+</div><!-- /tab-container -->
+
+<script>
+function switchTab(n){
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){ b.classList.toggle('active', i===n); });
+  document.querySelectorAll('.tab-panel').forEach(function(p,i){ p.classList.toggle('active', i===n); });
+  window.scrollTo({top:0});
+}
+</script>
+
+</body>
+</html>

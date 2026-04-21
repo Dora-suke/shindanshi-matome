@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>価格戦略 - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--orange-bg);color:var(--gray-dark);line-height:1.75;min-height:100vh}
+.header{background:linear-gradient(135deg,var(--orange-dark) 0%,var(--orange-main) 50%,var(--orange-light) 100%);color:#fff;padding:2rem 1.5rem 1.2rem;text-align:center}.header h1{font-size:1.8rem;font-weight:800;letter-spacing:.05em;margin-bottom:.3rem}.header .subtitle{font-size:.95rem;opacity:.9}.header .badge{display:inline-block;background:rgba(255,255,255,.2);padding:.2rem .8rem;border-radius:20px;font-size:.8rem;margin-top:.5rem}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.6rem;margin:.8rem 0}.bubble-wrap.right{flex-direction:row-reverse}.bubble-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12)}.avatar-teacher{background:linear-gradient(135deg,#ff9800,#f57c00)}.avatar-student{background:linear-gradient(135deg,#42a5f5,#1e88e5)}.avatar-warn{background:linear-gradient(135deg,#ef5350,#c62828)}.avatar-hint{background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:.7rem 1rem;box-shadow:var(--shadow);position:relative;max-width:85%;font-size:.9rem;line-height:1.7}.bubble-body::before{content:'';position:absolute;top:14px;width:0;height:0;border:8px solid transparent}.bubble-wrap:not(.right) .bubble-body::before{left:-14px;border-right-color:var(--white)}.bubble-wrap.right .bubble-body::before{right:-14px;border-left-color:var(--white)}.bubble-body.b-orange{background:#fff8e1;border:1px solid #ffe082}.bubble-body.b-orange::before{border-right-color:#fff8e1}.bubble-body.b-blue{background:#e3f2fd;border:1px solid #90caf9}.bubble-body.b-blue::before{border-right-color:#e3f2fd}.bubble-body.b-red{background:#fce4ec;border:1px solid #ef9a9a}.bubble-body.b-red::before{border-right-color:#fce4ec}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-wrap.right .bubble-body.b-orange::before{border-right-color:transparent;border-left-color:#fff8e1}.bubble-wrap.right .bubble-body.b-green::before{border-right-color:transparent;border-left-color:#e8f5e9}.bubble-body strong{color:#e65100}.bubble-name{font-size:.72rem;font-weight:700;color:var(--gray-mid);margin-bottom:.2rem}
+.tab-container{max-width:920px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.85rem .5rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}
+.tab-panel{display:none;padding:1.5rem 1.2rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-purple{background:var(--purple-bg)}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.2rem;font-weight:800;margin:1.5rem 0 .8rem;padding:.5rem .8rem;border-radius:8px;display:flex;align-items:center;gap:.5rem}.section-title:first-child{margin-top:0}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6);color:#fff}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db);color:#fff}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71);color:#fff}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light));color:#fff}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373);color:#fff}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1rem 1.2rem;margin:.7rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-red{border-left-color:var(--red-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.alert-box{border-radius:var(--radius);padding:.8rem 1rem .8rem 3rem;margin:.8rem 0;position:relative;font-size:.9rem;line-height:1.7}.alert-box::before{position:absolute;left:.8rem;top:.7rem;font-size:1.2rem}.alert-danger{background:#fce4ec;border:1px solid #ef9a9a;color:#b71c1c}.alert-danger::before{content:"\26A0\FE0F"}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"\1F4A1"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"\1F4DD"}.alert-box strong{color:inherit}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:1rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e0e0e0}.dt-purple{color:var(--purple-dark)}.dt-blue{color:var(--blue-dark)}.dt-green{color:var(--green-dark)}.dt-red{color:var(--red-dark)}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center;min-width:70px}.flow-box small{display:block;font-weight:400;font-size:.75rem;opacity:.9}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.fb-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.flow-arrow{font-size:1.3rem;margin:0 .3rem;font-weight:700;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.88rem}th,td{padding:.55rem .7rem;text-align:left;border-bottom:1px solid #e0e0e0}tr:hover{background:rgba(0,0,0,.02)}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}
+ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
+.point-box{border-radius:var(--radius);padding:1rem 1.2rem;margin:.8rem 0}.pb-purple{background:linear-gradient(135deg,var(--purple-light),#fff);border:2px solid #ce93d8}.pb-blue{background:linear-gradient(135deg,var(--blue-light),#fff);border:2px solid #90caf9}.pb-green{background:linear-gradient(135deg,var(--green-light),#fff);border:2px solid #a5d6a7}.pb-orange{background:linear-gradient(135deg,var(--orange-pale),#fff);border:2px solid #ffcc80}.pb-red{background:linear-gradient(135deg,var(--red-light),#fff);border:2px solid #ef9a9a}.point-box h4{font-size:.95rem;font-weight:700;margin-bottom:.5rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.7rem 0}
+.mnemonic{background:linear-gradient(135deg,var(--purple-light),#fff);border:3px dashed var(--purple-main);border-radius:var(--radius);padding:1.2rem;margin:.8rem 0;text-align:center}.mnemonic .big{font-size:1.5rem;font-weight:800;color:var(--purple-dark);margin-bottom:.3rem;letter-spacing:.15em}.mnemonic .desc{font-size:.88rem;color:var(--gray-mid)}
+.scene{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:.8rem 0;box-shadow:var(--shadow);text-align:center}.scene-row{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap}.scene-item{text-align:center}.scene-item .emoji{font-size:2.2rem}.scene-item .label{font-size:.78rem;font-weight:700;color:var(--gray-dark);margin-top:.2rem}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;align-items:center;margin:.8rem 0}.vs-side{background:var(--white);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:var(--shadow)}.vs-side h4{font-size:.9rem;font-weight:700;margin-bottom:.3rem}.vs-mid{font-size:1.5rem;font-weight:800;color:var(--gray-mid);text-align:center}
+.sim-card{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;box-shadow:var(--shadow);border-top:4px solid var(--green-main)}.sim-card h4{font-size:1rem;font-weight:800;color:var(--green-dark);margin-bottom:.5rem}.sim-label{display:inline-block;padding:.15rem .6rem;border-radius:4px;font-size:.72rem;font-weight:700;color:#fff;background:var(--green-main);margin-bottom:.5rem}
+.quiz-item{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:28px;height:28px;border-radius:50%;text-align:center;line-height:28px;font-size:.85rem;font-weight:700;margin-bottom:.5rem}.quiz-cat{display:inline-block;padding:.15rem .6rem;border-radius:4px;font-size:.72rem;font-weight:700;color:#fff;margin-left:.5rem;vertical-align:middle}.qc-purple{background:var(--purple-main)}.qc-blue{background:var(--blue-main)}.qc-green{background:var(--green-main)}.qc-red{background:var(--red-main)}.quiz-question{font-weight:600;font-size:.95rem;margin-bottom:.8rem;line-height:1.7}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.55rem .8rem;margin:.3rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;transition:all .2s;font-size:.9rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.7rem;padding:.8rem;border-radius:var(--radius-sm);font-size:.88rem;line-height:1.7}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}.quiz-score{text-align:center;padding:1rem;background:var(--orange-pale);border-radius:var(--radius);margin-top:1rem;font-size:1.1rem;font-weight:700;color:var(--orange-dark);display:none}
+.footer{text-align:center;padding:1.5rem;color:var(--gray-light);font-size:.8rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.fill-card .fill-header{padding:12px 18px;font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px}
+.fill-card .fill-header.bg-purple{background:var(--purple-main)}
+.fill-card .fill-header.bg-blue{background:var(--blue-main)}
+.fill-card .fill-body{padding:18px 20px}
+.fill-blank{display:inline-block;min-width:100px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:4px;font-size:.95rem;line-height:2}
+/* ===== Sub Tab (穴埋めタブ内の初級/中級/上級) ===== */
+.sub-tab-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0 20px;padding:6px;background:#f1f5f9;border-radius:12px}
+.sub-tab-btn{flex:1;min-width:110px;max-width:220px;background:#fff;color:#64748b;border:2px solid transparent;border-radius:10px;padding:10px 14px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
+.sub-tab-btn:hover{color:#1a365d;background:#e2e8f0}
+.sub-tab-btn.active.lv-beg{background:#0d9488;color:#fff;border-color:#0d9488;box-shadow:0 2px 8px rgba(13,148,136,.3)}
+.sub-tab-btn.active.lv-mid{background:#2563eb;color:#fff;border-color:#2563eb;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.sub-tab-btn.active.lv-adv{background:#7c3aed;color:#fff;border-color:#7c3aed;box-shadow:0 2px 8px rgba(124,58,237,.3)}
+.sub-tab-content{display:none}
+.sub-tab-content.active{display:block;animation:fadeIn .3s}
+.level-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700;margin-left:8px;vertical-align:middle}
+.level-badge.beg{background:#ccfbf1;color:#0f766e}
+.level-badge.mid{background:#dbeafe;color:#1d4ed8}
+.level-badge.adv{background:#ede9fe;color:#6d28d9}
+@media(max-width:600px){.two-col,.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg)}.tab-btn{font-size:.68rem;padding:.7rem .3rem}.header h1{font-size:1.4rem}.bubble-body{max-width:78%}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>価格戦略</h1>
+  <div class="subtitle">中小企業診断士 企業経営理論 | 1-11 価格・チャネル戦略</div>
+  <div class="badge">全6タブ構成 | 価格設定 重要度 &#x2B50;&#x2B50;&#x2B50;</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="purple" onclick="switchTab(0)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F331; 初級</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(4)">&#x1F4D8; 中級</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F3AF; 上級</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(6)">&#x1F3E2; 事例相談</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(7)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(8)">&#x1F4A1; 実例</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(9)">&#x1F423; ゼロから</button>
+  </nav>
+
+  <!-- ===== TAB 1: 入門 (PURPLE) ===== -->
+  <div class="tab-panel active theme-purple" id="tab0">
+    <div class="point-box pb-purple"><h4>&#x1F331; このタブで学ぶこと</h4>
+      <ul><li>価格設定の<strong>3つの基本戦略</strong>（コスト・需要・競争）</li><li>新製品の<strong>2つの価格戦略</strong>（スキミング vs ペネトレーション）</li><li>心理的価格設定・製品ミックス価格・割引の基本</li></ul>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4B0;</span> 価格ってなぜ大事？</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-student">&#x1F9D1;</div><div class="bubble-body b-blue"><div class="bubble-name">受験生</div>いい商品を作れば売れるんじゃないの？</div></div>
+    <div class="bubble-wrap right"><div class="bubble-avatar avatar-teacher">&#x1F468;</div><div class="bubble-body b-orange"><div class="bubble-name">先生</div>いくらいい商品でも、<strong>値段が合わなければ売れない</strong>。高すぎれば買ってもらえないし、安すぎれば儲からない。価格は<strong>4Pの中で唯一「収益を生む」要素</strong>なんだ！</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3AF;</span> 価格設定の3つの基本</h2>
+    <div class="scene"><div class="scene-row">
+      <div class="scene-item"><div class="emoji">&#x1F4B5;</div><div class="label"><strong>コスト志向</strong><br>原価＋利益<br>で決める</div></div>
+      <div class="scene-item"><div class="emoji">&#x1F465;</div><div class="label"><strong>需要志向</strong><br>お客さんが<br>いくら払うか</div></div>
+      <div class="scene-item"><div class="emoji">&#x1F3C1;</div><div class="label"><strong>競争志向</strong><br>ライバルの<br>価格に合わせる</div></div>
+    </div></div>
+
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">覚え方</div>ラーメン屋で考えよう！ コスト志向＝「材料費＋家賃＋利益で850円」、需要志向＝「このエリアなら1,000円でも行列できる」、競争志向＝「隣の店が800円だからうちも800円」</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F195;</span> 新製品の2大価格戦略</h2>
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--red-main);"><h4 style="color:var(--red-main);">&#x1F451; スキミング</h4><p style="font-size:.85rem;"><strong>高い価格</strong>でスタート<br>利益率重視・早期回収</p><p style="font-size:.78rem;color:var(--gray-mid);">例：新型iPhone</p></div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--blue-main);"><h4 style="color:var(--blue-main);">&#x1F30A; ペネトレーション</h4><p style="font-size:.85rem;"><strong>安い価格</strong>でスタート<br>シェア重視・大量販売</p><p style="font-size:.78rem;color:var(--gray-mid);">例：格安SIM</p></div>
+    </div>
+    <div class="mnemonic"><div class="big">スキミング＝上澄み &#x1F451; / ペネトレーション＝浸透 &#x1F30A;</div><div class="desc">「上澄みをすくう＝高い層から取る」「浸透する＝安くして市場に染み込む」</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F9E0;</span> 心理的価格設定</h2>
+    <div class="two-col">
+      <div class="card card-purple"><h4>&#x1F451; 名声価格（威光価格）</h4><p>あえて高くして高級感を演出</p><p style="font-size:.82rem;color:var(--gray-mid);">例：ブランドバッグ</p></div>
+      <div class="card card-blue"><h4>&#x0039;&#xFE0F;&#x20E3; 端数価格</h4><p>980円など端数で安く見せる</p><p style="font-size:.82rem;color:var(--gray-mid);">例：スーパーの食品</p></div>
+      <div class="card card-green"><h4>&#x1F504; 慣習価格</h4><p>消費者が「この値段」と決めている</p><p style="font-size:.82rem;color:var(--gray-mid);">例：自販機の飲料120円</p></div>
+      <div class="card card-orange"><h4>&#x1F4E6; 抱き合わせ価格</h4><p>セットで安く売る</p><p style="font-size:.82rem;color:var(--gray-mid);">例：ハンバーガーセット</p></div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3F7;&#xFE0F;</span> 価格の調整</h2>
+    <div class="card card-teal"><h4>割引の種類</h4>
+      <ul><li><strong>現金割引</strong>：現金払いで安くする（資金回収を早める）</li><li><strong>数量割引</strong>：大量購入で安くする</li><li><strong>季節割引</strong>：閑散期に安くして需要を喚起</li><li><strong>機能割引</strong>：流通機能に応じた割引</li></ul>
+    </div>
+    <div class="two-col">
+      <div class="card card-red"><h4>&#x1F525; ロスリーダー政策</h4><p>目玉商品を赤字で売り、他の商品で利益を確保</p><p style="font-size:.82rem;color:var(--gray-mid);">例：スーパーの卵98円</p></div>
+      <div class="card card-blue"><h4>&#x1F4C9; EDLP政策</h4><p>常に低価格で販売（特売に頼らない）</p><p style="font-size:.82rem;color:var(--gray-mid);">例：ウォルマート</p></div>
+    </div>
+
+    <div class="alert-exam"><strong>試験頻出キーワード</strong>：コストプラス法/マークアップ法、スキミングプライス/ペネトレーションプライス、名声価格・端数価格・慣習価格、ロスリーダー、EDLP、価格弾力性、ダイナミック・プライシング、キャプティブ価格<br>&#x1F4DA; 過去問：H19-26、H20-33、H26-28、R2-29、R4-29、R6-37</div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x270D;&#xFE0F;</span> 入門チェック（穴埋め）</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-purple">入門のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・3つの基本戦略：<span class="fill-blank">コスト志向</span>／<span class="fill-blank">需要志向</span>／<span class="fill-blank">競争志向</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・新製品：高価格=<span class="fill-blank">スキミング</span>／低価格=<span class="fill-blank">ペネトレーション</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・心理的価格：<span class="fill-blank">名声価格</span>／<span class="fill-blank">端数価格</span>／<span class="fill-blank">慣習価格</span>／<span class="fill-blank">抱き合わせ価格</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 基本 (BLUE) ===== -->
+  <div class="tab-panel theme-blue" id="tab1">
+    <div class="point-box pb-blue"><h4>&#x1F4D8; このタブで学ぶこと</h4>
+      <ul><li>価格の<strong>4つの影響要因</strong>と<strong>需要の価格弾力性</strong></li><li>3つの基本戦略・新製品価格・製品ミックス価格の<strong>詳細</strong></li><li>ダイナミック・プライシングとサブスクリプション</li></ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CA;</span> 価格の4つの影響要因</h2>
+    <div class="diagram"><div class="diagram-title dt-blue">価格を決める4つの要因</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">消費者の需要<small>人気＝高く設定</small></div><span class="flow-arrow">+</span>
+        <div class="flow-box fb-orange">製品のコスト<small>原価が価格の下限</small></div><span class="flow-arrow">+</span>
+        <div class="flow-box fb-green">競合の存在<small>ライバル価格を意識</small></div><span class="flow-arrow">+</span>
+        <div class="flow-box fb-red">法的な規制<small>独禁法など</small></div>
+      </div>
+    </div>
+
+    <div class="card card-blue"><h4>&#x1F4C9; 需要の価格弾力性</h4>
+      <p>価格が変わったとき、需要がどれくらい変わるかの指標。</p>
+      <p style="background:#263238;color:#fff;padding:.5rem 1rem;border-radius:6px;text-align:center;margin:.5rem 0;font-weight:700;">価格弾力性 ＝ 需要の変化率 &#xF7; 価格の変化率</p>
+      <ul><li><strong>弾力性が大きい</strong>：価格を上げると売れなくなる（例：日用品）</li><li><strong>弾力性が小さい</strong>：価格を変えても需要は変わらない（例：医薬品）</li></ul>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">身近な例え</div>ガソリンは値上がりしても買うしかない＝<strong>弾力性が小さい</strong>。映画は値上がりしたら「配信で見よう」＝<strong>弾力性が大きい</strong>。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4B5;</span> 3つの志向 × 配下の代表手法</h2>
+    <div class="diagram"><div class="diagram-title dt-blue">価格設定法の全体マップ（どの志向に何があるか）</div>
+      <div class="flow-row">
+        <div class="flow-box fb-orange">コスト志向<small>原価を起点</small></div>
+        <div class="flow-box fb-blue">需要志向<small>顧客価値を起点</small></div>
+        <div class="flow-box fb-green">競争志向<small>競合価格を起点</small></div>
+      </div>
+    </div>
+    <table class="tbl-blue">
+      <tr><th style="width:20%;">志向</th><th>配下の代表手法</th><th style="width:30%;">具体例</th></tr>
+      <tr><td><strong>コスト志向</strong><br><small>原価＋利益</small></td><td><strong>コストプラス法</strong>（製造業）／<strong>マークアップ法</strong>（流通業）／<strong>損益分岐点価格設定</strong></td><td>仕入300円→売価500円<br>(マークアップ率40%)</td></tr>
+      <tr><td><strong>需要志向</strong><br><small>顧客の価値</small></td><td><strong>知覚価値価格法</strong>／<strong>差別価格法</strong>（価格差別）／<strong>心理的価格設定</strong>（名声・端数・慣習・抱き合わせ）</td><td>高級レストランのコース<br>GWの旅行料金が高い</td></tr>
+      <tr><td><strong>競争志向</strong><br><small>競合に合わせる</small></td><td><strong>実勢型</strong>（go-rate pricing）／<strong>入札型</strong>（sealed-bid pricing）</td><td>ガソリンの店頭価格<br>公共工事の入札</td></tr>
+    </table>
+    <div class="alert-tip"><strong>覚え方</strong>：志向＝「何を基準に決めるか」。コスト＝<strong>原価</strong>／需要＝<strong>顧客</strong>／競争＝<strong>ライバル</strong>。各志向の配下手法まで一体で覚えると試験で強い。</div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F195;</span> 新製品の価格設定</h2>
+    <table class="tbl-blue">
+      <tr><th style="width:20%;">戦略</th><th>内容</th><th style="width:22%;">成立条件</th></tr>
+      <tr><td><strong>スキミング</strong><br><small>上澄吸収価格</small></td><td>高価格でスタートし早期に開発コストを回収。イノベーター層がターゲット</td><td>品質・イメージが高い<br>競合が模倣しにくい<br>弾力性が<strong>小さい</strong></td></tr>
+      <tr><td><strong>ペネトレーション</strong><br><small>市場浸透価格</small></td><td>低価格で大量販売しシェアを一気に獲得。規模の経済を早期に実現</td><td>弾力性が<strong>大きい</strong><br>規模の経済性がある<br>模倣されやすい製品</td></tr>
+    </table>
+    <div class="alert-danger"><strong>引っかけ注意！</strong>スキミングは弾力性が<strong>小さい</strong>製品、ペネトレーションは弾力性が<strong>大きい</strong>製品に向いている。ここを逆にした選択肢が頻出！</div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4E6;</span> 製品ミックスによる価格設定</h2>
+    <div class="two-col">
+      <div class="card card-blue"><h4>&#x1F381; 抱き合わせ価格</h4><p>複数製品をセット販売</p><p style="font-size:.82rem;color:var(--gray-mid);">例：PC＋ソフトのセット</p></div>
+      <div class="card card-green"><h4>&#x1F4CA; プライスライニング</h4><p>段階的な価格帯で製品を並べる</p><p style="font-size:.82rem;color:var(--gray-mid);">例：スーツ2万/5万/10万</p></div>
+      <div class="card card-red"><h4>&#x1F3A3; キャプティブ価格</h4><p>本体を安く、消耗品で儲ける</p><p style="font-size:.82rem;color:var(--gray-mid);">例：プリンタ本体安→インク高</p></div>
+      <div class="card card-purple"><h4>&#x1F4F1; サブスクリプション</h4><p>定額制で継続課金</p><p style="font-size:.82rem;color:var(--gray-mid);">例：Netflix、Microsoft365</p></div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4B1;</span> 現代の価格戦略</h2>
+    <div class="card card-teal"><h4>&#x1F4C8; ダイナミック・プライシング</h4><p>需要と供給に合わせて<strong>リアルタイムに価格を変動</strong>させる手法。</p><p style="font-size:.82rem;color:var(--gray-mid);">例：ホテルの繁忙期料金、航空券、ライドシェアの料金変動</p><p style="margin-top:.3rem;font-size:.85rem;">企業メリット：利益最大化・稼働率向上。消費者メリット：オフピーク時に安く買える。</p></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 基本チェック（穴埋め）</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">基本のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・4つの影響要因：<span class="fill-blank">需要</span>／<span class="fill-blank">コスト</span>／<span class="fill-blank">競合</span>／<span class="fill-blank">法規制</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・価格弾力性＝<span class="fill-blank">需要の変化率</span>÷<span class="fill-blank">価格の変化率</span>（大＝敏感／小＝鈍感）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・3志向と配下：コスト→<span class="fill-blank">コストプラス／マークアップ</span>／需要→<span class="fill-blank">知覚価値／差別／心理的</span>／競争→<span class="fill-blank">実勢型／入札型</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・スキミング＝弾力性<span class="fill-blank">小</span>／ペネトレーション＝弾力性<span class="fill-blank">大</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 詳細 (BLUE) ===== -->
+  <div class="tab-panel theme-blue" id="tab2">
+    <div class="point-box pb-blue"><h4>&#x1F50D; このタブで学ぶこと</h4>
+      <ul><li>3つの志向（コスト／需要／競争）を<strong>配下の手法ごとに深掘り</strong></li><li>各志向の<strong>計算式・判断基準・成立条件</strong>を整理</li><li>価格弾力性の応用（交差・所得）と価格差別の関係</li></ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F5FA;&#xFE0F;</span> 全体マップ：3志向と配下の手法</h2>
+    <div class="diagram"><div class="diagram-title dt-blue">価格設定法のツリー構造</div>
+      <table class="tbl-blue" style="margin:0;">
+        <tr><th style="width:22%;">志向</th><th>配下の手法</th></tr>
+        <tr><td style="background:#fef3e2;"><strong>&#x1F4B0; コスト志向</strong><br><small>起点＝原価</small></td><td>① コストプラス法　② マークアップ法　③ 損益分岐点価格設定</td></tr>
+        <tr><td style="background:#e3f2fd;"><strong>&#x1F465; 需要志向</strong><br><small>起点＝顧客価値</small></td><td>① 知覚価値価格法　② 差別価格法（第1〜3度価格差別）　③ 心理的価格設定（名声／端数／慣習／抱き合わせ）</td></tr>
+        <tr><td style="background:#e8f5e9;"><strong>&#x1F3C1; 競争志向</strong><br><small>起点＝競合価格</small></td><td>① 実勢型（go-rate pricing）　② 入札型（sealed-bid pricing）</td></tr>
+      </table>
+    </div>
+
+    <!-- ========== コスト志向の詳細 ========== -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F4B0;</span> ① コスト志向の詳細</h2>
+    <div class="card card-orange"><h4>コストプラス法 vs マークアップ法（計算の違い）</h4>
+      <div class="diagram" style="box-shadow:none;padding:.5rem 0;"><div class="diagram-title dt-blue">例：原価300円・利益率40%</div>
+        <div class="flow-row">
+          <div class="flow-box fb-orange">コストプラス<small>原価に40%上乗せ<br>300×1.4=420円</small></div><span class="flow-arrow">vs</span>
+          <div class="flow-box fb-blue">マークアップ<small>売価の40%が利益<br>300÷(1-0.4)=500円</small></div>
+        </div>
+      </div>
+      <p style="font-size:.85rem;margin-top:.3rem;"><strong>コストプラス法</strong>＝原価基準（製造業）。<strong>マークアップ法</strong>＝売価基準（流通業）。</p>
+    </div>
+    <div class="card card-orange"><h4>損益分岐点価格設定</h4>
+      <p>固定費・変動費を回収できる最低価格を算定し、それを<strong>価格の下限</strong>として設定する手法。</p>
+      <p style="background:#263238;color:#fff;padding:.4rem .8rem;border-radius:6px;text-align:center;margin:.4rem 0;font-weight:700;font-size:.88rem;">損益分岐点売上高 ＝ 固定費 ÷ (1 − 変動費率)</p>
+    </div>
+    <div class="alert-danger"><strong>引っかけ注意</strong>：「マークアップ率40%」は<strong>売価に対する利益の割合</strong>。原価に40%上乗せ＝コストプラス法と混同しない！</div>
+
+    <!-- ========== 需要志向の詳細 ========== -->
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F465;</span> ② 需要志向の詳細</h2>
+    <div class="card card-blue"><h4>(ア) 知覚価値価格法</h4>
+      <p>消費者が感じる<strong>価値</strong>を基準に価格を決める。参照価格・留保価格と密接に関連。</p>
+      <div class="flow-row" style="margin-top:.4rem;">
+        <div class="flow-box fb-blue">参照価格<small>心の中の<br>相場感</small></div><span class="flow-arrow">&#x2194;</span>
+        <div class="flow-box fb-teal">知覚価値<small>払っても<br>よい価値</small></div><span class="flow-arrow">&#x2194;</span>
+        <div class="flow-box fb-red">留保価格<small>これ以上は<br>払わない上限</small></div>
+      </div>
+    </div>
+    <div class="card card-blue"><h4>(イ) 差別価格法＝価格差別の3段階</h4>
+      <table class="tbl-blue" style="margin:.3rem 0;">
+        <tr><th style="width:22%;">段階</th><th>仕組み</th><th style="width:30%;">例</th></tr>
+        <tr><td><strong>第1度</strong><br><small>完全価格差別</small></td><td>顧客一人ひとりの留保価格で設定</td><td>個別交渉・オークション</td></tr>
+        <tr><td><strong>第2度</strong><br><small>数量・バージョン別</small></td><td>購入量や仕様で価格を変える</td><td>数量割引・松竹梅メニュー</td></tr>
+        <tr><td><strong>第3度</strong><br><small>セグメント別</small></td><td>顧客属性（年齢・時間帯）で分ける</td><td>学割・平日割・ダイナミック・プライシング</td></tr>
+      </table>
+    </div>
+    <div class="card card-blue"><h4>(ウ) 心理的価格設定</h4>
+      <table class="tbl-blue" style="margin:.3rem 0;">
+        <tr><th style="width:24%;">手法</th><th>狙い</th><th style="width:28%;">例</th></tr>
+        <tr><td><strong>名声（威光）価格</strong></td><td>あえて高くして高級感を演出</td><td>ブランドバッグ</td></tr>
+        <tr><td><strong>端数価格</strong></td><td>980円などで安く見せる</td><td>スーパーの食品</td></tr>
+        <tr><td><strong>慣習価格</strong></td><td>消費者が慣れた価格帯を維持</td><td>自販機120円</td></tr>
+        <tr><td><strong>抱き合わせ価格</strong></td><td>セットでお得感を演出</td><td>ハンバーガーセット</td></tr>
+      </table>
+    </div>
+
+    <!-- ========== 競争志向の詳細 ========== -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3C1;</span> ③ 競争志向の詳細</h2>
+    <div class="two-col">
+      <div class="card card-green"><h4>&#x1F3AF; 実勢型（go-rate pricing）</h4><p>業界の平均的価格に合わせて設定。価格競争を避け横並びで安定化させる狙い。</p><p style="font-size:.82rem;color:var(--gray-mid);">例：ガソリンスタンドの店頭価格</p></div>
+      <div class="card card-green"><h4>&#x1F4DD; 入札型（sealed-bid pricing）</h4><p>競合の入札価格を予想して決定。「自社コスト＋競合との相対関係」で価格を戦略的に設定。</p><p style="font-size:.82rem;color:var(--gray-mid);">例：公共工事、B2B調達</p></div>
+    </div>
+
+    <!-- ========== 横断トピック ========== -->
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4C9;</span> 横断①：価格弾力性の応用（3種類）</h2>
+    <table class="tbl-blue">
+      <tr><th style="width:26%;">種類</th><th>式と意味</th><th style="width:30%;">使いどころ</th></tr>
+      <tr><td><strong>価格弾力性</strong></td><td>需要変化率 ÷ <strong>自製品の価格</strong>変化率</td><td>値上げ／値下げ判断</td></tr>
+      <tr><td><strong>交差弾力性</strong></td><td>自製品需要変化率 ÷ <strong>他社製品価格</strong>変化率<br>プラス=代替財／マイナス=補完財</td><td>競合・補完品の分析</td></tr>
+      <tr><td><strong>所得弾力性</strong></td><td>需要変化率 ÷ <strong>所得</strong>変化率<br>プラス=上級財／マイナス=下級財</td><td>景気動向に応じた戦略</td></tr>
+    </table>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F501;</span> 横断②：ダイナミック・プライシング</h2>
+    <div class="diagram"><div class="diagram-title dt-blue">需要志向（第3度価格差別）の応用形</div>
+      <div class="flow-row">
+        <div class="flow-box fb-teal">①データ収集<small>販売実績<br>競合価格</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-purple">②AI予測<small>需要予測<br>最適価格算出</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-orange">③価格変動<small>リアルタイム<br>反映</small></div>
+      </div>
+    </div>
+    <div class="alert-tip"><strong>成立条件</strong>：非貯蔵性（ホテル・航空券・ライブ）／在庫変動が大きい／顧客が価格変動を受容。<strong>慣習価格が強い日用品には不向き</strong>。</div>
+
+    <div class="alert-exam"><strong>詳細タブ頻出キーワード</strong>：コストプラス法／マークアップ法／損益分岐点価格／知覚価値価格／差別価格法（第1〜3度）／名声・端数・慣習・抱き合わせ／実勢型・入札型／交差弾力性・所得弾力性／非貯蔵性</div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 詳細チェック（穴埋め）</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">詳細のキモ</div>
+      <div class="fill-body">
+        <div class="fill-group">・原価300円・利益率40% → コストプラス法＝<span class="fill-blank">420</span>円／マークアップ法＝<span class="fill-blank">500</span>円</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・需要志向の3基準：<span class="fill-blank">参照価格</span>／<span class="fill-blank">知覚価値</span>／<span class="fill-blank">留保価格</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・価格差別：第1度＝<span class="fill-blank">完全価格差別</span>／第2度＝<span class="fill-blank">数量・バージョン別</span>／第3度＝<span class="fill-blank">セグメント別</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・競争志向：<span class="fill-blank">実勢型</span>（go-rate）／<span class="fill-blank">入札型</span>（sealed-bid）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・弾力性応用：<span class="fill-blank">交差弾力性</span>（代替／補完）／<span class="fill-blank">所得弾力性</span>（上級／下級）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: 初級 (BLUE) ===== -->
+  <div class="tab-panel theme-blue" id="tab3">
+    <div class="point-box pb-blue" style="margin-bottom:1rem;">
+      <h4>&#x270D;&#xFE0F; 穴埋め：初級</h4>
+      <ul>
+        <li>入門・基本の重要ポイントを穴埋めで確認</li>
+        <li>各カードの「答えを見る」ボタン、または穴埋め部分をクリックで回答表示</li>
+      </ul>
+    </div>
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#059669;">全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b;">リセット</button>
+    </div>
+
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q1. 価格設定の3つの基本戦略</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">コスト志向</span>＝原価＋利益で決める（<span class="fill-blank">コストプラス法</span>／<span class="fill-blank">マークアップ法</span>）<br>&#x2461; <span class="fill-blank">需要志向</span>＝お客さんがいくら払うかで決める</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+        <div class="fill-group">&#x2462; <span class="fill-blank">競争志向</span>＝ライバルの価格に合わせる（実勢型／入札型）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462; の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q2. 新製品の2大価格戦略</div>
+      <div class="fill-body">
+        <div class="fill-group">・<span class="fill-blank">スキミング（上澄吸収価格）</span>＝高い価格でスタート。利益率重視・早期回収。弾力性が<span class="fill-blank">小さい</span>製品に適する<br>・成立条件：品質・イメージが高い、競合が<span class="fill-blank">模倣しにくい</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">スキミングの答えを見る</button>
+        <div class="fill-group">・<span class="fill-blank">ペネトレーション（市場浸透価格）</span>＝安い価格でスタート。シェア重視・大量販売。弾力性が<span class="fill-blank">大きい</span>製品に適する<br>・成立条件：<span class="fill-blank">規模の経済性</span>がある、模倣されやすい製品</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">ペネトレーションの答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q3. 心理的価格設定</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">名声価格（威光価格）</span>＝あえて高くして高級感を演出<br>&#x2461; <span class="fill-blank">端数価格</span>＝980円など端数で安く見せる</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+        <div class="fill-group">&#x2462; <span class="fill-blank">慣習価格</span>＝消費者が「この値段」と決めている価格（例：自販機120円）<br>&#x2463; <span class="fill-blank">抱き合わせ価格</span>＝セットで安く売る（例：ハンバーガーセット）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462;&#x2463; の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q4. 割引の種類と販売戦略</div>
+      <div class="fill-body">
+        <div class="fill-group">・<span class="fill-blank">現金割引</span>＝現金払いで安くする・<span class="fill-blank">数量割引</span>＝大量購入で安くする<br>・<span class="fill-blank">季節割引</span>＝閑散期に需要喚起・<span class="fill-blank">機能割引</span>＝流通機能に応じた割引</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">割引の答えを見る</button>
+        <div class="fill-group">・<span class="fill-blank">ロスリーダー政策</span>＝目玉商品を赤字で売り他で利益確保<br>・<span class="fill-blank">EDLP</span>（Every Day Low Price）＝常に低価格で販売（特売に頼らない）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">販売戦略の答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab3 -->
+
+  <!-- ===== TAB 5: 中級 (BLUE) ===== -->
+  <div class="tab-panel theme-blue" id="tab4">
+    <div class="point-box pb-blue" style="margin-bottom:1rem;">
+      <h4>&#x270D;&#xFE0F; 穴埋め：中級</h4>
+      <ul>
+        <li>需要弾力性・製品ミックス・ダイナミック・プライシングを穴埋めで整理</li>
+        <li>各カードの「答えを見る」ボタン、または穴埋め部分をクリックで回答表示</li>
+      </ul>
+    </div>
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab4')" style="background:#059669;">全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab4')" style="background:#64748b;">リセット</button>
+    </div>
+
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q5. 需要の価格弾力性</div>
+      <div class="fill-body">
+        <div class="fill-group">・公式：価格弾力性 ＝ <span class="fill-blank">需要の変化率</span> ÷ <span class="fill-blank">価格の変化率</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">公式の答えを見る</button>
+        <div class="fill-group">・弾力性が<span class="fill-blank">大きい</span>＝価格上げると売れなくなる（代替品が多い。例：日用品）<br>・弾力性が<span class="fill-blank">小さい</span>＝価格変えても需要は変わらない（代替品がない。例：医薬品）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">弾力性の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q6. 製品ミックスによる価格設定</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">抱き合わせ価格</span>＝複数製品をセット販売<br>&#x2461; <span class="fill-blank">プライスライニング</span>＝段階的な価格帯で製品を並べる</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+        <div class="fill-group">&#x2462; <span class="fill-blank">キャプティブ価格</span>＝本体を安く、消耗品で儲ける（例：プリンタ＋インク）<br>&#x2463; <span class="fill-blank">サブスクリプション</span>＝定額制で継続課金（例：Netflix）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462;&#x2463; の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q7. ダイナミック・プライシング</div>
+      <div class="fill-body">
+        <div class="fill-group">・<span class="fill-blank">ダイナミック・プライシング</span>＝需要と供給に合わせて<span class="fill-blank">リアルタイム</span>に価格を変動させる戦略<br>・例：ホテル繁忙期料金、航空券、ライドシェア</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab4 -->
+
+  <!-- ===== TAB 6: 上級 (BLUE) ===== -->
+  <div class="tab-panel theme-blue" id="tab5">
+    <div class="point-box pb-blue" style="margin-bottom:1rem;">
+      <h4>&#x270D;&#xFE0F; 穴埋め：上級</h4>
+      <ul>
+        <li>3志向の全体マップ・計算・価格差別・弾力性の応用を総仕上げ</li>
+        <li>各カードの「答えを見る」ボタン、または穴埋め部分をクリックで回答表示</li>
+      </ul>
+    </div>
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab5')" style="background:#059669;">全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab5')" style="background:#64748b;">リセット</button>
+    </div>
+
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q8. 3志向と配下の手法（全体マップ）</div>
+      <div class="fill-body">
+        <div class="fill-group">・コスト志向 → <span class="fill-blank">コストプラス法</span>／<span class="fill-blank">マークアップ法</span>／<span class="fill-blank">損益分岐点価格設定</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">コスト志向の答えを見る</button>
+        <div class="fill-group">・需要志向 → <span class="fill-blank">知覚価値価格法</span>／<span class="fill-blank">差別価格法</span>／<span class="fill-blank">心理的価格設定</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">需要志向の答えを見る</button>
+        <div class="fill-group">・競争志向 → <span class="fill-blank">実勢型</span>（go-rate pricing）／<span class="fill-blank">入札型</span>（sealed-bid pricing）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">競争志向の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q9. コスト志向の計算（考え方と数値）</div>
+      <div class="fill-body">
+        <div class="fill-group">・原価に一定の利益を上乗せして決める方式（製造業）＝<span class="fill-blank">コストプラス法</span><br>・売価に対する利益率を基準に決める方式（流通業）＝<span class="fill-blank">マークアップ法</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">方式名の答えを見る</button>
+        <div class="fill-group">・原価300円・利益率40%で計算すると、コストプラス法の価格＝<span class="fill-blank">420</span>円／マークアップ法の価格＝<span class="fill-blank">500</span>円</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">計算結果の答えを見る</button>
+        <div class="fill-group">・固定費・変動費から価格の下限を求める手法＝<span class="fill-blank">損益分岐点価格設定</span>　／　公式：損益分岐点売上高＝<span class="fill-blank">固定費</span>÷(1−<span class="fill-blank">変動費率</span>)</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">損益分岐点の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q10. 需要志向の3つの基準価格</div>
+      <div class="fill-body">
+        <div class="fill-group">・<span class="fill-blank">参照価格</span>＝消費者の心の中にある相場感（内的／外的）<br>・<span class="fill-blank">知覚価値</span>＝払ってもよいと感じる価値<br>・<span class="fill-blank">留保価格</span>＝これ以上は絶対払わない上限価格</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q11. 差別価格法（価格差別の3段階）</div>
+      <div class="fill-body">
+        <div class="fill-group">・顧客一人ひとりの留保価格で設定（例：個別交渉・オークション）＝第<span class="fill-blank">1</span>度＝<span class="fill-blank">完全価格差別</span><br>・購入量や仕様で価格を変える（例：数量割引、松竹梅）＝第<span class="fill-blank">2</span>度＝<span class="fill-blank">数量・バージョン別</span><br>・顧客属性で分ける（例：学割、平日割、ダイナミック・プライシング）＝第<span class="fill-blank">3</span>度＝<span class="fill-blank">セグメント別</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・ダイナミック・プライシングは、価格差別のうち第<span class="fill-blank">3</span>度の応用形にあたる</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q12. 競争志向の2タイプ</div>
+      <div class="fill-body">
+        <div class="fill-group">・<span class="fill-blank">実勢型</span>（go-rate pricing）＝業界の平均的価格に合わせる（例：ガソリンスタンド）<br>・<span class="fill-blank">入札型</span>（sealed-bid pricing）＝競合の入札価格を予想して決定（例：公共工事）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q13. 価格弾力性の応用（3種類）</div>
+      <div class="fill-body">
+        <div class="fill-group">・<span class="fill-blank">交差弾力性</span>＝自製品需要変化率÷他社価格変化率（プラス＝<span class="fill-blank">代替財</span>／マイナス＝<span class="fill-blank">補完財</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">交差弾力性の答えを見る</button>
+        <div class="fill-group">・<span class="fill-blank">所得弾力性</span>＝需要変化率÷所得変化率（プラス＝<span class="fill-blank">上級財</span>／マイナス＝<span class="fill-blank">下級財</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">所得弾力性の答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab5 -->
+
+  <!-- ===== TAB 7: 事例相談 (GREEN) ===== -->
+  <div class="tab-panel theme-green" id="tab6">
+    <div class="point-box pb-green"><h4>&#x1F3E2; このタブで学ぶこと</h4>
+      <ul><li>中小企業の<strong>リアルな価格の悩み</strong>に理論を適用</li><li>「値下げすべき？」「高く売れない？」への<strong>具体的回答</strong></li></ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x2615;</span> ケース1：個人カフェ「Cafe Bloom」</h2>
+    <div class="sim-card"><span class="sim-label">相談内容</span><h4>&#x1F4AC; 「大手チェーンのコーヒーが350円。うちは500円。値下げすべき？」</h4><p style="font-size:.88rem;color:var(--gray-mid);">自家焙煎コーヒーにこだわる個人カフェ。味は好評だが「高い」と言われがち。</p></div>
+    <div class="bubble-wrap right"><div class="bubble-avatar avatar-teacher">&#x1F468;</div><div class="bubble-body b-orange"><div class="bubble-name">診断士の回答</div>値下げは<strong>絶対NG</strong>！ここは<strong>名声価格（威光価格）</strong>の考え方を使おう。</div></div>
+    <div class="card card-green"><h4>&#x2705; 処方箋</h4>
+      <ul><li><strong>名声価格の活用</strong>：「高いからこそ美味しそう」と思わせる。安くすると逆にブランドが崩壊</li><li><strong>需要志向の価格設定</strong>：自家焙煎の体験価値に見合う価格。「空間＋味」に500円は妥当</li><li>大手との<strong>価格競争は中小に不利</strong>（コストで勝てない）。差別化で戦う！</li></ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F35E;</span> ケース2：町のパン屋「小麦工房」</h2>
+    <div class="sim-card"><span class="sim-label">相談内容</span><h4>&#x1F4AC; 「新しい高級食パンを出したい。1斤1,000円は高すぎる？」</h4><p style="font-size:.88rem;color:var(--gray-mid);">従業員3名。通常のパンは200〜300円。高級食パンブームに乗りたいが価格設定に悩む。</p></div>
+    <div class="bubble-wrap right"><div class="bubble-avatar avatar-teacher">&#x1F468;</div><div class="bubble-body b-orange"><div class="bubble-name">診断士の回答</div>これは<strong>スキミング（上澄吸収価格）戦略</strong>が使えるケースだ！</div></div>
+    <div class="card card-green"><h4>&#x2705; 処方箋</h4>
+      <ul><li><strong>スキミング戦略</strong>：高級食パンは差別化されており、競合が模倣しにくい→高価格が成立</li><li><strong>プライスライニング</strong>：通常パン300円 / プレミアム600円 / 最高級1,000円と段階を設ける</li><li>1,000円に抵抗がある層には600円のプレミアムで対応→<strong>価格帯を分けて取りこぼしを防ぐ</strong></li></ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3AA;</span> ケース3：地方の遊園地「ファミリーランド」</h2>
+    <div class="sim-card"><span class="sim-label">相談内容</span><h4>&#x1F4AC; 「平日はガラガラ、休日だけ混む。どうすれば...」</h4><p style="font-size:.88rem;color:var(--gray-mid);">入園料一律2,000円。平日の来場者は休日の3分の1。スタッフは固定でコスト変わらず。</p></div>
+    <div class="bubble-wrap right"><div class="bubble-avatar avatar-teacher">&#x1F468;</div><div class="bubble-body b-orange"><div class="bubble-name">診断士の回答</div><strong>ダイナミック・プライシング</strong>の出番！平日と休日で価格を変えよう。</div></div>
+    <div class="card card-green"><h4>&#x2705; 処方箋</h4>
+      <ul><li><strong>ダイナミック・プライシング</strong>：休日2,500円 / 平日1,500円で需要を平準化</li><li><strong>季節割引</strong>：冬季限定チケット1,000円で閑散期の来場を促進</li><li><strong>抱き合わせ価格</strong>：入園料＋食事＋お土産のファミリーセットで客単価UP</li></ul>
+    </div>
+    <div class="alert-tip"><strong>3ケース共通のポイント</strong>：「とりあえず値下げ」は中小企業の最悪の選択。<strong>価格＝価値の表現</strong>。適切な価格戦略を選べば、値上げしても売れる！</div>
+  </div>
+
+  <!-- ===== TAB 6: クイズ (ORANGE) ===== -->
+  <div class="tab-panel theme-orange" id="tab7">
+    <div class="point-box pb-orange"><h4>&#x270F;&#xFE0F; このタブで学ぶこと</h4>
+      <ul><li>身近な事例で<strong>価格戦略の知識を総チェック</strong></li><li>まちがえたら他のタブに戻って復習！</li></ul>
+    </div>
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> 身近な事例で理解度チェック！</h2>
+
+    <!-- Q1: 正解 C -->
+    <div class="quiz-item" id="q1"><div class="quiz-num">1</div><span class="quiz-cat qc-purple">基本戦略</span>
+      <div class="quiz-question">製品の原価に一定の利益を上乗せして価格を設定する方法を何と呼ぶか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q1',2)"><li data-idx="0">A. 需要志向の価格設定</li><li data-idx="1">B. 実勢型価格設定</li><li data-idx="2">C. コストプラス法</li><li data-idx="3">D. ダイナミック・プライシング</li></ul>
+      <div class="quiz-explanation" id="q1-exp"><strong>&#x2705; 正解：C. コストプラス法</strong><br>原価＋利益で価格を決める＝コスト志向。製造業ではコストプラス法、流通業ではマークアップ法と呼ぶ。</div>
+    </div>
+    <!-- Q2: 正解 A -->
+    <div class="quiz-item" id="q2"><div class="quiz-num">2</div><span class="quiz-cat qc-blue">新製品</span>
+      <div class="quiz-question">新製品を高価格で発売し、イノベーター層から早期に利益を回収する戦略はどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q2',0)"><li data-idx="0">A. 上澄吸収価格戦略（スキミング）</li><li data-idx="1">B. 市場浸透価格戦略（ペネトレーション）</li><li data-idx="2">C. ロスリーダー政策</li><li data-idx="3">D. EDLP政策</li></ul>
+      <div class="quiz-explanation" id="q2-exp"><strong>&#x2705; 正解：A. スキミング</strong><br>上澄吸収＝高い層からすくい取る。品質が高く模倣しにくい製品に有効。Bは低価格でシェアを取る戦略。</div>
+    </div>
+    <!-- Q3: 正解 D -->
+    <div class="quiz-item" id="q3"><div class="quiz-num">3</div><span class="quiz-cat qc-green">心理的価格</span>
+      <div class="quiz-question">缶ジュースが120円前後で長年販売されているように、消費者が慣習的に受け入れる価格を何と呼ぶか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q3',3)"><li data-idx="0">A. 名声価格</li><li data-idx="1">B. 端数価格</li><li data-idx="2">C. キャプティブ価格</li><li data-idx="3">D. 慣習価格</li></ul>
+      <div class="quiz-explanation" id="q3-exp"><strong>&#x2705; 正解：D. 慣習価格</strong><br>消費者が「この値段が当たり前」と感じる価格。120円を超えると急に需要が減る＝慣習価格の壁。</div>
+    </div>
+    <!-- Q4: 正解 B -->
+    <div class="quiz-item" id="q4"><div class="quiz-num">4</div><span class="quiz-cat qc-red">販促価格</span>
+      <div class="quiz-question">スーパーが卵を採算度外視の98円で販売し、来店した顧客に他の商品も買ってもらう手法を何と呼ぶか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q4',1)"><li data-idx="0">A. EDLP政策</li><li data-idx="1">B. ロスリーダー政策</li><li data-idx="2">C. 抱き合わせ価格</li><li data-idx="3">D. 季節割引</li></ul>
+      <div class="quiz-explanation" id="q4-exp"><strong>&#x2705; 正解：B. ロスリーダー政策</strong><br>ロスリーダー＝損を覚悟の目玉商品で集客し、他の商品で利益を確保。AのEDLPは常時低価格（ウォルマート方式）。</div>
+    </div>
+    <!-- Q5: 正解 C -->
+    <div class="quiz-item" id="q5"><div class="quiz-num">5</div><span class="quiz-cat qc-blue">ミックス価格</span>
+      <div class="quiz-question">プリンタ本体を安く販売し、インクカートリッジで利益を得る価格戦略はどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q5',2)"><li data-idx="0">A. プライスライニング</li><li data-idx="1">B. 抱き合わせ価格</li><li data-idx="2">C. キャプティブ価格</li><li data-idx="3">D. 端数価格</li></ul>
+      <div class="quiz-explanation" id="q5-exp"><strong>&#x2705; 正解：C. キャプティブ価格</strong><br>キャプティブ＝「虜」。本体を安くして顧客を囲い込み、消耗品で儲ける。携帯電話の本体0円＋通話料もこのパターン。</div>
+    </div>
+    <!-- Q6: 正解 A -->
+    <div class="quiz-item" id="q6"><div class="quiz-num">6</div><span class="quiz-cat qc-green">現代価格</span>
+      <div class="quiz-question">ホテルが繁忙期に料金を上げ、閑散期に下げるように、需給に応じてリアルタイムに価格を変動させる手法は何か。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q6',0)"><li data-idx="0">A. ダイナミック・プライシング</li><li data-idx="1">B. サブスクリプション</li><li data-idx="2">C. ペネトレーション</li><li data-idx="3">D. マークアップ法</li></ul>
+      <div class="quiz-explanation" id="q6-exp"><strong>&#x2705; 正解：A. ダイナミック・プライシング</strong><br>需要と供給に合わせて価格を変動させる手法。航空券、ライドシェア、ホテルでおなじみ。近年の試験で頻出！</div>
+    </div>
+    <!-- Q7: 正解 D -->
+    <div class="quiz-item" id="q7"><div class="quiz-num">7</div><span class="quiz-cat qc-purple">弾力性</span>
+      <div class="quiz-question">需要の価格弾力性が<strong>大きい</strong>製品の特徴として最も適切なものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q7',3)"><li data-idx="0">A. 代替品がほとんど存在しない</li><li data-idx="1">B. 生活必需品である</li><li data-idx="2">C. 独占市場で販売されている</li><li data-idx="3">D. 価格を少し上げるだけで需要が大きく減少する</li></ul>
+      <div class="quiz-explanation" id="q7-exp"><strong>&#x2705; 正解：D.</strong><br>弾力性が大きい＝価格変動に需要が敏感に反応する。代替品が多い製品ほど弾力性が大きい。A〜Cは弾力性が小さい製品の特徴。</div>
+    </div>
+    <!-- Q8: 正解 B -->
+    <div class="quiz-item" id="q8"><div class="quiz-num">8</div><span class="quiz-cat qc-red">チャネル価格</span>
+      <div class="quiz-question">メーカーが流通業者に対して、広告協力などの条件で行う割引を何と呼ぶか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q8',1)"><li data-idx="0">A. 数量割引</li><li data-idx="1">B. アローワンス</li><li data-idx="2">C. リベート</li><li data-idx="3">D. 現金割引</li></ul>
+      <div class="quiz-explanation" id="q8-exp"><strong>&#x2705; 正解：B. アローワンス</strong><br>メーカーの意図に従い広告・陳列を行った流通業者への割引＝アローワンス。Cのリベートは取引後に現金で支払われるもの。</div>
+    </div>
+    <div class="quiz-score" id="quizScore"></div>
+  </div>
+
+  <!-- ===== TAB 7: 実例 (RED) ===== -->
+  <div class="tab-panel theme-red" id="tab8">
+    <div class="point-box pb-red"><h4>&#x1F4A1; このタブで学ぶこと</h4>
+      <ul><li>実在企業の事例で「<strong>なぜその価格戦略を選んだのか</strong>」を考える</li><li>ストーリーで理論を<strong>記憶に定着</strong>させる</li></ul>
+    </div>
+    <div class="bubble-wrap right"><div class="bubble-avatar avatar-teacher">&#x1F468;</div><div class="bubble-body b-orange"><div class="bubble-name">先生</div>表とにらめっこして覚えるのもいいですが、正直飽きてきちゃいますよね。実例を読みながら「<strong>どうしてその価格にしたのか</strong>」を考えると理解が深まるよ！</div></div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4F1;</span> 実例1：iPhoneの価格戦略</h2>
+    <div class="card card-red"><h4>スキミング戦略の教科書</h4>
+      <p>2007年の初代iPhoneは499ドル（約6万円）。当時のガラケーと比べると破格の高さでした。Appleは毎年新モデルを最高価格で発売し、<strong>旧モデルを値下げして残す</strong>手法を取っています。</p>
+      <p style="margin-top:.5rem;">iPhone 15 Pro Max＝約19万円。「高いからこそステータス」＝<strong>名声価格</strong>の効果も。さらにAppleCare（保証）やiCloudストレージ（月額課金）で<strong>キャプティブ価格</strong>も同時に活用。</p>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜこの戦略？</div>Appleの強みは「模倣しにくい独自のエコシステム」。スキミング戦略の成立条件（品質・差別化・模倣困難）を完璧に満たしている。さらに1つの製品に<strong>スキミング＋名声価格＋キャプティブ＋サブスク</strong>を重ねている複合戦略！</div></div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F6D2;</span> 実例2：ユニクロのEDLP戦略</h2>
+    <div class="card card-red"><h4>「毎日が安い」の仕組み</h4>
+      <p>ユニクロは基本的に<strong>セール（特売）に頼らない「EDLP（エブリデー・ロープライス）」</strong>に近い価格設定。ヒートテック990円、ウルトラライトダウン5,990円など、シーズン通して同じ価格を維持。</p>
+      <p style="margin-top:.5rem;">これを実現しているのが<strong>SPA（製造小売業）モデル</strong>。企画→製造→販売を自社で一貫管理し、中間マージンを排除。さらに大量生産で<strong>規模の経済性</strong>を効かせてコストを下げている。</p>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜこの戦略？</div>衣料品は<strong>価格弾力性が大きい</strong>（安い方に流れやすい）。だからペネトレーション＋EDLPで一気にシェアを取り、規模の経済で競合を圧倒する。中小企業には真似できない大企業ならではの戦略！</div></div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x2708;&#xFE0F;</span> 実例3：航空業界のダイナミック・プライシング</h2>
+    <div class="card card-red"><h4>同じ飛行機で隣の席が半額!?</h4>
+      <p>航空券は<strong>ダイナミック・プライシングの元祖</strong>。同じ便でも、予約時期・曜日・残席数で価格が大きく変動します。早割で片道5,000円の席の隣が、直前予約で50,000円ということも。</p>
+      <p style="margin-top:.5rem;">航空座席はサービスと同じく<strong>「非貯蔵性」</strong>がある（空席は翌日に持ち越せない）。だからこそ、埋まらないよりは安く売った方がいい＝<strong>需要に応じた柔軟な価格調整</strong>が合理的。</p>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜこの戦略？</div>航空座席は「飛んだら終わり」＝非貯蔵性。空席＝永遠の売上ゼロ。だからダイナミック・プライシングで「少しでも埋める」のが合理的。これはホテルやライブチケットも同じ原理。試験ではサービスマーケティングとの横断問題もあるよ！</div></div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F3AE;</span> 実例4：ゲーム業界のキャプティブ価格</h2>
+    <div class="card card-red"><h4>本体は赤字でも売る理由</h4>
+      <p>PlayStation 5の発売当初の価格は49,980円。実はソニーは<strong>本体1台売るごとに赤字</strong>だったと言われています。では、なぜ売るのか？</p>
+      <p style="margin-top:.5rem;">答えは<strong>キャプティブ価格</strong>。本体を安くして普及させ、<strong>ソフト販売・PS Plus（月額課金）・ダウンロードコンテンツ</strong>で回収する。さらにPS Plusはサブスクリプション（定額制）で毎月安定収益を生む仕組み。</p>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜこの戦略？</div>ゲーム機は「本体なし＝ソフトが売れない」。だから本体を「虜にする道具」として安くばらまき、ソフト＋課金で利益を回収。プリンタのインク商法と同じ構造！試験では「キャプティブ＝本体安×消耗品高」を即答できればOK。</div></div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F6CD;&#xFE0F;</span> 実例5：コストコの年会費モデル</h2>
+    <div class="card card-red"><h4>「会員費で稼ぐ」という逆転の発想</h4>
+      <p>コストコの商品は原価に<strong>わずか14%しかマージンを乗せない</strong>ルール。通常のスーパーが25〜50%のマージンを取るのに対し、驚異的な低さです。では利益はどこから？</p>
+      <p style="margin-top:.5rem;">答えは<strong>年会費（個人4,840円）</strong>。コストコの営業利益の大半は年会費から。「安くて大量」で集客し、年会費で安定収益を確保する。<strong>ロスリーダー政策を店全体に適用した</strong>ようなモデル。</p>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜこの戦略？</div>コストコは<strong>商品では儲けない</strong>代わりに<strong>会費（サブスクリプション）</strong>で安定収益を得る。試験的には「コスト志向の低マークアップ＋サブスク型収益モデル」の融合。常識を超えた価格戦略は出題されやすい！</div></div>
+
+    <div class="alert-exam"><strong>実例から学ぶ試験対策まとめ</strong><br>
+      &#x2022; スキミング＝高品質＋模倣困難が条件（iPhone）<br>
+      &#x2022; EDLP＝ロスリーダーに頼らず常時低価格（ユニクロ）<br>
+      &#x2022; ダイナミック・プライシング＝非貯蔵性のある財に有効（航空券）<br>
+      &#x2022; キャプティブ＝本体安×消耗品高（PlayStation）<br>
+      &#x2022; サブスクリプション＝定額課金で安定収益（コストコ会費）<br>
+      &#x2022; 価格弾力性が大きい製品にはペネトレーション/EDLPが有効
+    </div>
+  </div>
+
+  <!-- ===== TAB 8: ゼロから (GREEN) 入門より基礎 ===== -->
+  <div class="tab-panel theme-green" id="tab9">
+    <div class="point-box pb-green"><h4>&#x1F423; このタブで学ぶこと</h4>
+      <ul><li>完全初心者向けの<strong>基本用語</strong>（価格・原価・利益）</li><li>なぜ価格を決めるのか、3つの決め方を<strong>一行で</strong></li><li>最も簡単な<strong>計算ステップ例</strong>（原価→価格／弾力性）</li></ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F524;</span> まず用語を知ろう</h2>
+    <table class="tbl-blue">
+      <tr><th style="width:28%;">用語</th><th>意味（かみ砕き）</th><th style="width:28%;">身近な例</th></tr>
+      <tr><td><strong>価格（売価）</strong></td><td>お客さんが支払う金額</td><td>パン1個 150円</td></tr>
+      <tr><td><strong>原価（コスト）</strong></td><td>その商品を作る・仕入れるのに掛かったお金</td><td>小麦粉＋人件費＝100円</td></tr>
+      <tr><td><strong>利益</strong></td><td>価格－原価＝手元に残るお金</td><td>150－100＝50円</td></tr>
+    </table>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x2753;</span> なぜ価格を自分で決めるの？</h2>
+    <div class="diagram"><div class="diagram-title dt-green">お金の流れ</div>
+      <div class="flow-row">
+        <div class="flow-box fb-orange">原価<small>かかったお金</small></div><span class="flow-arrow">+</span>
+        <div class="flow-box fb-green">利益<small>残したいお金</small></div><span class="flow-arrow">=</span>
+        <div class="flow-box fb-blue">価格<small>お客が払う額</small></div>
+      </div>
+    </div>
+    <div class="alert-tip"><strong>ポイント</strong>：価格が低すぎ→利益ゼロ。高すぎ→売れない。<strong>ちょうどいい所を決める</strong>のが価格戦略です。</div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F522;</span> 3つの決め方（一行で）</h2>
+    <table class="tbl-blue">
+      <tr><th style="width:26%;">決め方</th><th>キーワード一言</th><th style="width:28%;">例</th></tr>
+      <tr><td><strong>コスト志向</strong></td><td>原価＋利益</td><td>100円＋50円＝150円</td></tr>
+      <tr><td><strong>需要志向</strong></td><td>お客が払える額</td><td>人気なら200円でも売れる</td></tr>
+      <tr><td><strong>競争志向</strong></td><td>ライバルに合わせる</td><td>隣が140円→140円</td></tr>
+    </table>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F9EE;</span> 最小の計算ステップ①（価格の決め方）</h2>
+    <div class="diagram"><div class="diagram-title dt-green">コストプラス法：3ステップ</div>
+      <div class="flow-row">
+        <div class="flow-box fb-orange">Step1<small>原価を確認<br>100円</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-green">Step2<small>利益を足す<br>＋50円</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-blue">Step3<small>価格が決定<br>150円</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4C8;</span> 価格弾力性をグラフで見る</h2>
+    <div class="diagram"><div class="diagram-title dt-green">価格を上げると需要はどう動く？（縦軸＝価格／横軸＝需要量）</div>
+      <svg viewBox="0 0 560 300" width="100%" style="max-width:560px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+        <line x1="60" y1="20" x2="60" y2="260" stroke="#5d6d7e" stroke-width="2"/>
+        <line x1="60" y1="260" x2="540" y2="260" stroke="#5d6d7e" stroke-width="2"/>
+        <text x="30" y="30" font-size="13" fill="#5d6d7e" font-weight="700">価格</text>
+        <text x="505" y="280" font-size="13" fill="#5d6d7e" font-weight="700">需要量</text>
+        <line x1="60" y1="80" x2="540" y2="80" stroke="#ccc" stroke-dasharray="4 4"/>
+        <line x1="60" y1="180" x2="540" y2="180" stroke="#ccc" stroke-dasharray="4 4"/>
+        <text x="35" y="85" font-size="11" fill="#888">高</text>
+        <text x="35" y="185" font-size="11" fill="#888">安</text>
+        <line x1="110" y1="80" x2="480" y2="180" stroke="#2980b9" stroke-width="3"/>
+        <text x="330" y="105" font-size="13" fill="#1a5276" font-weight="700">弾力性 大（ゆるい傾き）</text>
+        <text x="330" y="122" font-size="11" fill="#1a5276">値上げで需要が大きく減る</text>
+        <text x="330" y="135" font-size="11" fill="#1a5276">例：日用品・映画</text>
+        <line x1="230" y1="80" x2="280" y2="180" stroke="#e74c3c" stroke-width="3"/>
+        <text x="70" y="55" font-size="13" fill="#922b21" font-weight="700">弾力性 小（急な傾き）</text>
+        <text x="70" y="72" font-size="11" fill="#922b21">値上げしても需要はあまり減らない</text>
+        <text x="70" y="265" font-size="11" fill="#922b21" transform="rotate(-5 70 265)">例：医薬品・ガソリン</text>
+        <circle cx="110" cy="80" r="4" fill="#2980b9"/><circle cx="480" cy="180" r="4" fill="#2980b9"/>
+        <circle cx="230" cy="80" r="4" fill="#e74c3c"/><circle cx="280" cy="180" r="4" fill="#e74c3c"/>
+      </svg>
+    </div>
+    <div class="alert-tip"><strong>計算例</strong>：価格を10%UPしたら需要が20%DOWN → 弾力性＝20÷10＝<strong>2</strong>。1より<strong>大きい＝敏感（青の線）</strong>／1より<strong>小さい＝鈍感（赤の線）</strong>。</div>
+
+    <div class="alert-exam"><strong>このタブを終えたら</strong>→「&#x1F4D8; 基本」タブで詳しい戦略名や成立条件を学びましょう。</div>
+  </div>
+
+  <nav class="tab-nav" style="border-radius:0 0 var(--radius) var(--radius);margin-top:-1px;">
+    <button class="tab-btn active" data-color="purple" onclick="switchTab(0)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F331; 初級</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(4)">&#x1F4D8; 中級</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F3AF; 上級</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(6)">&#x1F3E2; 事例相談</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(7)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(8)">&#x1F4A1; 実例</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(9)">&#x1F423; ゼロから</button>
+  </nav>
+</div>
+<div class="footer">中小企業診断士 企業経営理論 | 価格戦略 学習まとめ</div>
+
+<script>
+function switchTab(idx){const n=10;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='\u2705 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='\u2705 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='\uD83D\uDC41 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+let answered=0,correct=0,total=8;
+function handleQuiz(e,qid,correctIdx){const li=e.target.closest('li');if(!li||document.querySelector('#'+qid+' li.correct, #'+qid+' li.wrong'))return;const idx=parseInt(li.dataset.idx);const expEl=document.getElementById(qid+'-exp');if(idx===correctIdx){li.classList.add('correct');expEl.className='quiz-explanation show correct-exp';correct++}else{li.classList.add('wrong');document.querySelectorAll('#'+qid+' .quiz-options li')[correctIdx].classList.add('correct');expEl.className='quiz-explanation show wrong-exp'}answered++;if(answered===total){const s=document.getElementById('quizScore');s.style.display='block';s.textContent=total+'問中 '+correct+'問正解！'+(correct===total?' パーフェクト！':correct>=5?' いい調子！':' もう一回復習しよう！')}}
+</script>
+</body>
+</html>

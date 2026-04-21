@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>差異分析（標準原価計算） - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --bg: #f8fafc; --bg-card: #ffffff; --bg-surface: #f1f5f9;
+  --accent-blue: #2563eb; --accent-cyan: #0891b2; --accent-violet: #7c3aed;
+  --accent-rose: #e11d48; --accent-amber: #d97706; --accent-emerald: #059669;
+  --text: #1e293b; --text-dim: #475569; --text-muted: #94a3b8;
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --radius: 16px; --radius-sm: 10px;
+  --content-max: 720px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.85; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+  padding: 2.2rem 1.5rem 1.5rem; text-align: center;
+}
+.header h1 {
+  font-size: 1.8rem; font-weight: 800; letter-spacing: 0.03em; color: #fff;
+}
+.header .subtitle { font-size: 0.92rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem; }
+.header .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.6rem; flex-wrap: wrap; }
+.header .badge {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+  padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.9);
+}
+
+/* Tab Nav */
+.tab-container { max-width: 900px; margin: 0 auto; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--bg-card);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto;
+  box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.6rem; border: none;
+  background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: all 0.25s; border-bottom: 3px solid transparent;
+  white-space: nowrap; text-align: center; font-family: inherit;
+}
+.tab-btn:hover { color: var(--text-dim); background: #f8fafc; }
+.tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); background: #eff6ff; }
+.tab-btn[data-c="rose"].active { color: var(--accent-rose); border-bottom-color: var(--accent-rose); background: #fff1f2; }
+.tab-btn[data-c="violet"].active { color: var(--accent-violet); border-bottom-color: var(--accent-violet); background: #f5f3ff; }
+.tab-btn[data-c="emerald"].active { color: var(--accent-emerald); border-bottom-color: var(--accent-emerald); background: #ecfdf5; }
+.tab-btn[data-c="amber"].active { color: var(--accent-amber); border-bottom-color: var(--accent-amber); background: #fffbeb; }
+
+/* Tab Panel */
+.tab-panel {
+  display: none; padding: 1.8rem 1.4rem;
+  background: var(--bg-card); box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius);
+  max-width: 900px; margin: 0 auto;
+}
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+.tab-panel > * { max-width: var(--content-max); margin-left: auto; margin-right: auto; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+/* Section Title */
+.stitle {
+  font-size: 1.15rem; font-weight: 800; margin: 1.8rem 0 0.8rem; padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.5rem;
+  border: 1px solid var(--border);
+}
+.stitle:first-child { margin-top: 0; }
+.stitle-blue { background: #eff6ff; color: var(--accent-blue); border-color: #bfdbfe; }
+.stitle-rose { background: #fff1f2; color: var(--accent-rose); border-color: #fecdd3; }
+.stitle-emerald { background: #ecfdf5; color: var(--accent-emerald); border-color: #a7f3d0; }
+.stitle-violet { background: #f5f3ff; color: var(--accent-violet); border-color: #ddd6fe; }
+.stitle-amber { background: #fffbeb; color: var(--accent-amber); border-color: #fde68a; }
+
+/* Card */
+.card {
+  background: var(--bg-card); border: 1px solid #e2e8f0;
+  border-radius: var(--radius); padding: 1.2rem; margin: 0.8rem 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.card strong { color: var(--accent-blue); }
+.card-glow-blue { border-color: #93c5fd; }
+.card-glow-rose { border-color: #fda4af; }
+.card-glow-emerald { border-color: #6ee7b7; }
+
+/* Alert */
+.alert-warn {
+  background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid var(--accent-rose);
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0;
+  font-size: 0.95rem; line-height: 1.8; color: #9f1239;
+}
+.alert-tip {
+  background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid var(--accent-amber);
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0;
+  font-size: 0.95rem; line-height: 1.8; color: #92400e;
+}
+
+/* Formula pill */
+.formula {
+  background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius); padding: 0.8rem 1rem; margin: 0.5rem 0;
+  text-align: center; font-size: 1.15rem; font-weight: 800; color: var(--text);
+}
+
+/* Tag */
+.tag {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 6px;
+  font-size: 0.75rem; font-weight: 700;
+}
+.tag-rose { background: #ffe4e6; color: var(--accent-rose); }
+.tag-blue { background: #dbeafe; color: var(--accent-blue); }
+
+/* Two-col */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin: 0.7rem 0; }
+
+/* Fill-in */
+.fill-card { background: var(--bg-card); border: 1px solid #e2e8f0; border-radius: var(--radius); margin-bottom: 1rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.fill-hdr { padding: 0.6rem 1rem; font-weight: 700; font-size: 0.95rem; border-bottom: 1px solid #e2e8f0; }
+.fill-hdr-blue { background: #eff6ff; color: var(--accent-blue); }
+.fill-hdr-rose { background: #fff1f2; color: var(--accent-rose); }
+.fill-hdr-amber { background: #fffbeb; color: var(--accent-amber); }
+.fill-hdr-emerald { background: #ecfdf5; color: var(--accent-emerald); }
+.fill-hdr-violet { background: #f5f3ff; color: var(--accent-violet); }
+.fill-bdy { padding: 1rem 1.2rem; }
+.fill-blank {
+  display: inline-block; min-width: 72px; border-bottom: 2.5px solid #cbd5e1;
+  text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: 0.95rem;
+}
+.fill-blank.show { color: var(--accent-rose) !important; background: #fff1f2 !important; border-color: var(--accent-rose) !important; }
+.fill-reveal-btn {
+  display: inline-block; background: #eff6ff; color: var(--accent-blue); border: 1px solid #bfdbfe;
+  border-radius: 8px; padding: 6px 14px; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; margin-top: 6px; font-family: inherit; transition: all 0.2s;
+}
+.fill-reveal-btn:hover { background: #dbeafe; }
+.fill-group { margin-bottom: 6px; font-size: 0.95rem; line-height: 2.1; }
+
+.footer {
+  text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.78rem;
+  max-width: 900px; margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.3rem; }
+  .two-col { grid-template-columns: 1fr !important; }
+  .tab-btn { font-size: 0.7rem; padding: 0.7rem 0.3rem; }
+  .tab-panel { padding: 1.2rem 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>差異分析（標準原価計算）</h1>
+  <p class="subtitle">中小企業診断士 財務・会計｜原価計算の差異分析を徹底解説</p>
+  <div class="badges">
+    <span class="badge">過去問 R6-12 R5-10 R4-11 R3-12</span>
+    <span class="badge">超頻出テーマ</span>
+  </div>
+</div>
+
+<!-- Tab Nav -->
+<div class="tab-container">
+<nav class="tab-nav">
+  <button class="tab-btn active" data-c="violet" onclick="switchTab(0)">概要</button>
+  <button class="tab-btn" data-c="blue" onclick="switchTab(1)">考え方</button>
+  <button class="tab-btn" data-c="rose" onclick="switchTab(2)">計算の方向</button>
+  <button class="tab-btn" data-c="violet" onclick="switchTab(3)">4パターン</button>
+  <button class="tab-btn" data-c="amber" onclick="switchTab(4)">計算まとめ</button>
+  <button class="tab-btn" data-c="emerald" onclick="switchTab(5)">ボックス図</button>
+  <button class="tab-btn" data-c="rose" onclick="switchTab(6)">穴埋め</button>
+</nav>
+
+<!-- ==================== TAB 0: 概要 ==================== -->
+<div class="tab-panel active" id="tab0">
+
+  <h2 class="stitle stitle-violet">&#x1F4D6; 差異分析の全体像</h2>
+
+  <div class="card card-glow-blue">
+    <p style="font-size:1.05rem;line-height:2;margin-bottom:0.5rem;">
+      <strong>差異分析</strong>とは、製品を作る前に決めた予算（標準原価）と、実際にかかった原価を比べて、<br>
+      <strong style="color:#7c3aed;">「どこで」「なぜ」「いくら」ズレたのか</strong>を明らかにする分析手法。
+    </p>
+    <p style="font-size:0.95rem;color:#475569;">中小企業診断士の試験では<strong>超頻出テーマ</strong>。公式の暗記だけでなく「なぜそう計算するのか」を理解しておくと解きやすい。</p>
+  </div>
+
+  <h2 class="stitle stitle-blue">&#x1F5FA; このページの学習マップ</h2>
+
+  <div style="display:grid;gap:0.6rem;">
+    <div class="card" style="border-left:4px solid #2563eb;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#2563eb;margin-bottom:0.15rem;">STEP 1：考え方（次のタブ）</p>
+      <p style="font-size:0.92rem;color:#475569;">お弁当屋さんの例で「差異分析って何？」をイメージする</p>
+    </div>
+    <div class="card" style="border-left:4px solid #e11d48;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#e11d48;margin-bottom:0.15rem;">STEP 2：計算の方向</p>
+      <p style="font-size:0.92rem;color:#475569;">なぜ「標準 − 実際」の順番？有利差異と不利差異の判定</p>
+    </div>
+    <div class="card" style="border-left:4px solid #7c3aed;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#7c3aed;margin-bottom:0.15rem;">STEP 3：4パターン</p>
+      <p style="font-size:0.92rem;color:#475569;">2×2マトリクスで全体像を掴む。「かける相手」のルールをスーパーの買い物で理解</p>
+    </div>
+    <div class="card" style="border-left:4px solid #d97706;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#d97706;margin-bottom:0.15rem;">STEP 4：計算まとめ</p>
+      <p style="font-size:0.92rem;color:#475569;">3ステップで計算 → 4公式を端的に整理 ＋ 早見表</p>
+    </div>
+    <div class="card" style="border-left:4px solid #059669;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#059669;margin-bottom:0.15rem;">STEP 5：ボックス図</p>
+      <p style="font-size:0.92rem;color:#475569;">タテ＝価格差異、ヨコ＝数量差異をビジュアルで確認</p>
+    </div>
+    <div class="card" style="border-left:4px solid #e11d48;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#e11d48;margin-bottom:0.15rem;">STEP 6：穴埋めチェック</p>
+      <p style="font-size:0.92rem;color:#475569;">全6問で理解度を確認</p>
+    </div>
+  </div>
+
+  <h2 class="stitle stitle-amber">&#x1F3AF; 試験で問われるポイント</h2>
+
+  <div class="card">
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:0.5rem 0.8rem;font-size:0.95rem;line-height:1.9;">
+      <span style="font-weight:800;color:#e11d48;">頻出1</span>
+      <span>4つの差異の<strong>公式</strong>（特に「かける相手」が実際か標準か）</span>
+      <span style="font-weight:800;color:#e11d48;">頻出2</span>
+      <span><strong>有利差異・不利差異</strong>の判定（プラス＝有利、マイナス＝不利）</span>
+      <span style="font-weight:800;color:#e11d48;">頻出3</span>
+      <span>具体的な数値を使った<strong>差異の計算</strong></span>
+      <span style="font-weight:800;color:#d97706;">注意</span>
+      <span>計算の方向は<strong>「標準 − 実際」</strong>（逆にしない！）</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 1: 考え方 ==================== -->
+<div class="tab-panel" id="tab1">
+
+  <h2 class="stitle stitle-blue">&#x2753; そもそも差異分析とは？</h2>
+
+  <div class="card card-glow-blue">
+    <p style="font-size:1.05rem;line-height:2;">
+      製品を作る<strong>前</strong>に「これくらいかかるはず」と決めた原価 ＝ <strong>標準原価</strong><br>
+      実際に作った<strong>後</strong>の原価 ＝ <strong>実際原価</strong><br><br>
+      この2つを比べて<strong>「どこで」「いくら」ズレたのか</strong>を分析するのが差異分析。
+    </p>
+  </div>
+
+  <h2 class="stitle stitle-amber">&#x1F371; お弁当屋さんで考えてみよう</h2>
+
+  <div class="card">
+    <p style="font-size:1.05rem;line-height:2;">
+      お弁当1個の予算（標準原価）を<strong>500円</strong>と決めていた。<br>
+      でも実際に作ったら<strong style="color:#e11d48;">580円</strong>かかった。<br>
+      → <strong style="color:#e11d48;">80円の予算オーバー</strong>。なぜ？
+    </p>
+    <div class="two-col" style="margin-top:0.8rem;">
+      <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:var(--radius);padding:0.8rem;text-align:center;">
+        <p style="font-size:1.8rem;">&#x1F4B0;</p>
+        <p style="font-size:1rem;font-weight:700;color:#e11d48;">米が値上がりした？</p>
+        <p style="font-size:0.88rem;color:#475569;">→ 値段のズレ</p>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius);padding:0.8rem;text-align:center;">
+        <p style="font-size:1.8rem;">&#x1F4CF;</p>
+        <p style="font-size:1rem;font-weight:700;color:#d97706;">米を使いすぎた？</p>
+        <p style="font-size:0.88rem;color:#475569;">→ 量のズレ</p>
+      </div>
+    </div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);padding:0.7rem;margin-top:0.8rem;text-align:center;">
+      <p style="font-size:1.1rem;font-weight:800;color:#2563eb;">「値段のせい？量のせい？」に分けるのが差異分析！</p>
+    </div>
+  </div>
+
+  <h2 class="stitle stitle-emerald">&#x1F3AF; 差異分析の目的</h2>
+
+  <div class="card card-glow-emerald">
+    <p style="font-size:1.05rem;line-height:2;">
+      差異分析は<strong style="color:#059669;">「犯人探し」ではなく「改善のヒント」</strong>を見つけるための道具。
+    </p>
+    <div class="two-col" style="margin-top:0.6rem;">
+      <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:var(--radius-sm);padding:0.7rem;">
+        <p style="font-weight:800;color:#e11d48;margin-bottom:0.3rem;">値段のズレが大きい</p>
+        <p style="font-size:0.92rem;color:#475569;">→ 仕入先の変更を検討<br>→ 市場価格の変動を調査</p>
+      </div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:0.7rem;">
+        <p style="font-weight:800;color:#2563eb;margin-bottom:0.3rem;">量のズレが大きい</p>
+        <p style="font-size:0.92rem;color:#475569;">→ 作業手順の見直し<br>→ 盛り付け基準の統一</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 2: 計算の方向 ==================== -->
+<div class="tab-panel" id="tab2">
+
+  <h2 class="stitle stitle-rose">&#x26A0;&#xFE0F; 大前提：計算の方向</h2>
+
+  <div class="card card-glow-rose">
+    <p style="font-size:1.1rem;line-height:2;margin-bottom:0.5rem;">
+      差異分析の公式はすべて<br>
+      <span style="font-size:1.3rem;font-weight:800;color:#2563eb;">「標準 − 実際」</span>の順番で計算する。
+    </p>
+    <p style="font-size:1rem;line-height:2;color:#475569;">
+      なぜ？ → <strong style="color:#1e293b;">予算（標準）を基準にして、実際がそれより良かったか悪かったかを判定する</strong>から。
+    </p>
+  </div>
+
+  <div class="two-col">
+    <div style="background:#ecfdf5;border:2px solid #6ee7b7;border-radius:var(--radius);padding:1rem;text-align:center;">
+      <p style="font-size:1.15rem;font-weight:800;color:#059669;margin-bottom:0.4rem;">プラス ＝ 有利差異</p>
+      <div style="background:#f8fafc;border-radius:8px;padding:0.6rem;margin:0.4rem 0;">
+        <p style="font-size:1.1rem;">標準100円 − 実際80円</p>
+        <p style="font-size:1.4rem;font-weight:800;color:#059669;">＝ +20円</p>
+      </div>
+      <p style="font-size:0.95rem;color:#059669;">予算より<strong>安くできた</strong>！</p>
+    </div>
+    <div style="background:#fff1f2;border:2px solid #fda4af;border-radius:var(--radius);padding:1rem;text-align:center;">
+      <p style="font-size:1.15rem;font-weight:800;color:#e11d48;margin-bottom:0.4rem;">マイナス ＝ 不利差異</p>
+      <div style="background:#f8fafc;border-radius:8px;padding:0.6rem;margin:0.4rem 0;">
+        <p style="font-size:1.1rem;">標準100円 − 実際120円</p>
+        <p style="font-size:1.4rem;font-weight:800;color:#e11d48;">＝ -20円</p>
+      </div>
+      <p style="font-size:0.95rem;color:#e11d48;">予算<strong>オーバー</strong>！</p>
+    </div>
+  </div>
+
+  <div class="alert-warn" style="margin-top:1rem;">
+    <strong>&#x26A0; 注意：「実際 − 標準」ではない！</strong><br>
+    必ず<strong>「標準が先、実際が後」</strong>。こうするとプラス＝良い、マイナス＝悪いと直感的に分かる。
+  </div>
+</div>
+
+<!-- ==================== TAB 3: 4パターン ==================== -->
+<div class="tab-panel" id="tab3">
+
+  <h2 class="stitle stitle-violet">&#x1F522; 差異は「2種類 &#xD7; 2分野 ＝ 4パターン」</h2>
+
+  <div class="card">
+    <p style="font-size:1.05rem;line-height:2;margin-bottom:0.6rem;">
+      ズレの原因は<strong>2種類</strong>だけ。「<strong style="color:#e11d48;">値段</strong>」か「<strong style="color:#2563eb;">量</strong>」か。<br>
+      それを<strong>材料費</strong>と<strong>労務費</strong>の2分野で分析する → 合計4つ。
+    </p>
+  </div>
+
+  <!-- 2×2 マトリクス -->
+  <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:0;margin:1rem 0;border-radius:var(--radius);overflow:hidden;border:1px solid #e2e8f0;">
+    <div style="background:var(--bg);padding:0.6rem;"></div>
+    <div style="background:#dbeafe;padding:0.7rem;text-align:center;font-weight:800;font-size:1rem;color:#2563eb;border-left:1px solid var(--border);">&#x1F9F1; 直接材料費</div>
+    <div style="background:#fef3c7;padding:0.7rem;text-align:center;font-weight:800;font-size:1rem;color:#d97706;border-left:1px solid var(--border);">&#x1F477; 直接労務費</div>
+
+    <div style="background:#fff1f2;padding:0.7rem;text-align:center;font-weight:800;color:#e11d48;writing-mode:vertical-rl;border-top:1px solid var(--border);">値段系</div>
+    <div style="background:var(--bg-surface);padding:1rem;border:1px solid #e2e8f0;border-bottom:none;border-right:none;">
+      <p style="font-weight:800;font-size:1.1rem;color:#e11d48;">&#x2460; 価格差異</p>
+      <p style="font-size:0.95rem;margin-top:0.2rem;">材料の<strong style="color:#e11d48;">仕入値段</strong>が違った</p>
+      <p style="font-size:0.82rem;color:#94a3b8;margin-top:0.15rem;">例：米@100円→@120円</p>
+      <span class="tag tag-rose" style="margin-top:0.3rem;">× 実際をかける</span>
+    </div>
+    <div style="background:var(--bg-surface);padding:1rem;border-top:1px solid var(--border);">
+      <p style="font-weight:800;font-size:1.1rem;color:#e11d48;">&#x2462; 賃率差異</p>
+      <p style="font-size:0.95rem;margin-top:0.2rem;">作業者の<strong style="color:#e11d48;">時給</strong>が違った</p>
+      <p style="font-size:0.82rem;color:#94a3b8;margin-top:0.15rem;">例：時給@1,000円→@1,200円</p>
+      <span class="tag tag-rose" style="margin-top:0.3rem;">× 実際をかける</span>
+    </div>
+
+    <div style="background:#eff6ff;padding:0.7rem;text-align:center;font-weight:800;color:#2563eb;writing-mode:vertical-rl;border-top:1px solid var(--border);">量系</div>
+    <div style="background:var(--bg-surface);padding:1rem;border:1px solid #e2e8f0;border-bottom:none;border-right:none;">
+      <p style="font-weight:800;font-size:1.1rem;color:#2563eb;">&#x2461; 数量差異</p>
+      <p style="font-size:0.95rem;margin-top:0.2rem;">材料を<strong style="color:#2563eb;">使いすぎた</strong>or節約</p>
+      <p style="font-size:0.82rem;color:#94a3b8;margin-top:0.15rem;">例：200kg→230kg</p>
+      <span class="tag tag-blue" style="margin-top:0.3rem;">× 標準をかける</span>
+    </div>
+    <div style="background:var(--bg-surface);padding:1rem;border-top:1px solid var(--border);">
+      <p style="font-weight:800;font-size:1.1rem;color:#2563eb;">&#x2463; 時間差異</p>
+      <p style="font-size:0.95rem;margin-top:0.2rem;">作業に<strong style="color:#2563eb;">時間がかかりすぎた</strong></p>
+      <p style="font-size:0.82rem;color:#94a3b8;margin-top:0.15rem;">例：100時間→120時間</p>
+      <span class="tag tag-blue" style="margin-top:0.3rem;">× 標準をかける</span>
+    </div>
+  </div>
+
+  <div class="alert-tip">
+    材料費の「単価・数量」を労務費に置き換えると「賃率・時間」になるだけ。<strong>構造はまったく同じ！</strong>
+  </div>
+
+  <!-- かける相手のルール -->
+  <h2 class="stitle stitle-rose">&#x1F511; 最重要：「かける相手」のルール</h2>
+
+  <div class="card" style="border:2px solid #fda4af;">
+    <p style="font-size:1.05rem;line-height:2;margin-bottom:0.8rem;">
+      なぜ「値段系は実際」「量系は標準」なのか？<br>
+      <strong>スーパーの買い物</strong>で考えるとスッキリ分かる。
+    </p>
+
+    <!-- ストーリー：スーパーの買い物 -->
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius);padding:1rem;margin-bottom:1rem;">
+      <p style="font-weight:800;font-size:1rem;color:#d97706;margin-bottom:0.4rem;">例：お米を買いに行った</p>
+      <p style="font-size:0.95rem;line-height:1.9;">
+        予定（標準）：<strong>@100円</strong> × <strong>200kg</strong> ＝ 20,000円<br>
+        実際　　　　：<strong style="color:#e11d48;">@120円</strong> × <strong style="color:#e11d48;">230kg</strong> ＝ 27,600円<br>
+        → <strong>7,600円の予算オーバー</strong>。これを分解したい！
+      </p>
+    </div>
+
+    <!-- 値段系の説明 -->
+    <div style="background:#fff1f2;border:2px solid #fda4af;border-radius:var(--radius);padding:1rem;margin-bottom:0.8rem;">
+      <p style="font-weight:800;font-size:1.1rem;color:#e11d48;margin-bottom:0.4rem;">&#x2460; まず「値段のズレ」を計算したい</p>
+      <p style="font-size:1rem;line-height:2;">
+        1kgあたり<strong>20円</strong>高かった（@100→@120）。<br>
+        では、この「20円高い」影響は何kgに及んだ？<br>
+      </p>
+      <div style="background:#fff;border-radius:var(--radius-sm);padding:0.8rem;margin:0.5rem 0;">
+        <p style="font-size:1rem;line-height:2;">
+          予定では200kgだったけど、<strong style="color:#e11d48;">実際に買ったのは230kg</strong>。<br>
+          値上がりの影響を受けたのは「実際に買った230kg全部」。<br>
+          予定の200kgだけではない！<strong>実際に手に入れた全量</strong>が値上がりしている。
+        </p>
+      </div>
+      <div style="background:#fef2f2;border-radius:var(--radius-sm);padding:0.6rem;text-align:center;">
+        <p style="font-size:1.1rem;font-weight:800;">だから → （標準単価−実際単価）× <span style="color:#e11d48;font-size:1.2rem;">実際数量</span></p>
+        <p style="font-size:0.92rem;color:#475569;margin-top:0.2rem;">(-20円) × <strong>230kg</strong> ＝ △4,600円</p>
+      </div>
+    </div>
+
+    <!-- 量系の説明 -->
+    <div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:var(--radius);padding:1rem;margin-bottom:0.8rem;">
+      <p style="font-weight:800;font-size:1.1rem;color:#2563eb;margin-bottom:0.4rem;">&#x2461; 次に「量のズレ」を計算したい</p>
+      <p style="font-size:1rem;line-height:2;">
+        200kgのはずが230kgで、<strong>30kg</strong>使いすぎた。<br>
+        この「30kgの使いすぎ」を金額にしたい。何円をかける？<br>
+      </p>
+      <div style="background:#fff;border-radius:var(--radius-sm);padding:0.8rem;margin:0.5rem 0;">
+        <p style="font-size:1rem;line-height:2;">
+          ここで実際の@120円をかけると、<strong>値上がり分まで混ざってしまう</strong>。<br>
+          「量」だけの影響を見たいのに、「値段」の影響も入ったらダメ。<br>
+          だから<strong style="color:#2563eb;">標準の@100円で固定</strong>して、純粋に量のズレだけを測る。
+        </p>
+      </div>
+      <div style="background:#eff6ff;border-radius:var(--radius-sm);padding:0.6rem;text-align:center;">
+        <p style="font-size:1.1rem;font-weight:800;">だから → （標準数量−実際数量）× <span style="color:#2563eb;font-size:1.2rem;">標準単価</span></p>
+        <p style="font-size:0.92rem;color:#475569;margin-top:0.2rem;">(-30kg) × <strong>@100円</strong> ＝ △3,000円</p>
+      </div>
+    </div>
+
+    <!-- まとめ -->
+    <div style="background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:2px solid #c4b5fd;border-radius:var(--radius);padding:1rem;text-align:center;">
+      <p style="font-weight:800;font-size:1.05rem;margin-bottom:0.5rem;">つまりこういうこと</p>
+      <div class="two-col" style="margin:0;">
+        <div style="background:#fff;border-radius:var(--radius-sm);padding:0.7rem;">
+          <p style="font-weight:800;color:#e11d48;font-size:1rem;">値段系 → × 実際</p>
+          <p style="font-size:0.88rem;color:#475569;margin-top:0.2rem;">値上がりの影響を受けたのは<br><strong>実際に買った全量</strong>だから</p>
+        </div>
+        <div style="background:#fff;border-radius:var(--radius-sm);padding:0.7rem;">
+          <p style="font-weight:800;color:#2563eb;font-size:1rem;">量系 → × 標準</p>
+          <p style="font-size:0.88rem;color:#475569;margin-top:0.2rem;">量のズレだけを見たいから<br><strong>値段は予定通りで固定</strong>する</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 4: 計算まとめ ==================== -->
+<div class="tab-panel" id="tab4">
+
+  <h2 class="stitle stitle-amber">&#x1F9EE; 差異分析の計算は3ステップだけ</h2>
+
+  <div class="card card-glow-blue">
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:0.6rem 1rem;align-items:start;">
+      <div style="background:#2563eb;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;">1</div>
+      <div>
+        <p style="font-weight:800;font-size:1.05rem;">ズレを出す：標準 − 実際</p>
+        <p style="color:#475569;font-size:0.92rem;">値段（単価/賃率）or 量（数量/時間）それぞれで引き算する</p>
+      </div>
+
+      <div style="background:#7c3aed;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;">2</div>
+      <div>
+        <p style="font-weight:800;font-size:1.05rem;">かける相手を決める</p>
+        <p style="color:#475569;font-size:0.92rem;"><strong style="color:#e11d48;">値段系 → 実際</strong>をかける ／ <strong style="color:#2563eb;">量系 → 標準</strong>をかける</p>
+      </div>
+
+      <div style="background:#059669;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;">3</div>
+      <div>
+        <p style="font-weight:800;font-size:1.05rem;">結果を判定する</p>
+        <p style="color:#475569;font-size:0.92rem;"><strong style="color:#059669;">プラス＝有利</strong>（節約） ／ <strong style="color:#e11d48;">マイナス＝不利</strong>（超過）</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4公式を端的に -->
+  <h2 class="stitle stitle-rose">&#x1F4DD; 4つの公式</h2>
+
+  <div style="display:grid;gap:0.6rem;">
+    <!-- ①② 材料費 -->
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="background:#2563eb;color:#fff;padding:0.5rem 1rem;font-weight:800;">&#x1F9F1; 直接材料費</div>
+      <div style="padding:0.8rem 1rem;">
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0.3rem 0.8rem;align-items:center;">
+          <span class="tag tag-rose">値段</span>
+          <div>
+            <p style="font-weight:700;">&#x2460; 価格差異 ＝（標準単価−実際単価）× <strong style="color:#e11d48;">実際数量</strong></p>
+            <p style="font-size:0.85rem;color:#475569;">仕入値段が高い/安い → 実際に買った全量に影響</p>
+          </div>
+          <p style="font-size:0.82rem;color:#94a3b8;">例：(-20)×230＝△4,600</p>
+        </div>
+        <hr style="border:none;border-top:1px solid #e2e8f0;margin:0.5rem 0;">
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0.3rem 0.8rem;align-items:center;">
+          <span class="tag tag-blue">量</span>
+          <div>
+            <p style="font-weight:700;">&#x2461; 数量差異 ＝（標準数量−実際数量）× <strong style="color:#2563eb;">標準単価</strong></p>
+            <p style="font-size:0.85rem;color:#475569;">使いすぎ/節約 → 値段は標準で固定して量だけ測る</p>
+          </div>
+          <p style="font-size:0.82rem;color:#94a3b8;">例：(-30)×@100＝△3,000</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③④ 労務費 -->
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="background:#d97706;color:#fff;padding:0.5rem 1rem;font-weight:800;">&#x1F477; 直接労務費（材料費と同じ構造）</div>
+      <div style="padding:0.8rem 1rem;">
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0.3rem 0.8rem;align-items:center;">
+          <span class="tag tag-rose">値段</span>
+          <div>
+            <p style="font-weight:700;">&#x2462; 賃率差異 ＝（標準賃率−実際賃率）× <strong style="color:#e11d48;">実際時間</strong></p>
+            <p style="font-size:0.85rem;color:#475569;">時給が高い/安い → 実際に働いた全時間に影響</p>
+          </div>
+          <p style="font-size:0.82rem;color:#94a3b8;">例：(-200)×120＝△24,000</p>
+        </div>
+        <hr style="border:none;border-top:1px solid #e2e8f0;margin:0.5rem 0;">
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0.3rem 0.8rem;align-items:center;">
+          <span class="tag tag-blue">量</span>
+          <div>
+            <p style="font-weight:700;">&#x2463; 時間差異 ＝（標準時間−実際時間）× <strong style="color:#2563eb;">標準賃率</strong></p>
+            <p style="font-size:0.85rem;color:#475569;">時間かかりすぎ/早い → 賃率は標準で固定して時間だけ測る</p>
+          </div>
+          <p style="font-size:0.82rem;color:#94a3b8;">例：(-20)×@1,000＝△20,000</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 早見表 -->
+  <h2 class="stitle stitle-emerald">&#x1F4CB; 早見表</h2>
+  <div class="card" style="overflow-x:auto;padding:0;">
+    <table style="width:100%;border-collapse:collapse;font-size:0.95rem;border:2px solid #93c5fd;">
+      <tr>
+        <th style="background:#2563eb;color:#fff;padding:0.7rem;text-align:left;border:1px solid #1d4ed8;">差異</th>
+        <th style="background:#2563eb;color:#fff;padding:0.7rem;text-align:left;border:1px solid #1d4ed8;">やること</th>
+        <th style="background:#2563eb;color:#fff;padding:0.7rem;text-align:center;width:14%;border:1px solid #1d4ed8;">×</th>
+        <th style="background:#2563eb;color:#fff;padding:0.7rem;text-align:left;border:1px solid #1d4ed8;width:22%;">ひとこと</th>
+      </tr>
+      <tr>
+        <td style="padding:0.7rem;font-weight:700;border:1px solid #cbd5e1;background:#fff1f2;">&#x2460; 価格差異</td>
+        <td style="padding:0.7rem;border:1px solid #cbd5e1;background:#fff1f2;">標準単価−実際単価</td>
+        <td style="padding:0.7rem;text-align:center;font-weight:800;color:#e11d48;border:1px solid #cbd5e1;background:#fff1f2;">実際数量</td>
+        <td style="padding:0.7rem;border:1px solid #cbd5e1;background:#fff1f2;font-size:0.85rem;">高く買った？</td>
+      </tr>
+      <tr>
+        <td style="padding:0.7rem;font-weight:700;border:1px solid #cbd5e1;background:#eff6ff;">&#x2461; 数量差異</td>
+        <td style="padding:0.7rem;border:1px solid #cbd5e1;background:#eff6ff;">標準数量−実際数量</td>
+        <td style="padding:0.7rem;text-align:center;font-weight:800;color:#2563eb;border:1px solid #cbd5e1;background:#eff6ff;">標準単価</td>
+        <td style="padding:0.7rem;border:1px solid #cbd5e1;background:#eff6ff;font-size:0.85rem;">使いすぎた？</td>
+      </tr>
+      <tr>
+        <td style="padding:0.7rem;font-weight:700;border:1px solid #cbd5e1;background:#fff1f2;">&#x2462; 賃率差異</td>
+        <td style="padding:0.7rem;border:1px solid #cbd5e1;background:#fff1f2;">標準賃率−実際賃率</td>
+        <td style="padding:0.7rem;text-align:center;font-weight:800;color:#e11d48;border:1px solid #cbd5e1;background:#fff1f2;">実際時間</td>
+        <td style="padding:0.7rem;border:1px solid #cbd5e1;background:#fff1f2;font-size:0.85rem;">時給高かった？</td>
+      </tr>
+      <tr>
+        <td style="padding:0.7rem;font-weight:700;border:1px solid #cbd5e1;background:#eff6ff;">&#x2463; 時間差異</td>
+        <td style="padding:0.7rem;border:1px solid #cbd5e1;background:#eff6ff;">標準時間−実際時間</td>
+        <td style="padding:0.7rem;text-align:center;font-weight:800;color:#2563eb;border:1px solid #cbd5e1;background:#eff6ff;">標準賃率</td>
+        <td style="padding:0.7rem;border:1px solid #cbd5e1;background:#eff6ff;font-size:0.85rem;">時間かかった？</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== TAB 5: ボックス図 ==================== -->
+<div class="tab-panel" id="tab5">
+
+  <h2 class="stitle stitle-emerald">&#x1F4CA; ボックス図で理解する</h2>
+
+  <div class="card card-glow-blue">
+    <p style="font-size:1rem;margin-bottom:0.2rem;"><strong>直接材料費の例</strong></p>
+    <p style="font-size:0.92rem;color:#475569;margin-bottom:1rem;">標準：@100円 × 200kg ＝ 20,000円 ／ 実際：@120円 × 230kg ＝ 27,600円</p>
+
+    <div style="max-width:420px;margin:0 auto;">
+      <div style="position:relative;border:2px solid #94a3b8;border-radius:8px;height:280px;background:#fff5f5;">
+        <!-- 標準エリア -->
+        <div style="position:absolute;left:0;bottom:0;width:60%;height:55%;background:#eff6ff;border:2px dashed #2563eb;border-bottom:none;border-left:none;border-radius:0;"></div>
+
+        <!-- Y軸 -->
+        <div style="position:absolute;top:10px;left:10px;font-size:0.95rem;color:#e11d48;font-weight:800;">実際 @120円</div>
+        <div style="position:absolute;top:46%;left:10px;font-size:0.95rem;color:#2563eb;font-weight:800;">標準 @100円</div>
+        <!-- X軸 -->
+        <div style="position:absolute;bottom:-30px;left:53%;font-size:0.92rem;color:#2563eb;font-weight:800;">標準 200kg</div>
+        <div style="position:absolute;bottom:-30px;right:0;font-size:0.92rem;color:#e11d48;font-weight:800;">実際 230kg</div>
+
+        <!-- 実際原価 -->
+        <div style="position:absolute;top:10px;right:10px;font-size:0.88rem;color:#e11d48;font-weight:700;">実際原価 27,600円</div>
+        <!-- 標準原価 -->
+        <div style="position:absolute;bottom:20%;left:12%;">
+          <p style="font-size:0.95rem;font-weight:800;color:#2563eb;">標準原価</p>
+          <p style="font-size:0.95rem;font-weight:800;color:#2563eb;">20,000円</p>
+        </div>
+
+        <!-- 価格差異 -->
+        <div style="position:absolute;top:16%;right:4%;background:#ffe4e6;border:2px solid #fda4af;border-radius:var(--radius-sm);padding:0.5rem 0.7rem;text-align:center;">
+          <p style="font-weight:800;font-size:1.05rem;color:#e11d48;">&#x2460; 価格差異</p>
+          <p style="font-size:1.05rem;font-weight:700;color:#e11d48;">△4,600円</p>
+          <p style="font-size:0.8rem;color:#475569;">タテ方向（単価の差）</p>
+        </div>
+        <!-- 数量差異 -->
+        <div style="position:absolute;bottom:4%;right:3%;background:#fef3c7;border:2px solid #fcd34d;border-radius:var(--radius-sm);padding:0.5rem 0.7rem;text-align:center;">
+          <p style="font-weight:800;font-size:1.05rem;color:#d97706;">&#x2461; 数量差異</p>
+          <p style="font-size:1.05rem;font-weight:700;color:#d97706;">△3,000円</p>
+          <p style="font-size:0.8rem;color:#475569;">ヨコ方向（量の差）</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 計算 -->
+    <div class="two-col" style="margin-top:2.2rem;">
+      <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:var(--radius-sm);padding:0.7rem;text-align:center;">
+        <p style="font-weight:800;font-size:1rem;color:#e11d48;">&#x2460; 価格差異（タテ）</p>
+        <p style="font-size:1rem;margin:0.3rem 0;">(@100−@120) × 230kg</p>
+        <p style="font-size:1.15rem;font-weight:800;color:#e11d48;">＝ △4,600円（不利）</p>
+      </div>
+      <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:var(--radius-sm);padding:0.7rem;text-align:center;">
+        <p style="font-weight:800;font-size:1rem;color:#d97706;">&#x2461; 数量差異（ヨコ）</p>
+        <p style="font-size:1rem;margin:0.3rem 0;">(200−230) × @100</p>
+        <p style="font-size:1.15rem;font-weight:800;color:#d97706;">＝ △3,000円（不利）</p>
+      </div>
+    </div>
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:0.6rem;margin-top:0.6rem;text-align:center;">
+      <p style="font-size:1.05rem;font-weight:700;">合計 ＝ 4,600+3,000 ＝ <strong style="font-size:1.15rem;color:#e11d48;">7,600円</strong> ＝ 27,600−20,000 と一致！</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 6: 穴埋めチェック ==================== -->
+<div class="tab-panel" id="tab6">
+
+  <h2 class="stitle stitle-rose">&#x270D;&#xFE0F; 穴埋めチェック</h2>
+
+  <div style="text-align:right;margin-bottom:0.8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFill()" style="background:#ecfdf5;color:#059669;border-color:#6ee7b7;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAllFill()" style="background:#f1f5f9;color:#475569;border-color:#cbd5e1;">&#x1F504; リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-blue">Q1. 差異分析の基本</div>
+    <div class="fill-bdy">
+      <div class="fill-group">差異分析は<span class="fill-blank">標準原価</span>と<span class="fill-blank">実際原価</span>を比べてズレを分析すること。<br>公式はすべて「<span class="fill-blank">標準</span> − <span class="fill-blank">実際</span>」の順番で計算する。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">プラス ＝ <span class="fill-blank">有利差異</span>（節約できた）<br>マイナス ＝ <span class="fill-blank">不利差異</span>（使いすぎた）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-rose">Q2. 材料費の差異</div>
+    <div class="fill-bdy">
+      <div class="fill-group">&#x2460; <span class="fill-blank">価格差異</span> ＝（標準単価−実際単価）× <span class="fill-blank">実際数量</span><br>→ 材料の<span class="fill-blank">値段</span>のズレ</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460; の答えを見る</button>
+      <div class="fill-group">&#x2461; <span class="fill-blank">数量差異</span> ＝（標準数量−実際数量）× <span class="fill-blank">標準単価</span><br>→ 材料の<span class="fill-blank">使いすぎ</span>or節約</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2461; の答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-amber">Q3. 労務費の差異</div>
+    <div class="fill-bdy">
+      <div class="fill-group">&#x2462; <span class="fill-blank">賃率差異</span> ＝（標準賃率−実際賃率）× <span class="fill-blank">実際時間</span><br>→ <span class="fill-blank">時給</span>のズレ</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462; の答えを見る</button>
+      <div class="fill-group">&#x2463; <span class="fill-blank">時間差異</span> ＝（標準時間−実際時間）× <span class="fill-blank">標準賃率</span><br>→ 作業<span class="fill-blank">時間</span>のズレ</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2463; の答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-violet">Q4. かける相手のルール</div>
+    <div class="fill-bdy">
+      <div class="fill-group">値段系（価格差異・賃率差異）は<span class="fill-blank">実際</span>をかける。<br>量系（数量差異・時間差異）は<span class="fill-blank">標準</span>をかける。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-emerald">Q5. 計算してみよう</div>
+    <div class="fill-bdy">
+      <div class="fill-group" style="font-size:0.88rem;color:#94a3b8;">条件：標準@100円×200kg ／ 実際@120円×230kg</div>
+      <div class="fill-group">価格差異 ＝ (@100−@120)×230 ＝ <span class="fill-blank">△4,600円（不利）</span><br>数量差異 ＝ (200−230)×@100 ＝ <span class="fill-blank">△3,000円（不利）</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">合計差異 ＝ <span class="fill-blank">7,600円</span>（＝ 27,600−20,000 と一致）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-violet">Q6. ボックス図</div>
+    <div class="fill-bdy">
+      <div class="fill-group">ボックス図のタテ方向 ＝ <span class="fill-blank">価格差異</span>（単価の差）<br>ボックス図のヨコ方向 ＝ <span class="fill-blank">数量差異</span>（量の差）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="tab-nav" style="border-radius:0 0 var(--radius) var(--radius);border-top:none;">
+  <button class="tab-btn active" data-c="violet" onclick="switchTab(0)">概要</button>
+  <button class="tab-btn" data-c="blue" onclick="switchTab(1)">考え方</button>
+  <button class="tab-btn" data-c="rose" onclick="switchTab(2)">計算の方向</button>
+  <button class="tab-btn" data-c="violet" onclick="switchTab(3)">4パターン</button>
+  <button class="tab-btn" data-c="amber" onclick="switchTab(4)">計算まとめ</button>
+  <button class="tab-btn" data-c="emerald" onclick="switchTab(5)">ボックス図</button>
+  <button class="tab-btn" data-c="rose" onclick="switchTab(6)">穴埋め</button>
+</nav>
+</div>
+
+<div class="footer">財務・会計 差異分析（標準原価計算）学習まとめ</div>
+
+<script>
+function switchTab(idx){
+  var numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){ b.classList.toggle('active', i % numTabs === idx); });
+  document.querySelectorAll('.tab-panel').forEach(function(p,i){ p.classList.toggle('active', i === idx); });
+  document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  if(grp && grp.classList.contains('fill-group')){
+    grp.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  }
+  btn.textContent = '\u2705 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAllFill(){
+  document.querySelectorAll('#tab6 .fill-blank').forEach(function(el){ el.classList.add('show'); });
+  document.querySelectorAll('#tab6 .fill-reveal-btn').forEach(function(b){ b.textContent = '\u2705 表示済み'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAllFill(){
+  document.querySelectorAll('#tab6 .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  document.querySelectorAll('#tab6 .fill-reveal-btn').forEach(function(b){ b.innerHTML = '\uD83D\uDC41 答えを見る'; b.disabled = false; b.style.opacity = '1'; });
+}
+document.addEventListener('click', function(e){
+  if(e.target.classList && e.target.classList.contains('fill-blank')){
+    e.target.classList.toggle('show');
+  }
+});
+</script>
+</body>
+</html>

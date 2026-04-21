@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>運営管理 穴埋め＆クイズ問題集</title>
+<style>
+:root {
+  --orange-dark:#d35400; --orange-main:#e67e22; --orange-pale:#fdebd0; --orange-bg:#fef9f3;
+  --green:#27ae60; --green-light:#d5f5e3;
+  --red:#e74c3c; --red-light:#fadbd8;
+  --blue:#2980b9; --blue-light:#d6eaf8;
+  --purple:#8e44ad;
+  --gray-dark:#2c3e50; --gray-mid:#5d6d7e; --gray-pale:#f4f6f7;
+}
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Segoe UI", sans-serif; background: var(--orange-bg); color: var(--gray-dark); line-height:1.6; }
+
+/* Tab Navigation */
+.tab-nav { position:sticky; top:0; z-index:100; background:#fff; display:flex; overflow-x:auto; border-bottom:3px solid var(--orange-main); box-shadow:0 2px 8px rgba(0,0,0,.1); -webkit-overflow-scrolling:touch; }
+.tab-nav::-webkit-scrollbar { height:3px; }
+.tab-nav::-webkit-scrollbar-thumb { background:var(--orange-main); border-radius:3px; }
+.tab-btn { flex-shrink:0; padding:10px 16px; border:none; background:none; font-size:.85rem; font-weight:600; color:var(--gray-mid); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-3px; white-space:nowrap; transition:.2s; }
+.tab-btn:hover { color:var(--orange-main); background:var(--orange-pale); }
+.tab-btn.active { color:var(--orange-dark); border-bottom-color:var(--orange-main); background:var(--orange-pale); }
+.tab-panel { display:none; padding:16px; max-width:900px; margin:0 auto; }
+.tab-panel.active { display:block; }
+
+/* Selection Screen */
+.sel-header { text-align:center; margin:20px 0 8px; }
+.sel-header h1 { font-size:1.5rem; color:var(--orange-dark); }
+.sel-header p { color:var(--gray-mid); font-size:.9rem; }
+.global-btns { display:flex; justify-content:center; gap:10px; margin:12px 0 20px; }
+.global-btn { padding:8px 20px; border-radius:20px; border:2px solid var(--orange-main); background:#fff; color:var(--orange-main); font-weight:700; font-size:.85rem; cursor:pointer; transition:.2s; }
+.global-btn:hover { background:var(--orange-main); color:#fff; }
+
+.sel-card { background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.08); margin-bottom:16px; overflow:hidden; border:1px solid #eee; }
+.sel-card-header { padding:12px 16px; font-weight:700; font-size:1rem; color:#fff; }
+.bg-card-0 { background:linear-gradient(135deg,#e67e22,#f39c12); }
+.bg-card-1 { background:linear-gradient(135deg,#2980b9,#3498db); }
+.bg-card-2 { background:linear-gradient(135deg,#27ae60,#2ecc71); }
+.bg-card-3 { background:linear-gradient(135deg,#8e44ad,#9b59b6); }
+.bg-card-4 { background:linear-gradient(135deg,#e74c3c,#c0392b); }
+.sel-card-body { padding:14px 16px; }
+.sel-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.sel-row-label { font-weight:700; font-size:.85rem; color:var(--gray-mid); min-width:56px; }
+.sel-toggle { padding:6px 14px; border-radius:16px; border:2px solid #ccc; background:#fff; color:#999; font-size:.8rem; font-weight:600; cursor:pointer; transition:.2s; }
+.sel-toggle.on-fill { border-color:var(--blue); background:var(--blue); color:#fff; }
+.sel-toggle.on-quiz { border-color:var(--orange-main); background:var(--orange-main); color:#fff; }
+.sel-card-actions { display:flex; gap:6px; margin-top:4px; justify-content:flex-end; }
+.sel-mini-btn { padding:4px 10px; border-radius:10px; border:1px solid #ccc; background:#fafafa; color:var(--gray-mid); font-size:.72rem; cursor:pointer; transition:.2s; }
+.sel-mini-btn:hover { background:var(--gray-pale); border-color:#aaa; }
+
+.start-btn-wrap { text-align:center; margin:24px 0 40px; }
+.start-btn { padding:16px 48px; border:none; border-radius:30px; background:linear-gradient(135deg,var(--orange-main),var(--orange-dark)); color:#fff; font-size:1.2rem; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(230,126,34,.4); transition:.2s; }
+.start-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(230,126,34,.5); }
+.start-btn:active { transform:translateY(0); }
+
+/* Back Link */
+.back-link { display:inline-block; margin-bottom:16px; color:var(--orange-main); text-decoration:none; font-weight:600; font-size:.9rem; }
+.back-link:hover { text-decoration:underline; }
+
+/* Section Divider */
+.section-divider { font-size:1.1rem; font-weight:700; color:var(--gray-dark); margin:24px 0 12px; padding:8px 16px; background:var(--orange-pale); border-left:4px solid var(--orange-main); border-radius:0 8px 8px 0; }
+
+/* Fill Cards */
+.fill-section-label { margin:16px 0 8px; }
+.fill-card { background:#fff; border-radius:10px; margin-bottom:14px; box-shadow:0 1px 6px rgba(0,0,0,.06); overflow:hidden; }
+.fill-header { padding:10px 14px; font-weight:700; font-size:.9rem; color:#fff; }
+.fill-header.bg-orange { background:linear-gradient(135deg,#e67e22,#f39c12); }
+.fill-header.bg-blue { background:linear-gradient(135deg,#2980b9,#3498db); }
+.fill-header.bg-green { background:linear-gradient(135deg,#27ae60,#2ecc71); }
+.fill-header.bg-purple { background:linear-gradient(135deg,#8e44ad,#9b59b6); }
+.fill-header.bg-red { background:linear-gradient(135deg,#e74c3c,#c0392b); }
+.fill-body { padding:14px; }
+.fill-group { margin-bottom:6px; font-size:.92rem; line-height:1.7; }
+.fill-blank { color:transparent; background:#ffe0b2; border-radius:4px; padding:1px 6px; cursor:pointer; transition:.2s; user-select:none; border-bottom:2px dashed #e67e22; }
+.fill-blank.show { color:var(--red); background:#fff3e0; border-bottom-color:transparent; font-weight:700; }
+.fill-reveal-btn { margin:6px 0 10px; padding:5px 14px; border:1px solid var(--orange-main); border-radius:16px; background:#fff; color:var(--orange-main); font-size:.78rem; cursor:pointer; font-weight:600; transition:.2s; }
+.fill-reveal-btn:hover { background:var(--orange-pale); }
+.fill-reveal-btn.revealed { background:var(--gray-pale); border-color:#ccc; color:#aaa; }
+
+/* Fill Controls */
+.fill-controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.fill-ctrl-btn { padding:6px 16px; border-radius:16px; border:1px solid var(--orange-main); background:#fff; color:var(--orange-main); font-size:.8rem; font-weight:600; cursor:pointer; transition:.2s; }
+.fill-ctrl-btn:hover { background:var(--orange-pale); }
+
+/* Quiz */
+.quiz-item { background:#fff; border-radius:10px; margin-bottom:14px; box-shadow:0 1px 6px rgba(0,0,0,.06); overflow:hidden; }
+.quiz-item-header { padding:10px 14px; font-weight:700; font-size:.88rem; color:#fff; display:flex; justify-content:space-between; align-items:center; }
+.quiz-item-header.bg-orange { background:linear-gradient(135deg,#e67e22,#f39c12); }
+.quiz-item-header.bg-blue { background:linear-gradient(135deg,#2980b9,#3498db); }
+.quiz-item-header.bg-green { background:linear-gradient(135deg,#27ae60,#2ecc71); }
+.quiz-item-header.bg-purple { background:linear-gradient(135deg,#8e44ad,#9b59b6); }
+.quiz-item-header.bg-red { background:linear-gradient(135deg,#e74c3c,#c0392b); }
+.quiz-cat { font-size:.72rem; background:rgba(255,255,255,.3); padding:2px 8px; border-radius:8px; }
+.quiz-body { padding:14px; }
+.quiz-q { font-size:.92rem; font-weight:600; margin-bottom:10px; }
+.quiz-opts { display:flex; flex-direction:column; gap:6px; }
+.quiz-opt { padding:10px 14px; border:2px solid #ddd; border-radius:8px; background:#fafafa; cursor:pointer; font-size:.88rem; transition:.2s; }
+.quiz-opt:hover:not(.disabled) { border-color:var(--orange-main); background:var(--orange-pale); }
+.quiz-opt.correct { border-color:var(--green); background:var(--green-light); font-weight:700; }
+.quiz-opt.wrong { border-color:var(--red); background:var(--red-light); }
+.quiz-opt.disabled { cursor:default; opacity:.7; }
+.quiz-opt.disabled:hover { border-color:#ddd; background:#fafafa; }
+.quiz-opt.correct.disabled { opacity:1; }
+.quiz-opt.wrong.disabled { opacity:1; }
+.quiz-exp { display:none; margin-top:10px; padding:10px; background:#f0f7ff; border-radius:8px; font-size:.85rem; color:var(--blue); border-left:3px solid var(--blue); }
+.quiz-exp.show { display:block; }
+
+.quiz-score { text-align:center; padding:16px; margin:16px 0; background:#fff; border-radius:10px; font-weight:700; font-size:1.1rem; box-shadow:0 1px 6px rgba(0,0,0,.06); }
+.quiz-controls { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:24px; }
+.quiz-ctrl-btn { padding:8px 20px; border-radius:16px; border:1px solid var(--orange-main); background:#fff; color:var(--orange-main); font-size:.85rem; font-weight:600; cursor:pointer; transition:.2s; }
+.quiz-ctrl-btn:hover { background:var(--orange-pale); }
+
+/* Section sub-label */
+.section-sub-label { font-size:.9rem; font-weight:700; color:var(--gray-mid); margin:14px 0 8px; padding:6px 12px; background:var(--blue-light); border-radius:6px; display:inline-block; }
+
+/* Responsive */
+@media(max-width:600px) {
+  .tab-btn { padding:8px 10px; font-size:.75rem; }
+  .fill-body, .quiz-body { padding:10px; }
+  .sel-card-body { padding:10px 12px; }
+  .sel-toggle { padding:5px 10px; font-size:.75rem; }
+  .start-btn { padding:14px 36px; font-size:1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Navigation -->
+<nav class="tab-nav" id="tabNav">
+  <button class="tab-btn active" id="tabBtnSel" onclick="switchTab(0)">選択画面</button>
+  <button class="tab-btn" id="tabBtn0" style="display:none" onclick="switchTab(1)">01.生産管理概論</button>
+  <button class="tab-btn" id="tabBtn1" style="display:none" onclick="switchTab(2)">02.生産計画・管理方式</button>
+  <button class="tab-btn" id="tabBtn2" style="display:none" onclick="switchTab(3)">03.ライン・セル生産</button>
+  <button class="tab-btn" id="tabBtn3" style="display:none" onclick="switchTab(4)">04.需要予測・LP</button>
+  <button class="tab-btn" id="tabBtn4" style="display:none" onclick="switchTab(5)">06.PERT・MRP</button>
+</nav>
+
+<!-- ========== TAB 0: Selection Screen ========== -->
+<div class="tab-panel active" id="tab0">
+  <div class="sel-header">
+    <h1>運営管理 穴埋め＆クイズ問題集</h1>
+    <p>学習したいセクションを選択してください</p>
+  </div>
+  <div class="global-btns">
+    <button class="global-btn" onclick="selectAll()">全選択</button>
+    <button class="global-btn" onclick="deselectAll()">全解除</button>
+  </div>
+
+  <!-- Card 0 -->
+  <div class="sel-card">
+    <div class="sel-card-header bg-card-0">01. 生産管理概論</div>
+    <div class="sel-card-body">
+      <div class="sel-row">
+        <span class="sel-row-label">穴埋め:</span>
+        <button class="sel-toggle" id="sel_0_f_1" onclick="toggleSelect('0_f_1')">前半</button>
+        <button class="sel-toggle" id="sel_0_f_2" onclick="toggleSelect('0_f_2')">中盤</button>
+        <button class="sel-toggle" id="sel_0_f_3" onclick="toggleSelect('0_f_3')">後半</button>
+      </div>
+      <div class="sel-row">
+        <span class="sel-row-label">クイズ:</span>
+        <button class="sel-toggle" id="sel_0_q_1" onclick="toggleSelect('0_q_1')">前半</button>
+        <button class="sel-toggle" id="sel_0_q_2" onclick="toggleSelect('0_q_2')">中盤</button>
+        <button class="sel-toggle" id="sel_0_q_3" onclick="toggleSelect('0_q_3')">後半</button>
+      </div>
+      <div class="sel-card-actions">
+        <button class="sel-mini-btn" onclick="selectAllFile(0)">全ON</button>
+        <button class="sel-mini-btn" onclick="deselectAllFile(0)">全OFF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 1 -->
+  <div class="sel-card">
+    <div class="sel-card-header bg-card-1">02. 生産計画・管理方式・開発設計</div>
+    <div class="sel-card-body">
+      <div class="sel-row">
+        <span class="sel-row-label">穴埋め:</span>
+        <button class="sel-toggle" id="sel_1_f_1" onclick="toggleSelect('1_f_1')">前半</button>
+        <button class="sel-toggle" id="sel_1_f_2" onclick="toggleSelect('1_f_2')">中盤</button>
+        <button class="sel-toggle" id="sel_1_f_3" onclick="toggleSelect('1_f_3')">後半</button>
+      </div>
+      <div class="sel-row">
+        <span class="sel-row-label">クイズ:</span>
+        <button class="sel-toggle" id="sel_1_q_1" onclick="toggleSelect('1_q_1')">前半</button>
+        <button class="sel-toggle" id="sel_1_q_2" onclick="toggleSelect('1_q_2')">中盤</button>
+        <button class="sel-toggle" id="sel_1_q_3" onclick="toggleSelect('1_q_3')">後半</button>
+      </div>
+      <div class="sel-card-actions">
+        <button class="sel-mini-btn" onclick="selectAllFile(1)">全ON</button>
+        <button class="sel-mini-btn" onclick="deselectAllFile(1)">全OFF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="sel-card">
+    <div class="sel-card-header bg-card-2">03. ライン生産方式とセル生産方式</div>
+    <div class="sel-card-body">
+      <div class="sel-row">
+        <span class="sel-row-label">穴埋め:</span>
+        <button class="sel-toggle" id="sel_2_f_1" onclick="toggleSelect('2_f_1')">前半</button>
+        <button class="sel-toggle" id="sel_2_f_2" onclick="toggleSelect('2_f_2')">中盤</button>
+        <button class="sel-toggle" id="sel_2_f_3" onclick="toggleSelect('2_f_3')">後半</button>
+      </div>
+      <div class="sel-row">
+        <span class="sel-row-label">クイズ:</span>
+        <button class="sel-toggle" id="sel_2_q_1" onclick="toggleSelect('2_q_1')">前半</button>
+        <button class="sel-toggle" id="sel_2_q_2" onclick="toggleSelect('2_q_2')">中盤</button>
+        <button class="sel-toggle" id="sel_2_q_3" onclick="toggleSelect('2_q_3')">後半</button>
+      </div>
+      <div class="sel-card-actions">
+        <button class="sel-mini-btn" onclick="selectAllFile(2)">全ON</button>
+        <button class="sel-mini-btn" onclick="deselectAllFile(2)">全OFF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="sel-card">
+    <div class="sel-card-header bg-card-3">04. 需要予測と線形計画法</div>
+    <div class="sel-card-body">
+      <div class="sel-row">
+        <span class="sel-row-label">穴埋め:</span>
+        <button class="sel-toggle" id="sel_3_f_1" onclick="toggleSelect('3_f_1')">前半</button>
+        <button class="sel-toggle" id="sel_3_f_2" onclick="toggleSelect('3_f_2')">中盤</button>
+        <button class="sel-toggle" id="sel_3_f_3" onclick="toggleSelect('3_f_3')">後半</button>
+      </div>
+      <div class="sel-row">
+        <span class="sel-row-label">クイズ:</span>
+        <button class="sel-toggle" id="sel_3_q_1" onclick="toggleSelect('3_q_1')">前半</button>
+        <button class="sel-toggle" id="sel_3_q_2" onclick="toggleSelect('3_q_2')">中盤</button>
+        <button class="sel-toggle" id="sel_3_q_3" onclick="toggleSelect('3_q_3')">後半</button>
+      </div>
+      <div class="sel-card-actions">
+        <button class="sel-mini-btn" onclick="selectAllFile(3)">全ON</button>
+        <button class="sel-mini-btn" onclick="deselectAllFile(3)">全OFF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="sel-card">
+    <div class="sel-card-header bg-card-4">06. PERT・MRP・ジョンソン法</div>
+    <div class="sel-card-body">
+      <div class="sel-row">
+        <span class="sel-row-label">穴埋め:</span>
+        <button class="sel-toggle" id="sel_4_f_1" onclick="toggleSelect('4_f_1')">前半</button>
+        <button class="sel-toggle" id="sel_4_f_2" onclick="toggleSelect('4_f_2')">中盤</button>
+        <button class="sel-toggle" id="sel_4_f_3" onclick="toggleSelect('4_f_3')">後半</button>
+      </div>
+      <div class="sel-row">
+        <span class="sel-row-label">クイズ:</span>
+        <button class="sel-toggle" id="sel_4_q_1" onclick="toggleSelect('4_q_1')">前半</button>
+        <button class="sel-toggle" id="sel_4_q_2" onclick="toggleSelect('4_q_2')">中盤</button>
+        <button class="sel-toggle" id="sel_4_q_3" onclick="toggleSelect('4_q_3')">後半</button>
+      </div>
+      <div class="sel-card-actions">
+        <button class="sel-mini-btn" onclick="selectAllFile(4)">全ON</button>
+        <button class="sel-mini-btn" onclick="deselectAllFile(4)">全OFF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="start-btn-wrap">
+    <button class="start-btn" onclick="startStudy()">学習スタート</button>
+  </div>
+</div>
+
+<!-- ========== TAB 1: File 0 - 生産管理概論 ========== -->
+<div class="tab-panel" id="tab1">
+  <a href="#" class="back-link" onclick="switchTab(0);return false">&larr; 選択画面に戻る</a>
+
+  <div id="fillDiv0" style="display:none">
+    <div class="section-divider">穴埋めチェック</div>
+    <div class="fill-controls" id="fillCtrl0">
+      <button class="fill-ctrl-btn" onclick="revealAllFile(0)">全て表示</button>
+      <button class="fill-ctrl-btn" onclick="hideAllFile(0)">全てリセット</button>
+    </div>
+
+    <div id="f0f1">
+      <div class="fill-section-label"><div class="fill-header bg-orange">A. 超入門の範囲</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-orange">Q1. 生産管理とは</div><div class="fill-body">
+        <div class="fill-group">生産管理のやること3つ：<span class="fill-blank">開発・設計</span>、<span class="fill-blank">材料調達</span>、<span class="fill-blank">製品の製造</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-orange">Q2. QCD</div><div class="fill-body">
+        <div class="fill-group">Q = <span class="fill-blank">Quality（品質）</span>　C = <span class="fill-blank">Cost（コスト）</span>　D = <span class="fill-blank">Delivery（納期）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">QCDの3つは<span class="fill-blank">トレードオフ</span>の関係</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-orange">Q3. PQCDSME</div><div class="fill-body">
+        <div class="fill-group">P = <span class="fill-blank">Productivity（生産性）</span>　S = <span class="fill-blank">Safety（安全性）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">M = <span class="fill-blank">Morale（意欲）</span>　E = <span class="fill-blank">Environment（環境性）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-orange">Q4. 生産の4M</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">Man（人）</span>　<span class="fill-blank">Machine（機械）</span>　<span class="fill-blank">Material（材料）</span>　<span class="fill-blank">Method（方法）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-section-label"><div class="fill-header bg-blue">B. 入門の範囲</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q5. 3S（効率化の3原則）</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">Simplification（単純化）</span>　<span class="fill-blank">Standardization（標準化）</span>　<span class="fill-blank">Specialization（専門化）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q6. 5S</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">整理</span>（捨てる）　<span class="fill-blank">整頓</span>（並べる）　<span class="fill-blank">清掃</span>　<span class="fill-blank">清潔</span>　<span class="fill-blank">躾</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q7. ECRS（改善の4原則）</div><div class="fill-body">
+        <div class="fill-group">E = <span class="fill-blank">Eliminate（排除）</span> → C = <span class="fill-blank">Combine（結合）</span> → R = <span class="fill-blank">Rearrange（交換）</span> → S = <span class="fill-blank">Simplify（簡素化）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">最初に考えるべきは<span class="fill-blank">E（排除）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q8. 受注生産 vs 見込生産</div><div class="fill-body">
+        <div class="fill-group">受注生産 ＝ <span class="fill-blank">注文を受けてから</span>作る。課題は<span class="fill-blank">納期を守ること</span><br>見込生産 ＝ <span class="fill-blank">需要を予測して先に</span>作る。課題は<span class="fill-blank">需要予測の精度</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f0f2">
+      <div class="fill-card"><div class="fill-header bg-blue">Q9. 品種×生産量の分類</div><div class="fill-body">
+        <div class="fill-group">多品種少量→<span class="fill-blank">個別生産</span>　中品種中量→<span class="fill-blank">ロット生産</span>　少品種多量→<span class="fill-blank">連続生産</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q10. ライン生産 vs セル生産</div><div class="fill-body">
+        <div class="fill-group">ライン生産＝<span class="fill-blank">単能工</span>　セル生産＝<span class="fill-blank">多能工</span>が必要</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">セル生産のレイアウト：<span class="fill-blank">U字ライン方式</span>と<span class="fill-blank">1人生産方式</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q11. 段取り替え</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">内段取り</span>＝ライン停止　<span class="fill-blank">外段取り</span>＝ライン停止なし</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">シングル段取り＝<span class="fill-blank">10分未満</span>　改善＝<span class="fill-blank">内段取りを外段取りに</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-section-label"><div class="fill-header bg-green">C. 基本の範囲</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q12. 生産性・歩留り</div><div class="fill-body">
+        <div class="fill-group">生産性＝<span class="fill-blank">産出量</span>/<span class="fill-blank">投入量</span>　労働生産性＝<span class="fill-blank">付加価値額</span>/<span class="fill-blank">従業員数</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">歩留り＝<span class="fill-blank">産出された品物の量</span>/<span class="fill-blank">投入された主原材料の量</span>×100</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q13. 稼働率・リードタイム</div><div class="fill-body">
+        <div class="fill-group">稼働率＝<span class="fill-blank">有効稼働時間</span>/<span class="fill-blank">利用可能時間</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">生産リードタイム＝<span class="fill-blank">着手時期</span>から<span class="fill-blank">完了時期</span>までの時間</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q14. ラインバランシング</div><div class="fill-body">
+        <div class="fill-group">サイクルタイム＝最も<span class="fill-blank">長い</span>工程の時間（＝<span class="fill-blank">ボトルネック</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">ライン編成効率＝<span class="fill-blank">作業時間の合計</span>/（<span class="fill-blank">サイクルタイム×ステーション数</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">バランスロス率＝<span class="fill-blank">100%−ライン編成効率</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">例：A=3,B=5,C=4→CT=<span class="fill-blank">5分</span> 効率=<span class="fill-blank">80%</span> ロス=<span class="fill-blank">20%</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q15. 受注生産の細分類</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">個別受注生産</span>＝毎回設計　<span class="fill-blank">繰返し受注生産</span>＝仕様決まり</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q16. セル生産のメリット・デメリット</div><div class="fill-body">
+        <div class="fill-group">メリット：<span class="fill-blank">バランスロスが少ない</span>・<span class="fill-blank">仕掛品を減らせる</span>・<span class="fill-blank">やりがいを感じやすい</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">デメリット：<span class="fill-blank">多能工が必要</span>・<span class="fill-blank">能力差が生産量に直結</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f0f3">
+      <div class="fill-card"><div class="fill-header bg-green">Q17. PDSサイクル</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">Plan</span>→<span class="fill-blank">Do</span>→<span class="fill-blank">See</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-section-label"><div class="fill-header bg-purple">D. 応用の範囲</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q18. 段取りの効率順</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">ゼロ段取り</span>＞<span class="fill-blank">シングル段取り</span>＞<span class="fill-blank">外段取り</span>＞<span class="fill-blank">内段取り</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q19. 段取り頻度</div><div class="fill-body">
+        <div class="fill-group">高い順：<span class="fill-blank">個別生産</span>＞<span class="fill-blank">ロット生産</span>＞<span class="fill-blank">連続生産</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q20. 設備総合効率</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">時間稼働率</span>×<span class="fill-blank">性能稼働率</span>×<span class="fill-blank">良品率</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">時間稼働率のロス＝<span class="fill-blank">故障・段取り替え</span>　性能稼働率＝<span class="fill-blank">空転・チョコ停</span>　良品率＝<span class="fill-blank">不良品・手直し</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q21. MTBF・MTTR・可用率</div><div class="fill-body">
+        <div class="fill-group">MTBF＝<span class="fill-blank">稼働時間合計</span>/<span class="fill-blank">故障回数</span>→<span class="fill-blank">長い</span>ほど良い</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">MTTR＝<span class="fill-blank">修理時間合計</span>/<span class="fill-blank">修理回数</span>→<span class="fill-blank">短い</span>ほど良い</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">可用率＝<span class="fill-blank">MTBF</span>/（<span class="fill-blank">MTBF+MTTR</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q22. 標準時間</div><div class="fill-body">
+        <div class="fill-group">標準時間＝<span class="fill-blank">正味時間</span>+<span class="fill-blank">余裕時間</span>　正味時間＝<span class="fill-blank">観測時間</span>×<span class="fill-blank">レイティング係数</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">外掛け：正味×<span class="fill-blank">（1+余裕率）</span>　内掛け：正味/<span class="fill-blank">（1−余裕率）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q23. 度数率と強度率</div><div class="fill-body">
+        <div class="fill-group">度数率：×<span class="fill-blank">1,000,000</span>→災害の<span class="fill-blank">頻度</span>　強度率：×<span class="fill-blank">1,000</span>→災害の<span class="fill-blank">重さ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-red">Q24. 高い/低いほど良い判定</div><div class="fill-body">
+        <div class="fill-group">生産性・歩留り・稼働率・編成効率・可用率→<span class="fill-blank">高い</span>ほど良い</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">CT・リードタイム・MTTR・ロス率・度数率・強度率→<span class="fill-blank">低い</span>ほど良い</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">MTBF→<span class="fill-blank">長い</span>ほど良い</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+  </div>
+
+  <div id="quizDiv0" style="display:none">
+    <div class="section-divider">実践クイズ</div>
+    <div id="f0q1"></div>
+    <div id="f0q2"></div>
+    <div id="f0q3"></div>
+    <div class="quiz-score" id="quizScore0"></div>
+    <div class="quiz-controls">
+      <button class="quiz-ctrl-btn" onclick="resetQuiz(0)">クイズをリセット</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TAB 2: File 1 - 生産計画・管理方式・開発設計 ========== -->
+<div class="tab-panel" id="tab2">
+  <a href="#" class="back-link" onclick="switchTab(0);return false">&larr; 選択画面に戻る</a>
+
+  <div id="fillDiv1" style="display:none">
+    <div class="section-divider">穴埋めチェック</div>
+    <div class="fill-controls" id="fillCtrl1">
+      <button class="fill-ctrl-btn" onclick="revealAllFile(1)">全て表示</button>
+      <button class="fill-ctrl-btn" onclick="hideAllFile(1)">全てリセット</button>
+    </div>
+
+    <div id="f1f1">
+      <div class="fill-section-label"><div class="fill-header bg-blue">A. 入門編の範囲</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q1. トヨタ生産方式の2本柱</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">JIT（ジャストインタイム）</span>と<span class="fill-blank">自働化</span>（にんべん付き）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">JIT＝<span class="fill-blank">後工程引取方式</span>（別名：<span class="fill-blank">プルシステム</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q2. JITの前提条件と関連用語</div><div class="fill-body">
+        <div class="fill-group">前提条件＝<span class="fill-blank">平準化</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group"><span class="fill-blank">あんどん</span>　<span class="fill-blank">シングル段取</span>　<span class="fill-blank">一個流し</span>　<span class="fill-blank">ポカヨケ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q3. 内段取と外段取</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">内段取</span>＝ライン停止　<span class="fill-blank">外段取</span>＝停止なし　改善＝<span class="fill-blank">内段取を外段取に</span>転換</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q4. かんばん方式</div><div class="fill-body">
+        <div class="fill-group">JITの<span class="fill-blank">情報伝達ツール</span>：<span class="fill-blank">生産指示かんばん</span>と<span class="fill-blank">引取りかんばん</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q5. 製品開発の4ステップ</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">製品企画</span>→<span class="fill-blank">製品設計</span>→<span class="fill-blank">工程設計</span>→<span class="fill-blank">生産準備</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">製品設計＝「<span class="fill-blank">何を作るか</span>」　工程設計＝「<span class="fill-blank">どうやって作るか</span>」</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q6. 開発期間短縮</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">コンカレント・エンジニアリング</span>（同時並行）　<span class="fill-blank">フロントローディング</span>（前倒し解決）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q7. VEの基本</div><div class="fill-body">
+        <div class="fill-group">価値＝<span class="fill-blank">機能</span>÷<span class="fill-blank">コスト</span>　VEでは<span class="fill-blank">機能を下げる</span>パターンは存在しない</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f1f2">
+      <div class="fill-section-label"><div class="fill-header bg-green">B. 基本事項の範囲</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q8. 製品設計の2側面</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">機能設計</span>（機能と構造決定）　<span class="fill-blank">生産設計</span>（組立容易性考慮）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q9. デザインレビュー</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">デザインレビュー</span>＝設計審査　QCD（<span class="fill-blank">品質</span>・<span class="fill-blank">コスト</span>・<span class="fill-blank">納期</span>）は<span class="fill-blank">設計段階</span>で決まる</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q10. VEの手順</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">機能定義</span>→<span class="fill-blank">機能評価</span>→<span class="fill-blank">代替案作成</span>→<span class="fill-blank">提案と実施</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">機能は「<span class="fill-blank">名詞</span>＋<span class="fill-blank">動詞</span>」で表現　<span class="fill-blank">機能系統図</span>で整理</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q11. VE機能の分類</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">使用機能</span>（VE主対象）　<span class="fill-blank">貴重機能</span>（魅力）　<span class="fill-blank">基本機能</span>　<span class="fill-blank">二次機能</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q12. 生産統制の3本柱</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">進捗管理</span>　<span class="fill-blank">現品管理</span>　<span class="fill-blank">余力管理</span>　余力＝<span class="fill-blank">能力</span>−<span class="fill-blank">負荷</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q13. プッシュ型 vs プル型</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">プッシュ型</span>＝<span class="fill-blank">MRP</span>　<span class="fill-blank">プル型</span>＝<span class="fill-blank">かんばん方式</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f1f3">
+      <div class="fill-card"><div class="fill-header bg-green">Q14. 管理方式</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">製番管理方式</span>（受注生産向き）　<span class="fill-blank">追番管理方式</span>（繰返し生産向き）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q15. その他の生産方式</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">オーダエントリー方式</span>（注文を後から引当て）　<span class="fill-blank">生産座席予約方式</span>（設備日程に割付け）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-section-label"><div class="fill-header bg-purple">C. 応用・横断整理</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q16. 数字・公式まとめ</div><div class="fill-body">
+        <div class="fill-group">シングル段取＝<span class="fill-blank">10分未満</span>　VE＝<span class="fill-blank">機能÷コスト</span>　余力＝<span class="fill-blank">能力−負荷</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q17. 紛らわしい用語</div><div class="fill-body">
+        <div class="fill-group">自働化は<span class="fill-blank">にんべん</span>付き＝<span class="fill-blank">異常時に自動で止まる</span>仕組み</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">製番管理は使用先が<span class="fill-blank">注文ごとに固定</span>　MRPは<span class="fill-blank">固定しない</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q18. 手法と適用場面</div><div class="fill-body">
+        <div class="fill-group">在庫最小限→<span class="fill-blank">かんばん方式</span>　開発短縮→<span class="fill-blank">コンカレント・エンジニアリング</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">機能維持でコスト減→<span class="fill-blank">VE</span>　注文別進捗→<span class="fill-blank">製番管理方式</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q19. VEのコスト範囲</div><div class="fill-body">
+        <div class="fill-group">対象＝<span class="fill-blank">ライフサイクルコスト</span>　アイデア発想＝<span class="fill-blank">ブレーンストーミング法</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+  </div>
+
+  <div id="quizDiv1" style="display:none">
+    <div class="section-divider">実践クイズ</div>
+    <div id="f1q1"></div>
+    <div id="f1q2"></div>
+    <div id="f1q3"></div>
+    <div class="quiz-score" id="quizScore1"></div>
+    <div class="quiz-controls">
+      <button class="quiz-ctrl-btn" onclick="resetQuiz(1)">クイズをリセット</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TAB 3: File 2 - ライン・セル生産 ========== -->
+<div class="tab-panel" id="tab3">
+  <a href="#" class="back-link" onclick="switchTab(0);return false">&larr; 選択画面に戻る</a>
+
+  <div id="fillDiv2" style="display:none">
+    <div class="section-divider">穴埋めチェック</div>
+    <div class="fill-controls" id="fillCtrl2">
+      <button class="fill-ctrl-btn" onclick="revealAllFile(2)">全て表示</button>
+      <button class="fill-ctrl-btn" onclick="hideAllFile(2)">全てリセット</button>
+    </div>
+
+    <div id="f2f1">
+      <div class="fill-section-label"><div class="fill-header bg-blue">A. 入門編</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q1. ライン生産方式</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">少品種多量</span>向き　作業者＝<span class="fill-blank">単能工</span>　デメリット：変化に<span class="fill-blank">対応しにくい</span>、<span class="fill-blank">モチベーション</span>低下</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q2. セル生産方式</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">多品種少量</span>向き　<span class="fill-blank">多能工</span>が前提　<span class="fill-blank">グループテクノロジー（GT）</span>で類似部品をグループ化</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q3. セル生産の2形態</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">U字ライン方式</span>：<span class="fill-blank">待ち時間が発生しにくい</span>　<span class="fill-blank">1人生産方式</span>：<span class="fill-blank">仕掛品が発生しない</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q4. 生産形態の分類</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">個別生産</span>：<span class="fill-blank">機能別レイアウト</span>　<span class="fill-blank">ロット生産</span>：<span class="fill-blank">グループ別</span>　<span class="fill-blank">連続生産</span>：<span class="fill-blank">製品別</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f2f2">
+      <div class="fill-section-label"><div class="fill-header bg-purple">B. 基本事項</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q5. ジョブショップ vs フローショップ</div><div class="fill-body">
+        <div class="fill-group">ジョブショップ＝<span class="fill-blank">機能別レイアウト</span>、<span class="fill-blank">加工経路が異なる</span>、<span class="fill-blank">多品種少量</span>向き</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">フローショップ＝<span class="fill-blank">製品別レイアウト</span>、<span class="fill-blank">同じ経路</span>、<span class="fill-blank">少品種多量</span>向き</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q6. ライン生産の分類</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">単一品種ライン</span>：段取り替え<span class="fill-blank">不要</span>　多品種→<span class="fill-blank">切り替え方式</span>と<span class="fill-blank">混合ライン方式</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q7. ラインバランシング</div><div class="fill-body">
+        <div class="fill-group">CT＝<span class="fill-blank">ボトルネック</span>工程の時間＝<span class="fill-blank">資材投入の時間間隔</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">編成効率＝<span class="fill-blank">作業時間合計</span>÷（CT×<span class="fill-blank">ステーション数</span>）　例：<span class="fill-blank">80%</span>　ロス：<span class="fill-blank">20%</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q8. 仕掛品と手待ち</div><div class="fill-body">
+        <div class="fill-group">遅い工程の<span class="fill-blank">手前に仕掛品</span>が溜まる　<span class="fill-blank">直後の工程で手待ち</span>が発生</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f2f3">
+      <div class="fill-card"><div class="fill-header bg-purple">Q9. 山崩し</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">ボトルネック工程</span>の作業を<span class="fill-blank">余裕のある工程</span>に移動→<span class="fill-blank">均等化</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q10. ライン vs セル 比較</div><div class="fill-body">
+        <div class="fill-group">ライン：<span class="fill-blank">少品種多量</span>・<span class="fill-blank">単能工</span>・<span class="fill-blank">製品別</span>　セル：<span class="fill-blank">多品種少量</span>・<span class="fill-blank">多能工</span>・<span class="fill-blank">グループ別</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">バランスロスが少ない＝生産性が高いは<span class="fill-blank">間違い</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q11. グループ別レイアウトとモジュール生産</div><div class="fill-body">
+        <div class="fill-group">グループ別＝<span class="fill-blank">中間的</span>位置づけ　モジュール：<span class="fill-blank">モジュール</span>にまとめ<span class="fill-blank">インターフェース</span>で組合せ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+  </div>
+
+  <div id="quizDiv2" style="display:none">
+    <div class="section-divider">実践クイズ</div>
+    <div id="f2q1"></div>
+    <div id="f2q2"></div>
+    <div id="f2q3"></div>
+    <div class="quiz-score" id="quizScore2"></div>
+    <div class="quiz-controls">
+      <button class="quiz-ctrl-btn" onclick="resetQuiz(2)">クイズをリセット</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TAB 4: File 3 - 需要予測・LP ========== -->
+<div class="tab-panel" id="tab4">
+  <a href="#" class="back-link" onclick="switchTab(0);return false">&larr; 選択画面に戻る</a>
+
+  <div id="fillDiv3" style="display:none">
+    <div class="section-divider">穴埋めチェック</div>
+    <div class="fill-controls" id="fillCtrl3">
+      <button class="fill-ctrl-btn" onclick="revealAllFile(3)">全て表示</button>
+      <button class="fill-ctrl-btn" onclick="hideAllFile(3)">全てリセット</button>
+    </div>
+
+    <div id="f3f1">
+      <div class="fill-section-label"><div class="fill-header bg-blue">A. 入門編</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q1. 需要予測の分類</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">定性的予測法</span>：人の判断、データ<span class="fill-blank">不足</span>時に使用　<span class="fill-blank">定量的予測法</span>：過去の数値データ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q2. デルファイ法</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">専門家</span>に<span class="fill-blank">匿名</span>でアンケート反復　ポイント：「匿名」「<span class="fill-blank">繰り返し</span>」「<span class="fill-blank">統計的処理</span>」</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-blue">Q3. 時系列4変動要因</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">傾向変動（トレンド）</span>　<span class="fill-blank">循環変動</span>　<span class="fill-blank">季節変動</span>　<span class="fill-blank">不規則変動</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f3f2">
+      <div class="fill-section-label"><div class="fill-header bg-purple">B. 基本事項</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q4. 移動平均法</div><div class="fill-body">
+        <div class="fill-group">過去N期間の<span class="fill-blank">平均値</span>を予測。全データに<span class="fill-blank">等しい重み</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">N大→反応<span class="fill-blank">遅い</span>　N小→反応<span class="fill-blank">速い</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q5. 指数平滑法</div><div class="fill-body">
+        <div class="fill-group">F<sub>t+1</sub>=F<sub>t</sub>+<span class="fill-blank">α</span>(D<sub>t</sub>−F<sub>t</sub>)　意味：前回予測+<span class="fill-blank">α×予測誤差</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">α大→<span class="fill-blank">直近重視</span>・<span class="fill-blank">速い</span>　α小→<span class="fill-blank">過去重視</span>・<span class="fill-blank">遅い</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q6. 回帰分析</div><div class="fill-body">
+        <div class="fill-group">Y=<span class="fill-blank">a+bX</span>　X＝<span class="fill-blank">説明変数</span>　単回帰：<span class="fill-blank">1つ</span>　重回帰：<span class="fill-blank">2つ以上</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">相関係数r：<span class="fill-blank">-1〜+1</span>　決定係数r²：<span class="fill-blank">説明できる割合</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q7. 線形計画法の3要素</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">目的関数</span>　<span class="fill-blank">制約条件</span>　<span class="fill-blank">非負条件</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f3f3">
+      <div class="fill-card"><div class="fill-header bg-purple">Q8. 図解法</div><div class="fill-body">
+        <div class="fill-group">最適解は<span class="fill-blank">実行可能領域</span>の<span class="fill-blank">端点（頂点）</span>に存在</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">傾き一致→<span class="fill-blank">多重最適解</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q9. シャドープライス</div><div class="fill-body">
+        <div class="fill-group">制約を<span class="fill-blank">1単位増加</span>時の目的関数改善値　ボトルネック→<span class="fill-blank">正</span>　余裕あり→<span class="fill-blank">ゼロ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q10. 予測手法の比較</div><div class="fill-body">
+        <div class="fill-group">デルファイ法→<span class="fill-blank">定性的</span>　移動平均法→定量的（<span class="fill-blank">時系列</span>）　指数平滑法→<span class="fill-blank">α</span>で調整　回帰分析→（<span class="fill-blank">因果</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+  </div>
+
+  <div id="quizDiv3" style="display:none">
+    <div class="section-divider">実践クイズ</div>
+    <div id="f3q1"></div>
+    <div id="f3q2"></div>
+    <div id="f3q3"></div>
+    <div class="quiz-score" id="quizScore3"></div>
+    <div class="quiz-controls">
+      <button class="quiz-ctrl-btn" onclick="resetQuiz(3)">クイズをリセット</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TAB 5: File 4 - PERT・MRP ========== -->
+<div class="tab-panel" id="tab5">
+  <a href="#" class="back-link" onclick="switchTab(0);return false">&larr; 選択画面に戻る</a>
+
+  <div id="fillDiv4" style="display:none">
+    <div class="section-divider">穴埋めチェック</div>
+    <div class="fill-controls" id="fillCtrl4">
+      <button class="fill-ctrl-btn" onclick="revealAllFile(4)">全て表示</button>
+      <button class="fill-ctrl-btn" onclick="hideAllFile(4)">全てリセット</button>
+    </div>
+
+    <div id="f4f1">
+      <div class="fill-section-label"><div class="fill-header bg-green">A. 入門</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q1. 生産管理の全体像</div><div class="fill-body">
+        <div class="fill-group">3フェーズ：<span class="fill-blank">計画</span>→<span class="fill-blank">実行</span>→<span class="fill-blank">統制</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q2. 略語の正体</div><div class="fill-body">
+        <div class="fill-group">PERT＝<span class="fill-blank">作業の順番と日数を図にする方法</span>　MRP＝<span class="fill-blank">部品リストを自動で作る仕組み</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">BOM＝<span class="fill-blank">材料リスト</span>　MPS＝<span class="fill-blank">何をいつ作るかの計画表</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">SPT＝<span class="fill-blank">短い仕事から先</span>　EDD＝<span class="fill-blank">締切が近い仕事から先</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q3. 生産計画と生産統制</div><div class="fill-body">
+        <div class="fill-group">3段階：<span class="fill-blank">大日程計画</span>→<span class="fill-blank">中日程計画</span>→<span class="fill-blank">小日程計画</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">3内容：<span class="fill-blank">手順計画</span>　<span class="fill-blank">工数計画</span>　<span class="fill-blank">日程計画</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">統制3本柱：<span class="fill-blank">進捗管理</span>　<span class="fill-blank">現品管理</span>　<span class="fill-blank">余力管理</span>（余力＝<span class="fill-blank">能力</span>−<span class="fill-blank">負荷</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q4. PERT・クリティカルパス</div><div class="fill-body">
+        <div class="fill-group">矢印＝<span class="fill-blank">作業</span>　丸＝<span class="fill-blank">結合点</span>　点線＝<span class="fill-blank">ダミー作業</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">クリティカルパス＝<span class="fill-blank">最長ルート</span>＝<span class="fill-blank">最短完了日数</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-green">Q5. MRP基本公式</div><div class="fill-body">
+        <div class="fill-group">正味所要量＝<span class="fill-blank">総所要量</span>−<span class="fill-blank">手持在庫</span>−<span class="fill-blank">発注残</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f4f2">
+      <div class="fill-section-label"><div class="fill-header bg-purple">B. 基本事項</div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q6. 生産計画の詳細</div><div class="fill-body">
+        <div class="fill-group">手順計画＝「<span class="fill-blank">How</span>」　工数計画＝「<span class="fill-blank">How much</span>」　日程計画＝「<span class="fill-blank">When</span>」</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">ガントチャート：<span class="fill-blank">機械別</span>・<span class="fill-blank">作業者別</span>・<span class="fill-blank">注文別</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">山積み＝負荷を<span class="fill-blank">積み上げ</span>　山崩し＝<span class="fill-blank">余力のある日に移す</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q7. PERT詳細（最早・最遅）</div><div class="fill-body">
+        <div class="fill-group">最早：合流→<span class="fill-blank">最大値</span>　最遅：→<span class="fill-blank">最小値</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">余裕時間＝<span class="fill-blank">最遅</span>−<span class="fill-blank">最早</span>　CP上＝<span class="fill-blank">0</span>　覚え方「<span class="fill-blank">早MAX遅MIN</span>」</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q8. CPMとクラッシング</div><div class="fill-body">
+        <div class="fill-group">クラッシング＝追加コストで<span class="fill-blank">作業期間を短縮</span>　<span class="fill-blank">CP上</span>のみ効果あり</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">コスト勾配＝（<span class="fill-blank">特急費用−標準費用</span>）÷（<span class="fill-blank">標準日数−特急日数</span>）→<span class="fill-blank">最小</span>の作業から</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q9. MRP詳細</div><div class="fill-body">
+        <div class="fill-group">入力3つ：<span class="fill-blank">MPS</span>　<span class="fill-blank">BOM</span>　<span class="fill-blank">在庫情報</span>　BOM＝<span class="fill-blank">ストラクチャー型</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">MRP II＝<span class="fill-blank">製造資源</span>計画（人員・設備・資金も含む）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+
+    <div id="f4f3">
+      <div class="fill-card"><div class="fill-header bg-purple">Q10. BOM</div><div class="fill-body">
+        <div class="fill-group">サマリー型＝<span class="fill-blank">一覧</span>　ストラクチャー型＝<span class="fill-blank">階層構造</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">ローレベルコーディング＝<span class="fill-blank">最も低い階層</span>に統一→計算<span class="fill-blank">1回で済む</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q11. ジョンソン法</div><div class="fill-body">
+        <div class="fill-group">前提：<span class="fill-blank">2台</span>の機械のフローショップ　目的：<span class="fill-blank">メイクスパン</span>最小化</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group"><span class="fill-blank">最小値</span>を見つけ→機械1なら<span class="fill-blank">前から</span>　機械2なら<span class="fill-blank">後ろから</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q12. ディスパッチング</div><div class="fill-body">
+        <div class="fill-group"><span class="fill-blank">差立て</span>　SPT→<span class="fill-blank">平均フロータイム最小</span>　EDD→<span class="fill-blank">最大遅れ最小</span>　FCFS＝<span class="fill-blank">先着順</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+
+      <div class="fill-card"><div class="fill-header bg-purple">Q13. 重要用語</div><div class="fill-body">
+        <div class="fill-group">工数＝<span class="fill-blank">人×時間</span>　フロータイム＝<span class="fill-blank">工場での滞在時間</span>　メイクスパン＝<span class="fill-blank">全仕事の総時間</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div></div>
+    </div>
+  </div>
+
+  <div id="quizDiv4" style="display:none">
+    <div class="section-divider">実践クイズ</div>
+    <div id="f4q1"></div>
+    <div id="f4q2"></div>
+    <div id="f4q3"></div>
+    <div class="quiz-score" id="quizScore4"></div>
+    <div class="quiz-controls">
+      <button class="quiz-ctrl-btn" onclick="resetQuiz(4)">クイズをリセット</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const headerColors = ['bg-orange','bg-blue','bg-green','bg-purple','bg-red'];
+
+const allQuizData = {
+  "0_1": [
+    { q:"工具が見つからず10分以上探している。まず取り組むべきは？", opts:["QCサークル","ECRS分析","3S導入","5S（整理・整頓）"], ans:3, cat:"効率化", exp:"正解はD。5Sの整理・整頓で解決。" },
+    { q:"小麦粉100kgからパン90kg。歩留りは？", opts:["90%","110%","9%","10%"], ans:0, cat:"計算", exp:"正解はA。90/100×100=90%。" },
+    { q:"ECRSで最初に考えるべきことは？", opts:["Simplify","Rearrange","Eliminate","Combine"], ans:2, cat:"ECRS", exp:"正解はC。E→C→R→Sの順。" },
+    { q:"5工程（3,5,8,4,6分）のサイクルタイムは？", opts:["3分","8分","5.2分","26分"], ans:1, cat:"ライン", exp:"正解はB。最長工程=8分。" }
+  ],
+  "0_2": [
+    { q:"キヤノンがセル生産に転換した最大の理由は？", opts:["単能工化","品種数削減","多品種化対応と仕掛品削減","設備削減"], ans:2, cat:"セル", exp:"正解はC。" },
+    { q:"見込生産の在庫過剰対策は？", opts:["需要予測精度向上＋一部受注生産化","全て受注生産","在庫ゼロ","生産量半減"], ans:0, cat:"生産形態", exp:"正解はA。" },
+    { q:"4Mに該当しないものは？", opts:["Man","Market","Material","Method"], ans:1, cat:"4M", exp:"正解はB。Marketは4Mに含まない。" },
+    { q:"5工程（3,5,8,4,6分）の編成効率は？", opts:["52%","75%","65%","80%"], ans:2, cat:"計算", exp:"正解はC。26/(8×5)=65%。" }
+  ],
+  "0_3": [
+    { q:"内段取り→外段取りへの転換とは？", opts:["10分未満に短縮","段取りをやめる","社外委託","止めずにできる準備を事前に行う"], ans:3, cat:"効率化", exp:"正解はD。" },
+    { q:"PQCDSMEの「M」は？", opts:["Management","Material","Morale","Machine"], ans:2, cat:"管理指標", exp:"正解はC。Morale（意欲）。" },
+    { q:"自主管理活動の目的は？", opts:["トップダウン命令","自発的に品質問題解決","従業員の自発性を高める","QCのC=Cost"], ans:2, cat:"自主管理", exp:"正解はC。" }
+  ],
+  "1_1": [
+    { q:"トヨタ生産方式の2つの柱は？", opts:["JIT+MRP","JIT+自働化","かんばん+平準化","自動化+シングル段取"], ans:1, cat:"JIT", exp:"正解はB。" },
+    { q:"JITの特徴は？", opts:["前工程が押し込む","必要な時に必要な数だけ","大量在庫で欠品防止","集中管理"], ans:1, cat:"JIT", exp:"正解はB。プル型。" },
+    { q:"かんばんの2種類は？", opts:["発注+納品","生産指示+引取り","計画+実績","前工程+後工程"], ans:1, cat:"かんばん", exp:"正解はB。" },
+    { q:"VEの価値の式は？", opts:["コスト÷機能","機能×コスト","機能÷コスト","機能−コスト"], ans:2, cat:"VE", exp:"正解はC。" }
+  ],
+  "1_2": [
+    { q:"VEで存在しないパターンは？", opts:["コスト↓機能維持","コスト維持機能↑","機能↓コスト↓","コスト↓機能↑"], ans:2, cat:"VE", exp:"正解はC。機能を下げるパターンはない。" },
+    { q:"製番管理方式の説明は？", opts:["順番に番号管理","注文ごとに全部品同一番号","後工程引取","上流→下流指示"], ans:1, cat:"管理方式", exp:"正解はB。" },
+    { q:"機能設計と生産設計は？", opts:["外観+内部構造","機能構造決定+組立容易性","市場調査+工程計画","同じ意味"], ans:1, cat:"開発設計", exp:"正解はB。" },
+    { q:"コンカレント・エンジニアリングの目的は？", opts:["品質最大化","開発期間短縮","コスト最小化","在庫削減"], ans:1, cat:"開発設計", exp:"正解はB。" }
+  ],
+  "1_3": [
+    { q:"VE機能定義の表現ポイントは？", opts:["形容詞+名詞","名詞+動詞","数値+グラフ","図面+仕様書"], ans:1, cat:"VE", exp:"正解はB。" },
+    { q:"生産統制の3活動は？", opts:["品質・原価・納期","進捗・現品・余力","計画・実績・差異","設備・在庫・人員"], ans:1, cat:"管理方式", exp:"正解はB。" },
+    { q:"JITの前提条件は？", opts:["自動化設備","平準化","大量安全在庫","多能工育成"], ans:1, cat:"JIT", exp:"正解はB。" },
+    { q:"プッシュ型の代表例は？", opts:["かんばん","MRP","追番管理","製番管理"], ans:1, cat:"生産計画", exp:"正解はB。" }
+  ],
+  "2_1": [
+    { q:"ライン生産のメリットは？", opts:["多品種少量向き","変化に柔軟","生産性高い・管理容易","モチベーション向上"], ans:2, cat:"ライン", exp:"正解はC。" },
+    { q:"サイクルタイムの定義は？", opts:["作業時間合計","作業時間平均","最長工程の時間","最短工程の時間"], ans:2, cat:"ライン", exp:"正解はC。ボトルネック。" },
+    { q:"A=3,B=5,C=4の編成効率は？", opts:["60%","80%","75%","90%"], ans:1, cat:"計算", exp:"正解はB。12/(5×3)=80%。" },
+    { q:"山崩しとは？", opts:["ライン停止して段取替","ボトルネック作業を他工程に移動","不良品除去","増員で速度UP"], ans:1, cat:"ライン", exp:"正解はB。" }
+  ],
+  "2_2": [
+    { q:"セル生産の定義は？", opts:["コンベア方式","GT使った生産方式","上流→下流指示","大量作業者で分担"], ans:1, cat:"セル", exp:"正解はB。" },
+    { q:"U字ラインのメリットは？", opts:["単能工OK","待ち時間少なく柔軟","習熟不要","大量生産最適"], ans:1, cat:"セル", exp:"正解はB。" },
+    { q:"1人生産方式の最大デメリットは？", opts:["仕掛品大量","モチベーション低下","作業者の能力に大きく依存","設備制約"], ans:2, cat:"セル", exp:"正解はC。" }
+  ],
+  "2_3": [
+    { q:"混合ライン方式の特徴は？", opts:["期間ごとに品種切替","複数品種同時、段取替なし","1人で全品種","品種ごとに専用ライン"], ans:1, cat:"ライン", exp:"正解はB。" },
+    { q:"GTの説明は？", opts:["大量生産技術","類似性でグループ化し大量生産的効果","1人全工程","自動停止技術"], ans:1, cat:"GT", exp:"正解はB。" },
+    { q:"バランスロス率0%とは？", opts:["ライン停止","全工程均一でムダなし","生産量ゼロ","不良品ゼロ"], ans:1, cat:"計算", exp:"正解はB。" }
+  ],
+  "3_1": [
+    { q:"匿名アンケートを反復して意見収束させる手法は？", opts:["回帰分析","デルファイ法","指数平滑法","移動平均法"], ans:1, cat:"予測", exp:"正解はB。" },
+    { q:"α大のときの指数平滑法の特徴は？", opts:["過去重視で安定","季節変動除去","直近重視で反応速い","移動平均と同じ"], ans:2, cat:"予測", exp:"正解はC。" },
+    { q:"LPの最適解がある場所は？", opts:["端点（頂点）","中心","交点すべて","原点"], ans:0, cat:"LP", exp:"正解はA。" }
+  ],
+  "3_2": [
+    { q:"景気循環による数年周期の変動は？", opts:["傾向変動","循環変動","季節変動","不規則変動"], ans:1, cat:"予測", exp:"正解はB。" },
+    { q:"実績100,120,110の移動平均予測値は？", opts:["100","105","110","120"], ans:2, cat:"計算", exp:"正解はC。330/3=110。" },
+    { q:"シャドープライスとは？", opts:["市場価格−原価","制約資源1単位増の改善額","予測誤差の金額","在庫保管単価"], ans:1, cat:"LP", exp:"正解はB。" }
+  ],
+  "3_3": [
+    { q:"予測値200、実績220、α=0.3の今期予測は？", opts:["200","206","210","214"], ans:1, cat:"計算", exp:"正解はB。200+0.3×20=206。" },
+    { q:"A(利益5万)B(利益4万)、2A+B≦10、A+2B≦10の最適解は？", opts:["A=5,B=0（25万）","A=0,B=5（20万）","A=B=10/3（30万）","A=3,B=3（27万）"], ans:2, cat:"計算", exp:"正解はC。" }
+  ],
+  "4_1": [
+    { q:"生産計画の3段階を長い順に並べると？", opts:["小→中→大","大→小→中","大→中→小","中→大→小"], ans:2, cat:"計画", exp:"正解はC。" },
+    { q:"生産統制の3活動は？", opts:["進捗・現品・余力","品質・原価・納期","計画・実績・差異","設備・在庫・人員"], ans:0, cat:"統制", exp:"正解はA。" },
+    { q:"クリティカルパスは？", opts:["最もコスト高","最も作業数多い","最短日数ルート","最長日数ルート"], ans:3, cat:"PERT", exp:"正解はD。" },
+    { q:"正味所要量の式は？", opts:["総+在庫+発注残","総−在庫+発注残","総−在庫−発注残","総+在庫−発注残"], ans:2, cat:"MRP", exp:"正解はC。" }
+  ],
+  "4_2": [
+    { q:"ジョンソン法で最小値が後工程の場合？", opts:["前から","後ろから","中央","スキップ"], ans:1, cat:"ジョンソン", exp:"正解はB。" },
+    { q:"平均フロータイム最小のルールは？", opts:["FCFS","EDD","LPT","SPT"], ans:3, cat:"ディスパッチング", exp:"正解はD。" },
+    { q:"MRPで使う階層BOMは？", opts:["サマリー型","ストラクチャー型","フラット型","マトリクス型"], ans:1, cat:"BOM", exp:"正解はB。" }
+  ],
+  "4_3": [
+    { q:"最早結合点時刻、合流時は？", opts:["最小値","最大値","平均値","中央値"], ans:1, cat:"PERT", exp:"正解はB。" },
+    { q:"クラッシングの説明は？", opts:["CP以外を短縮","全作業を均等短縮","追加コストでCP上の作業短縮","外注に切替"], ans:2, cat:"CPM", exp:"正解はC。" },
+    { q:"MRP IIとMRPの違いは？", opts:["人員・設備・資金も含む全体計画","プル型","BOM不使用","小日程のみ"], ans:0, cat:"MRP", exp:"正解はA。" }
+  ]
+};
+
+// ===== STATE =====
+const selection = {};
+const quizState = {};
+
+// Initialize selection state
+for (let f = 0; f < 5; f++) {
+  for (let s = 1; s <= 3; s++) {
+    selection[f+'_f_'+s] = false;
+    selection[f+'_q_'+s] = false;
+  }
+}
+
+// ===== SELECTION FUNCTIONS =====
+function toggleSelect(key) {
+  selection[key] = !selection[key];
+  updateToggleBtn(key);
+}
+
+function updateToggleBtn(key) {
+  const btn = document.getElementById('sel_'+key);
+  if (!btn) return;
+  const isOn = selection[key];
+  const isFill = key.includes('_f_');
+  btn.classList.remove('on-fill','on-quiz');
+  if (isOn) btn.classList.add(isFill ? 'on-fill' : 'on-quiz');
+}
+
+function selectAllFile(f) {
+  for (let s = 1; s <= 3; s++) {
+    selection[f+'_f_'+s] = true;
+    selection[f+'_q_'+s] = true;
+    updateToggleBtn(f+'_f_'+s);
+    updateToggleBtn(f+'_q_'+s);
+  }
+}
+
+function deselectAllFile(f) {
+  for (let s = 1; s <= 3; s++) {
+    selection[f+'_f_'+s] = false;
+    selection[f+'_q_'+s] = false;
+    updateToggleBtn(f+'_f_'+s);
+    updateToggleBtn(f+'_q_'+s);
+  }
+}
+
+function selectAll() {
+  for (let f = 0; f < 5; f++) selectAllFile(f);
+}
+
+function deselectAll() {
+  for (let f = 0; f < 5; f++) deselectAllFile(f);
+}
+
+// ===== START STUDY =====
+function startStudy() {
+  const anySelected = Object.values(selection).some(function(v){ return v; });
+  if (!anySelected) {
+    alert('学習するセクションを選択してください。');
+    return;
+  }
+
+  for (let f = 0; f < 5; f++) {
+    const hasFill = selection[f+'_f_1'] || selection[f+'_f_2'] || selection[f+'_f_3'];
+    const hasQuiz = selection[f+'_q_1'] || selection[f+'_q_2'] || selection[f+'_q_3'];
+    const hasAny = hasFill || hasQuiz;
+
+    document.getElementById('tabBtn'+f).style.display = hasAny ? '' : 'none';
+
+    for (let s = 1; s <= 3; s++) {
+      var fillEl = document.getElementById('f'+f+'f'+s);
+      if (fillEl) fillEl.style.display = selection[f+'_f_'+s] ? '' : 'none';
+      var quizEl = document.getElementById('f'+f+'q'+s);
+      if (quizEl) quizEl.style.display = selection[f+'_q_'+s] ? '' : 'none';
+    }
+
+    var fillDiv = document.getElementById('fillDiv'+f);
+    var fillCtrl = document.getElementById('fillCtrl'+f);
+    if (fillDiv) fillDiv.style.display = hasFill ? '' : 'none';
+    if (fillCtrl) fillCtrl.style.display = hasFill ? '' : 'none';
+
+    var quizDiv = document.getElementById('quizDiv'+f);
+    if (quizDiv) quizDiv.style.display = hasQuiz ? '' : 'none';
+
+    for (let s = 1; s <= 3; s++) {
+      if (selection[f+'_q_'+s]) {
+        renderQuizSection(f, s);
+      }
+    }
+
+    if (hasQuiz) updateScore(f);
+  }
+
+  var firstVisible = -1;
+  for (let f = 0; f < 5; f++) {
+    if (document.getElementById('tabBtn'+f).style.display !== 'none') {
+      firstVisible = f;
+      break;
+    }
+  }
+  if (firstVisible >= 0) {
+    switchTab(firstVisible + 1);
+  }
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(index) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+
+  if (index === 0) {
+    document.getElementById('tabBtnSel').classList.add('active');
+    document.getElementById('tab0').classList.add('active');
+  } else {
+    document.getElementById('tabBtn'+(index-1)).classList.add('active');
+    document.getElementById('tab'+index).classList.add('active');
+  }
+  window.scrollTo(0, 0);
+}
+
+// ===== FILL FUNCTIONS =====
+function revealBlanks(btn) {
+  var groups = [];
+  var el = btn.previousElementSibling;
+  while (el) {
+    if (el.classList.contains('fill-group')) {
+      groups.push(el);
+    } else if (el.classList.contains('fill-reveal-btn')) {
+      break;
+    }
+    el = el.previousElementSibling;
+  }
+  groups.forEach(function(g) {
+    g.querySelectorAll('.fill-blank').forEach(function(b){ b.classList.add('show'); });
+  });
+  btn.textContent = '表示済み';
+  btn.classList.add('revealed');
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('fill-blank')) {
+    e.target.classList.toggle('show');
+  }
+});
+
+function revealAllFile(f) {
+  var div = document.getElementById('fillDiv'+f);
+  if (!div) return;
+  div.querySelectorAll('.fill-blank').forEach(function(b){ b.classList.add('show'); });
+  div.querySelectorAll('.fill-reveal-btn').forEach(function(b){
+    b.textContent = '表示済み';
+    b.classList.add('revealed');
+  });
+}
+
+function hideAllFile(f) {
+  var div = document.getElementById('fillDiv'+f);
+  if (!div) return;
+  div.querySelectorAll('.fill-blank').forEach(function(b){ b.classList.remove('show'); });
+  div.querySelectorAll('.fill-reveal-btn').forEach(function(b){
+    b.textContent = '答えを見る';
+    b.classList.remove('revealed');
+  });
+}
+
+// ===== QUIZ FUNCTIONS =====
+function renderQuizSection(fileIdx, secIdx) {
+  var key = fileIdx + '_' + secIdx;
+  var data = allQuizData[key];
+  if (!data) return;
+
+  var container = document.getElementById('f'+fileIdx+'q'+secIdx);
+  if (!container) return;
+
+  var secLabels = ['前半','中盤','後半'];
+  var color = headerColors[fileIdx % headerColors.length];
+  var labels = ['A','B','C','D'];
+
+  var html = '<div class="section-sub-label">' + secLabels[secIdx-1] + '</div>';
+
+  for (var qi = 0; qi < data.length; qi++) {
+    var item = data[qi];
+    var stateKey = fileIdx+'_'+secIdx+'_'+qi;
+    var state = quizState[stateKey];
+    var answered = state && state.answered;
+
+    html += '<div class="quiz-item">';
+    html += '<div class="quiz-item-header '+color+'"><span>Q'+(qi+1)+'</span><span class="quiz-cat">'+item.cat+'</span></div>';
+    html += '<div class="quiz-body">';
+    html += '<div class="quiz-q">'+item.q+'</div>';
+    html += '<div class="quiz-opts">';
+
+    for (var oi = 0; oi < item.opts.length; oi++) {
+      var cls = 'quiz-opt';
+      if (answered) {
+        cls += ' disabled';
+        if (oi === item.ans) cls += ' correct';
+        else if (state.selected === oi) cls += ' wrong';
+      }
+      html += '<div class="'+cls+'" onclick="answerQuiz(this,'+fileIdx+','+secIdx+','+qi+','+oi+'">';
+      html += labels[oi]+'. '+item.opts[oi]+'</div>';
+    }
+
+    html += '</div>';
+    html += '<div class="quiz-exp'+(answered?' show':'')+'">'+item.exp+'</div>';
+    html += '</div></div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function answerQuiz(el, fileIdx, secIdx, qIdx, optIdx) {
+  var stateKey = fileIdx+'_'+secIdx+'_'+qIdx;
+  if (quizState[stateKey] && quizState[stateKey].answered) return;
+
+  var data = allQuizData[fileIdx+'_'+secIdx][qIdx];
+  var isCorrect = optIdx === data.ans;
+
+  quizState[stateKey] = { answered: true, correct: isCorrect, selected: optIdx };
+
+  var item = el.closest('.quiz-item');
+  var opts = item.querySelectorAll('.quiz-opt');
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].classList.add('disabled');
+    if (i === data.ans) opts[i].classList.add('correct');
+    else if (i === optIdx && !isCorrect) opts[i].classList.add('wrong');
+  }
+
+  item.querySelector('.quiz-exp').classList.add('show');
+  updateScore(fileIdx);
+}
+
+function updateScore(fileIdx) {
+  var total = 0, correct = 0, answered = 0;
+  for (var s = 1; s <= 3; s++) {
+    if (!selection[fileIdx+'_q_'+s]) continue;
+    var data = allQuizData[fileIdx+'_'+s];
+    if (!data) continue;
+    total += data.length;
+    for (var qi = 0; qi < data.length; qi++) {
+      var st = quizState[fileIdx+'_'+s+'_'+qi];
+      if (st && st.answered) {
+        answered++;
+        if (st.correct) correct++;
+      }
+    }
+  }
+
+  var scoreEl = document.getElementById('quizScore'+fileIdx);
+  if (!scoreEl) return;
+
+  if (answered === 0) {
+    scoreEl.textContent = '全 '+total+' 問';
+  } else {
+    var pct = total > 0 ? Math.round(correct/total*100) : 0;
+    scoreEl.innerHTML = '<span style="color:var(--green)">'+correct+'</span> / '+total+' 正解（'+pct+'%）　回答済み: '+answered+'/'+total;
+  }
+}
+
+function resetQuiz(fileIdx) {
+  for (var s = 1; s <= 3; s++) {
+    var data = allQuizData[fileIdx+'_'+s];
+    if (!data) continue;
+    for (var qi = 0; qi < data.length; qi++) {
+      delete quizState[fileIdx+'_'+s+'_'+qi];
+    }
+    if (selection[fileIdx+'_q_'+s]) {
+      renderQuizSection(fileIdx, s);
+    }
+  }
+  updateScore(fileIdx);
+}
+</script>
+</body>
+</html>

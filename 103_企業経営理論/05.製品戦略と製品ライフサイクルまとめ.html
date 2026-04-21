@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>製品戦略と製品ライフサイクル - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef; --purple-bg: #f5eef8;
+  --teal-dark: #00695c; --teal-main: #00897b; --teal-light: #e0f2f1;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange-main) 50%, var(--orange-light) 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem; }
+
+/* Speech Bubbles */
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before { left: -14px; border-right-color: var(--white); }
+.bubble-wrap.right .bubble-body::before { right: -14px; border-left-color: var(--white); }
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-body strong { color: #e65100; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+
+/* Tabs */
+.tab-container { max-width: 920px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-nav-sticky { position: sticky; top: 0; z-index: 100; }
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.78rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-purple { background: var(--purple-bg); }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Section Titles */
+.section-title {
+  font-size: 1.2rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); color: white; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); color: white; }
+.st-icon { font-size: 1.1rem; }
+
+/* Cards */
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card-teal { border-left-color: var(--teal-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+/* Alert boxes */
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-box strong { color: inherit; }
+
+/* Diagram / Flow */
+.diagram {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram-title {
+  text-align: center; font-weight: 700; font-size: 1rem;
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0;
+}
+.dt-purple { color: var(--purple-dark); }
+.dt-blue { color: var(--blue-dark); }
+.dt-green { color: var(--green-dark); }
+.dt-red { color: var(--red-dark); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.88rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); box-shadow: 0 2px 6px rgba(41,128,185,0.3); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); box-shadow: 0 2px 6px rgba(231,76,60,0.3); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); box-shadow: 0 2px 6px rgba(39,174,96,0.3); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); box-shadow: 0 2px 6px rgba(230,126,34,0.3); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); box-shadow: 0 2px 6px rgba(142,68,173,0.3); }
+.fb-teal { background: linear-gradient(135deg, var(--teal-main), #26a69a); box-shadow: 0 2px 6px rgba(0,137,123,0.3); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.88rem; }
+th, td { padding: 0.55rem 0.7rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-purple th { background: var(--purple-main); color: white; }
+.tbl-purple tr:nth-child(even) { background: var(--purple-light); }
+
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+
+.point-box { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #ce93d8; }
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.5rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.15em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+
+/* Scene */
+.scene {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center;
+}
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+
+/* VS box */
+.vs-box { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center; margin: 0.8rem 0; }
+.vs-side { background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center; box-shadow: var(--shadow); }
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+
+/* Quiz */
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0; transition: border-color 0.3s;
+}
+.quiz-num {
+  display: inline-block; background: var(--orange-main); color: white;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-purple { background: var(--purple-main); }
+.qc-blue { background: var(--blue-main); }
+.qc-green { background: var(--green-main); }
+.qc-red { background: var(--red-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.9rem;
+}
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation {
+  display: none; margin-top: 0.7rem; padding: 0.8rem;
+  border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7;
+}
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score {
+  text-align: center; padding: 1rem; background: var(--orange-pale);
+  border-radius: var(--radius); margin-top: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none;
+}
+
+/* Simulation card */
+.sim-card {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 1rem 0; box-shadow: var(--shadow); border-top: 4px solid var(--green-main);
+}
+.sim-card h4 { font-size: 1rem; font-weight: 800; color: var(--green-dark); margin-bottom: 0.5rem; }
+.sim-label {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; color: white; background: var(--green-main);
+  margin-bottom: 0.5rem;
+}
+
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+
+/* Fill-in-the-blank */
+.fill-card { background: var(--gray-pale); border-radius: var(--radius); margin-bottom: 18px; box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06)); overflow: hidden; }
+.fill-card .fill-header { padding: 12px 18px; font-weight: 700; font-size: .95rem; color: #fff; display: flex; align-items: center; gap: 8px; }
+.fill-card .fill-header.bg-orange { background: var(--orange-main); }
+.fill-card .fill-header.bg-blue { background: var(--blue-main, #2980b9); }
+.fill-card .fill-header.bg-green { background: var(--green-main, #27ae60); }
+.fill-card .fill-header.bg-purple { background: var(--purple-main, #8e44ad); }
+.fill-card .fill-body { padding: 18px 20px; }
+.fill-blank { display: inline-block; min-width: 100px; border-bottom: 2.5px solid #94a3b8; text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer; font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px; transition: all .25s; user-select: none; font-size: .95rem; }
+.fill-blank.show { color: #dc2626; background: #fef2f2; border-color: #dc2626; }
+.fill-reveal-btn { display: inline-block; background: #1a365d; color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-size: .85rem; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
+.fill-reveal-btn:hover { background: #2a4a7f; }
+.fill-group { margin-bottom: 4px; font-size: .95rem; line-height: 2; }
+
+@media (max-width: 600px) {
+  .two-col, .vs-box { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.68rem; padding: 0.7rem 0.3rem; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 78%; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>製品戦略と製品ライフサイクル</h1>
+  <div class="subtitle">中小企業診断士 企業経営理論 | 1-10 製品戦略</div>
+  <div class="badge">全9タブ構成 学習サイト</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="purple" onclick="switchTab(0)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F331; 初級</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(4)">&#x1F4D8; 中級</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F3AF; 上級</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(6)">&#x1F3E2; 事例相談</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(7)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(8)">&#x1F4A1; 実例</button>
+  </nav>
+
+  <!-- ==================== TAB 1: 入門編 (PURPLE) ==================== -->
+  <div class="tab-panel active theme-purple" id="tab0">
+
+    <div class="point-box pb-purple">
+      <h4>&#x1F331; このタブで学ぶこと</h4>
+      <ul>
+        <li>製品ライフサイクル（PLC）＝<strong>製品の一生</strong>を4段階で理解</li>
+        <li>各段階で<strong>何をすべきか</strong>を1つずつ覚える</li>
+        <li>製品の3層モデル・消費財4分類・プロダクトミックスの超キホン</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3AF;</span> 製品ライフサイクル（PLC）って？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        PLCって何ですか？名前からしてむずかしそう...
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        カンタンだよ！<strong>製品が生まれてから消えるまでの一生</strong>のこと。人間と同じで、赤ちゃん→青年→大人→お年寄りの4段階があるんだ。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-purple">PLCの4段階 ＝ 製品の一生</div>
+      <div class="scene-row" style="margin-bottom:0.8rem;">
+        <div class="scene-item">
+          <div class="emoji">&#x1F476;</div>
+          <div class="label">導入期<br><strong style="color:var(--blue-main);">知ってもらう</strong></div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F466;</div>
+          <div class="label">成長期<br><strong style="color:var(--green-main);">シェアを取る</strong></div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F468;&#x200D;&#x1F4BC;</div>
+          <div class="label">成熟期<br><strong style="color:var(--orange-main);">利益を守る</strong></div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F474;</div>
+          <div class="label">衰退期<br><strong style="color:var(--red-main);">引き際を考える</strong></div>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">導入期<small>売上：低い</small></div>
+        <span class="flow-arrow" style="color:var(--purple-main);">&#8594;</span>
+        <div class="flow-box fb-green">成長期<small>売上：急上昇</small></div>
+        <span class="flow-arrow" style="color:var(--purple-main);">&#8594;</span>
+        <div class="flow-box fb-orange">成熟期<small>売上：ピーク</small></div>
+        <span class="flow-arrow" style="color:var(--purple-main);">&#8594;</span>
+        <div class="flow-box fb-red">衰退期<small>売上：低下</small></div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方</div>
+        映画で考えよう！ 導入期＝公開初日（まだ口コミ少ない）、成長期＝SNSでバズって大ヒット、成熟期＝ロングラン上映、衰退期＝配信に移行。<strong>映画も製品も一生は同じ</strong>！
+      </div>
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">導 → 成長 → 成熟 → 衰退</div>
+      <div class="desc">「<strong>どう</strong>せい<strong>ちょう</strong>して<strong>じゅく</strong>して<strong>すい</strong>たい」＝ どうせ成長して熟して衰退。製品の運命！</div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F354;</span> 製品の3層モデル</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        製品って、モノそのもののことですよね？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        実は3つの層があるんだよ。<strong>おにぎり</strong>で考えてみよう！
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x2764;&#xFE0F;</div>
+          <div class="label"><strong>核</strong><br>お腹を満たす<br>（本当の目的）</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F371;</div>
+          <div class="label"><strong>形態</strong><br>具材・海苔・<br>パッケージ</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F3EA;</div>
+          <div class="label"><strong>付随機能</strong><br>温めサービス<br>ポイント付与</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>核＝お客さんが本当に求めていること</strong>。スマホの核は「いつでも繋がる」。高級時計の核は「ステータス」。試験では核と形態を混同させる問題が頻出！
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F6D2;</span> 消費財の4分類</h2>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>&#x1F6D2; 最寄品</h4>
+        <p>コンビニでパッと買う</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">例：ガム・飲料水</p>
+      </div>
+      <div class="card card-blue">
+        <h4>&#x1F50D; 買回品</h4>
+        <p>比較して選ぶ</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">例：洋服・家電</p>
+      </div>
+      <div class="card card-purple">
+        <h4>&#x1F48E; 専門品</h4>
+        <p>指名買い・こだわり</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">例：高級車・宝飾品</p>
+      </div>
+      <div class="card card-red">
+        <h4>&#x1F6AB; 非探索品</h4>
+        <p>自分からは探さない</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">例：生命保険・墓石</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">引っかけ注意</div>
+        「非探索品＝不要な製品」ではない！ 生命保険は<strong>必要だけど自分から探さない</strong>だけ。だから企業側の積極的アプローチが必要！
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3EA;</span> プロダクト・ミックス</h2>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--green-main);">
+        <h4 style="color:var(--green-main);">&#x1F45F; 靴の専門店</h4>
+        <p style="font-size:0.85rem;">ライン<strong>狭い</strong><br>アイテム<strong>深い</strong></p>
+        <p style="font-size:0.78rem;color:var(--gray-mid);">靴だけだがサイズ・色が超豊富</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--blue-main);">
+        <h4 style="color:var(--blue-main);">&#x1F3EA; 100円ショップ</h4>
+        <p style="font-size:0.85rem;">ライン<strong>広い</strong><br>アイテム<strong>浅い</strong></p>
+        <p style="font-size:0.78rem;color:var(--gray-mid);">何でもあるが各1〜2種</p>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>中小企業は「狭く深く」が基本戦略。</strong>経営資源が限られるため、得意分野に絞って深い品揃えで大手と差別化するのがセオリー！
+    </div>
+
+    <div class="alert-exam">
+      <strong>試験のキーワード</strong>：製品ラインの<strong>幅</strong>＝カテゴリーの数、製品アイテムの<strong>深さ</strong>＝各カテゴリーの品目数、<strong>フルライン戦略</strong>＝幅を広げて市場全体をカバー（大企業向け）
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x270D;&#xFE0F;</span> 入門チェック（穴埋め）</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-purple">入門のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・PLCの4段階：<span class="fill-blank">導入期</span>／<span class="fill-blank">成長期</span>／<span class="fill-blank">成熟期</span>／<span class="fill-blank">衰退期</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・製品の3層：<span class="fill-blank">核</span>／<span class="fill-blank">形態</span>／<span class="fill-blank">付随機能</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・消費財4分類：<span class="fill-blank">最寄品</span>／<span class="fill-blank">買回品</span>／<span class="fill-blank">専門品</span>／<span class="fill-blank">非探索品</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・中小企業の基本戦略＝「<span class="fill-blank">狭く深く</span>」／大企業＝<span class="fill-blank">フルライン戦略</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: 基本 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab1">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F4D8; このタブで学ぶこと</h4>
+      <ul>
+        <li>PLC各段階の<strong>マーケティング戦略</strong>を表で整理</li>
+        <li>成長期 vs 成熟期の<strong>目的の違い</strong>（超頻出）</li>
+        <li>各段階で<strong>何をすべきか</strong>（4Pごとの方針）</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CA;</span> PLCの4段階 詳細テーブル</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        この表はまるごと覚えなくてOK。<strong>各段階の「目的」と「価格戦略」</strong>だけは必ず押さえよう！
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+    <table class="tbl-blue">
+      <tr><th>項目</th><th>導入期</th><th>成長期</th><th>成熟期</th><th>衰退期</th></tr>
+      <tr><td><strong>売上</strong></td><td>低い</td><td>急上昇</td><td>ピーク</td><td>低下</td></tr>
+      <tr><td><strong>利益</strong></td><td>マイナス</td><td>上昇</td><td>高い</td><td>低下</td></tr>
+      <tr><td><strong>顧客</strong></td><td>イノベーター</td><td>初期採用者</td><td>一般大衆</td><td>採用遅滞者</td></tr>
+      <tr><td><strong>競合</strong></td><td>ほぼなし</td><td>増加</td><td>安定</td><td>減少</td></tr>
+      <tr><td><strong>目的</strong></td><td>知名度向上・試用</td><td><strong style="color:var(--blue-dark);">シェア最大化</strong></td><td><strong style="color:var(--blue-dark);">利益最大化</strong></td><td>支出削減・撤退</td></tr>
+      <tr><td><strong>製品</strong></td><td>標準製品</td><td>製品拡張・保証</td><td>多様なモデル</td><td>弱小カット</td></tr>
+      <tr><td><strong>価格</strong></td><td>コストプラス法</td><td>市場浸透価格</td><td>競争対応価格</td><td>価格切り下げ</td></tr>
+      <tr><td><strong>チャネル</strong></td><td>選択的</td><td>開放的</td><td>より開放的</td><td>不採算カット</td></tr>
+      <tr><td><strong>プロモ</strong></td><td>知名度の向上</td><td>大衆への関心喚起</td><td>ブランド差別化</td><td>最小限に削減</td></tr>
+    </table>
+    </div>
+
+    <div class="alert-danger">
+      <strong>超頻出！成長期 vs 成熟期の引っかけ</strong><br>
+      &#x2022; 成長期の目的＝<strong>シェア最大化</strong>（攻め！）<br>
+      &#x2022; 成熟期の目的＝<strong>利益最大化</strong>（守り！）<br>
+      試験ではこの2つを入れ替えた選択肢がよく出る！「攻めと守り」で覚えよう。
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F6E1;&#xFE0F;</span> PLCへの対応戦略まとめ</h2>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>&#x1F476; 導入期のカギ</h4>
+        <p><strong>知名度を上げる</strong>ことが最優先。コストプラス法で価格設定し、選択的チャネルで少しずつ広げる。</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">例：新しいタピオカ屋がSNSで宣伝</p>
+      </div>
+      <div class="card card-green">
+        <h4>&#x1F466; 成長期のカギ</h4>
+        <p><strong>シェアを取る</strong>ことが最優先。市場浸透価格で一気に広げ、開放的チャネルで拡大。</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">例：タピオカブームで全国展開</p>
+      </div>
+      <div class="card card-orange">
+        <h4>&#x1F468;&#x200D;&#x1F4BC; 成熟期のカギ</h4>
+        <p><strong>利益を守る</strong>ことが最優先。ブランド差別化で競合と差をつけ、多様なモデル展開。</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">例：高級タピオカ・限定メニューで差別化</p>
+      </div>
+      <div class="card card-red">
+        <h4>&#x1F474; 衰退期のカギ</h4>
+        <p><strong>撤退のタイミング</strong>が重要。弱小アイテムをカットし、不採算チャネルを整理。</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">例：ブーム終了で店舗縮小・別業態へ転換</p>
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 基本チェック（穴埋め）</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">基本のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・成長期の目的＝<span class="fill-blank">シェア最大化</span>（攻め）／成熟期の目的＝<span class="fill-blank">利益最大化</span>（守り）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・価格：導入期＝<span class="fill-blank">コストプラス法</span>／成長期＝<span class="fill-blank">市場浸透価格</span>／成熟期＝<span class="fill-blank">競争対応価格</span>／衰退期＝<span class="fill-blank">価格切り下げ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・チャネル：導入期＝<span class="fill-blank">選択的</span>／成長期＝<span class="fill-blank">開放的</span>／成熟期＝<span class="fill-blank">より開放的</span>／衰退期＝<span class="fill-blank">不採算カット</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・顧客：導入期＝<span class="fill-blank">イノベーター</span>／成長期＝<span class="fill-blank">初期採用者</span>／成熟期＝<span class="fill-blank">一般大衆</span>／衰退期＝<span class="fill-blank">採用遅滞者</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: 詳細 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab2">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F50D; このタブで学ぶこと</h4>
+      <ul>
+        <li><strong>ロジャーズの普及理論</strong>（5タイプ顧客分類と割合）</li>
+        <li><strong>キャズム（溝）</strong>＝初期市場とメインストリームの分断</li>
+        <li><strong>計画的陳腐化政策</strong>＝PLCを企業がコントロールする方法</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F465;</span> ロジャーズの普及理論</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        PLCの表にある「イノベーター」とか「初期採用者」って何ですか？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ロジャーズという学者が「新しいものを買う順番」で人を5タイプに分けたんだ。新型iPhoneに並ぶ人と、壊れるまで使う人は別タイプってこと！
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">ロジャーズの採用者カテゴリー（5分類）</div>
+      <div class="flow-row">
+        <div class="flow-box fb-purple">イノベーター<small>2.5%</small></div>
+        <span class="flow-arrow" style="color:var(--blue-main);">&#8594;</span>
+        <div class="flow-box fb-blue">初期採用者<small>13.5%</small></div>
+        <span class="flow-arrow" style="color:var(--blue-main);">&#8594;</span>
+        <div class="flow-box fb-green">前期多数派<small>34%</small></div>
+        <span class="flow-arrow" style="color:var(--blue-main);">&#8594;</span>
+        <div class="flow-box fb-orange">後期多数派<small>34%</small></div>
+        <span class="flow-arrow" style="color:var(--blue-main);">&#8594;</span>
+        <div class="flow-box fb-red">遅滞者<small>16%</small></div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        新作ゲーム機の発売日。&#x1F3AE; 徹夜で並ぶ人＝イノベーター、レビューを見て早めに買う人＝初期採用者、「みんな持ってるから」で買う人＝多数派、壊れるまで旧型を使う人＝遅滞者。<strong>あなたはどのタイプ？</strong>
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>試験ポイント</strong>：イノベーター＝<strong>2.5%</strong>、初期採用者＝<strong>13.5%</strong>はよく問われる数字。「イノベーター＋初期採用者＝16%がキャズム（溝）の前」も重要！
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F504;</span> 計画的陳腐化政策</h2>
+
+    <div class="card card-blue">
+      <h4>&#x1F4F1; 計画的陳腐化政策とは</h4>
+      <p>企業が<strong>意図的にモデルチェンジ</strong>を行い、既存製品を心理的・技術的に「古く感じさせる」ことで買い替えを促す戦略。PLCを企業側からコントロールする手法。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        iPhoneが毎年新モデルを出すのがまさにコレ！ iPhone14はまだ使えるのに、15が出ると「古い」と感じてしまう。自動車の毎年のマイナーチェンジも同じ。<strong>技術的には十分なのに心理的に買い替えさせる</strong>のがポイント。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">引っかけ注意</div>
+        「計画的陳腐化政策＝製品の品質を意図的に下げる」はバツ！品質ではなく<strong>「新しさの演出」で旧製品を古く感じさせる</strong>のが正しい。
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CF;</span> 計画的陳腐化の3タイプ</h2>
+    <table class="tbl-blue">
+      <tr><th style="width:28%;">タイプ</th><th>内容</th><th style="width:28%;">例</th></tr>
+      <tr><td><strong>機能的陳腐化</strong></td><td>新機能を追加して旧製品を機能的に古くする</td><td>iPhoneの新チップ</td></tr>
+      <tr><td><strong>心理的陳腐化</strong></td><td>デザイン・広告で「古い」と感じさせる</td><td>自動車のマイナーチェンジ</td></tr>
+      <tr><td><strong>材質的陳腐化</strong></td><td>耐久性を意図的に限定（批判対象）</td><td>消耗品化された家電</td></tr>
+    </table>
+
+    <div class="alert-exam">
+      <strong>詳細タブ頻出キーワード</strong>：イノベーター2.5%／初期採用者13.5%／前期34%／後期34%／遅滞者16%／キャズム16%の壁／計画的陳腐化（機能・心理・材質）
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 詳細チェック（穴埋め）</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">詳細のキモ</div>
+      <div class="fill-body">
+        <div class="fill-group">・ロジャーズ5分類：<span class="fill-blank">イノベーター</span>（2.5%）→<span class="fill-blank">初期採用者</span>（13.5%）→<span class="fill-blank">前期多数派</span>（34%）→<span class="fill-blank">後期多数派</span>（34%）→<span class="fill-blank">遅滞者</span>（16%）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・キャズム（溝）の前＝<span class="fill-blank">イノベーター</span>＋<span class="fill-blank">初期採用者</span>＝<span class="fill-blank">16</span>％</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・計画的陳腐化政策＝企業が意図的にモデルチェンジして既存製品を<span class="fill-blank">心理的・技術的に陳腐化</span>させる戦略</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・陳腐化の3タイプ：<span class="fill-blank">機能的</span>陳腐化／<span class="fill-blank">心理的</span>陳腐化／<span class="fill-blank">材質的</span>陳腐化</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: 初級 (GREEN) ==================== -->
+  <div class="tab-panel theme-green" id="tab3">
+    <div class="point-box pb-green" style="margin-bottom:1rem;">
+      <h4>&#x270D;&#xFE0F; 穴埋め：初級</h4>
+      <ul>
+        <li>入門の重要ポイントを穴埋めで確認（PLC4段階／3層モデル／消費財／ミックス）</li>
+        <li>各カードの「答えを見る」ボタン、または穴埋め部分をクリックで回答表示</li>
+      </ul>
+    </div>
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#059669;">全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b;">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q1. PLCの4段階</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">導入期</span>＝知ってもらう。売上は低い、利益はマイナス<br>&#x2461; <span class="fill-blank">成長期</span>＝シェアを取る。売上は急上昇</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+        <div class="fill-group">&#x2462; <span class="fill-blank">成熟期</span>＝利益を守る。売上はピーク→横ばい<br>&#x2463; <span class="fill-blank">衰退期</span>＝引き際を考える。売上は低下</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462;&#x2463; の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q2. 製品の3層モデル</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">核（中核的ベネフィット）</span>＝顧客が本当に求めている便益<br>&#x2461; <span class="fill-blank">形態（製品の実体）</span>＝具材・パッケージなど目に見える部分<br>&#x2462; <span class="fill-blank">付随機能</span>＝アフターサービス・保証・ポイント付与など</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q3. 消費財の4分類</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">最寄品</span>＝コンビニでパッと買う（例：ガム・飲料水）<br>&#x2461; <span class="fill-blank">買回品</span>＝比較して選ぶ（例：洋服・家電）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+        <div class="fill-group">&#x2462; <span class="fill-blank">専門品</span>＝指名買い・こだわり（例：高級車・宝飾品）<br>&#x2463; <span class="fill-blank">非探索品</span>＝自分からは探さない（例：生命保険・墓石）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462;&#x2463; の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q4. プロダクト・ミックス</div>
+      <div class="fill-body">
+        <div class="fill-group">・製品ラインの<span class="fill-blank">幅</span>＝カテゴリーの数<br>・製品アイテムの<span class="fill-blank">深さ</span>＝各カテゴリーの品目数</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・中小企業の基本戦略は「<span class="fill-blank">狭く深く</span>」<br>・<span class="fill-blank">フルライン戦略</span>＝幅を広げて市場全体をカバー（大企業向け）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab3 -->
+
+  <!-- ==================== TAB 5: 中級 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab4">
+    <div class="point-box pb-blue" style="margin-bottom:1rem;">
+      <h4>&#x270D;&#xFE0F; 穴埋め：中級</h4>
+      <ul>
+        <li>基本タブの4P戦略（目的・価格・チャネル）を穴埋めで整理</li>
+        <li>各カードの「答えを見る」ボタン、または穴埋め部分をクリックで回答表示</li>
+      </ul>
+    </div>
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab4')" style="background:#059669;">全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab4')" style="background:#64748b;">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q5. PLC各段階の目的（超頻出）</div>
+      <div class="fill-body">
+        <div class="fill-group">・導入期の目的＝<span class="fill-blank">知名度向上・試用</span><br>・成長期の目的＝<span class="fill-blank">シェア最大化</span>（攻め！）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">導入期・成長期の答えを見る</button>
+        <div class="fill-group">・成熟期の目的＝<span class="fill-blank">利益最大化</span>（守り！）<br>・衰退期の目的＝<span class="fill-blank">支出削減・撤退</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">成熟期・衰退期の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q6. PLC各段階の価格戦略</div>
+      <div class="fill-body">
+        <div class="fill-group">・導入期＝<span class="fill-blank">コストプラス法</span> or <span class="fill-blank">上澄吸収価格</span><br>・成長期＝<span class="fill-blank">市場浸透価格</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">導入期・成長期の答えを見る</button>
+        <div class="fill-group">・成熟期＝<span class="fill-blank">競争対応価格</span><br>・衰退期＝<span class="fill-blank">価格切り下げ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">成熟期・衰退期の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">Q7. PLC各段階のチャネル・顧客</div>
+      <div class="fill-body">
+        <div class="fill-group">・チャネル：導入期＝<span class="fill-blank">選択的</span>／成長期＝<span class="fill-blank">開放的</span>／成熟期＝<span class="fill-blank">より開放的</span>／衰退期＝<span class="fill-blank">不採算カット</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">チャネルの答えを見る</button>
+        <div class="fill-group">・顧客：導入期＝<span class="fill-blank">イノベーター</span>／成長期＝<span class="fill-blank">初期採用者</span>／成熟期＝<span class="fill-blank">一般大衆</span>／衰退期＝<span class="fill-blank">採用遅滞者</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">顧客の答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab4 -->
+
+  <!-- ==================== TAB 6: 上級 (PURPLE) ==================== -->
+  <div class="tab-panel theme-purple" id="tab5">
+    <div class="point-box pb-purple" style="margin-bottom:1rem;">
+      <h4>&#x270D;&#xFE0F; 穴埋め：上級</h4>
+      <ul>
+        <li>詳細タブのロジャーズ普及理論・キャズム・計画的陳腐化を総仕上げ</li>
+        <li>各カードの「答えを見る」ボタン、または穴埋め部分をクリックで回答表示</li>
+      </ul>
+    </div>
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab5')" style="background:#059669;">全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab5')" style="background:#64748b;">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q8. ロジャーズの普及理論（5分類と割合）</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">イノベーター</span>（<span class="fill-blank">2.5%</span>）→ &#x2461; <span class="fill-blank">初期採用者</span>（<span class="fill-blank">13.5%</span>）→ &#x2462; 前期多数派（34%）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+        <div class="fill-group">&#x2463; 後期多数派（34%）→ &#x2464; <span class="fill-blank">遅滞者（ラガード）</span>（<span class="fill-blank">16%</span>）<br>・キャズム（溝）の前＝イノベーター＋初期採用者＝<span class="fill-blank">16%</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2464;以降の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q9. 計画的陳腐化政策</div>
+      <div class="fill-body">
+        <div class="fill-group">・企業が意図的にモデルチェンジを行い、既存製品を<span class="fill-blank">心理的・技術的に陳腐化</span>させて買い替えを促進する戦略</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・計画的陳腐化 ≠ 製品の<span class="fill-blank">品質を意図的に下げる</span>ことではない。「<span class="fill-blank">新しさの演出</span>」で旧製品を古く感じさせるのが正しい</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・陳腐化の3タイプ：<span class="fill-blank">機能的</span>陳腐化／<span class="fill-blank">心理的</span>陳腐化／<span class="fill-blank">材質的</span>陳腐化</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">Q10. 製品ラインと成熟期延命</div>
+      <div class="fill-body">
+        <div class="fill-group">・成熟期に新モデルやフレーバーを投入して売上を維持する＝製品アイテムの<span class="fill-blank">深さ</span>を拡大<br>・新カテゴリーへ展開して売上を維持する＝製品ラインの<span class="fill-blank">幅</span>を拡大</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab5 -->
+
+  <!-- ==================== TAB 7: 事例相談 (GREEN) ==================== -->
+  <div class="tab-panel theme-green" id="tab6">
+
+    <div class="point-box pb-green">
+      <h4>&#x1F3E2; このタブで学ぶこと</h4>
+      <ul>
+        <li>中小企業の<strong>リアルな悩み</strong>にPLC理論を当てはめる</li>
+        <li>理論が<strong>実際の経営判断にどう使えるか</strong>を体感する</li>
+        <li>診断士試験の<strong>事例問題対策</strong>にも直結！</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F35E;</span> ケース1：町のベーカリー「パン工房ひまわり」</h2>
+
+    <div class="sim-card">
+      <span class="sim-label">相談内容</span>
+      <h4>&#x1F4AC; 「高級食パンブームに乗って新商品を出したい。でもどう売り出せば...」</h4>
+      <p style="font-size:0.88rem;color:var(--gray-mid);">従業員5名の町のパン屋。常連客は多いが、売上は横ばい。高級食パン（1斤800円）を新たに開発したい。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">診断士の回答</div>
+        これはPLCの<strong>導入期</strong>の戦略が使えるね！
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x2705; 処方箋：導入期の戦略を適用</h4>
+      <ul>
+        <li><strong>知名度向上</strong>：常連客に無料試食を提供、Instagramで焼き上がりの動画を投稿</li>
+        <li><strong>選択的チャネル</strong>：まずは自店舗のみで販売（いきなり卸売りはしない）</li>
+        <li><strong>コストプラス法</strong>：材料費＋人件費に適正利益を乗せた1斤800円は妥当</li>
+        <li><strong>核の明確化</strong>：「朝食が特別になる幸せ」という便益を打ち出す</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ポイント</div>
+        中小企業は経営資源が限られるから、<strong>いきなり大量生産・大量宣伝はNG</strong>。まずは常連客という「イノベーター」に試してもらい、口コミで広げるのが正攻法！
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3E8;</span> ケース2：地方の老舗旅館「湯けむり荘」</h2>
+
+    <div class="sim-card">
+      <span class="sim-label">相談内容</span>
+      <h4>&#x1F4AC; 「団体客が減って売上が落ちてきた。このまま衰退するしかないの？」</h4>
+      <p style="font-size:0.88rem;color:var(--gray-mid);">創業50年の温泉旅館。団体旅行の減少で稼働率60%。客室20室、従業員15名。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">診断士の回答</div>
+        「団体旅行」という<strong>製品が成熟期〜衰退期</strong>に入っている。でも「旅館」自体を衰退させる必要はない。<strong>新しい製品ラインを導入期として立ち上げよう</strong>！
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x2705; 処方箋：製品ラインの組み替え</h4>
+      <ul>
+        <li><strong>衰退期の整理</strong>：団体向けの大広間宴会プランを縮小（弱小アイテムのカット）</li>
+        <li><strong>導入期の創出</strong>：ワーケーション（仕事＋温泉）プランを新規開発</li>
+        <li><strong>プロダクト・ミックス</strong>：「宿泊」ラインは維持しつつ、アイテムの深さを変える</li>
+        <li><strong>核の再定義</strong>：「団体の宴会」→「心身のリフレッシュ」に核を再設定</li>
+      </ul>
+    </div>
+
+    <div class="alert-tip">
+      <strong>診断士の視点</strong>：「衰退期だから撤退」ではなく、<strong>「製品ラインを組み替えて新しいPLCを始める」</strong>という発想が重要。これは2次試験の事例問題でもよく問われるパターン！
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x270F;&#xFE0F;</span> ケース3：地元の文房具メーカー「筆匠堂」</h2>
+
+    <div class="sim-card">
+      <span class="sim-label">相談内容</span>
+      <h4>&#x1F4AC; 「ペーパーレス化で筆記具の売上が減っている。商品を絞るべき？」</h4>
+      <p style="font-size:0.88rem;color:var(--gray-mid);">鉛筆・ボールペン・万年筆・マーカーの4ラインを展開。従業員30名。鉛筆とボールペンの売上が年々減少。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">診断士の回答</div>
+        PLC的には鉛筆・ボールペンが<strong>衰退期</strong>、万年筆は<strong>ニッチだが安定</strong>。ここは<strong>衰退期の戦略＋プロダクト・ミックスの見直し</strong>が必要！
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x2705; 処方箋：選択と集中</h4>
+      <ul>
+        <li><strong>弱小アイテムカット</strong>：低価格ボールペンは大手に勝てないので撤退</li>
+        <li><strong>製品ラインの幅を狭める</strong>：万年筆＋高級マーカーに集中（狭く深く）</li>
+        <li><strong>付随機能の強化</strong>：名入れサービス・修理対応で差別化</li>
+        <li><strong>ブランド戦略</strong>：「職人の手づくり」というストーリー（観念価値）を打ち出す</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">まとめ</div>
+        3つのケースに共通するのは<strong>「PLCの段階を見極めて、適切な戦略を選ぶ」</strong>こと。導入期なら知名度、成熟期なら差別化、衰退期なら選択と集中。<strong>理論がそのまま経営判断に使える</strong>のがPLCのすごさ！
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 8: クイズ (ORANGE) ==================== -->
+  <div class="tab-panel theme-orange" id="tab7">
+
+    <div class="point-box pb-orange">
+      <h4>&#x270F;&#xFE0F; このタブで学ぶこと</h4>
+      <ul>
+        <li>実際の企業事例で<strong>PLCと製品戦略の知識を総チェック</strong></li>
+        <li>まちがえたらタブに戻って<strong>ピンポイント復習</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> 身近な事例で理解度チェック！</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        全8問！身近な企業の事例から出題するよ。まちがえたらタブに戻って確認しよう！
+      </div>
+    </div>
+
+    <!-- Q1: 正解 C -->
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div><span class="quiz-cat qc-blue">PLC</span>
+      <div class="quiz-question">タピオカドリンクは2019年頃に日本で大ブームとなり、その後急速に店舗数が減少した。2024年現在のPLC段階として最も適切なものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q1',2)">
+        <li data-idx="0">A. 導入期</li>
+        <li data-idx="1">B. 成長期</li>
+        <li data-idx="2">C. 衰退期</li>
+        <li data-idx="3">D. 成熟期</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>&#x2705; 正解：C. 衰退期</strong><br>
+        ブーム後に店舗数が急減＝衰退期。残った店舗は「弱小アイテムカット」と「差別化」で生き残りを図っている。PLCの典型パターン！
+      </div>
+    </div>
+
+    <!-- Q2: 正解 A -->
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div><span class="quiz-cat qc-blue">PLC</span>
+      <div class="quiz-question">カップヌードルは1971年に発売され、50年以上売れ続けている。現在のPLC段階として最も適切なものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q2',0)">
+        <li data-idx="0">A. 成熟期</li>
+        <li data-idx="1">B. 衰退期</li>
+        <li data-idx="2">C. 成長期</li>
+        <li data-idx="3">D. 導入期</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>&#x2705; 正解：A. 成熟期</strong><br>
+        売上が安定し、多様なフレーバー展開（多様なモデル・ブランド）で差別化。まさに成熟期の戦略「利益最大化＋ブランド差別化」を実践中！
+      </div>
+    </div>
+
+    <!-- Q3: 正解 D -->
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div><span class="quiz-cat qc-blue">PLC戦略</span>
+      <div class="quiz-question">PLCの成長期における価格戦略として最も適切なものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q3',3)">
+        <li data-idx="0">A. コストプラス法</li>
+        <li data-idx="1">B. 価格切り下げ</li>
+        <li data-idx="2">C. 競争対応価格</li>
+        <li data-idx="3">D. 市場浸透価格</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>&#x2705; 正解：D. 市場浸透価格</strong><br>
+        成長期は<strong>シェア最大化</strong>が目的。低価格でシェアを取りに行く「市場浸透価格」を採用する。Aは導入期、Bは衰退期、Cは成熟期。
+      </div>
+    </div>
+
+    <!-- Q4: 正解 B -->
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div><span class="quiz-cat qc-purple">3層モデル</span>
+      <div class="quiz-question">高級ホテルにおける製品の3層モデルの「核（中核的ベネフィット）」として最も適切なものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q4',1)">
+        <li data-idx="0">A. 高級なベッドや家具</li>
+        <li data-idx="1">B. 快適な休息と特別な体験</li>
+        <li data-idx="2">C. コンシェルジュサービス</li>
+        <li data-idx="3">D. ホテルのブランドロゴ</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>&#x2705; 正解：B. 快適な休息と特別な体験</strong><br>
+        核＝お客さんが<strong>本当に求めていること</strong>。ベッド（A）は形態、コンシェルジュ（C）は付随機能、ロゴ（D）も形態。「なぜホテルに泊まるのか？」の答えが核！
+      </div>
+    </div>
+
+    <!-- Q5: 正解 A -->
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div><span class="quiz-cat qc-green">陳腐化政策</span>
+      <div class="quiz-question">自動車メーカーが数年ごとにモデルチェンジを行い、旧型を「古い」と感じさせて買い替えを促す戦略は何か。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q5',0)">
+        <li data-idx="0">A. 計画的陳腐化政策</li>
+        <li data-idx="1">B. 市場浸透戦略</li>
+        <li data-idx="2">C. フルライン戦略</li>
+        <li data-idx="3">D. ブランド拡張</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>&#x2705; 正解：A. 計画的陳腐化政策</strong><br>
+        意図的にモデルチェンジして旧製品を「心理的に陳腐化」させる戦略。品質を下げるのではなく、<strong>新しさの演出で買い替えを促す</strong>のがポイント。
+      </div>
+    </div>
+
+    <!-- Q6: 正解 D -->
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div><span class="quiz-cat qc-red">消費財分類</span>
+      <div class="quiz-question">消費者の関心が低く、企業側からの積極的な広告・人的販売が必要な製品の分類はどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q6',3)">
+        <li data-idx="0">A. 最寄品</li>
+        <li data-idx="1">B. 専門品</li>
+        <li data-idx="2">C. 買回品</li>
+        <li data-idx="3">D. 非探索品</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>&#x2705; 正解：D. 非探索品</strong><br>
+        生命保険・墓石・辞書など。必要だが自分からは探さない。だから企業側が営業マンを派遣したり広告を打ったりして<strong>積極的にアプローチ</strong>する必要がある。
+      </div>
+    </div>
+
+    <!-- Q7: 正解 C -->
+    <div class="quiz-item" id="q7">
+      <div class="quiz-num">7</div><span class="quiz-cat qc-green">プロダクトミックス</span>
+      <div class="quiz-question">中小の靴専門店の製品戦略として最も適切なものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q7',2)">
+        <li data-idx="0">A. 製品ラインの幅を広げてフルラインで展開する</li>
+        <li data-idx="1">B. 全品目を低価格にして量で勝負する</li>
+        <li data-idx="2">C. 製品ラインを絞り、アイテムの深さで差別化する</li>
+        <li data-idx="3">D. ブランド名を統一して大量広告を打つ</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        <strong>&#x2705; 正解：C. 製品ラインを絞り、アイテムの深さで差別化する</strong><br>
+        中小企業は経営資源が限られるため、「<strong>狭く深く</strong>」が基本。靴専門店なら靴に絞って、サイズ・色・素材を豊富にすることで大手と差別化する。
+      </div>
+    </div>
+
+    <!-- Q8: 正解 B -->
+    <div class="quiz-item" id="q8">
+      <div class="quiz-num">8</div><span class="quiz-cat qc-blue">PLC</span>
+      <div class="quiz-question">ロジャーズの普及理論において、新製品を最も早く採用する「イノベーター」の割合はどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q8',1)">
+        <li data-idx="0">A. 16%</li>
+        <li data-idx="1">B. 2.5%</li>
+        <li data-idx="2">C. 13.5%</li>
+        <li data-idx="3">D. 34%</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        <strong>&#x2705; 正解：B. 2.5%</strong><br>
+        イノベーター＝2.5%、初期採用者＝13.5%、前期多数派＝34%、後期多数派＝34%、遅滞者＝16%。この<strong>数字はそのまま試験に出る</strong>ので暗記必須！
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+  </div>
+
+  <!-- ==================== TAB 9: 実例 (RED) ==================== -->
+  <div class="tab-panel theme-red" id="tab8">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F4A1; このタブで学ぶこと</h4>
+      <ul>
+        <li>実在企業の事例で「<strong>なぜその戦略を選んだのか</strong>」を考える</li>
+        <li>表とにらめっこするだけでなく、<strong>ストーリーで記憶に定着</strong>させる</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        表とにらめっこして覚えるのもいいけど、正直なところ飽きてきちゃうよね。少しでも覚えやすくなるように実例を集めたよ！「<strong>どうしてその手法を選択したのか</strong>」に思いをはせると理解が深まるはず。
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4F1;</span> 実例1：ポケベル→ガラケー→スマホ</h2>
+
+    <div class="card card-red">
+      <h4>PLCの「世代交代」を体感する</h4>
+      <p><strong>ポケベル</strong>は1990年代に女子高生の必需品でしたが、ガラケーの登場で衰退し、2019年にサービス終了。<strong>ガラケー</strong>は2000年代に全盛期を迎えましたが、2007年のiPhone登場で成熟期→衰退期へ。<strong>スマートフォン</strong>は現在、成熟期にあり、多様なモデル展開とブランド差別化が行われています。</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">通信端末のPLC世代交代</div>
+      <div class="flow-row">
+        <div class="flow-box fb-red">ポケベル<small>衰退→終了</small></div>
+        <span class="flow-arrow" style="color:var(--red-main);">&#8594;</span>
+        <div class="flow-box fb-orange">ガラケー<small>成熟→衰退</small></div>
+        <span class="flow-arrow" style="color:var(--red-main);">&#8594;</span>
+        <div class="flow-box fb-blue">スマートフォン<small>現在：成熟期</small></div>
+        <span class="flow-arrow" style="color:var(--red-main);">&#8594;</span>
+        <div class="flow-box fb-purple">次世代は？<small>AR/VR端末？</small></div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">考えてみよう</div>
+        ある製品の衰退期は、<strong>別の製品の導入期と重なる</strong>ことが多い。ガラケーが衰退したのはスマホが登場したから。<strong>「何が次の製品を殺すか」を予測する</strong>のも製品戦略の重要なテーマ！
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F9E5;</span> 実例2：ユニクロのヒートテック</h2>
+
+    <div class="card card-red">
+      <h4>成熟期を「延命」する戦略の教科書</h4>
+      <p>2003年に発売されたヒートテックは、すでに20年以上のロングセラー。普通なら成熟期→衰退期に入るところを、ユニクロは巧みに延命させています。</p>
+      <ul>
+        <li>毎年の<strong>素材改良</strong>（吸湿発熱性能の向上）で「新しさ」を演出</li>
+        <li>「<strong>極暖</strong>」「<strong>超極暖</strong>」と製品アイテムの<strong>深さ</strong>を拡大</li>
+        <li>Tシャツ・レギンス・靴下と製品ラインの<strong>幅</strong>も拡大</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">なぜこの戦略？</div>
+        ヒートテックという<strong>1つの核（冬を暖かく過ごす）</strong>を保ちながら、形態（素材・デザイン）と付随機能（ラインナップの幅）を進化させることで成熟期を延命。これは<strong>「ロングセラー化」の理想的なパターン</strong>で、試験の成熟期の戦略として問われるよ！
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F3AE;</span> 実例3：任天堂のゲーム機</h2>
+
+    <div class="card card-red">
+      <h4>計画的陳腐化政策の巧みな活用</h4>
+      <p>ファミコン（1983）→スーファミ（1990）→N64（1996）→Wii（2006）→Switch（2017）。任天堂は約5〜10年サイクルで新ハードを投入し、<strong>旧機種を計画的に陳腐化</strong>させています。</p>
+      <ul>
+        <li>新ハード発売時に旧ハードのソフト開発を段階的に縮小</li>
+        <li>「据え置き→携帯→ハイブリッド」と<strong>核（遊びの体験）を再定義</strong></li>
+        <li>Switchは「家でも外でも遊べる」という新しい核で大ヒット</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">なぜこの戦略？</div>
+        ゲーム機は技術革新が速いため、<strong>計画的陳腐化が自然に起こりやすい業界</strong>。任天堂の巧みさは、単に性能を上げるだけでなく、<strong>「遊び方そのもの」を変えること</strong>（Wiiのモーション操作、Switchの携帯/据置ハイブリッド）で心理的にも技術的にも旧製品を陳腐化させている点！
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4F7;</span> 実例4：「写ルンです」の復活</h2>
+
+    <div class="card card-red">
+      <h4>衰退期からの奇跡の復活</h4>
+      <p>富士フイルムの使い捨てカメラ「写ルンです」は、デジカメ・スマホの普及で衰退期に入りました。ところが2015年頃から<strong>若者の間で「エモい」と再ブーム</strong>に。</p>
+      <ul>
+        <li>衰退期→まさかの<strong>再成長</strong>（PLCの例外パターン）</li>
+        <li><strong>核の再定義</strong>：「手軽に写真を撮る」→「フィルム独特のレトロな味わいを楽しむ」</li>
+        <li>ターゲットの変化：ファミリー層→<strong>Z世代の若者</strong></li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">なぜこの戦略？</div>
+        写ルンですの復活は<strong>「核を再定義」した好例</strong>。同じ製品でも、提供する便益（核）を変えることで新しいPLCが始まることがある。試験では「PLCは必ず衰退する」という選択肢がバツになるパターンとして出題される可能性あり！
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F9F9;</span> 実例5：ダイソンの掃除機</h2>
+
+    <div class="card card-red">
+      <h4>導入期→成長期の成功パターン</h4>
+      <p>ジェームズ・ダイソンが「吸引力の変わらないただ一つの掃除機」で日本市場に参入したのは2004年。従来の紙パック式が成熟期にある中、<strong>サイクロン式という新技術</strong>で導入期を切り開きました。</p>
+      <ul>
+        <li><strong>導入期</strong>：高価格（コストプラス法）で「技術力」を訴求</li>
+        <li><strong>成長期</strong>：TVCMで大衆への知名度・関心を喚起</li>
+        <li><strong>核の差別化</strong>：「吸引力が落ちない」という明確な便益</li>
+        <li>コードレス・ハンディと<strong>製品ラインの幅を拡大</strong>して成熟期へ</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">なぜこの戦略？</div>
+        ダイソンは<strong>「核」が明確</strong>だから成功した。「吸引力が変わらない」は誰でもわかる便益。さらに、紙パック式（成熟期）に対する<strong>新カテゴリー（サイクロン式）</strong>を作ったことで、ゼロから新しいPLCを始められた。これは製品戦略のお手本！
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>実例から学ぶ試験対策まとめ</strong><br>
+      &#x2022; PLCは必ず衰退するわけではない（写ルンですの復活）<br>
+      &#x2022; 成熟期の延命には製品改良とアイテム拡大が有効（ヒートテック）<br>
+      &#x2022; 計画的陳腐化は「品質低下」ではなく「新しさの演出」（任天堂）<br>
+      &#x2022; 核を再定義すると新しいPLCが始まる（写ルンです・ダイソン）<br>
+      &#x2022; ある製品の衰退期＝別の製品の導入期（ポケベル→スマホ）
+    </div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="purple" onclick="switchTab(0)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F331; 初級</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(4)">&#x1F4D8; 中級</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F3AF; 上級</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(6)">&#x1F3E2; 事例相談</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(7)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(8)">&#x1F4A1; 実例</button>
+  </nav>
+</div>
+
+<div class="footer">中小企業診断士 企業経営理論 | 製品戦略と製品ライフサイクル 学習まとめ</div>
+
+<script>
+function switchTab(idx) {
+  const n = 9;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % n === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  if(grp && grp.classList.contains('fill-group')){
+    grp.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  }
+  btn.textContent = '\u2705 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){ el.classList.add('show'); });
+  document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){ b.textContent = '\u2705 表示済み'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){ b.textContent = '\uD83D\uDC41 答えを見る'; b.disabled = false; b.style.opacity = '1'; });
+}
+document.addEventListener('click', function(e){
+  if(e.target.classList && e.target.classList.contains('fill-blank')){
+    e.target.classList.toggle('show');
+  }
+});
+let answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 5 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+</script>
+</body>
+</html>

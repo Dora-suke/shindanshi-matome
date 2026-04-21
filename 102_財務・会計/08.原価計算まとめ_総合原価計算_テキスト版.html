@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>総合原価計算 ステップ解説 - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --bg: #f8fafc; --bg-card: #ffffff; --bg-surface: #f1f5f9;
+  --accent-blue: #2563eb; --accent-cyan: #0891b2; --accent-violet: #7c3aed;
+  --accent-rose: #e11d48; --accent-amber: #d97706; --accent-emerald: #059669;
+  --text: #1e293b; --text-dim: #475569; --text-muted: #94a3b8;
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --radius: 16px; --radius-sm: 10px;
+  --content-max: 720px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.85; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.header {
+  background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+  padding: 2.2rem 1.5rem 1.5rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.03em; color: #fff; }
+.header .subtitle { font-size: 0.92rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem; }
+.header .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.6rem; flex-wrap: wrap; }
+.header .badge {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+  padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.9);
+}
+.tab-container { max-width: 900px; margin: 0 auto; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--bg-card);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.6rem; border: none;
+  background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: all 0.25s; border-bottom: 3px solid transparent;
+  white-space: nowrap; text-align: center; font-family: inherit;
+}
+.tab-btn:hover { color: var(--text-dim); background: #f8fafc; }
+.tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); background: #eff6ff; }
+.tab-btn[data-c="rose"].active { color: var(--accent-rose); border-bottom-color: var(--accent-rose); background: #fff1f2; }
+.tab-btn[data-c="violet"].active { color: var(--accent-violet); border-bottom-color: var(--accent-violet); background: #f5f3ff; }
+.tab-btn[data-c="emerald"].active { color: var(--accent-emerald); border-bottom-color: var(--accent-emerald); background: #ecfdf5; }
+.tab-btn[data-c="amber"].active { color: var(--accent-amber); border-bottom-color: var(--accent-amber); background: #fffbeb; }
+.tab-panel {
+  display: none; padding: 1.8rem 1.4rem;
+  background: var(--bg-card); box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); max-width: 900px; margin: 0 auto;
+}
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+.tab-panel > * { max-width: var(--content-max); margin-left: auto; margin-right: auto; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+.stitle {
+  font-size: 1.15rem; font-weight: 800; margin: 1.8rem 0 0.8rem; padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border);
+}
+.stitle:first-child { margin-top: 0; }
+.stitle-blue { background: #eff6ff; color: var(--accent-blue); border-color: #bfdbfe; }
+.stitle-rose { background: #fff1f2; color: var(--accent-rose); border-color: #fecdd3; }
+.stitle-emerald { background: #ecfdf5; color: var(--accent-emerald); border-color: #a7f3d0; }
+.stitle-violet { background: #f5f3ff; color: var(--accent-violet); border-color: #ddd6fe; }
+.stitle-amber { background: #fffbeb; color: var(--accent-amber); border-color: #fde68a; }
+.card {
+  background: var(--bg-card); border: 1px solid #e2e8f0;
+  border-radius: var(--radius); padding: 1.2rem; margin: 0.8rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.card strong { color: var(--accent-blue); }
+.card-glow-blue { border-color: #93c5fd; }
+.card-glow-emerald { border-color: #6ee7b7; }
+.alert-warn {
+  background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid var(--accent-rose);
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; font-size: 0.95rem; line-height: 1.8; color: #9f1239;
+}
+.alert-tip {
+  background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid var(--accent-amber);
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; font-size: 0.95rem; line-height: 1.8; color: #92400e;
+}
+.formula {
+  background: linear-gradient(135deg, #ecfdf5, #eff6ff); border: 1px solid #a7f3d0;
+  border-radius: var(--radius); padding: 0.8rem 1rem; margin: 0.5rem 0;
+  text-align: center; font-size: 1.15rem; font-weight: 800; color: var(--text);
+}
+.tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.tag-emerald { background: #d1fae5; color: var(--accent-emerald); }
+.tag-blue { background: #dbeafe; color: var(--accent-blue); }
+.tag-amber { background: #fef3c7; color: var(--accent-amber); }
+.tag-rose { background: #ffe4e6; color: var(--accent-rose); }
+.tag-violet { background: #ede9fe; color: var(--accent-violet); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin: 0.7rem 0; }
+.footer { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.78rem; max-width: 900px; margin: 0 auto; }
+
+/* ===== Highlight ===== */
+.hl { background: #fef08a; padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700; }
+.hl-blue { background: #dbeafe; color: var(--accent-blue); }
+.hl-amber { background: #fef3c7; color: var(--accent-amber); }
+.hl-rose { background: #ffe4e6; color: var(--accent-rose); }
+.hl-emerald { background: #d1fae5; color: var(--accent-emerald); }
+.hl-violet { background: #ede9fe; color: var(--accent-violet); }
+
+/* ===== BOX図 ===== */
+.box-fig {
+  border: 2.5px solid #334155; border-radius: var(--radius-sm);
+  overflow: hidden; margin: 0.5rem 0; font-size: 0.88rem;
+}
+.box-fig-title {
+  padding: 0.45rem 0.8rem; font-weight: 800; font-size: 0.85rem;
+  text-align: center; color: #fff;
+}
+.box-fig-title.blue { background: var(--accent-blue); }
+.box-fig-title.amber { background: var(--accent-amber); }
+.box-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+}
+.box-left, .box-right {
+  padding: 0.6rem 0.7rem;
+}
+.box-left { border-right: 2px solid #334155; background: #f8fafc; }
+.box-right { background: #f8fafc; }
+.box-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.25rem 0; line-height: 1.6;
+}
+.box-row .label { font-weight: 600; }
+.box-row .val { font-weight: 800; font-family: "SF Mono", "Fira Code", monospace; }
+.box-side-label {
+  text-align: center; font-size: 0.72rem; color: var(--text-muted);
+  font-weight: 700; padding: 0.2rem 0; background: #e2e8f0; letter-spacing: 0.1em;
+}
+
+/* ===== Step flow ===== */
+.step-arrow {
+  text-align: center; font-size: 1.8rem; color: var(--accent-blue);
+  margin: 0.8rem 0; line-height: 1;
+}
+
+/* ===== 計算ブロック ===== */
+.calc-block {
+  background: var(--bg-surface); border: 1px solid #e2e8f0;
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.6rem 0;
+  font-size: 0.95rem;
+}
+.calc-line {
+  display: flex; align-items: baseline; gap: 0.5rem;
+  padding: 0.2rem 0; line-height: 2;
+}
+.calc-label { font-weight: 700; min-width: 90px; }
+.calc-expr { font-family: "SF Mono", "Fira Code", monospace; font-weight: 600; }
+.calc-result { font-weight: 800; font-size: 1.1rem; }
+.calc-result.blue { color: var(--accent-blue); }
+.calc-result.amber { color: var(--accent-amber); }
+.calc-result.emerald { color: var(--accent-emerald); }
+.calc-result.rose { color: var(--accent-rose); }
+
+/* ===== Data Table ===== */
+.data-table {
+  width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 0.5rem 0;
+}
+.data-table th, .data-table td {
+  border: 1px solid #cbd5e1; padding: 0.45rem 0.7rem; text-align: right;
+}
+.data-table th {
+  background: #f1f5f9; font-weight: 700; text-align: center;
+}
+.data-table td:first-child, .data-table th:first-child { text-align: left; }
+.data-table tr:last-child { font-weight: 700; background: #f8fafc; }
+
+/* ===== Answer box ===== */
+.answer-box {
+  background: linear-gradient(135deg, #ecfdf5, #dbeafe);
+  border: 2px solid #059669; border-radius: var(--radius);
+  padding: 1.2rem 1.5rem; margin: 0.8rem 0; text-align: center;
+}
+.answer-box .answer-label { font-size: 0.85rem; color: var(--accent-emerald); font-weight: 700; }
+.answer-box .answer-value { font-size: 1.8rem; font-weight: 800; color: var(--accent-emerald); margin: 0.3rem 0; }
+
+/* ===== 数量フロー図 ===== */
+.flow-diagram {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  margin: 1rem 0; flex-wrap: wrap;
+}
+.flow-col {
+  display: flex; flex-direction: column; gap: 0.4rem; align-items: center;
+}
+.flow-box {
+  border-radius: var(--radius-sm); padding: 0.5rem 0.8rem;
+  text-align: center; font-weight: 700; font-size: 0.85rem;
+  color: #fff; min-width: 80px;
+}
+.flow-box.violet { background: var(--accent-violet); }
+.flow-box.blue { background: var(--accent-blue); }
+.flow-box.amber { background: var(--accent-amber); }
+.flow-box.emerald { background: var(--accent-emerald); }
+.flow-box.rose { background: var(--accent-rose); }
+.flow-arrow { font-size: 1.5rem; font-weight: 800; color: var(--text-muted); }
+
+/* ===== 比較フロー ===== */
+.compare-flow {
+  width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.8rem 0;
+}
+.compare-flow th, .compare-flow td {
+  border: 1px solid #cbd5e1; padding: 0.6rem 0.8rem; text-align: center; vertical-align: middle;
+}
+.compare-flow th { background: #f1f5f9; font-weight: 700; }
+.compare-flow .arrow-row td { border: none; padding: 0.2rem; font-size: 1.2rem; color: var(--text-muted); }
+
+/* ===== 色付きカード ===== */
+.color-card {
+  border-radius: var(--radius); padding: 1.2rem; margin: 0.8rem 0;
+  background: var(--bg-card); box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.color-card.border-blue { border: 1px solid #e2e8f0; border-left: 4px solid var(--accent-blue); }
+.color-card.border-amber { border: 1px solid #e2e8f0; border-left: 4px solid var(--accent-amber); }
+.color-card.border-emerald { border: 1px solid #e2e8f0; border-left: 4px solid var(--accent-emerald); }
+.color-card.border-violet { border: 1px solid #e2e8f0; border-left: 4px solid var(--accent-violet); }
+.color-card.border-rose { border: 1px solid #e2e8f0; border-left: 4px solid var(--accent-rose); }
+.color-card h4 { margin-bottom: 0.5rem; }
+
+/* ===== 3ボックス図 ===== */
+.three-box {
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  margin: 0.7rem 0; flex-wrap: wrap;
+}
+.three-box .tbox {
+  border-radius: var(--radius-sm); padding: 0.5rem 1rem;
+  text-align: center; font-weight: 700; font-size: 0.9rem; color: #fff;
+}
+.three-box .tbox.emerald { background: var(--accent-emerald); }
+.three-box .tbox.violet { background: var(--accent-violet); }
+.three-box .tbox.blue { background: var(--accent-blue); }
+.three-box .sep { font-size: 1.3rem; font-weight: 800; color: var(--text-muted); }
+
+/* ===== compact data ===== */
+.compact-data {
+  background: var(--bg-surface); border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm); padding: 0.7rem 1rem; margin: 0.6rem 0;
+  font-size: 0.88rem; line-height: 1.9;
+}
+
+/* ===== point star ===== */
+.point-star {
+  background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-sm);
+  padding: 0.5rem 0.8rem; margin: 0.5rem 0; font-size: 0.9rem; color: #92400e;
+}
+
+/* ===== BOX図 矢印付き ===== */
+/* ===== BOX図（4マス構造 + 矢印） ===== */
+.box-flow {
+  border: 2.5px solid #334155; border-radius: var(--radius-sm);
+  overflow: hidden; margin: 0.7rem 0; font-size: 0.88rem;
+}
+.box-flow-title {
+  padding: 0.45rem 0.8rem; font-weight: 800; font-size: 0.85rem;
+  text-align: center; color: #fff;
+}
+.box-flow-title.blue { background: var(--accent-blue); }
+.box-flow-title.amber { background: var(--accent-amber); }
+/* 4マスグリッド: 左上(月初) | 右上(完成品) / 左下(当月) | 右下(月末) */
+.box-flow-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  min-height: 120px; position: relative;
+}
+.box-flow-cell {
+  padding: 0.6rem 0.7rem; background: #f8fafc; position: relative;
+  display: flex; flex-direction: column; justify-content: center;
+}
+/* 左上: 月初 */
+.box-flow-cell.top-left {
+  border-right: 2px solid #334155; border-bottom: 1.5px dashed #cbd5e1;
+  background: #f5f3ff;
+}
+/* 左下: 当月投入 */
+.box-flow-cell.bottom-left {
+  border-right: 2px solid #334155;
+  background: #eff6ff;
+}
+/* 右上: 完成品 */
+.box-flow-cell.top-right {
+  border-bottom: 1.5px solid #334155;
+  background: #ecfdf5;
+}
+/* 右下: 月末仕掛品 */
+.box-flow-cell.bottom-right {
+  background: #fff1f2;
+}
+.box-flow-item { padding: 0.2rem 0; line-height: 1.5; }
+.box-flow-item .bf-label { font-weight: 700; font-size: 0.82rem; }
+.box-flow-item .bf-val { font-weight: 800; font-family: "SF Mono","Fira Code",monospace; font-size: 0.88rem; }
+.box-flow-item .bf-sub { font-size: 0.72rem; color: var(--text-dim); }
+
+/* 矢印（セル内に配置） */
+.cell-arrow {
+  position: absolute; font-weight: 900; font-size: 1.3rem; line-height: 1; z-index: 2;
+}
+/* 先入先出法: 月初(左上) → 完成品(右上) */
+.cell-arrow.fifo-a { color: #e11d48; right: -18px; top: 50%; transform: translateY(-50%); }
+/* 先入先出法: 当月(左下) → 完成品(右上) */
+.cell-arrow.fifo-b { color: #e11d48; right: -18px; top: 15%; transform: translateY(-50%); }
+/* 先入先出法: 当月(左下) → 月末(右下) */
+.cell-arrow.fifo-c { color: #e11d48; right: -18px; bottom: 20%; transform: translateY(50%); }
+
+/* 矢印テキスト版（セル内にインラインで表示） */
+.arrow-tag {
+  display: inline-flex; align-items: center; gap: 0.2rem;
+  font-size: 0.7rem; font-weight: 800; padding: 0.15rem 0.4rem;
+  border-radius: 4px; margin-top: 0.2rem; white-space: nowrap;
+}
+.arrow-tag.red { background: #ffe4e6; color: #e11d48; }
+.arrow-tag.blue { background: #dbeafe; color: #2563eb; }
+.arrow-tag.green { background: #d1fae5; color: #059669; }
+
+/* 平均法: 左側全体を青枠で囲む */
+.box-flow-cell.avg-left {
+  border-right: 2px solid #334155;
+}
+.box-flow-grid.avg-grid .top-left {
+  border-right: 2px solid #334155; border-bottom: none;
+  background: #eff6ff;
+}
+.box-flow-grid.avg-grid .bottom-left {
+  border-right: 2px solid #334155;
+  background: #eff6ff;
+}
+.box-flow-grid.avg-grid {
+  position: relative;
+}
+.avg-mix-border {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 50%;
+  border: 3.5px solid var(--accent-blue); border-radius: 8px 0 0 8px;
+  pointer-events: none; z-index: 3;
+}
+.avg-mix-label {
+  display: block; text-align: center; font-weight: 800; font-size: 0.82rem;
+  color: var(--accent-blue); padding: 0.3rem 0; margin: 0;
+  background: #dbeafe; border-top: 1.5px dashed #93c5fd;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.3rem; }
+  .two-col { grid-template-columns: 1fr !important; }
+  .tab-btn { font-size: 0.7rem; padding: 0.7rem 0.3rem; }
+  .tab-panel { padding: 1.2rem 0.8rem; }
+  .box-fig { font-size: 0.8rem; }
+  .flow-diagram { gap: 0.3rem; }
+  .flow-box { min-width: 60px; font-size: 0.78rem; padding: 0.4rem 0.5rem; }
+  .compare-flow { font-size: 0.78rem; }
+  .compare-flow th, .compare-flow td { padding: 0.4rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>総合原価計算 ― 計算ステップ解説</h1>
+  <p class="subtitle">同じデータで先入先出法と平均法を比較しながらステップごとに解く</p>
+  <div class="badges">
+    <span class="badge">先入先出法</span>
+    <span class="badge">平均法</span>
+    <span class="badge">BOX図</span>
+    <span class="badge">ステップ解説</span>
+  </div>
+</div>
+
+<div class="tab-container">
+<nav class="tab-nav">
+  <button class="tab-btn active" data-c="emerald" onclick="switchTab(0)">共通データ</button>
+  <button class="tab-btn" data-c="blue" onclick="switchTab(1)">先入先出法</button>
+  <button class="tab-btn" data-c="amber" onclick="switchTab(2)">平均法</button>
+  <button class="tab-btn" data-c="violet" onclick="switchTab(3)">比較</button>
+</nav>
+
+<!-- ==================== TAB 0: 共通データ ==================== -->
+<div class="tab-panel active" id="tab0">
+
+<div class="stitle stitle-emerald">数量データ</div>
+<table class="data-table">
+  <tr><th></th><th>数量</th><th>加工進捗度</th><th>備考</th></tr>
+  <tr><td>月初仕掛品</td><td>100個</td><td>50%</td><td></td></tr>
+  <tr><td>当月投入</td><td>900個</td><td>--</td><td></td></tr>
+  <tr><td>合計</td><td>1,000個</td><td></td><td></td></tr>
+  <tr><td>完成品</td><td>600個</td><td>100%</td><td></td></tr>
+  <tr><td>月末仕掛品</td><td>400個</td><td>50%</td><td></td></tr>
+</table>
+
+<div class="stitle stitle-blue">原価データ</div>
+<table class="data-table">
+  <tr><th></th><th>直接材料費</th><th>加工費</th><th>合計</th></tr>
+  <tr><td>月初仕掛品</td><td>8,000円</td><td>5,000円</td><td>13,000円</td></tr>
+  <tr><td>当月製造費用</td><td>27,000円</td><td>15,000円</td><td>42,000円</td></tr>
+  <tr><td>合計</td><td>35,000円</td><td>20,000円</td><td>55,000円</td></tr>
+</table>
+<div class="formula">総原価 = 35,000 + 20,000 = <span style="color:var(--accent-emerald)">55,000円</span></div>
+
+<div class="stitle stitle-violet">数量の流れ</div>
+<div class="flow-diagram">
+  <div class="flow-col">
+    <div class="flow-box violet" style="height:40px; display:flex; align-items:center; justify-content:center;">月初 100個</div>
+    <div class="flow-box blue" style="height:120px; display:flex; align-items:center; justify-content:center;">当月投入<br>900個</div>
+  </div>
+  <div class="flow-arrow">+<br>=</div>
+  <div class="flow-col">
+    <div class="flow-box amber" style="height:168px; display:flex; align-items:center; justify-content:center;">合計<br>1,000個</div>
+  </div>
+  <div class="flow-arrow">=</div>
+  <div class="flow-col">
+    <div class="flow-box emerald" style="height:100px; display:flex; align-items:center; justify-content:center;">完成品<br>600個</div>
+    <div class="flow-box rose" style="height:60px; display:flex; align-items:center; justify-content:center;">月末 400個</div>
+  </div>
+</div>
+
+<div class="stitle stitle-amber">始点投入とは</div>
+<div class="card">
+  <strong>直接材料費は始点投入</strong> = 工程の最初にまとめて投入される<br>
+  → <span class="hl hl-blue">換算量 = 個数そのまま</span>（進捗度に関係なく100%分の材料が入っている）<br><br>
+  <strong>加工費</strong>は加工の進み具合に応じて発生する<br>
+  → <span class="hl hl-amber">換算量 = 個数 x 進捗度</span>（月末400個 x 50% = 200個分の加工しか済んでいない）
+</div>
+
+<div class="stitle stitle-blue">2つの方法の違い（概要）</div>
+<div class="two-col">
+  <div class="color-card border-blue">
+    <h4 style="color:var(--accent-blue)">先入先出法</h4>
+    <span class="tag tag-blue">当月コストだけ</span><br>
+    月初仕掛品のコストを<strong>単価計算に入れない</strong>。<br>
+    当月投入分だけで単価を計算する。
+  </div>
+  <div class="color-card border-amber">
+    <h4 style="color:var(--accent-amber)">平均法</h4>
+    <span class="tag tag-amber">月初+当月を混ぜる</span><br>
+    月初仕掛品のコストも<strong>単価計算に入れる</strong>。<br>
+    月初と当月を合わせて平均単価を出す。
+  </div>
+</div>
+
+<div class="alert-tip">
+  この後、<strong>Tab2（先入先出法）</strong>と<strong>Tab3（平均法）</strong>でそれぞれの方法をステップごとに解いていきます。最後にTab4で結果を比較します。
+</div>
+
+</div><!-- /tab0 -->
+
+<!-- ==================== TAB 1: 先入先出法 ==================== -->
+<div class="tab-panel" id="tab1">
+
+<div class="stitle stitle-blue">先入先出法 ― BOX図で解く</div>
+
+<div class="compact-data">
+  <strong>数量:</strong> 月初100個(50%) + 当月900 = 1,000 → 完成600 + 月末400(50%)<br>
+  <strong>原価:</strong> 直接材料費 8,000+27,000=35,000 / 加工費 5,000+15,000=20,000 / 総原価 55,000円
+</div>
+
+<!-- STEP 1 -->
+<div class="stitle stitle-violet">STEP 1: BOX図を描く（数量を記入）</div>
+
+<div class="card">
+  まずBOX図の枠を描いて<strong>数量だけ</strong>を記入する。金額はまだ空欄。<br>
+  先入先出法では<span class="hl hl-blue">月初と当月を分けたまま</span>、それぞれ完成品・月末仕掛品に流す。
+</div>
+
+<div class="two-col">
+<!-- 直接材料費 BOX（数量のみ）4マス構造 -->
+<div class="box-flow">
+  <div class="box-flow-title blue">直接材料費（数量）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-cell top-left">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span></div>
+      <div class="box-flow-item"><span class="bf-val">100個</span></div>
+      <span class="arrow-tag red">→ 完成品へ</span>
+    </div>
+    <div class="box-flow-cell top-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span></div>
+      <div class="box-flow-item"><span class="bf-val" style="color:var(--accent-emerald)">600個</span></div>
+    </div>
+    <div class="box-flow-cell bottom-left">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span></div>
+      <div class="box-flow-item"><span class="bf-val">900個</span></div>
+      <span class="arrow-tag red">→ 完成品へ</span>
+      <span class="arrow-tag red">↘ 月末へ</span>
+    </div>
+    <div class="box-flow-cell bottom-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span></div>
+      <div class="box-flow-item"><span class="bf-val" style="color:var(--accent-rose)">400個</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 加工費 BOX（換算量）4マス構造 -->
+<div class="box-flow">
+  <div class="box-flow-title amber">加工費（換算量）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-cell top-left">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span></div>
+      <div class="box-flow-item"><span class="bf-val">50個</span> <span class="bf-sub">100x50%</span></div>
+      <span class="arrow-tag red">→ 完成品へ</span>
+    </div>
+    <div class="box-flow-cell top-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span></div>
+      <div class="box-flow-item"><span class="bf-val" style="color:var(--accent-emerald)">600個</span></div>
+    </div>
+    <div class="box-flow-cell bottom-left">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span></div>
+      <div class="box-flow-item"><span class="bf-val">750個</span> <span class="bf-sub">差額800-50</span></div>
+      <span class="arrow-tag red">→ 完成品へ</span>
+      <span class="arrow-tag red">↘ 月末へ</span>
+    </div>
+    <div class="box-flow-cell bottom-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span></div>
+      <div class="box-flow-item"><span class="bf-val" style="color:var(--accent-rose)">200個</span> <span class="bf-sub">400x50%</span></div>
+    </div>
+  </div>
+</div>
+</div><!-- /two-col -->
+
+<div class="alert-tip" style="font-size:0.85rem;">
+  <strong>加工費の換算量:</strong> 月初 100 x 50% = <strong>50個</strong>、月末 400 x 50% = <strong>200個</strong>、当月は差額 800 - 50 = <strong>750個</strong><br>
+  （借方合計 50+750 = 800 = 貸方合計 600+200）
+</div>
+
+<div class="card" style="border-left:4px solid #e11d48;">
+  <p style="font-weight:800;color:#e11d48;margin-bottom:0.3rem;">矢印の意味（先入先出法）</p>
+  <p style="font-size:0.88rem;line-height:1.8;">
+    <span class="arrow-tag red">→ 完成品へ</span> 月初仕掛品は<strong>先に完成品へ直行</strong>（コストもそのまま）<br>
+    <span class="arrow-tag red">→ 完成品へ</span> 当月投入の一部も完成品へ<br>
+    <span class="arrow-tag red">↘ 月末へ</span> 当月投入の残りが月末仕掛品に<br><br>
+    <strong>月初と当月を混ぜない</strong>。だから単価は<strong>当月コストだけ</strong>で計算する。
+  </p>
+</div>
+
+<div class="step-arrow">&#9660;</div>
+
+<!-- STEP 2 -->
+<div class="stitle stitle-blue">STEP 2: 費用データを記入</div>
+
+<div class="card">
+  STEP1のBOX図に<strong>費用（金額）を追記</strong>する。ここまでは先入先出法でも平均法でも同じ。
+</div>
+
+<div class="two-col">
+<!-- 直接材料費 BOX（費用追記） -->
+<div class="box-flow">
+  <div class="box-flow-title blue">直接材料費（数量+費用）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-left">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span><br><span class="bf-val">100個 / <strong>8,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span><br><span class="bf-val">900個 / <strong>27,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">1,000個 / 35,000円</span></div>
+    </div>
+    <div class="box-flow-arrows">
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line">→→</div>
+    </div>
+    <div class="box-flow-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span><br><span class="bf-val">600個 / ?</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span><br><span class="bf-val">400個 / ?</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">1,000個 / 35,000円</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 加工費 BOX（費用追記） -->
+<div class="box-flow">
+  <div class="box-flow-title amber">加工費（換算量+費用）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-left">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span><br><span class="bf-val">50個 / <strong>5,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span><br><span class="bf-val">750個 / <strong>15,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">800個 / 20,000円</span></div>
+    </div>
+    <div class="box-flow-arrows">
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line">→→</div>
+    </div>
+    <div class="box-flow-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span><br><span class="bf-val">600個 / ?</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span><br><span class="bf-val">200個 / ?</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">800個 / 20,000円</span></div>
+    </div>
+  </div>
+</div>
+</div><!-- /two-col -->
+
+<div class="step-arrow">&#9660;</div>
+
+<!-- STEP 3 -->
+<div class="stitle stitle-amber">STEP 3: 当月単価を出す</div>
+
+<div class="card">
+  先入先出法では<span class="hl hl-rose">「当月投入だけ」</span>で単価を出す。月初コストは単価計算に入れない。
+</div>
+
+<div class="color-card border-blue">
+  <h4 style="color:var(--accent-blue)">直接材料費の当月単価</h4>
+  <div class="calc-block">
+    <div class="calc-line">
+      <span class="calc-label">当月単価</span>
+      <span class="calc-expr">= 当月27,000 &divide; 当月900個 = <span class="calc-result blue">30円</span></span>
+    </div>
+  </div>
+</div>
+
+<div class="color-card border-amber">
+  <h4 style="color:var(--accent-amber)">加工費の当月単価</h4>
+  <div class="calc-block">
+    <div class="calc-line">
+      <span class="calc-label">当月単価</span>
+      <span class="calc-expr">= 当月15,000 &divide; 当月750個 = <span class="calc-result amber">20円</span></span>
+    </div>
+  </div>
+</div>
+
+<div class="point-star">
+  ★ ポイント: 月初のコストは単価計算に<strong>入れない</strong> → 完成品にそのまま直行させる。<br>
+  BOX図の矢印を思い出す: 月初のコストは完成品に直行、当月コストだけで単価を出して月末を評価。
+</div>
+
+<div class="step-arrow">&#9660;</div>
+
+<!-- STEP 4 -->
+<div class="stitle stitle-rose">STEP 4: 月末仕掛品と完成品原価を出す</div>
+
+<p style="font-size:0.9rem; color:var(--text-dim); margin-bottom:0.5rem;">STEP3の単価でBOX図の「?」を全て埋めて完成させる。</p>
+
+<div class="two-col">
+<!-- 直接材料費 BOX（完成版） -->
+<div class="box-flow">
+  <div class="box-flow-title blue">直接材料費 BOX図（完成）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-left">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span><br><span class="bf-val">100個 / 8,000円</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span><br><span class="bf-val">900個 / 27,000円</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">1,000個 / 35,000円</span></div>
+    </div>
+    <div class="box-flow-arrows">
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line">→→</div>
+    </div>
+    <div class="box-flow-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span><br><span class="bf-val">600個 / <strong style="color:var(--accent-emerald)">23,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span><br><span class="bf-val">400個 / <strong style="color:var(--accent-rose)">12,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">1,000個 / 35,000円</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 加工費 BOX（完成版） -->
+<div class="box-flow">
+  <div class="box-flow-title amber">加工費 BOX図（完成）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-left">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span><br><span class="bf-val">50個 / 5,000円</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span><br><span class="bf-val">750個 / 15,000円</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">800個 / 20,000円</span></div>
+    </div>
+    <div class="box-flow-arrows">
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line">→→</div>
+    </div>
+    <div class="box-flow-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span><br><span class="bf-val">600個 / <strong style="color:var(--accent-emerald)">16,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span><br><span class="bf-val">200個 / <strong style="color:var(--accent-rose)">4,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">800個 / 20,000円</span></div>
+    </div>
+  </div>
+</div>
+</div><!-- /two-col -->
+
+<div class="calc-block">
+  <div class="calc-line"><span class="calc-label" style="color:var(--accent-rose)">月末仕掛品</span></div>
+  <div class="calc-line"><span class="calc-label">直接材料費</span><span class="calc-expr">30円 x 400個 = <span class="calc-result rose">12,000円</span></span></div>
+  <div class="calc-line"><span class="calc-label">加工費</span><span class="calc-expr">20円 x 200個 = <span class="calc-result rose">4,000円</span></span></div>
+  <div class="calc-line"><span class="calc-label">合計</span><span class="calc-expr"><span class="calc-result rose">16,000円</span></span></div>
+</div>
+
+<div class="calc-block">
+  <div class="calc-line"><span class="calc-label" style="color:var(--accent-emerald)">完成品原価</span></div>
+  <div class="calc-line"><span class="calc-label">直接材料費</span><span class="calc-expr">35,000 - 12,000 = <span class="calc-result emerald">23,000円</span></span></div>
+  <div class="calc-line"><span class="calc-label">加工費</span><span class="calc-expr">20,000 - 4,000 = <span class="calc-result emerald">16,000円</span></span></div>
+  <div class="calc-line"><span class="calc-label">合計</span><span class="calc-expr"><span class="calc-result emerald">39,000円</span></span></div>
+</div>
+
+<div class="calc-block">
+  <div class="calc-line"><span class="calc-label">検算</span><span class="calc-expr">55,000 - 16,000 = 39,000 &#10003;</span></div>
+  <div class="calc-line"><span class="calc-label">完成品単価</span><span class="calc-expr">39,000 &divide; 600 = <span class="calc-result emerald">65円/個</span></span></div>
+</div>
+
+<div class="answer-box">
+  <div class="answer-label">先入先出法 ― 完成品原価</div>
+  <div class="answer-value">39,000円（65円/個）</div>
+  <div style="font-size:0.85rem; color:var(--text-dim);">月末仕掛品: 16,000円（直接材料費12,000 + 加工費4,000）</div>
+</div>
+
+</div><!-- /tab1 -->
+
+<!-- ==================== TAB 2: 平均法 ==================== -->
+<div class="tab-panel" id="tab2">
+
+<div class="stitle stitle-amber">平均法 ― BOX図で解く</div>
+
+<div class="compact-data">
+  <strong>数量:</strong> 月初100個(50%) + 当月900 = 1,000 → 完成600 + 月末400(50%)<br>
+  <strong>原価:</strong> 直接材料費 8,000+27,000=35,000 / 加工費 5,000+15,000=20,000 / 総原価 55,000円
+</div>
+
+<div class="alert-tip">
+  先入先出法との違い: <strong>STEP1・2は同じ</strong>。<strong>STEP3の単価の出し方だけが違う</strong>。<br>
+  平均法では月初と当月のコストを混ぜて平均単価を出す。
+</div>
+
+<!-- STEP 1 -->
+<div class="stitle stitle-violet">STEP 1: BOX図を描く（数量を記入）</div>
+
+<div class="card">
+  まずBOX図の枠を描いて<strong>数量だけ</strong>を記入する。<br>
+  平均法では<span class="hl hl-blue">月初と当月を混ぜて</span>から、平均単価で完成品・月末仕掛品に配分する。
+</div>
+
+<div class="two-col">
+<!-- 直接材料費 BOX（数量のみ）4マス＋平均法 -->
+<div class="box-flow">
+  <div class="box-flow-title blue">直接材料費（数量）</div>
+  <div class="box-flow-grid avg-grid">
+    <div class="avg-mix-border"></div>
+    <div class="box-flow-cell top-left" style="background:#eff6ff;border-bottom:none;">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span></div>
+      <div class="box-flow-item"><span class="bf-val">100個</span></div>
+    </div>
+    <div class="box-flow-cell top-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span></div>
+      <div class="box-flow-item"><span class="bf-val" style="color:var(--accent-emerald)">600個</span></div>
+      <span class="arrow-tag blue">← 平均単価で配分</span>
+    </div>
+    <div class="box-flow-cell bottom-left" style="background:#eff6ff;">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span></div>
+      <div class="box-flow-item"><span class="bf-val">900個</span></div>
+      <span class="avg-mix-label">↑↓ 混ぜて平均単価を出す</span>
+    </div>
+    <div class="box-flow-cell bottom-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span></div>
+      <div class="box-flow-item"><span class="bf-val" style="color:var(--accent-rose)">400個</span></div>
+      <span class="arrow-tag blue">← 平均単価で配分</span>
+    </div>
+  </div>
+</div>
+
+<!-- 加工費 BOX（換算量）4マス＋平均法 -->
+<div class="box-flow">
+  <div class="box-flow-title amber">加工費（換算量）</div>
+  <div class="box-flow-grid avg-grid">
+    <div class="avg-mix-border"></div>
+    <div class="box-flow-cell top-left" style="background:#eff6ff;border-bottom:none;">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span></div>
+      <div class="box-flow-item"><span class="bf-val">50個</span> <span class="bf-sub">100x50%</span></div>
+    </div>
+    <div class="box-flow-cell top-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span></div>
+      <div class="box-flow-item"><span class="bf-val" style="color:var(--accent-emerald)">600個</span></div>
+      <span class="arrow-tag blue">← 平均単価で配分</span>
+    </div>
+    <div class="box-flow-cell bottom-left" style="background:#eff6ff;">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span></div>
+      <div class="box-flow-item"><span class="bf-val">750個</span> <span class="bf-sub">差額800-50</span></div>
+      <span class="avg-mix-label">↑↓ 混ぜて平均単価を出す</span>
+    </div>
+    <div class="box-flow-cell bottom-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span></div>
+      <div class="box-flow-item"><span class="bf-val" style="color:var(--accent-rose)">200個</span> <span class="bf-sub">400x50%</span></div>
+      <span class="arrow-tag blue">← 平均単価で配分</span>
+    </div>
+  </div>
+</div>
+</div><!-- /two-col -->
+
+<div class="alert-tip" style="font-size:0.85rem;">
+  <strong>加工費の換算量:</strong> 月初 100 x 50% = <strong>50個</strong>、月末 400 x 50% = <strong>200個</strong>、当月は差額 800 - 50 = <strong>750個</strong><br>
+  数量は先入先出法と同じ。
+</div>
+
+<div class="card" style="border-left:4px solid #2563eb;">
+  <p style="font-weight:800;color:#2563eb;margin-bottom:0.3rem;">矢印の意味（平均法）</p>
+  <p style="font-size:0.88rem;line-height:1.8;">
+    左側の<strong style="color:#2563eb;">青枠</strong>＝月初と当月を<strong>混ぜるプール</strong><br>
+    <span class="arrow-tag blue">← 平均単価で配分</span> 混ぜた平均単価で完成品と月末仕掛品に<strong>同じ単価</strong>で配分する<br><br>
+    先入先出法と違い、月初のコストを分離しない。<strong>全部混ぜてから配る</strong>のが平均法。
+  </p>
+</div>
+
+<div class="step-arrow">&#9660;</div>
+
+<!-- STEP 2 -->
+<div class="stitle stitle-amber">STEP 2: 費用データを記入</div>
+
+<div class="card">
+  STEP1のBOX図に<strong>費用（金額）を追記</strong>する。ここまでは先入先出法と同じ。
+</div>
+
+<div class="two-col">
+<!-- 直接材料費 BOX（費用追記） -->
+<div class="box-flow">
+  <div class="box-flow-title blue">直接材料費（数量+費用）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-left avg-mix">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span><br><span class="bf-val">100個 / <strong>8,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span><br><span class="bf-val">900個 / <strong>27,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">1,000個 / 35,000円</span></div>
+      <span class="avg-mix-label">混ぜる → 平均単価</span>
+    </div>
+    <div class="box-flow-arrows">
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line" style="visibility:hidden;">→→</div>
+      <div class="arrow-line">→→</div>
+    </div>
+    <div class="box-flow-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span><br><span class="bf-val">600個 / ?</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span><br><span class="bf-val">400個 / ?</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">1,000個 / 35,000円</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 加工費 BOX（費用追記） -->
+<div class="box-flow">
+  <div class="box-flow-title amber">加工費（換算量+費用）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-left avg-mix">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span><br><span class="bf-val">50個 / <strong>5,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span><br><span class="bf-val">750個 / <strong>15,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">800個 / 20,000円</span></div>
+      <span class="avg-mix-label">混ぜる → 平均単価</span>
+    </div>
+    <div class="box-flow-arrows">
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line" style="visibility:hidden;">→→</div>
+      <div class="arrow-line">→→</div>
+    </div>
+    <div class="box-flow-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span><br><span class="bf-val">600個 / ?</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span><br><span class="bf-val">200個 / ?</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">800個 / 20,000円</span></div>
+    </div>
+  </div>
+</div>
+</div><!-- /two-col -->
+
+<div class="step-arrow">&#9660;</div>
+
+<!-- STEP 3 -->
+<div class="stitle stitle-amber">STEP 3: 平均単価を出す</div>
+
+<div class="card">
+  平均法では<span class="hl hl-amber">「月初＋当月の合計」&divide;「総換算量」</span>で平均単価を出す。月初コストも入れて平均する。
+</div>
+
+<div class="color-card border-blue">
+  <h4 style="color:var(--accent-blue)">直接材料費の平均単価</h4>
+  <div class="calc-block">
+    <div class="calc-line">
+      <span class="calc-label">平均単価</span>
+      <span class="calc-expr">= (8,000 + 27,000) &divide; (600 + 400) = 35,000 &divide; 1,000 = <span class="calc-result blue">35円</span></span>
+    </div>
+  </div>
+  <div style="font-size:0.85rem; color:var(--text-dim);">分母 1,000 = 完成品600 + 月末400（直接材料費は始点投入なので換算量=個数そのまま）</div>
+</div>
+
+<div class="color-card border-amber">
+  <h4 style="color:var(--accent-amber)">加工費の平均単価</h4>
+  <div class="calc-block">
+    <div class="calc-line">
+      <span class="calc-label">平均単価</span>
+      <span class="calc-expr">= (5,000 + 15,000) &divide; (600 + 200) = 20,000 &divide; 800 = <span class="calc-result amber">25円</span></span>
+    </div>
+  </div>
+  <div style="font-size:0.85rem; color:var(--text-dim);">分母 800 = 完成品600 + 月末200（400 x 50%）</div>
+</div>
+
+<div class="point-star">
+  ★ ポイント: 月初のコストも<strong>含めて平均</strong>する → 月初の割高コストが混ざって単価が上がる。<br>
+  先入先出法: 材料30円/加工20円 → 平均法: 材料<strong>35円</strong>/加工<strong>25円</strong>（どちらも上がる）
+</div>
+
+<div class="step-arrow">&#9660;</div>
+
+<!-- STEP 4 -->
+<div class="stitle stitle-rose">STEP 4: 月末仕掛品と完成品原価を出す</div>
+
+<p style="font-size:0.9rem; color:var(--text-dim); margin-bottom:0.5rem;">STEP3の平均単価でBOX図の「?」を全て埋めて完成させる。</p>
+
+<div class="two-col">
+<!-- 直接材料費 BOX（完成版） -->
+<div class="box-flow">
+  <div class="box-flow-title blue">直接材料費 BOX図（完成）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-left avg-mix">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span><br><span class="bf-val">100個 / 8,000円</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span><br><span class="bf-val">900個 / 27,000円</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">1,000個 / 35,000円</span></div>
+      <span class="avg-mix-label">平均単価 @35円</span>
+    </div>
+    <div class="box-flow-arrows">
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line" style="visibility:hidden;">→→</div>
+      <div class="arrow-line">→→</div>
+    </div>
+    <div class="box-flow-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span><br><span class="bf-val">600個 / <strong style="color:var(--accent-emerald)">21,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span><br><span class="bf-val">400個 / <strong style="color:var(--accent-rose)">14,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">1,000個 / 35,000円</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 加工費 BOX（完成版） -->
+<div class="box-flow">
+  <div class="box-flow-title amber">加工費 BOX図（完成）</div>
+  <div class="box-flow-grid">
+    <div class="box-flow-left avg-mix">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-violet)">月初仕掛品</span><br><span class="bf-val">50個 / 5,000円</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-blue)">当月投入</span><br><span class="bf-val">750個 / 15,000円</span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">800個 / 20,000円</span></div>
+      <span class="avg-mix-label">平均単価 @25円</span>
+    </div>
+    <div class="box-flow-arrows">
+      <div class="arrow-line">→→</div>
+      <div class="arrow-line" style="visibility:hidden;">→→</div>
+      <div class="arrow-line">→→</div>
+    </div>
+    <div class="box-flow-right">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-emerald)">完成品</span><br><span class="bf-val">600個 / <strong style="color:var(--accent-emerald)">15,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label" style="color:var(--accent-rose)">月末仕掛品</span><br><span class="bf-val">200個 / <strong style="color:var(--accent-rose)">5,000円</strong></span></div>
+      <hr class="box-flow-sep">
+      <div class="box-flow-item"><span class="bf-label">合計</span> <span class="bf-val">800個 / 20,000円</span></div>
+    </div>
+  </div>
+</div>
+</div><!-- /two-col -->
+
+<div class="calc-block">
+  <div class="calc-line"><span class="calc-label" style="color:var(--accent-rose)">月末仕掛品</span></div>
+  <div class="calc-line"><span class="calc-label">直接材料費</span><span class="calc-expr">35円 x 400個 = <span class="calc-result rose">14,000円</span></span></div>
+  <div class="calc-line"><span class="calc-label">加工費</span><span class="calc-expr">25円 x 200個 = <span class="calc-result rose">5,000円</span></span></div>
+  <div class="calc-line"><span class="calc-label">合計</span><span class="calc-expr"><span class="calc-result rose">19,000円</span></span></div>
+</div>
+
+<div class="calc-block">
+  <div class="calc-line"><span class="calc-label" style="color:var(--accent-emerald)">完成品原価</span></div>
+  <div class="calc-line"><span class="calc-label">直接材料費</span><span class="calc-expr">35,000 - 14,000 = <span class="calc-result emerald">21,000円</span></span></div>
+  <div class="calc-line"><span class="calc-label">加工費</span><span class="calc-expr">20,000 - 5,000 = <span class="calc-result emerald">15,000円</span></span></div>
+  <div class="calc-line"><span class="calc-label">合計</span><span class="calc-expr"><span class="calc-result emerald">36,000円</span></span></div>
+</div>
+
+<div class="calc-block">
+  <div class="calc-line"><span class="calc-label">検算</span><span class="calc-expr">55,000 - 19,000 = 36,000 &#10003;</span></div>
+  <div class="calc-line"><span class="calc-label">完成品単価</span><span class="calc-expr">36,000 &divide; 600 = <span class="calc-result emerald">60円/個</span></span></div>
+</div>
+
+<div class="answer-box">
+  <div class="answer-label">平均法 ― 完成品原価</div>
+  <div class="answer-value">36,000円（60円/個）</div>
+  <div style="font-size:0.85rem; color:var(--text-dim);">月末仕掛品: 19,000円（直接材料費14,000 + 加工費5,000）</div>
+</div>
+
+</div><!-- /tab2 -->
+
+<!-- ==================== TAB 3: 比較 ==================== -->
+<div class="tab-panel" id="tab3">
+
+<div class="stitle stitle-violet">比較 ― なぜ差が出る？</div>
+
+<table class="data-table">
+  <tr><th></th><th style="color:var(--accent-blue)">先入先出法</th><th style="color:var(--accent-amber)">平均法</th><th>差額</th></tr>
+  <tr><td>直接材料費単価</td><td>30円（当月のみ）</td><td>35円（月初+当月）</td><td>+5円</td></tr>
+  <tr><td>加工費単価</td><td>20円（当月のみ）</td><td>25円（月初+当月）</td><td>+5円</td></tr>
+  <tr><td>月末仕掛品</td><td>16,000円</td><td>19,000円</td><td style="color:var(--accent-rose)">+3,000円</td></tr>
+  <tr><td>完成品原価</td><td>39,000円</td><td>36,000円</td><td style="color:var(--accent-blue)">-3,000円</td></tr>
+</table>
+
+<div class="stitle stitle-rose">なぜ差が出る？</div>
+<div class="card">
+  <strong style="color:var(--accent-rose)">月初の1個あたりコストが、当月より高い</strong>からです。<br>
+  平均法は割高な月初コストを混ぜるので単価が上がり、月末仕掛品が高くなる。<br>
+  その分だけ完成品原価（= 総原価 - 月末）は下がる。
+</div>
+
+<div class="stitle stitle-amber">月初 vs 当月 ― 1個あたりコスト比較</div>
+<div class="two-col">
+  <div class="color-card border-blue">
+    <h4 style="color:var(--accent-blue)">直接材料費</h4>
+    <div style="font-size:0.92rem;">
+      <span class="hl hl-violet">月初: 8,000円 &divide; 100個 = <strong>80円</strong></span><br>
+      <span class="hl hl-blue">当月: 27,000円 &divide; 900個 = <strong>30円</strong></span><br>
+      → 月初が<strong style="color:var(--accent-rose)">2.7倍</strong>割高
+    </div>
+  </div>
+  <div class="color-card border-amber">
+    <h4 style="color:var(--accent-amber)">加工費</h4>
+    <div style="font-size:0.92rem;">
+      <span class="hl hl-violet">月初: 5,000円 &divide; 50個 = <strong>100円</strong></span><br>
+      <span class="hl hl-amber">当月: 15,000円 &divide; 750個 = <strong>20円</strong></span><br>
+      → 月初が<strong style="color:var(--accent-rose)">5倍</strong>割高
+    </div>
+  </div>
+</div>
+
+<div class="stitle stitle-violet">比較フロー ― 4ステップで見る違い</div>
+<table class="compare-flow">
+  <tr>
+    <th style="width:28%">ステップ</th>
+    <th style="width:36%; color:var(--accent-blue)">先入先出法</th>
+    <th style="width:36%; color:var(--accent-amber)">平均法</th>
+  </tr>
+  <tr>
+    <td style="font-weight:700">月初コストを<br>どうする？</td>
+    <td style="background:#fff1f2;"><strong style="color:var(--accent-rose)">&#10008; 混ぜない</strong><br><span style="font-size:0.82rem;">完成品に直行させる</span></td>
+    <td style="background:#ecfdf5;"><strong style="color:var(--accent-emerald)">&#10004; 混ぜる</strong><br><span style="font-size:0.82rem;">全部プールして平均</span></td>
+  </tr>
+  <tr class="arrow-row"><td></td><td>&#9660;</td><td>&#9660;</td></tr>
+  <tr>
+    <td style="font-weight:700">月末を評価する<br>単価</td>
+    <td>当月だけで計算<br><span class="tag tag-blue">材料30円 / 加工20円</span><br><span style="font-size:0.82rem;">（安いまま）</span></td>
+    <td>月初+当月の平均<br><span class="tag tag-amber">材料35円 / 加工25円</span><br><span style="font-size:0.82rem;">（割高な月初を混ぜて上がる）</span></td>
+  </tr>
+  <tr class="arrow-row"><td></td><td>&#9660;</td><td>&#9660;</td></tr>
+  <tr>
+    <td style="font-weight:700">月末仕掛品</td>
+    <td><strong style="color:var(--accent-blue)">16,000円</strong><br><span style="font-size:0.82rem;">材料12,000 + 加工4,000</span><br><span class="tag tag-blue">安い</span></td>
+    <td><strong style="color:var(--accent-amber)">19,000円</strong><br><span style="font-size:0.82rem;">材料14,000 + 加工5,000</span><br><span class="tag tag-amber">高い</span></td>
+  </tr>
+  <tr class="arrow-row"><td></td><td>&#9660;</td><td>&#9660;</td></tr>
+  <tr>
+    <td style="font-weight:700">完成品原価<br><span style="font-size:0.78rem;color:var(--text-muted);">(55,000 - 月末)</span></td>
+    <td style="background:#eff6ff;"><strong style="color:var(--accent-blue); font-size:1.1rem;">39,000円</strong><br><span style="font-size:0.82rem;">（高くなる）</span></td>
+    <td style="background:#fffbeb;"><strong style="color:var(--accent-amber); font-size:1.1rem;">36,000円</strong><br><span style="font-size:0.82rem;">（安くなる）</span></td>
+  </tr>
+</table>
+
+<div class="formula" style="font-size:1rem;">
+  差額 <span style="color:var(--accent-rose); font-size:1.3rem;">3,000円</span> = 月初コストを混ぜたかどうかで生まれる差
+</div>
+
+<div class="card" style="border-left:4px solid var(--accent-violet);">
+  <strong style="color:var(--accent-violet)">まとめ</strong><br>
+  月初と当月の<strong>1個あたり単価のギャップ</strong>が大きいほど、2つの方法の差は大きくなる。<br>
+  もし月初と当月の単価が同じ（ギャップゼロ）なら、先入先出法と平均法の結果は<strong>完全に一致</strong>する。
+</div>
+
+</div><!-- /tab3 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+  中小企業診断士 財務・会計 | 総合原価計算 ステップ解説
+</div>
+
+<script>
+function switchTab(idx){
+  var numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){ b.classList.toggle('active', i % numTabs === idx); });
+  document.querySelectorAll('.tab-panel').forEach(function(p,i){ p.classList.toggle('active', i === idx); });
+  document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>キャッシュフロー計算書【やさしい版】- 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 10px; --radius-sm: 6px;
+  --pink-main: #e91e63; --pink-light: #fce4ec; --pink-bg: #fef5f7;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: #fff8f0; color: var(--gray-dark); line-height: 1.85; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, #ff9800 0%, #ffb74d 50%, #ffe082 100%);
+  color: #4e342e; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.8; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.5);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem; font-weight: 700;
+}
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.5rem; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-baker { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-sensei { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.bubble-body {
+  background: var(--white); border-radius: 16px; padding: 0.8rem 1.1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 82%;
+  font-size: 0.92rem; line-height: 1.8;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 16px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before { left: -14px; border-right-color: var(--white); }
+.bubble-wrap.right .bubble-body::before { right: -14px; border-left-color: var(--white); }
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-body strong { color: #e65100; }
+.bubble-name { font-size: 0.75rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+.tab-container { max-width: 780px; margin: 1rem auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.9rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.85rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn[data-color="pink"] { color: var(--pink-main); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active[data-color="pink"] { border-bottom-color: var(--pink-main); background: var(--pink-light); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+.tab-panel.theme-pink { background: var(--pink-bg); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.section-title {
+  font-size: 1.15rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-pink { background: linear-gradient(135deg, var(--pink-main), #f06292); color: white; }
+.st-icon { font-size: 1.1rem; }
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card-red { border-left-color: var(--red-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.8;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-box strong { color: inherit; }
+.scene {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center;
+}
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.5rem; }
+.scene-item .label { font-size: 0.82rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.3rem; }
+.scene-caption { font-size: 0.88rem; color: var(--gray-mid); }
+.vs-box {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center; margin: 0.8rem 0;
+}
+.vs-side {
+  background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center;
+  box-shadow: var(--shadow);
+}
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+.diagram {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram-title {
+  text-align: center; font-weight: 700; font-size: 1rem;
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0;
+}
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.88rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.92rem; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-orange th { background: var(--orange-main); color: white; }
+.tbl-orange tr:nth-child(even) { background: var(--orange-pale); }
+ul { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.3rem 0; font-size: 0.92rem; }
+.point-box { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-pink { background: linear-gradient(135deg, var(--pink-light), #fff); border: 2px solid #f48fb1; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.8rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 1rem; font-weight: 600; text-align: center;
+}
+.mnemonic {
+  background: linear-gradient(135deg, var(--orange-pale), #fff);
+  border: 3px dashed var(--orange-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.3rem; font-weight: 800; color: var(--orange-dark); margin-bottom: 0.3rem; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); line-height: 1.8; }
+.story-bar {
+  background: linear-gradient(90deg, var(--orange-pale), #fff);
+  border-radius: var(--radius); padding: 0.6rem 1rem; margin: 0.5rem 0;
+  font-size: 0.82rem; color: var(--orange-dark); font-weight: 600; text-align: center;
+  border: 1px dashed var(--orange-light);
+}
+.step-box {
+  display: flex; align-items: center; gap: 0.5rem;
+  border-radius: 8px; padding: 0.6rem 1rem; width: 100%; margin: 0.3rem 0;
+}
+.step-num {
+  background: var(--blue-main); color: white; border-radius: 50%;
+  width: 28px; height: 28px; display: flex; align-items: center;
+  justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+}
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0;
+}
+.quiz-num {
+  display: inline-block; background: var(--pink-main); color: white;
+  width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px;
+  font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.8; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.6rem 0.9rem; margin: 0.35rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.92rem;
+}
+.quiz-options li:hover { border-color: var(--pink-main); background: var(--pink-light); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation {
+  display: none; margin-top: 0.7rem; padding: 0.8rem;
+  border-radius: var(--radius-sm); font-size: 0.9rem; line-height: 1.8;
+}
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score {
+  text-align: center; padding: 1rem; background: var(--pink-light);
+  border-radius: var(--radius); margin-top: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--pink-main); display: none;
+}
+.cf-pattern {
+  background: var(--white); border-radius: var(--radius); padding: 1rem 1.2rem;
+  margin: 0.7rem 0; box-shadow: var(--shadow); border-left: 5px solid var(--gray-light);
+}
+.cf-pattern h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+.cf-signs { display: flex; gap: 0.5rem; margin: 0.4rem 0; flex-wrap: wrap; }
+.cf-sign {
+  padding: 0.3rem 0.7rem; border-radius: 20px; font-weight: 700; font-size: 0.82rem;
+}
+.cf-plus { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.cf-minus { background: #fce4ec; color: #c62828; border: 1px solid #ef9a9a; }
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+@media (max-width: 600px) {
+  .vs-box { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.75rem; padding: 0.7rem 0.3rem; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 78%; }
+  .scene-row { gap: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>キャッシュフロー計算書【やさしい版】</h1>
+  <div class="subtitle">カフェ店長さくらさんと一緒に学ぼう</div>
+  <div class="badge">全4タブ 初心者向け</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="blue" onclick="switchTab(0)">&#x1F338; ゼロからわかる</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(1)">&#x2615; 用語をやさしく</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(2)">&#x1F9EE; やさしい計算</button>
+    <button class="tab-btn" data-color="pink" onclick="switchTab(3)">&#x270F;&#xFE0F; たしかめクイズ</button>
+  </nav>
+
+  <!-- ==================== TAB 1: ゼロからわかる (Blue) ==================== -->
+  <div class="tab-panel active theme-blue" id="tab0">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F338; このタブで学ぶこと</h4>
+      <ul>
+        <li><strong>キャッシュフロー（C/F）ってなに？</strong>をゼロから理解する</li>
+        <li><strong>利益とお金のちがい</strong>を知る</li>
+        <li><strong>3つのキャッシュフロー</strong>をカフェの例で覚える</li>
+      </ul>
+    </div>
+
+    <!-- Section 1: C/Fとは -->
+    <h2 class="section-title st-blue"><span class="st-icon">&#x2615;</span> C/Fって何？ ― お店の「お金の出入り日記」</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-baker">&#x1F338;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">さくらさん</div>
+        先生、私のカフェ、帳簿（ちょうぼ）では利益が出てるのに、通帳を見たらお金が全然ない...なんで？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">せんせい</div>
+        それはね、<strong>「利益」と「お金」はべつもの</strong>だからだよ。ここがC/F計算書をわかるための<strong>いちばん大事なポイント</strong>！
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--blue-dark);">利益 &#x2260; お金 ― なんでちがうの？</div>
+      <div class="vs-box">
+        <div class="vs-side" style="border:2px solid var(--blue-main);">
+          <h4 style="color:var(--blue-main);">&#x1F4C8; P/L（りえきの世界）</h4>
+          <p style="font-size:0.85rem;">売上100万 &#x2212; 費用70万<br>= <strong>利益30万</strong></p>
+          <p style="font-size:0.78rem;color:var(--gray-mid);">「いくら儲（もう）けたか」</p>
+        </div>
+        <div class="vs-mid">&#x2260;</div>
+        <div class="vs-side" style="border:2px solid var(--green-main);">
+          <h4 style="color:var(--green-main);">&#x1F4B0; C/F（お金の世界）</h4>
+          <p style="font-size:0.85rem;">入金60万 &#x2212; 出金50万<br>= <strong>手元+10万</strong></p>
+          <p style="font-size:0.78rem;color:var(--gray-mid);">「実際にお金がいくら動いたか」</p>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:0.85rem;color:var(--gray-mid);margin-top:0.5rem;">利益は30万なのにお金は10万しか増えてない！</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x2615; さくらさんのカフェで見てみよう</h4>
+      <p>今月の売上は<strong>100万円</strong>。でも近所のオフィスへのケータリング分<strong>40万円</strong>はまだ入金されてない（売掛金＝うりかけきん）。</p>
+      <p>つまり、帳簿では100万売れたことになっているけど、<strong>実際に届いたお金は60万円だけ</strong>。</p>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">この「帳簿と実際のお金のズレ」を見える化するのが<strong>キャッシュフロー計算書（C/F）</strong>です！</p>
+    </div>
+
+    <!-- Section 2: 3つのCF -->
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CA;</span> 3つのキャッシュフロー</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">せんせい</div>
+        お金の流れは<strong>3つに分けて</strong>記録するよ。カフェのカウンターに<strong>3つのレジ</strong>がある、とイメージしてみて！
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x2615;</div>
+          <div class="label"><strong>営業CF</strong><br><span style="color:var(--blue-main);">本業で稼ぐお金</span></div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F3D7;&#xFE0F;</div>
+          <div class="label"><strong>投資CF</strong><br><span style="color:var(--orange-main);">設備を買う/売るお金</span></div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F3E6;</div>
+          <div class="label"><strong>財務CF</strong><br><span style="color:var(--green-main);">借りる/返すお金</span></div>
+        </div>
+      </div>
+      <div class="scene-caption" style="margin-top:0.8rem;">お金の流れをこの<strong>3つに分けて</strong>書くのがC/F計算書！</div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x2615; カフェで例えると</h4>
+      <ul>
+        <li><strong>営業CF</strong> = コーヒーを売ってお客さんからもらうお金、豆の仕入れで出ていくお金</li>
+        <li><strong>投資CF</strong> = 新しいエスプレッソマシンを買う、古い食器を売る</li>
+        <li><strong>財務CF</strong> = 開業資金（かいぎょうしきん）を銀行から借りる、ローンを返す</li>
+      </ul>
+    </div>
+
+    <!-- Section 3: B/S, P/L, C/F比較 -->
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4DA;</span> 3つの書類をくらべてみよう</h2>
+
+    <table class="tbl-blue">
+      <tr><th style="width:20%;">書類</th><th style="width:30%;">やくわり</th><th>身近なたとえ</th></tr>
+      <tr><td><strong>B/S</strong><br><span style="font-size:0.78rem;">貸借対照表</span></td><td>ある日の<strong>もちもの</strong>と<strong>借金</strong>の一覧</td><td>&#x1F4F8; スマホで撮った写真<br><span style="font-size:0.8rem;">「今この瞬間の状態」</span></td></tr>
+      <tr><td><strong>P/L</strong><br><span style="font-size:0.78rem;">損益計算書</span></td><td>1年間の<strong>もうけ</strong>の成績</td><td>&#x1F4DD; 通知表<br><span style="font-size:0.8rem;">「1年間がんばった結果」</span></td></tr>
+      <tr><td><strong>C/F</strong><br><span style="font-size:0.78rem;">キャッシュフロー計算書</span></td><td>1年間の<strong>実際のお金の出入り</strong></td><td>&#x1F4B0; 家計簿<br><span style="font-size:0.8rem;">「お金がいくら入って出たか」</span></td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-baker">&#x1F338;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">さくらさん</div>
+        なるほど！写真と通知表と家計簿か。3つそろって初めて<strong>お店の全体が見える</strong>んだね。
+      </div>
+    </div>
+
+    <!-- Section 4: 語呂 -->
+    <div class="mnemonic">
+      <div class="big">&#x2615; 3つのレジのカフェ</div>
+      <div class="desc">
+        想像してみて：カフェのカウンターに<strong>3つのレジ</strong>が並んでいる。<br>
+        <strong>1台目（営業レジ）</strong>からは湯気（ゆげ）と一緒にお金が出てきて、<br>
+        <strong>2台目（投資レジ）</strong>にはエスプレッソマシンがお金を飲みこんでいて、<br>
+        <strong>3台目（財務レジ）</strong>は銀行と透明なチューブでつながっている。<br>
+        &#x2014; この変な光景を思いうかべれば、3つのCFはもう忘れない！
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>ここまで読んだあなたへ</strong>：おめでとう！C/F計算書の基本（利益&#x2260;お金、3つのCF、3つの書類）はこれでバッチリ。次のタブで用語をくわしく見ていこう！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: 用語をやさしく (Green) ==================== -->
+  <div class="tab-panel theme-green" id="tab1">
+
+    <div class="point-box pb-green">
+      <h4>&#x2615; このタブで学ぶこと</h4>
+      <ul>
+        <li><strong>売掛金・買掛金・棚卸資産</strong>をカフェの場面で理解</li>
+        <li><strong>減価償却費（げんかしょうきゃくひ）</strong>のしくみを知る</li>
+        <li><strong>間接法（かんせつほう）</strong>= 利益のズレを直す方法を覚える</li>
+      </ul>
+    </div>
+
+    <!-- Section 1: 売掛金・買掛金・棚卸資産 -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F91D;</span> カフェでわかる3つの用語</h2>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--green-dark);">さくらさんのカフェの日常</div>
+      <div style="display:flex;flex-direction:column;gap:0.6rem;align-items:center;">
+        <div style="background:#e3f2fd;border:2px solid var(--blue-main);border-radius:8px;padding:0.5rem 1rem;width:95%;text-align:center;">
+          <strong style="color:var(--blue-dark);">売掛金（うりかけきん）</strong><br>
+          <span style="font-size:0.85rem;">近所のオフィスにケータリングしたけど、<strong>まだお金をもらってない</strong></span><br>
+          <span style="font-size:0.8rem;color:var(--blue-main);">&#x2192; 「後でもらえるお金」のこと</span>
+        </div>
+        <div style="background:#e8f5e9;border:2px solid var(--green-main);border-radius:8px;padding:0.5rem 1rem;width:95%;text-align:center;">
+          <strong style="color:var(--green-dark);">買掛金（かいかけきん）</strong><br>
+          <span style="font-size:0.85rem;">コーヒー豆を仕入れたけど、<strong>まだお金を払ってない</strong></span><br>
+          <span style="font-size:0.8rem;color:var(--green-main);">&#x2192; 「後で払うお金」のこと</span>
+        </div>
+        <div style="background:#fff3e0;border:2px solid var(--orange-main);border-radius:8px;padding:0.5rem 1rem;width:95%;text-align:center;">
+          <strong style="color:var(--orange-dark);">棚卸資産（たなおろししさん）= ざいこ</strong><br>
+          <span style="font-size:0.85rem;">倉庫に積んであるコーヒー豆。<strong>まだ売れていない</strong></span><br>
+          <span style="font-size:0.8rem;color:var(--orange-main);">&#x2192; 「お金が商品の形で眠（ねむ）っている」状態</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-baker">&#x1F338;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">さくらさん</div>
+        売掛金も棚卸資産も、<strong>お金がまだ手元にない</strong>って共通点があるね！
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">せんせい</div>
+        そう！だから<strong>売掛金や棚卸資産が増えると、お金は減る方向</strong>。逆に<strong>買掛金が増えると、まだ払ってないからお金は残る方向</strong>。ここが超大事！
+      </div>
+    </div>
+
+    <!-- Section 2: 減価償却費 -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x2699;&#xFE0F;</span> 減価償却費（げんかしょうきゃくひ）って？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-baker">&#x1F338;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">さくらさん</div>
+        エスプレッソマシン、100万円で買ったんだけど、帳簿に毎年「費用20万円」って出てくるの。なんで？
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--green-dark);">エスプレッソマシンの減価償却</div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;align-items:center;">
+        <div class="flow-box fb-red" style="width:80%;">&#x1F4B8; 100万円のマシンを購入<small>このときだけお金が出る！</small></div>
+        <div style="font-size:1rem;color:var(--green-main);">&#x2B07;&#xFE0F; 5年に分けて費用にする</div>
+        <div style="display:flex;gap:0.3rem;flex-wrap:wrap;justify-content:center;">
+          <div style="background:var(--green-light);border-radius:6px;padding:0.4rem 0.6rem;font-size:0.78rem;font-weight:700;text-align:center;">1年目<br>20万円</div>
+          <div style="background:var(--green-light);border-radius:6px;padding:0.4rem 0.6rem;font-size:0.78rem;font-weight:700;text-align:center;">2年目<br>20万円</div>
+          <div style="background:var(--green-light);border-radius:6px;padding:0.4rem 0.6rem;font-size:0.78rem;font-weight:700;text-align:center;">3年目<br>20万円</div>
+          <div style="background:var(--green-light);border-radius:6px;padding:0.4rem 0.6rem;font-size:0.78rem;font-weight:700;text-align:center;">4年目<br>20万円</div>
+          <div style="background:var(--green-light);border-radius:6px;padding:0.4rem 0.6rem;font-size:0.78rem;font-weight:700;text-align:center;">5年目<br>20万円</div>
+        </div>
+        <div style="font-size:0.85rem;color:var(--red-main);font-weight:700;margin-top:0.3rem;">&#x2191; 毎年20万は帳簿（ちょうぼ）の費用。実際にはお金は動かない！</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">せんせい</div>
+        だから間接法では<strong>減価償却費を利益に足し戻す</strong>よ。P/Lでは費用として引かれてるけど、お金は出ていないから「戻す」んだ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ヒント</div>
+        減価償却費は「<strong>帳簿だけの費用</strong>」。お金は買ったときにもう出ているから、毎年の計算ではお金は動かないよ。
+      </div>
+    </div>
+
+    <!-- Section 3: 間接法 -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F527;</span> 間接法 = 利益のズレを直す方法</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-baker">&#x1F338;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">さくらさん</div>
+        間接法ってむずかしそう...
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">せんせい</div>
+        大丈夫！やることは<strong>たった3ステップ</strong>だよ。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--green-dark);">間接法のかんたん3ステップ</div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;align-items:center;">
+        <div class="step-box" style="background:var(--green-light);border:2px solid var(--green-main);">
+          <span class="step-num" style="background:var(--green-main);">1</span>
+          <span style="font-size:0.88rem;"><strong>利益からスタート</strong>（税引前当期純利益）</span>
+        </div>
+        <div style="font-size:1rem;color:var(--green-main);">&#x2B07;&#xFE0F;</div>
+        <div class="step-box" style="background:#e3f2fd;border:2px solid var(--blue-main);">
+          <span class="step-num" style="background:var(--blue-main);">2</span>
+          <span style="font-size:0.88rem;"><strong>お金が動かない費用を足す</strong>（減価償却費など）</span>
+        </div>
+        <div style="font-size:1rem;color:var(--green-main);">&#x2B07;&#xFE0F;</div>
+        <div class="step-box" style="background:#fff3e0;border:2px solid var(--orange-main);">
+          <span class="step-num" style="background:var(--orange-main);">3</span>
+          <span style="font-size:0.88rem;"><strong>お金のズレを調整する</strong>（売掛金・買掛金など）</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: +と-の意味 -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x2795;&#x2796;</span> プラスとマイナスの意味</h2>
+
+    <table class="tbl-green">
+      <tr><th>区分</th><th>プラス（+）のとき</th><th>マイナス（&#x2212;）のとき</th></tr>
+      <tr><td><strong>営業CF</strong></td><td>&#x2615; 本業でお金が入ってる<br><span style="font-size:0.8rem;color:var(--green-main);">（いい状態！）</span></td><td>本業でお金が出ていってる<br><span style="font-size:0.8rem;color:var(--red-main);">（要注意）</span></td></tr>
+      <tr><td><strong>投資CF</strong></td><td>設備を売ってお金が入った</td><td>&#x1F3D7;&#xFE0F; 新しい設備を買った<br><span style="font-size:0.8rem;color:var(--blue-main);">（成長のための投資）</span></td></tr>
+      <tr><td><strong>財務CF</strong></td><td>&#x1F3E6; お金を借りた</td><td>借金を返している<br><span style="font-size:0.8rem;color:var(--green-main);">（いい状態！）</span></td></tr>
+    </table>
+
+    <div class="mnemonic">
+      <div class="big">&#x1F4B0; 資産ふえたらお金へった</div>
+      <div class="desc">
+        想像してみて：カフェの倉庫の入り口に<strong>巨大なシーソー</strong>がある。<br>
+        左に「資産（コーヒー豆や売掛金）」、右に「お金」が乗っている。<br>
+        <strong>資産が増えると &#x2192; お金は下がる（マイナス）</strong><br>
+        <strong>負債（かいかけきん）が増えると &#x2192; お金は上がる（プラス）</strong><br>
+        &#x2014; シーソーの動きを思いうかべれば、加算・減算はもう迷わない！
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>よくあるまちがい</strong><br>
+      &#x2022; 売掛金が「増えた」→ お金はまだ届いてない → 営業CF<strong>マイナス</strong><br>
+      &#x2022; 買掛金が「増えた」→ まだ払ってない → 営業CF<strong>プラス</strong><br>
+      逆に覚えてしまう人が多いので注意！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: やさしい計算 (Orange) ==================== -->
+  <div class="tab-panel theme-orange" id="tab2">
+
+    <div class="point-box pb-orange">
+      <h4>&#x1F9EE; このタブで学ぶこと</h4>
+      <ul>
+        <li>さくらさんのカフェの<strong>1年間のC/F</strong>を一緒に計算する</li>
+        <li><strong>フリーキャッシュフロー（FCF）</strong>を理解する</li>
+        <li><strong>C/Fパターン</strong>でお店の健康（けんこう）チェック</li>
+      </ul>
+    </div>
+
+    <div class="story-bar">&#x2615; さくらカフェの1年間のお金の流れを計算してみよう！</div>
+
+    <!-- 営業CF -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x2615;</span> ステップ1：営業CF（本業のお金）</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">せんせい</div>
+        まずは間接法で営業CFを計算しよう。利益からスタートして、ズレを直していくよ。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--orange-dark);">さくらカフェの営業CF（間接法）</div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;align-items:center;">
+        <div style="background:var(--orange-pale);border:2px solid var(--orange-main);border-radius:8px;padding:0.6rem 1rem;width:95%;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;">&#x2460; 税引前当期純利益（もうけ）</span>
+          <strong style="font-size:1rem;">200万円</strong>
+        </div>
+        <div style="font-size:0.9rem;color:var(--green-main);font-weight:700;">＋ お金が動かない費用を足す</div>
+        <div style="background:#e8f5e9;border:2px solid var(--green-main);border-radius:8px;padding:0.6rem 1rem;width:95%;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;">&#x2461; ＋ 減価償却費</span>
+          <strong style="font-size:1rem;color:var(--green-dark);">+40万円</strong>
+        </div>
+        <div style="font-size:0.9rem;color:var(--red-main);font-weight:700;">お金のズレを調整する</div>
+        <div style="background:#fce4ec;border:2px solid var(--red-main);border-radius:8px;padding:0.6rem 1rem;width:95%;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;">&#x2462; &#x2212; 売掛金の増加（まだもらってない）</span>
+          <strong style="font-size:1rem;color:var(--red-dark);">&#x2212;20万円</strong>
+        </div>
+        <div style="background:#e8f5e9;border:2px solid var(--green-main);border-radius:8px;padding:0.6rem 1rem;width:95%;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;">&#x2463; ＋ 買掛金の増加（まだ払ってない）</span>
+          <strong style="font-size:1rem;color:var(--green-dark);">+10万円</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-box" style="font-size:1.1rem;">営業CF = 200 + 40 &#x2212; 20 + 10 = <strong>230万円</strong></div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-baker">&#x1F338;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">さくらさん</div>
+        利益は200万だけど、実際に手元に入ったお金は<strong>230万</strong>なんだ！減価償却費の分だけ多いんだね。
+      </div>
+    </div>
+
+    <!-- 投資CF -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F3D7;&#xFE0F;</span> ステップ2：投資CF（設備のお金）</h2>
+
+    <div class="card card-orange">
+      <h4>&#x1F3D7;&#xFE0F; さくらカフェの投資</h4>
+      <ul>
+        <li>新しいエスプレッソマシン購入 → <strong style="color:var(--red-main);">&#x2212;150万円</strong></li>
+        <li>古い食器を売却（ばいきゃく） → <strong style="color:var(--green-main);">+10万円</strong></li>
+      </ul>
+      <div class="formula-box">投資CF = &#x2212;150 + 10 = <strong>&#x2212;140万円</strong></div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">マイナスだけど、これは将来のための投資。悪いことじゃない！</p>
+    </div>
+
+    <!-- 財務CF -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F3E6;</span> ステップ3：財務CF（借金のお金）</h2>
+
+    <div class="card card-orange">
+      <h4>&#x1F3E6; さくらカフェの財務</h4>
+      <ul>
+        <li>銀行から追加で借入（かりいれ） → <strong style="color:var(--green-main);">+100万円</strong></li>
+        <li>去年の借金を返済（へんさい） → <strong style="color:var(--red-main);">&#x2212;80万円</strong></li>
+      </ul>
+      <div class="formula-box">財務CF = +100 &#x2212; 80 = <strong>+20万円</strong></div>
+    </div>
+
+    <!-- 合計 -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F4B0;</span> 合計：1年間でお金はいくら増えた？</h2>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--orange-dark);">さくらカフェのC/F合計</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue" style="min-width:100px;">営業CF<small>+230万</small></div>
+        <div class="flow-arrow" style="color:var(--orange-main);">+</div>
+        <div class="flow-box fb-orange" style="min-width:100px;">投資CF<small>&#x2212;140万</small></div>
+        <div class="flow-arrow" style="color:var(--orange-main);">+</div>
+        <div class="flow-box fb-green" style="min-width:100px;">財務CF<small>+20万</small></div>
+      </div>
+    </div>
+
+    <div class="formula-box" style="font-size:1.2rem;">230 + (&#x2212;140) + 20 = <strong>+110万円</strong></div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-baker">&#x1F338;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">さくらさん</div>
+        やった！1年間で手元のお金が<strong>110万円増えた</strong>んだね！
+      </div>
+    </div>
+
+    <!-- フリーCF -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F3AF;</span> フリーキャッシュフロー（FCF）</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">せんせい</div>
+        <strong>フリーCF = 営業CF + 投資CF</strong>。つまり「銀行に関係なく、<strong>自由に使えるお金</strong>」のことだよ。
+      </div>
+    </div>
+
+    <div class="formula-box" style="font-size:1.1rem;">フリーCF = 230 + (&#x2212;140) = <strong>+90万円</strong></div>
+
+    <div class="card card-green" style="border-left-color:var(--green-main);">
+      <h4>&#x1F4A1; フリーCFがプラスなら安心</h4>
+      <p>さくらカフェは本業で稼いだお金で設備投資もまかなえて、さらに<strong>90万円あまった</strong>。この90万は借金の返済にも、新しいメニュー開発にも自由に使える！</p>
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">&#x1F36E; フリーCF = 営業 + 投資</div>
+      <div class="desc">
+        想像してみて：さくらさんが<strong>プリンを作っている</strong>。<br>
+        営業CF（もうけたお金）= プリンの材料<br>
+        投資CF（設備に使ったお金）= 型（かた）の代金<br>
+        <strong>フリーCF = 材料 &#x2212; 型代 = 残ったプリンの数</strong><br>
+        &#x2014; 残りのプリンは自由にあげたり食べたりできる。それがフリーCF！
+      </div>
+    </div>
+
+    <!-- CFパターン -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F50D;</span> C/Fパターン診断</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-sensei">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">せんせい</div>
+        3つのCFの+と&#x2212;の組み合わせで、会社の状態がわかるよ。さくらカフェを診断してみよう！
+      </div>
+    </div>
+
+    <div class="cf-pattern" style="border-left-color:var(--orange-main);background:#fff8e1;">
+      <h4>&#x2B50; さくらカフェ：営業+／投資&#x2212;／財務+ = 成長型！</h4>
+      <div class="cf-signs">
+        <span class="cf-sign cf-plus">営業 +230</span>
+        <span class="cf-sign cf-minus">投資 &#x2212;140</span>
+        <span class="cf-sign cf-plus">財務 +20</span>
+      </div>
+      <p style="font-size:0.88rem;margin-top:0.3rem;">本業でしっかり稼ぎながら、設備投資もして、さらにお金も借りて拡大中。<strong>成長期の会社によくあるパターン</strong>！</p>
+    </div>
+
+    <div class="cf-pattern" style="border-left-color:var(--green-main);">
+      <h4>&#x2705; 健全型（けんぜんがた）：営業+／投資&#x2212;／財務&#x2212;</h4>
+      <div class="cf-signs">
+        <span class="cf-sign cf-plus">営業 +</span>
+        <span class="cf-sign cf-minus">投資 &#x2212;</span>
+        <span class="cf-sign cf-minus">財務 &#x2212;</span>
+      </div>
+      <p style="font-size:0.88rem;margin-top:0.3rem;">本業で稼いだお金で投資も借金返済もできている。<strong>いちばん理想的</strong>！</p>
+    </div>
+
+    <div class="cf-pattern" style="border-left-color:var(--red-main);">
+      <h4>&#x26A0;&#xFE0F; 注意型：営業&#x2212;／投資+／財務+</h4>
+      <div class="cf-signs">
+        <span class="cf-sign cf-minus">営業 &#x2212;</span>
+        <span class="cf-sign cf-plus">投資 +</span>
+        <span class="cf-sign cf-plus">財務 +</span>
+      </div>
+      <p style="font-size:0.88rem;margin-top:0.3rem;">本業で赤字。設備を売り、借金もしてしのいでいる。<strong>要注意</strong>！</p>
+    </div>
+
+    <div class="alert-exam">
+      <strong>試験のポイント</strong>：C/Fパターンの問題は、3つの符号（+/&#x2212;）を見て「どんな状態か」を答えるだけ。上の3パターンを覚えておこう！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: たしかめクイズ (Pink) ==================== -->
+  <div class="tab-panel theme-pink" id="tab3">
+
+    <div class="point-box pb-pink">
+      <h4>&#x270F;&#xFE0F; 全6問の4択クイズ</h4>
+      <p>さくらさんのカフェで学んだことを確認しよう。<strong>気楽にチャレンジ！</strong></p>
+    </div>
+
+    <h2 class="section-title st-pink"><span class="st-icon">&#x270F;&#xFE0F;</span> やってみよう！</h2>
+
+    <!-- Q1: 正解 A(0) -->
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div>
+      <div class="quiz-question">キャッシュフロー計算書（C/F）とは、何を記録したもの？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q1', 0)">
+        <li data-idx="0">A. 実際のお金の出入りの記録</li>
+        <li data-idx="1">B. 会社のもうけの成績表</li>
+        <li data-idx="2">C. ある日の財産と借金の一覧</li>
+        <li data-idx="3">D. 来年の売上の予想</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>&#x2705; 正解：A. 実際のお金の出入りの記録</strong><br>
+        C/F計算書は「家計簿」のイメージ。B（もうけ）はP/L、C（財産一覧）はB/Sのこと。
+      </div>
+    </div>
+
+    <!-- Q2: 正解 C(2) -->
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div>
+      <div class="quiz-question">間接法で営業CFを計算するとき、減価償却費はどうする？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q2', 2)">
+        <li data-idx="0">A. 引く（マイナスする）</li>
+        <li data-idx="1">B. 何もしない</li>
+        <li data-idx="2">C. 足す（プラスする）</li>
+        <li data-idx="3">D. 2倍にして引く</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>&#x2705; 正解：C. 足す（プラスする）</strong><br>
+        減価償却費は帳簿だけの費用で、実際にはお金が出ていない。だから利益に<strong>足し戻す</strong>。エスプレッソマシンの代金は買ったときにもう払っているからね！
+      </div>
+    </div>
+
+    <!-- Q3: 正解 B(1) -->
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div>
+      <div class="quiz-question">さくらカフェの売掛金（うりかけきん）が増えたら、営業CFはどうなる？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q3', 1)">
+        <li data-idx="0">A. 増える（プラス）</li>
+        <li data-idx="1">B. 減る（マイナス）</li>
+        <li data-idx="2">C. 変わらない</li>
+        <li data-idx="3">D. 2倍になる</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>&#x2705; 正解：B. 減る（マイナス）</strong><br>
+        売掛金が増えた ＝ まだお金をもらっていない ＝ 手元のお金は<strong>減る方向</strong>。シーソーの左（資産）が重くなったら、右（お金）は下がる！
+      </div>
+    </div>
+
+    <!-- Q4: 正解 D(3) -->
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div>
+      <div class="quiz-question">フリーキャッシュフロー（FCF）の計算式はどれ？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q4', 3)">
+        <li data-idx="0">A. 営業CF &#x2212; 財務CF</li>
+        <li data-idx="1">B. 投資CF + 財務CF</li>
+        <li data-idx="2">C. 営業CF + 財務CF + 投資CF</li>
+        <li data-idx="3">D. 営業CF + 投資CF</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>&#x2705; 正解：D. 営業CF + 投資CF</strong><br>
+        フリーCFは「銀行に関係なく自由に使えるお金」。本業のもうけ（営業CF）から設備投資（投資CF）を差し引いた残り。プリンの材料から型代を引いた残りだね！
+      </div>
+    </div>
+
+    <!-- Q5: 正解 A(0) -->
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div>
+      <div class="quiz-question">営業CF +、投資CF &#x2212;、財務CF &#x2212; のパターンは何と呼ばれる？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q5', 0)">
+        <li data-idx="0">A. 健全型</li>
+        <li data-idx="1">B. 成長型</li>
+        <li data-idx="2">C. 注意型</li>
+        <li data-idx="3">D. 衰退型</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>&#x2705; 正解：A. 健全型</strong><br>
+        本業で稼いだお金で投資も借金返済もできている、いちばん理想的なパターン！さくらカフェの目標だね。
+      </div>
+    </div>
+
+    <!-- Q6: 正解 C(2) -->
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div>
+      <div class="quiz-question">株主への配当金（はいとうきん）の支払いは、3つのCFのどこに入る？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q6', 2)">
+        <li data-idx="0">A. 営業CFのマイナス</li>
+        <li data-idx="1">B. 投資CFのマイナス</li>
+        <li data-idx="2">C. 財務CFのマイナス</li>
+        <li data-idx="3">D. どこにも入らない</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>&#x2705; 正解：C. 財務CFのマイナス</strong><br>
+        配当金の支払いは<strong>財務活動</strong>のひとつ。お金を出した人（株主）への還元（かんげん）だから、銀行への返済と同じ「財務CF」に入るよ。
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="blue" onclick="switchTab(0)">&#x1F338; ゼロからわかる</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(1)">&#x2615; 用語をやさしく</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(2)">&#x1F9EE; やさしい計算</button>
+    <button class="tab-btn" data-color="pink" onclick="switchTab(3)">&#x270F;&#xFE0F; たしかめクイズ</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 キャッシュフロー計算書【やさしい版】 学習まとめ</div>
+
+<script>
+function switchTab(idx) {
+  const numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % numTabs === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+let answered = 0, correct = 0, total = 6;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '\u554F\u4E2D ' + correct + '\u554F\u6B63\u89E3\uFF01' + (correct === total ? ' \u30D1\u30FC\u30D5\u30A7\u30AF\u30C8\uFF01' : correct >= 4 ? ' \u3044\u3044\u8ABF\u5B50\uFF01' : ' \u3082\u3046\u4E00\u56DE\u8AAD\u3082\u3046\uFF01');
+  }
+}
+</script>
+</body>
+</html>

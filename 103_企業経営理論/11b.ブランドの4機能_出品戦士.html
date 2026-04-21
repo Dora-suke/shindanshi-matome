@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ブランドの4機能 - ブランド出品戦士</title>
+<style>
+:root {
+  --orange-dark: #d35400;
+  --orange-main: #e67e22;
+  --orange-light: #f39c12;
+  --orange-pale: #fdebd0;
+  --orange-bg: #fef9f3;
+  --gray-dark: #2c3e50;
+  --gray-mid: #5d6d7e;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg);
+  color: var(--gray-dark);
+  line-height: 1.75;
+}
+.header {
+  background: linear-gradient(135deg, #6a1b9a 0%, #8e44ad 50%, #ab47bc 100%);
+  color: white;
+  padding: 2rem 1.5rem 1.2rem;
+  text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+
+.container { max-width: 860px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+/* ===== 語呂カード ===== */
+.yoro-card {
+  background: linear-gradient(135deg, #6a1b9a, #8e44ad);
+  color: white;
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.yoro-card .yoro-main { font-size: 2.2rem; font-weight: 900; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+.yoro-card .yoro-break { font-size: 1rem; opacity: 0.85; }
+.yoro-card .yoro-break span {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  border-radius: 6px;
+  padding: 0.1rem 0.5rem;
+  margin: 0 0.15rem;
+  font-weight: 700;
+}
+
+/* ===== ストーリーボックス ===== */
+.story-box {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.4rem 1.6rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+  border-left: 5px solid #8e44ad;
+}
+.story-box h2 { font-size: 1.1rem; font-weight: 800; color: #6a1b9a; margin-bottom: 0.8rem; }
+.story-box p { font-size: 0.95rem; line-height: 1.9; }
+.story-box .highlight { background: #f3e5f5; border-radius: 4px; padding: 0.1rem 0.4rem; font-weight: 700; color: #6a1b9a; }
+
+/* ===== 戦士ビジュアル ===== */
+.warrior-scene {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-radius: 16px;
+  padding: 2rem 1rem 1.5rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+/* 星 */
+.warrior-scene::before {
+  content: '✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦';
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.3em;
+}
+
+.scene-title {
+  text-align: center;
+  color: #ffd700;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 10px rgba(255,215,0,0.5);
+}
+
+/* 戦士本体 */
+.warrior-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.warrior-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* 装備カード（左右に配置） */
+.equipment-left, .equipment-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-bottom: 1rem;
+}
+
+.equip-card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  text-align: center;
+  color: white;
+  min-width: 130px;
+  backdrop-filter: blur(4px);
+  transition: transform 0.2s;
+  cursor: default;
+}
+.equip-card:hover { transform: scale(1.04); background: rgba(255,255,255,0.15); }
+.equip-card .equip-icon { font-size: 1.8rem; display: block; margin-bottom: 0.2rem; }
+.equip-card .equip-label { font-size: 0.65rem; letter-spacing: 0.05em; opacity: 0.75; display: block; }
+.equip-card .equip-name { font-size: 0.85rem; font-weight: 800; display: block; }
+.equip-card .equip-func { font-size: 0.72rem; opacity: 0.85; display: block; margin-top: 0.15rem; }
+
+/* 戦士キャラ */
+.warrior-char {
+  font-size: 5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 16px rgba(255,215,0,0.6));
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.warrior-name {
+  color: #ffd700;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 12px rgba(255,215,0,0.6);
+  margin-top: 0.4rem;
+}
+.warrior-tag {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.7rem;
+  margin-top: 0.2rem;
+}
+
+/* カード色分け */
+.card-shield  { border-color: #42a5f5; }
+.card-armor   { border-color: #66bb6a; }
+.card-banner  { border-color: #ffa726; }
+.card-gem     { border-color: #ec407a; }
+.card-shield .equip-name  { color: #90caf9; }
+.card-armor  .equip-name  { color: #a5d6a7; }
+.card-banner .equip-name  { color: #ffcc80; }
+.card-gem    .equip-name  { color: #f48fb1; }
+
+/* ===== 4機能テーブル ===== */
+.func-table {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin: 1.5rem 0;
+}
+.func-table table { width: 100%; border-collapse: collapse; }
+.func-table th {
+  background: linear-gradient(135deg, #6a1b9a, #8e44ad);
+  color: white;
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+.func-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #f0e6f6;
+  vertical-align: top;
+}
+.func-table tr:last-child td { border-bottom: none; }
+.func-table tr:nth-child(even) td { background: #faf0ff; }
+.kana-badge {
+  display: inline-block;
+  background: #6a1b9a;
+  color: white;
+  border-radius: 50%;
+  width: 1.6em;
+  height: 1.6em;
+  line-height: 1.6em;
+  text-align: center;
+  font-weight: 900;
+  font-size: 1rem;
+  margin-right: 0.4rem;
+}
+
+/* ===== 記憶のコツ ===== */
+.tip-box {
+  background: #fff8e1;
+  border: 2px dashed #ffa726;
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+}
+.tip-box h3 { font-size: 1rem; font-weight: 800; color: #e65100; margin-bottom: 0.6rem; }
+.tip-box ul { padding-left: 1.2rem; font-size: 0.9rem; line-height: 2; }
+
+/* ===== セクション見出し ===== */
+.sec-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #6a1b9a;
+  border-left: 4px solid #8e44ad;
+  padding-left: 0.7rem;
+  margin: 2rem 0 1rem;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚔️ ブランドの4つの機能</h1>
+  <div class="subtitle">語呂合わせ：ブランド出品戦士</div>
+</div>
+
+<div class="container">
+
+  <!-- 語呂合わせ -->
+  <div class="yoro-card">
+    <div class="yoro-main">ブランド出品戦士</div>
+    <div class="yoro-break">
+      <span>出</span>出所表示機能
+      <span>品</span>品質表示機能
+      <span>宣</span>広告宣伝機能
+      <span>値</span>資産価値
+    </div>
+  </div>
+
+  <!-- 戦士イメージ写真 -->
+  <div style="background:linear-gradient(135deg,#ede7f6,#d1c4e9);border:3px solid #9575cd;border-radius:18px;padding:28px;margin:1.2rem 0 0.5rem;text-align:center;">
+
+    <p style="font-size:1.4rem;font-weight:900;color:#4a148c;margin:0 0 6px;">&#x2694; 出品戦士の4つの武装 &#x2694;</p>
+    <p style="font-size:.88rem;color:#5e35b1;margin:0 0 20px;">語呂の各キーワードを写真でイメージに焼き付けよう！</p>
+
+    <!-- 戦士SVGイラスト -->
+    <div style="margin:0 auto 20px;max-width:360px;">
+      <svg viewBox="0 0 360 420" style="width:100%;height:auto;filter:drop-shadow(0 4px 12px rgba(74,20,140,.2));">
+        <!-- 背景オーラ -->
+        <ellipse cx="180" cy="210" rx="150" ry="190" fill="url(#auraGrad)" opacity=".25"/>
+        <defs>
+          <radialGradient id="auraGrad"><stop offset="0%" stop-color="#ce93d8"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+          <linearGradient id="armorGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffd54f"/><stop offset="100%" stop-color="#ff8f00"/></linearGradient>
+          <linearGradient id="capeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7b1fa2"/><stop offset="100%" stop-color="#4a148c"/></linearGradient>
+        </defs>
+
+        <!-- マント -->
+        <path d="M110,140 Q80,250 60,380 L300,380 Q280,250 250,140 Z" fill="url(#capeGrad)" opacity=".85"/>
+        <path d="M60,380 Q180,360 300,380 L300,390 Q180,370 60,390 Z" fill="#4a148c"/>
+
+        <!-- 鎧（胴体）【品】 -->
+        <rect x="120" y="140" width="120" height="130" rx="16" fill="url(#armorGrad)" stroke="#f57f17" stroke-width="2"/>
+        <rect x="140" y="155" width="80" height="20" rx="6" fill="#fff8e1" opacity=".6"/>
+        <text x="180" y="170" text-anchor="middle" font-size="11" font-weight="800" fill="#e65100">QUALITY</text>
+        <!-- 鎧の装飾ライン -->
+        <line x1="180" y1="180" x2="180" y2="265" stroke="#f57f17" stroke-width="1.5" opacity=".5"/>
+        <rect x="155" y="240" width="50" height="18" rx="4" fill="#fff8e1" opacity=".4"/>
+        <text x="180" y="254" text-anchor="middle" font-size="8" font-weight="700" fill="#bf360c">&#x1F3C5; 品質保証</text>
+
+        <!-- 宝石（胸元）【値】 -->
+        <polygon points="180,195 170,215 180,225 190,215" fill="#e1bee7" stroke="#9c27b0" stroke-width="1.5"/>
+        <polygon points="180,200 174,212 180,220 186,212" fill="#f3e5f5"/>
+        <circle cx="180" cy="210" r="4" fill="#fff" opacity=".8"/>
+        <text x="180" y="240" text-anchor="middle" font-size="7" font-weight="700" fill="#7b1fa2">&#x1F48E; 資産価値</text>
+
+        <!-- 左腕 + 盾【出】 -->
+        <rect x="90" y="155" width="30" height="80" rx="8" fill="url(#armorGrad)" stroke="#f57f17" stroke-width="1.5"/>
+        <!-- 盾 -->
+        <path d="M30,150 L30,230 Q30,260 65,270 Q100,260 100,230 L100,150 Z" fill="#1565c0" stroke="#0d47a1" stroke-width="2"/>
+        <path d="M40,160 L40,225 Q40,250 65,258 Q90,250 90,225 L90,160 Z" fill="#1976d2"/>
+        <circle cx="65" cy="200" r="22" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/>
+        <text x="65" y="196" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">B</text>
+        <text x="65" y="210" text-anchor="middle" font-size="7" font-weight="700" fill="#bbdefb">BRAND</text>
+        <text x="65" y="278" text-anchor="middle" font-size="8" font-weight="700" fill="#1565c0">&#x1F6E1; 出所表示</text>
+
+        <!-- 右腕 + 旗【宣】 -->
+        <rect x="240" y="155" width="30" height="80" rx="8" fill="url(#armorGrad)" stroke="#f57f17" stroke-width="1.5"/>
+        <!-- 旗のポール -->
+        <line x1="290" y1="30" x2="290" y2="250" stroke="#5d4037" stroke-width="4" stroke-linecap="round"/>
+        <!-- 旗 -->
+        <path d="M292,35 L340,50 L340,110 L292,95 Z" fill="#e53935" opacity=".9"/>
+        <path d="M292,40 L335,53 L335,105 L292,92 Z" fill="#ef5350"/>
+        <text x="314" y="70" text-anchor="middle" font-size="9" font-weight="900" fill="#fff">AD</text>
+        <text x="314" y="84" text-anchor="middle" font-size="7" font-weight="700" fill="#ffcdd2">宣伝</text>
+        <text x="290" y="265" text-anchor="middle" font-size="8" font-weight="700" fill="#c62828">&#x1F6A9; 広告宣伝</text>
+
+        <!-- ヘルメット -->
+        <ellipse cx="180" cy="115" rx="42" ry="35" fill="#bdbdbd" stroke="#9e9e9e" stroke-width="2"/>
+        <rect x="145" y="105" width="70" height="12" rx="3" fill="#e0e0e0"/>
+        <!-- バイザー -->
+        <rect x="155" y="100" width="50" height="22" rx="6" fill="#37474f"/>
+        <!-- 目の光 -->
+        <circle cx="168" cy="111" r="3" fill="#64ffda"/>
+        <circle cx="192" cy="111" r="3" fill="#64ffda"/>
+        <!-- ヘルメット装飾 -->
+        <ellipse cx="180" cy="82" rx="5" ry="12" fill="#ffd54f"/>
+
+        <!-- 脚 -->
+        <rect x="140" y="270" width="35" height="70" rx="8" fill="#616161" stroke="#424242" stroke-width="1.5"/>
+        <rect x="185" y="270" width="35" height="70" rx="8" fill="#616161" stroke="#424242" stroke-width="1.5"/>
+        <!-- ブーツ -->
+        <rect x="135" y="330" width="45" height="22" rx="8" fill="#424242"/>
+        <rect x="180" y="330" width="45" height="22" rx="8" fill="#424242"/>
+
+        <!-- ラベル -->
+        <rect x="110" y="370" width="140" height="30" rx="10" fill="#4a148c"/>
+        <text x="180" y="390" text-anchor="middle" font-size="13" font-weight="900" fill="#fff" letter-spacing="2">出品戦士</text>
+        <text x="180" y="415" text-anchor="middle" font-size="9" font-weight="700" fill="#9575cd">BRAND WARRIOR</text>
+      </svg>
+    </div>
+
+    <!-- 4つの武装写真 -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+
+      <!-- 盾＝出所表示 -->
+      <div style="flex:1;min-width:110px;max-width:160px;text-align:center;background:#fff;border-radius:14px;padding:12px 8px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+        <img src="https://images.unsplash.com/photo-1580974928064-f0aeef70895a?w=200&h=140&fit=crop&auto=format" alt="盾・紋章" style="width:100%;border-radius:10px;object-fit:cover;height:90px;" onerror="this.parentElement.innerHTML='<div style=background:#e3f2fd;border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;font-size:2.5rem>&#x1F6E1;</div>'+'<p style=font-size:.78rem;font-weight:700;color:#1565c0;margin:6px&#32;0&#32;0>&#x1F6E1;&#32;盾＝出所表示</p><p style=font-size:.7rem;color:#78909c;margin:2px&#32;0&#32;0>誰が作ったか示す</p>'">
+        <p style="font-size:.78rem;font-weight:700;color:#1565c0;margin:6px 0 0;">&#x1F6E1; 盾 ＝ <span style="font-size:1rem;">出</span>所表示</p>
+        <p style="font-size:.7rem;color:#78909c;margin:2px 0 0;">「誰が作ったか」を示す</p>
+      </div>
+
+      <!-- 鎧＝品質表示 -->
+      <div style="flex:1;min-width:110px;max-width:160px;text-align:center;background:#fff;border-radius:14px;padding:12px 8px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+        <img src="https://images.unsplash.com/photo-1569183091671-696402586b9c?w=200&h=140&fit=crop&auto=format" alt="金メダル・鎧" style="width:100%;border-radius:10px;object-fit:cover;height:90px;" onerror="this.parentElement.innerHTML='<div style=background:#fff8e1;border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;font-size:2.5rem>&#x1F3C5;</div>'+'<p style=font-size:.78rem;font-weight:700;color:#e65100;margin:6px&#32;0&#32;0>&#x1F3C5;&#32;鎧＝品質表示</p><p style=font-size:.7rem;color:#78909c;margin:2px&#32;0&#32;0>品質の高さを保証</p>'">
+        <p style="font-size:.78rem;font-weight:700;color:#e65100;margin:6px 0 0;">&#x1F3C5; 鎧 ＝ <span style="font-size:1rem;">品</span>質表示</p>
+        <p style="font-size:.7rem;color:#78909c;margin:2px 0 0;">「品質の高さ」を保証</p>
+      </div>
+
+      <!-- 旗＝広告宣伝 -->
+      <div style="flex:1;min-width:110px;max-width:160px;text-align:center;background:#fff;border-radius:14px;padding:12px 8px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+        <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=200&h=140&fit=crop&auto=format" alt="旗・プレゼン" style="width:100%;border-radius:10px;object-fit:cover;height:90px;" onerror="this.parentElement.innerHTML='<div style=background:#e8f5e9;border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;font-size:2.5rem>&#x1F6A9;</div>'+'<p style=font-size:.78rem;font-weight:700;color:#2e7d32;margin:6px&#32;0&#32;0>&#x1F6A9;&#32;旗＝広告宣伝</p><p style=font-size:.7rem;color:#78909c;margin:2px&#32;0&#32;0>名を世に知らしめる</p>'">
+        <p style="font-size:.78rem;font-weight:700;color:#2e7d32;margin:6px 0 0;">&#x1F6A9; 旗 ＝ 広告<span style="font-size:1rem;">宣</span>伝</p>
+        <p style="font-size:.7rem;color:#78909c;margin:2px 0 0;">「名を世に知らしめる」</p>
+      </div>
+
+      <!-- 宝石＝資産価値 -->
+      <div style="flex:1;min-width:110px;max-width:160px;text-align:center;background:#fff;border-radius:14px;padding:12px 8px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+        <img src="https://images.unsplash.com/photo-1515562141589-67f0d569b6e2?w=200&h=140&fit=crop&auto=format" alt="宝石・ダイヤモンド" style="width:100%;border-radius:10px;object-fit:cover;height:90px;" onerror="this.parentElement.innerHTML='<div style=background:#f3e5f5;border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;font-size:2.5rem>&#x1F48E;</div>'+'<p style=font-size:.78rem;font-weight:700;color:#7b1fa2;margin:6px&#32;0&#32;0>&#x1F48E;&#32;宝石＝資産価値</p><p style=font-size:.7rem;color:#78909c;margin:2px&#32;0&#32;0>ブランドエクイティ</p>'">
+        <p style="font-size:.78rem;font-weight:700;color:#7b1fa2;margin:6px 0 0;">&#x1F48E; 宝石 ＝ 資産価<span style="font-size:1rem;">値</span></p>
+        <p style="font-size:.7rem;color:#78909c;margin:2px 0 0;">「ブランドエクイティ」</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ストーリー -->
+  <div class="sec-title">📖 記憶ストーリー</div>
+  <div class="story-box">
+    <h2>「ブランド出品戦士」伝説</h2>
+    <p>
+      市場（マーケット）に現れた伝説の戦士、その名も<span class="highlight">ブランド出品戦士</span>。<br><br>
+      彼は4つの強力な武装を身につけて、偽物や無名商品と戦う。<br><br>
+      ① 左手の<span class="highlight">盾（たて）</span>には「MADE BY ○○」の紋章が刻まれている。
+      敵に向かって盾を構えると、誰でも「あ、あのブランドだ！」と一瞬でわかる。
+      これが<strong>出所表示機能</strong>（どこの誰が作ったか示す盾）。<br><br>
+      ② 全身を覆う<span class="highlight">黄金の鎧</span>は、身に着けるだけで「このブランドなら品質間違いなし」と証明してくれる。
+      これが<strong>品質表示機能</strong>（品質保証の鎧）。<br><br>
+      ③ 右手には高々とかかげた<span class="highlight">旗（はた）</span>。
+      市場を颯爽と歩くだけで旗がはためき、周囲に名を知らしめる。
+      これが<strong>広告宣伝機能</strong>（存在を知らせる旗）。<br><br>
+      ④ 胸元には輝く<span class="highlight">宝石</span>。これは戦士の「財産そのもの」。
+      ブランドの名声が高まるほど宝石は大きく輝き、企業の資産となる。
+      これが<strong>資産価値</strong>（ブランドエクイティの宝石）。<br><br>
+      4つをそろえた出品戦士は今日も市場で無敵だ。
+    </p>
+  </div>
+
+  <!-- 機能一覧テーブル -->
+  <div class="sec-title">📋 4機能の詳細</div>
+  <div class="func-table">
+    <table>
+      <thead>
+        <tr>
+          <th>記号</th><th>武装</th><th>機能名</th><th>ポイント</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="kana-badge">出</span></td>
+          <td>🛡️ 盾</td>
+          <td><strong>出所表示機能</strong></td>
+          <td>製品の製造元・出所を消費者に識別させる機能。類似品・偽物との差別化の第一歩。</td>
+        </tr>
+        <tr>
+          <td><span class="kana-badge">品</span></td>
+          <td>🥇 鎧</td>
+          <td><strong>品質表示機能</strong></td>
+          <td>品質水準を消費者に保証する機能。同じブランドなら品質が同じという信頼を生む。</td>
+        </tr>
+        <tr>
+          <td><span class="kana-badge">宣</span></td>
+          <td>🚩 旗</td>
+          <td><strong>広告宣伝機能</strong></td>
+          <td>ブランド名が広告効果を高める機能。ブランドが知られているほど広告が効きやすい。</td>
+        </tr>
+        <tr>
+          <td><span class="kana-badge">値</span></td>
+          <td>💎 宝石</td>
+          <td><strong>資産価値（ブランドエクイティ）</strong></td>
+          <td>ブランドそのものが無形の資産。M&Aや事業売却でも評価対象になる企業価値の源泉。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 記憶のコツ -->
+  <div class="tip-box">
+    <h3>💡 記憶のコツ：武装と機能の対応を1文で</h3>
+    <ul>
+      <li>🛡️ 盾＝<strong>出所</strong>：「盾の紋章（家紋）＝出所・家柄を示す」</li>
+      <li>🥇 鎧＝<strong>品質</strong>：「鎧が良ければ安心＝品質保証」</li>
+      <li>🚩 旗＝<strong>宣伝</strong>：「旗をかかげて名乗る＝広告宣伝」</li>
+      <li>💎 宝石＝<strong>資産</strong>：「宝石は換金できる財産＝ブランドエクイティ」</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

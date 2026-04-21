@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CML・リスクフリー資産シミュレーション - 中小企業診断士</title>
+<style>
+:root {
+  --blue: #2980b9; --blue-light: #d6eaf8; --blue-dark: #1a5276;
+  --green: #27ae60; --green-light: #d5f5e3;
+  --orange: #e67e22; --orange-light: #fdebd0;
+  --red: #e74c3c; --red-light: #fadbd8;
+  --purple: #8e44ad; --purple-light: #e8daef;
+  --teal: #1abc9c; --teal-light: #d1f2eb;
+  --gray: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf;
+  --white: #fff; --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:#f0f3f7;color:var(--gray);line-height:1.7}
+.header{background:linear-gradient(135deg,#1b2631 0%,#2c3e50 40%,#2980b9 100%);color:#fff;padding:1.2rem 1rem .8rem;text-align:center}
+.header h1{font-size:1.35rem;font-weight:800}
+.header p{font-size:.82rem;opacity:.9;margin-top:.15rem}
+.main{max-width:1100px;margin:.8rem auto;padding:0 .6rem}
+
+/* ===== Layout ===== */
+.top-layout{display:grid;grid-template-columns:1fr 340px;gap:.8rem;align-items:start;margin-bottom:.8rem}
+.canvas-wrap{background:var(--white);border-radius:var(--radius);padding:.8rem;box-shadow:var(--shadow)}
+.canvas-wrap h2{font-size:.95rem;font-weight:800;color:var(--blue-dark);margin-bottom:.4rem;text-align:center}
+canvas{width:100%;border-radius:8px;border:1px solid #e0e0e0;display:block}
+.canvas-legend{font-size:.68rem;color:var(--gray-mid);margin-top:.3rem;text-align:center;line-height:1.6}
+.right-panel{display:flex;flex-direction:column;gap:.6rem}
+.sim-panel{background:var(--white);border-radius:var(--radius);padding:.8rem 1rem;box-shadow:var(--shadow)}
+.sim-panel h3{font-size:.88rem;font-weight:700;color:var(--blue-dark);margin-bottom:.4rem}
+
+/* ===== Slider ===== */
+.slider-group{margin:.4rem 0}
+.slider-label{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;font-weight:600;margin-bottom:.2rem}
+.slider-value{color:#fff;padding:.1rem .5rem;border-radius:16px;font-size:.8rem;font-weight:700;min-width:50px;text-align:center}
+input[type="range"]{width:100%;height:6px;-webkit-appearance:none;appearance:none;border-radius:3px;outline:none;cursor:pointer}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--white);border:3px solid var(--blue);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.slider-ticks{display:flex;justify-content:space-between;font-size:.65rem;color:var(--gray-light)}
+.range-rf{background:linear-gradient(90deg,#ecf0f1,var(--teal))}
+.range-alloc{background:linear-gradient(90deg,var(--teal),var(--blue),var(--red))}
+
+/* ===== Result Cards ===== */
+.result-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem}
+.rc{background:var(--white);border-radius:8px;padding:.5rem .3rem;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);border-top:3px solid var(--gray-light)}
+.rc.rc-ret{border-top-color:var(--green)}.rc.rc-risk{border-top-color:var(--red)}.rc.rc-sharpe{border-top-color:var(--purple)}
+.rc .rc-label{font-size:.65rem;color:var(--gray-mid);font-weight:600}
+.rc .rc-num{font-size:1.1rem;font-weight:800}
+.rc .rc-sub{font-size:.6rem;color:var(--gray-light)}
+
+/* ===== Status Badge ===== */
+.status-badge{display:inline-block;padding:.2rem .7rem;border-radius:16px;font-size:.78rem;font-weight:700;color:#fff;margin-top:.2rem}
+.sb-safe{background:var(--teal)}.sb-market{background:var(--blue)}.sb-lever{background:var(--red)}
+
+/* ===== Comment ===== */
+.comment-box{border-radius:8px;padding:.5rem .7rem;font-size:.78rem;line-height:1.6;border:1.5px solid #a5d6a7;background:linear-gradient(135deg,#e8f5e9,#fff)}
+.comment-box strong{color:#1b5e20}
+
+/* ===== Bottom ===== */
+.bottom-layout{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem}
+.explain-section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-bottom:.8rem}
+.ex-card{border-radius:var(--radius);padding:.8rem .9rem;font-size:.82rem;line-height:1.7}
+.ex-card h4{font-size:.88rem;margin-bottom:.3rem}
+.ex-green{background:linear-gradient(135deg,#e8f5e9,#fff);border:1.5px solid #a5d6a7}.ex-green h4{color:#1b5e20}
+.ex-red{background:linear-gradient(135deg,#fce4ec,#fff);border:1.5px solid #ef9a9a}.ex-red h4{color:#b71c1c}
+.ex-purple{background:linear-gradient(135deg,var(--purple-light),#fff);border:1.5px solid #ce93d8}.ex-purple h4{color:#6c3483}
+
+/* ===== Scenario Table ===== */
+.sc-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.sc-table th{background:var(--blue);color:#fff;padding:.4rem;font-size:.75rem}
+.sc-table td{padding:.35rem .4rem;text-align:center;border-bottom:1px solid #e0e0e0}
+.sc-table tr:nth-child(even){background:var(--blue-light)}
+.sc-table .hl{background:#fff9c4 !important;font-weight:700}
+
+/* ===== Visual Diagram ===== */
+.diagram-box{background:var(--white);border-radius:var(--radius);padding:.8rem 1rem;box-shadow:var(--shadow);margin-bottom:.6rem}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}
+.flow-box{color:#fff;padding:.5rem .9rem;border-radius:8px;font-weight:700;font-size:.82rem;text-align:center;min-width:60px}
+.flow-box small{display:block;font-weight:400;font-size:.72rem;opacity:.9}
+.fb-teal{background:linear-gradient(135deg,var(--teal),#48c9b0)}
+.fb-blue{background:linear-gradient(135deg,var(--blue),#3498db)}
+.fb-red{background:linear-gradient(135deg,var(--red),#e57373)}
+.fb-green{background:linear-gradient(135deg,var(--green),#2ecc71)}
+.fb-purple{background:linear-gradient(135deg,var(--purple),#9b59b6)}
+.flow-arrow{font-size:1.2rem;margin:0 .3rem;font-weight:700;flex-shrink:0}
+
+.footer{text-align:center;padding:1rem;color:var(--gray-light);font-size:.75rem}
+@media(max-width:800px){.top-layout,.bottom-layout{grid-template-columns:1fr}.explain-section{grid-template-columns:1fr}.header h1{font-size:1.2rem}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CML・リスクフリー資産 シミュレーション</h1>
+  <p>安全資産と市場ポートフォリオの配分、借入レバレッジまで体感しよう</p>
+</div>
+
+<div class="main">
+
+  <!-- ===== TOP: Graph + Controls ===== -->
+  <div class="top-layout">
+
+    <!-- LEFT: Canvas -->
+    <div class="canvas-wrap">
+      <h2>&#x1F4C8; CML と 効率的フロンティア</h2>
+      <canvas id="cmlCanvas" width="600" height="440"></canvas>
+      <div class="canvas-legend">
+        <span style="color:var(--teal);">&#x25A0;</span> Rf&#x3000;
+        <span style="color:var(--blue);font-size:1.1em;">&#x25C9;</span> M（接点）&#x3000;
+        <span style="color:var(--red);">&#x25CF;</span> P（現在地）&#x3000;
+        <span style="color:#c0392b;">&#x2500;&#x2500;</span> CML&#x3000;
+        <span style="color:#27ae60;">&#x2500;&#x2500;</span> 効率的フロンティア&#x3000;
+        &#x203B; 用語の意味はページ下部の「用語辞典」を参照
+      </div>
+    </div>
+
+    <!-- RIGHT: Controls -->
+    <div class="right-panel">
+
+      <!-- Settings -->
+      <div class="sim-panel">
+        <h3>&#x1F3E6; M（市場ポートフォリオ）</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.8rem;">
+          <div style="padding:.3rem .5rem;background:var(--blue-light);border-radius:6px;border-left:3px solid var(--blue);">
+            <strong style="color:var(--blue);">収益率</strong> <strong id="mRetDisplay">7.50%</strong>
+          </div>
+          <div style="padding:.3rem .5rem;background:var(--blue-light);border-radius:6px;border-left:3px solid var(--blue);">
+            <strong style="color:var(--blue);">リスク</strong> <strong id="mRiskDisplay">11.69%</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sliders -->
+      <div class="sim-panel">
+        <h3>&#x1F39B; スライダーを動かそう</h3>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>&#x1F3E6; Rf</span>
+            <span class="slider-value" id="rfDisplay" style="background:var(--teal);">2.0%</span>
+          </div>
+          <input type="range" class="range-rf" id="rfSlider" min="0" max="50" value="20" oninput="update()">
+          <div class="slider-ticks"><span>0%</span><span>2.5%</span><span>5%</span></div>
+        </div>
+
+        <div class="slider-group" style="margin-top:.6rem;">
+          <div class="slider-label">
+            <span>&#x2696; Mへの配分</span>
+            <span class="slider-value" id="allocDisplay" style="background:var(--blue);">100%</span>
+          </div>
+          <input type="range" class="range-alloc" id="allocSlider" min="0" max="200" value="100" oninput="update()">
+          <div class="slider-ticks"><span>0%<br>(全額安全)</span><span>100%<br>(全額M)</span><span>200%<br>(借入)</span></div>
+        </div>
+
+        <div style="text-align:center;margin-top:.3rem;">
+          <span class="status-badge" id="statusBadge">&#x1F3E6; 市場PFと同じ</span>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="result-row">
+        <div class="rc rc-ret">
+          <div class="rc-label">期待収益率</div>
+          <div class="rc-num" id="resReturn" style="color:var(--green);">8.00%</div>
+          <div class="rc-sub">E(Rp)</div>
+        </div>
+        <div class="rc rc-risk">
+          <div class="rc-label">リスク</div>
+          <div class="rc-num" id="resRisk" style="color:var(--red);">15.00%</div>
+          <div class="rc-sub">&#x03C3;p</div>
+        </div>
+        <div class="rc rc-sharpe">
+          <div class="rc-label">シャープレシオ</div>
+          <div class="rc-num" id="resSharpe" style="color:var(--purple);">0.40</div>
+          <div class="rc-sub">CML上で一定</div>
+        </div>
+      </div>
+
+      <!-- Comment -->
+      <div class="comment-box" id="commentBox">
+        <strong>&#x1F4A1; いま何が起きている？</strong><br>
+        <span id="commentText">リスク資産100% = 市場ポートフォリオMそのもの。CML上のM点にいます。</span>
+      </div>
+
+      <!-- Allocation Visual -->
+      <div class="sim-panel" style="padding:.6rem .8rem;">
+        <h3 style="font-size:.82rem;margin-bottom:.3rem;">&#x1F4CA; 資金配分イメージ</h3>
+        <div style="display:flex;height:28px;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1);">
+          <div id="barRf" style="background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:700;transition:width .3s;width:0%;">Rf</div>
+          <div id="barM" style="background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:700;transition:width .3s;width:100%;">M 100%</div>
+          <div id="barBorrow" style="background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:700;transition:width .3s;width:0%;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--gray-mid);margin-top:.2rem;">
+          <span id="labelRf">安全資産: 0%</span>
+          <span id="labelM">市場PF: 100%</span>
+          <span id="labelBorrow" style="color:var(--red);">借入: 0%</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== BOTTOM ===== -->
+  <div class="bottom-layout">
+
+    <!-- Scenario Table -->
+    <div class="sim-panel">
+      <h3>&#x1F50D; 配分パターン一覧（Rf=2%時）</h3>
+      <table class="sc-table">
+        <tr><th>配分</th><th>安全資産</th><th>市場PF</th><th>収益率</th><th>リスク</th><th>状態</th></tr>
+        <tr id="scr0"><td>0%</td><td>100%</td><td>0%</td><td id="sc0r">2.0%</td><td id="sc0s">0%</td><td style="color:var(--teal);">全額安全</td></tr>
+        <tr id="scr50"><td>50%</td><td>50%</td><td>50%</td><td id="sc50r">5.0%</td><td id="sc50s">7.5%</td><td style="color:var(--green);">慎重派</td></tr>
+        <tr id="scr100"><td>100%</td><td>0%</td><td>100%</td><td id="sc100r">8.0%</td><td id="sc100s">15%</td><td style="color:var(--blue);">市場平均</td></tr>
+        <tr id="scr150"><td>150%</td><td>-50%</td><td>150%</td><td id="sc150r">11.0%</td><td id="sc150s">22.5%</td><td style="color:var(--orange);">借入投資</td></tr>
+        <tr id="scr200"><td>200%</td><td>-100%</td><td>200%</td><td id="sc200r">14.0%</td><td id="sc200s">30%</td><td style="color:var(--red);">フル借入</td></tr>
+      </table>
+    </div>
+
+    <!-- Story -->
+    <div class="sim-panel">
+      <h3>&#x1F35E; パン屋さんで理解するCML</h3>
+      <p style="font-size:.8rem;line-height:1.7;">
+        <strong>安全資産（Rf）</strong>= 銀行の定期預金。元本保証で安心だけど儲けはわずか。<br>
+        <strong>市場PF（M）</strong>= 「最強のパン品揃え」。リスクはあるがリターンも大きい。<br><br>
+        &#x2022; <strong>配分0%</strong>：全額を銀行に預ける。安心だけど儲からない。<br>
+        &#x2022; <strong>配分50%</strong>：半分を銀行、半分をお店に投資。バランス型。<br>
+        &#x2022; <strong>配分100%</strong>：全額をお店に投資。市場平均のリスクとリターン。<br>
+        &#x2022; <strong>配分150%</strong>：銀行から借りてまでお店に投資。<strong>レバレッジ</strong>。リターンもリスクもアップ。<br><br>
+        <strong>CML（資本市場線）</strong>は「銀行預金と最強のお店を混ぜた、すべての配分パターンを結ぶ直線」。<br>
+        この線の<strong>傾き = シャープレシオ</strong>（効率性）で、どの配分でも同じ！
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== How It Works ===== -->
+  <div class="diagram-box">
+    <h3 style="font-size:.9rem;font-weight:800;color:var(--blue-dark);margin-bottom:.5rem;text-align:center;">&#x1F500; CMLの仕組み：3つのゾーン</h3>
+    <div class="flow-row" style="gap:.4rem;flex-wrap:wrap;">
+      <div class="flow-box fb-teal" style="min-width:140px;">&#x1F3E6; 貸出ゾーン<small>配分 0〜100%</small></div>
+      <div class="flow-arrow" style="color:var(--blue);">&#8594;</div>
+      <div class="flow-box fb-blue" style="min-width:140px;border:3px solid #fff;box-shadow:0 0 12px rgba(41,128,185,0.5);">&#x1F3AF; M点（接点）<small>配分 100%</small></div>
+      <div class="flow-arrow" style="color:var(--red);">&#8594;</div>
+      <div class="flow-box fb-red" style="min-width:140px;">&#x1F4B3; 借入ゾーン<small>配分 100%超</small></div>
+    </div>
+
+    <!-- 初心者向け解説 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.8rem;font-size:.8rem;line-height:1.7;">
+
+      <div style="background:var(--teal-light);border-radius:8px;padding:.6rem .7rem;border-left:3px solid var(--teal);">
+        <strong style="color:var(--teal);">貸出ゾーンって？</strong><br>
+        持っているお金の一部を<strong>安全資産（定期預金や国債）</strong>に、残りを<strong>M（市場ポートフォリオ）</strong>に振り分ける状態。<br><br>
+        例えば配分50%なら、100万円のうち50万円を定期預金、50万円を投資信託に入れるイメージ。<br><br>
+        <strong>安全資産を「貸している」</strong>（=銀行に預けている）ので「貸出」ゾーンと呼ぶ。リスクはMより小さく、リターンも控えめ。
+      </div>
+
+      <div style="background:var(--blue-light);border-radius:8px;padding:.6rem .7rem;border-left:3px solid var(--blue);">
+        <strong style="color:var(--blue);">M点（接点）って？</strong><br>
+        手持ちのお金<strong>全額をM（市場ポートフォリオ）</strong>に投資した状態。安全資産ゼロ。<br><br>
+        このMは「リスク資産だけで作れる最高効率の組み合わせ」で、グラフ上ではCML（直線）が効率的フロンティア（曲線）に<strong>ちょうど触れる点</strong>。<br><br>
+        <strong>なぜ「接点」が大事？</strong> → この点を通る直線が、安全資産と組み合わせたときに最も効率が良い（=シャープレシオが最大の）ラインになるから。
+      </div>
+
+      <div style="background:var(--red-light);border-radius:8px;padding:.6rem .7rem;border-left:3px solid var(--red);">
+        <strong style="color:var(--red);">借入ゾーンって？</strong><br>
+        自分のお金だけでは足りず、<strong>安全資産の金利でお金を借りて</strong>、それもMに投資する状態。<br><br>
+        例えば配分150%なら、100万円持っていて、さらに50万円を年2%で借りて、合計150万円をMに投資。<br><br>
+        <strong>うまくいけば大きく儲かるが、失敗すると借金の返済+損失</strong>でダメージも大きい。これが「レバレッジ（てこの原理）」。
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Exam Points (用語説明なし・ポイントのみ) ===== -->
+  <div class="explain-section">
+    <div class="ex-card ex-red">
+      <h4>&#x26A0; 試験の引っかけ</h4>
+      &#x2022; CMLの横軸は&#x03B2; → <strong>&#x274C; &#x03C3;が正解</strong>（&#x03B2;はSML）<br>
+      &#x2022; 借入投資はCML上にない → <strong>&#x274C; CML上の延長にある</strong><br>
+      &#x2022; CMLの傾きは&#x03B2; → <strong>&#x274C; シャープレシオが正解</strong>
+    </div>
+    <div class="ex-card ex-purple">
+      <h4>&#x1F3AF; スライダーで確認してみよう</h4>
+      &#x2022; Rfを上げるとCMLの傾きが緩くなる<br>
+      &#x2022; 配分100%でP点がMにピタリと重なる<br>
+      &#x2022; 配分150%にして借入ゾーンを体感
+    </div>
+    <div class="ex-card ex-green">
+      <h4>&#x1F4DD; 公式</h4>
+      E(Rp) = Rf + w x (Rm - Rf)<br>
+      &#x03C3;p = w x &#x03C3;m<br>
+      <span style="font-size:.78rem;">CMLの傾き = (Rm - Rf) &#x00F7; &#x03C3;m</span>
+    </div>
+  </div>
+
+  <!-- ===== 用語辞典 ===== -->
+  <div class="sim-panel" style="margin-bottom:.8rem;">
+    <h3 style="font-size:1rem;">&#x1F4D6; 用語辞典 &#x2014; このページに出てくる用語をまとめて解説</h3>
+    <table class="sc-table" style="font-size:.82rem;">
+      <tr><th style="width:22%;">用語・記号</th><th style="width:38%;">正式名称</th><th>意味（かんたんに）</th></tr>
+      <tr>
+        <td><strong style="color:var(--teal);">Rf</strong></td>
+        <td>リスクフリーレート<br>(Risk-Free Rate)</td>
+        <td>安全資産の利回り。元本割れしない投資先（例：国債）の利率。リスクはゼロ。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--blue);">M</strong></td>
+        <td>市場ポートフォリオ<br>(Market Portfolio)</td>
+        <td>リスク資産だけで作れる「最もリスク効率が良い組み合わせ」。CMLと効率的フロンティアの<strong>接点</strong>。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#c0392b;">CML</strong></td>
+        <td>資本市場線<br>(Capital Market Line)</td>
+        <td>Rf（安全資産）とM（市場PF）を結ぶ<strong>直線</strong>。この線上の全ポートフォリオが最も効率的。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#27ae60;">効率的フロンティア</strong></td>
+        <td>Efficient Frontier</td>
+        <td>リスク資産だけの組み合わせのうち、同じリスクで<strong>最大リターン</strong>を実現する曲線（上半分のみ）。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--red);">P</strong></td>
+        <td>あなたのポートフォリオ</td>
+        <td>スライダーで設定した配分に対応するCML上の点。Rf〜Mの間、またはMの右側（借入）。</td>
+      </tr>
+      <tr>
+        <td><strong>&#x03C3;</strong>（シグマ）</td>
+        <td>標準偏差<br>(Standard Deviation)</td>
+        <td>リターンの「ブレ幅」= リスクの大きさ。大きいほど結果が不安定。CMLの横軸。</td>
+      </tr>
+      <tr>
+        <td><strong>&#x03B2;</strong>（ベータ）</td>
+        <td>ベータ値</td>
+        <td>市場全体に対してどれだけ連動するか。&#x03B2;=1は市場と同じ動き。CMLではなく<strong>SMLの横軸</strong>。</td>
+      </tr>
+      <tr>
+        <td><strong>E(Rm)</strong></td>
+        <td>市場の期待収益率</td>
+        <td>市場ポートフォリオMの平均的な儲け。</td>
+      </tr>
+      <tr>
+        <td><strong>w</strong></td>
+        <td>配分比率</td>
+        <td>資金のうちM（市場PF）に投資する割合。0%=全額安全資産、100%=全額M、100%超=借入投資。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--purple);">シャープレシオ</strong></td>
+        <td>Sharpe Ratio</td>
+        <td>リスク1単位あたりの超過リターン。= (Rm - Rf) &#x00F7; &#x03C3;m。CMLの<strong>傾き</strong>。大きいほど効率的。</td>
+      </tr>
+      <tr>
+        <td><strong>貸出ゾーン</strong></td>
+        <td>Lending Portfolio</td>
+        <td>配分0〜100%。安全資産とMを混ぜてリスクを抑える。グラフのMより<strong>左側</strong>。</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--red);">借入ゾーン</strong></td>
+        <td>Borrowing Portfolio</td>
+        <td>配分100%超。Rfの金利で借金し、Mに上乗せ投資。リスクもリターンも拡大。グラフのMより<strong>右側</strong>。</td>
+      </tr>
+      <tr>
+        <td><strong>レバレッジ</strong></td>
+        <td>Leverage</td>
+        <td>借入を使って自己資金以上に投資すること。テコの原理で利益も損失も拡大する。</td>
+      </tr>
+      <tr>
+        <td><strong>接点</strong></td>
+        <td>Tangent Point</td>
+        <td>CML（直線）が効率的フロンティア（曲線）にちょうど触れる1点。= M（市場ポートフォリオ）の位置。</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">財務・会計 CML・リスクフリー資産 シミュレーション</div>
+
+<script>
+// ===== 2 assets for efficient frontier =====
+const RA_=12, SA_=22, RB_=3, SB_=6, RHO=0.1;
+
+function efCalc(wA) {
+  const wB=1-wA, ret=wA*RA_+wB*RB_;
+  const v=(wA*SA_)**2+(wB*SB_)**2+2*wA*wB*SA_*SB_*RHO;
+  return {ret, risk:Math.sqrt(Math.max(v,0))};
+}
+
+// Find tangent portfolio M for given Rf (max Sharpe on frontier)
+function findTangent(rf) {
+  let bestSharpe=-999, bestW=0;
+  for(let i=0;i<=200;i++){
+    const w=i/200, p=efCalc(w);
+    if(p.risk>0.01){
+      const sh=(p.ret-rf)/p.risk;
+      if(sh>bestSharpe){bestSharpe=sh;bestW=w;}
+    }
+  }
+  const m=efCalc(bestW);
+  return {ret:m.ret, risk:m.risk, sharpe:bestSharpe, wA:bestW};
+}
+
+function update() {
+  const rf = parseInt(document.getElementById('rfSlider').value) / 10;
+  const w = parseInt(document.getElementById('allocSlider').value) / 100;
+
+  // Compute tangent point M dynamically based on Rf
+  const M = findTangent(rf);
+  const RM = M.ret, SM = M.risk;
+
+  const ret = rf + w * (RM - rf);
+  const risk = w * SM;
+  const sharpe = SM > 0 ? (RM - rf) / SM : 0;
+
+  // Displays
+  document.getElementById('rfDisplay').textContent = rf.toFixed(1) + '%';
+  const allocEl = document.getElementById('allocDisplay');
+  allocEl.textContent = Math.round(w * 100) + '%';
+  allocEl.style.background = w <= 1 ? (w < 0.5 ? 'var(--teal)' : 'var(--blue)') : 'var(--red)';
+
+  document.getElementById('resReturn').textContent = ret.toFixed(2) + '%';
+  document.getElementById('resRisk').textContent = risk.toFixed(2) + '%';
+  document.getElementById('resSharpe').textContent = sharpe.toFixed(2);
+
+  // Update M display
+  document.getElementById('mRetDisplay').textContent = RM.toFixed(2) + '%';
+  document.getElementById('mRiskDisplay').textContent = SM.toFixed(2) + '%';
+
+  // Status badge
+  const badge = document.getElementById('statusBadge');
+  if (w === 0) { badge.textContent = '&#x1F3E6; 全額安全資産'; badge.className = 'status-badge sb-safe'; }
+  else if (w <= 1) { badge.textContent = '&#x1F4B0; 安全資産 + 市場PF'; badge.className = 'status-badge sb-market'; }
+  else { badge.textContent = '&#x1F4B3; 借入してレバレッジ投資'; badge.className = 'status-badge sb-lever'; }
+
+  // Comment
+  let c = '';
+  if (w === 0) c = 'リスク資産ゼロ。安全だけどリターンはRfのみ。CML上の最左端（Rf点）にいます。';
+  else if (w < 0.5) c = '安全資産多め。リスクをかなり抑えた慎重型。CMLの左半分にいます。';
+  else if (w < 1) c = '安全資産と市場PFのミックス。リスクを調整しつつリターンも狙うバランス型。';
+  else if (w === 1) c = 'リスク資産100% = 市場ポートフォリオMそのもの。CML上のM点にいます。';
+  else if (w <= 1.5) c = '&#x26A0; 借入投資（レバレッジ）！Rfの金利で借りてMに追加投資。リターンもリスクもM以上に。CMLの右側に移動しています。';
+  else c = '&#x26A0; 高レバレッジ！大きな借入で高リスク・高リターン。うまくいけば大儲け、失敗すれば大損。CMLの右端付近です。';
+  document.getElementById('commentText').innerHTML = c;
+
+  // Allocation bar
+  const rfPct = Math.max(1 - w, 0);
+  const mPct = Math.min(w, 1);
+  const borPct = Math.max(w - 1, 0);
+  const total = rfPct + mPct + borPct;
+  document.getElementById('barRf').style.width = (rfPct/total*100) + '%';
+  document.getElementById('barRf').textContent = rfPct > 0.05 ? 'Rf ' + Math.round(rfPct*100) + '%' : '';
+  document.getElementById('barM').style.width = (mPct/total*100) + '%';
+  document.getElementById('barM').textContent = 'M ' + Math.round(mPct*100/(rfPct+mPct+borPct)*100/100*w > 1 ? mPct*100 : w*100) + '%';
+  document.getElementById('barM').textContent = 'M';
+  document.getElementById('barBorrow').style.width = (borPct/total*100) + '%';
+  document.getElementById('barBorrow').textContent = borPct > 0.01 ? '借入' : '';
+  document.getElementById('labelRf').textContent = '安全資産: ' + Math.round(Math.max(1-w,0)*100) + '%';
+  document.getElementById('labelM').textContent = '市場PF: ' + Math.round(Math.min(w,1)*100) + '%' + (w>1 ? ' (+' + Math.round((w-1)*100) + '%)' : '');
+  document.getElementById('labelBorrow').textContent = '借入: ' + (w > 1 ? Math.round((w-1)*100) + '%' : '0%');
+
+  // Scenario table
+  [[0,'0'],[0.5,'50'],[1,'100'],[1.5,'150'],[2,'200']].forEach(([ww, id]) => {
+    const rr = rf + ww * (RM - rf), ss = ww * SM;
+    document.getElementById('sc' + id + 'r').textContent = rr.toFixed(1) + '%';
+    document.getElementById('sc' + id + 's').textContent = ss.toFixed(1) + '%';
+    const row = document.getElementById('scr' + id);
+    row.className = (Math.abs(ww - w) < 0.03) ? 'hl' : '';
+  });
+
+  drawCML(rf, w, RM, SM);
+}
+
+function drawCML(rf, currentW, RM, SM) {
+  const canvas = document.getElementById('cmlCanvas');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  const pad = {top:30, right:25, bottom:45, left:55};
+  const gW = W-pad.left-pad.right, gH = H-pad.top-pad.bottom;
+  const xMin=0, xMax=30, yMin=-1, yMax=16;
+  const toX = v => pad.left + (v-xMin)/(xMax-xMin)*gW;
+  const toY = v => pad.top + (1-(v-yMin)/(yMax-yMin))*gH;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='#ecf0f1'; ctx.lineWidth=1;
+  for(let x=0;x<=30;x+=5){ctx.beginPath();ctx.moveTo(toX(x),pad.top);ctx.lineTo(toX(x),H-pad.bottom);ctx.stroke();}
+  for(let y=0;y<=16;y+=2){ctx.beginPath();ctx.moveTo(pad.left,toY(y));ctx.lineTo(W-pad.right,toY(y));ctx.stroke();}
+
+  // Axes
+  ctx.strokeStyle='#7f8c8d'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad.left,pad.top); ctx.lineTo(pad.left,H-pad.bottom); ctx.lineTo(W-pad.right,H-pad.bottom); ctx.stroke();
+  ctx.fillStyle='#5d6d7e'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+  for(let x=0;x<=30;x+=5) ctx.fillText(x+'%',toX(x),H-pad.bottom+15);
+  ctx.textAlign='right';
+  for(let y=0;y<=16;y+=2) ctx.fillText(y+'%',pad.left-6,toY(y)+3);
+  ctx.textAlign='center'; ctx.fillStyle='#2c3e50'; ctx.font='bold 11px sans-serif';
+  ctx.fillText('標準偏差 (リスク &#x03C3;)',W/2,H-5);
+  ctx.save(); ctx.translate(14,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('期待収益率',0,0); ctx.restore();
+
+  // ===== Efficient Frontier (full egg-shaped curve) =====
+  const efPts = [];
+  for(let i=0;i<=200;i++){const wA=i/200;const p=efCalc(wA);efPts.push(p);}
+  let minIdx=0; efPts.forEach((p,i)=>{if(p.risk<efPts[minIdx].risk)minIdx=i;});
+
+  // Lower part (inefficient) - thin gray
+  ctx.strokeStyle='#bdc3c7'; ctx.lineWidth=1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  for(let i=0;i<=minIdx;i++){i===0?ctx.moveTo(toX(efPts[i].risk),toY(efPts[i].ret)):ctx.lineTo(toX(efPts[i].risk),toY(efPts[i].ret));}
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Upper part (efficient frontier) - thick green
+  ctx.strokeStyle='#27ae60'; ctx.lineWidth=3;
+  ctx.beginPath();
+  for(let i=minIdx;i<efPts.length;i++){i===minIdx?ctx.moveTo(toX(efPts[i].risk),toY(efPts[i].ret)):ctx.lineTo(toX(efPts[i].risk),toY(efPts[i].ret));}
+  ctx.stroke();
+
+  // Frontier labels
+  const eLbl = Math.min(minIdx + Math.floor((200-minIdx)*0.7), 199);
+  ctx.fillStyle='#27ae60'; ctx.font='bold 10px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('効率的フロンティア', toX(efPts[eLbl].risk)+6, toY(efPts[eLbl].ret)+4);
+  ctx.font='8px sans-serif'; ctx.fillStyle='#27ae60';
+  ctx.fillText('(リスク資産だけの最適曲線)', toX(efPts[eLbl].risk)+6, toY(efPts[eLbl].ret)+15);
+
+  if(minIdx > 3) {
+    const iLbl = Math.floor(minIdx*0.35);
+    ctx.fillStyle='#bdc3c7'; ctx.font='9px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('(非効率な部分)', toX(efPts[iLbl].risk)+6, toY(efPts[iLbl].ret)+12);
+  }
+
+  // ===== Lending/Borrowing zone shading =====
+  if(SM > 0.5) {
+    ctx.fillStyle='rgba(26,188,156,0.08)';
+    ctx.fillRect(toX(0), pad.top, toX(SM)-toX(0), gH);
+    ctx.fillStyle='rgba(231,76,60,0.05)';
+    ctx.fillRect(toX(SM), pad.top, toX(xMax)-toX(SM), gH);
+    ctx.fillStyle='#1abc9c'; ctx.font='8px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('貸出ゾーン', toX(SM*0.45), pad.top+12);
+    ctx.fillStyle='#e74c3c';
+    ctx.fillText('借入ゾーン', toX(SM+(xMax-SM)*0.5), pad.top+12);
+  }
+
+  // ===== CML (straight line from Rf through M, clipped to graph area) =====
+  const cmlSlope = SM > 0 ? (RM - rf) / SM : 0;
+  // Clip CML end to stay within xMax and yMax
+  let cmlEndX = xMax - 2;
+  const cmlEndY = rf + cmlSlope * cmlEndX;
+  if (cmlEndY > yMax - 0.5) { cmlEndX = (yMax - 0.5 - rf) / cmlSlope; }
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(pad.left, pad.top, gW, gH);
+  ctx.clip();
+
+  ctx.strokeStyle='#c0392b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(rf));
+  ctx.lineTo(toX(cmlEndX), toY(rf + cmlSlope * cmlEndX));
+  ctx.stroke();
+
+  ctx.restore();
+
+  // CML label (positioned within visible area)
+  const cmlLblX = Math.min(cmlEndX * 0.8, xMax - 5);
+  const cmlLblY = rf + cmlSlope * cmlLblX;
+  if (cmlLblY < yMax - 1) {
+    ctx.fillStyle='#c0392b'; ctx.font='bold 10px sans-serif'; ctx.textAlign='right';
+    ctx.fillText('資本市場線（CML）', toX(cmlLblX)-2, toY(cmlLblY)-10);
+    ctx.font='8px sans-serif';
+    ctx.fillText('= Rfから接点Mを結ぶ直線', toX(cmlLblX)-2, toY(cmlLblY)-0);
+  }
+
+  // ===== Rf point =====
+  ctx.fillStyle='#1abc9c';
+  const rfx = toX(0), rfy = toY(rf);
+  ctx.beginPath(); ctx.arc(rfx, rfy, 7, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Rf', rfx, rfy+3);
+  ctx.fillStyle='#1abc9c'; ctx.font='bold 9px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('Rf（安全資産）', rfx+12, rfy-3);
+  ctx.font='8px sans-serif';
+  ctx.fillText('リスク=0, 収益率='+rf.toFixed(1)+'%', rfx+12, rfy+9);
+
+  // ===== M point: tangent point emphasis =====
+  const mx = toX(SM), my = toY(RM);
+
+  // Outer pulsing rings
+  ctx.strokeStyle='rgba(41,128,185,0.25)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(mx, my, 18, 0, Math.PI*2); ctx.stroke();
+  ctx.strokeStyle='rgba(41,128,185,0.12)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(mx, my, 25, 0, Math.PI*2); ctx.stroke();
+
+  // Filled M circle
+  ctx.fillStyle='#2980b9';
+  ctx.beginPath(); ctx.arc(mx, my, 10, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(mx, my, 10, 0, Math.PI*2); ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('M', mx, my+4);
+
+  // "接点" label below M
+  ctx.fillStyle='#e74c3c'; ctx.font='bold 12px sans-serif';
+  ctx.fillText('接点', mx, my+30);
+  ctx.font='8px sans-serif'; ctx.fillStyle='#e74c3c';
+  ctx.fillText('(CMLがフロンティアに接する点)', mx, my+41);
+
+  // Annotation box for M (upper-left of M)
+  const annX = mx - 120, annY = my - 55;
+  // Arrow
+  ctx.strokeStyle='#2980b9'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(mx-10, my-9); ctx.lineTo(annX+110, annY+32); ctx.stroke();
+  // Box
+  const boxW=130, boxH=42, bx2=annX, by2=annY, br2=6;
+  ctx.fillStyle='rgba(41,128,185,0.93)';
+  ctx.beginPath();
+  ctx.moveTo(bx2+br2,by2); ctx.lineTo(bx2+boxW-br2,by2); ctx.quadraticCurveTo(bx2+boxW,by2,bx2+boxW,by2+br2);
+  ctx.lineTo(bx2+boxW,by2+boxH-br2); ctx.quadraticCurveTo(bx2+boxW,by2+boxH,bx2+boxW-br2,by2+boxH);
+  ctx.lineTo(bx2+br2,by2+boxH); ctx.quadraticCurveTo(bx2,by2+boxH,bx2,by2+boxH-br2);
+  ctx.lineTo(bx2,by2+br2); ctx.quadraticCurveTo(bx2,by2,bx2+br2,by2);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 9px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('M = 市場ポートフォリオ', bx2+6, by2+14);
+  ctx.font='8px sans-serif';
+  ctx.fillText('CMLと効率的フロンティアの', bx2+6, by2+26);
+  ctx.fillText('接点 = 最もリスク効率が良い点', bx2+6, by2+37);
+
+  // Current point P (clipped to graph area)
+  const pRisk = currentW * SM;
+  const pRet = rf + currentW * (RM - rf);
+  const pxClip = Math.min(pRisk, xMax - 1);
+  const pyClip = Math.min(pRet, yMax - 0.5);
+  const px = toX(pxClip), py = toY(pyClip);
+
+  // Only draw P if within visible range
+  if (pRisk <= xMax && pRet <= yMax) {
+    // Dashed guide lines
+    ctx.setLineDash([3,3]); ctx.strokeStyle='rgba(231,76,60,0.4)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, toY(yMin)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(toX(xMin), py); ctx.stroke();
+    ctx.setLineDash([]);
+    // P circle
+    ctx.fillStyle='#e74c3c';
+    ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('P', px, py+3);
+  } else {
+    // P is off-screen: show arrow at edge
+    const edgeX = Math.min(toX(pRisk), toX(xMax)-15);
+    const edgeY = Math.max(toY(pRet), pad.top+10);
+    ctx.fillStyle='#e74c3c'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('P &#x27A1;', edgeX, edgeY);
+  }
+}
+
+update();
+window.addEventListener('resize', update);
+</script>
+</body>
+</html>

@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>利益分析・利益差異分析 - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange-main) 50%, var(--orange-light) 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem;
+}
+
+/* ===== Agent Discussion ===== */
+.agent-discussion {
+  max-width: 920px; margin: 1rem auto; padding: 0 0.8rem;
+}
+.agent-chat {
+  background: var(--white); border-radius: var(--radius); padding: 1rem; margin: 0.5rem 0;
+  box-shadow: var(--shadow); border-left: 4px solid var(--gray-light);
+}
+.agent-chat.pm { border-left-color: #e74c3c; }
+.agent-chat.planner { border-left-color: #2980b9; }
+.agent-chat.creator { border-left-color: #27ae60; }
+.agent-chat.critic { border-left-color: #8e44ad; }
+.agent-name { font-size: 0.78rem; font-weight: 700; margin-bottom: 0.3rem; }
+.agent-name.pm { color: #e74c3c; }
+.agent-name.planner { color: #2980b9; }
+.agent-name.creator { color: #27ae60; }
+.agent-name.critic { color: #8e44ad; }
+.agent-chat p { font-size: 0.88rem; line-height: 1.7; }
+.discussion-toggle {
+  max-width: 920px; margin: 0.5rem auto; padding: 0 0.8rem; text-align: center;
+}
+.discussion-toggle button {
+  background: linear-gradient(135deg, #5d6d7e, #2c3e50); color: white;
+  border: none; padding: 0.6rem 1.5rem; border-radius: 20px; cursor: pointer;
+  font-size: 0.85rem; font-weight: 600; transition: all 0.3s;
+}
+.discussion-toggle button:hover { opacity: 0.85; transform: scale(1.02); }
+.agent-discussion.collapsed { display: none; }
+
+/* ===== Speech Bubbles ===== */
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before { left: -14px; border-right-color: var(--white); }
+.bubble-wrap.right .bubble-body::before { right: -14px; border-left-color: var(--white); }
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-body strong { color: #e65100; }
+
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+
+/* ===== Tabs ===== */
+.tab-container { max-width: 920px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.78rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+.tab-panel.theme-purple { background: #f5eef8; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== Section Titles ===== */
+.section-title {
+  font-size: 1.2rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); color: white; }
+.st-icon { font-size: 1.1rem; }
+
+/* ===== Cards ===== */
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+/* ===== Alert / Tip boxes ===== */
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-box strong { color: inherit; }
+
+/* ===== Visual boxes ===== */
+.vs-box {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;
+  margin: 0.8rem 0;
+}
+.vs-side {
+  background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center;
+  box-shadow: var(--shadow);
+}
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+
+/* ===== Diagram / Flow ===== */
+.diagram {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram-title {
+  text-align: center; font-weight: 700; font-size: 1rem;
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0;
+}
+.dt-blue { color: var(--blue-dark); }
+.dt-red { color: var(--red-dark); }
+.dt-green { color: var(--green-dark); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.88rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); box-shadow: 0 2px 6px rgba(41,128,185,0.3); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); box-shadow: 0 2px 6px rgba(231,76,60,0.3); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); box-shadow: 0 2px 6px rgba(39,174,96,0.3); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); box-shadow: 0 2px 6px rgba(230,126,34,0.3); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); box-shadow: 0 2px 6px rgba(142,68,173,0.3); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+
+/* ===== Tables ===== */
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.9rem; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-red th { background: var(--red-main); color: white; }
+.tbl-red tr:nth-child(even) { background: var(--red-light); }
+.tbl-purple th { background: var(--purple-main); color: white; }
+.tbl-purple tr:nth-child(even) { background: var(--purple-light); }
+
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.8rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 0.95rem; font-weight: 600; text-align: center;
+}
+
+.point-box {
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0;
+}
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #ce93d8; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+
+/* ===== Mnemonic ===== */
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.5rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.15em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+
+/* ===== Scene ===== */
+.scene {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center;
+}
+.scene-img { font-size: 3rem; margin-bottom: 0.3rem; }
+.scene-caption { font-size: 0.85rem; color: var(--gray-mid); }
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+
+/* ===== Quiz ===== */
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0; transition: border-color 0.3s;
+}
+.quiz-num {
+  display: inline-block; background: var(--orange-main); color: white;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-purple { background: var(--purple-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.9rem;
+}
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation {
+  display: none; margin-top: 0.7rem; padding: 0.8rem;
+  border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7;
+}
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score {
+  text-align: center; padding: 1rem; background: var(--orange-pale);
+  border-radius: var(--radius); margin-top: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none;
+}
+
+/* ===== Simulation ===== */
+.sim-step {
+  background: var(--white); border-radius: var(--radius); padding: 1rem 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); border-left: 4px solid var(--green-main);
+}
+.sim-step h4 { color: var(--green-dark); font-size: 0.95rem; margin-bottom: 0.5rem; }
+.sim-result {
+  background: linear-gradient(135deg, #e8f5e9, #fff);
+  border: 2px solid var(--green-main); border-radius: var(--radius);
+  padding: 1rem; margin: 0.8rem 0; text-align: center;
+}
+.sim-result .big-num { font-size: 1.8rem; font-weight: 800; }
+.sim-result .big-num.positive { color: var(--green-main); }
+.sim-result .big-num.negative { color: var(--red-main); }
+
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+
+@media (max-width: 600px) {
+  .two-col, .vs-box { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.68rem; padding: 0.7rem 0.3rem; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 78%; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>利益分析・利益差異分析</h1>
+  <div class="subtitle">中小企業診断士 財務・会計 | 予算と実績のギャップを読み解く</div>
+  <div class="badge">全6タブ構成 学習サイト</div>
+</div>
+
+<!-- ===== Agent Discussion ===== -->
+<div class="discussion-toggle">
+  <button onclick="toggleDiscussion()">&#x1F916; エージェント会議を見る / 閉じる</button>
+</div>
+<div class="agent-discussion collapsed" id="agentDiscussion">
+  <div class="agent-chat pm">
+    <div class="agent-name pm">&#x1F4CB; PM（プロジェクトマネージャー）</div>
+    <p>今回のテーマは「利益分析・利益差異分析」です。ユーザーさんは<strong>勘定科目が覚えられない</strong>という悩みを持っています。差異分析は計算が絡むので、まず全体像をシンプルに見せてから段階的に深めましょう。5タブ構成で進めます。</p>
+  </div>
+  <div class="agent-chat planner">
+    <div class="agent-name planner">&#x1F4D0; 計画エージェント</div>
+    <p>構成案です。タブ1「入門」は差異分析とは何かを3つのポイントだけで。タブ2「基本事項」で売上高差異・原価差異の公式と体系図。タブ3「シミュレーション」で町のパン屋を題材に実数字で差異を計算。タブ4「クイズ」は親しみやすい事例ベースで。タブ5「実例で学ぶ」は実在企業のケースで理解を深める方針でいきます。</p>
+  </div>
+  <div class="agent-chat creator">
+    <div class="agent-name creator">&#x1F3A8; 作成エージェント</div>
+    <p>了解です。差異分析は「予算 vs 実績」の比較がコアなので、ビジュアルで見せます。公式はボックス図で直感的に。シミュレーションはパン屋「もちもちベーカリー」で数字を追えるようにします。クイズは答えをA〜Dにバラけさせます。</p>
+  </div>
+  <div class="agent-chat critic">
+    <div class="agent-name critic">&#x1F9D0; 評価エージェント</div>
+    <p>気になる点：入門タブが難しくなりすぎないよう注意。「価格差異」「数量差異」という用語自体が初学者にはハードルなので、まずは「値段のズレ」「量のズレ」という日常語で導入してください。あと、クイズの正解がBに偏らないようバラけさせること。</p>
+  </div>
+  <div class="agent-chat pm">
+    <div class="agent-name pm">&#x1F4CB; PM（プロジェクトマネージャー）</div>
+    <p>評価エージェントの指摘を反映します。入門タブは専門用語を極力使わず、日常の言葉で説明。タブ1の最終確認として、他タブの要点がカバーされているか確認済みです。それでは作成開始！</p>
+  </div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="red" onclick="switchTab(0)">&#x1F476; ゼロから理解</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本事項</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F3EA; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(4)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F30D; 実例で学ぶ</button>
+  </nav>
+
+  <!-- ==================== TAB 0: ゼロから理解 (RED) ==================== -->
+  <div class="tab-panel active theme-red" id="tab0">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F476; このタブで学ぶこと</h4>
+      <ul>
+        <li>「予算」「実績」「原価」など<strong>基本用語の意味</strong>がわかる</li>
+        <li>なぜ「差異を分解する」のか<strong>理由</strong>がわかる</li>
+        <li>小学校の算数レベルで<strong>はじめての差異計算</strong>ができる</li>
+      </ul>
+    </div>
+
+    <!-- ===== セクション1: 用語の意味 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4D6;</span> まず言葉の意味を知ろう</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        「予算」「実績」「原価」...カタカナも漢字も多くて何が何だか...
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        お小遣い帳で考えてみよう。全部、日常の言葉に置き換えられるよ！
+      </div>
+    </div>
+
+    <table class="tbl-red">
+      <tr><th style="width:22%;">用語</th><th style="width:38%;">意味</th><th style="width:40%;">お小遣い帳でいうと</th></tr>
+      <tr><td><strong>予算</strong></td><td>「これくらいになるはず」という<strong>計画の数字</strong></td><td>今月のお小遣い計画表</td></tr>
+      <tr><td><strong>実績</strong></td><td>「実際にこうなった」という<strong>結果の数字</strong></td><td>月末に集計した実際の収支</td></tr>
+      <tr><td><strong>売上高</strong></td><td>お客さんからもらった<strong>お金の合計</strong></td><td>バイト代の合計</td></tr>
+      <tr><td><strong>原価</strong></td><td>商品を作るのに<strong>かかったお金</strong></td><td>材料費や交通費</td></tr>
+      <tr><td><strong>売上総利益</strong></td><td>売上高 − 原価 ＝ <strong>もうけ</strong></td><td>バイト代 − 交通費 ＝ 手取り</td></tr>
+      <tr><td><strong>標準原価</strong></td><td>「本来これくらいで作れるはず」という<strong>原価の目安</strong></td><td>「交通費は月5,000円のはず」</td></tr>
+      <tr><td><strong>差異</strong></td><td>予算と実績の<strong>ズレ</strong></td><td>計画と実際の差額</td></tr>
+    </table>
+
+    <!-- 図1: 用語の関係フロー -->
+    <div class="diagram">
+      <div class="diagram-title dt-red">利益ができるまでの流れ</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue" style="min-width:110px;">&#x1F4B0; 売上高<small>お客さんからのお金</small></div>
+        <div class="flow-arrow" style="color:var(--red-main);">&#x2212;</div>
+        <div class="flow-box fb-red" style="min-width:110px;">&#x1F3ED; 原価<small>作るのにかかったお金</small></div>
+        <div class="flow-arrow" style="color:var(--red-main);">＝</div>
+        <div class="flow-box fb-green" style="min-width:110px;">&#x2728; 売上総利益<small>もうけ！</small></div>
+      </div>
+      <p style="text-align:center;font-size:0.82rem;color:var(--gray-mid);margin-top:0.5rem;">この「もうけ」が予定と違ったとき、原因を探るのが差異分析！</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：レモネード屋さん</div>
+        夏祭りでレモネードを売る。1杯200円×100杯＝売上高20,000円。レモンと砂糖代が8,000円＝原価。もうけ＝20,000−8,000＝<strong>12,000円（売上総利益）</strong>
+      </div>
+    </div>
+
+    <!-- ===== セクション2: なぜ差異分析が必要？ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x2753;</span> なぜ「分解」が必要なの？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        合計の差額がわかればいいんじゃないの？なんでわざわざ分けるの？
+      </div>
+    </div>
+
+    <!-- 図2: 分解しないとダメな理由 ビフォーアフター -->
+    <div class="diagram">
+      <div class="diagram-title dt-red">分解しないと原因が分からない！</div>
+      <div class="two-col">
+        <div style="background:#fce4ec;border:2px solid #e74c3c;border-radius:8px;padding:0.8rem;text-align:center;">
+          <div style="font-weight:700;color:#922b21;margin-bottom:0.4rem;">分解しない場合</div>
+          <p style="font-size:0.85rem;">「売上が2万円減った」</p>
+          <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.3rem;">→ で、<strong>どうすればいいの？</strong><br>値段を上げる？もっと売る？<br>対策が決められない...</p>
+        </div>
+        <div style="background:#e8f5e9;border:2px solid #27ae60;border-radius:8px;padding:0.8rem;text-align:center;">
+          <div style="font-weight:700;color:#1e8449;margin-bottom:0.4rem;">分解した場合</div>
+          <p style="font-size:0.85rem;">「値段のズレ：−5,000円」<br>「量のズレ：−15,000円」</p>
+          <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.3rem;">→ <strong>量の減少が主な原因！</strong><br>集客策を打とう！<br>対策がハッキリ分かる</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        病院と同じだよ。「体調が悪い」だけじゃ治療できない。「熱がある」「咳が出る」と<strong>原因を分けるから正しい薬を出せる</strong>。差異分析も同じで、ズレを分けるから正しい対策が打てるんだ！
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：学校のテスト</div>
+        「合計点が下がった」だけでは何を勉強すればいいか分からない。「数学が−20点、英語は+5点」と科目別に見れば、数学を重点的に勉強すればOKと分かる！
+      </div>
+    </div>
+
+    <!-- ===== セクション3: 最も簡単な例 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F34E;</span> りんごで差異分析をやってみよう</h2>
+
+    <div class="card card-red">
+      <h4>&#x1F4CB; お店の計画（予算）</h4>
+      <p>りんごを <strong>1個100円</strong> で <strong>10個</strong> 売る予定<br>
+      → 予算の売上高 ＝ 100円 × 10個 ＝ <strong>1,000円</strong></p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F4B0; 実際の結果（実績）</h4>
+      <p>りんごを <strong>1個80円</strong> で <strong>8個</strong> 売った<br>
+      → 実績の売上高 ＝ 80円 × 8個 ＝ <strong>640円</strong></p>
+    </div>
+
+    <div class="sim-result">
+      <p>売上高のズレ（差異）</p>
+      <div class="big-num negative">&#x2212;360円（不利差異）</div>
+      <p style="font-size:0.82rem;color:var(--gray-mid);">640 − 1,000 ＝ &#x2212;360円</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        360円少ないのは分かったけど...値段のせい？量のせい？
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        それを調べるのが差異分析！次のセクションで<strong>3ステップ</strong>で分解してみよう。
+      </div>
+    </div>
+
+    <!-- ===== セクション4: 差異の基本ルール ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4CF;</span> 差異の基本ルール</h2>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">有利？不利？の判定ルール</div>
+      <table class="tbl-red">
+        <tr><th></th><th>有利差異</th><th>不利差異</th></tr>
+        <tr><td><strong>売上が...</strong></td><td style="color:#1e8449;font-weight:700;">予算より多い</td><td style="color:#922b21;font-weight:700;">予算より少ない</td></tr>
+        <tr><td><strong>コストが...</strong></td><td style="color:#1e8449;font-weight:700;">予算より少ない</td><td style="color:#922b21;font-weight:700;">予算より多い</td></tr>
+      </table>
+      <p style="text-align:center;font-size:0.82rem;color:var(--gray-mid);margin-top:0.5rem;">コスト側は「少ない方がうれしい」から逆になるだけ！</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：コンビニのバイト</div>
+        「今月のバイト代が予算より多かった」→ 有利（うれしい）。「スマホ代が予算より高かった」→ 不利（かなしい）。売上とコストで嬉しさが逆なだけ！
+      </div>
+    </div>
+
+    <!-- ===== セクション5: はじめての計算 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F522;</span> はじめての差異計算（3ステップ）</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        さっきのりんごの例で実際に計算してみよう！<br>予算：<strong>100円 × 10個</strong>、実績：<strong>80円 × 8個</strong>
+      </div>
+    </div>
+
+    <!-- 図3: 差異計算3ステップ -->
+    <div class="sim-step">
+      <h4>Step 1：値段のズレを計算する</h4>
+      <div class="formula-box" style="font-size:0.88rem;">（実際の値段 &#x2212; 予算の値段）&#x00D7; 実際に売った数<br>＝（80円 &#x2212; 100円）&#x00D7; 8個 ＝ <strong>&#x2212;160円</strong></div>
+      <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.3rem;">値段が20円安くなった × 8個 → 160円分の損。<strong>不利差異</strong></p>
+    </div>
+
+    <div class="sim-step">
+      <h4>Step 2：量のズレを計算する</h4>
+      <div class="formula-box" style="font-size:0.88rem;">（実際に売った数 &#x2212; 予算の数）&#x00D7; 予算の値段<br>＝（8個 &#x2212; 10個）&#x00D7; 100円 ＝ <strong>&#x2212;200円</strong></div>
+      <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.3rem;">2個少なく売った × 100円 → 200円分の損。<strong>不利差異</strong></p>
+    </div>
+
+    <div class="sim-step">
+      <h4>Step 3：合計を確認する</h4>
+      <div class="formula-box" style="font-size:0.88rem;">値段のズレ（&#x2212;160）+ 量のズレ（&#x2212;200）＝ <strong>&#x2212;360円</strong></div>
+      <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.3rem;">合計がさっきの差異（&#x2212;360円）と一致！分解成功！</p>
+    </div>
+
+    <div class="sim-result">
+      <p>分解結果</p>
+      <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin:0.5rem 0;">
+        <div style="background:#fce4ec;border-radius:8px;padding:0.5rem 1rem;text-align:center;">
+          <div style="font-size:0.78rem;color:#922b21;font-weight:700;">値段のズレ</div>
+          <div style="font-size:1.3rem;font-weight:800;color:#e74c3c;">&#x2212;160円</div>
+        </div>
+        <div style="font-size:1.5rem;font-weight:800;color:var(--gray-mid);line-height:3rem;">+</div>
+        <div style="background:#fce4ec;border-radius:8px;padding:0.5rem 1rem;text-align:center;">
+          <div style="font-size:0.78rem;color:#922b21;font-weight:700;">量のズレ</div>
+          <div style="font-size:1.3rem;font-weight:800;color:#e74c3c;">&#x2212;200円</div>
+        </div>
+        <div style="font-size:1.5rem;font-weight:800;color:var(--gray-mid);line-height:3rem;">＝</div>
+        <div style="background:#fadbd8;border-radius:8px;padding:0.5rem 1rem;text-align:center;">
+          <div style="font-size:0.78rem;color:#922b21;font-weight:700;">合計</div>
+          <div style="font-size:1.3rem;font-weight:800;color:#e74c3c;">&#x2212;360円</div>
+        </div>
+      </div>
+      <p style="font-size:0.82rem;color:var(--gray-mid);">量の減少（&#x2212;200円）のほうが大きい → <strong>集客が課題！</strong></p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>ポイント</strong>：値段のズレでは「実際の数」をかけて、量のズレでは「予算の値段」をかける。このルールはずっと同じだよ！
+      </div>
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">値段のズレ → 実際の数をかける<br>量のズレ → 予算の値段をかける</div>
+      <div class="desc">この2つのルールがすべての差異分析の基本！</div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x1F3AD; 変な光景で覚えよう：冷蔵庫の中の教室</h4>
+      <p style="font-size:0.88rem;line-height:1.7;">冷蔵庫を開けたら、中に<strong>小さな教室</strong>がある。黒板に「<strong>ネ（値段）ジ（実際）</strong>」と書いてある。先生は<strong>巨大なネジ</strong>の姿をしていて、生徒に向かって「値段のズレには実際の数をかけろ！」と叫んでいる。隣の冷凍室には「<strong>リョウ（量）ヨ（予算）</strong>」と書かれた<strong>旅行カバン</strong>がキンキンに凍っている。「量のズレには予算をかけろ！」とカバンが震えている。</p>
+      <p style="font-size:0.82rem;color:var(--purple-dark);font-weight:700;margin-top:0.3rem;">&#x1F9CA; ネジ先生 → 値段×実際 ／ 凍った旅行カバン → 量×予算</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：文房具の仕入れ</div>
+        学校の備品で「ノート1冊150円×200冊」を予定。実際は「130円×180冊」だった。値段のズレ＝（130−150）×180＝−3,600円（有利：安く買えた）。量のズレ＝（180−200）×150＝−3,000円（有利：節約できた）。
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>ゼロから理解のまとめ</strong><br>
+      &#x2022; <strong>予算</strong>＝計画 ／ <strong>実績</strong>＝結果 ／ <strong>差異</strong>＝そのズレ<br>
+      &#x2022; 売上総利益 ＝ 売上高 − 原価<br>
+      &#x2022; ズレを<strong>分解する理由</strong>＝原因を特定して対策を打つため<br>
+      &#x2022; 計算は「<strong>値段のズレ</strong>」と「<strong>量のズレ</strong>」の2つだけ<br>
+      ここまでOKなら、次の「入門」タブへ進もう！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 1: 入門 (GREEN) ==================== -->
+  <div class="tab-panel theme-green" id="tab1">
+
+    <div class="point-box pb-green">
+      <h4>&#x1F331; このタブのゴール</h4>
+      <p>「利益差異分析ってなに？」を<strong>3つだけ</strong>おさえれば大丈夫！</p>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x2753;</span> そもそも利益差異分析ってなに？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        利益差異分析って名前からしてむずかしそう...
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        かんたんに言うと「<strong>予定どおりに儲かったかな？</strong>」をチェックすることだよ。予定と実際のズレを「差異」って呼ぶだけ！
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x1F4CB;</div>
+          <div class="label">予算（計画）<br>100万円もうかるはず</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x2194;&#xFE0F;</div>
+          <div class="label">くらべる</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4B0;</div>
+          <div class="label">実績（結果）<br>80万円しかもうからなかった</div>
+        </div>
+      </div>
+      <div class="scene-caption" style="margin-top:0.8rem;">&#8594; <strong style="color:var(--red-main);">差額の20万円が「差異」</strong>。なぜズレたかを分析する！</div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3AF;</span> おさえるのは3つだけ！</h2>
+
+    <div class="card card-green">
+      <h4>&#x2776; ズレの原因は2つしかない</h4>
+      <p>利益が予定とちがう原因は<strong>「値段のズレ」</strong>か<strong>「量のズレ」</strong>のどちらか。</p>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F3EA; 例：りんごを1個100円で100個売る予定だった → 1個90円でしか売れなかった（値段のズレ）、80個しか売れなかった（量のズレ）</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x2777; 売上のズレとコストのズレに分ける</h4>
+      <p>利益 ＝ 売上 − コスト。だから<strong>売上側のズレ</strong>と<strong>コスト側のズレ</strong>の2方向から見る。</p>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">売上が予想より少なかった？ コストが予想より高くついた？ どっちが原因かハッキリさせる！</p>
+    </div>
+
+    <div class="card card-orange">
+      <h4>&#x2778; 有利差異と不利差異</h4>
+      <p><strong>有利差異</strong>＝予算よりもうかった（うれしいズレ）<br>
+      <strong>不利差異</strong>＝予算よりもうからなかった（かなしいズレ）</p>
+    </div>
+
+    <!-- 討議追加：有利/不利の比較図 -->
+    <div class="diagram">
+      <div class="diagram-title dt-green">有利差異 vs 不利差異のカンタン判定</div>
+      <div class="two-col">
+        <div style="background:#e8f5e9;border:2px solid #27ae60;border-radius:8px;padding:0.8rem;text-align:center;">
+          <div style="font-size:1.3rem;font-weight:800;color:#1e8449;">有利差異</div>
+          <p style="font-size:0.82rem;margin-top:0.3rem;">売上が予算より<strong>多い</strong><br>コストが予算より<strong>少ない</strong></p>
+        </div>
+        <div style="background:#fce4ec;border:2px solid #e74c3c;border-radius:8px;padding:0.8rem;text-align:center;">
+          <div style="font-size:1.3rem;font-weight:800;color:#922b21;">不利差異</div>
+          <p style="font-size:0.82rem;margin-top:0.3rem;">売上が予算より<strong>少ない</strong><br>コストが予算より<strong>多い</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">引っかけ注意</div>
+        コスト側は<strong>符号が逆</strong>！コストが増える＝利益が減る＝<strong>不利</strong>差異。学校のテストで「80点とれた＝有利」「出費が増えた＝不利」と覚えよう！
+      </div>
+    </div>
+
+    <!-- 討議追加：売上とコストの構造対比 -->
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        コスト側も実は<strong>同じ構造</strong>。売上＝単価×数量。コスト＝単価×消費量。どちらも「値段のズレ」と「量のズレ」に分けるだけ！タブ2で詳しくやるよ。
+      </div>
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">値段 &#x00D7; 量 = 売上</div>
+      <div class="desc">差異は「<strong>値段のズレ</strong>」と「<strong>量のズレ</strong>」に分けるだけ！</div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x1F3AD; 変な光景で覚えよう：お風呂に浮かぶ値札と数量</h4>
+      <p style="font-size:0.88rem;line-height:1.7;">あなたが湯船に浸かっていると、お湯の上に巨大な<strong>値札</strong>（&#x1F3F7;）がプカプカ浮いている。値札を持ち上げると裏側に<strong>大量のりんご</strong>がぶら下がっている。「値段」と「量」がセットでくっついて、お風呂から出てこない。<br>→ <strong>売上 ＝ 値段 × 量</strong>。ズレは必ずこの2つに分かれる！</p>
+      <p style="font-size:0.82rem;color:var(--purple-dark);font-weight:700;margin-top:0.3rem;">&#x1F6C1; 湯船の値札 → 値段のズレ ／ ぶら下がるりんご → 量のズレ</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方のコツ</div>
+        フリマアプリで不用品を売るとき、「<strong>思ったより安くしか売れなかった（値段のズレ）</strong>」「<strong>思ったほど売れなかった（量のズレ）</strong>」。この2つ、日常でもよくある感覚だよね！
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-green">利益差異分析の全体マップ（これだけ！）</div>
+      <div style="display:flex; flex-direction:column; gap:0.5rem; align-items:center;">
+        <div class="flow-box fb-orange" style="width:70%;">&#x1F4B5; 利益のズレ（利益差異）</div>
+        <div style="font-size:1.2rem; color:var(--green-main);">&#x2B07;&#xFE0F; 分解すると</div>
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;">
+          <div class="flow-box fb-blue" style="min-width:140px;">&#x1F4C8; 売上のズレ<small>販売価格差異<br>販売数量差異</small></div>
+          <div class="flow-box fb-red" style="min-width:140px;">&#x1F4C9; コストのズレ<small>原価差異<br>（価格・数量）</small></div>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:0.78rem;color:var(--gray-mid);margin-top:0.5rem;">※ 各差異の詳しい分類はタブ2「基本事項」で解説します</p>
+    </div>
+
+    <div class="alert-tip">
+      <strong>入門まとめ</strong><br>
+      &#x2022; 利益差異分析 ＝ <strong>予算と実績のズレを調べる</strong>こと<br>
+      &#x2022; ズレの原因は<strong>「値段」か「量」</strong><br>
+      &#x2022; <strong>売上側</strong>と<strong>コスト側</strong>の両方から見る<br>
+      &#x2022; いいズレ＝<strong>有利差異</strong>、わるいズレ＝<strong>不利差異</strong><br>
+      基本はこれだけ！次のタブで公式を見ていこう。
+    </div>
+
+    <!-- 討議追加：実例で定着 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：回転寿司の売上分析</div>
+        回転寿司チェーンが「今月は売上が低い...」と悩んだとき、原因は「客単価が下がった（値段のズレ）」のか「来店数が減った（量のズレ）」のか。POSデータで分けて調べると対策が見えてくる！
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: 基本事項 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab2">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F4D6; このタブで学ぶこと</h4>
+      <ul>
+        <li>売上高差異を<strong>販売価格差異</strong>と<strong>販売数量差異</strong>に分解できる</li>
+        <li>売上総利益差異の体系を理解する</li>
+        <li>原価差異（<strong>材料費・労務費・製造間接費</strong>）の各公式を覚える</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4C8;</span> 売上高差異の分解</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        売上のズレは「<strong>販売価格差異</strong>」と「<strong>販売数量差異</strong>」に分かれるよ。値段と量、どっちが原因かハッキリさせるのがポイント！
+      </div>
+    </div>
+
+    <div class="formula-box">売上高差異 ＝ 実際売上高 &#x2212; 予算売上高</div>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>&#x1F4B2; 販売価格差異</h4>
+        <div class="formula-box" style="font-size:0.85rem;">（実際単価 &#x2212; 予算単価）&#x00D7; 実際販売数量</div>
+        <p style="font-size:0.85rem;margin-top:0.4rem;">値段を変えたことによるズレ。実際に売った数量をかける。</p>
+      </div>
+      <div class="card card-orange">
+        <h4>&#x1F4E6; 販売数量差異</h4>
+        <div class="formula-box" style="font-size:0.85rem;">（実際数量 &#x2212; 予算数量）&#x00D7; 予算単価</div>
+        <p style="font-size:0.85rem;margin-top:0.4rem;">売れた量が予定と違ったことによるズレ。予算単価をかける。</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方</div>
+        <strong>価格差異は「実際数量」</strong>をかける。<strong>数量差異は「予算単価」</strong>をかける。<br>
+        覚え方：「<strong>カ（価格）ジ（実際）</strong>」「<strong>スウ（数量）ヨ（予算）</strong>」→ 「家事は数よ！」<br><br>
+        &#x1F3AD;<strong>変な光景</strong>：駅のホームでお母さんが<strong>掃除機</strong>をかけている（家事）。通りすがりの人が「何してるんですか？」と聞くと、お母さんは振り返って「<strong>家事は数よ！</strong>」と怒鳴る。ホームの電光掲示板には「価格→実際、数量→予算」とデカデカと表示されている。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">ボックス図で理解する売上高差異</div>
+      <table style="width:100%;border-collapse:collapse;text-align:center;">
+        <tr>
+          <td style="width:20%;"></td>
+          <td style="width:40%;border:2px solid #2980b9;background:#d6eaf8;padding:0.8rem;">
+            <strong>&#x2460; 販売価格差異</strong><br>
+            <span style="font-size:0.82rem;">（実際単価−予算単価）×実際数量</span>
+          </td>
+          <td style="width:40%;"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td style="border:2px solid #e67e22;border-top:none;background:#fdebd0;padding:0.8rem;" colspan="2">
+            <strong>&#x2461; 販売数量差異</strong><br>
+            <span style="font-size:0.82rem;">（実際数量−予算数量）×予算単価</span>
+          </td>
+        </tr>
+      </table>
+      <p style="text-align:center;font-size:0.82rem;color:var(--gray-mid);margin-top:0.5rem;">横軸：数量 ／ 縦軸：単価　で面積が売上高。差異はそれぞれの「短冊」の面積！</p>
+    </div>
+
+    <!-- 討議追加：ボックス図の読み方補足 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        「短冊の面積」ってどういうこと？
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        長方形の面積 ＝ たて × よこ だよね。売上高もまったく同じで<strong>「単価 × 数量」の面積</strong>。予算と実績で長方形の大きさが違うから、そのズレを2つの細長い帯（短冊）に分けて見るのがボックス図なんだ！
+      </div>
+    </div>
+
+    <!-- 討議追加：実例 ECサイト -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：ECサイトの売上分析</div>
+        Amazonのセール。値引きで単価が下がっても注文数が爆増すれば売上は伸びる。価格差異は不利でも、数量差異がそれを上回る有利ならトータルOK！
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CA;</span> 売上総利益差異の体系</h2>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">利益差異分析ツリー</div>
+      <div style="display:flex;flex-direction:column;gap:0.3rem;align-items:center;">
+        <div class="flow-box fb-orange" style="width:75%;">売上総利益差異</div>
+        <div style="font-size:1rem;">&#x2B07;&#xFE0F;</div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;">
+            <div class="flow-box fb-blue" style="min-width:130px;">売上高差異</div>
+            <div style="font-size:0.9rem;">&#x2B07;&#xFE0F;</div>
+            <div style="display:flex;gap:0.4rem;">
+              <div class="flow-box fb-blue" style="font-size:0.75rem;padding:0.4rem 0.6rem;">販売価格差異</div>
+              <div class="flow-box fb-blue" style="font-size:0.75rem;padding:0.4rem 0.6rem;">販売数量差異</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;">
+            <div class="flow-box fb-red" style="min-width:130px;">原価差異</div>
+            <div style="font-size:0.9rem;">&#x2B07;&#xFE0F;</div>
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:center;">
+              <div class="flow-box fb-red" style="font-size:0.75rem;padding:0.4rem 0.6rem;">材料費差異</div>
+              <div class="flow-box fb-red" style="font-size:0.75rem;padding:0.4rem 0.6rem;">労務費差異</div>
+              <div class="flow-box fb-red" style="font-size:0.75rem;padding:0.4rem 0.6rem;">製造間接費差異</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3ED;</span> 原価差異の分解</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        原価差異もぜんぶ「<strong>価格（単価）のズレ</strong>」と「<strong>量（能率）のズレ</strong>」に分解するパターンだよ！
+      </div>
+    </div>
+
+    <table class="tbl-blue">
+      <tr><th>原価の種類</th><th>価格系の差異</th><th>量系の差異</th></tr>
+      <tr>
+        <td><strong>直接材料費</strong></td>
+        <td><strong>価格差異</strong><br><span style="font-size:0.82rem;">（実際単価−標準単価）×実際消費量</span></td>
+        <td><strong>数量差異</strong><br><span style="font-size:0.82rem;">（実際消費量−標準消費量）×標準単価</span></td>
+      </tr>
+      <tr>
+        <td><strong>直接労務費</strong></td>
+        <td><strong>賃率差異</strong><br><span style="font-size:0.82rem;">（実際賃率−標準賃率）×実際作業時間</span></td>
+        <td><strong>時間差異（作業時間差異）</strong><br><span style="font-size:0.82rem;">（実際時間−標準時間）×標準賃率</span></td>
+      </tr>
+      <tr>
+        <td><strong>製造間接費</strong></td>
+        <td><strong>予算差異</strong><br><span style="font-size:0.82rem;">実際発生額−予算許容額</span></td>
+        <td><strong>能率差異</strong> + <strong>操業度差異</strong><br><span style="font-size:0.82rem;">（後述）</span></td>
+      </tr>
+    </table>
+
+    <div class="mnemonic">
+      <div class="big">材 = 価 × 数 ／ 労 = 賃 × 時 ／ 間 = 予 × 能 × 操</div>
+      <div class="desc">材料は「<strong>価</strong>格と<strong>数</strong>量」、労務は「<strong>賃</strong>率と<strong>時</strong>間」、間接費は「<strong>予</strong>算・<strong>能</strong>率・<strong>操</strong>業度」</div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x1F3AD; 変な光景で覚えよう：回転寿司のレーン3本</h4>
+      <p style="font-size:0.88rem;line-height:1.7;">回転寿司屋に入ったら、レーンが3本ある。<br>
+      &#x1F3E3; <strong>1本目のレーン「材料レーン」</strong>：お皿の上に<strong>価格シール</strong>と<strong>数の子</strong>が一緒に乗って回っている。<strong>「価格と数量！」</strong>と叫びながら流れてくる。<br>
+      &#x1F477; <strong>2本目のレーン「労務レーン」</strong>：お皿の上で<strong>金色のコイン（賃金）</strong>が<strong>時計</strong>の上に乗っている。時計の針がグルグル回りながら「<strong>賃率と時間！</strong>」と言っている。<br>
+      &#x1F3ED; <strong>3本目のレーン「間接費レーン」</strong>：なぜか<strong>お坊さん</strong>がレーンに座って流れてくる。手に<strong>予算書</strong>を持ち、<strong>能面</strong>をかぶり、<strong>操縦桿</strong>を握っている。「<strong>予算・能率・操業度！</strong>」とお経のように唱えている。</p>
+      <p style="font-size:0.82rem;color:var(--purple-dark);font-weight:700;margin-top:0.3rem;">&#x1F363; 材料＝価格シール＋数の子 ／ 労務＝コイン＋時計 ／ 間接費＝予算書＋能面＋操縦桿のお坊さん</p>
+    </div>
+
+    <!-- 討議追加：原価差異と売上差異の共通パターン比較図 -->
+    <div class="diagram">
+      <div class="diagram-title dt-blue">売上差異と原価差異は同じパターン！</div>
+      <div class="two-col">
+        <div style="background:#d6eaf8;border:2px solid #2980b9;border-radius:8px;padding:0.8rem;text-align:center;">
+          <div style="font-weight:700;color:#1a5276;margin-bottom:0.3rem;">売上高差異</div>
+          <p style="font-size:0.82rem;"><strong>価格差異</strong>：（実際−予算）×<span style="color:#e74c3c;font-weight:700;">実際数量</span><br><strong>数量差異</strong>：（実際−予算）×<span style="color:#2980b9;font-weight:700;">予算単価</span></p>
+        </div>
+        <div style="background:#fadbd8;border:2px solid #e74c3c;border-radius:8px;padding:0.8rem;text-align:center;">
+          <div style="font-weight:700;color:#922b21;margin-bottom:0.3rem;">原価差異（材料費）</div>
+          <p style="font-size:0.82rem;"><strong>価格差異</strong>：（実際−標準）×<span style="color:#e74c3c;font-weight:700;">実際消費量</span><br><strong>数量差異</strong>：（実際−標準）×<span style="color:#2980b9;font-weight:700;">標準単価</span></p>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:0.78rem;color:var(--gray-mid);margin-top:0.5rem;">どちらも「価格系→実際量」「数量系→標準（予算）単価」をかける！</p>
+    </div>
+
+    <!-- 討議追加：実例 料理 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：料理のレシピと原価差異</div>
+        レシピに「バター50g」と書いてあるのに、実際は60g使った。これが材料の<strong>数量差異（不利）</strong>。バターの値段が上がっていたら<strong>価格差異（不利）</strong>も同時に発生！
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x2699;</span> 製造間接費差異（3分法）</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F4CA; 製造間接費差異の3つ</h4>
+      <ul>
+        <li><strong>予算差異</strong>＝実際発生額 − 予算許容額（変動費率×実際操業度＋固定費予算額）</li>
+        <li><strong>能率差異</strong>＝（実際操業度 − 標準操業度）× 標準配賦率</li>
+        <li><strong>操業度差異</strong>＝（基準操業度 − 実際操業度）× 固定費率</li>
+      </ul>
+    </div>
+
+    <!-- 討議追加：用語補足 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        「予算許容額」「標準配賦率」「固定費率」...用語が多すぎてパンクしそう...
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>予算許容額</strong>＝「その稼働量なら本来このくらいかかるはず」という目安コスト。<strong>標準配賦率</strong>＝変動費率＋固定費率の合計。<strong>固定費率</strong>＝固定費予算額÷基準操業度。まず「名前＝意味」をセットで押さえよう！
+      </div>
+    </div>
+
+    <!-- 討議追加：3分法フロー図 -->
+    <div class="diagram">
+      <div class="diagram-title dt-blue">製造間接費差異 3分法の判定フロー</div>
+      <div class="flow-row">
+        <div class="flow-box fb-orange" style="min-width:110px;">&#x1F4B0; 実際発生額<small>いくらかかった？</small></div>
+        <div class="flow-arrow" style="color:var(--blue-main);">&#8594;</div>
+        <div class="flow-box fb-blue" style="min-width:110px;">&#x1F4CB; 予算許容額<small>かかるはずの額</small></div>
+        <div class="flow-arrow" style="color:var(--blue-main);">&#8594;</div>
+        <div class="flow-box fb-green" style="min-width:110px;">&#x1F3AF; 標準配賦額<small>あるべき額</small></div>
+        <div class="flow-arrow" style="color:var(--blue-main);">&#8594;</div>
+        <div class="flow-box fb-purple" style="min-width:110px;">&#x1F3E2; 固定費予算<small>基準の額</small></div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">
+        <span style="background:#fff3e0;border:1px solid #ffcc80;border-radius:4px;padding:0.2rem 0.6rem;font-size:0.78rem;font-weight:700;">予算差異</span>
+        <span style="background:#e3f2fd;border:1px solid #90caf9;border-radius:4px;padding:0.2rem 0.6rem;font-size:0.78rem;font-weight:700;">能率差異</span>
+        <span style="background:#e8daef;border:1px solid #ce93d8;border-radius:4px;padding:0.2rem 0.6rem;font-size:0.78rem;font-weight:700;">操業度差異</span>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        工場をアパートに例えると：<br>
+        <strong>予算差異</strong>＝電気代が思ったより高かった（ムダ遣い）<br>
+        <strong>能率差異</strong>＝作業が遅くて残業した（効率の悪さ）<br>
+        <strong>操業度差異</strong>＝空き部屋があって家賃が入らなかった（稼働率の低さ）
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>試験の頻出ポイント！</strong><br>
+      &#x2022; 価格系の差異 → <strong>実際数量</strong>をかける<br>
+      &#x2022; 数量系の差異 → <strong>標準単価</strong>をかける<br>
+      この「<strong>どっちをかけるか</strong>」が最もよく問われる！
+    </div>
+
+    <div class="alert-exam">
+      <strong>試験でよく出る！</strong><br>
+      &#x2022; 売上高差異の分解（販売価格差異・販売数量差異）<br>
+      &#x2022; 直接材料費差異・直接労務費差異の計算<br>
+      &#x2022; 製造間接費の3分法
+    </div>
+
+    <!-- 討議追加：実例 スポーツジム -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：スポーツジムの間接費</div>
+        ジムの月額固定費（家賃・設備リース）は会員が0人でもかかる。会員が想定より少ないと、1人あたりに割り当てる固定費が膨らむ。これがまさに<strong>操業度差異（不利）</strong>だよ！
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: シミュレーション (GREEN) ==================== -->
+  <div class="tab-panel theme-green" id="tab3">
+
+    <div class="point-box pb-green">
+      <h4>&#x1F3EA; このタブで学ぶこと</h4>
+      <ul>
+        <li>町のパン屋さんの数字で<strong>利益差異分析を実際にやってみる</strong></li>
+        <li>ズレの原因を<strong>具体的な経営判断</strong>に結びつける</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F35E;</span> もちもちベーカリーの悩み</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">もちもちベーカリー店長</div>
+        先月の利益が予算より少なかったんです... どこが悪かったのか教えてください！
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-green">もちもちベーカリーのデータ</div>
+      <table class="tbl-green">
+        <tr><th></th><th>予算</th><th>実績</th><th>差異</th></tr>
+        <tr><td><strong>食パン販売単価</strong></td><td>300円</td><td>280円</td><td style="color:var(--red-main);">&#x25B2;20円ダウン</td></tr>
+        <tr><td><strong>販売数量</strong></td><td>1,000個</td><td>900個</td><td style="color:var(--red-main);">&#x25B2;100個ダウン</td></tr>
+        <tr><td><strong>売上高</strong></td><td>300,000円</td><td>252,000円</td><td style="color:var(--red-main);">&#x25B2;48,000円</td></tr>
+        <tr><td><strong>材料費単価（小麦粉/個）</strong></td><td>80円</td><td>90円</td><td style="color:var(--red-main);">&#x25B2;10円アップ</td></tr>
+        <tr><td><strong>材料消費量</strong></td><td>1,000個分</td><td>950個分</td><td style="color:var(--green-main);">&#x25BC;50個分節約</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F50D;</span> Step1: 売上高差異を分解</h2>
+
+    <div class="sim-step">
+      <h4>&#x2460; 販売価格差異</h4>
+      <div class="formula-box" style="font-size:0.88rem;">（実際単価 &#x2212; 予算単価）&#x00D7; 実際数量 ＝（280 &#x2212; 300）&#x00D7; 900 ＝ <strong>&#x2212;18,000円</strong></div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4AC; 近所にコンビニが開店して、値下げせざるを得なかった → <strong>不利差異</strong></p>
+    </div>
+
+    <div class="sim-step">
+      <h4>&#x2461; 販売数量差異</h4>
+      <div class="formula-box" style="font-size:0.88rem;">（実際数量 &#x2212; 予算数量）&#x00D7; 予算単価 ＝（900 &#x2212; 1,000）&#x00D7; 300 ＝ <strong>&#x2212;30,000円</strong></div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4AC; 値下げしても客足が戻りきらなかった → <strong>不利差異</strong></p>
+    </div>
+
+    <div class="sim-result">
+      <p>売上高差異の合計</p>
+      <div class="big-num negative">&#x2212;48,000円（不利差異）</div>
+      <p style="font-size:0.82rem;color:var(--gray-mid);">&#x2212;18,000 + (&#x2212;30,000) = &#x2212;48,000 &#x2714;</p>
+    </div>
+
+    <!-- 討議追加：実例 映画館 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：映画館のチケット値引き</div>
+        映画館がレイトショー割引（1,900円→1,300円）を始めたら、来場者は増えたが客単価は下がった。販売価格差異（不利）と販売数量差異（有利）が同時に発生する典型パターン！
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F50D;</span> Step2: 原価差異を分解（直接材料費）</h2>
+
+    <div class="sim-step">
+      <h4>&#x2462; 材料価格差異</h4>
+      <p style="font-size:0.82rem;color:var(--gray-mid);margin-bottom:0.3rem;">※ 標準消費量 ＝ 予算時の1個あたり材料量 × 予算数量で設定。今回は1,000個分。</p>
+      <div class="formula-box" style="font-size:0.88rem;">（実際単価 &#x2212; 標準単価）&#x00D7; 実際消費量 ＝（90 &#x2212; 80）&#x00D7; 950 ＝ <strong>+9,500円</strong></div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4AC; 小麦粉の仕入れ値が高騰した → <strong>不利差異</strong>（コスト増はマイナス）</p>
+    </div>
+
+    <div class="sim-step">
+      <h4>&#x2463; 材料数量差異</h4>
+      <div class="formula-box" style="font-size:0.88rem;">（実際消費量 &#x2212; 標準消費量）&#x00D7; 標準単価 ＝（950 &#x2212; 1,000）&#x00D7; 80 ＝ <strong>&#x2212;4,000円</strong></div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4AC; 販売が減ったが、材料のロスも減らせた → <strong>有利差異</strong>（コスト減はプラス）</p>
+    </div>
+
+    <div class="sim-result">
+      <p>材料費差異の合計</p>
+      <div class="big-num negative">+5,500円（不利差異）</div>
+      <p style="font-size:0.82rem;color:var(--gray-mid);">9,500 + (&#x2212;4,000) = +5,500（コスト増＝利益への不利影響）</p>
+    </div>
+
+    <!-- 討議追加：全体サマリー図 -->
+    <div class="diagram">
+      <div class="diagram-title dt-green">差異の全体サマリー</div>
+      <div class="flow-row" style="gap:0.3rem;">
+        <div class="flow-box fb-blue" style="min-width:130px;">売上高差異<small>&#x2212;48,000円</small></div>
+        <div class="flow-arrow" style="color:var(--green-main);">+</div>
+        <div class="flow-box fb-red" style="min-width:130px;">材料費差異<small>+5,500円（不利）</small></div>
+        <div class="flow-arrow" style="color:var(--green-main);">＝</div>
+        <div class="flow-box fb-orange" style="min-width:130px;">利益への影響<small>&#x2212;53,500円</small></div>
+      </div>
+    </div>
+
+    <!-- 討議追加：符号の注意 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">符号の注意！</div>
+        コスト側で<strong>+（プラス）はコスト増＝不利差異</strong>。売上側で<strong>−（マイナス）は売上減＝不利差異</strong>。向きが逆なので注意！<br>
+        ※ 簡略化のため今回は材料費のみ分析。実際には労務費・間接費も分析します。
+      </div>
+    </div>
+
+    <!-- 討議追加：実例 コンビニ -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：コンビニの仕入れ管理</div>
+        コンビニのおにぎり。お米の仕入れ値が上がった（価格差異・不利）けど、ロスを減らす発注精度を上げた（数量差異・有利）。もちもちベーカリーと同じ構図だね！
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4AC;</span> 店長への経営アドバイス</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">コンサルタント</div>
+        分析結果をまとめると：<br>
+        &#x2022; 売上の落ち込みが<strong>最大の原因</strong>（&#x2212;48,000円）<br>
+        &#x2022; 特に<strong>販売数量の減少</strong>（&#x2212;30,000円）が大きい<br>
+        &#x2022; 材料費の高騰も追い打ち（+5,500円のコスト増）<br>
+        &#x2022; ただし材料のロス削減は<strong>良い取り組み</strong>（&#x2212;4,000円の節約）<br><br>
+        <strong>提案：</strong>値下げ競争を避け、「焼きたて」「国産小麦」など<strong>付加価値で差別化</strong>して客数アップを狙いましょう！
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>中小企業診断士としてのポイント</strong><br>
+      差異分析は「<strong>どこに手を打つべきか</strong>」を特定するツール。数字を出すだけでなく、<strong>原因→対策</strong>まで提案できることが診断士に求められる力です。
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: クイズ (ORANGE) ==================== -->
+  <div class="tab-panel theme-orange" id="tab4">
+
+    <div class="point-box pb-orange">
+      <h4>&#x1F3AF; このタブで学ぶこと</h4>
+      <ul>
+        <li>タブ1〜3の内容を<strong>全8問のクイズ</strong>で総チェック</li>
+        <li>身近な事例でイメージしながら解ける問題！</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> 理解度チェック</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        全8問！身近な例から本試験レベルまで。答えはバラバラだから、ちゃんと考えてね！
+      </div>
+    </div>
+
+    <!-- Q1: 正解A -->
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div><span class="quiz-cat qc-green">入門</span>
+      <div class="quiz-question">あなたはメルカリで不用品を1個2,000円で50個売る予定でしたが、実際は1個1,800円で40個売れました。「販売価格差異」はいくらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q1', 0)">
+        <li data-idx="0">&#x2212;8,000円（不利差異）</li>
+        <li data-idx="1">&#x2212;10,000円（不利差異）</li>
+        <li data-idx="2">&#x2212;20,000円（不利差異）</li>
+        <li data-idx="3">&#x2212;4,000円（不利差異）</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>&#x2705; 正解：&#x2212;8,000円</strong><br>
+        販売価格差異 ＝（実際単価−予算単価）×<strong>実際数量</strong><br>
+        ＝（1,800−2,000）×40 ＝ &#x2212;200×40 ＝ <strong>&#x2212;8,000円</strong><br>
+        「<strong>カジ</strong>（価格×実際）」で覚えよう！
+      </div>
+    </div>
+
+    <!-- Q2: 正解D -->
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div><span class="quiz-cat qc-blue">基本</span>
+      <div class="quiz-question">利益差異分析において、売上高差異を分解すると正しい組み合わせはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q2', 3)">
+        <li data-idx="0">価格差異と賃率差異</li>
+        <li data-idx="1">能率差異と操業度差異</li>
+        <li data-idx="2">予算差異と数量差異</li>
+        <li data-idx="3">販売価格差異と販売数量差異</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>&#x2705; 正解：販売価格差異と販売数量差異</strong><br>
+        売上高差異は「値段のズレ」と「量のズレ」に分かれる。賃率差異は労務費、能率・操業度差異は製造間接費の話だよ！
+      </div>
+    </div>
+
+    <!-- Q3: 正解C -->
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div><span class="quiz-cat qc-blue">基本</span>
+      <div class="quiz-question">町の焼き鳥屋で、標準では1本あたり鶏肉50gを使う予定が、実際には55g使ってしまった。1,000本焼いた場合、鶏肉の標準単価が1gあたり2円なら、材料数量差異はいくらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q3', 2)">
+        <li data-idx="0">5,000円の有利差異</li>
+        <li data-idx="1">5,500円の不利差異</li>
+        <li data-idx="2">10,000円の不利差異</li>
+        <li data-idx="3">10,000円の有利差異</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>&#x2705; 正解：10,000円の不利差異</strong><br>
+        材料数量差異 ＝（実際消費量−標準消費量）×標準単価<br>
+        ＝（55,000g−50,000g）×2円 ＝ 5,000×2 ＝ <strong>10,000円</strong><br>
+        実際の方が多く使った → コスト増 → <strong>不利差異</strong>！
+      </div>
+    </div>
+
+    <!-- Q4: 正解B -->
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div><span class="quiz-cat qc-green">入門</span>
+      <div class="quiz-question">利益差異分析で「予算より利益が多かった」場合、これを何と呼ぶか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q4', 1)">
+        <li data-idx="0">不利差異</li>
+        <li data-idx="1">有利差異</li>
+        <li data-idx="2">標準差異</li>
+        <li data-idx="3">操業度差異</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>&#x2705; 正解：有利差異</strong><br>
+        予算より「いい結果」＝有利差異（Favorable）。予算より「悪い結果」＝不利差異（Unfavorable）。シンプル！
+      </div>
+    </div>
+
+    <!-- Q5: 正解A -->
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div><span class="quiz-cat qc-blue">基本</span>
+      <div class="quiz-question">直接労務費差異を分解したとき、「賃率差異」の計算式はどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q5', 0)">
+        <li data-idx="0">（実際賃率−標準賃率）×実際作業時間</li>
+        <li data-idx="1">（実際賃率−標準賃率）×標準作業時間</li>
+        <li data-idx="2">（実際作業時間−標準作業時間）×標準賃率</li>
+        <li data-idx="3">（実際作業時間−標準作業時間）×実際賃率</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>&#x2705; 正解：（実際賃率−標準賃率）×実際作業時間</strong><br>
+        価格系の差異は「<strong>実際数量</strong>」をかける！賃率差異は「価格系」なので実際作業時間をかける。Cは時間差異、Dはひっかけ！
+      </div>
+    </div>
+
+    <!-- Q6: 正解D -->
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div><span class="quiz-cat qc-purple">応用</span>
+      <div class="quiz-question">カフェの店長が「今月は予算よりコーヒー豆の仕入れ値が高かったが、注文数が想定より多く売上は好調だった」と言っています。この場合に発生している差異の組み合わせとして正しいものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q6', 3)">
+        <li data-idx="0">材料価格差異（有利）と販売数量差異（有利）</li>
+        <li data-idx="1">材料価格差異（不利）と販売数量差異（不利）</li>
+        <li data-idx="2">材料数量差異（不利）と販売価格差異（有利）</li>
+        <li data-idx="3">材料価格差異（不利）と販売数量差異（有利）</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>&#x2705; 正解：材料価格差異（不利）と販売数量差異（有利）</strong><br>
+        仕入れ値が<strong>高い</strong>→材料価格差異は<strong>不利</strong>。注文数が<strong>多い</strong>→販売数量差異は<strong>有利</strong>。文章から差異の種類と方向を読み取る力が大事！
+      </div>
+    </div>
+
+    <!-- Q7: 正解C -->
+    <div class="quiz-item" id="q7">
+      <div class="quiz-num">7</div><span class="quiz-cat qc-red">計算</span>
+      <div class="quiz-question">ある製品の予算：単価500円×販売数量2,000個。実績：単価520円×販売数量1,800個。販売数量差異はいくらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q7', 2)">
+        <li data-idx="0">&#x2212;104,000円</li>
+        <li data-idx="1">+36,000円</li>
+        <li data-idx="2">&#x2212;100,000円</li>
+        <li data-idx="3">&#x2212;96,000円</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        <strong>&#x2705; 正解：&#x2212;100,000円</strong><br>
+        販売数量差異 ＝（実際数量−予算数量）×<strong>予算単価</strong><br>
+        ＝（1,800−2,000）×500 ＝ &#x2212;200×500 ＝ <strong>&#x2212;100,000円</strong><br>
+        「<strong>スウヨ</strong>（数量×予算）」！予算単価をかけるのがポイント。
+      </div>
+    </div>
+
+    <!-- Q8: 正解B -->
+    <div class="quiz-item" id="q8">
+      <div class="quiz-num">8</div><span class="quiz-cat qc-purple">応用</span>
+      <div class="quiz-question">製造間接費差異を3分法で分解したとき、含まれ<strong>ない</strong>ものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q8', 1)">
+        <li data-idx="0">予算差異</li>
+        <li data-idx="1">賃率差異</li>
+        <li data-idx="2">能率差異</li>
+        <li data-idx="3">操業度差異</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        <strong>&#x2705; 正解：賃率差異</strong><br>
+        製造間接費の3分法は「<strong>予算差異・能率差異・操業度差異</strong>」。賃率差異は<strong>直接労務費</strong>の差異だよ！混同しやすいので注意。
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+  </div>
+
+  <!-- ==================== TAB 5: 実例で学ぶ (PURPLE) ==================== -->
+  <div class="tab-panel theme-purple" id="tab5">
+
+    <div class="point-box pb-purple">
+      <h4>&#x1F30D; このタブで学ぶこと</h4>
+      <p>表とにらめっこして覚えるのもいいですが、正直なところ飽きてきちゃいますよね。少しでも覚えやすくなるように実例を集めました！「<strong>なぜその差異が生まれたのか</strong>」に思いをはせると理解が深まります。</p>
+    </div>
+
+    <!-- 討議追加：実例×差異の対応表 -->
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--purple-dark);">実例と差異の対応マップ</div>
+      <table class="tbl-purple">
+        <tr><th>実例</th><th>学べる差異</th><th>有利/不利</th></tr>
+        <tr><td>スシロー値上げ</td><td>販売価格差異</td><td style="color:var(--green-main);font-weight:700;">有利</td></tr>
+        <tr><td>トヨタのカイゼン</td><td>材料数量差異・能率差異</td><td style="color:var(--green-main);font-weight:700;">有利</td></tr>
+        <tr><td>スタバのフラペチーノ</td><td>セールスミックス差異</td><td style="color:var(--green-main);font-weight:700;">有利</td></tr>
+        <tr><td>半導体不足</td><td>操業度差異</td><td style="color:var(--red-main);font-weight:700;">不利</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F363;</span> スシローの「100円寿司」値上げ &#x2014; 販売価格差異</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F4F0; 何が起きた？</h4>
+      <p>2022年10月、スシロー（FOOD & LIFE COMPANIES）は長年の看板だった<strong>「1皿100円（税抜）」を廃止</strong>し、最低価格を120円に引き上げました。原材料費の高騰（魚価、米、油、輸送費）が背景です。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">差異分析の視点</div>
+        値上げ前を「予算（旧価格）」、値上げ後を「実績（新価格）」と考えると：<br><br>
+        <strong>&#x2022; 販売価格差異 → 有利</strong>：1皿あたり20円アップ × 販売皿数 ＝ 大きな売上増効果<br>
+        <strong>&#x2022; 販売数量差異 → 不利の可能性</strong>：値上げで客足が鈍れば数量減<br><br>
+        実際には値上げ後も客数は大きく減らず、<strong>価格差異の有利が数量差異の不利を上回り</strong>、売上は増加しました。「値上げ＝悪」ではなく、<strong>差異分析で総合的に判断すべき</strong>好例です。
+      </div>
+    </div>
+
+    <!-- 討議追加：キーポイント -->
+    <div class="flow-row" style="margin:0.5rem 0;">
+      <div class="flow-box fb-purple" style="width:90%;font-size:0.82rem;">覚えておこう：値上げの成否は<strong>「販売価格差異（有利）＞ 販売数量差異（不利）」</strong>かどうかで判定！</div>
+    </div>
+
+    <!-- 討議追加：受験生の疑問 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        値上げすると客が減るのは当たり前じゃないの？
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        だからこそ差異分析が大事！「どれくらい客が減るか」を数値で予測し、値上げの利益と比べるのが経営判断だよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F697;</span> トヨタの「カイゼン」&#x2014; 材料数量差異と能率差異</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F4F0; 何が起きた？</h4>
+      <p>トヨタ生産方式（TPS）の柱「<strong>カイゼン</strong>」は、工程のムダを徹底的に排除する取り組みです。部品1個あたりの材料の歩留まり向上、秒単位の作業時間短縮を積み重ね、年間で数百億円規模のコスト削減を達成しています。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">差異分析の視点</div>
+        <strong>&#x2022; 材料数量差異 → 有利</strong>：歩留まり改善で1台あたりの鋼板使用量が標準より減少<br>
+        <strong>&#x2022; 時間差異（能率差異）→ 有利</strong>：作業動線の改善で組立時間が標準より短縮<br><br>
+        トヨタは「標準原価」を設定しても、それを<strong>現状維持のゴールではなく、さらに改善するスタートライン</strong>と位置づけます。差異分析は「標準との比較」ですが、<strong>標準自体を引き下げ続ける</strong>のがカイゼンの本質です。
+      </div>
+    </div>
+
+    <div class="flow-row" style="margin:0.5rem 0;">
+      <div class="flow-box fb-purple" style="width:90%;font-size:0.82rem;">覚えておこう：カイゼンは<strong>「有利差異を出し続けること」</strong>を目指す活動！</div>
+    </div>
+
+    <!-- 討議追加：実例 学校の部活 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：学校の部活動費</div>
+        野球部で「ボール1個300円×月100個」の予算。実際は「280円×90個」だったら、価格差異（有利：安く買えた）と数量差異（有利：節約できた）の両方プラス。部費の節約活動もカイゼンと同じだね！
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x2615;</span> スターバックスの「フラペチーノ商法」&#x2014; セールスミックス差異</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F4F0; 何が起きた？</h4>
+      <p>スターバックスは季節限定フラペチーノを次々と投入します。通常のドリップコーヒー（約350円）に対し、フラペチーノは<strong>600〜700円</strong>。限定品への集中的な広告で高単価商品の販売構成比を引き上げています。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">差異分析の視点</div>
+        複数商品を扱う場合、販売数量差異はさらに「<strong>純粋な数量差異</strong>」と「<strong>セールスミックス差異</strong>」に分解できます。<br><br>
+        <strong>&#x2022; セールスミックス差異 → 有利</strong>：高単価のフラペチーノの構成比が増えることで、平均単価が上昇<br><br>
+        総販売杯数が同じでも、<strong>商品の組み合わせ（ミックス）が変わるだけ</strong>で利益が変わる。これがセールスミックス差異です。中小企業でも「<strong>利益率の高い商品を推す</strong>」だけで利益改善できることを教えてくれる好例！
+      </div>
+    </div>
+
+    <div class="flow-row" style="margin:0.5rem 0;">
+      <div class="flow-box fb-purple" style="width:90%;font-size:0.82rem;">覚えておこう：セールスミックス差異＝<strong>販売数量差異の発展系</strong>。商品構成の変化が利益に与える影響！</div>
+    </div>
+
+    <!-- 討議追加：受験生の補足疑問 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        セールスミックス差異ってタブ2では出てこなかったけど？
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        タブ2の「販売数量差異」をさらに細かく分けたものがセールスミックス差異だよ。複数商品を扱う企業で使う<strong>応用テクニック</strong>。まずは基本の2分解を完璧にしよう！
+      </div>
+    </div>
+
+    <!-- 討議追加：実例 ファミレス -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：ファミレスのメニュー戦略</div>
+        ファミレスで「ハンバーグ定食800円」より「プレミアムステーキ1,500円」が多く出ると、客数が同じでも売上が上がる。メニュー構成を変えるだけで利益アップ＝セールスミックス差異！
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4BB;</span> 半導体不足と自動車メーカー &#x2014; 操業度差異</h2>
+
+    <div class="card card-purple">
+      <h4>&#x1F4F0; 何が起きた？</h4>
+      <p>2021〜2022年、世界的な半導体不足により、トヨタ・日産・ホンダなど大手自動車メーカーが<strong>工場の生産ラインを一時停止・減産</strong>せざるを得ませんでした。工場の設備はあるのに、部品が足りず動かせない状態です。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">差異分析の視点</div>
+        <strong>&#x2022; 操業度差異 → 大幅な不利</strong>：基準操業度（フル稼働を想定）に対し、実際操業度が大きく下回った<br><br>
+        工場の家賃や設備の減価償却費は、動かそうが止めようが<strong>固定費として毎月かかります</strong>。生産量が減ると、1個あたりにのせる固定費が増え、コストが膨らむ。<br>
+        操業度差異＝（基準操業度−実際操業度）×固定費率。<strong>「遊んでいる設備のコスト」</strong>を数値化するのが操業度差異です。
+      </div>
+    </div>
+
+    <div class="flow-row" style="margin:0.5rem 0;">
+      <div class="flow-box fb-purple" style="width:90%;font-size:0.82rem;">覚えておこう：操業度差異＝<strong>「稼働していない設備にかかるムダな固定費」</strong>を見える化する差異！</div>
+    </div>
+
+    <!-- 討議追加：実例 学校の教室 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">実例：学校の教室利用</div>
+        定員40人の教室に20人しか生徒がいない。教室の家賃・冷暖房費は変わらないのに、1人あたりのコストは2倍に。空いた20席分のコスト＝操業度差異（不利）と同じ考え方！
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>実例から学ぶポイントまとめ</strong><br>
+      &#x2022; <strong>販売価格差異</strong>：スシロー → 値上げの効果を測れる<br>
+      &#x2022; <strong>材料数量差異・能率差異</strong>：トヨタ → カイゼンの成果が数字でわかる<br>
+      &#x2022; <strong>セールスミックス差異</strong>：スタバ → 商品構成の変化が利益に与える影響<br>
+      &#x2022; <strong>操業度差異</strong>：半導体不足 → 稼働率低下のコストを可視化<br><br>
+      差異分析は「数字のパズル」ではなく、<strong>経営の意思決定を支えるツール</strong>。実際のニュースに触れたとき「これは何差異だろう？」と考えるクセをつけると、自然と身につきます！
+    </div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="red" onclick="switchTab(0)">&#x1F476; ゼロから理解</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本事項</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F3EA; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(4)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F30D; 実例で学ぶ</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 利益分析・利益差異分析 学習まとめ</div>
+
+<script>
+function switchTab(idx) {
+  const numTabs = 6;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % numTabs === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleDiscussion() {
+  document.getElementById('agentDiscussion').classList.toggle('collapsed');
+}
+
+let answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 6 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+</script>
+</body>
+</html>

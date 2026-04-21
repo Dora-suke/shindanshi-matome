@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>総合原価計算 - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --bg: #f8fafc; --bg-card: #ffffff; --bg-surface: #f1f5f9;
+  --accent-blue: #2563eb; --accent-cyan: #0891b2; --accent-violet: #7c3aed;
+  --accent-rose: #e11d48; --accent-amber: #d97706; --accent-emerald: #059669;
+  --text: #1e293b; --text-dim: #475569; --text-muted: #94a3b8;
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --radius: 16px; --radius-sm: 10px;
+  --content-max: 720px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.85; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.header {
+  background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+  padding: 2.2rem 1.5rem 1.5rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.03em; color: #fff; }
+.header .subtitle { font-size: 0.92rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem; }
+.header .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.6rem; flex-wrap: wrap; }
+.header .badge {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+  padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.9);
+}
+.tab-container { max-width: 900px; margin: 0 auto; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--bg-card);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.6rem; border: none;
+  background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: all 0.25s; border-bottom: 3px solid transparent;
+  white-space: nowrap; text-align: center; font-family: inherit;
+}
+.tab-btn:hover { color: var(--text-dim); background: #f8fafc; }
+.tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); background: #eff6ff; }
+.tab-btn[data-c="rose"].active { color: var(--accent-rose); border-bottom-color: var(--accent-rose); background: #fff1f2; }
+.tab-btn[data-c="violet"].active { color: var(--accent-violet); border-bottom-color: var(--accent-violet); background: #f5f3ff; }
+.tab-btn[data-c="emerald"].active { color: var(--accent-emerald); border-bottom-color: var(--accent-emerald); background: #ecfdf5; }
+.tab-btn[data-c="amber"].active { color: var(--accent-amber); border-bottom-color: var(--accent-amber); background: #fffbeb; }
+.tab-panel {
+  display: none; padding: 1.8rem 1.4rem;
+  background: var(--bg-card); box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); max-width: 900px; margin: 0 auto;
+}
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+.tab-panel > * { max-width: var(--content-max); margin-left: auto; margin-right: auto; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+.stitle {
+  font-size: 1.15rem; font-weight: 800; margin: 1.8rem 0 0.8rem; padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border);
+}
+.stitle:first-child { margin-top: 0; }
+.stitle-blue { background: #eff6ff; color: var(--accent-blue); border-color: #bfdbfe; }
+.stitle-rose { background: #fff1f2; color: var(--accent-rose); border-color: #fecdd3; }
+.stitle-emerald { background: #ecfdf5; color: var(--accent-emerald); border-color: #a7f3d0; }
+.stitle-violet { background: #f5f3ff; color: var(--accent-violet); border-color: #ddd6fe; }
+.stitle-amber { background: #fffbeb; color: var(--accent-amber); border-color: #fde68a; }
+.card {
+  background: var(--bg-card); border: 1px solid #e2e8f0;
+  border-radius: var(--radius); padding: 1.2rem; margin: 0.8rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.card strong { color: var(--accent-blue); }
+.card-glow-blue { border-color: #93c5fd; }
+.card-glow-emerald { border-color: #6ee7b7; }
+.alert-warn {
+  background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid var(--accent-rose);
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; font-size: 0.95rem; line-height: 1.8; color: #9f1239;
+}
+.alert-tip {
+  background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid var(--accent-amber);
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; font-size: 0.95rem; line-height: 1.8; color: #92400e;
+}
+.formula {
+  background: linear-gradient(135deg, #ecfdf5, #eff6ff); border: 1px solid #a7f3d0;
+  border-radius: var(--radius); padding: 0.8rem 1rem; margin: 0.5rem 0;
+  text-align: center; font-size: 1.15rem; font-weight: 800; color: var(--text);
+}
+.tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.tag-emerald { background: #d1fae5; color: var(--accent-emerald); }
+.tag-blue { background: #dbeafe; color: var(--accent-blue); }
+.tag-amber { background: #fef3c7; color: var(--accent-amber); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin: 0.7rem 0; }
+.fill-card { background: var(--bg-card); border: 1px solid #e2e8f0; border-radius: var(--radius); margin-bottom: 1rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.fill-hdr { padding: 0.6rem 1rem; font-weight: 700; font-size: 0.95rem; border-bottom: 1px solid #e2e8f0; }
+.fill-hdr-blue { background: #eff6ff; color: var(--accent-blue); }
+.fill-hdr-rose { background: #fff1f2; color: var(--accent-rose); }
+.fill-hdr-amber { background: #fffbeb; color: var(--accent-amber); }
+.fill-hdr-emerald { background: #ecfdf5; color: var(--accent-emerald); }
+.fill-hdr-violet { background: #f5f3ff; color: var(--accent-violet); }
+.fill-bdy { padding: 1rem 1.2rem; }
+.fill-blank {
+  display: inline-block; min-width: 72px; border-bottom: 2.5px solid #cbd5e1;
+  text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: 0.95rem;
+}
+.fill-blank.show { color: var(--accent-rose) !important; background: #fff1f2 !important; border-color: var(--accent-rose) !important; }
+.fill-reveal-btn {
+  display: inline-block; background: #eff6ff; color: var(--accent-blue); border: 1px solid #bfdbfe;
+  border-radius: 8px; padding: 6px 14px; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; margin-top: 6px; font-family: inherit; transition: all 0.2s;
+}
+.fill-reveal-btn:hover { background: #dbeafe; }
+.fill-group { margin-bottom: 6px; font-size: 0.95rem; line-height: 2.1; }
+.footer { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.78rem; max-width: 900px; margin: 0 auto; }
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.3rem; }
+  .two-col { grid-template-columns: 1fr !important; }
+  .tab-btn { font-size: 0.7rem; padding: 0.7rem 0.3rem; }
+  .tab-panel { padding: 1.2rem 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>総合原価計算</h1>
+  <p class="subtitle">中小企業診断士 財務・会計｜総合原価計算を徹底解説</p>
+  <div class="badges">
+    <span class="badge">大量生産向きの原価計算</span>
+    <span class="badge">超頻出テーマ</span>
+  </div>
+</div>
+
+<div class="tab-container">
+<nav class="tab-nav">
+  <button class="tab-btn active" data-c="violet" onclick="switchTab(0)">概要</button>
+  <button class="tab-btn" data-c="blue" onclick="switchTab(1)">考え方</button>
+  <button class="tab-btn" data-c="emerald" onclick="switchTab(2)">換算量</button>
+  <button class="tab-btn" data-c="amber" onclick="switchTab(3)">2つの方法</button>
+  <button class="tab-btn" data-c="blue" onclick="switchTab(4)">BOX図</button>
+  <button class="tab-btn" data-c="amber" onclick="switchTab(5)">計算まとめ</button>
+  <button class="tab-btn" data-c="emerald" onclick="switchTab(6)">練習問題</button>
+  <button class="tab-btn" data-c="rose" onclick="switchTab(7)">穴埋め</button>
+</nav>
+
+<!-- ==================== TAB 0: 概要 ==================== -->
+<div class="tab-panel active" id="tab0">
+
+  <h2 class="stitle stitle-violet">&#x1F4D6; 総合原価計算の全体像</h2>
+
+  <div class="card card-glow-emerald">
+    <p style="font-size:1.05rem;line-height:2;">
+      <strong style="color:#059669;">総合原価計算</strong>とは、同じ製品を大量に作るときに使う原価計算。<br>
+      <strong>一定期間にかかった原価の合計</strong>を、<strong>作った数で割る</strong>だけ。
+    </p>
+    <p style="font-size:0.92rem;color:#475569;margin-top:0.3rem;">例：食品工場、飲料メーカー、文具メーカーなど「同じモノをたくさん作る」企業が使う。</p>
+  </div>
+
+  <h2 class="stitle stitle-blue">&#x1F5FA; このページの学習マップ</h2>
+
+  <div style="display:grid;gap:0.6rem;">
+    <div class="card" style="border-left:4px solid #2563eb;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#2563eb;margin-bottom:0.15rem;">STEP 1：考え方</p>
+      <p style="font-size:0.92rem;color:#475569;">パン工場の例で「総合原価計算って何？」をイメージする</p>
+    </div>
+    <div class="card" style="border-left:4px solid #059669;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#059669;margin-bottom:0.15rem;">STEP 2：完成品換算量</p>
+      <p style="font-size:0.92rem;color:#475569;">最大の難所！材料費 vs 加工費の違い（始点投入がカギ）</p>
+    </div>
+    <div class="card" style="border-left:4px solid #d97706;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#d97706;margin-bottom:0.15rem;">STEP 3：2つの方法</p>
+      <p style="font-size:0.92rem;color:#475569;">先入先出法と平均法 ― コンビニおにぎり vs ガソリン給油で覚える</p>
+    </div>
+    <div class="card" style="border-left:4px solid #2563eb;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#2563eb;margin-bottom:0.15rem;">STEP 4：BOX図</p>
+      <p style="font-size:0.92rem;color:#475569;">仕掛品勘定のT勘定で「借方合計＝貸方合計」を確認</p>
+    </div>
+    <div class="card" style="border-left:4px solid #d97706;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#d97706;margin-bottom:0.15rem;">STEP 5：計算まとめ</p>
+      <p style="font-size:0.92rem;color:#475569;">3ステップで計算 ＋ 具体例で実践</p>
+    </div>
+    <div class="card" style="border-left:4px solid #e11d48;padding:0.8rem 1rem;">
+      <p style="font-weight:800;color:#e11d48;margin-bottom:0.15rem;">STEP 6：穴埋めチェック</p>
+      <p style="font-size:0.92rem;color:#475569;">全7問で理解度を確認</p>
+    </div>
+  </div>
+
+  <h2 class="stitle stitle-amber">&#x1F3AF; 試験で問われるポイント</h2>
+
+  <div class="card">
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:0.5rem 0.8rem;font-size:0.95rem;line-height:1.9;">
+      <span style="font-weight:800;color:#e11d48;">頻出1</span>
+      <span><strong>完成品換算量</strong>の計算（材料費は100%、加工費は進捗度をかける）</span>
+      <span style="font-weight:800;color:#e11d48;">頻出2</span>
+      <span><strong>先入先出法</strong>と<strong>平均法</strong>の計算手順の違い</span>
+      <span style="font-weight:800;color:#e11d48;">頻出3</span>
+      <span>月末仕掛品と完成品原価の<strong>具体的な計算</strong></span>
+      <span style="font-weight:800;color:#d97706;">注意</span>
+      <span>材料費の「<strong>始点投入</strong>」→ 進捗度に関係なく100% が最大の引っかけ</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 1: 考え方 ==================== -->
+<div class="tab-panel" id="tab1">
+
+  <h2 class="stitle stitle-blue">&#x2753; 総合原価計算とは？</h2>
+
+  <div class="card card-glow-blue">
+    <p style="font-size:1.05rem;line-height:2;">
+      「今月、製品1個あたりいくらかかった？」を計算する方法。<br>
+      <strong>同じ製品を大量に作る</strong>工場で使う。
+    </p>
+    <div class="formula">製品1個あたり原価 ＝ 当期総製造費用 ÷ 完成品換算量</div>
+  </div>
+
+  <h2 class="stitle stitle-amber">&#x1F35E; パン工場で考えてみよう</h2>
+
+  <div class="card">
+    <p style="font-size:1.05rem;line-height:2;margin-bottom:0.6rem;">
+      食パンを<strong>1,000個</strong>作る工場。今月かかった費用の合計が<strong>50万円</strong>。<br>
+      → 1個あたり ＝ 50万 ÷ 1,000 ＝ <strong style="color:#059669;">500円</strong>。簡単！
+    </p>
+    <p style="font-size:1rem;line-height:2;">
+      でも実際は<strong>月末に作りかけの食パン（仕掛品）</strong>がある。<br>
+      200個が途中のまま月をまたぐ。この200個をどう扱う？
+    </p>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius);padding:0.8rem;margin-top:0.6rem;text-align:center;">
+      <p style="font-size:1.1rem;font-weight:800;color:#d97706;">ここで登場するのが「完成品換算量」！</p>
+      <p style="font-size:0.92rem;color:#475569;">作りかけの製品を「完成品何個分か」に換算する考え方</p>
+    </div>
+  </div>
+
+  <h2 class="stitle stitle-emerald">&#x1F504; 原価の流れ</h2>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:center;gap:0.3rem;flex-wrap:wrap;font-size:1rem;font-weight:700;">
+      <div style="background:#dbeafe;border-radius:8px;padding:0.5rem 0.8rem;">材料</div>
+      <span style="font-size:1.2rem;">→</span>
+      <div style="background:#fef3c7;border-radius:8px;padding:0.5rem 0.8rem;">仕掛品</div>
+      <span style="font-size:1.2rem;">→</span>
+      <div style="background:#d1fae5;border-radius:8px;padding:0.5rem 0.8rem;">製品</div>
+      <span style="font-size:1.2rem;">→</span>
+      <div style="background:#ffe4e6;border-radius:8px;padding:0.5rem 0.8rem;">売上原価</div>
+    </div>
+    <p style="font-size:0.88rem;color:#475569;text-align:center;margin-top:0.5rem;">回転寿司で例えると：冷蔵庫のネタ → 握ってる途中 → レーンの寿司 → お客さんが食べた分</p>
+  </div>
+</div>
+
+<!-- ==================== TAB 2: 完成品換算量 ==================== -->
+<div class="tab-panel" id="tab2">
+
+  <h2 class="stitle stitle-emerald">&#x1F522; そもそも「換算量」って何？</h2>
+
+  <!-- なぜ換算が必要？ -->
+  <div class="card" style="border:2px solid #6ee7b7;">
+    <p style="font-weight:800;font-size:1.1rem;color:#059669;margin-bottom:0.5rem;">なぜ「換算」が必要なの？</p>
+    <p style="font-size:1rem;line-height:2;margin-bottom:0.6rem;">
+      工場には月末に<strong>「作りかけのパン」</strong>が残っている。<br>
+      完成品と作りかけを<strong>同じ「1個」として数えていいの？</strong>
+    </p>
+
+    <div style="background:#ecfdf5;border-radius:var(--radius);padding:1rem;margin-bottom:0.6rem;">
+      <p style="font-size:0.92rem;color:#475569;margin-bottom:0.5rem;">例：月末にパンが100個、作りかけで残っている。進捗度は50%。</p>
+      <div class="two-col">
+        <div style="background:#fff1f2;border:2px solid #fda4af;border-radius:var(--radius-sm);padding:0.7rem;text-align:center;">
+          <p style="font-size:1.5rem;">&#x274C;</p>
+          <p style="font-weight:800;color:#e11d48;">そのまま100個と数えると？</p>
+          <p style="font-size:0.92rem;color:#475569;margin-top:0.3rem;">半分しかできてないのに完成品と同じ扱い。<br><strong>原価が不正確になる！</strong></p>
+        </div>
+        <div style="background:#ecfdf5;border:2px solid #6ee7b7;border-radius:var(--radius-sm);padding:0.7rem;text-align:center;">
+          <p style="font-size:1.5rem;">&#x2B55;</p>
+          <p style="font-weight:800;color:#059669;">50個分に換算すると？</p>
+          <p style="font-size:0.92rem;color:#475569;margin-top:0.3rem;">半分完成 ＝ 完成品0.5個分。<br>100個 × 50% ＝ <strong>50個分</strong>。正確！</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:2px solid #059669;border-radius:var(--radius);padding:0.7rem;text-align:center;">
+      <p style="font-size:1.1rem;font-weight:800;color:#059669;">換算量 ＝ 作りかけを「完成品何個分か」に直した数</p>
+      <p style="font-size:0.92rem;color:#475569;margin-top:0.2rem;">これで完成品と作りかけを<strong>公平に比較</strong>できる</p>
+    </div>
+  </div>
+
+  <!-- もっと身近な例え -->
+  <div class="card" style="border-left:4px solid #d97706;">
+    <p style="font-weight:800;color:#d97706;margin-bottom:0.4rem;">身近な例えで理解しよう</p>
+    <p style="font-size:1rem;line-height:2;">
+      <strong>ジグソーパズルで考えてみよう。</strong><br><br>
+      1000ピースのパズルを3つ作っている。<br>
+      &#x2022; パズルA：<strong>完成！</strong>（100%）→ 完成品 <strong>1個分</strong><br>
+      &#x2022; パズルB：<strong>半分</strong>できた（50%）→ 完成品 <strong>0.5個分</strong><br>
+      &#x2022; パズルC：<strong>まだ1/4</strong>（25%）→ 完成品 <strong>0.25個分</strong><br><br>
+      全部で「完成品<strong>1.75個分</strong>」の作業をした。<br>
+      この「1.75個分」が<strong>完成品換算量</strong>。
+    </p>
+  </div>
+
+  <h2 class="stitle stitle-rose">&#x26A0; 最大の注意点：材料費 vs 加工費</h2>
+
+  <div class="card" style="border:2px solid #fda4af;">
+    <p style="font-size:1.05rem;line-height:2;margin-bottom:0.8rem;">
+      完成品換算量の計算で<strong>材料費と加工費は扱いが違う</strong>。<br>
+      ここが<strong style="color:#e11d48;">試験で最も引っかかるポイント</strong>！
+    </p>
+
+    <div class="two-col">
+      <div style="background:#dbeafe;border:2px solid #93c5fd;border-radius:var(--radius);padding:1rem;text-align:center;">
+        <p style="font-size:1.1rem;font-weight:800;color:#2563eb;">材料費</p>
+        <span class="tag tag-blue">始点投入</span>
+        <div style="background:#fff;border-radius:var(--radius-sm);padding:0.8rem;margin:0.6rem 0;">
+          <p style="font-size:2rem;">&#x1F35E;</p>
+          <p style="font-size:1rem;font-weight:700;">進捗度に関係なく</p>
+          <p style="font-size:1.4rem;font-weight:800;color:#2563eb;">100%</p>
+        </div>
+        <p style="font-size:0.92rem;color:#475569;">作り始めに材料を<strong>全量投入済み</strong>。<br>50%完成でも材料は100%入っている。</p>
+        <div style="background:#eff6ff;border-radius:8px;padding:0.5rem;margin-top:0.4rem;">
+          <p style="font-size:0.88rem;">例：仕掛品100個<br>→ 換算量 ＝ <strong>100個</strong></p>
+        </div>
+      </div>
+      <div style="background:#fef3c7;border:2px solid #fcd34d;border-radius:var(--radius);padding:1rem;text-align:center;">
+        <p style="font-size:1.1rem;font-weight:800;color:#d97706;">加工費</p>
+        <span class="tag tag-amber">進捗度に比例</span>
+        <div style="background:#fff;border-radius:var(--radius-sm);padding:0.8rem;margin:0.6rem 0;">
+          <p style="font-size:2rem;">&#x1F477;</p>
+          <p style="font-size:1rem;font-weight:700;">進捗度をかける</p>
+          <p style="font-size:1.4rem;font-weight:800;color:#d97706;">× 進捗度%</p>
+        </div>
+        <p style="font-size:0.92rem;color:#475569;">労務費＋経費は加工した分だけ。<br>50%完成なら加工も50%分。</p>
+        <div style="background:#fffbeb;border-radius:8px;padding:0.5rem;margin-top:0.4rem;">
+          <p style="font-size:0.88rem;">例：仕掛品100個（進捗50%）<br>→ 換算量 ＝ <strong>50個</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-warn">
+    <strong>超だいじ！</strong>材料費は「始点投入」なので<strong>進捗度に関係なく100%</strong>。加工費だけ進捗度をかける。<br>
+    試験で「材料費の完成品換算量は？」と聞かれたら、進捗度は<strong>無視</strong>して仕掛品数量そのまま！
+  </div>
+</div>
+
+<!-- ==================== TAB 3: 2つの方法 ==================== -->
+<div class="tab-panel" id="tab3">
+
+  <h2 class="stitle stitle-amber">&#x1F504; 先入先出法 vs 平均法</h2>
+
+  <div class="card">
+    <p style="font-size:1.05rem;line-height:2;">
+      月初に仕掛品がある場合、完成品原価の計算方法が<strong>2つ</strong>ある。<br>
+      このタブでは<strong>「考え方の違い」</strong>を理解する。具体的な計算は「計算まとめ」タブへ！
+    </p>
+  </div>
+
+  <!-- 加工進捗度の補足 -->
+  <div class="card" style="border-left:4px solid #7c3aed;">
+    <p style="font-weight:800;font-size:1.05rem;color:#7c3aed;margin-bottom:0.4rem;">&#x2753; 「加工進捗度」ってどういうこと？</p>
+    <p style="font-size:1rem;line-height:2;margin-bottom:0.5rem;">
+      パン作りを<strong>10工程</strong>に分けたとする。<br>
+      進捗40% ＝ <strong>10工程のうち4工程まで終わった</strong>状態。
+    </p>
+    <div style="display:flex;gap:3px;margin-bottom:0.5rem;">
+      <div style="flex:1;height:28px;background:#059669;border-radius:4px 0 0 4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;font-weight:700;">1</div>
+      <div style="flex:1;height:28px;background:#059669;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;font-weight:700;">2</div>
+      <div style="flex:1;height:28px;background:#059669;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;font-weight:700;">3</div>
+      <div style="flex:1;height:28px;background:#059669;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;font-weight:700;">4</div>
+      <div style="flex:1;height:28px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.7rem;">5</div>
+      <div style="flex:1;height:28px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.7rem;">6</div>
+      <div style="flex:1;height:28px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.7rem;">7</div>
+      <div style="flex:1;height:28px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.7rem;">8</div>
+      <div style="flex:1;height:28px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.7rem;">9</div>
+      <div style="flex:1;height:28px;background:#e2e8f0;border-radius:0 4px 4px 0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.7rem;">10</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:0.3rem;">
+      <span style="color:#059669;font-weight:700;">← 完了済み 40% →</span>
+      <span style="color:#94a3b8;">← まだ 60% →</span>
+    </div>
+    <p style="font-size:0.92rem;color:#475569;line-height:1.8;">
+      つまり<strong>材料は最初に全部入れてある</strong>けど、<strong>加工（人の作業）はまだ途中</strong>。<br>
+      だから加工費の換算量は 個数 × 進捗度 で計算する。
+    </p>
+  </div>
+
+  <!-- 2つの方法の考え方 -->
+  <h2 class="stitle stitle-blue">&#x1F371; 先入先出法 ＝ コンビニのおにぎり</h2>
+
+  <div class="card" style="border:2px solid #2563eb;padding:0;">
+    <div style="background:#2563eb;color:#fff;padding:0.6rem 1rem;font-weight:800;font-size:1.05rem;">考え方：古いものを先に出す</div>
+    <div style="padding:1rem;">
+      <p style="font-size:1rem;line-height:2;margin-bottom:0.6rem;">
+        コンビニでは<strong>古いおにぎりを棚の前に</strong>置いて先に売る。<br>
+        同じように、<strong>月初の作りかけを先に完成</strong>させて、当月の新しい分と<strong>分けて</strong>計算する。
+      </p>
+
+      <div style="background:#eff6ff;border-radius:var(--radius);padding:0.8rem;">
+        <p style="font-weight:800;color:#2563eb;margin-bottom:0.4rem;">単価の出し方</p>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+          <div style="background:#fff;border:2px solid #93c5fd;border-radius:8px;padding:0.6rem;">
+            <p style="font-size:0.82rem;color:#2563eb;">今月の費用<strong>だけ</strong></p>
+            <p style="font-size:1.3rem;">&#x1F4B0;</p>
+            <p style="font-weight:800;">当月投入額</p>
+          </div>
+          <p style="font-weight:800;font-size:1.2rem;color:#2563eb;">÷</p>
+          <div style="background:#fff;border:2px solid #93c5fd;border-radius:8px;padding:0.6rem;">
+            <p style="font-size:0.82rem;color:#2563eb;">今月の作業量<strong>だけ</strong></p>
+            <p style="font-size:1.3rem;">&#x1F35E;</p>
+            <p style="font-weight:800;">当月換算量</p>
+          </div>
+          <p style="font-weight:800;font-size:1.2rem;color:#2563eb;">＝</p>
+          <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:8px;padding:0.6rem;">
+            <p style="font-size:1.3rem;">&#x1F3F7;</p>
+            <p style="font-weight:800;color:#2563eb;">当月単価</p>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:#475569;text-align:center;margin-top:0.4rem;">月初の分は混ぜない → 今月だけの正確な「1個いくら？」が出る</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="stitle stitle-emerald">&#x26FD; 平均法 ＝ ガソリンの給油</h2>
+
+  <div class="card" style="border:2px solid #059669;padding:0;">
+    <div style="background:#059669;color:#fff;padding:0.6rem 1rem;font-weight:800;font-size:1.05rem;">考え方：ぜんぶ混ぜて平均する</div>
+    <div style="padding:1rem;">
+      <p style="font-size:1rem;line-height:2;margin-bottom:0.6rem;">
+        ガソリンタンクに新しいガソリンを足したら<strong>古いのと全部混ざる</strong>。<br>
+        同じように、<strong>月初と今月をぜんぶ混ぜて平均</strong>して計算する。
+      </p>
+
+      <div style="background:#ecfdf5;border-radius:var(--radius);padding:0.8rem;">
+        <p style="font-weight:800;color:#059669;margin-bottom:0.4rem;">単価の出し方</p>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+          <div style="background:#fff;border:2px solid #6ee7b7;border-radius:8px;padding:0.6rem;">
+            <p style="font-size:0.82rem;color:#059669;"><strong>全部</strong>の費用</p>
+            <p style="font-size:1.3rem;">&#x1F4B0;&#x1F4B0;</p>
+            <p style="font-weight:800;">月初 + 当月</p>
+          </div>
+          <p style="font-weight:800;font-size:1.2rem;color:#059669;">÷</p>
+          <div style="background:#fff;border:2px solid #6ee7b7;border-radius:8px;padding:0.6rem;">
+            <p style="font-size:0.82rem;color:#059669;"><strong>全部</strong>の個数</p>
+            <p style="font-size:1.3rem;">&#x1F35E;&#x1F35E;</p>
+            <p style="font-weight:800;">総換算量</p>
+          </div>
+          <p style="font-weight:800;font-size:1.2rem;color:#059669;">＝</p>
+          <div style="background:#ecfdf5;border:2px solid #059669;border-radius:8px;padding:0.6rem;">
+            <p style="font-size:1.3rem;">&#x1F3F7;</p>
+            <p style="font-weight:800;color:#059669;">平均単価</p>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:#475569;text-align:center;margin-top:0.4rem;">月初も混ぜる → ぜんぶ混ぜた「1個いくら？」が出る</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 違いのまとめ -->
+  <h2 class="stitle stitle-rose">&#x1F511; 結局なにが違う？</h2>
+
+  <div class="card" style="border:2px solid #fda4af;">
+    <p style="font-size:1.05rem;line-height:2;margin-bottom:0.6rem;">
+      <strong>違いはSTEP1の「単価の出し方」だけ。</strong><br>
+      STEP2（月末仕掛品の計算）とSTEP3（引き算で完成品を出す）は<strong>どちらも同じ</strong>。
+    </p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.95rem;border:2px solid #fda4af;">
+        <tr>
+          <th style="background:#475569;color:#fff;padding:0.6rem;border:1px solid #334155;width:20%;"></th>
+          <th style="background:#2563eb;color:#fff;padding:0.6rem;border:1px solid #1d4ed8;">&#x1F371; 先入先出法</th>
+          <th style="background:#059669;color:#fff;padding:0.6rem;border:1px solid #047857;">&#x26FD; 平均法</th>
+        </tr>
+        <tr>
+          <td style="padding:0.6rem;border:1px solid #cbd5e1;font-weight:700;background:#fff1f2;color:#e11d48;">STEP1<br>単価</td>
+          <td style="padding:0.6rem;border:1px solid #cbd5e1;background:#eff6ff;"><strong>当月だけ</strong>で計算<br><span style="font-size:0.85rem;color:#475569;">当月投入額 ÷ 当月換算量</span></td>
+          <td style="padding:0.6rem;border:1px solid #cbd5e1;background:#ecfdf5;"><strong>全部混ぜて</strong>計算<br><span style="font-size:0.85rem;color:#475569;">(月初+当月) ÷ 総換算量</span></td>
+        </tr>
+        <tr>
+          <td style="padding:0.6rem;border:1px solid #cbd5e1;font-weight:700;">STEP2</td>
+          <td colspan="2" style="padding:0.6rem;border:1px solid #cbd5e1;text-align:center;background:#f8fafc;"><strong>同じ！</strong> 単価 × 月末換算量</td>
+        </tr>
+        <tr>
+          <td style="padding:0.6rem;border:1px solid #cbd5e1;font-weight:700;">STEP3</td>
+          <td colspan="2" style="padding:0.6rem;border:1px solid #cbd5e1;text-align:center;background:#f8fafc;"><strong>同じ！</strong> 総原価 − 月末仕掛品</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="alert-tip">
+    <strong>具体的な数値を使った計算は「計算まとめ」タブで！</strong><br>
+    同じデータで先入先出法と平均法の<strong>両方の答えを出す</strong>ところまで解説しています。
+  </div>
+</div>
+
+<!-- ==================== TAB 4: BOX図 ==================== -->
+<div class="tab-panel" id="tab4">
+
+  <h2 class="stitle stitle-blue">&#x1F4CA; BOX図とは？</h2>
+
+  <div class="card card-glow-blue">
+    <p style="font-size:1.05rem;line-height:2;">
+      仕掛品勘定の<strong>入り（借方）</strong>と<strong>出（貸方）</strong>を1つの箱で整理する図。<br>
+      「今月いくら入れて、いくら出た？残りは？」が一目で分かる。
+    </p>
+  </div>
+
+  <!-- 2つの方法タブの復習 -->
+  <div class="card" style="border-left:4px solid #d97706;">
+    <p style="font-weight:800;color:#d97706;margin-bottom:0.3rem;">&#x1F504; 復習：2つの方法（前のタブの内容）</p>
+    <p style="font-size:0.92rem;line-height:1.8;margin-bottom:0.4rem;">
+      どちらの方法も<strong>直接材料費と加工費を別々に</strong>BOX図を作って計算する。やることは同じ3ステップ：
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.88rem;">
+      <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:0.5rem;">
+        <p style="font-weight:700;color:#2563eb;">&#x1F535; 先入先出法</p>
+        <p>当月<strong>だけ</strong>で単価を出す</p>
+      </div>
+      <div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:8px;padding:0.5rem;">
+        <p style="font-weight:700;color:#d97706;">&#x1F7E0; 平均法</p>
+        <p>月初と当月を<strong>混ぜて平均</strong>する</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基本のBOX図 -->
+  <h2 class="stitle stitle-violet">&#x1F4E6; 基本のBOX図</h2>
+
+  <div class="card">
+    <div style="max-width:500px;margin:0 auto;">
+      <div style="border:3px solid #2563eb;border-radius:8px;overflow:hidden;">
+        <div style="background:#2563eb;color:#fff;text-align:center;padding:0.5rem;font-weight:800;font-size:1.05rem;">仕掛品勘定</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;min-height:180px;">
+          <div style="border-right:3px solid #2563eb;padding:0.8rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#2563eb;margin-bottom:0.3rem;font-size:0.92rem;">借方（入る側）</p>
+            <div style="font-size:0.95rem;line-height:2.2;">
+              <div style="display:flex;justify-content:space-between;"><span>月初仕掛品</span><span style="font-weight:700;">×××</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>直接材料費</span><span style="font-weight:700;">×××</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>直接労務費</span><span style="font-weight:700;">×××</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>製造間接費</span><span style="font-weight:700;">×××</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.4rem;border-top:2px solid #93c5fd;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#2563eb;"><span>合計</span><span>×××</span></div>
+            </div>
+          </div>
+          <div style="padding:0.8rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#059669;margin-bottom:0.3rem;font-size:0.92rem;">貸方（出る側）</p>
+            <div style="font-size:0.95rem;line-height:2.2;">
+              <div style="display:flex;justify-content:space-between;background:#ecfdf5;border-radius:4px;padding:0 0.3rem;"><span style="font-weight:700;color:#059669;">完成品原価</span><span style="font-weight:800;color:#059669;">← これを求める！</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>月末仕掛品</span><span style="font-weight:700;">×××</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.4rem;border-top:2px solid #6ee7b7;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>合計</span><span>×××</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0.4rem;align-items:center;margin-top:0.8rem;">
+      <div style="background:#eff6ff;border-radius:8px;padding:0.5rem;text-align:center;">
+        <p style="font-size:0.88rem;color:#475569;">借方合計</p>
+        <p style="font-weight:800;color:#2563eb;font-size:1rem;">入れた合計</p>
+      </div>
+      <p style="font-size:1.3rem;font-weight:800;color:#475569;">＝</p>
+      <div style="background:#ecfdf5;border-radius:8px;padding:0.5rem;text-align:center;">
+        <p style="font-size:0.88rem;color:#475569;">貸方合計</p>
+        <p style="font-weight:800;color:#059669;font-size:1rem;">出た合計</p>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:0.92rem;color:#475569;margin-top:0.3rem;">左右は<strong>必ず一致する</strong>。だから…</p>
+    <div style="background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:2px solid #6ee7b7;border-radius:var(--radius);padding:0.7rem;margin-top:0.5rem;text-align:center;">
+      <p style="font-size:1.1rem;font-weight:800;color:#059669;">完成品原価 ＝ 借方合計 − 月末仕掛品</p>
+      <p style="font-size:0.92rem;color:#475569;margin-top:0.2rem;">全部入れた合計から、月末に残ってる分を引くだけ！</p>
+    </div>
+  </div>
+
+  <!-- 具体例のBOX図 -->
+  <h2 class="stitle stitle-amber">&#x1F35E; 具体例：パン工場のBOX図</h2>
+
+  <div class="card">
+    <p style="font-size:0.92rem;color:#475569;margin-bottom:0.6rem;">月初仕掛品45万 ／ 当月投入225万 ／ 月末仕掛品20万 の場合</p>
+
+    <div style="max-width:500px;margin:0 auto;">
+      <div style="border:3px solid #d97706;border-radius:8px;overflow:hidden;">
+        <div style="background:#d97706;color:#fff;text-align:center;padding:0.5rem;font-weight:800;font-size:1.05rem;">仕掛品勘定（パン工場）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;min-height:200px;">
+          <!-- 借方 -->
+          <div style="border-right:3px solid #d97706;padding:0.8rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#d97706;margin-bottom:0.3rem;font-size:0.92rem;">借方（入る側）</p>
+            <div style="font-size:0.95rem;line-height:2.2;">
+              <div style="display:flex;justify-content:space-between;background:#fffbeb;border-radius:4px;padding:0 0.3rem;">
+                <span>月初仕掛品</span><span style="font-weight:700;">45万</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:0 0.3rem;">
+                <span>直接材料費</span><span style="font-weight:700;">120万</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:0 0.3rem;">
+                <span>直接労務費</span><span style="font-weight:700;">60万</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:0 0.3rem;">
+                <span>製造間接費</span><span style="font-weight:700;">45万</span>
+              </div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.4rem;border-top:2px solid #fde68a;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#d97706;font-size:1.05rem;"><span>合計</span><span>270万</span></div>
+            </div>
+          </div>
+          <!-- 貸方 -->
+          <div style="padding:0.8rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#059669;margin-bottom:0.3rem;font-size:0.92rem;">貸方（出る側）</p>
+            <div style="font-size:0.95rem;line-height:2.2;">
+              <div style="display:flex;justify-content:space-between;background:#ecfdf5;border:2px solid #6ee7b7;border-radius:4px;padding:0.15rem 0.3rem;">
+                <span style="font-weight:800;color:#059669;">完成品原価</span>
+                <span style="font-weight:800;color:#059669;font-size:1.1rem;">250万</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;background:#fff1f2;border-radius:4px;padding:0 0.3rem;">
+                <span>月末仕掛品</span><span style="font-weight:700;color:#e11d48;">20万</span>
+              </div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.4rem;border-top:2px solid #6ee7b7;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;font-size:1.05rem;"><span>合計</span><span>270万</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 計算の流れを図解 -->
+    <div style="margin-top:1rem;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;">
+      <div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:var(--radius-sm);padding:0.6rem;text-align:center;">
+        <p style="font-size:0.82rem;color:#475569;">借方合計</p>
+        <p style="font-size:1.2rem;font-weight:800;color:#2563eb;">270万</p>
+      </div>
+      <p style="font-size:1.3rem;font-weight:800;color:#475569;">−</p>
+      <div style="background:#fff1f2;border:2px solid #fda4af;border-radius:var(--radius-sm);padding:0.6rem;text-align:center;">
+        <p style="font-size:0.82rem;color:#475569;">月末仕掛品</p>
+        <p style="font-size:1.2rem;font-weight:800;color:#e11d48;">20万</p>
+      </div>
+      <p style="font-size:1.3rem;font-weight:800;color:#475569;">＝</p>
+      <div style="background:#ecfdf5;border:2px solid #6ee7b7;border-radius:var(--radius-sm);padding:0.6rem;text-align:center;">
+        <p style="font-size:0.82rem;color:#475569;">完成品原価</p>
+        <p style="font-size:1.2rem;font-weight:800;color:#059669;">250万</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 読み方の補足 -->
+  <div class="card" style="border-left:4px solid #7c3aed;">
+    <p style="font-weight:800;color:#7c3aed;margin-bottom:0.4rem;">BOX図の読み方</p>
+    <p style="font-size:1rem;line-height:2;">
+      <strong>借方（左側）</strong>＝ 今月この箱に「入れたもの」の合計。<br>
+      月初の残り＋今月新たに投入した直接材料費・直接労務費・製造間接費。<br><br>
+      <strong>貸方（右側）</strong>＝ この箱から「出ていったもの」の合計。<br>
+      完成して出ていった分＋月末にまだ残っている分。<br><br>
+      入れたもの ＝ 出たもの＋残ってるもの。だから左右は<strong>必ず一致</strong>する。<br>
+      「完成品原価」だけが分からないなら、<strong>合計から残りを引けば出る</strong>。
+    </p>
+  </div>
+
+  <!-- ========== 2つの方法でBOX図はどう変わる？ ========== -->
+  <h2 class="stitle stitle-emerald" style="margin-top:1.5rem;">&#x1F50D; 2つの方法でBOX図はどう変わる？</h2>
+
+  <!-- 大前提 -->
+  <div class="card card-glow-blue">
+    <p style="font-weight:800;color:#2563eb;font-size:1.05rem;margin-bottom:0.4rem;">&#x2757; 大前提：BOX図の「数量」は両方とも同じ</p>
+    <p style="font-size:0.95rem;line-height:1.9;margin-bottom:0.5rem;">
+      先入先出法でも平均法でも、<strong>物の流れ（何個入って何個出たか）は変わらない</strong>。<br>
+      BOX図の数量は両方まったく同じ。<strong>重複カウントではない。</strong>
+    </p>
+    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;padding:0.6rem;">
+      <p style="font-size:0.92rem;line-height:1.8;text-align:center;">
+        では何が違う？ → <strong style="color:#e11d48;font-size:1.05rem;">単価を出すとき「月初のコストを混ぜるかどうか」</strong><br>
+        <span style="font-size:0.85rem;color:#475569;">これが唯一の違い。その結果、月末仕掛品の金額が変わり、完成品原価も変わる。</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- 単価の出し方の違い -->
+  <div class="card" style="border:2px solid #7c3aed;">
+    <p style="font-weight:800;color:#7c3aed;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F3F7; 月初コストを入れるか入れないか ― ここだけが違う</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+      <!-- 先入先出法 -->
+      <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:8px;padding:0.7rem;">
+        <p style="font-weight:800;color:#2563eb;font-size:0.95rem;margin-bottom:0.3rem;">&#x1F535; 先入先出法 ― 月初コストを<span style="color:#e11d48;">入れない</span></p>
+        <div style="background:#fff;border-radius:6px;padding:0.5rem;margin-bottom:0.4rem;">
+          <p style="font-size:0.88rem;color:#475569;line-height:1.7;">
+            単価 ＝<br>
+            <strong style="color:#2563eb;font-size:1rem;">当月コストだけ ÷ 当月の換算量</strong>
+          </p>
+        </div>
+        <p style="font-size:0.82rem;color:#475569;line-height:1.7;">
+          月初のコストは単価計算に<strong style="color:#e11d48;">入れない</strong>。<br>
+          月初コストは完成品にそのまま直行させる。<br>
+          → 月末は「今月かかったコストだけ」で評価される。
+        </p>
+      </div>
+      <!-- 平均法 -->
+      <div style="background:#fffbeb;border:2px solid #d97706;border-radius:8px;padding:0.7rem;">
+        <p style="font-weight:800;color:#d97706;font-size:0.95rem;margin-bottom:0.3rem;">&#x1F7E0; 平均法 ― 月初コストを<span style="color:#059669;">入れる</span></p>
+        <div style="background:#fff;border-radius:6px;padding:0.5rem;margin-bottom:0.4rem;">
+          <p style="font-size:0.88rem;color:#475569;line-height:1.7;">
+            単価 ＝<br>
+            <strong style="color:#d97706;font-size:1rem;">(月初＋当月)全部 ÷ 総換算量</strong>
+          </p>
+        </div>
+        <p style="font-size:0.82rem;color:#475569;line-height:1.7;">
+          月初のコストも単価計算に<strong style="color:#059669;">入れる</strong>。<br>
+          月初と当月をぜんぶ同じプールに混ぜて平均する。<br>
+          → 月末も完成品も「月初込みの平均単価」で評価される。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 具体例で比較 -->
+  <h2 class="stitle stitle-rose">&#x1F4CA; 同じBOX図、違う金額 ― 具体例で比較</h2>
+
+  <div class="card" style="border:1.5px solid #94a3b8;">
+    <p style="font-weight:800;color:#475569;font-size:0.88rem;margin-bottom:0.3rem;">使うデータ（計算まとめタブと同じ）</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.85rem;">
+      <div><span style="color:#475569;">数量：</span>月初<strong>100個</strong>(50%) ／ 投入<strong>900個</strong> ／ 完成<strong>600個</strong> ／ 月末<strong>400個</strong>(50%)</div>
+      <div><span style="color:#2563eb;font-weight:700;">直接材料費：</span>月初8,000 ／ 当月27,000<br><span style="color:#d97706;font-weight:700;">加工費：</span>月初5,000 ／ 当月15,000</div>
+    </div>
+  </div>
+
+  <!-- 材料費BOX比較 -->
+  <div class="card" style="border:2px solid #2563eb;">
+    <p style="font-weight:800;color:#2563eb;font-size:1.05rem;margin-bottom:0.6rem;">&#x1F9F1; 直接材料費のBOX図を並べて比較</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+      <!-- FIFO材料費BOX -->
+      <div>
+        <p style="font-weight:700;color:#2563eb;font-size:0.85rem;text-align:center;margin-bottom:0.3rem;">&#x1F535; 先入先出法</p>
+        <div style="border:2px solid #2563eb;border-radius:8px;overflow:hidden;font-size:0.82rem;">
+          <div style="background:#2563eb;color:#fff;text-align:center;padding:0.25rem;font-weight:800;font-size:0.78rem;">仕掛品（直接材料費）</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;min-height:100px;">
+            <div style="border-right:2px solid #2563eb;padding:0.4rem;">
+              <div style="line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;"><span>月初</span><span style="font-weight:700;">8,000</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>当月</span><span style="font-weight:700;">27,000</span></div>
+              </div>
+              <div style="border-top:1.5px solid #93c5fd;margin-top:0.2rem;padding-top:0.2rem;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#2563eb;"><span>計</span><span>35,000</span></div>
+              </div>
+            </div>
+            <div style="padding:0.4rem;">
+              <div style="line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;color:#059669;font-weight:700;"><span>完成</span><span>23,000</span></div>
+                <div style="display:flex;justify-content:space-between;color:#e11d48;font-weight:700;background:#fff1f2;border-radius:3px;padding:0 0.2rem;"><span>月末</span><span>12,000</span></div>
+              </div>
+              <div style="border-top:1.5px solid #6ee7b7;margin-top:0.2rem;padding-top:0.2rem;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>計</span><span>35,000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="text-align:center;font-size:0.78rem;color:#2563eb;margin-top:0.3rem;font-weight:700;">月末 ＝ <strong>@30</strong> × 400 ＝ 12,000</p>
+        <p style="text-align:center;font-size:0.72rem;color:#94a3b8;">（当月27,000 ÷ 900個）</p>
+      </div>
+      <!-- 平均法材料費BOX -->
+      <div>
+        <p style="font-weight:700;color:#d97706;font-size:0.85rem;text-align:center;margin-bottom:0.3rem;">&#x1F7E0; 平均法</p>
+        <div style="border:2px solid #d97706;border-radius:8px;overflow:hidden;font-size:0.82rem;">
+          <div style="background:#d97706;color:#fff;text-align:center;padding:0.25rem;font-weight:800;font-size:0.78rem;">仕掛品（直接材料費）</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;min-height:100px;">
+            <div style="border-right:2px solid #d97706;padding:0.4rem;">
+              <div style="line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;"><span>月初</span><span style="font-weight:700;">8,000</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>当月</span><span style="font-weight:700;">27,000</span></div>
+              </div>
+              <div style="border-top:1.5px solid #fde68a;margin-top:0.2rem;padding-top:0.2rem;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#d97706;"><span>計</span><span>35,000</span></div>
+              </div>
+            </div>
+            <div style="padding:0.4rem;">
+              <div style="line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;color:#059669;font-weight:700;"><span>完成</span><span>21,000</span></div>
+                <div style="display:flex;justify-content:space-between;color:#e11d48;font-weight:700;background:#fff1f2;border-radius:3px;padding:0 0.2rem;"><span>月末</span><span>14,000</span></div>
+              </div>
+              <div style="border-top:1.5px solid #6ee7b7;margin-top:0.2rem;padding-top:0.2rem;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>計</span><span>35,000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="text-align:center;font-size:0.78rem;color:#d97706;margin-top:0.3rem;font-weight:700;">月末 ＝ <strong>@35</strong> × 400 ＝ 14,000</p>
+        <p style="text-align:center;font-size:0.72rem;color:#94a3b8;">（合計35,000 ÷ 1,000個）</p>
+      </div>
+    </div>
+
+    <!-- 差額ハイライト -->
+    <div style="background:#fef2f2;border:2px solid #fca5a5;border-radius:8px;padding:0.5rem;margin-top:0.6rem;text-align:center;">
+      <p style="font-size:0.92rem;color:#475569;">
+        <strong>借方（左）は完全に同じ</strong>。月末の金額だけが違う！<br>
+        月末の差：14,000 − 12,000 ＝ <strong style="color:#e11d48;">+2,000円</strong>（平均法のほうが高い）
+      </p>
+    </div>
+    <div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:8px;padding:0.5rem 0.6rem;margin-top:0.4rem;">
+      <p style="font-size:0.85rem;color:#475569;line-height:1.8;">
+        <strong>なぜ月末が高いと完成品が安くなる？</strong><br>
+        完成品原価 ＝ 借方合計 − 月末仕掛品。<strong>借方合計（35,000）はどちらも同じ</strong>。<br>
+        同じ合計から引く月末が大きいほど、残る完成品原価は小さくなる。<br>
+        先入先出法：35,000 − <strong style="color:#2563eb;">12,000</strong> ＝ <strong>23,000</strong>　／　平均法：35,000 − <strong style="color:#d97706;">14,000</strong> ＝ <strong>21,000</strong>（<strong style="color:#e11d48;">2,000円低い</strong>）
+      </p>
+    </div>
+  </div>
+
+  <!-- 加工費BOX比較 -->
+  <div class="card" style="border:2px solid #d97706;">
+    <p style="font-weight:800;color:#d97706;font-size:1.05rem;margin-bottom:0.6rem;">&#x1F477; 加工費のBOX図を並べて比較</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+      <!-- FIFO加工費BOX -->
+      <div>
+        <p style="font-weight:700;color:#2563eb;font-size:0.85rem;text-align:center;margin-bottom:0.3rem;">&#x1F535; 先入先出法</p>
+        <div style="border:2px solid #2563eb;border-radius:8px;overflow:hidden;font-size:0.82rem;">
+          <div style="background:#2563eb;color:#fff;text-align:center;padding:0.25rem;font-weight:800;font-size:0.78rem;">仕掛品（加工費）※換算量</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;min-height:100px;">
+            <div style="border-right:2px solid #2563eb;padding:0.4rem;">
+              <div style="line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;"><span>月初50個</span><span style="font-weight:700;">5,000</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>当月750個</span><span style="font-weight:700;">15,000</span></div>
+              </div>
+              <div style="border-top:1.5px solid #93c5fd;margin-top:0.2rem;padding-top:0.2rem;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#2563eb;"><span>計 800個</span><span>20,000</span></div>
+              </div>
+            </div>
+            <div style="padding:0.4rem;">
+              <div style="line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;color:#059669;font-weight:700;"><span>完成600個</span><span>16,000</span></div>
+                <div style="display:flex;justify-content:space-between;color:#e11d48;font-weight:700;background:#fff1f2;border-radius:3px;padding:0 0.2rem;"><span>月末200個</span><span>4,000</span></div>
+              </div>
+              <div style="border-top:1.5px solid #6ee7b7;margin-top:0.2rem;padding-top:0.2rem;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>計 800個</span><span>20,000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="text-align:center;font-size:0.78rem;color:#2563eb;margin-top:0.3rem;font-weight:700;">月末 ＝ <strong>@20</strong> × 200個 ＝ 4,000</p>
+        <p style="text-align:center;font-size:0.72rem;color:#94a3b8;">（当月15,000 ÷ 750個）</p>
+      </div>
+      <!-- 平均法加工費BOX -->
+      <div>
+        <p style="font-weight:700;color:#d97706;font-size:0.85rem;text-align:center;margin-bottom:0.3rem;">&#x1F7E0; 平均法</p>
+        <div style="border:2px solid #d97706;border-radius:8px;overflow:hidden;font-size:0.82rem;">
+          <div style="background:#d97706;color:#fff;text-align:center;padding:0.25rem;font-weight:800;font-size:0.78rem;">仕掛品（加工費）※換算量</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;min-height:100px;">
+            <div style="border-right:2px solid #d97706;padding:0.4rem;">
+              <div style="line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;"><span>月初50個</span><span style="font-weight:700;">5,000</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>当月750個</span><span style="font-weight:700;">15,000</span></div>
+              </div>
+              <div style="border-top:1.5px solid #fde68a;margin-top:0.2rem;padding-top:0.2rem;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#d97706;"><span>計 800個</span><span>20,000</span></div>
+              </div>
+            </div>
+            <div style="padding:0.4rem;">
+              <div style="line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;color:#059669;font-weight:700;"><span>完成600個</span><span>15,000</span></div>
+                <div style="display:flex;justify-content:space-between;color:#e11d48;font-weight:700;background:#fff1f2;border-radius:3px;padding:0 0.2rem;"><span>月末200個</span><span>5,000</span></div>
+              </div>
+              <div style="border-top:1.5px solid #6ee7b7;margin-top:0.2rem;padding-top:0.2rem;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>計 800個</span><span>20,000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="text-align:center;font-size:0.78rem;color:#d97706;margin-top:0.3rem;font-weight:700;">月末 ＝ <strong>@25</strong> × 200個 ＝ 5,000</p>
+        <p style="text-align:center;font-size:0.72rem;color:#94a3b8;">（合計20,000 ÷ 800個）</p>
+      </div>
+    </div>
+
+    <!-- 同じ200個なのに金額が違う理由 -->
+    <div style="background:#fff7ed;border:2px solid #f59e0b;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+      <p style="font-weight:800;color:#b45309;font-size:0.92rem;margin-bottom:0.4rem;">&#x2753; 同じ「月末200個」なのに、なぜ 4,000 と 5,000 で違う？</p>
+      <p style="font-size:0.88rem;color:#475569;line-height:1.8;margin-bottom:0.5rem;">
+        200個という<strong>数量は同じ</strong>。違うのは<strong>掛ける単価</strong>。<br>
+        単価が違う理由は、月初コストを入れるかどうか。
+      </p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0.4rem;align-items:stretch;">
+        <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:6px;padding:0.5rem;text-align:center;">
+          <p style="font-size:0.78rem;color:#2563eb;font-weight:700;">&#x1F535; 先入先出法</p>
+          <p style="font-size:0.82rem;color:#475569;">月初コストを<strong style="color:#e11d48;">入れない</strong></p>
+          <p style="font-size:0.82rem;color:#475569;"><strong>当月</strong>15,000 ÷ 750個</p>
+          <p style="font-weight:800;color:#2563eb;font-size:1rem;">＝ @20</p>
+          <p style="font-size:0.82rem;">200個 × @20 ＝ <strong>4,000</strong></p>
+        </div>
+        <div style="display:flex;align-items:center;">
+          <p style="font-weight:800;color:#b45309;font-size:0.85rem;">差<br>1,000円</p>
+        </div>
+        <div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:6px;padding:0.5rem;text-align:center;">
+          <p style="font-size:0.78rem;color:#d97706;font-weight:700;">&#x1F7E0; 平均法</p>
+          <p style="font-size:0.82rem;color:#475569;">月初コストを<strong style="color:#059669;">入れる</strong></p>
+          <p style="font-size:0.82rem;color:#475569;">(<strong>月初</strong>5,000+<strong>当月</strong>15,000) ÷ 800個</p>
+          <p style="font-weight:800;color:#d97706;font-size:1rem;">＝ @25</p>
+          <p style="font-size:0.82rem;">200個 × @25 ＝ <strong>5,000</strong></p>
+        </div>
+      </div>
+      <p style="font-size:0.82rem;color:#64748b;margin-top:0.4rem;text-align:center;">
+        月初の加工費単価は @100（5,000÷50個）で当月の @20 より高い。<br>
+        平均法はこの高い月初を混ぜるから、単価が @20 → @25 に上がる。
+      </p>
+    </div>
+
+    <div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:8px;padding:0.5rem 0.6rem;margin-top:0.4rem;">
+      <p style="font-size:0.85rem;color:#475569;line-height:1.8;">
+        <strong>完成品への影響：</strong>借方合計（20,000）は同じ。引く月末が大きいほど完成品は小さくなる。<br>
+        先入先出法：20,000 − <strong style="color:#2563eb;">4,000</strong> ＝ <strong>16,000</strong>　／　平均法：20,000 − <strong style="color:#d97706;">5,000</strong> ＝ <strong>15,000</strong>（<strong style="color:#e11d48;">1,000円低い</strong>）
+      </p>
+    </div>
+  </div>
+
+  <!-- 合計の差額まとめ -->
+  <div class="card" style="border:3px solid #059669;background:linear-gradient(135deg,#ecfdf5,#f8fafc);">
+    <p style="font-weight:800;color:#059669;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F4CA; 合計の差 ― なぜ3,000円違う？</p>
+
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.9rem;border:2px solid #d1d5db;">
+        <tr>
+          <th style="background:#334155;color:#fff;padding:0.5rem;border:1px solid #475569;"></th>
+          <th style="background:#2563eb;color:#fff;padding:0.5rem;border:1px solid #1d4ed8;text-align:center;">&#x1F535; 先入先出法</th>
+          <th style="background:#d97706;color:#fff;padding:0.5rem;border:1px solid #b45309;text-align:center;">&#x1F7E0; 平均法</th>
+          <th style="background:#e11d48;color:#fff;padding:0.5rem;border:1px solid #be123c;text-align:center;">差額</th>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;font-weight:700;">直接材料費単価</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;">@30（当月のみ）</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;">@35（月初+当月平均）</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;color:#e11d48;font-weight:700;">+5</td>
+        </tr>
+        <tr style="background:#f8fafc;">
+          <td style="padding:0.5rem;border:1px solid #d1d5db;font-weight:700;">加工費単価</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;">@20（当月のみ）</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;">@25（月初+当月平均）</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;color:#e11d48;font-weight:700;">+5</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;font-weight:700;">月末仕掛品</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;font-weight:700;">16,000円</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;font-weight:700;">19,000円</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;color:#e11d48;font-weight:800;">+3,000</td>
+        </tr>
+        <tr style="background:#ecfdf5;">
+          <td style="padding:0.5rem;border:1px solid #d1d5db;font-weight:800;">完成品原価</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;font-weight:800;color:#059669;">39,000円</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;font-weight:800;color:#059669;">36,000円</td>
+          <td style="padding:0.5rem;border:1px solid #d1d5db;text-align:center;color:#e11d48;font-weight:800;">-3,000</td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="font-size:0.85rem;color:#475569;margin-top:0.5rem;text-align:center;">総原価55,000円は同じ。月末仕掛品が +3,000 高い分、完成品原価が -3,000 低くなる。</p>
+  </div>
+
+  <!-- なぜ差が出るのか（仕組み） -->
+  <div class="card" style="border:2px solid #7c3aed;">
+    <p style="font-weight:800;color:#7c3aed;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F4A1; なぜ差が出る？ ― 月初単価と当月単価のギャップ</p>
+
+    <p style="font-size:0.92rem;color:#475569;line-height:1.8;margin-bottom:0.5rem;">
+      月初に残っていた仕掛品のコストと、当月新たにかかったコストを比べてみる。
+    </p>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:stretch;margin-bottom:0.6rem;">
+      <div style="background:#f5f3ff;border:1.5px solid #c4b5fd;border-radius:8px;padding:0.5rem;text-align:center;">
+        <p style="font-size:0.82rem;color:#7c3aed;font-weight:700;">月初の仕掛品コスト</p>
+        <div style="font-size:0.85rem;line-height:1.8;margin-top:0.3rem;">
+          <p>直接材料費 <strong>8,000円</strong>（100個分）</p>
+          <p>加工費 <strong>5,000円</strong>（50個分）</p>
+        </div>
+        <p style="font-size:0.75rem;color:#7c3aed;font-weight:700;margin-top:0.2rem;">1個あたりのコストが高い</p>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <p style="font-weight:800;color:#e11d48;font-size:1.1rem;">&#x226B;</p>
+        <p style="font-size:0.72rem;color:#e11d48;font-weight:700;">月初のほうが<br>割高！</p>
+      </div>
+      <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:0.5rem;text-align:center;">
+        <p style="font-size:0.82rem;color:#2563eb;font-weight:700;">当月の投入コスト</p>
+        <div style="font-size:0.85rem;line-height:1.8;margin-top:0.3rem;">
+          <p>直接材料費 <strong>27,000円</strong>（900個分）</p>
+          <p>加工費 <strong>15,000円</strong>（750個分）</p>
+        </div>
+        <p style="font-size:0.75rem;color:#2563eb;font-weight:700;margin-top:0.2rem;">1個あたりのコストが安い</p>
+      </div>
+    </div>
+    <p style="font-size:0.82rem;color:#475569;text-align:center;margin-bottom:0.5rem;">
+      この<strong>「月初が割高」というギャップ</strong>が、2つの方法で答えが分かれる原因。
+    </p>
+
+    <!-- 縦ステップ×左右比較フロー図 -->
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:0;font-size:0.88rem;">
+
+      <!-- ヘッダー行 -->
+      <div style="padding:0.4rem;"></div>
+      <div style="background:#2563eb;color:#fff;padding:0.5rem;text-align:center;font-weight:800;border-radius:8px 0 0 0;">&#x1F535; 先入先出法</div>
+      <div style="background:#d97706;color:#fff;padding:0.5rem;text-align:center;font-weight:800;border-radius:0 8px 0 0;">&#x1F7E0; 平均法</div>
+
+      <!-- STEP1: 月初コストをどうする？ -->
+      <div style="background:#f5f3ff;padding:0.5rem;display:flex;align-items:center;justify-content:center;border:1px solid #e2e8f0;">
+        <p style="font-weight:800;color:#7c3aed;font-size:0.78rem;text-align:center;">月初コスト<br>（前月より高い）<br>をどうする？</p>
+      </div>
+      <div style="background:#eff6ff;padding:0.6rem;text-align:center;border:1px solid #e2e8f0;">
+        <p style="font-weight:800;color:#e11d48;font-size:1.3rem;">&#x2718;</p>
+        <p style="font-weight:800;color:#e11d48;font-size:0.95rem;">混ぜない</p>
+        <p style="font-size:0.78rem;color:#475569;">月初コストは単価計算に入れず<br>完成品にそのまま直行させる</p>
+      </div>
+      <div style="background:#fffbeb;padding:0.6rem;text-align:center;border:1px solid #e2e8f0;">
+        <p style="font-weight:800;color:#059669;font-size:1.3rem;">&#x2714;</p>
+        <p style="font-weight:800;color:#059669;font-size:0.95rem;">混ぜる</p>
+        <p style="font-size:0.78rem;color:#475569;">月初と当月を全部<br>同じプールに入れて平均する</p>
+      </div>
+
+      <!-- 矢印行 -->
+      <div style="padding:0.15rem;"></div>
+      <div style="text-align:center;padding:0.15rem;"><p style="font-weight:800;color:#2563eb;font-size:1rem;">&#x25BC;</p></div>
+      <div style="text-align:center;padding:0.15rem;"><p style="font-weight:800;color:#d97706;font-size:1rem;">&#x25BC;</p></div>
+
+      <!-- STEP2: 単価 -->
+      <div style="background:#f8fafc;padding:0.5rem;display:flex;align-items:center;justify-content:center;border:1px solid #e2e8f0;">
+        <p style="font-weight:800;color:#475569;font-size:0.78rem;text-align:center;">月末を評価<br>する単価</p>
+      </div>
+      <div style="background:#dbeafe;padding:0.6rem;text-align:center;border:1px solid #e2e8f0;">
+        <p style="font-size:0.78rem;color:#475569;">当月コスト<strong>だけ</strong>で計算</p>
+        <p style="font-size:0.78rem;color:#475569;">直接材料費: 27,000÷900 ＝ <strong style="color:#2563eb;">30円</strong></p>
+        <p style="font-size:0.78rem;color:#475569;">加工費: 15,000÷750 ＝ <strong style="color:#2563eb;">20円</strong></p>
+        <p style="font-size:0.75rem;color:#2563eb;font-weight:700;">月初を入れないから安いまま</p>
+      </div>
+      <div style="background:#fef3c7;padding:0.6rem;text-align:center;border:1px solid #e2e8f0;">
+        <p style="font-size:0.78rem;color:#475569;">月初＋当月の<strong>平均</strong>で計算</p>
+        <p style="font-size:0.78rem;color:#475569;">直接材料費: 35,000÷1,000 ＝ <strong style="color:#d97706;">35円</strong></p>
+        <p style="font-size:0.78rem;color:#475569;">加工費: 20,000÷800 ＝ <strong style="color:#d97706;">25円</strong></p>
+        <p style="font-size:0.75rem;color:#b45309;font-weight:700;">割高な月初を混ぜたから上がる</p>
+      </div>
+
+      <!-- 矢印行 -->
+      <div style="padding:0.15rem;"></div>
+      <div style="text-align:center;padding:0.15rem;"><p style="font-weight:800;color:#2563eb;font-size:1rem;">&#x25BC;</p></div>
+      <div style="text-align:center;padding:0.15rem;"><p style="font-weight:800;color:#d97706;font-size:1rem;">&#x25BC;</p></div>
+
+      <!-- STEP3: 月末仕掛品 -->
+      <div style="background:#fff1f2;padding:0.5rem;display:flex;align-items:center;justify-content:center;border:1px solid #e2e8f0;">
+        <p style="font-weight:800;color:#e11d48;font-size:0.78rem;text-align:center;">月末仕掛品</p>
+      </div>
+      <div style="background:#eff6ff;padding:0.6rem;text-align:center;border:2px solid #93c5fd;">
+        <p style="font-weight:800;color:#e11d48;font-size:1.2rem;">16,000円</p>
+        <p style="font-size:0.75rem;color:#475569;">直接材料費12,000 + 加工費4,000</p>
+        <p style="font-size:0.78rem;color:#2563eb;font-weight:700;">安い単価 → 月末も安い</p>
+      </div>
+      <div style="background:#fffbeb;padding:0.6rem;text-align:center;border:2px solid #fcd34d;">
+        <p style="font-weight:800;color:#e11d48;font-size:1.2rem;">19,000円</p>
+        <p style="font-size:0.75rem;color:#475569;">直接材料費14,000 + 加工費5,000</p>
+        <p style="font-size:0.78rem;color:#d97706;font-weight:700;">高い単価 → 月末も高い</p>
+      </div>
+
+      <!-- 矢印行 -->
+      <div style="padding:0.15rem;"></div>
+      <div style="text-align:center;padding:0.15rem;"><p style="font-weight:800;color:#2563eb;font-size:1rem;">&#x25BC;</p></div>
+      <div style="text-align:center;padding:0.15rem;"><p style="font-weight:800;color:#d97706;font-size:1rem;">&#x25BC;</p></div>
+
+      <!-- STEP4: 完成品原価 -->
+      <div style="background:#ecfdf5;padding:0.5rem;display:flex;align-items:center;justify-content:center;border:1px solid #e2e8f0;">
+        <p style="font-weight:800;color:#059669;font-size:0.78rem;text-align:center;">完成品原価<br><span style="font-size:0.68rem;color:#475569;">55,000−月末</span></p>
+      </div>
+      <div style="background:#ecfdf5;padding:0.6rem;text-align:center;border:3px solid #059669;border-radius:0 0 0 8px;">
+        <p style="font-size:0.75rem;color:#475569;">55,000 − 16,000 ＝</p>
+        <p style="font-weight:800;color:#059669;font-size:1.3rem;">39,000円</p>
+        <p style="font-size:0.78rem;color:#059669;font-weight:700;">引く額が小さい → 高くなる</p>
+      </div>
+      <div style="background:#ecfdf5;padding:0.6rem;text-align:center;border:3px solid #059669;border-radius:0 0 8px 0;">
+        <p style="font-size:0.75rem;color:#475569;">55,000 − 19,000 ＝</p>
+        <p style="font-weight:800;color:#059669;font-size:1.3rem;">36,000円</p>
+        <p style="font-size:0.78rem;color:#059669;font-weight:700;">引く額が大きい → 安くなる</p>
+      </div>
+
+    </div>
+
+    <!-- 差額 -->
+    <div style="background:#fef2f2;border:2px solid #e11d48;border-radius:8px;padding:0.5rem;text-align:center;margin-top:0.6rem;margin-bottom:0.5rem;">
+      <p style="font-size:0.95rem;color:#475569;line-height:1.8;">
+        <strong style="color:#e11d48;font-size:1.05rem;">差額 3,000円</strong> ＝ 月末仕掛品の差（19,000 − 16,000）<br>
+        <span style="font-size:0.85rem;">月初コストを混ぜたかどうか、それだけでこの差が生まれる</span>
+      </p>
+    </div>
+
+    <div style="background:#f8fafc;border-radius:8px;padding:0.5rem;margin-top:0.3rem;">
+      <p style="font-size:0.85rem;color:#475569;line-height:1.8;text-align:center;">
+        <strong>まとめ：</strong>月初と当月で単価にギャップがあるほど、2つの方法の差は大きくなる。<br>
+        ギャップが無ければ（月初単価＝当月単価）、両方の答えは一致する。
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== TAB 5: 計算まとめ ==================== -->
+<div class="tab-panel" id="tab5">
+
+  <h2 class="stitle stitle-amber">&#x1F9EE; 計算まとめ ― 同じデータで2つの方法を比較</h2>
+
+  <!-- このタブの進め方 -->
+  <div class="card" style="border:2px solid #7c3aed;">
+    <p style="font-weight:800;color:#7c3aed;margin-bottom:0.4rem;">&#x1F4D6; このタブの進め方</p>
+    <p style="font-size:0.95rem;line-height:1.8;margin-bottom:0.5rem;">
+      同じデータを使って<strong>先入先出法</strong>と<strong>平均法</strong>の両方で完成品原価を出す。<br>
+      どちらの方法も<strong>材料費と加工費を別々に</strong>計算して最後に合算する。
+    </p>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:0.3rem 0.6rem;font-size:0.92rem;line-height:1.8;">
+      <span style="font-weight:800;color:#2563eb;">&#x2460;</span>
+      <span>共通データ＋数量フロー → 最初に確認</span>
+      <span style="font-weight:800;color:#2563eb;">&#x2461;</span>
+      <span><span style="background:#eff6ff;padding:0.1rem 0.4rem;border-radius:4px;color:#2563eb;font-weight:700;">&#x1F535; 先入先出法</span> 青エリアでSTEP1→2→3</span>
+      <span style="font-weight:800;color:#d97706;">&#x2462;</span>
+      <span><span style="background:#fffbeb;padding:0.1rem 0.4rem;border-radius:4px;color:#d97706;font-weight:700;">&#x1F7E0; 平均法</span> 黄エリアでSTEP1→2→3</span>
+      <span style="font-weight:800;color:#059669;">&#x2463;</span>
+      <span>最後に2つの答えを比較</span>
+    </div>
+    <div style="background:#f8fafc;border-radius:8px;padding:0.4rem;margin-top:0.4rem;font-size:0.85rem;color:#475569;">
+      <strong>材料費と加工費を分ける理由：</strong>材料は最初に全部入れる（始点投入）ので換算量が個数そのまま。加工費は進捗度をかける。換算量が違うから別々に計算する。
+    </div>
+  </div>
+
+  <!-- 共通データ -->
+  <div class="card" style="border:2px solid #059669;">
+    <p style="font-weight:800;font-size:1.05rem;color:#059669;margin-bottom:0.5rem;">共通データ</p>
+
+    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:var(--radius);padding:0.8rem;margin-bottom:0.6rem;">
+      <p style="font-weight:800;color:#475569;margin-bottom:0.4rem;">数量データ （ ）内は加工進捗度</p>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:0.2rem 1rem;font-size:1rem;line-height:2;">
+        <span>月初仕掛品</span><span><strong>100個</strong>（50%）</span>
+        <span>当月投入</span><span><strong>900個</strong></span>
+        <span style="border-top:2px solid #475569;padding-top:0.2rem;">合計</span><span style="border-top:2px solid #475569;padding-top:0.2rem;"><strong>1,000個</strong></span>
+        <span>月末仕掛品</span><span><strong>400個</strong>（50%）</span>
+        <span style="border-top:2px solid #475569;padding-top:0.2rem;border-bottom:3px double #475569;padding-bottom:0.2rem;">完成品</span><span style="border-top:2px solid #475569;padding-top:0.2rem;border-bottom:3px double #475569;padding-bottom:0.2rem;"><strong>600個</strong></span>
+      </div>
+    </div>
+
+    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:var(--radius);padding:0.8rem;">
+      <p style="font-weight:800;color:#475569;margin-bottom:0.4rem;">原価データ</p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:1rem;border:2px solid #93c5fd;">
+          <tr>
+            <th style="background:#2563eb;color:#fff;padding:0.6rem;border:1px solid #1d4ed8;"></th>
+            <th style="background:#2563eb;color:#fff;padding:0.6rem;border:1px solid #1d4ed8;text-align:right;">材料費</th>
+            <th style="background:#2563eb;color:#fff;padding:0.6rem;border:1px solid #1d4ed8;text-align:right;">加工費</th>
+          </tr>
+          <tr>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;font-weight:700;">月初仕掛品</td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;"><strong>8,000円</strong></td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;"><strong>5,000円</strong></td>
+          </tr>
+          <tr style="background:#f8fafc;">
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;font-weight:700;">当月製造費用</td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;"><strong>27,000円</strong></td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;"><strong>15,000円</strong></td>
+          </tr>
+          <tr style="background:#ecfdf5;">
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;font-weight:800;">合計</td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;font-weight:800;">35,000円</td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;font-weight:800;">20,000円</td>
+          </tr>
+        </table>
+      </div>
+      <p style="font-size:0.88rem;color:#475569;margin-top:0.4rem;text-align:center;">総原価 ＝ 35,000 + 20,000 ＝ <strong>55,000円</strong>　／　材料は<strong>始点投入</strong></p>
+    </div>
+  </div>
+
+  <!-- 数量フロー図（箱サイズが数量に比例） -->
+  <div class="card" style="border:2px solid #d97706;padding:0.8rem;">
+    <div style="max-width:520px;margin:0 auto;">
+      <p style="text-align:center;font-weight:800;color:#334155;font-size:1rem;margin-bottom:0.5rem;">&#x1F3ED; 数量の流れ</p>
+      <div style="display:grid;grid-template-columns:120px auto 1fr auto 120px;gap:0.2rem;align-items:center;text-align:center;">
+        <!-- 投入（左） -->
+        <div>
+          <div style="background:#f5f3ff;border:1.5px solid #7c3aed;border-radius:8px;padding:0.3rem;margin-bottom:0.2rem;height:25px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <p style="font-size:0.68rem;color:#7c3aed;font-weight:700;">&#x1F319; 月初 <span style="font-size:0.6rem;">(加工50%)</span></p>
+            <p style="font-weight:800;color:#7c3aed;font-size:0.95rem;">100個</p>
+          </div>
+          <div style="background:#dbeafe;border:1.5px solid #2563eb;border-radius:8px;padding:0.3rem;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <p style="font-size:0.68rem;color:#2563eb;font-weight:700;">&#x1F4E6; 当月投入</p>
+            <p style="font-weight:800;color:#2563eb;font-size:1.2rem;">900個</p>
+          </div>
+        </div>
+        <!-- 矢印 -->
+        <p style="font-weight:800;font-size:1.1rem;color:#d97706;">→</p>
+        <!-- 工場（中央） -->
+        <div style="background:linear-gradient(135deg,#fefce8,#fff7ed);border:2px solid #f59e0b;border-radius:8px;padding:0.4rem;height:182px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <p style="font-size:0.72rem;color:#b45309;font-weight:700;">&#x1F3ED; 合計</p>
+          <p style="font-weight:800;color:#d97706;font-size:1.5rem;">1,000個</p>
+          <p style="font-size:0.65rem;color:#b45309;">100+900</p>
+        </div>
+        <!-- 矢印 -->
+        <p style="font-weight:800;font-size:1.1rem;color:#d97706;">→</p>
+        <!-- 産出（右） -->
+        <div>
+          <div style="background:#ecfdf5;border:1.5px solid #059669;border-radius:8px;padding:0.3rem;margin-bottom:0.2rem;height:105px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <p style="font-size:0.68rem;color:#059669;font-weight:700;">&#x2705; 完成品</p>
+            <p style="font-weight:800;color:#059669;font-size:1.2rem;">600個</p>
+          </div>
+          <div style="background:#fff1f2;border:1.5px solid #e11d48;border-radius:8px;padding:0.3rem;height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <p style="font-size:0.68rem;color:#e11d48;font-weight:700;">&#x23F3; 月末 <span style="font-size:0.6rem;">(加工50%)</span></p>
+            <p style="font-weight:800;color:#e11d48;font-size:0.95rem;">400個</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 先入先出法で出てくる「300個」の説明 -->
+  <div class="card" style="border-left:4px solid #7c3aed;">
+    <p style="font-weight:800;color:#7c3aed;margin-bottom:0.4rem;">&#x2753; この後出てくる「500個」って何？</p>
+    <p style="font-size:0.95rem;line-height:2;margin-bottom:0.5rem;">
+      先入先出法では「月初の100個を<strong>先に完成</strong>させる」と考える。<br>
+      完成品600個のうち、月初100個を引いた残りが<strong>当月から投入して完成した分</strong>。
+    </p>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+      <div style="background:#ecfdf5;border:1.5px solid #059669;border-radius:8px;padding:0.5rem;">
+        <p style="font-size:0.78rem;color:#059669;">完成品</p>
+        <p style="font-weight:800;color:#059669;font-size:1.1rem;">600個</p>
+      </div>
+      <p style="font-weight:800;font-size:1.1rem;color:#7c3aed;">−</p>
+      <div style="background:#f5f3ff;border:1.5px solid #7c3aed;border-radius:8px;padding:0.5rem;">
+        <p style="font-size:0.78rem;color:#7c3aed;">月初（先に完成）</p>
+        <p style="font-weight:800;color:#7c3aed;font-size:1.1rem;">100個</p>
+      </div>
+      <p style="font-weight:800;font-size:1.1rem;color:#7c3aed;">＝</p>
+      <div style="background:#dbeafe;border:2px solid #2563eb;border-radius:8px;padding:0.5rem;">
+        <p style="font-size:0.78rem;color:#2563eb;">当月から完成した分</p>
+        <p style="font-weight:800;color:#2563eb;font-size:1.1rem;">500個</p>
+      </div>
+    </div>
+    <p style="font-size:0.85rem;color:#475569;margin-top:0.3rem;">※ 平均法ではこの分け方をしない（ぜんぶ混ぜるから）</p>
+  </div>
+
+  <!-- ========== 先入先出法（青エリア） ========== -->
+  <div style="background:#eff6ff;border:3px solid #2563eb;border-radius:var(--radius);padding:1rem;margin-top:1.5rem;">
+  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+    <div style="background:#2563eb;color:#fff;padding:0.4rem 1rem;border-radius:8px;font-weight:800;font-size:1.1rem;">&#x1F535; 先入先出法</div>
+    <p style="font-size:0.88rem;color:#2563eb;">当月だけで単価を出す方法</p>
+  </div>
+
+  <!-- 共通データ再掲（圧縮版） -->
+  <div style="background:#fff;border:1px solid #93c5fd;border-radius:8px;padding:0.5rem 0.8rem;margin-bottom:0.5rem;display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.85rem;">
+    <div>
+      <span style="color:#475569;font-weight:700;">数量：</span>月初<strong>100</strong>(50%) ／ 投入<strong>900</strong> ／ 完成<strong>600</strong> ／ 月末<strong style="color:#e11d48;">400</strong>(50%)
+    </div>
+    <div>
+      <span style="color:#2563eb;font-weight:700;">材料費：</span>月初8,000 ／ 当月<strong>27,000</strong><br>
+      <span style="color:#d97706;font-weight:700;">加工費：</span>月初5,000 ／ 当月<strong>15,000</strong>　<span style="color:#475569;">総原価<strong>55,000円</strong></span>
+    </div>
+  </div>
+
+  <p style="font-weight:800;color:#2563eb;font-size:0.88rem;margin-bottom:0.3rem;">※ 材料費と加工費を<strong>それぞれ別々に</strong>計算して、最後に合算する</p>
+
+  <!-- STEP1 -->
+  <h2 class="stitle stitle-violet" style="margin-top:0.5rem;">STEP 1：当月単価を出す</h2>
+
+  <div class="card" style="border-left:4px solid #2563eb;">
+    <p style="font-weight:800;color:#2563eb;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F9F1; 材料費（始点投入 → 換算量は個数そのまま）</p>
+
+    <div style="background:#dbeafe;border-radius:8px;padding:0.6rem;margin-bottom:0.5rem;">
+      <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">先入先出法の換算量 ＝ 当月完成分 + 月末の換算量</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#059669;">当月完成分</p>
+          <p style="font-weight:800;font-size:1.1rem;">500個</p>
+          <p style="font-size:0.72rem;color:#94a3b8;">（↑で説明した通り）</p>
+        </div>
+        <p style="font-weight:800;color:#2563eb;">+</p>
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#e11d48;">月末400個</p>
+          <p style="font-weight:800;font-size:1.1rem;">400個</p>
+          <p style="font-size:0.72rem;color:#2563eb;">材料は始点投入<br>→ そのまま</p>
+        </div>
+        <p style="font-weight:800;color:#2563eb;">＝</p>
+        <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+          <p style="font-weight:800;color:#2563eb;font-size:1.1rem;">900個</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#eff6ff;border-radius:8px;padding:0.6rem;">
+      <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">当月単価 ＝ 当月投入額 ÷ 当月換算量</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#475569;">当月投入</p>
+          <p style="font-weight:800;">27,000円</p>
+        </div>
+        <p style="font-weight:800;color:#2563eb;">÷</p>
+        <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#2563eb;">当月換算量</p>
+          <p style="font-weight:800;color:#2563eb;">900個</p>
+        </div>
+        <p style="font-weight:800;color:#2563eb;">＝</p>
+        <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#2563eb;">&#x1F3F7; 材料費単価</p>
+          <p style="font-weight:800;color:#2563eb;font-size:1.1rem;">@30円</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:4px solid #d97706;">
+    <p style="font-weight:800;color:#d97706;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F477; 加工費（進捗度をかける）</p>
+
+    <div style="background:#fef3c7;border-radius:8px;padding:0.6rem;margin-bottom:0.5rem;">
+      <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">先入先出法の換算量 ＝ 月初残り + 当月完成分 + 月末の換算量</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#7c3aed;">月初残り</p>
+          <p style="font-weight:800;font-size:1rem;">50個</p>
+          <p style="font-size:0.72rem;color:#94a3b8;">100×(1-50%)</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">+</p>
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#059669;">当月完成</p>
+          <p style="font-weight:800;font-size:1rem;">500個</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">+</p>
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#e11d48;">月末400個×50%</p>
+          <p style="font-weight:800;font-size:1rem;">200個</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">＝</p>
+        <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+          <p style="font-weight:800;color:#d97706;font-size:1.1rem;">750個</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fffbeb;border-radius:8px;padding:0.6rem;">
+      <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">当月単価 ＝ 当月投入額 ÷ 当月換算量</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#475569;">当月投入</p>
+          <p style="font-weight:800;">15,000円</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">÷</p>
+        <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#d97706;">当月換算量</p>
+          <p style="font-weight:800;color:#d97706;">750個</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">＝</p>
+        <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#d97706;">&#x1F3F7; 加工費単価</p>
+          <p style="font-weight:800;color:#d97706;font-size:1.1rem;">@20円</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP2: BOX図 -->
+  <h2 class="stitle stitle-rose">STEP 2：BOX図で月末仕掛品を出す</h2>
+
+  <div class="card" style="border:2px solid #2563eb;">
+    <p style="font-weight:800;color:#2563eb;font-size:1.05rem;margin-bottom:0.5rem;">材料費のBOX図</p>
+    <div style="max-width:460px;margin:0 auto;">
+      <div style="border:3px solid #2563eb;border-radius:8px;overflow:hidden;">
+        <div style="background:#2563eb;color:#fff;text-align:center;padding:0.4rem;font-weight:800;">仕掛品（材料費）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;min-height:150px;">
+          <div style="border-right:3px solid #2563eb;padding:0.7rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#2563eb;font-size:0.88rem;margin-bottom:0.2rem;">借方（入る側）</p>
+            <div style="font-size:0.95rem;line-height:2;">
+              <div style="display:flex;justify-content:space-between;background:#f5f3ff;border-radius:4px;padding:0 0.3rem;"><span>月初</span><span style="font-weight:700;">100個 / 8,000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0 0.3rem;"><span>当月投入</span><span style="font-weight:700;">900個 / 27,000</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #93c5fd;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#2563eb;"><span>合計</span><span>1,000個 / 35,000</span></div>
+            </div>
+          </div>
+          <div style="padding:0.7rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#059669;font-size:0.88rem;margin-bottom:0.2rem;">貸方（出る側）</p>
+            <div style="font-size:0.95rem;line-height:2;">
+              <div style="display:flex;justify-content:space-between;background:#ecfdf5;border-radius:4px;padding:0 0.3rem;"><span style="color:#059669;font-weight:700;">完成品</span><span style="font-weight:700;color:#059669;">600個 / ← 求める！</span></div>
+              <div style="display:flex;justify-content:space-between;background:#fff1f2;border-radius:4px;padding:0 0.3rem;"><span style="color:#e11d48;">月末</span><span style="font-weight:700;color:#e11d48;">400個 / 12,000</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #6ee7b7;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>合計</span><span>1,000個 / 35,000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#eff6ff;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+      <p style="font-size:0.95rem;line-height:1.8;">
+        <strong>月末仕掛品（材料費）</strong>＝ @30 × 400個 ＝ <strong style="color:#e11d48;">12,000円</strong><br>
+        <strong>完成品（材料費）</strong>＝ 35,000 - 12,000 ＝ <strong style="color:#059669;">23,000円</strong>
+      </p>
+    </div>
+    <div style="background:#f5f3ff;border:1.5px dashed #7c3aed;border-radius:8px;padding:0.5rem 0.6rem;margin-top:0.4rem;">
+      <p style="font-size:0.82rem;color:#7c3aed;font-weight:700;margin-bottom:0.2rem;">&#x1F50D; なぜ @30？（先入先出法のポイント）</p>
+      <p style="font-size:0.82rem;color:#475569;line-height:1.7;">
+        <strong style="color:#2563eb;">当月投入27,000 ÷ 当月換算量900個 ＝ @30</strong><br>
+        月初の8,000円は単価計算に<strong>含めない</strong>。月初コストは完成品に直接のせる。<br>
+        → 月末は「今月かかったコストだけ」で評価される。
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="border:2px solid #d97706;">
+    <p style="font-weight:800;color:#d97706;font-size:1.05rem;margin-bottom:0.5rem;">加工費のBOX図</p>
+    <div style="max-width:460px;margin:0 auto;">
+      <div style="border:3px solid #d97706;border-radius:8px;overflow:hidden;">
+        <div style="background:#d97706;color:#fff;text-align:center;padding:0.4rem;font-weight:800;">仕掛品（加工費）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;min-height:150px;">
+          <div style="border-right:3px solid #d97706;padding:0.7rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#d97706;font-size:0.88rem;margin-bottom:0.2rem;">借方（入る側）</p>
+            <div style="font-size:0.95rem;line-height:2;">
+              <div style="display:flex;justify-content:space-between;background:#f5f3ff;border-radius:4px;padding:0 0.3rem;"><span>月初</span><span style="font-weight:700;">50個※ / 5,000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0 0.3rem;"><span>当月投入</span><span style="font-weight:700;">750個※ / 15,000</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #fde68a;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#d97706;"><span>合計</span><span>800個 / 20,000</span></div>
+            </div>
+          </div>
+          <div style="padding:0.7rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#059669;font-size:0.88rem;margin-bottom:0.2rem;">貸方（出る側）</p>
+            <div style="font-size:0.95rem;line-height:2;">
+              <div style="display:flex;justify-content:space-between;background:#ecfdf5;border-radius:4px;padding:0 0.3rem;"><span style="color:#059669;font-weight:700;">完成品</span><span style="font-weight:700;color:#059669;">600個 / ← 求める！</span></div>
+              <div style="display:flex;justify-content:space-between;background:#fff1f2;border-radius:4px;padding:0 0.3rem;"><span style="color:#e11d48;">月末</span><span style="font-weight:700;color:#e11d48;">200個 / 4,000</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #6ee7b7;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>合計</span><span>800個 / 20,000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.78rem;color:#94a3b8;margin-top:0.3rem;">※加工費は換算量で記入。月初100個×50%＝50個、当月投入は差額で800-50＝750個</p>
+    </div>
+    <div style="background:#fffbeb;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+      <p style="font-size:0.95rem;line-height:1.8;">
+        <strong>月末仕掛品（加工費）</strong>＝ @20 × 200個 ＝ <strong style="color:#e11d48;">4,000円</strong><br>
+        <strong>完成品（加工費）</strong>＝ 20,000 - 4,000 ＝ <strong style="color:#059669;">16,000円</strong>
+      </p>
+    </div>
+    <div style="background:#f5f3ff;border:1.5px dashed #7c3aed;border-radius:8px;padding:0.5rem 0.6rem;margin-top:0.4rem;">
+      <p style="font-size:0.82rem;color:#7c3aed;font-weight:700;margin-bottom:0.2rem;">&#x1F50D; なぜ @20？（先入先出法のポイント）</p>
+      <p style="font-size:0.82rem;color:#475569;line-height:1.7;">
+        <strong style="color:#d97706;">当月投入15,000 ÷ 当月換算量750個 ＝ @20</strong><br>
+        月初の5,000円は単価計算に<strong>含めない</strong>。月初コストは完成品に直接のせる。<br>
+        → 月末は「今月かかったコストだけ」で評価される。
+      </p>
+    </div>
+  </div>
+
+  <!-- 先入先出法まとめ：月末の評価ロジック -->
+  <div class="card" style="border:2px dashed #2563eb;background:#f8fafc;">
+    <p style="font-weight:800;color:#2563eb;font-size:0.95rem;margin-bottom:0.4rem;">&#x1F4CB; 先入先出法のBOX図まとめ ― 重複カウントはない</p>
+    <p style="font-size:0.88rem;color:#475569;line-height:1.8;margin-bottom:0.5rem;">
+      BOX図の<strong>数量（物の流れ）</strong>は借方・貸方で一致。重複なし。<br>
+      先入先出法の特徴は<strong>月末を「当月単価だけ」で評価</strong>すること。
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.85rem;">
+      <div style="background:#eff6ff;border-radius:6px;padding:0.5rem;text-align:center;">
+        <p style="font-weight:700;color:#2563eb;">材料費の月末</p>
+        <p>当月単価 <strong>@30</strong> × 400個</p>
+        <p style="font-weight:800;color:#e11d48;">＝ 12,000円</p>
+      </div>
+      <div style="background:#fffbeb;border-radius:6px;padding:0.5rem;text-align:center;">
+        <p style="font-weight:700;color:#d97706;">加工費の月末</p>
+        <p>当月単価 <strong>@20</strong> × 200個</p>
+        <p style="font-weight:800;color:#e11d48;">＝ 4,000円</p>
+      </div>
+    </div>
+    <p style="font-size:0.82rem;color:#475569;margin-top:0.4rem;text-align:center;">
+      月末合計 <strong style="color:#e11d48;">16,000円</strong>　→　完成品原価 ＝ 55,000 - 16,000 ＝ <strong style="color:#059669;">39,000円</strong>
+    </p>
+  </div>
+
+  <!-- STEP3: 完成品原価 -->
+  <h2 class="stitle stitle-emerald">STEP 3：完成品原価を出す</h2>
+
+  <div class="card" style="border:2px solid #059669;">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+      <div style="background:#dbeafe;border:2px solid #2563eb;border-radius:8px;padding:0.7rem;">
+        <p style="font-size:0.82rem;color:#2563eb;">完成品（材料費）</p>
+        <p style="font-weight:800;color:#2563eb;font-size:1.15rem;">23,000円</p>
+      </div>
+      <p style="font-weight:800;font-size:1.2rem;">+</p>
+      <div style="background:#fef3c7;border:2px solid #d97706;border-radius:8px;padding:0.7rem;">
+        <p style="font-size:0.82rem;color:#d97706;">完成品（加工費）</p>
+        <p style="font-weight:800;color:#d97706;font-size:1.15rem;">16,000円</p>
+      </div>
+      <p style="font-weight:800;font-size:1.2rem;">＝</p>
+      <div style="background:#ecfdf5;border:3px solid #059669;border-radius:8px;padding:0.7rem;">
+        <p style="font-size:0.82rem;color:#059669;">完成品原価</p>
+        <p style="font-weight:800;color:#059669;font-size:1.3rem;">39,000円</p>
+      </div>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+      <p style="font-weight:800;color:#d97706;margin-bottom:0.2rem;">検算</p>
+      <p style="font-size:0.92rem;line-height:1.8;">
+        総原価 ＝ 35,000 + 20,000 ＝ <strong>55,000円</strong><br>
+        月末仕掛品 ＝ 12,000 + 4,000 ＝ <strong style="color:#e11d48;">16,000円</strong><br>
+        完成品原価 ＝ 55,000 - 16,000 ＝ <strong style="color:#059669;">39,000円</strong> &#x2714;&#xFE0F;
+      </p>
+    </div>
+  </div>
+
+  </div><!-- /.先入先出法エリア -->
+
+  <!-- ========== 平均法（アンバーエリア） ========== -->
+  <div style="background:#fffbeb;border:3px solid #d97706;border-radius:var(--radius);padding:1rem;margin-top:1.5rem;">
+  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+    <div style="background:#d97706;color:#fff;padding:0.4rem 1rem;border-radius:8px;font-weight:800;font-size:1.1rem;">&#x1F7E0; 平均法</div>
+    <p style="font-size:0.88rem;color:#d97706;">月初と当月を混ぜて平均する方法</p>
+  </div>
+
+  <!-- 共通データ再掲（圧縮版） -->
+  <div style="background:#fff;border:1px solid #fcd34d;border-radius:8px;padding:0.5rem 0.8rem;margin-bottom:0.5rem;display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.85rem;">
+    <div>
+      <span style="color:#475569;font-weight:700;">数量：</span>月初<strong>100</strong>(50%) ／ 投入<strong>900</strong> ／ 完成<strong>600</strong> ／ 月末<strong style="color:#e11d48;">400</strong>(50%)
+    </div>
+    <div>
+      <span style="color:#2563eb;font-weight:700;">材料費：</span>月初<strong>8,000</strong> ／ 当月<strong>27,000</strong><br>
+      <span style="color:#d97706;font-weight:700;">加工費：</span>月初<strong>5,000</strong> ／ 当月<strong>15,000</strong>　<span style="color:#475569;">総原価<strong>55,000円</strong></span>
+    </div>
+  </div>
+
+  <!-- 先入先出法との違い -->
+  <div style="background:#fff;border:1.5px solid #fcd34d;border-radius:8px;padding:0.6rem;margin-bottom:0.5rem;">
+    <p style="font-weight:800;color:#d97706;font-size:0.88rem;margin-bottom:0.2rem;">&#x1F504; 先入先出法との違い（STEP1だけ！）</p>
+    <p style="font-size:0.88rem;color:#475569;line-height:1.8;">
+      先入先出法は<strong style="color:#2563eb;">当月だけ</strong>で単価を出した。<br>
+      平均法は<strong style="color:#d97706;">月初＋当月を全部混ぜて</strong>単価を出す。STEP2・3は同じ。<br>
+      こちらも材料費と加工費を<strong>それぞれ別々に</strong>計算して、最後に合算する。
+    </p>
+  </div>
+
+  <!-- STEP1 -->
+  <h2 class="stitle stitle-violet" style="margin-top:0.5rem;">STEP 1：平均単価を出す</h2>
+
+  <div class="card" style="border-left:4px solid #2563eb;">
+    <p style="font-weight:800;color:#2563eb;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F9F1; 材料費（始点投入 → 換算量は個数そのまま）</p>
+
+    <div style="background:#dbeafe;border-radius:8px;padding:0.6rem;margin-bottom:0.5rem;">
+      <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">平均法の換算量 ＝ 完成品 + 月末の換算量</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#059669;">完成品</p>
+          <p style="font-weight:800;font-size:1.1rem;">600個</p>
+        </div>
+        <p style="font-weight:800;color:#2563eb;">+</p>
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#e11d48;">月末400個</p>
+          <p style="font-size:0.65rem;color:#2563eb;">材料は始点投入→そのまま</p>
+          <p style="font-weight:800;font-size:1.1rem;">400個</p>
+        </div>
+        <p style="font-weight:800;color:#2563eb;">＝</p>
+        <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+          <p style="font-weight:800;color:#2563eb;font-size:1.1rem;">1,000個</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#eff6ff;border-radius:8px;padding:0.6rem;">
+      <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">平均単価 ＝（月初 + 当月）÷ 総換算量</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#475569;">月初+当月</p>
+          <p style="font-weight:800;">8,000+27,000</p>
+          <p style="font-weight:800;">＝35,000円</p>
+        </div>
+        <p style="font-weight:800;color:#2563eb;">÷</p>
+        <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#2563eb;">総換算量</p>
+          <p style="font-weight:800;color:#2563eb;">1,000個</p>
+        </div>
+        <p style="font-weight:800;color:#2563eb;">＝</p>
+        <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#2563eb;">&#x1F3F7; 材料費単価</p>
+          <p style="font-weight:800;color:#2563eb;font-size:1.1rem;">@35円</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:4px solid #d97706;">
+    <p style="font-weight:800;color:#d97706;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F477; 加工費（進捗度をかける）</p>
+
+    <div style="background:#fef3c7;border-radius:8px;padding:0.6rem;margin-bottom:0.5rem;">
+      <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">平均法の換算量 ＝ 完成品 + 月末の換算量</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#059669;">完成品</p>
+          <p style="font-weight:800;font-size:1.1rem;">600個</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">+</p>
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#e11d48;">月末400個×50%</p>
+          <p style="font-weight:800;font-size:1.1rem;">200個</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">＝</p>
+        <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+          <p style="font-weight:800;color:#d97706;font-size:1.1rem;">800個</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fffbeb;border-radius:8px;padding:0.6rem;">
+      <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">平均単価 ＝（月初 + 当月）÷ 総換算量</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#475569;">月初+当月</p>
+          <p style="font-weight:800;">5,000+15,000</p>
+          <p style="font-weight:800;">＝20,000円</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">÷</p>
+        <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#d97706;">総換算量</p>
+          <p style="font-weight:800;color:#d97706;">800個</p>
+        </div>
+        <p style="font-weight:800;color:#d97706;">＝</p>
+        <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+          <p style="font-size:0.78rem;color:#d97706;">&#x1F3F7; 加工費単価</p>
+          <p style="font-weight:800;color:#d97706;font-size:1.1rem;">@25円</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP2: BOX図 -->
+  <h2 class="stitle stitle-rose">STEP 2：BOX図で月末仕掛品を出す</h2>
+
+  <div class="card" style="border:2px solid #2563eb;">
+    <p style="font-weight:800;color:#2563eb;font-size:1.05rem;margin-bottom:0.5rem;">材料費のBOX図</p>
+    <div style="max-width:460px;margin:0 auto;">
+      <div style="border:3px solid #2563eb;border-radius:8px;overflow:hidden;">
+        <div style="background:#2563eb;color:#fff;text-align:center;padding:0.4rem;font-weight:800;">仕掛品（材料費）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;min-height:150px;">
+          <div style="border-right:3px solid #2563eb;padding:0.7rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#2563eb;font-size:0.88rem;margin-bottom:0.2rem;">借方（入る側）</p>
+            <div style="font-size:0.95rem;line-height:2;">
+              <div style="display:flex;justify-content:space-between;background:#f5f3ff;border-radius:4px;padding:0 0.3rem;"><span>月初</span><span style="font-weight:700;">100個 / 8,000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0 0.3rem;"><span>当月投入</span><span style="font-weight:700;">900個 / 27,000</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #93c5fd;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#2563eb;"><span>合計</span><span>1,000個 / 35,000</span></div>
+            </div>
+          </div>
+          <div style="padding:0.7rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#059669;font-size:0.88rem;margin-bottom:0.2rem;">貸方（出る側）</p>
+            <div style="font-size:0.95rem;line-height:2;">
+              <div style="display:flex;justify-content:space-between;background:#ecfdf5;border-radius:4px;padding:0 0.3rem;"><span style="color:#059669;font-weight:700;">完成品</span><span style="font-weight:700;color:#059669;">600個 / ← 求める！</span></div>
+              <div style="display:flex;justify-content:space-between;background:#fff1f2;border-radius:4px;padding:0 0.3rem;"><span style="color:#e11d48;">月末</span><span style="font-weight:700;color:#e11d48;">400個 / 14,000</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #6ee7b7;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>合計</span><span>1,000個 / 35,000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#eff6ff;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+      <p style="font-size:0.95rem;line-height:1.8;">
+        <strong>月末仕掛品（材料費）</strong>＝ @35 × 400個 ＝ <strong style="color:#e11d48;">14,000円</strong><br>
+        <strong>完成品（材料費）</strong>＝ 35,000 - 14,000 ＝ <strong style="color:#059669;">21,000円</strong>
+      </p>
+    </div>
+    <div style="background:#fef3c7;border:1.5px dashed #b45309;border-radius:8px;padding:0.5rem 0.6rem;margin-top:0.4rem;">
+      <p style="font-size:0.82rem;color:#b45309;font-weight:700;margin-bottom:0.2rem;">&#x1F50D; なぜ @35？（平均法のポイント）</p>
+      <p style="font-size:0.82rem;color:#475569;line-height:1.7;">
+        <strong style="color:#d97706;">(月初8,000 + 当月27,000) ÷ 総換算量1,000個 ＝ @35</strong><br>
+        月初と当月を<strong>全部混ぜて平均</strong>した単価で月末を評価する。<br>
+        → 先入先出法(@30)より単価が高い → 月末が<strong>2,000円多く</strong>なる（12,000 → 14,000）
+      </p>
+    </div>
+    <div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:0.5rem 0.6rem;margin-top:0.3rem;">
+      <p style="font-size:0.82rem;color:#475569;font-weight:700;margin-bottom:0.2rem;">&#x2753; 重複カウントでは？ → いいえ！</p>
+      <p style="font-size:0.8rem;color:#64748b;line-height:1.7;">
+        BOXの数量（物の流れ）は先入先出法と<strong>まったく同じ</strong>。入った物と出た物は一致する。<br>
+        違うのは<strong>月末を評価する「単価」だけ</strong>。数量が重複しているわけではない。
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="border:2px solid #d97706;">
+    <p style="font-weight:800;color:#d97706;font-size:1.05rem;margin-bottom:0.5rem;">加工費のBOX図</p>
+    <div style="max-width:460px;margin:0 auto;">
+      <div style="border:3px solid #d97706;border-radius:8px;overflow:hidden;">
+        <div style="background:#d97706;color:#fff;text-align:center;padding:0.4rem;font-weight:800;">仕掛品（加工費）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;min-height:150px;">
+          <div style="border-right:3px solid #d97706;padding:0.7rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#d97706;font-size:0.88rem;margin-bottom:0.2rem;">借方（入る側）</p>
+            <div style="font-size:0.95rem;line-height:2;">
+              <div style="display:flex;justify-content:space-between;background:#f5f3ff;border-radius:4px;padding:0 0.3rem;"><span>月初</span><span style="font-weight:700;">50個※ / 5,000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0 0.3rem;"><span>当月投入</span><span style="font-weight:700;">750個※ / 15,000</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #fde68a;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#d97706;"><span>合計</span><span>800個 / 20,000</span></div>
+            </div>
+          </div>
+          <div style="padding:0.7rem;display:flex;flex-direction:column;">
+            <p style="font-weight:800;color:#059669;font-size:0.88rem;margin-bottom:0.2rem;">貸方（出る側）</p>
+            <div style="font-size:0.95rem;line-height:2;">
+              <div style="display:flex;justify-content:space-between;background:#ecfdf5;border-radius:4px;padding:0 0.3rem;"><span style="color:#059669;font-weight:700;">完成品</span><span style="font-weight:700;color:#059669;">600個 / ← 求める！</span></div>
+              <div style="display:flex;justify-content:space-between;background:#fff1f2;border-radius:4px;padding:0 0.3rem;"><span style="color:#e11d48;">月末</span><span style="font-weight:700;color:#e11d48;">200個 / 5,000</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #6ee7b7;">
+              <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>合計</span><span>800個 / 20,000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.78rem;color:#94a3b8;margin-top:0.3rem;">※加工費は換算量で記入。月初100個×50%＝50個、当月投入は差額で800-50＝750個</p>
+    </div>
+    <div style="background:#fffbeb;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+      <p style="font-size:0.95rem;line-height:1.8;">
+        <strong>月末仕掛品（加工費）</strong>＝ @25 × 200個 ＝ <strong style="color:#e11d48;">5,000円</strong><br>
+        <strong>完成品（加工費）</strong>＝ 20,000 - 5,000 ＝ <strong style="color:#059669;">15,000円</strong>
+      </p>
+    </div>
+    <div style="background:#fef3c7;border:1.5px dashed #b45309;border-radius:8px;padding:0.5rem 0.6rem;margin-top:0.4rem;">
+      <p style="font-size:0.82rem;color:#b45309;font-weight:700;margin-bottom:0.2rem;">&#x1F50D; なぜ @25？（平均法のポイント）</p>
+      <p style="font-size:0.82rem;color:#475569;line-height:1.7;">
+        <strong style="color:#d97706;">(月初5,000 + 当月15,000) ÷ 総換算量800個 ＝ @25</strong><br>
+        月初と当月を<strong>全部混ぜて平均</strong>した単価で月末を評価する。<br>
+        → 先入先出法(@20)より単価が高い → 月末が<strong>1,000円多く</strong>なる（4,000 → 5,000）
+      </p>
+    </div>
+  </div>
+
+  <!-- 平均法まとめ：差が出る仕組み -->
+  <div class="card" style="border:2px dashed #d97706;background:#fffdf5;">
+    <p style="font-weight:800;color:#d97706;font-size:0.95rem;margin-bottom:0.4rem;">&#x1F4CB; 平均法のBOX図まとめ ― 重複カウントではない！差が出る仕組み</p>
+    <p style="font-size:0.88rem;color:#475569;line-height:1.8;margin-bottom:0.5rem;">
+      BOXの<strong>数量（物の流れ）は先入先出法とまったく同じ</strong>。重複カウントではない。<br>
+      違うのは<strong>月末を評価する単価</strong>だけ。月初コストを混ぜるから単価が変わる。
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.85rem;">
+      <div style="background:#fffbeb;border-radius:6px;padding:0.5rem;text-align:center;">
+        <p style="font-weight:700;color:#d97706;">材料費の月末</p>
+        <p>平均単価 <strong>@35</strong> × 400個</p>
+        <p style="font-weight:800;color:#e11d48;">＝ 14,000円</p>
+        <p style="font-size:0.75rem;color:#94a3b8;">先入先出法は12,000円（差+2,000）</p>
+      </div>
+      <div style="background:#fffbeb;border-radius:6px;padding:0.5rem;text-align:center;">
+        <p style="font-weight:700;color:#d97706;">加工費の月末</p>
+        <p>平均単価 <strong>@25</strong> × 200個</p>
+        <p style="font-weight:800;color:#e11d48;">＝ 5,000円</p>
+        <p style="font-size:0.75rem;color:#94a3b8;">先入先出法は4,000円（差+1,000）</p>
+      </div>
+    </div>
+    <p style="font-size:0.82rem;color:#475569;margin-top:0.4rem;text-align:center;">
+      月末合計 <strong style="color:#e11d48;">19,000円</strong>　→　完成品原価 ＝ 55,000 - 19,000 ＝ <strong style="color:#059669;">36,000円</strong>
+    </p>
+    <div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:0.5rem;margin-top:0.5rem;">
+      <p style="font-size:0.82rem;color:#475569;line-height:1.8;text-align:center;">
+        <strong>なぜ差が出る？</strong><br>
+        月初の単価（材料@80、加工@100）は当月（材料@30、加工@20）より<strong>高い</strong>。<br>
+        平均法 → 高い月初を混ぜる → 平均単価が上がる → <strong>月末が高くなる → 完成品が安くなる</strong><br>
+        先入先出法 → 月初を混ぜない → 当月の安い単価のまま → <strong>月末が安い → 完成品が高くなる</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- STEP3: 完成品原価 -->
+  <h2 class="stitle stitle-emerald">STEP 3：完成品原価を出す</h2>
+
+  <div class="card" style="border:2px solid #059669;">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+      <div style="background:#dbeafe;border:2px solid #2563eb;border-radius:8px;padding:0.7rem;">
+        <p style="font-size:0.82rem;color:#2563eb;">完成品（材料費）</p>
+        <p style="font-weight:800;color:#2563eb;font-size:1.15rem;">21,000円</p>
+      </div>
+      <p style="font-weight:800;font-size:1.2rem;">+</p>
+      <div style="background:#fef3c7;border:2px solid #d97706;border-radius:8px;padding:0.7rem;">
+        <p style="font-size:0.82rem;color:#d97706;">完成品（加工費）</p>
+        <p style="font-weight:800;color:#d97706;font-size:1.15rem;">15,000円</p>
+      </div>
+      <p style="font-weight:800;font-size:1.2rem;">＝</p>
+      <div style="background:#ecfdf5;border:3px solid #059669;border-radius:8px;padding:0.7rem;">
+        <p style="font-size:0.82rem;color:#059669;">完成品原価</p>
+        <p style="font-weight:800;color:#059669;font-size:1.3rem;">36,000円</p>
+      </div>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+      <p style="font-weight:800;color:#d97706;margin-bottom:0.2rem;">検算</p>
+      <p style="font-size:0.92rem;line-height:1.8;">
+        総原価 ＝ 35,000 + 20,000 ＝ <strong>55,000円</strong><br>
+        月末仕掛品 ＝ 14,000 + 5,000 ＝ <strong style="color:#e11d48;">19,000円</strong><br>
+        完成品原価 ＝ 55,000 - 19,000 ＝ <strong style="color:#059669;">36,000円</strong> &#x2714;&#xFE0F;
+      </p>
+    </div>
+  </div>
+
+  </div><!-- /.平均法エリア -->
+
+  <!-- ========== 比較カード ========== -->
+  <h2 class="stitle stitle-emerald" style="margin-top:1.5rem;">&#x1F50D; 同じデータ、違う答え ― 比較</h2>
+
+  <div class="card" style="border:3px solid #059669;background:linear-gradient(135deg,#ecfdf5,#eff6ff);">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;text-align:center;">
+      <div style="background:#fff;border:2px solid #2563eb;border-radius:var(--radius);padding:1rem;">
+        <p style="font-weight:800;color:#2563eb;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F535; 先入先出法</p>
+        <p style="font-size:0.88rem;color:#475569;">月末仕掛品</p>
+        <p style="font-weight:800;color:#e11d48;font-size:1.1rem;">16,000円</p>
+        <p style="font-size:0.78rem;color:#94a3b8;">材料12,000 + 加工4,000</p>
+        <div style="border-top:2px solid #e2e8f0;margin:0.5rem 0;padding-top:0.5rem;">
+          <p style="font-size:0.88rem;color:#475569;">完成品原価</p>
+          <p style="font-weight:800;color:#059669;font-size:1.5rem;">39,000円</p>
+          <p style="font-size:0.82rem;color:#475569;">@65円/個</p>
+        </div>
+      </div>
+      <div style="background:#fff;border:2px solid #d97706;border-radius:var(--radius);padding:1rem;">
+        <p style="font-weight:800;color:#d97706;font-size:1.05rem;margin-bottom:0.5rem;">&#x1F7E0; 平均法</p>
+        <p style="font-size:0.88rem;color:#475569;">月末仕掛品</p>
+        <p style="font-weight:800;color:#e11d48;font-size:1.1rem;">19,000円</p>
+        <p style="font-size:0.78rem;color:#94a3b8;">材料14,000 + 加工5,000</p>
+        <div style="border-top:2px solid #e2e8f0;margin:0.5rem 0;padding-top:0.5rem;">
+          <p style="font-size:0.88rem;color:#475569;">完成品原価</p>
+          <p style="font-weight:800;color:#059669;font-size:1.5rem;">36,000円</p>
+          <p style="font-size:0.82rem;color:#475569;">@60円/個</p>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:0.6rem;margin-top:0.8rem;text-align:center;">
+      <p style="font-size:0.92rem;line-height:1.8;">
+        <strong>差額 ＝ 3,000円</strong>（総原価55,000円は同じ）<br>
+        <span style="font-size:0.85rem;color:#475569;">先入先出法は月初と当月を分離 → 当月の単価だけで月末を評価<br>
+        平均法は月初と当月を混ぜる → 平均単価で月末を評価</span>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== TAB 6: 練習問題 ==================== -->
+<div class="tab-panel" id="tab6">
+
+  <h2 class="stitle stitle-emerald">&#x1F4DD; 練習問題（平均法）</h2>
+
+  <!-- 問題文 -->
+  <div class="card" style="border:2px solid #059669;">
+    <p style="font-size:1rem;line-height:2;margin-bottom:0.6rem;">
+      当社はX製品を大量生産している。材料はすべて<strong>始点で投入</strong>している。<br>
+      月末仕掛品の評価は<strong>平均法</strong>による。<br>
+      <strong>完成品原価を求めよ。</strong>
+    </p>
+
+    <!-- 数量データ -->
+    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:var(--radius);padding:0.8rem;margin-bottom:0.6rem;">
+      <p style="font-weight:800;color:#475569;margin-bottom:0.4rem;">数量データ （ ）内は加工進捗度</p>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:0.2rem 1rem;font-size:1rem;line-height:2;">
+        <span>月初仕掛品</span><span><strong>100個</strong>（40%）</span>
+        <span>当月投入</span><span><strong>400個</strong></span>
+        <span style="border-top:2px solid #475569;padding-top:0.2rem;">合計</span><span style="border-top:2px solid #475569;padding-top:0.2rem;"><strong>500個</strong></span>
+        <span>月末仕掛品</span><span><strong>100個</strong>（50%）</span>
+        <span style="border-top:2px solid #475569;padding-top:0.2rem;border-bottom:3px double #475569;padding-bottom:0.2rem;">完成品</span><span style="border-top:2px solid #475569;padding-top:0.2rem;border-bottom:3px double #475569;padding-bottom:0.2rem;"><strong>400個</strong></span>
+      </div>
+    </div>
+
+    <!-- 原価データ -->
+    <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:var(--radius);padding:0.8rem;">
+      <p style="font-weight:800;color:#475569;margin-bottom:0.4rem;">原価データ</p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:1rem;border:2px solid #93c5fd;">
+          <tr>
+            <th style="background:#2563eb;color:#fff;padding:0.6rem;border:1px solid #1d4ed8;"></th>
+            <th style="background:#2563eb;color:#fff;padding:0.6rem;border:1px solid #1d4ed8;text-align:right;">材料費</th>
+            <th style="background:#2563eb;color:#fff;padding:0.6rem;border:1px solid #1d4ed8;text-align:right;">加工費</th>
+          </tr>
+          <tr>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;font-weight:700;">月初仕掛品</td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;"><strong>3,000千円</strong></td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;"><strong>800千円</strong></td>
+          </tr>
+          <tr style="background:#f8fafc;">
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;font-weight:700;">当月製造費用</td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;"><strong>12,000千円</strong></td>
+            <td style="padding:0.6rem;border:1px solid #cbd5e1;text-align:right;"><strong>4,400千円</strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 解答ボタン -->
+  <div style="text-align:center;margin:1rem 0;">
+    <button onclick="document.getElementById('answer-area').style.display='block';this.style.display='none';" style="background:#059669;color:#fff;border:none;border-radius:var(--radius);padding:0.8rem 2rem;font-size:1.05rem;font-weight:800;cursor:pointer;font-family:inherit;">&#x1F50D; 解答を見る</button>
+  </div>
+
+  <!-- 解答エリア -->
+  <div id="answer-area" style="display:none;">
+
+    <!-- 数量フロー図 -->
+    <div class="card" style="border:2px solid #d97706;">
+      <div style="max-width:500px;margin:0 auto;">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="font-size:1.15em;font-weight:bold;color:#334155;">&#x1F3ED; まず数量の流れを確認</div>
+        </div>
+        <div style="background:#f8fafc;border:2px solid #cbd5e1;border-radius:16px;padding:14px;margin-bottom:4px;">
+          <div style="text-align:center;font-size:0.75em;font-weight:bold;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;">&#x25BC; 投入</div>
+          <div style="display:flex;gap:10px;align-items:stretch;">
+            <div style="flex:1;background:#f5f3ff;border:2px solid #7c3aed;border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:0.8em;color:#7c3aed;font-weight:bold;">&#x1F319; 月初</div>
+              <div style="font-size:1.8em;font-weight:bold;color:#7c3aed;">100</div>
+              <div style="font-size:0.7em;color:#7c3aed;background:#ede9fe;border-radius:6px;padding:2px 6px;display:inline-block;">加工40%</div>
+            </div>
+            <div style="flex:2;background:#dbeafe;border:2px solid #2563eb;border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:0.8em;color:#2563eb;font-weight:bold;">&#x1F4E6; 当月投入</div>
+              <div style="font-size:1.8em;font-weight:bold;color:#2563eb;">400</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:1.2em;color:#475569;margin:2px 0;">&#x2B07;</div>
+        <div style="background:linear-gradient(135deg,#fefce8,#fff7ed);border:2px solid #f59e0b;border-radius:16px;padding:12px;text-align:center;margin-bottom:4px;">
+          <div style="font-size:0.85em;color:#78716c;">100 ＋ 400 ＝</div>
+          <div style="font-size:2em;font-weight:bold;color:#d97706;">500<span style="font-size:0.4em;color:#92400e;"> 個</span></div>
+        </div>
+        <div style="text-align:center;font-size:1.2em;color:#475569;margin:2px 0;">&#x2B07;</div>
+        <div style="background:#f8fafc;border:2px solid #cbd5e1;border-radius:16px;padding:14px;">
+          <div style="text-align:center;font-size:0.75em;font-weight:bold;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;">&#x25BC; 産出</div>
+          <div style="display:flex;gap:10px;align-items:stretch;">
+            <div style="flex:3;background:#ecfdf5;border:2px solid #059669;border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:0.8em;color:#059669;font-weight:bold;">&#x2705; 完成品</div>
+              <div style="font-size:1.8em;font-weight:bold;color:#059669;">400</div>
+            </div>
+            <div style="flex:1;background:#fff1f2;border:2px solid #e11d48;border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:0.8em;color:#e11d48;font-weight:bold;">&#x23F3; 月末</div>
+              <div style="font-size:1.8em;font-weight:bold;color:#e11d48;">100</div>
+              <div style="font-size:0.7em;color:#e11d48;background:#ffe4e6;border-radius:6px;padding:2px 6px;display:inline-block;">加工50%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP1: 平均単価 -->
+    <h2 class="stitle stitle-violet">STEP 1：平均単価を出す</h2>
+
+    <div class="card" style="border-left:4px solid #2563eb;">
+      <p style="font-weight:800;color:#2563eb;font-size:1rem;margin-bottom:0.5rem;">&#x1F9F1; 材料費（始点投入 → 換算量は個数そのまま）</p>
+
+      <!-- 換算量 -->
+      <div style="background:#dbeafe;border-radius:8px;padding:0.6rem;margin-bottom:0.5rem;">
+        <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">平均法の換算量 ＝ 完成品 + 月末の換算量</p>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+          <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#059669;">完成品</p>
+            <p style="font-weight:800;font-size:1.1rem;">400個</p>
+          </div>
+          <p style="font-weight:800;color:#2563eb;">+</p>
+          <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#e11d48;">月末200個</p>
+          <p style="font-size:0.65rem;color:#2563eb;">材料は始点投入→そのまま</p>
+            <p style="font-weight:800;font-size:1.1rem;">100個</p>
+          </div>
+          <p style="font-weight:800;color:#2563eb;">＝</p>
+          <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+            <p style="font-weight:800;color:#2563eb;font-size:1.1rem;">500個</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 平均単価 -->
+      <div style="background:#eff6ff;border-radius:8px;padding:0.6rem;">
+        <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">平均単価 ＝（月初 + 当月）÷ 総換算量</p>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+          <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#475569;">月初+当月</p>
+            <p style="font-weight:800;">3,000+12,000</p>
+            <p style="font-weight:800;">＝15,000千円</p>
+          </div>
+          <p style="font-weight:800;color:#2563eb;">÷</p>
+          <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#2563eb;">総換算量</p>
+            <p style="font-weight:800;color:#2563eb;">500個</p>
+          </div>
+          <p style="font-weight:800;color:#2563eb;">＝</p>
+          <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#2563eb;">&#x1F3F7; 材料費単価</p>
+            <p style="font-weight:800;color:#2563eb;font-size:1.1rem;">@30千円</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #d97706;">
+      <p style="font-weight:800;color:#d97706;font-size:1rem;margin-bottom:0.5rem;">&#x1F477; 加工費（進捗度をかける）</p>
+
+      <!-- 換算量 -->
+      <div style="background:#fef3c7;border-radius:8px;padding:0.6rem;margin-bottom:0.5rem;">
+        <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">平均法の換算量 ＝ 完成品 + 月末の換算量</p>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+          <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#059669;">完成品</p>
+            <p style="font-weight:800;font-size:1.1rem;">400個</p>
+          </div>
+          <p style="font-weight:800;color:#d97706;">+</p>
+          <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#e11d48;">月末100個×50%</p>
+            <p style="font-weight:800;font-size:1.1rem;">50個</p>
+          </div>
+          <p style="font-weight:800;color:#d97706;">＝</p>
+          <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+            <p style="font-weight:800;color:#d97706;font-size:1.1rem;">450個</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 平均単価 -->
+      <div style="background:#fffbeb;border-radius:8px;padding:0.6rem;">
+        <p style="font-size:0.88rem;color:#475569;margin-bottom:0.3rem;">平均単価 ＝（月初 + 当月）÷ 総換算量</p>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+          <div style="background:#fff;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#475569;">月初+当月</p>
+            <p style="font-weight:800;">800+4,400</p>
+            <p style="font-weight:800;">＝5,200千円</p>
+          </div>
+          <p style="font-weight:800;color:#d97706;">÷</p>
+          <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#d97706;">総換算量</p>
+            <p style="font-weight:800;color:#d97706;">450個</p>
+          </div>
+          <p style="font-weight:800;color:#d97706;">＝</p>
+          <div style="background:#fffbeb;border:2px solid #d97706;border-radius:6px;padding:0.4rem;">
+            <p style="font-size:0.78rem;color:#d97706;">&#x1F3F7; 加工費単価</p>
+            <p style="font-weight:800;color:#d97706;">ここが割り切れない！</p>
+          </div>
+        </div>
+        <p style="font-size:0.85rem;color:#475569;text-align:center;margin-top:0.3rem;">→ 割り切れない場合は月末仕掛品を先に出して、引き算で完成品を出す</p>
+      </div>
+    </div>
+
+    <!-- STEP2: 月末仕掛品 → BOX図で解く -->
+    <h2 class="stitle stitle-rose">STEP 2：BOX図で月末仕掛品を出す</h2>
+
+    <!-- 材料費BOX図 -->
+    <div class="card" style="border:2px solid #2563eb;">
+      <p style="font-weight:800;color:#2563eb;font-size:1.05rem;margin-bottom:0.5rem;">材料費のBOX図</p>
+      <div style="max-width:460px;margin:0 auto;">
+        <div style="border:3px solid #2563eb;border-radius:8px;overflow:hidden;">
+          <div style="background:#2563eb;color:#fff;text-align:center;padding:0.4rem;font-weight:800;">仕掛品（材料費）</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;min-height:150px;">
+            <div style="border-right:3px solid #2563eb;padding:0.7rem;display:flex;flex-direction:column;">
+              <p style="font-weight:800;color:#2563eb;font-size:0.88rem;margin-bottom:0.2rem;">借方（入る側）</p>
+              <div style="font-size:0.95rem;line-height:2;">
+                <div style="display:flex;justify-content:space-between;background:#f5f3ff;border-radius:4px;padding:0 0.3rem;"><span>月初</span><span style="font-weight:700;">100個 / 3,000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:0 0.3rem;"><span>当月投入</span><span style="font-weight:700;">400個 / 12,000</span></div>
+              </div>
+              <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #93c5fd;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#2563eb;"><span>合計</span><span>500個 / 15,000</span></div>
+              </div>
+            </div>
+            <div style="padding:0.7rem;display:flex;flex-direction:column;">
+              <p style="font-weight:800;color:#059669;font-size:0.88rem;margin-bottom:0.2rem;">貸方（出る側）</p>
+              <div style="font-size:0.95rem;line-height:2;">
+                <div style="display:flex;justify-content:space-between;background:#ecfdf5;border-radius:4px;padding:0 0.3rem;"><span style="color:#059669;font-weight:700;">完成品</span><span style="font-weight:700;color:#059669;">400個 / <strong>?</strong></span></div>
+                <div style="display:flex;justify-content:space-between;background:#fff1f2;border-radius:4px;padding:0 0.3rem;"><span style="color:#e11d48;">月末</span><span style="font-weight:700;color:#e11d48;">100個 / 3,000</span></div>
+              </div>
+              <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #6ee7b7;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>合計</span><span>500個 / 15,000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#eff6ff;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+        <p style="font-size:0.95rem;line-height:1.8;">
+          <strong>月末仕掛品（材料費）</strong>＝ @30千円 × 100個 ＝ <strong style="color:#e11d48;">3,000千円</strong><br>
+          <strong>完成品（材料費）</strong>＝ 15,000 − 3,000 ＝ <strong style="color:#059669;">12,000千円</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- 加工費BOX図 -->
+    <div class="card" style="border:2px solid #d97706;">
+      <p style="font-weight:800;color:#d97706;font-size:1.05rem;margin-bottom:0.5rem;">加工費のBOX図</p>
+      <div style="max-width:460px;margin:0 auto;">
+        <div style="border:3px solid #d97706;border-radius:8px;overflow:hidden;">
+          <div style="background:#d97706;color:#fff;text-align:center;padding:0.4rem;font-weight:800;">仕掛品（加工費）</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;min-height:150px;">
+            <div style="border-right:3px solid #d97706;padding:0.7rem;display:flex;flex-direction:column;">
+              <p style="font-weight:800;color:#d97706;font-size:0.88rem;margin-bottom:0.2rem;">借方（入る側）</p>
+              <div style="font-size:0.95rem;line-height:2;">
+                <div style="display:flex;justify-content:space-between;background:#f5f3ff;border-radius:4px;padding:0 0.3rem;"><span>月初</span><span style="font-weight:700;">40個※ / 800</span></div>
+                <div style="display:flex;justify-content:space-between;padding:0 0.3rem;"><span>当月投入</span><span style="font-weight:700;">410個※ / 4,400</span></div>
+              </div>
+              <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #fde68a;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#d97706;"><span>合計</span><span>450個 / 5,200</span></div>
+              </div>
+            </div>
+            <div style="padding:0.7rem;display:flex;flex-direction:column;">
+              <p style="font-weight:800;color:#059669;font-size:0.88rem;margin-bottom:0.2rem;">貸方（出る側）</p>
+              <div style="font-size:0.95rem;line-height:2;">
+                <div style="display:flex;justify-content:space-between;background:#ecfdf5;border-radius:4px;padding:0 0.3rem;"><span style="color:#059669;font-weight:700;">完成品</span><span style="font-weight:700;color:#059669;">400個 / <strong>?</strong></span></div>
+                <div style="display:flex;justify-content:space-between;background:#fff1f2;border-radius:4px;padding:0 0.3rem;"><span style="color:#e11d48;">月末</span><span style="font-weight:700;color:#e11d48;">50個 / ← 求める！</span></div>
+              </div>
+              <div style="margin-top:auto;padding-top:0.3rem;border-top:2px solid #6ee7b7;">
+                <div style="display:flex;justify-content:space-between;font-weight:800;color:#059669;"><span>合計</span><span>450個 / 5,200</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.78rem;color:#94a3b8;margin-top:0.3rem;">※加工費は換算量で記入。月初100個×40%＝40個、当月投入は差額で450-40＝410個</p>
+      </div>
+      <div style="background:#fffbeb;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+        <p style="font-size:0.95rem;line-height:1.8;">
+          加工費の平均単価 ＝ 5,200 ÷ 450 ≒ <strong>@11.556千円</strong>（割り切れない！）<br>
+          <strong>月末仕掛品（加工費）</strong>＝ 5,200 ÷ 450 × 50個 ≒ <strong style="color:#e11d48;">578千円</strong><br>
+          <strong>完成品（加工費）</strong>＝ 5,200 − 578 ＝ <strong style="color:#059669;">4,622千円</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- STEP3: 完成品原価 -->
+    <h2 class="stitle stitle-emerald">STEP 3：完成品原価を出す ― ゴール！</h2>
+
+    <div class="card" style="border:2px solid #059669;">
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0.3rem;align-items:center;text-align:center;">
+        <div style="background:#dbeafe;border:2px solid #2563eb;border-radius:8px;padding:0.7rem;">
+          <p style="font-size:0.82rem;color:#2563eb;">完成品（材料費）</p>
+          <p style="font-weight:800;color:#2563eb;font-size:1.15rem;">12,000千円</p>
+        </div>
+        <p style="font-weight:800;font-size:1.2rem;">+</p>
+        <div style="background:#fef3c7;border:2px solid #d97706;border-radius:8px;padding:0.7rem;">
+          <p style="font-size:0.82rem;color:#d97706;">完成品（加工費）</p>
+          <p style="font-weight:800;color:#d97706;font-size:1.15rem;">4,622千円</p>
+        </div>
+        <p style="font-weight:800;font-size:1.2rem;">＝</p>
+        <div style="background:#ecfdf5;border:3px solid #059669;border-radius:8px;padding:0.7rem;">
+          <p style="font-size:0.82rem;color:#059669;">完成品原価</p>
+          <p style="font-size:1.5rem;">&#x1F35E;&#x2728;</p>
+          <p style="font-weight:800;color:#059669;font-size:1.3rem;">16,622千円</p>
+        </div>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem;margin-top:0.6rem;">
+        <p style="font-weight:800;color:#d97706;margin-bottom:0.2rem;">検算</p>
+        <p style="font-size:0.92rem;line-height:1.8;">
+          総原価 ＝ (3,000+12,000) + (800+4,400) ＝ <strong>20,200千円</strong><br>
+          月末仕掛品 ＝ 3,000 + 578 ＝ <strong style="color:#e11d48;">3,578千円</strong><br>
+          完成品原価 ＝ 20,200 − 3,578 ＝ <strong style="color:#059669;">16,622千円</strong> &#x2714;&#xFE0F;
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== TAB 7: 穴埋めチェック ==================== -->
+<div class="tab-panel" id="tab7">
+
+  <h2 class="stitle stitle-rose">&#x270D;&#xFE0F; 穴埋めチェック</h2>
+
+  <div style="text-align:right;margin-bottom:0.8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFill()" style="background:#ecfdf5;color:#059669;border-color:#6ee7b7;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAllFill()" style="background:#f1f5f9;color:#475569;border-color:#cbd5e1;">&#x1F504; リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-emerald">Q1. 総合原価計算の基本</div>
+    <div class="fill-bdy">
+      <div class="fill-group">総合原価計算は<span class="fill-blank">同じ製品</span>を<span class="fill-blank">大量生産</span>するときに使う。<br>製品1個あたり原価 ＝ 当期総製造費用 ÷ <span class="fill-blank">完成品換算量</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-rose">Q2. 材料費 vs 加工費の換算量</div>
+    <div class="fill-bdy">
+      <div class="fill-group">材料費は<span class="fill-blank">始点投入</span>なので、進捗度に関係なく<span class="fill-blank">100%</span>換算。<br>加工費は<span class="fill-blank">進捗度</span>をかけて換算する。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">例：月末仕掛品100個（進捗60%）の場合<br>材料費の換算量 ＝ <span class="fill-blank">100個</span> ／ 加工費の換算量 ＝ <span class="fill-blank">60個</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-blue">Q3. 先入先出法</div>
+    <div class="fill-bdy">
+      <div class="fill-group"><span class="fill-blank">先入先出法</span> ＝ 月初仕掛品を<span class="fill-blank">先に完成</span>させ、当月投入分と分けて計算。<br>当月単価 ＝ <span class="fill-blank">当月投入額</span> ÷ 当月換算量</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-emerald">Q4. 平均法</div>
+    <div class="fill-bdy">
+      <div class="fill-group"><span class="fill-blank">平均法</span> ＝ 月初と当月投入を<span class="fill-blank">平均</span>して計算。<br>平均単価 ＝ （<span class="fill-blank">月初原価</span> + 当月原価）÷ 総換算量</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-amber">Q5. 2つの方法の違い</div>
+    <div class="fill-bdy">
+      <div class="fill-group">先入先出法と平均法の違いは<span class="fill-blank">単価の出し方</span>だけ。<br>先入先出法 → <span class="fill-blank">当月だけ</span>で単価を出す<br>平均法 → 月初も<span class="fill-blank">混ぜて平均</span>する</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-blue">Q6. BOX図</div>
+    <div class="fill-bdy">
+      <div class="fill-group">BOX図の借方（入る側）＝ <span class="fill-blank">月初仕掛品</span> + 直接材料費 + 直接労務費 + 製造間接費<br>BOX図の貸方（出る側）＝ <span class="fill-blank">完成品原価</span> + <span class="fill-blank">月末仕掛品</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">完成品原価 ＝ <span class="fill-blank">借方合計</span> − 月末仕掛品</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-hdr fill-hdr-violet">Q7. 覚え方</div>
+    <div class="fill-bdy">
+      <div class="fill-group">先入先出法 ＝ <span class="fill-blank">コンビニのおにぎり</span>（古いのを先に売る）<br>平均法 ＝ <span class="fill-blank">ガソリンの給油</span>（混ぜたら全部同じ）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="tab-nav" style="border-radius:0 0 var(--radius) var(--radius);border-top:none;">
+  <button class="tab-btn active" data-c="violet" onclick="switchTab(0)">概要</button>
+  <button class="tab-btn" data-c="blue" onclick="switchTab(1)">考え方</button>
+  <button class="tab-btn" data-c="emerald" onclick="switchTab(2)">換算量</button>
+  <button class="tab-btn" data-c="amber" onclick="switchTab(3)">2つの方法</button>
+  <button class="tab-btn" data-c="blue" onclick="switchTab(4)">BOX図</button>
+  <button class="tab-btn" data-c="amber" onclick="switchTab(5)">計算まとめ</button>
+  <button class="tab-btn" data-c="emerald" onclick="switchTab(6)">練習問題</button>
+  <button class="tab-btn" data-c="rose" onclick="switchTab(7)">穴埋め</button>
+</nav>
+</div>
+
+<div class="footer">財務・会計 総合原価計算 学習まとめ</div>
+
+<script>
+function switchTab(idx){
+  var numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){ b.classList.toggle('active', i % numTabs === idx); });
+  document.querySelectorAll('.tab-panel').forEach(function(p,i){ p.classList.toggle('active', i === idx); });
+  document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  if(grp && grp.classList.contains('fill-group')){
+    grp.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  }
+  btn.textContent = '\u2705 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAllFill(){
+  document.querySelectorAll('#tab7 .fill-blank').forEach(function(el){ el.classList.add('show'); });
+  document.querySelectorAll('#tab7 .fill-reveal-btn').forEach(function(b){ b.textContent = '\u2705 表示済み'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAllFill(){
+  document.querySelectorAll('#tab7 .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  document.querySelectorAll('#tab7 .fill-reveal-btn').forEach(function(b){ b.innerHTML = '\uD83D\uDC41 答えを見る'; b.disabled = false; b.style.opacity = '1'; });
+}
+document.addEventListener('click', function(e){
+  if(e.target.classList && e.target.classList.contains('fill-blank')){
+    e.target.classList.toggle('show');
+  }
+});
+</script>
+</body>
+</html>

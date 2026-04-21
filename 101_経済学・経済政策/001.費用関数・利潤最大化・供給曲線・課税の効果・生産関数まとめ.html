@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>費用関数・利潤最大化・供給曲線 | 中小企業診断士 経済学</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif; background:#f0f2f5; color:var(--gray-dark); line-height:1.8; }
+.header { background:linear-gradient(135deg,#2c3e50 0%,#3498db 100%); color:#fff; text-align:center; padding:2rem 1rem 1.5rem; }
+.header h1 { font-size:1.9rem; margin-bottom:.3rem; }
+.header .subtitle { font-size:.95rem; opacity:.88; margin-bottom:.5rem; }
+.header .badge { display:inline-block; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3); padding:.25rem .9rem; border-radius:20px; font-size:.82rem; }
+.tab-container { max-width:960px; margin:0 auto; padding:.5rem 1rem 2rem; }
+.tab-nav { display:flex; flex-wrap:wrap; gap:4px; margin:1rem 0 .5rem; background:var(--white); border-radius:var(--radius); padding:6px; box-shadow:var(--shadow); }
+.tab-btn { flex:1 1 auto; min-width:100px; padding:.55rem .4rem; border:none; background:none; border-bottom:3px solid transparent; font-size:.85rem; font-weight:600; cursor:pointer; border-radius:var(--radius-sm) var(--radius-sm) 0 0; transition:.2s; }
+.tab-btn:hover { background:var(--gray-pale); }
+.tab-btn[data-color="blue"] { color:var(--blue-main); }
+.tab-btn.active[data-color="blue"] { border-bottom-color:var(--blue-main); background:var(--blue-light); }
+.tab-btn[data-color="red"] { color:var(--red-main); }
+.tab-btn.active[data-color="red"] { border-bottom-color:var(--red-main); background:var(--red-light); }
+.tab-btn[data-color="green"] { color:var(--green-main); }
+.tab-btn.active[data-color="green"] { border-bottom-color:var(--green-main); background:var(--green-light); }
+.tab-btn[data-color="orange"] { color:var(--orange-main); }
+.tab-btn.active[data-color="orange"] { border-bottom-color:var(--orange-main); background:var(--orange-pale); }
+.tab-btn[data-color="purple"] { color:var(--purple-main); }
+.tab-btn.active[data-color="purple"] { border-bottom-color:var(--purple-main); background:var(--purple-light); }
+.tab-btn[data-color="teal"] { color:#00897b; }
+.tab-btn.active[data-color="teal"] { border-bottom-color:#00897b; background:#e0f2f1; }
+.tab-panel.theme-teal { background:#e0f7fa; }
+.st-teal { background:linear-gradient(135deg,#00897b,#26a69a); color:#fff; }
+.pb-teal { background:linear-gradient(135deg,#e0f2f1,#fff); border:2px solid #80cbc4; }
+.tbl-teal th { background:#00897b; color:#fff; }
+.tbl-teal tr:nth-child(even) { background:#e0f2f1; }
+.tab-panel { display:none; padding:1.5rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-top:.5rem; }
+.tab-panel.active { display:block; }
+.tab-panel.theme-blue { background:var(--blue-bg); }
+.tab-panel.theme-red { background:var(--red-bg); }
+.tab-panel.theme-green { background:var(--green-bg); }
+.tab-panel.theme-orange { background:var(--orange-bg); }
+.tab-panel.theme-purple { background:#f5eef8; }
+.section-title,.st-blue,.st-red,.st-green,.st-orange,.st-purple {
+  padding:.7rem 1rem; border-radius:var(--radius-sm); font-size:1.1rem; font-weight:700; margin:1.5rem 0 .8rem; color:#fff;
+}
+.st-blue { background:linear-gradient(135deg,var(--blue-main),#2471a3); }
+.st-red { background:linear-gradient(135deg,var(--red-main),#c0392b); }
+.st-green { background:linear-gradient(135deg,var(--green-main),#229954); }
+.st-orange { background:linear-gradient(135deg,var(--orange-main),var(--orange-dark)); }
+.st-purple { background:linear-gradient(135deg,var(--purple-main),#9b59b6); }
+.card { background:var(--white); border-radius:var(--radius); padding:1.2rem; margin:.8rem 0; box-shadow:var(--shadow); }
+.card h3 { font-size:1rem; margin-bottom:.5rem; }
+.alert-box { border-radius:var(--radius-sm); padding:.8rem 1rem; margin:.7rem 0; font-size:.92rem; }
+.alert-tip { background:#eafaf1; border-left:4px solid var(--green-main); }
+.alert-warn { background:#fef9e7; border-left:4px solid var(--orange-light); }
+.alert-danger { background:var(--red-light); border-left:4px solid var(--red-main); }
+.alert-info { background:var(--blue-light); border-left:4px solid var(--blue-main); }
+.bubble-wrap { margin:.8rem 0; }
+.bubble-wrap .bubble { display:flex; gap:.6rem; margin:.5rem 0; align-items:flex-start; }
+.bubble-wrap .bubble.right { flex-direction:row-reverse; }
+.bubble .icon { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+.bubble .text { background:var(--white); border-radius:12px; padding:.55rem .85rem; max-width:80%; box-shadow:0 1px 4px rgba(0,0,0,.06); font-size:.92rem; }
+.bubble.right .text { background:var(--blue-light); }
+.flow-box { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.3rem; margin:.8rem 0; font-size:.92rem; }
+.flow-box .step { background:var(--white); border:2px solid var(--blue-main); border-radius:var(--radius-sm); padding:.4rem .7rem; font-weight:600; }
+.flow-box .arrow { font-size:1.2rem; color:var(--gray-mid); }
+.formula-box { background:linear-gradient(135deg,#fef9e7,#fff); border:2px solid var(--orange-light); border-radius:var(--radius); padding:1rem; margin:.7rem 0; text-align:center; }
+.formula-box .formula { font-size:1.15rem; font-weight:700; color:var(--orange-dark); margin:.3rem 0; }
+.formula-box .desc { font-size:.85rem; color:var(--gray-mid); }
+.mnemonic { background:linear-gradient(135deg,#e8daef,#fff); border:2px solid #bb8fce; border-radius:var(--radius); padding:1rem; margin:.7rem 0; }
+.mnemonic .title { font-weight:700; color:var(--purple-dark); margin-bottom:.3rem; }
+.scene { background:var(--white); border-radius:var(--radius); padding:1rem; margin:.8rem 0; border-left:5px solid var(--blue-main); }
+.scene .scene-title { font-weight:700; font-size:1rem; margin-bottom:.4rem; }
+.vs-box { display:grid; grid-template-columns:1fr auto 1fr; gap:.5rem; margin:.8rem 0; align-items:center; }
+.vs-box .vs-item { background:var(--white); border-radius:var(--radius-sm); padding:.8rem; text-align:center; box-shadow:var(--shadow); }
+.vs-box .vs-mid { font-size:1.3rem; font-weight:700; color:var(--red-main); }
+.point-box,.pb-blue,.pb-red,.pb-green,.pb-orange,.pb-purple {
+  border-radius:var(--radius); padding:1rem; margin:.7rem 0;
+}
+.pb-blue { background:linear-gradient(135deg,var(--blue-light),#fff); border:2px solid var(--blue-main); }
+.pb-red { background:linear-gradient(135deg,var(--red-light),#fff); border:2px solid var(--red-main); }
+.pb-green { background:linear-gradient(135deg,var(--green-light),#fff); border:2px solid var(--green-main); }
+.pb-orange { background:linear-gradient(135deg,var(--orange-pale),#fff); border:2px solid var(--orange-main); }
+.pb-purple { background:linear-gradient(135deg,var(--purple-light),#fff); border:2px solid #bb8fce; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin:.8rem 0; }
+@media(max-width:600px){ .two-col,.vs-box { grid-template-columns:1fr; } }
+.diagram { background:var(--white); border-radius:var(--radius); padding:1rem; margin:.8rem 0; text-align:center; box-shadow:var(--shadow); font-family:monospace; white-space:pre; line-height:1.5; font-size:.82rem; overflow-x:auto; }
+table { width:100%; border-collapse:collapse; margin:.7rem 0; font-size:.9rem; }
+th,td { padding:.5rem .6rem; text-align:left; border:1px solid #ddd; }
+.tbl-blue th { background:var(--blue-main); color:#fff; }
+.tbl-blue tr:nth-child(even) { background:var(--blue-light); }
+.tbl-red th { background:var(--red-main); color:#fff; }
+.tbl-red tr:nth-child(even) { background:var(--red-light); }
+.tbl-green th { background:var(--green-main); color:#fff; }
+.tbl-green tr:nth-child(even) { background:var(--green-light); }
+.tbl-orange th { background:var(--orange-main); color:#fff; }
+.tbl-orange tr:nth-child(even) { background:var(--orange-pale); }
+.tbl-purple th { background:var(--purple-main); color:#fff; }
+.tbl-purple tr:nth-child(even) { background:var(--purple-light); }
+.quiz-item { background:var(--white); border-radius:var(--radius); padding:1.2rem; margin:1rem 0; box-shadow:var(--shadow); }
+.quiz-num { display:inline-block; background:var(--orange-main); color:#fff; font-size:.78rem; font-weight:700; padding:.15rem .55rem; border-radius:10px; margin-bottom:.3rem; }
+.quiz-cat { display:inline-block; font-size:.75rem; font-weight:600; padding:.12rem .5rem; border-radius:10px; margin-left:.3rem; }
+.cat-blue { background:var(--blue-light); color:var(--blue-dark); }
+.cat-red { background:var(--red-light); color:var(--red-dark); }
+.cat-green { background:var(--green-light); color:var(--green-dark); }
+.cat-orange { background:var(--orange-pale); color:var(--orange-dark); }
+.cat-purple { background:var(--purple-light); color:var(--purple-dark); }
+.quiz-question { font-weight:600; margin:.5rem 0; font-size:.97rem; }
+.quiz-options { list-style:none; padding:0; }
+.quiz-options li { padding:.5rem .8rem; margin:.3rem 0; border:2px solid #e0e0e0; border-radius:var(--radius-sm); cursor:pointer; transition:.2s; font-size:.92rem; }
+.quiz-options li:hover { background:#f7f7f7; border-color:var(--blue-main); }
+.quiz-options li.correct { background:#d5f5e3; border-color:var(--green-main); }
+.quiz-options li.wrong { background:var(--red-light); border-color:var(--red-main); }
+.quiz-explanation { display:none; margin-top:.6rem; padding:.7rem; border-radius:var(--radius-sm); font-size:.88rem; }
+.quiz-explanation.show { display:block; }
+.correct-exp { background:#d5f5e3; border-left:4px solid var(--green-main); }
+.wrong-exp { background:var(--red-light); border-left:4px solid var(--red-main); }
+#quizScore { display:none; text-align:center; font-size:1.2rem; font-weight:700; padding:1rem; margin:1rem 0; background:linear-gradient(135deg,var(--orange-pale),#fff); border:2px solid var(--orange-main); border-radius:var(--radius); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>費用関数・利潤最大化・供給曲線</h1>
+  <div class="subtitle">中小企業診断士 経済学・経済政策 | 5-2 企業行動と供給曲線</div>
+  <div class="badge">全6タブ構成 学習サイト</div>
+</div>
+
+<div class="tab-container">
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-color="teal" onclick="switchTab(0)">&#x1F530; ゼロから理解</button>
+  <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F331; 入門編</button>
+  <button class="tab-btn" data-color="red" onclick="switchTab(2)">&#x1F4D5; 基本事項</button>
+  <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F3ED; シミュレーション</button>
+  <button class="tab-btn" data-color="orange" onclick="switchTab(4)">&#x270F;&#xFE0F; 実践クイズ</button>
+  <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F4A1; 実例で覚える</button>
+</nav>
+
+<!-- ============ TAB 0: ゼロから理解 ============ -->
+<div class="tab-panel theme-teal active">
+
+<div class="pb-teal">
+  <strong>&#x1F4D6; このタブで学ぶこと</strong>
+  <ul style="margin:.3rem 0 0 1.2rem;">
+    <li>経済学の<strong>専門用語</strong>を日常のことばに変換できるようになる</li>
+    <li>企業が「利潤最大化」を目指す理由と<strong>全体の流れ</strong>をつかむ</li>
+    <li>パン屋の数字で<strong>いちばんやさしい計算</strong>を体験する</li>
+  </ul>
+</div>
+
+<!-- セクション1：用語辞典 -->
+<h2 class="st-teal">&#x1F4D6; 経済学の「ことば」辞典</h2>
+
+<div class="card">
+  <h3>&#x1F50E; まず読み方と意味をおさえよう</h3>
+  <table class="tbl-teal">
+    <tr><th>専門用語</th><th>読み方</th><th>日常語で言うと</th></tr>
+    <tr><td><strong>費用関数</strong></td><td>ひようかんすう</td><td>「作る量」と「かかるお金」の関係式</td></tr>
+    <tr><td><strong>限界費用（MC）</strong></td><td>げんかいひよう</td><td>あと1個作るときの<strong>追加コスト</strong></td></tr>
+    <tr><td><strong>平均費用（AC）</strong></td><td>へいきんひよう</td><td><strong>1個あたりの総コスト</strong>（全部÷個数）</td></tr>
+    <tr><td><strong>逓減</strong></td><td>ていげん</td><td>だんだん<strong>減っていく</strong>こと</td></tr>
+    <tr><td><strong>逓増</strong></td><td>ていぞう</td><td>だんだん<strong>増えていく</strong>こと</td></tr>
+    <tr><td><strong>利潤</strong></td><td>りじゅん</td><td><strong>もうけ</strong>（売上 − 費用）</td></tr>
+    <tr><td><strong>プライステイカー</strong></td><td>―</td><td>市場の値段を<strong>そのまま受け入れる</strong>企業</td></tr>
+    <tr><td><strong>供給曲線</strong></td><td>きょうきゅうきょくせん</td><td>「この値段なら何個作るか」を示す線</td></tr>
+    <tr><td><strong>弾力性</strong></td><td>だんりょくせい</td><td>値段が変わったとき量が<strong>どれくらい動くか</strong></td></tr>
+    <tr><td><strong>生産関数</strong></td><td>せいさんかんすう</td><td>人・機械を入れたら製品が<strong>何個出てくるか</strong></td></tr>
+  </table>
+  <div class="alert-tip">
+    &#x1F4A1; 経済学の<strong>「限界」は「ギリギリ」ではなく「あと1個分」</strong>という意味。この1語を知るだけで半分理解できます！
+  </div>
+</div>
+
+<!-- セクション2：なぜ利潤最大化？ -->
+<h2 class="st-teal">&#x2753; そもそもなぜ「利潤最大化」？</h2>
+
+<div class="card">
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:#e0f2f1;">&#x1F9D1;</div>
+      <div class="text">企業ってなんでもうけを最大にしたがるの？他の目標はないの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">実際にはSDGsや社員の幸せもありますが、経済学では<strong>「企業は利潤（もうけ）を最大にするように行動する」</strong>と仮定して分析します。この仮定のおかげでシンプルに予測できるんです。</div>
+    </div>
+  </div>
+  <div class="flow-box">
+    <div class="step" style="border-color:#00897b;">&#x1F3ED; 企業は何個作る？</div>
+    <div class="arrow">&#x2192;</div>
+    <div class="step" style="border-color:#00897b;">&#x1F4B0; もうけ＝売上−費用</div>
+    <div class="arrow">&#x2192;</div>
+    <div class="step" style="border-color:#00897b;">&#x1F3AF; もうけが最大の量を選ぶ</div>
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">もうけを計算するには、まず<strong>「費用」を知ること</strong>が第一歩。だから費用曲線から学ぶんです！</div>
+    </div>
+  </div>
+</div>
+
+<!-- セクション3：費用の全体図 -->
+<h2 class="st-teal">&#x1F5FA; 費用のぜんぶを1枚で理解</h2>
+
+<div class="card">
+  <h3>&#x1F333; 費用の分類ツリー</h3>
+  <div class="pb-teal" style="text-align:center; font-size:.95rem;">
+    <strong style="font-size:1.1rem;">総費用（TC）</strong><br>
+    &#x251C;&#x2500;&#x2500; <strong>固定費用（FC）</strong> … 作らなくてもかかる（家賃など）<br>
+    &#x2514;&#x2500;&#x2500; <strong>可変費用（VC）</strong> … 作るほど増える（材料費など）<br><br>
+    &#x25BC; 割り算すると &#x25BC;<br><br>
+    TC ÷ 個数 ＝ <strong>平均費用（AC）</strong> … 1個あたり総コスト<br>
+    VC ÷ 個数 ＝ <strong>平均可変費用（AVC）</strong> … 1個あたり変動コスト<br><br>
+    &#x25BC; 微分（差分）すると &#x25BC;<br><br>
+    ΔTC（1個増やしたときの増加分）＝ <strong>限界費用（MC）</strong>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4CA; 消費者理論との対応表</h3>
+  <p>5-1で学んだ消費者行動と、今回の企業行動は<strong>対になる考え方</strong>です。</p>
+  <table class="tbl-teal">
+    <tr><th>消費者（5-1）</th><th></th><th>企業（5-2：今回）</th></tr>
+    <tr><td>効用最大化</td><td>&#x2194;</td><td>利潤最大化</td></tr>
+    <tr><td>無差別曲線</td><td>&#x2194;</td><td>等産出量曲線</td></tr>
+    <tr><td>予算制約線</td><td>&#x2194;</td><td>等費用線</td></tr>
+    <tr><td>限界効用</td><td>&#x2194;</td><td>限界生産性</td></tr>
+    <tr><td>限界代替率（MRS）</td><td>&#x2194;</td><td>技術的限界代替率（MRTS）</td></tr>
+    <tr><td>需要曲線</td><td>&#x2194;</td><td>供給曲線</td></tr>
+  </table>
+  <div class="alert-tip">
+    &#x1F4A1; 消費者理論がわかっていれば、<strong>言葉を置き換えるだけ</strong>で企業理論の半分は理解できます！
+  </div>
+</div>
+
+<!-- セクション4：MC中心のフロー -->
+<h2 class="st-teal">&#x1F50D; 「あと1個つくる」で全部つながる</h2>
+
+<div class="card">
+  <h3>&#x1F4CB; 企業の判断フロー</h3>
+  <div class="flow-box">
+    <div class="step" style="border-color:#00897b;">&#x1F4B5; 市場価格Pを確認</div>
+    <div class="arrow">&#x2192;</div>
+    <div class="step" style="border-color:#e74c3c;">&#x1F4CA; P = MC の量を計算</div>
+    <div class="arrow">&#x2192;</div>
+    <div class="step" style="border-color:#2980b9;">&#x1F6A6; P vs AC / AVC で判断</div>
+  </div>
+  <div class="two-col" style="margin-top:.8rem;">
+    <div class="pb-teal">
+      <strong>&#x2705; P &ge; AC のとき</strong><br>
+      黒字！生産を続ける<br>
+      <span style="font-size:.85rem;color:var(--gray-mid);">（損益分岐点より上）</span>
+    </div>
+    <div class="pb-teal">
+      <strong>&#x1F7E1; AVC &le; P &lt; AC のとき</strong><br>
+      赤字だけど続けた方がマシ<br>
+      <span style="font-size:.85rem;color:var(--gray-mid);">（固定費の一部を回収）</span>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="pb-teal">
+      <strong>&#x1F534; P &lt; AVC のとき</strong><br>
+      作れば作るほど損！即停止<br>
+      <span style="font-size:.85rem;color:var(--gray-mid);">（操業停止点より下）</span>
+    </div>
+    <div class="pb-teal">
+      <strong>&#x1F4C8; 供給曲線とは？</strong><br>
+      ＝ MCの右上がり部分<br>
+      <span style="font-size:.85rem;color:var(--gray-mid);">（P=MCで量が決まるから）</span>
+    </div>
+  </div>
+</div>
+
+<!-- セクション5：やさしい計算例 -->
+<h2 class="st-teal">&#x1F522; いちばんやさしい計算例</h2>
+
+<div class="card">
+  <h3>&#x1F35E; パン屋さんで利潤を計算しよう</h3>
+  <div class="pb-teal">
+    <strong>設定：</strong> パン1個 200円で売れる ／ 家賃（FC）= 月10万円 ／ 材料費（VC）= 1個あたり80円
+  </div>
+
+  <div class="alert-info" style="margin-top:.5rem;">
+    <strong>Step 1 &#x1F4DD; 月に500個作ったときの費用</strong><br>
+    TC = FC + VC = 100,000 + 80 × 500 = <strong>140,000円</strong>
+  </div>
+  <div class="alert-info">
+    <strong>Step 2 &#x1F4DD; 売上を計算</strong><br>
+    売上 = 200 × 500 = <strong>100,000円</strong>
+  </div>
+  <div class="alert-info">
+    <strong>Step 3 &#x1F4DD; 利潤（もうけ）</strong><br>
+    利潤 = 100,000 − 140,000 = <strong>&#x2212;40,000円（赤字！）</strong>
+  </div>
+
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:#e0f2f1;">&#x1F9D1;</div>
+      <div class="text">赤字だ…もっと作れば黒字になる？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">1,000個作ってみよう！</div>
+    </div>
+  </div>
+
+  <div class="alert-tip">
+    <strong>Step 4 &#x1F4DD; 1,000個の場合</strong><br>
+    TC = 100,000 + 80 × 1,000 = 180,000円<br>
+    売上 = 200 × 1,000 = 200,000円<br>
+    利潤 = 200,000 − 180,000 = <strong>20,000円（黒字！）</strong>
+  </div>
+
+  <div class="card" style="margin-top:.5rem;">
+    <h3>&#x1F4CA; ついでに指標も計算</h3>
+    <table class="tbl-teal">
+      <tr><th>指標</th><th>計算式</th><th>500個</th><th>1,000個</th></tr>
+      <tr><td>AC（1個あたり総コスト）</td><td>TC ÷ 個数</td><td>280円</td><td>180円</td></tr>
+      <tr><td>AVC（1個あたり変動コスト）</td><td>VC ÷ 個数</td><td>80円</td><td>80円</td></tr>
+      <tr><td>利潤の判断</td><td>P vs AC</td><td>200 &lt; 280 &#x274C;</td><td>200 &gt; 180 &#x2705;</td></tr>
+    </table>
+    <div class="alert-tip">
+      &#x1F4A1; ACが280円→180円に下がった！たくさん作ると家賃（FC）が薄まるから ＝ <strong>規模の経済</strong>。P(200円) &gt; AC(180円) になった瞬間が<strong>損益分岐点</strong>です。
+    </div>
+  </div>
+</div>
+
+<div class="mnemonic">
+  <div class="title">&#x1F9E0; このタブのまとめ</div>
+  <p>&#x2705; 「限界」＝ あと1個分 ｜ &#x2705; 「逓減」＝ だんだん減る ｜ &#x2705; 「逓増」＝ だんだん増える</p>
+  <p>&#x2705; 利潤 ＝ 売上 − 費用 ｜ &#x2705; もうけ最大 → P = MC で生産量を決める</p>
+  <p>&#x2705; P &ge; AC → 黒字 ｜ &#x2705; AVC &le; P &lt; AC → 赤字だけど続ける ｜ &#x2705; P &lt; AVC → 即停止</p>
+  <p>&#x2705; 供給曲線 ＝ MC曲線の右上がり部分 ｜ &#x2705; 消費者理論の「裏返し」が生産者理論</p>
+</div>
+
+<!-- 語呂合わせコーナー -->
+<div class="mnemonic" style="border-color:#e74c3c;">
+  <div class="title">&#x1F3AD; 変な語呂合わせで一発暗記！</div>
+</div>
+
+<div class="card" style="border-left:5px solid #9b59b6;">
+  <h3>&#x1F4A1; 語呂1：費用の5兄弟を覚える</h3>
+  <p><strong>「固（FC）い可変（VC）な総（TC）理大臣が、限界（MC）まで平均（AC）台に乗っている」</strong></p>
+  <div style="background:#f5eef8; border-radius:var(--radius); padding:1rem; margin:.5rem 0; text-align:center;">
+    <div style="font-size:2.5rem; margin-bottom:.3rem;">&#x1F3DB;&#xFE0F;&#x1F935;&#x1F938;&#x200D;&#x2642;&#xFE0F;</div>
+    <div style="font-size:.85rem; color:var(--gray-mid);">国会議事堂の中で、スーツ姿の総理大臣がなぜか平均台の上でバランスを取っている。<br>しかも「もう限界…！」と叫んでいる。横には「固い岩」と「可変するスライム」が応援中。</div>
+  </div>
+  <table style="width:100%;font-size:.88rem;margin-top:.5rem;">
+    <tr><td><strong>固い岩</strong> &#x1FAA8;</td><td>= <strong>固</strong>定費用（<strong>F</strong>C）動かない</td></tr>
+    <tr><td><strong>可変スライム</strong> &#x1F7E2;</td><td>= <strong>可変</strong>費用（<strong>V</strong>C）伸び縮み</td></tr>
+    <tr><td><strong>総理大臣</strong> &#x1F935;</td><td>= <strong>総</strong>費用（<strong>T</strong>C）全部まとめ</td></tr>
+    <tr><td><strong>限界！と叫ぶ</strong> &#x1F4A2;</td><td>= <strong>限界</strong>費用（<strong>M</strong>C）あと1個のコスト</td></tr>
+    <tr><td><strong>平均台</strong> &#x1F938;</td><td>= <strong>平均</strong>費用（<strong>A</strong>C）1個あたりコスト</td></tr>
+  </table>
+</div>
+
+<div class="card" style="border-left:5px solid #e74c3c;">
+  <h3>&#x1F4A1; 語呂2：利潤最大化 P=MC</h3>
+  <p><strong>「パンダ（P）が向かい（MC）のベンチに座ったら、もうけ最大！」</strong></p>
+  <div style="background:#fce4ec; border-radius:var(--radius); padding:1rem; margin:.5rem 0; text-align:center;">
+    <div style="font-size:2.5rem; margin-bottom:.3rem;">&#x1F43C;&#x27A1;&#xFE0F;&#x1FA91;&#x1F4B0;</div>
+    <div style="font-size:.85rem; color:var(--gray-mid);">公園のベンチが2つ。パンダが「向かい」のベンチにドスンと座った瞬間、<br>頭上から金貨がジャラジャラ降ってくる。隣のベンチでは何も起きない。</div>
+  </div>
+  <p style="font-size:.88rem;"><strong>P</strong>（パンダ＝価格）と <strong>MC</strong>（向かい＝限界費用）が<strong>ぴったり一致（同じベンチ）</strong>したとき → 利潤最大！</p>
+</div>
+
+<div class="card" style="border-left:5px solid #27ae60;">
+  <h3>&#x1F4A1; 語呂3：損益分岐点 vs 操業停止点</h3>
+  <p><strong>「損（損益）したエース（AC）は泣くだけ。操（操業）を止めた悪（AVC）いやつは逃げた！」</strong></p>
+  <div style="background:#e8f5e9; border-radius:var(--radius); padding:1rem; margin:.5rem 0; text-align:center;">
+    <div style="font-size:2.5rem; margin-bottom:.3rem;">&#x1F3C0;&#x1F62D;&#x1F6D1;&#x1F3C3;&#x1F4A8;</div>
+    <div style="font-size:.85rem; color:var(--gray-mid);">バスケのコート。<strong>エース（AC）</strong>がシュートを外して泣いている（損益ゼロ＝損益分岐点）。<br>一方、<strong>悪いやつ（AVC）</strong>は審判に「操業停止！退場！」と言われてコートから逃げ出した。</div>
+  </div>
+  <table style="width:100%;font-size:.88rem;margin-top:.5rem;">
+    <tr><td>&#x1F62D; <strong>エース（AC）が泣く</strong></td><td>= 損益分岐点 → <strong>P = AC</strong>（利潤ゼロ）</td></tr>
+    <tr><td>&#x1F3C3; <strong>悪い（AVC）やつが逃げる</strong></td><td>= 操業停止点 → <strong>P = AVC</strong>（もう無理！）</td></tr>
+  </table>
+</div>
+
+<div class="card" style="border-left:5px solid #2980b9;">
+  <h3>&#x1F4A1; 語呂4：従量税 vs 従価税の供給曲線への影響</h3>
+  <p><strong>「従（じゅう）量のジュウシマツは、平行に飛ぶ。従価のジュウカは、傾いて転ぶ。」</strong></p>
+  <div style="background:#e3f2fd; border-radius:var(--radius); padding:1rem; margin:.5rem 0; text-align:center;">
+    <div style="font-size:2.5rem; margin-bottom:.3rem;">&#x1F426;&#x2197;&#xFE0F;&#x2197;&#xFE0F;&nbsp;&nbsp;&nbsp;&#x1F4B4;&#x1F4A5;&#x2934;&#xFE0F;</div>
+    <div style="font-size:.85rem; color:var(--gray-mid);">空を飛ぶ<strong>ジュウシマツ（十姉妹＝従量）</strong>の群れ。みんな同じ高さで平行にきれいに飛んでいる。<br>一方、<strong>お札の束（従価）</strong>が風に煽られて傾きがどんどん急になり、バタンと転んだ。</div>
+  </div>
+  <table style="width:100%;font-size:.88rem;margin-top:.5rem;">
+    <tr><td>&#x1F426; <strong>ジュウシマツ（従量）</strong>が平行に飛ぶ</td><td>= 従量税 → 供給曲線が<strong>上に平行シフト</strong></td></tr>
+    <tr><td>&#x1F4B4; <strong>お札（従価）</strong>が傾いて転ぶ</td><td>= 従価税 → 供給曲線の<strong>傾きが急に</strong>変化</td></tr>
+  </table>
+</div>
+
+<div class="card" style="border-left:5px solid #e67e22;">
+  <h3>&#x1F4A1; 語呂5：限界生産性の逓減</h3>
+  <p><strong>「お風呂に人を詰め込むほど、1人あたりの湯量は減る」</strong></p>
+  <div style="background:#fff8e1; border-radius:var(--radius); padding:1rem; margin:.5rem 0; text-align:center;">
+    <div style="font-size:2.5rem; margin-bottom:.3rem;">&#x1F6C1;&#x1F9D1;&#x1F9D1;&#x1F9D1;&#x1F9D1;&#x1F9D1;&#x1F4A6;</div>
+    <div style="font-size:.85rem; color:var(--gray-mid);">家庭のお風呂（設備＝資本K：一定）に1人入ると快適。2人でもまあOK。<br>でも5人、10人と詰め込むと、<strong>1人追加するたびにお湯はあふれ、全員が窮屈</strong>に。<br>人を増やしても「追加1人あたりの快適さ（＝限界生産物）」はどんどん減る！</div>
+  </div>
+  <p style="font-size:.88rem;">設備（K）が同じなのに労働者（L）を増やし続けると → <strong>限界生産性が逓減</strong>（ていげん＝だんだん減る）</p>
+</div>
+
+</div>
+
+<!-- ============ TAB 1: 入門編 ============ -->
+<div class="tab-panel theme-blue">
+
+<div class="pb-blue">
+  <strong>&#x1F4D6; このタブで学ぶこと</strong>
+  <ul style="margin:.3rem 0 0 1.2rem;">
+    <li>費用の2分類（FC・VC）と3つのコスト指標（MC・AC・AVC）を言えるようになる</li>
+    <li>利潤最大化条件 <strong>P=MC</strong> と「続けるか、やめるか」の判断基準を覚える</li>
+    <li>供給曲線・生産関数・課税の効果のエッセンスをつかむ</li>
+  </ul>
+</div>
+
+<h2 class="st-blue">&#x1F331; 最初の一歩 ― 費用と利潤のキホン</h2>
+
+<div class="scene">
+  <div class="scene-title">&#x1F35E; パン屋さんで考えよう！</div>
+  <p>あなたがパン屋さんを開いたとしましょう。お店を運営するには色々なお金がかかりますよね。これを「費用」と呼びます。</p>
+</div>
+
+<div class="card">
+  <h3>&#x1F4B0; 費用は2種類ある！</h3>
+  <div class="two-col">
+    <div class="pb-blue">
+      <strong>固定費用（FC）</strong><br>
+      パンを作っても作らなくてもかかるお金<br>
+      &#x1F3E0; 家賃、&#x1F373; オーブンのリース代
+    </div>
+    <div class="pb-blue">
+      <strong>可変費用（VC）</strong><br>
+      パンをたくさん作るほど増えるお金<br>
+      &#x1F33E; 小麦粉、&#x1F95A; 卵、バター
+    </div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">費用 ＝ 固定費用（FC）＋ 可変費用（VC）</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4CA; 3つの大事なコスト指標</h3>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--blue-light);">&#x1F9D1;</div>
+      <div class="text">「限界費用」ってなに？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text"><strong>限界費用（MC）</strong>＝ もう1個作るときの追加コスト。パンをあと1個焼くのにいくら余分にかかる？ということです。最初は効率が上がってMCは下がりますが、厨房が混み始めるとMCは上がります（<strong>U字型</strong>）。</div>
+    </div>
+    <div class="bubble">
+      <div class="icon" style="background:var(--blue-light);">&#x1F9D1;</div>
+      <div class="text">「平均費用」は？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text"><strong>平均費用（AC）</strong>＝ 1個あたりのコスト ＝ 総費用 ÷ 生産量。100個作って費用が1万円なら、AC = 100円/個。ACが下がっている段階を<strong>「規模の経済」</strong>（大量生産で1個あたり安くなる）と呼びます。</div>
+    </div>
+    <div class="bubble">
+      <div class="icon" style="background:var(--blue-light);">&#x1F9D1;</div>
+      <div class="text">「平均可変費用」もある？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text"><strong>平均可変費用（AVC）</strong>＝ 可変費用だけの1個あたりコスト。固定費用を除いて考えるときに使います。</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="st-blue">&#x1F4B5; 利潤最大化 ― いくら作れば一番儲かる？</h2>
+
+<div class="card">
+  <h3>&#x1F3AF; 儲けを最大にする条件</h3>
+  <div class="formula-box">
+    <div class="formula">利潤 ＝ 売上 − 費用</div>
+    <div class="desc">売上 = 価格 × 生産量</div>
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--blue-light);">&#x1F9D1;</div>
+      <div class="text">どうすれば利潤が最大になるの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">答えはシンプル！ <strong>価格（P）＝ 限界費用（MC）</strong> になるまで作ること。追加の1個の売値と追加コストが同じになるところがベストです。</div>
+    </div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">利潤最大化条件 ： P ＝ MC</div>
+    <div class="desc">もう1個作って得られるお金 ＝ もう1個作るコスト</div>
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>身近な例：</strong>フリマアプリで手作りアクセサリーを売る場合。1個500円で売れて、材料費が1個目300円、2個目350円、3個目500円なら、3個目で「売値＝コスト」。ここが利潤最大の生産量！</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="st-blue">&#x26A0;&#xFE0F; 続けるか、やめるかの判断</h2>
+
+<div class="card">
+  <h3>&#x1F6A6; 2つの重要ライン</h3>
+  <div class="two-col">
+    <div class="pb-blue">
+      <strong>&#x1F7E2; 損益分岐点</strong><br>
+      利潤がちょうどゼロの点<br>
+      <strong>P = AC</strong>（売値 = 1個あたり総コスト）<br>
+      ここより上なら黒字！
+    </div>
+    <div class="pb-blue">
+      <strong>&#x1F534; 操業停止点</strong><br>
+      これ以下なら店を閉めるべき点<br>
+      <strong>P = AVC</strong>（売値 = 1個あたり変動コスト）<br>
+      ここより下なら作れば作るほど損！
+    </div>
+  </div>
+  <div class="alert-tip">
+    &#x1F4A1; <strong>P が AVC以上 AC未満</strong>のとき → 赤字だけど営業した方がマシ（固定費の一部は回収できるから）
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>身近な例：</strong>学園祭の屋台。テント代（FC）5,000円は払い済み。たこ焼き1個の材料費（VC）30円、売価100円。たとえ全部は売れなくても、1個売るごとに70円回収できるから出店した方がマシ！</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="st-blue">&#x1F4C8; 供給曲線ってなに？</h2>
+
+<div class="card">
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--blue-light);">&#x1F9D1;</div>
+      <div class="text">供給曲線ってどこから出てくるの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text"><strong>供給曲線 ＝ MC曲線の右上がり部分</strong>です。企業はP=MCで生産量を決めるので、価格が変わるとMC曲線に沿って供給量が決まります。</div>
+    </div>
+  </div>
+  <div class="alert-info">
+    &#x1F4CC; 既存企業：操業停止点より右上のMC曲線。新規参入企業：損益分岐点より右上のMC曲線。
+  </div>
+  <div class="alert-tip">
+    &#x1F4A1; <strong>供給の価格弾力性</strong> ＝ 価格が1%上がったとき供給量が何%変わるか。供給曲線が緩やかなら弾力性が高い（増産しやすい）、急なら低い（増産しにくい）。
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>身近な例：</strong>回転寿司チェーン。ネタの仕入れ（VC）はお客さんの数で変わるけど、回転レーンの設備費（FC）は毎月同じ。お客が増えるほど1皿あたりの設備コストが薄まる ＝ 規模の経済！</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="st-blue">&#x1F3ED; 生産関数 ― 入れたら出てくる</h2>
+
+<div class="card">
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--blue-light);">&#x1F9D1;</div>
+      <div class="text">生産関数って？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">投入（労働者や材料）→ 産出（製品）の関係を表すものです。</div>
+    </div>
+    <div class="bubble">
+      <div class="icon" style="background:var(--blue-light);">&#x1F9D1;</div>
+      <div class="text">人を増やせば増やすほどたくさん作れる？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">最初はそうですが、だんだん<strong>増え方が鈍くなります</strong>。これが<strong>限界生産性の逓減</strong>。畑に人を10人、20人と増やしても、畑は同じなので効率が落ちますよね。</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="st-blue">&#x1F4B4; 課税の効果 ― 税金で何が変わる？</h2>
+
+<div class="card">
+  <div class="two-col">
+    <div class="pb-blue">
+      <strong>従量税</strong>（1個あたりT円）<br>
+      &#x2192; 供給曲線が<strong>上にT円だけ平行シフト</strong><br>
+      例：酒税、ガソリン税
+    </div>
+    <div class="pb-blue">
+      <strong>従価税</strong>（価格のT%）<br>
+      &#x2192; 供給曲線の<strong>傾きが急に</strong>なる<br>
+      例：消費税
+    </div>
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>覚え方：</strong>「<strong>量</strong>（従量税）は量が一定＝平行シフト」「<strong>価</strong>（従価税）は価格に比例＝傾き変化」。漢字1文字で覚えよう！</div>
+    </div>
+  </div>
+</div>
+
+<div class="mnemonic">
+  <div class="title">&#x1F9E0; まとめのまとめ</div>
+  <p>&#x2705; 費用 = FC + VC ｜ &#x2705; MC = もう1個のコスト ｜ &#x2705; AC = 1個あたりコスト</p>
+  <p>&#x2705; 利潤最大化 → P = MC ｜ &#x2705; 損益分岐点 → P = AC ｜ &#x2705; 操業停止点 → P = AVC</p>
+  <p>&#x2705; 供給曲線 = MC曲線 ｜ &#x2705; 生産関数 → 限界生産性は逓減</p>
+  <p>&#x2705; 従量税 → 平行シフト ｜ &#x2705; 従価税 → 傾き変化</p>
+</div>
+
+<div class="mnemonic" style="border-color:#e74c3c;">
+  <div class="title">&#x1F3AD; 語呂で瞬間暗記！</div>
+</div>
+
+<div class="card" style="border-left:5px solid #9b59b6;">
+  <h3>&#x1F43C; P = MC 「パンダが向かいに座ったら大もうけ」</h3>
+  <div style="background:#f5eef8; border-radius:var(--radius); padding:.8rem; margin:.4rem 0; text-align:center;">
+    <div style="font-size:2.2rem;">&#x1F43C;&#x27A1;&#xFE0F;&#x1FA91;&#x1F4B0;&#x2728;</div>
+    <div style="font-size:.82rem; color:var(--gray-mid);">公園で<strong>パンダ（P）</strong>が<strong>向かい（MC）</strong>のベンチにドスンと座った瞬間、金貨が降ってくる！</div>
+  </div>
+</div>
+
+<div class="card" style="border-left:5px solid #27ae60;">
+  <h3>&#x1F3C0; 損益分岐点vs操業停止点 「エース泣く、悪いやつ逃げる」</h3>
+  <div style="background:#e8f5e9; border-radius:var(--radius); padding:.8rem; margin:.4rem 0; text-align:center;">
+    <div style="font-size:2.2rem;">&#x1F3C0;&#x1F62D;&#x1F6D1;&#x1F3C3;&#x1F4A8;</div>
+    <div style="font-size:.82rem; color:var(--gray-mid);"><strong>損</strong>したエース(<strong>AC</strong>)は泣く＝損益分岐点｜<strong>操</strong>業を止めた悪(<strong>AVC</strong>)いやつは逃げた＝操業停止点</div>
+  </div>
+</div>
+
+<div class="card" style="border-left:5px solid #2980b9;">
+  <h3>&#x1F426; 従量税vs従価税 「ジュウシマツ平行、お札は傾く」</h3>
+  <div style="background:#e3f2fd; border-radius:var(--radius); padding:.8rem; margin:.4rem 0; text-align:center;">
+    <div style="font-size:2.2rem;">&#x1F426;&#x2197;&#xFE0F;&#x2197;&#xFE0F;&nbsp;&nbsp;&#x1F4B4;&#x1F4A5;&#x2934;&#xFE0F;</div>
+    <div style="font-size:.82rem; color:var(--gray-mid);"><strong>ジュウシマツ（従量）</strong>は平行に飛ぶ＝平行シフト｜<strong>お札（従価）</strong>が傾いて転ぶ＝傾き変化</div>
+  </div>
+</div>
+
+</div>
+
+<!-- ============ TAB 2: 基本事項 ============ -->
+<div class="tab-panel theme-red">
+
+<div class="pb-red">
+  <strong>&#x1F4D6; このタブで学ぶこと</strong>
+  <ul style="margin:.3rem 0 0 1.2rem;">
+    <li>費用関数のS字型カーブとMC・AC・AVCの<strong>数式・グラフ・関係</strong>を説明できる</li>
+    <li>利潤最大化条件P=MCと損益分岐点・操業停止点の<strong>判断基準</strong>を使いこなせる</li>
+    <li>供給曲線の導出、価格弾力性、課税効果、生産関数を<strong>体系的に理解</strong>する</li>
+  </ul>
+</div>
+
+<h2 class="st-red">&#x1F4D5; 費用曲線を理解する</h2>
+
+<div class="card">
+  <h3>費用の分類</h3>
+  <table class="tbl-red">
+    <tr><th>分類</th><th>内容</th><th>具体例</th><th>特徴</th></tr>
+    <tr><td><strong>固定費用（FC）</strong></td><td>生産量に関係なく一定</td><td>家賃、設備リース、正社員給与</td><td>短期的に変えられない</td></tr>
+    <tr><td><strong>可変費用（VC）</strong></td><td>生産量に応じて変動</td><td>原材料費、パート人件費、電気代</td><td>生産量に比例〜逓増</td></tr>
+    <tr><td><strong>総費用（TC）</strong></td><td>FC + VC</td><td>すべての費用の合計</td><td>S字型カーブ</td></tr>
+  </table>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>ECサイト運営で考えると、サーバー代・ドメイン代＝FC（注文ゼロでもかかる）、梱包材・配送費＝VC（注文数に比例）。この分類が瞬時にできると試験で強いです。</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>費用関数とS字型カーブ</h3>
+  <p>総費用曲線 C(x) は一般的にS字型を描きます。最初は効率が上がり費用の増え方が緩やかですが、ある点を超えると逓増します。</p>
+  <div class="formula-box">
+    <div class="formula">C(x) = VC(x) + FC</div>
+    <div class="desc">例：C(x) = x³ − 6x² + 15x + 5（FC = 5）</div>
+  </div>
+  <div class="diagram">
+費用
+ │          ／
+ │        ／   ← 逓増局面
+ │      ／
+ │    ・      ← 変曲点
+ │   ／
+ │  ／   ← 逓減局面
+ │／
+ │───── FC ─────
+ └──────────────→ 生産量(x)
+   総費用曲線（S字型）</div>
+</div>
+
+<div class="card">
+  <h3>限界費用（MC）</h3>
+  <p>生産量を1単位追加するときに増加する費用。グラフ上では<strong>費用曲線の接線の傾き</strong>です。</p>
+  <div class="formula-box">
+    <div class="formula">MC(x) = dC(x)/dx = C'(x)</div>
+    <div class="desc">C(x)=x³−6x²+15x+5 → MC(x)=3x²−12x+15</div>
+  </div>
+  <div class="alert-info">
+    &#x1F4CC; MC曲線はU字型。最初は下がり（効率化）、その後上がります（混雑・非効率）。
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>映画館のポップコーン。1杯目を作るコストと100杯目のコストはほぼ同じ（MC一定に近い）。でも機械がフル稼働になると、急いで作るためムダが増えてMCが上がります。</div>
+    </div>
+  </div>
+  <div class="alert-warn">
+    &#x26A0;&#xFE0F; <strong>試験の引っかけ：</strong>「限界費用は可変費用のみに関係し、固定費用には関係しない」→ これは<strong>正しい</strong>！FCは生産量で変わらないのでMCに影響しません。ひっかけ選択肢に注意。
+  </div>
+</div>
+
+<div class="card">
+  <h3>平均費用（AC）と平均可変費用（AVC）</h3>
+  <div class="two-col">
+    <div class="pb-red">
+      <strong>平均費用（AC）</strong><br>
+      AC = C(x) / x = 総費用 ÷ 生産量<br>
+      グラフ：原点から費用曲線上の点を結んだ直線の傾き<br>
+      U字型曲線
+    </div>
+    <div class="pb-red">
+      <strong>平均可変費用（AVC）</strong><br>
+      AVC = VC(x) / x = 可変費用 ÷ 生産量<br>
+      グラフ：FC切片から費用曲線上の点を結んだ直線の傾き<br>
+      U字型曲線
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>規模の経済と規模の不経済</h3>
+  <div class="vs-box">
+    <div class="vs-item">
+      <strong>規模の経済</strong><br>
+      ACが逓減（下がっている）<br>
+      生産量を増やすほど1個あたりコスト低下<br>
+      &#x1F4C9; 大量生産のメリット
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-item">
+      <strong>規模の不経済</strong><br>
+      ACが逓増（上がっている）<br>
+      生産量を増やすと1個あたりコスト上昇<br>
+      &#x1F4C8; 管理の非効率化
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x2B50; 費用曲線の重要な関係</h3>
+  <div class="alert-danger">
+    <strong>超重要：</strong> MC曲線は、AVC曲線の最低点とAC曲線の最低点を必ず通る！
+  </div>
+  <div class="alert-warn">
+    &#x26A0;&#xFE0F; <strong>試験の引っかけ：</strong>「操業停止点はACの最低点」→ <strong>バツ！</strong> 操業停止点は<strong>AVCの最低点</strong>（MC=AVC）。ACの最低点は<strong>損益分岐点</strong>。この2つの入れ替え問題は頻出！
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>覚え方：</strong>「操業＝AVC」「損益＝AC」。どちらもMCが通る最低点だけど、Vがつく方（AVC）が先に来る（下にある）と覚えよう。スポーツで例えると、AVC＝「棄権するかの体力ライン」、AC＝「勝ち負けのライン」。</div>
+    </div>
+  </div>
+  <div class="diagram">
+費用
+ │    MC
+ │   ╱  ╲        AC
+ │  ╱    ╲     ╱  ╲
+ │ ╱      ╲  ╱    ╲
+ │╱      ╳ ╲╱ ←損益分岐点（MC=AC）
+ │      ╱ ╲╳
+ │     ╱   AVC  ← 操業停止点（MC=AVC）
+ │    ╱
+ └──────────────────→ 生産量(x)
+  MC曲線はAVC・ACの最低点を通る</div>
+</div>
+
+<h2 class="st-red">&#x1F4B5; 利潤最大化行動</h2>
+
+<div class="card">
+  <h3>完全競争市場とプライステイカー</h3>
+  <p>完全競争市場では、個々の企業は市場価格を受け入れるだけ（<strong>プライステイカー</strong>）。自分で価格を変えられません。</p>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--red-light);">&#x1F914;</div>
+      <div class="text">完全競争市場の企業はどうやって利潤を最大にするの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">価格は変えられないので、<strong>生産量を調整</strong>します。P = MC となる生産量を選ぶのが最適です。</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>利潤の計算</h3>
+  <div class="formula-box">
+    <div class="formula">利潤 π = (P − AC) × x</div>
+    <div class="desc">利潤 = （価格 − 平均費用）× 生産量</div>
+  </div>
+  <table class="tbl-red">
+    <tr><th>条件</th><th>状態</th><th>判断</th></tr>
+    <tr><td>P &gt; AC</td><td>黒字（超過利潤あり）</td><td>&#x2705; 生産継続</td></tr>
+    <tr><td>P = AC</td><td>損益分岐点（利潤ゼロ）</td><td>&#x1F7E1; ギリギリ</td></tr>
+    <tr><td>AVC &lt; P &lt; AC</td><td>赤字だがVC回収可能</td><td>&#x1F7E0; 短期的に操業継続</td></tr>
+    <tr><td>P = AVC</td><td>操業停止点</td><td>&#x1F534; やめても続けても同じ</td></tr>
+    <tr><td>P &lt; AVC</td><td>VCすら回収できない</td><td>&#x26D4; 即座に停止</td></tr>
+  </table>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>スポーツジムの経営。会員が減って赤字でも、ビルのテナント料（FC）は解約できない。会費収入がトレーナー人件費・光熱費（VC）を上回る限り営業継続が合理的。これが「AVC &lt; P &lt; AC」の状態です。</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="st-red">&#x1F4C8; 供給曲線</h2>
+
+<div class="card">
+  <h3>個別企業の供給曲線</h3>
+  <div class="two-col">
+    <div class="pb-red">
+      <strong>既存企業の供給曲線</strong><br>
+      操業停止点（MC=AVC）より右上のMC曲線<br>
+      P &ge; AVCの最低点の範囲
+    </div>
+    <div class="pb-red">
+      <strong>新規参入企業の供給曲線</strong><br>
+      損益分岐点（MC=AC）より右上のMC曲線<br>
+      P &ge; ACの最低点の範囲
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>市場全体の供給曲線</h3>
+  <p>個別企業の供給曲線を<strong>横に足し合わせ（水平合計）</strong>したもの。</p>
+  <div class="diagram">
+価格       企業A     企業B      市場全体
+ │  ╱      │  ╱       │    ╱
+ │ ╱       │ ╱        │   ╱
+ │╱        │╱         │  ╱
+ └──→Q     └──→Q      └────→Q
+  SA    +    SB    =    S(=SA+SB)</div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>近所にラーメン店が3軒あるとき、「この地域のラーメン市場の供給曲線」は3軒の供給曲線を横に足し合わせたもの。価格500円のとき、A店50杯+B店40杯+C店60杯＝市場全体150杯。</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>供給の価格弾力性</h3>
+  <div class="formula-box">
+    <div class="formula">供給の価格弾力性 = 供給量の変化率(%) ÷ 価格の変化率(%)</div>
+    <div class="desc">Es = (ΔQ/Q) ÷ (ΔP/P)</div>
+  </div>
+  <table class="tbl-red">
+    <tr><th>供給曲線の形状</th><th>弾力性</th><th>具体例</th></tr>
+    <tr><td>傾きが緩やか（水平に近い）</td><td>弾力性が高い</td><td>工場製品（増産しやすい）</td></tr>
+    <tr><td>傾きが急（垂直に近い）</td><td>弾力性が低い</td><td>農産物（すぐに増やせない）</td></tr>
+  </table>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>2021年の半導体不足。価格が急騰しても、半導体工場の新設には2〜3年かかるため供給量をすぐ増やせない ＝ 短期では供給の価格弾力性が非常に低い。</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="st-red">&#x1F4B4; 課税の効果</h2>
+
+<div class="card">
+  <h3>従量税と従価税の比較</h3>
+  <table class="tbl-red">
+    <tr><th>項目</th><th>従量税</th><th>従価税</th></tr>
+    <tr><td>課税方法</td><td>1単位あたり定額T円</td><td>価格のT%</td></tr>
+    <tr><td>供給曲線への影響</td><td>上にT円だけ<strong>平行シフト</strong></td><td>傾きが<strong>(1+T%)倍</strong>に</td></tr>
+    <tr><td>具体例</td><td>酒税、ガソリン税、たばこ税</td><td>消費税</td></tr>
+    <tr><td>特徴</td><td>高い商品も安い商品も同額の税</td><td>高い商品ほど税額が大きい</td></tr>
+  </table>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>ガソリン税は1Lあたり約53.8円の従量税。100円のガソリンも200円のガソリンも税額は同じ。一方、消費税10%は100円の商品なら10円、200円なら20円 ＝ 従価税。</div>
+    </div>
+  </div>
+  <div class="alert-warn">
+    &#x26A0;&#xFE0F; <strong>試験の引っかけ：</strong>「従量税→傾きが変わる」「従価税→平行シフト」→ <strong>逆！</strong> 従量税＝平行シフト、従価税＝傾き変化。この入れ替えは超頻出です。
+  </div>
+  <div class="diagram">
+P           従量税          P           従価税
+│    S' S              │      S' S
+│   ╱ ╱               │     ╱╱
+│  ╱ ╱  ↑T円          │    ╱╱  ← 傾き変化
+│ ╱ ╱                  │   ╱╱
+│╱ ╱                   │  ╱╱
+└────────→Q            └────────→Q
+  平行シフト               傾きが急に</div>
+</div>
+
+<h2 class="st-red">&#x1F3ED; 生産関数</h2>
+
+<div class="card">
+  <h3>生産関数の基本</h3>
+  <p>投入量（インプット：労働L、資本K）と生産量（アウトプット：x）の技術的関係。</p>
+  <div class="formula-box">
+    <div class="formula">x = f(L, K)</div>
+    <div class="desc">生産量 = f（労働, 資本）</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>限界生産性の逓減</h3>
+  <p>ある投入要素を1単位追加したときの生産量の増加分（限界生産物）は、次第に減少します。</p>
+  <div class="alert-warn">
+    &#x26A0;&#xFE0F; <strong>限界生産性逓減の法則：</strong>他の投入要素を一定として、ある投入要素を追加し続けると、追加1単位あたりの生産増加量は次第に減少する。
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>料理で考えると、1人で全部やるより2人の方が早い。でもキッチンが同じ広さで5人、10人と増やしても、ぶつかり合って逆に遅くなる。これが限界生産性の逓減です。</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>等費用線と等産出量曲線</h3>
+  <div class="two-col">
+    <div class="pb-red">
+      <strong>等費用線</strong><br>
+      同じ費用で買える労働と資本の組み合わせ<br>
+      <strong>C = wL + rK</strong><br>
+      （w:賃金率、r:資本のレンタル料）<br>
+      予算制約線と同じ考え方
+    </div>
+    <div class="pb-red">
+      <strong>等産出量曲線</strong><br>
+      同じ生産量を実現する投入の組み合わせ<br>
+      無差別曲線と同じ形（右下がり・原点に凸）<br>
+      <strong>技術的限界代替率（MRTS）</strong>＝曲線の傾きの絶対値
+    </div>
+  </div>
+  <div class="alert-tip">
+    &#x1F4A1; 費用最小化条件：等費用線と等産出量曲線の<strong>接点</strong>で生産する。このとき MRTS = w/r が成立。
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>コンビニの人員配置。深夜は人件費（w）が高いのでセルフレジ（資本K）を増やし、昼はアルバイト（労働L）を増やす。これは等費用線の傾き（w/r）に応じて最適な組み合わせを選んでいる例です。</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>範囲の経済</h3>
+  <p>異なった製品を1社で生産することで、別々の企業で生産するよりも費用面で有利になること。規模の経済が「同じ製品の大量生産」なのに対し、範囲の経済は「多品種の生産」で発揮されます。</p>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">&#x1F3EA; <strong>実例：</strong>Amazonは書籍販売から始まり、家電・食品・クラウドサービスまで展開。配送網や倉庫を共有することで多品種でもコストを下げている ＝ 範囲の経済。</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ============ TAB 3: シミュレーション ============ -->
+<div class="tab-panel theme-green">
+
+<div class="pb-green">
+  <strong>&#x1F4D6; このタブで学ぶこと</strong>
+  <ul style="margin:.3rem 0 0 1.2rem;">
+    <li>パン屋の増員判断を<strong>限界費用</strong>で分析できる</li>
+    <li>町工場の操業継続を<strong>損益分岐点・操業停止点</strong>で判断できる</li>
+    <li>消費税（従価税）の影響を<strong>供給曲線のシフト</strong>で理解する</li>
+  </ul>
+</div>
+
+<h2 class="st-green">&#x1F3ED; 中小企業の悩みに答える</h2>
+
+<p style="margin-bottom:1rem;">リアルな経営判断を、費用関数・利潤最大化の理論で解いてみましょう。</p>
+
+<!-- シナリオ1 -->
+<div class="scene">
+  <div class="scene-title">&#x1F35E; シナリオ1：町のパン屋さん「もう1人雇うべき？」</div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4CB; 現在の状況</h3>
+  <table class="tbl-green">
+    <tr><th>項目</th><th>数値</th></tr>
+    <tr><td>固定費用（家賃+オーブンリース）</td><td>月30万円</td></tr>
+    <tr><td>パン1個あたり材料費</td><td>80円</td></tr>
+    <tr><td>現在の月産量</td><td>3,000個</td></tr>
+    <tr><td>パン1個の売価</td><td>200円</td></tr>
+    <tr><td>パート追加雇用のコスト</td><td>月8万円</td></tr>
+    <tr><td>雇用後の月産量</td><td>4,500個</td></tr>
+  </table>
+</div>
+
+<div class="bubble-wrap">
+  <div class="bubble">
+    <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F373;</div>
+    <div class="text">もう1人パートさんを雇おうか迷ってるんです。月8万円かかるけど、生産量は1,500個増えそうなんですが…</div>
+  </div>
+  <div class="bubble right">
+    <div class="icon" style="background:var(--green-light);">&#x1F4BC;</div>
+    <div class="text">まず現在の利潤を計算しましょう！</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4DD; Step 1：現在の利潤</h3>
+  <div class="formula-box">
+    <div class="formula">売上 = 200円 × 3,000個 = 600,000円</div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">費用 = 300,000円(FC) + 80円 × 3,000個(VC) = 540,000円</div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">現在の利潤 = 600,000 − 540,000 = 60,000円/月</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4DD; Step 2：パートを雇った場合の利潤</h3>
+  <div class="formula-box">
+    <div class="formula">売上 = 200円 × 4,500個 = 900,000円</div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">費用 = 300,000 + 80,000(パート) + 80円×4,500個 = 740,000円</div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">雇用後の利潤 = 900,000 − 740,000 = 160,000円/月</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4DD; Step 3：限界費用で考える</h3>
+  <div class="formula-box">
+    <div class="formula">追加1,500個の限界費用 = (80,000 + 80円×1,500個) ÷ 1,500 ≒ 133円/個</div>
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--green-light);">&#x1F4BC;</div>
+      <div class="text">追加の1個あたりコストは約133円。売価200円より安いので、<strong>雇うべきです！</strong> 利潤は月6万円→16万円に増えます。</div>
+    </div>
+    <div class="bubble">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F373;</div>
+      <div class="text">なるほど！限界費用 &lt; 価格だから、まだ増やす余地があるんですね！</div>
+    </div>
+  </div>
+  <div class="alert-tip">
+    &#x1F4A1; <strong>ポイント：</strong>限界費用（MC）&lt; 価格（P）なら、生産量を増やすことで利潤は増加する。P = MCに近づくまで生産を増やすのが最適。
+  </div>
+  <div class="alert-warn">
+    &#x26A0;&#xFE0F; <strong>注意：</strong>ここでの「133円/個」は追加1,500個の平均増分費用です。厳密なMCは生産量ごとに変わりますが、現実の経営判断ではこのような近似計算がよく使われます。
+  </div>
+</div>
+
+<!-- シナリオ2 -->
+<div class="scene">
+  <div class="scene-title">&#x1F527; シナリオ2：小さな町工場「値下げすべきか、やめるべきか」</div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4CB; 現在の状況</h3>
+  <table class="tbl-green">
+    <tr><th>項目</th><th>数値</th></tr>
+    <tr><td>固定費用（設備リース）</td><td>月50万円</td></tr>
+    <tr><td>平均可変費用（AVC）</td><td>1個400円</td></tr>
+    <tr><td>平均費用（AC）</td><td>1個500円（生産量5,000個のとき）</td></tr>
+    <tr><td>市場価格（下落中）</td><td>???</td></tr>
+  </table>
+</div>
+
+<div class="bubble-wrap">
+  <div class="bubble">
+    <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F527;</div>
+    <div class="text">部品の市場価格がどんどん下がっています。このまま続けるべきでしょうか…</div>
+  </div>
+  <div class="bubble right">
+    <div class="icon" style="background:var(--green-light);">&#x1F4BC;</div>
+    <div class="text">判断の基準は2つのラインです。損益分岐点（AC=500円）と操業停止点（AVC=400円）で考えましょう。</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F7E2; ケースA：市場価格が450円の場合</h3>
+  <div class="formula-box">
+    <div class="formula">AVC(400円) &lt; P(450円) &lt; AC(500円)</div>
+    <div class="desc">赤字だが、可変費用は回収できている</div>
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--green-light);">&#x1F4BC;</div>
+      <div class="text"><strong>操業を続けるべきです。</strong> 1個あたり50円（450-400）の余剰で固定費の一部を回収できます。やめると固定費50万円が丸損です。</div>
+    </div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">操業した場合の損失 = (500−450) × 5,000 = 250,000円</div>
+    <div class="formula">操業停止した場合の損失 = 500,000円（固定費丸損）</div>
+    <div class="desc">→ 操業した方が25万円マシ！</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F534; ケースB：市場価格が350円の場合</h3>
+  <div class="formula-box">
+    <div class="formula">P(350円) &lt; AVC(400円)</div>
+    <div class="desc">可変費用すら回収できない！</div>
+  </div>
+  <div class="bubble-wrap">
+    <div class="bubble right">
+      <div class="icon" style="background:var(--green-light);">&#x1F4BC;</div>
+      <div class="text"><strong>操業を停止すべきです。</strong> 作れば作るほど赤字が拡大します。1個作るごとに50円の追加損失が出ます。</div>
+    </div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">操業した場合の損失 = 500,000 + (400−350) × 5,000 = 750,000円</div>
+    <div class="formula">操業停止した場合の損失 = 500,000円（固定費のみ）</div>
+    <div class="desc">→ 停止した方が25万円マシ！</div>
+  </div>
+  <div class="alert-danger">
+    &#x26D4; P &lt; AVC のとき操業を続けると、固定費の損失に加えて可変費用の損失まで上乗せされてしまう。
+  </div>
+</div>
+
+<!-- シナリオ3 -->
+<div class="scene">
+  <div class="scene-title">&#x1F371; シナリオ3：お弁当屋さん「消費税が上がったらどうなる？」</div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4CB; 設定</h3>
+  <table class="tbl-green">
+    <tr><th>項目</th><th>数値</th></tr>
+    <tr><td>お弁当の税抜き売価</td><td>500円</td></tr>
+    <tr><td>消費税率</td><td>10%（従価税）</td></tr>
+    <tr><td>税込み売価</td><td>550円</td></tr>
+    <tr><td>限界費用</td><td>400円</td></tr>
+  </table>
+</div>
+
+<div class="bubble-wrap">
+  <div class="bubble">
+    <div class="icon" style="background:var(--orange-pale);">&#x1F469;&#x200D;&#x1F373;</div>
+    <div class="text">消費税が上がると、うちのお弁当はどうなるんですか？</div>
+  </div>
+  <div class="bubble right">
+    <div class="icon" style="background:var(--green-light);">&#x1F4BC;</div>
+    <div class="text">消費税は<strong>従価税</strong>です。供給曲線の傾きが急になります。つまり、同じ生産量を供給するために必要な価格が高くなります。</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4DD; 従価税の影響を計算</h3>
+  <p>消費税10%がかかると、企業が受け取る実質価格は：</p>
+  <div class="formula-box">
+    <div class="formula">企業の手取り = 消費者の支払い ÷ (1 + 税率)</div>
+    <div class="formula">550円 ÷ 1.1 = 500円</div>
+  </div>
+  <p>もし消費税が10%→15%に上がったとすると：</p>
+  <div class="formula-box">
+    <div class="formula">消費者が550円払っても → 企業の手取り = 550 ÷ 1.15 ≒ 478円</div>
+    <div class="desc">企業の手取りが減る → 供給曲線が上方シフト（傾きが急に）</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>&#x1F4DD; 価格転嫁の仕組み</h3>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F469;&#x200D;&#x1F373;</div>
+      <div class="text">税金分をそのままお客さんに上乗せしていいの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--green-light);">&#x1F4BC;</div>
+      <div class="text">理論上、税負担は需要と供給の<strong>弾力性</strong>によって売り手と買い手に分かれます。弾力性とは「価格が変わったとき、買う量がどれくらい変わるか」のこと。必需品（弾力性低い）→消費者が負担しやすい。ぜいたく品（弾力性高い）→企業が負担しやすい。</div>
+    </div>
+  </div>
+  <div class="alert-tip">
+    &#x1F4A1; <strong>ポイント：</strong>お弁当は日常食なので需要の弾力性が比較的低い → 消費者に転嫁しやすい。一方、高級レストランは弾力性が高い → 企業が負担しやすい。
+  </div>
+</div>
+
+</div>
+
+<!-- ============ TAB 4: 実践クイズ ============ -->
+<div class="tab-panel theme-orange">
+
+<div class="pb-orange">
+  <strong>&#x1F4D6; このタブで学ぶこと</strong>
+  <ul style="margin:.3rem 0 0 1.2rem;">
+    <li>タブ1〜3の内容を<strong>全8問のクイズ</strong>で総チェック</li>
+    <li>まちがえたらタブに戻って<strong>ピンポイント復習</strong></li>
+  </ul>
+</div>
+
+<h2 class="st-orange">&#x270F;&#xFE0F; 事例で学ぶクイズ（全8問）</h2>
+<p>身近な事例で理解度をチェック！</p>
+
+<!-- Q1 -->
+<div class="quiz-item">
+  <span class="quiz-num">Q1</span><span class="quiz-cat cat-red">費用関数</span>
+  <div class="quiz-question">ラーメン店の費用のうち、「可変費用」に該当するものはどれか？</div>
+  <ul class="quiz-options" id="q1" onclick="handleQuiz(event,'q1',2)">
+    <li data-idx="0">A. 店舗の家賃（月額固定）</li>
+    <li data-idx="1">B. 製麺機のリース料（月額固定）</li>
+    <li data-idx="2">C. 麺・チャーシューなどの仕入れ費用</li>
+    <li data-idx="3">D. 店舗の火災保険料</li>
+  </ul>
+  <div class="quiz-explanation" id="q1-exp">
+    <strong>正解：C</strong><br>
+    可変費用は生産量に応じて変動する費用です。麺やチャーシューの仕入れはラーメンを作る量に比例して増減します。家賃・リース料・保険料は生産量に関わらず一定の固定費用です。
+  </div>
+</div>
+
+<!-- Q2 -->
+<div class="quiz-item">
+  <span class="quiz-num">Q2</span><span class="quiz-cat cat-red">限界費用</span>
+  <div class="quiz-question">スマホケース工場で、生産量を100個から101個に増やしたとき、総費用が50,000円から50,120円に増加した。このとき限界費用（MC）はいくらか？</div>
+  <ul class="quiz-options" id="q2" onclick="handleQuiz(event,'q2',0)">
+    <li data-idx="0">A. 120円</li>
+    <li data-idx="1">B. 500円</li>
+    <li data-idx="2">C. 496円</li>
+    <li data-idx="3">D. 50,120円</li>
+  </ul>
+  <div class="quiz-explanation" id="q2-exp">
+    <strong>正解：A</strong><br>
+    限界費用（MC）＝ 総費用の増加分 ÷ 生産量の増加分 ＝ (50,120 − 50,000) ÷ (101 − 100) ＝ 120円。もう1個作るのに追加でかかるコストが限界費用です。
+  </div>
+</div>
+
+<!-- Q3 -->
+<div class="quiz-item">
+  <span class="quiz-num">Q3</span><span class="quiz-cat cat-blue">利潤最大化</span>
+  <div class="quiz-question">完全競争市場でコーヒーショップを経営している。コーヒー1杯の市場価格が400円のとき、利潤を最大化する生産量の決め方として正しいのはどれか？</div>
+  <ul class="quiz-options" id="q3" onclick="handleQuiz(event,'q3',3)">
+    <li data-idx="0">A. 平均費用（AC）が最低になる量を生産する</li>
+    <li data-idx="1">B. 総売上が最大になる量を生産する</li>
+    <li data-idx="2">C. 平均可変費用（AVC）が最低になる量を生産する</li>
+    <li data-idx="3">D. 限界費用（MC）が400円になる量を生産する</li>
+  </ul>
+  <div class="quiz-explanation" id="q3-exp">
+    <strong>正解：D</strong><br>
+    完全競争市場の利潤最大化条件は<strong>P = MC</strong>です。価格400円 = 限界費用となる生産量を選ぶのが最適。ACの最低点はゼロ利潤の点であり、利潤最大化の点とは異なります。
+  </div>
+</div>
+
+<!-- Q4 -->
+<div class="quiz-item">
+  <span class="quiz-num">Q4</span><span class="quiz-cat cat-red">損益分岐点・操業停止点</span>
+  <div class="quiz-question">赤字が続く居酒屋。月の固定費は60万円、平均可変費用は客単価3,000円に対して2,500円。短期的な判断として正しいのはどれか？</div>
+  <ul class="quiz-options" id="q4" onclick="handleQuiz(event,'q4',1)">
+    <li data-idx="0">A. 赤字なので即座に閉店すべき</li>
+    <li data-idx="1">B. 客単価がAVC以上なので短期的には営業を続けるべき</li>
+    <li data-idx="2">C. 固定費を回収できないので閉店すべき</li>
+    <li data-idx="3">D. 客単価を下げて集客を増やすべき</li>
+  </ul>
+  <div class="quiz-explanation" id="q4-exp">
+    <strong>正解：B</strong><br>
+    客単価3,000円 &gt; AVC 2,500円なので、1人あたり500円の貢献利益が得られます。閉店すると固定費60万円が丸損ですが、営業を続ければ固定費の一部を回収できます。<strong>P &ge; AVC なら短期的に操業継続</strong>が正しい判断です。
+  </div>
+</div>
+
+<!-- Q5 -->
+<div class="quiz-item">
+  <span class="quiz-num">Q5</span><span class="quiz-cat cat-blue">供給の価格弾力性</span>
+  <div class="quiz-question">供給の価格弾力性について、一般的に正しい記述はどれか？</div>
+  <ul class="quiz-options" id="q5" onclick="handleQuiz(event,'q5',2)">
+    <li data-idx="0">A. 農産物はソフトウェアより供給の価格弾力性が高い</li>
+    <li data-idx="1">B. 供給曲線の傾きが急なほど価格弾力性が高い</li>
+    <li data-idx="2">C. ソフトウェアは農産物より供給の価格弾力性が高い</li>
+    <li data-idx="3">D. 供給の価格弾力性は常に1である</li>
+  </ul>
+  <div class="quiz-explanation" id="q5-exp">
+    <strong>正解：C</strong><br>
+    ソフトウェアはコピーするだけで増産可能なので、価格が上がれば供給量を大幅に増やせます（弾力性が高い）。農産物は栽培期間が必要で、すぐには増産できません（弾力性が低い）。供給曲線の傾きが<strong>緩やか</strong>なほど弾力性が<strong>高い</strong>です。
+  </div>
+</div>
+
+<!-- Q6 -->
+<div class="quiz-item">
+  <span class="quiz-num">Q6</span><span class="quiz-cat cat-orange">課税の効果</span>
+  <div class="quiz-question">酒税（1本あたり定額の税金＝従量税）が課された場合、供給曲線はどう変化するか？</div>
+  <ul class="quiz-options" id="q6" onclick="handleQuiz(event,'q6',0)">
+    <li data-idx="0">A. 税額分だけ上に平行シフトする</li>
+    <li data-idx="1">B. 供給曲線の傾きが急になる</li>
+    <li data-idx="2">C. 供給曲線が右にシフトする</li>
+    <li data-idx="3">D. 供給曲線は変化しない</li>
+  </ul>
+  <div class="quiz-explanation" id="q6-exp">
+    <strong>正解：A</strong><br>
+    従量税（1単位あたり定額T円）は、すべての生産量においてコストがT円ずつ上がるため、供給曲線が<strong>上にT円だけ平行シフト</strong>します。傾きが変わるのは従価税（価格に比例する税）の場合です。
+  </div>
+</div>
+
+<!-- Q7 -->
+<div class="quiz-item">
+  <span class="quiz-num">Q7</span><span class="quiz-cat cat-purple">生産関数</span>
+  <div class="quiz-question">飲食店でアルバイトを1人ずつ追加で雇ったところ、1人目は1日30食増、2人目は25食増、3人目は15食増、4人目は5食増だった。この現象を最もよく説明する概念はどれか？</div>
+  <ul class="quiz-options" id="q7" onclick="handleQuiz(event,'q7',3)">
+    <li data-idx="0">A. 規模の経済</li>
+    <li data-idx="1">B. 規模の不経済</li>
+    <li data-idx="2">C. 損益分岐点</li>
+    <li data-idx="3">D. 限界生産性の逓減</li>
+  </ul>
+  <div class="quiz-explanation" id="q7-exp">
+    <strong>正解：D</strong><br>
+    アルバイトを1人追加するごとに増加する生産量（限界生産物）が 30→25→15→5 と減少しています。厨房の広さや設備は同じなので、人を増やしても効率が落ちます。これが<strong>限界生産性の逓減</strong>です。
+  </div>
+</div>
+
+<!-- Q8 -->
+<div class="quiz-item">
+  <span class="quiz-num">Q8</span><span class="quiz-cat cat-orange">計算問題</span>
+  <div class="quiz-question">ある企業の費用関数が C(x) = 2x² + 100（xは生産量）のとき、生産量x=10における限界費用（MC）はいくらか？</div>
+  <ul class="quiz-options" id="q8" onclick="handleQuiz(event,'q8',1)">
+    <li data-idx="0">A. 20</li>
+    <li data-idx="1">B. 40</li>
+    <li data-idx="2">C. 300</li>
+    <li data-idx="3">D. 200</li>
+  </ul>
+  <div class="quiz-explanation" id="q8-exp">
+    <strong>正解：B</strong><br>
+    MC = dC/dx = 4x。x=10のとき MC = 4 × 10 = <strong>40</strong>。C(x) = 2x² + 100 を微分すると 4x になります。AC = C(x)/x = 2x + 100/x = 20 + 10 = 30 と混同しないように注意。
+  </div>
+</div>
+
+</div>
+
+<!-- ============ TAB 5: 実例で覚える ============ -->
+<div class="tab-panel theme-purple">
+
+<div class="pb-purple">
+  <strong>&#x1F4D6; このタブで学ぶこと</strong>
+  <ul style="margin:.3rem 0 0 1.2rem;">
+    <li>費用関数・利潤最大化・供給曲線の理論が<strong>実際の企業でどう使われているか</strong>を知る</li>
+    <li>「なぜその行動を選んだのか」に思いをはせ、<strong>試験問題の背景理解</strong>を深める</li>
+  </ul>
+</div>
+
+<h2 class="st-purple">&#x1F4A1; 身近な実例集</h2>
+
+<p style="margin-bottom:1rem;">表とにらめっこして覚えるのもいいですが、正直なところ飽きてきちゃいますよね。少しでも覚えやすくなるようにいくつか実例を探してきました！読んでいただきながら、「なぜその行動を選んだのか」に思いをはせると理解が深まるかと思います。</p>
+
+<!-- 実例1 -->
+<div class="scene" style="border-left-color:var(--purple-main);">
+  <div class="scene-title">&#x1F697; 実例1：トヨタの「カイゼン」と限界費用</div>
+</div>
+
+<div class="card">
+  <p>トヨタ自動車は「トヨタ生産方式（TPS）」で世界的に有名です。その核心は<strong>「ムダ・ムラ・ムリ」の徹底的な排除</strong>。</p>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--purple-light);">&#x1F914;</div>
+      <div class="text">トヨタの「カイゼン」って経済学的にはどういう意味？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">車を1台追加で作るコスト、つまり<strong>限界費用（MC）を徹底的に下げる</strong>活動です。在庫のムダ、動作のムダ、不良品のムダ…これらをなくすとMC曲線が下方にシフトします。</div>
+    </div>
+  </div>
+  <div class="pb-purple">
+    <strong>経済学のポイント：</strong> 利潤最大化条件は P = MC。MC曲線を下方シフトさせると、同じ価格でもより多く生産でき、利潤が拡大する。「カイゼン」はまさにMCの下方シフト戦略。
+  </div>
+  <div class="alert-info">
+    &#x1F4DD; <strong>試験ではこう出る：</strong>「限界費用曲線が下方にシフトした場合、供給曲線はどう変化するか」→ 供給曲線も下方（右方）にシフトし、同じ価格でより多く供給できるようになる。
+  </div>
+</div>
+
+<!-- 実例2 -->
+<div class="scene" style="border-left-color:var(--purple-main);">
+  <div class="scene-title">&#x1F6D2; 実例2：100円ショップ（ダイソー）と規模の経済</div>
+</div>
+
+<div class="card">
+  <p>ダイソーは世界で約5,000店舗以上を展開し、ほとんどの商品を100円（税別）で販売しています。</p>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--purple-light);">&#x1F914;</div>
+      <div class="text">なぜ100円であんなに色々な商品を売れるの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">答えは<strong>規模の経済</strong>です。大量に仕入れ・大量に生産することで、1個あたりのコスト（平均費用AC）を劇的に下げています。</div>
+    </div>
+  </div>
+  <div class="pb-purple">
+    <strong>経済学のポイント：</strong> AC曲線のU字型の左側（逓減部分）を活用。生産量が多いほど、固定費用が薄まり、仕入れの交渉力も上がってACが下がる。世界5,000店舗の購買力で「規模の経済」を最大限に発揮している。
+  </div>
+  <div class="alert-tip">
+    &#x1F4A1; ただし、店舗を増やしすぎると管理コストが上昇し「規模の不経済」に陥る可能性も。AC曲線の右側（逓増部分）に入らないようバランスが大切。
+  </div>
+</div>
+
+<!-- 実例3 -->
+<div class="scene" style="border-left-color:var(--purple-main);">
+  <div class="scene-title">&#x1F37D;&#xFE0F; 実例3：コロナ禍の飲食店と操業停止点</div>
+</div>
+
+<div class="card">
+  <p>2020年、新型コロナウイルスの流行で多くの飲食店が存続の危機に立たされました。</p>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--purple-light);">&#x1F914;</div>
+      <div class="text">コロナで客が激減した飲食店は、なぜすぐ閉店しなかったの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">家賃などの<strong>固定費用は営業してもしなくても発生</strong>します。少しでも売上があってAVC以上なら、営業した方が損失は小さいんです。</div>
+    </div>
+    <div class="bubble">
+      <div class="icon" style="background:var(--purple-light);">&#x1F914;</div>
+      <div class="text">テイクアウトに切り替えたお店が多かったよね？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">その通り！テイクアウトは接客コストが低く<strong>AVCを下げる効果</strong>があります。P &ge; AVC を維持しやすい営業形態だったんです。</div>
+    </div>
+  </div>
+  <div class="pb-purple">
+    <strong>経済学のポイント：</strong> 赤字でも P &ge; AVC なら短期的に営業継続が合理的。固定費は「埋没費用（サンクコスト）」であり、意思決定から除外すべき。テイクアウト営業はAVCを下げてP &ge; AVC を維持する戦略。
+  </div>
+  <div class="alert-info">
+    &#x1F4DD; <strong>試験ではこう出る：</strong>「価格がAVC以上AC未満のとき、企業は短期的にどう行動すべきか」→ 操業を継続（固定費の一部を回収できるため）。「操業停止点の条件は？」→ P = AVCの最低点。
+  </div>
+</div>
+
+<!-- 実例4 -->
+<div class="scene" style="border-left-color:var(--purple-main);">
+  <div class="scene-title">&#x1F4B0; 実例4：消費税増税（8%→10%）と供給曲線</div>
+</div>
+
+<div class="card">
+  <p>2019年10月、日本の消費税は8%から10%に引き上げられました。</p>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--purple-light);">&#x1F914;</div>
+      <div class="text">消費税の引き上げで供給曲線はどう変わったの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">消費税は<strong>従価税</strong>なので、供給曲線の<strong>傾きが変化</strong>します。高い商品ほど税額が大きくなるため、高価格帯での影響が大きくなります。</div>
+    </div>
+    <div class="bubble">
+      <div class="icon" style="background:var(--purple-light);">&#x1F914;</div>
+      <div class="text">食品の軽減税率（8%据え置き）にはどんな意味が？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">食品は生活必需品で<strong>需要の価格弾力性が低い</strong>（値上げしても買わざるを得ない）。そのため増税の負担が消費者に重くのしかかります。軽減税率はその負担を和らげるための政策です。</div>
+    </div>
+  </div>
+  <div class="pb-purple">
+    <strong>経済学のポイント：</strong> 従価税は供給曲線の傾きを急にする。需要の弾力性が低い財ほど消費者の負担割合が大きくなるため、軽減税率で低弾力性の必需品の税率を抑えるのは経済学的に合理的。
+  </div>
+</div>
+
+<!-- 実例5 -->
+<div class="scene" style="border-left-color:var(--purple-main);">
+  <div class="scene-title">&#x1F4F1; 実例5：半導体不足と供給の価格弾力性</div>
+</div>
+
+<div class="card">
+  <p>2021年、世界的な半導体不足で自動車やゲーム機の生産が滞りました。</p>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--purple-light);">&#x1F914;</div>
+      <div class="text">半導体の値段が上がったのに、なぜすぐ増産できなかったの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">半導体工場の建設には<strong>2〜3年と数千億円</strong>が必要です。価格が上がっても短期間では供給量を増やせない ＝ <strong>供給の価格弾力性が非常に低い</strong>のです。</div>
+    </div>
+  </div>
+  <div class="pb-purple">
+    <strong>経済学のポイント：</strong> 供給の価格弾力性が低い財は、需要が増えると価格が急騰しやすい。半導体のように設備投資に時間がかかる産業は、短期の弾力性が低く長期では高くなる。試験では「短期vs長期の弾力性の違い」が問われることも。
+  </div>
+</div>
+
+<!-- 実例6 -->
+<div class="scene" style="border-left-color:var(--purple-main);">
+  <div class="scene-title">&#x1F33E; 実例6：農業の限界生産性逓減</div>
+</div>
+
+<div class="card">
+  <p>同じ面積の畑に対して、肥料の投入量を増やしていくとどうなるでしょうか？</p>
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <div class="icon" style="background:var(--purple-light);">&#x1F914;</div>
+      <div class="text">肥料をどんどんあげれば、もっとたくさん収穫できるんじゃないの？</div>
+    </div>
+    <div class="bubble right">
+      <div class="icon" style="background:var(--orange-pale);">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="text">最初のうちは効果抜群です。でもある量を超えると<strong>増加分は少しずつ減っていきます</strong>。やりすぎると逆に根腐れして収穫量が減ることも…</div>
+    </div>
+  </div>
+  <table class="tbl-purple">
+    <tr><th>肥料（kg）</th><th>収穫量（kg）</th><th>限界生産物</th></tr>
+    <tr><td>10</td><td>100</td><td>−</td></tr>
+    <tr><td>20</td><td>180</td><td>+80</td></tr>
+    <tr><td>30</td><td>240</td><td>+60</td></tr>
+    <tr><td>40</td><td>280</td><td>+40</td></tr>
+    <tr><td>50</td><td>300</td><td>+20</td></tr>
+  </table>
+  <div class="pb-purple">
+    <strong>経済学のポイント：</strong> 肥料10kgあたりの追加収穫量が 80→60→40→20 と逓減している。これが<strong>限界生産性の逓減</strong>。畑の面積（資本K）が一定のとき、肥料（労働L）を増やし続けても生産効率は落ちていく。
+  </div>
+  <div class="alert-tip">
+    &#x1F4A1; これは農業だけでなく、工場の労働者、広告費、研究開発費など、あらゆるビジネスの投入に当てはまる普遍的な法則です。
+  </div>
+</div>
+
+<div id="quizScore"></div>
+
+</div>
+
+<!-- ボトムナビ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-color="teal" onclick="switchTab(0)">&#x1F530; ゼロから理解</button>
+  <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F331; 入門編</button>
+  <button class="tab-btn" data-color="red" onclick="switchTab(2)">&#x1F4D5; 基本事項</button>
+  <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x1F3ED; シミュレーション</button>
+  <button class="tab-btn" data-color="orange" onclick="switchTab(4)">&#x270F;&#xFE0F; 実践クイズ</button>
+  <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F4A1; 実例で覚える</button>
+</nav>
+
+</div><!-- /tab-container -->
+
+<script>
+function switchTab(idx) {
+  const numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % numTabs === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+let answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 5 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+</script>
+
+</body>
+</html>

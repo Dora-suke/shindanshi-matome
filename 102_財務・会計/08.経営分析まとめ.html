@@ -1,0 +1,2810 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>経営分析 - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef;
+  --teal-dark: #0e6655; --teal-main: #1abc9c; --teal-light: #d1f2eb; --teal-bg: #e8f8f5;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange-main) 50%, var(--orange-light) 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem;
+}
+
+/* ===== Agent Discussion ===== */
+.agent-discussion {
+  max-width: 920px; margin: 1rem auto; padding: 0 0.8rem;
+}
+.agent-discussion-title {
+  text-align: center; font-size: 0.85rem; font-weight: 700; color: var(--gray-mid);
+  margin-bottom: 0.8rem; padding: 0.5rem; background: rgba(255,255,255,0.7);
+  border-radius: var(--radius); border: 1px dashed var(--gray-light);
+}
+
+/* ===== Speech Bubbles ===== */
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-pm { background: linear-gradient(135deg, #5c6bc0, #3949ab); }
+.avatar-planner { background: linear-gradient(135deg, #26a69a, #00897b); }
+.avatar-creator { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-critic { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before {
+  left: -14px; border-right-color: var(--white);
+}
+.bubble-wrap.right .bubble-body::before {
+  right: -14px; border-left-color: var(--white);
+}
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-body.b-purple { background: #f3e5f5; border: 1px solid #ce93d8; }
+.bubble-body.b-purple::before { border-right-color: #f3e5f5; }
+.bubble-body.b-teal { background: #e0f2f1; border: 1px solid #80cbc4; }
+.bubble-body.b-teal::before { border-right-color: #e0f2f1; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-wrap.right .bubble-body.b-purple::before { border-right-color: transparent; border-left-color: #f3e5f5; }
+.bubble-wrap.right .bubble-body.b-teal::before { border-right-color: transparent; border-left-color: #e0f2f1; }
+.bubble-body strong { color: #e65100; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+
+/* ===== Tabs ===== */
+.tab-container { max-width: 920px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; flex-wrap: wrap; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 0 0 auto; padding: 0.85rem 0.7rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.78rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn[data-color="teal"] { color: var(--teal-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active[data-color="teal"] { border-bottom-color: var(--teal-main); background: var(--teal-light); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+.tab-panel.theme-teal { background: var(--teal-bg); }
+.tab-panel.theme-purple { background: #f8f0ff; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== Section Titles ===== */
+.section-title {
+  font-size: 1.2rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); color: white; }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); color: white; }
+.st-icon { font-size: 1.1rem; }
+
+/* ===== Cards ===== */
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card-teal { border-left-color: var(--teal-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+/* ===== Alert / Tip boxes ===== */
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-box strong { color: inherit; }
+
+/* ===== Visual boxes ===== */
+.vs-box {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;
+  margin: 0.8rem 0;
+}
+.vs-side {
+  background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center;
+  box-shadow: var(--shadow);
+}
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+
+/* ===== Diagram / Flow ===== */
+.diagram {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram-title {
+  text-align: center; font-weight: 700; font-size: 1rem;
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0;
+}
+.dt-blue { color: var(--blue-dark); }
+.dt-red { color: var(--red-dark); }
+.dt-green { color: var(--green-dark); }
+.dt-teal { color: var(--teal-dark); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.88rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); box-shadow: 0 2px 6px rgba(41,128,185,0.3); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); box-shadow: 0 2px 6px rgba(231,76,60,0.3); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); box-shadow: 0 2px 6px rgba(39,174,96,0.3); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); box-shadow: 0 2px 6px rgba(230,126,34,0.3); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); box-shadow: 0 2px 6px rgba(142,68,173,0.3); }
+.fb-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); box-shadow: 0 2px 6px rgba(26,188,156,0.3); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+
+/* ===== Tables ===== */
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.88rem; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-red th { background: var(--red-main); color: white; }
+.tbl-red tr:nth-child(even) { background: var(--red-light); }
+.tbl-teal th { background: var(--teal-main); color: white; }
+.tbl-teal tr:nth-child(even) { background: var(--teal-light); }
+.tbl-orange th { background: var(--orange-main); color: white; }
+.tbl-orange tr:nth-child(even) { background: var(--orange-pale); }
+
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.8rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 0.95rem; font-weight: 600; text-align: center;
+}
+
+.point-box {
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0;
+}
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-teal { background: linear-gradient(135deg, var(--teal-light), #fff); border: 2px solid #80cbc4; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #ce93d8; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+
+/* ===== Mnemonic ===== */
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.5rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.15em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+
+/* ===== Scene ===== */
+.scene {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center;
+}
+.scene-img { font-size: 3rem; margin-bottom: 0.3rem; }
+.scene-caption { font-size: 0.85rem; color: var(--gray-mid); }
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+
+/* ===== Quiz ===== */
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0; transition: border-color 0.3s;
+}
+.quiz-num {
+  display: inline-block; background: var(--orange-main); color: white;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-teal { background: var(--teal-main); }
+.qc-orange { background: var(--orange-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.9rem;
+}
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation {
+  display: none; margin-top: 0.7rem; padding: 0.8rem;
+  border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7;
+}
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score {
+  text-align: center; padding: 1rem; background: var(--orange-pale);
+  border-radius: var(--radius); margin-top: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none;
+}
+
+/* ===== Simulation ===== */
+.sim-company {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 1rem 0; box-shadow: var(--shadow); border-top: 4px solid var(--green-main);
+}
+.sim-company h3 { font-size: 1rem; font-weight: 800; color: var(--green-dark); margin-bottom: 0.5rem; }
+.sim-data { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.5rem 0; }
+.sim-data-item {
+  background: var(--gray-pale); border-radius: var(--radius-sm); padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+}
+.sim-data-item .sim-label { font-weight: 700; color: var(--gray-mid); font-size: 0.75rem; }
+.sim-data-item .sim-value { font-weight: 800; color: var(--gray-dark); font-size: 1.1rem; }
+.sim-result {
+  background: linear-gradient(135deg, var(--green-light), #fff);
+  border: 2px solid var(--green-main); border-radius: var(--radius);
+  padding: 1rem; margin-top: 0.8rem;
+}
+
+/* Real story card */
+.story-card {
+  background: var(--white); border-radius: var(--radius); padding: 1.5rem;
+  margin: 1rem 0; box-shadow: var(--shadow-lg);
+  border-top: 5px solid var(--purple-main);
+}
+.story-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.3rem; }
+.story-card .story-meta {
+  font-size: 0.78rem; color: var(--gray-mid); margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem; border-bottom: 1px dashed #e0e0e0;
+}
+.story-card .story-body { font-size: 0.9rem; line-height: 1.8; }
+.story-point {
+  background: #fff3e0; border-radius: var(--radius-sm); padding: 0.8rem;
+  margin-top: 0.8rem; border-left: 4px solid var(--orange-main);
+}
+.story-point strong { color: var(--orange-dark); }
+
+/* ===== ROA/ROE キャッチフレーズ ===== */
+.roa-roe-tag {
+  background: linear-gradient(135deg, #fff3e0 0%, #fff 50%, #f3e5f5 100%);
+  border: 2px dashed #ff9800; border-radius: 8px;
+  padding: 0.5rem 0.8rem; margin: 0.6rem 0; font-size: 0.9rem;
+  font-weight: 700; line-height: 1.8; text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.roa-roe-tag .roa-label {
+  color: #e65100; background: #fff3e0; padding: 0.1rem 0.5rem;
+  border-radius: 4px; display: inline-block;
+}
+.roa-roe-tag .roe-label {
+  color: #6a1b9a; background: #f3e5f5; padding: 0.1rem 0.5rem;
+  border-radius: 4px; display: inline-block;
+}
+.roa-roe-tag .divider { color: #999; font-weight: 400; margin: 0 0.3rem; }
+
+/* ===== Fill-in Check ===== */
+.fill-card { background: var(--white); border-radius: var(--radius); margin-bottom: 1rem; box-shadow: var(--shadow); overflow: hidden; }
+.fill-card .fill-header { padding: 0.6rem 0.9rem; font-weight: 700; font-size: 0.92rem; color: #fff; }
+.fill-card .fill-body { padding: 0.8rem 1rem; }
+.fill-blank {
+  display: inline-block; min-width: 80px; border-bottom: 2.5px solid #94a3b8;
+  text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: 0.9rem;
+}
+.fill-blank.show { color: #dc2626 !important; background: #fef2f2 !important; border-color: #dc2626 !important; }
+.fill-reveal-btn {
+  display: inline-block; background: #1a365d; color: #fff; border: none;
+  border-radius: 8px; padding: 6px 14px; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; margin-top: 6px; font-family: inherit;
+}
+.fill-reveal-btn:hover { background: #2a4a7f; }
+.fill-group { margin-bottom: 4px; font-size: 0.9rem; line-height: 2; }
+
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+
+@media (max-width: 600px) {
+  .two-col, .three-col, .vs-box, .sim-data { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.68rem; padding: 0.7rem 0.5rem; flex: 0 0 auto; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 78%; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>経営分析</h1>
+  <div class="subtitle">中小企業診断士 財務・会計 | 経営分析の指標と活用</div>
+  <div class="badge">全11タブ構成</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="red" onclick="switchTab(0)">&#x1F476; ゼロから理解</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F530; 入門</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(2)">&#x1F4D7; 基本事項</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(3)">&#x1F3E6; 自己資本比率</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(4)">&#x1F3D7; 固定比率</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(5)">&#x1F3D7; 固定長期適合率</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">&#x1F3E2; ROA</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(7)">&#x1F4B0; ROE</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(8)">&#x1F3B5; 語呂合わせ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(9)">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(10)">&#x1F3EA; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(11)">&#x270F;&#xFE0F; 事例クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(12)">&#x1F4F0; 実例で学ぶ</button>
+  </nav>
+
+  <!-- ==================== TAB 0: ゼロから理解 (RED) ==================== -->
+  <div class="tab-panel active theme-red" id="tab0">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F476; このタブで学ぶこと</h4>
+      <ul>
+        <li>経営分析に出てくる<strong>基本用語</strong>の意味</li>
+        <li>B/S・P/Lが<strong>何のための書類</strong>か</li>
+        <li>いちばん簡単な数字で<strong>計算を体験</strong>する</li>
+      </ul>
+    </div>
+
+    <!-- ===== 1. そもそも経営分析って何？ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x2753;</span> そもそも経営分析って何？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        経営分析って、そもそも何をすることなの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        かんたんに言うと<strong>会社の通知表をつけること</strong>だよ。人間が健康診断で「血圧」「体重」を測るように、会社も数字で状態をチェックするんだ。
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x1F9D1;&#x200D;&#x2695;&#xFE0F;</div>
+          <div class="label">人の健康診断</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x27A1;&#xFE0F;</div>
+          <div class="label"></div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F3E2;</div>
+          <div class="label">会社の健康診断<br>= 経営分析</div>
+        </div>
+      </div>
+      <div class="scene-caption" style="margin-top:0.5rem;">体温・血圧を測るように、会社も<strong>数字</strong>で健康状態を測る</div>
+    </div>
+
+    <!-- ===== 2. 2つの書類を知ろう ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4C4;</span> まず知る2つの書類：B/SとP/L</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        B/SとかP/Lって何？アルファベットが出てきてもう怖い...
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        2つだけ覚えればOK！<strong>B/S＝創業からの生涯成績</strong>、<strong>P/L＝今年1年間の成績表</strong>だよ。
+      </div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--blue-main);">
+        <h4 style="color:var(--blue-main);">&#x1F4CB; B/S（貸借対照表）</h4>
+        <p style="font-size:0.88rem;"><strong>創業からの生涯成績</strong></p>
+        <p style="font-size:0.8rem;color:var(--gray-mid);">会社が生まれてから今日まで<br>ためてきた財産と借金の全記録</p>
+        <p style="font-size:0.78rem;margin-top:0.3rem;">家計でいうと<br>「これまでの貯金と借金の総まとめ」</p>
+      </div>
+      <div class="vs-mid">&#x1F91D;</div>
+      <div class="vs-side" style="border:3px solid var(--green-main);">
+        <h4 style="color:var(--green-main);">&#x1F4C8; P/L（損益計算書）</h4>
+        <p style="font-size:0.88rem;"><strong>今年1年間の成績表</strong></p>
+        <p style="font-size:0.8rem;color:var(--gray-mid);">この1年で<br>いくら売っていくら残った？</p>
+        <p style="font-size:0.78rem;margin-top:0.3rem;">家計でいうと<br>「今年の収入と支出の記録」</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        「生涯成績」と「1年間の成績」って具体的にどう違うの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        野球選手で例えるよ。<strong>B/S＝通算成績</strong>（デビューから今日まで何本ヒットを打ったか）、<strong>P/L＝今シーズンの成績</strong>（今年だけで何本打ったか）。B/Sは「その日時点の写真」で、P/Lは「1年間の動画」なんだ。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">B/S vs P/L ― 時間の違い</div>
+      <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:0.5rem; align-items:center; max-width:500px; margin:0 auto;">
+        <div style="background:var(--blue-light); padding:0.8rem; border-radius:8px; text-align:center;">
+          <div style="font-size:1.5rem;">&#x1F4F8;</div>
+          <div style="font-weight:800; color:var(--blue-dark);">B/S ＝ 写真</div>
+          <div style="font-size:0.78rem; color:var(--gray-mid);">ある<strong>1日</strong>の瞬間を撮影</div>
+          <div style="font-size:0.78rem;">「3月31日時点で<br>貯金500万・借金200万」</div>
+          <div style="font-size:0.72rem; margin-top:0.3rem; color:var(--blue-main); font-weight:700;">= 創業から積み上げた結果</div>
+        </div>
+        <div style="font-size:1.3rem; font-weight:800; color:var(--gray-mid);">VS</div>
+        <div style="background:var(--green-light); padding:0.8rem; border-radius:8px; text-align:center;">
+          <div style="font-size:1.5rem;">&#x1F3AC;</div>
+          <div style="font-weight:800; color:var(--green-dark);">P/L ＝ 動画</div>
+          <div style="font-size:0.78rem; color:var(--gray-mid);"><strong>1年間</strong>を通して記録</div>
+          <div style="font-size:0.78rem;">「4月〜3月で<br>売上1,000万・利益100万」</div>
+          <div style="font-size:0.72rem; margin-top:0.3rem; color:var(--green-main); font-weight:700;">= 今年1年間だけの成果</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 3. B/Sのしくみ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4B0;</span> B/Sのしくみ ― お金の出どころ</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        「総資本」とか「自己資本」とか、似た言葉が多すぎて混乱する...
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F5BC;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        B/Sを<strong>箱の図</strong>にすると一発でわかるよ！左が「何を持っている？」、右が「お金はどこから？」。
+      </div>
+    </div>
+
+    <!-- 図1：B/Sの箱図 -->
+    <div class="diagram">
+      <div class="diagram-title dt-red">B/S（貸借対照表）の構造</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2px; max-width:500px; margin:0 auto;">
+        <div style="background:var(--blue-light); padding:0.8rem; border-radius:8px 0 0 0; text-align:center;">
+          <div style="font-size:0.75rem;color:var(--gray-mid);">1年以内に現金化</div>
+          <div style="font-weight:800;color:var(--blue-dark);">流動資産</div>
+          <div style="font-size:0.78rem;">現金・売掛金・在庫</div>
+        </div>
+        <div style="background:var(--red-light); padding:0.8rem; border-radius:0 8px 0 0; text-align:center;">
+          <div style="font-size:0.75rem;color:var(--gray-mid);">1年以内に返す借金</div>
+          <div style="font-weight:800;color:var(--red-dark);">流動負債</div>
+          <div style="font-size:0.78rem;">買掛金・短期借入金</div>
+        </div>
+        <div style="background:var(--teal-light); padding:0.8rem; border-radius:0 0 0 0; text-align:center;" rowspan="2">
+          <div style="font-size:0.75rem;color:var(--gray-mid);">長く使うもの</div>
+          <div style="font-weight:800;color:var(--teal-dark);">固定資産</div>
+          <div style="font-size:0.78rem;">建物・機械・土地</div>
+        </div>
+        <div style="background:var(--orange-pale); padding:0.8rem; text-align:center;">
+          <div style="font-size:0.75rem;color:var(--gray-mid);">長期で返す借金</div>
+          <div style="font-weight:800;color:var(--orange-dark);">固定負債</div>
+          <div style="font-size:0.78rem;">長期借入金・社債</div>
+        </div>
+        <div style="grid-column:1; background:var(--white); border:2px dashed var(--gray-light); padding:0.3rem; text-align:center;">
+          <div style="font-size:0.7rem;color:var(--gray-mid);">左側ぜんぶ =</div>
+          <div style="font-weight:800;font-size:1.1rem;color:var(--blue-dark);">資産の合計</div>
+        </div>
+        <div style="background:var(--green-light); padding:0.8rem; border-radius:0 0 8px 0; text-align:center;">
+          <div style="font-size:0.75rem;color:var(--gray-mid);">自分のお金</div>
+          <div style="font-weight:800;color:var(--green-dark);">自己資本（純資産）</div>
+          <div style="font-size:0.78rem;">資本金・利益の蓄積</div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:0.8rem; font-size:0.85rem;">
+        <strong style="color:var(--red-dark);">負債</strong>（他人のお金）+ <strong style="color:var(--green-dark);">自己資本</strong>（自分のお金）= <strong style="color:var(--blue-dark);">総資本</strong>（全部のお金）
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>3つの用語はこれだけ！</strong><br>
+      &#x2022; <strong>総資本</strong>＝会社の全財産の合計（B/Sの右側ぜんぶ）<br>
+      &#x2022; <strong>負債</strong>＝借金（いつか返すお金）<br>
+      &#x2022; <strong>自己資本</strong>＝返さなくていい自分のお金
+    </div>
+
+    <!-- ===== 4. P/Lのしくみ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4C8;</span> P/Lのしくみ ― 5つの利益の階段</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        「営業利益」「経常利益」「当期純利益」...利益が多すぎてどれがどれだか...
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F5BC;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        利益は<strong>売上高から順番にコストを引いていく階段</strong>だよ。上から下に1段ずつ引くだけ！
+      </div>
+    </div>
+
+    <!-- 図2：利益の階段 -->
+    <div class="diagram">
+      <div class="diagram-title dt-red">P/L＝売上高から引き算していく階段</div>
+      <div style="display:flex; flex-direction:column; gap:4px; max-width:520px; margin:0 auto;">
+        <div style="background:linear-gradient(135deg,#1565c0,#1976d2); color:white; padding:0.6rem 1rem; border-radius:8px; text-align:center; width:100%;">
+          <div style="font-weight:800;">売上高</div>
+          <div style="font-size:0.75rem;">お客さんからもらった全額</div>
+        </div>
+        <div style="text-align:center; font-size:0.8rem; color:var(--red-main); font-weight:700;">&#x2B07; 材料費（売上原価）を引く</div>
+        <div style="background:linear-gradient(135deg,#2e7d32,#43a047); color:white; padding:0.6rem 1rem; border-radius:8px; text-align:center; width:85%; margin:0 auto;">
+          <div style="font-weight:800;">&#x2460; 売上総利益（粗利）</div>
+          <div style="font-size:0.75rem;">材料費を引いた残り</div>
+        </div>
+        <div style="text-align:center; font-size:0.8rem; color:var(--red-main); font-weight:700;">&#x2B07; 家賃・人件費（販管費）を引く</div>
+        <div style="background:linear-gradient(135deg,#e65100,#f57c00); color:white; padding:0.6rem 1rem; border-radius:8px; text-align:center; width:70%; margin:0 auto;">
+          <div style="font-weight:800;">&#x2461; 営業利益</div>
+          <div style="font-size:0.75rem;">本業で残ったもうけ</div>
+        </div>
+        <div style="text-align:center; font-size:0.8rem; color:var(--red-main); font-weight:700;">&#x2B07; 利息など（営業外損益）を足し引き</div>
+        <div style="background:linear-gradient(135deg,#6a1b9a,#8e24aa); color:white; padding:0.6rem 1rem; border-radius:8px; text-align:center; width:58%; margin:0 auto;">
+          <div style="font-weight:800;">&#x2462; 経常利益</div>
+          <div style="font-size:0.75rem;">本業＋副業の合計もうけ</div>
+        </div>
+        <div style="text-align:center; font-size:0.8rem; color:var(--red-main); font-weight:700;">&#x2B07; 災害損失など（特別損益）を足し引き</div>
+        <div style="background:linear-gradient(135deg,#b71c1c,#c62828); color:white; padding:0.6rem 1rem; border-radius:8px; text-align:center; width:45%; margin:0 auto;">
+          <div style="font-weight:800;">&#x2463; 税引前当期純利益</div>
+          <div style="font-size:0.75rem;">税金を払う前の最終もうけ</div>
+        </div>
+        <div style="text-align:center; font-size:0.8rem; color:var(--red-main); font-weight:700;">&#x2B07; 税金を引く</div>
+        <div style="background:linear-gradient(135deg,#263238,#37474f); color:white; padding:0.6rem 1rem; border-radius:8px; text-align:center; width:35%; margin:0 auto;">
+          <div style="font-weight:800;">&#x2464; 当期純利益</div>
+          <div style="font-size:0.75rem;">最終的に会社に残るお金</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        経営分析でよく使うのは<strong>営業利益・経常利益・当期純利益</strong>の3つ。「本業のもうけ」「全体のもうけ」「最終のもうけ」の3段階と覚えよう！
+      </div>
+    </div>
+
+    <!-- ===== 5. なぜ割り算するの？ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x2797;</span> なぜ割り算するの？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        利益額だけ見ればよくない？なんでわざわざ割り算するの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>大きさがちがう会社を比べるため</strong>だよ。こんな2つのお店、どっちが優秀？
+      </div>
+    </div>
+
+    <!-- 図3：比較図 -->
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--orange-main);">
+        <h4 style="color:var(--orange-main);">&#x1F35C; ラーメン屋A</h4>
+        <p style="font-size:0.88rem;">売上 <strong>1,000万円</strong></p>
+        <p style="font-size:0.88rem;">営業利益 <strong>100万円</strong></p>
+        <p style="font-size:1.1rem;font-weight:800;color:var(--orange-dark);margin-top:0.3rem;">利益率 10%</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:3px solid var(--blue-main);">
+        <h4 style="color:var(--blue-main);">&#x1F3EA; スーパーB</h4>
+        <p style="font-size:0.88rem;">売上 <strong>1億円</strong></p>
+        <p style="font-size:0.88rem;">営業利益 <strong>500万円</strong></p>
+        <p style="font-size:1.1rem;font-weight:800;color:var(--blue-dark);margin-top:0.3rem;">利益率 5%</p>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>金額ではBが上、でも利益率はAが上！</strong><br>
+      割り算すると<strong>規模が違う会社でも公平に比較</strong>できる。これが経営分析で「%」や「回」を使う理由！
+    </div>
+
+    <!-- ===== 6. やってみよう：いちばん簡単な計算 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x270F;&#xFE0F;</span> やってみよう！いちばん簡単な計算</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F5BC;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        ラーメン屋さんの数字で、<strong>3ステップ</strong>で計算してみよう！
+      </div>
+    </div>
+
+    <div class="card card-red">
+      <h4>&#x1F35C; ラーメン屋「太郎」のデータ</h4>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.3rem;">
+        <div style="background:var(--gray-pale); padding:0.4rem 0.8rem; border-radius:6px; font-size:0.88rem;"><strong>売上高</strong> 1,000万円</div>
+        <div style="background:var(--gray-pale); padding:0.4rem 0.8rem; border-radius:6px; font-size:0.88rem;"><strong>営業利益</strong> 100万円</div>
+        <div style="background:var(--gray-pale); padding:0.4rem 0.8rem; border-radius:6px; font-size:0.88rem;"><strong>総資本</strong> 800万円</div>
+        <div style="background:var(--gray-pale); padding:0.4rem 0.8rem; border-radius:6px; font-size:0.88rem;"><strong>経常利益</strong> 80万円</div>
+      </div>
+    </div>
+
+    <!-- 計算ステップ1 -->
+    <div class="card card-orange">
+      <h4>Step 1 &#x1F4B0; 売上高営業利益率を出そう</h4>
+      <div style="font-size:0.88rem;">
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">公式：営業利益 &#xF7; 売上高 &#xD7; 100</div>
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">計算：100万 &#xF7; 1,000万 &#xD7; 100</div>
+        <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">答え：<strong>10%</strong> &#x2192; 売上の10%が本業の利益として残った！</div>
+      </div>
+    </div>
+
+    <!-- 計算ステップ2 -->
+    <div class="card card-blue">
+      <h4>Step 2 &#x1F6E1; ROA（総資本経常利益率）を出そう</h4>
+      <div style="font-size:0.88rem;">
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">公式：経常利益 &#xF7; 総資本 &#xD7; 100</div>
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">計算：80万 &#xF7; 800万 &#xD7; 100</div>
+        <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">答え：<strong>10%</strong> &#x2192; 持っている資産全体で10%稼げた！</div>
+      </div>
+      <div class="roa-roe-tag">
+        💡 <span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+      </div>
+    </div>
+
+    <!-- 計算ステップ3 -->
+    <div class="card card-green">
+      <h4>Step 3 &#x1F504; 総資本回転率を出そう</h4>
+      <div style="font-size:0.88rem;">
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">公式：売上高 &#xF7; 総資本</div>
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">計算：1,000万 &#xF7; 800万</div>
+        <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">答え：<strong>1.25回</strong> &#x2192; 持っている資産の1.25倍の売上を稼いだ！</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        できた！<strong>公式に数字を入れて割り算するだけ</strong>。難しいことは何もないよね。この「割り算する」感覚をつかんだら、入門タブに進もう！
+      </div>
+    </div>
+
+    <!-- ===== 7. ROA vs ROE ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F50D;</span> 似てるけど全然違う！ROA vs ROE</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        ROAとROE、名前が似すぎて区別がつかない...何がちがうの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        AとEの英語で覚えるのはやめよう。代わりに<strong>「キャラ」で覚える</strong>と一発だよ！
+      </div>
+    </div>
+
+    <div class="roa-roe-tag" style="font-size:1rem;">
+      💡 <strong>一言でいうと</strong>：<span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+    </div>
+
+    <!-- キャラで覚えるROA vs ROE -->
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--orange-main);">
+        <div style="font-size:2rem;margin-bottom:0.2rem;">&#x1F468;&#x200D;&#x1F4BC;</div>
+        <h4 style="color:var(--orange-main);">ROA ＝ <strong>A</strong>ll（全部）</h4>
+        <p style="font-size:0.82rem;margin:0.3rem 0;color:var(--orange-dark);font-weight:700;">🏢 会社全体の実力</p>
+        <p style="font-size:0.82rem;margin:0.3rem 0;">A = <strong>All = 全部</strong>！<br>借金も自分の金も<strong>ぜーんぶ</strong>で稼げてる？</p>
+        <div class="formula-box" style="font-size:0.82rem; margin:0.4rem 0;"><strong>経常</strong>利益 &#xF7; <strong>総</strong>資本</div>
+        <p style="font-size:0.78rem;color:var(--gray-mid);">&#x2022; 分母＝<strong>All（全部）</strong>の資本<br>&#x2022; 分子＝<strong>途中</strong>の利益（経常）</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:3px solid var(--purple-main);">
+        <div style="font-size:2rem;margin-bottom:0.2rem;">&#x1F9D0;</div>
+        <h4 style="color:var(--purple-main);">ROE ＝ こだわり株主</h4>
+        <p style="font-size:0.82rem;margin:0.3rem 0;color:var(--purple-dark);font-weight:700;">💰 株主投資の効率</p>
+        <p style="font-size:0.82rem;margin:0.3rem 0;">「借金の分は関係ない。<br><strong>俺が出した金</strong>で最終いくら残った？」</p>
+        <div class="formula-box" style="font-size:0.82rem; margin:0.4rem 0;">当期<strong>純</strong>利益 &#xF7; <strong>自己</strong>資本</div>
+        <p style="font-size:0.78rem;color:var(--gray-mid);">&#x2022; 分母＝<strong>自分だけ</strong>の資本<br>&#x2022; 分子＝<strong>最終</strong>の利益（純利益）</p>
+      </div>
+    </div>
+
+    <div class="mnemonic">
+      <div class="big" style="font-size:1.3rem;">おおざっぱ ＝ 全部 &#xD7; 途中<br>こだわり ＝ 自分 &#xD7; 最終</div>
+      <div class="desc">
+        <strong>法則：見る範囲が狭くなるほど、利益も最終段階になる</strong><br>
+        ROA＝範囲が<strong>広い</strong>（総資本）→ 利益は<strong>途中</strong>（経常利益）<br>
+        ROE＝範囲が<strong>狭い</strong>（自己資本だけ）→ 利益は<strong>最終</strong>（純利益）
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        おお！<strong>「狭くなるほど最終になる」</strong>って法則があるんだ。これなら分子と分母をセットで思い出せる！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F5BC;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        実際の数字で見るとこうなるよ。ラーメン屋「太郎」で比べてみよう。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">同じお店でもROAとROEは違う！</div>
+      <div style="max-width:480px; margin:0 auto;">
+        <div style="background:var(--gray-pale); border-radius:8px; padding:0.8rem; margin-bottom:0.5rem;">
+          <div style="font-size:0.85rem; text-align:center;">
+            &#x1F35C; ラーメン屋「太郎」：経常利益 <strong>80万円</strong>、当期純利益 <strong>60万円</strong><br>
+            総資本 <strong>800万円</strong>（自己資本400万 + 借金400万）
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+          <div style="background:var(--orange-pale); border-radius:8px; padding:0.6rem; text-align:center;">
+            <div style="font-size:1.2rem;">&#x1F468;&#x200D;&#x1F4BC;</div>
+            <div style="font-weight:800; color:var(--orange-dark);">ROA（A = All）</div>
+            <div style="font-size:0.82rem;margin-top:0.2rem;"><strong>途中</strong>の利益 &#xF7; <strong>All</strong>の資本</div>
+            <div style="font-size:0.82rem;">80万 &#xF7; 800万</div>
+            <div style="font-size:1.2rem; font-weight:800; color:var(--orange-dark);">= 10%</div>
+          </div>
+          <div style="background:var(--purple-light); border-radius:8px; padding:0.6rem; text-align:center;">
+            <div style="font-size:1.2rem;">&#x1F9D0;</div>
+            <div style="font-weight:800; color:var(--purple-dark);">ROE（こだわり）</div>
+            <div style="font-size:0.82rem;margin-top:0.2rem;"><strong>最終</strong>の利益 &#xF7; <strong>自分</strong>の資本</div>
+            <div style="font-size:0.82rem;">60万 &#xF7; 400万</div>
+            <div style="font-size:1.2rem; font-weight:800; color:var(--purple-dark);">= 15%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>ROA vs ROE まとめ表</strong><br>
+      <table style="width:100%;font-size:0.85rem;margin-top:0.3rem;">
+        <tr><th style="background:var(--gray-pale);width:25%;"></th><th style="background:var(--orange-pale);text-align:center;">ROA（A = All 全部）</th><th style="background:var(--purple-light);text-align:center;">ROE（こだわり株主）</th></tr>
+        <tr><td style="font-weight:700;">一言で</td><td style="text-align:center;color:var(--orange-dark);font-weight:800;">🏢 会社全体の実力</td><td style="text-align:center;color:var(--purple-dark);font-weight:800;">💰 株主投資の効率</td></tr>
+        <tr><td style="font-weight:700;">覚え方</td><td style="text-align:center;">&#x1F468;&#x200D;&#x1F4BC; A = <strong>All（全部）</strong></td><td style="text-align:center;">&#x1F9D0; 「俺の分だけ見せて」</td></tr>
+        <tr><td style="font-weight:700;">分子（上）</td><td style="text-align:center;"><strong>経常</strong>利益（途中）</td><td style="text-align:center;">当期<strong>純</strong>利益（最終）</td></tr>
+        <tr><td style="font-weight:700;">分母（下）</td><td style="text-align:center;"><strong>総</strong>資本（All=全部）</td><td style="text-align:center;"><strong>自己</strong>資本（自分だけ）</td></tr>
+      </table>
+      <p style="margin-top:0.5rem;font-size:0.85rem;font-weight:700;text-align:center;">&#x1F4A1; ROAの<strong>A = All</strong>と覚えれば、残りのROEは「Allじゃないほう＝自分だけ」と自動で出る！</p>
+      <div class="roa-roe-tag">
+        📌 <span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>ここまでのまとめ</strong><br>
+      &#x2022; 経営分析 = <strong>会社の健康診断</strong>（数字で状態をチェック）<br>
+      &#x2022; B/S = <strong>創業からの生涯成績</strong>（ある日時点の財産と借金の全記録）<br>
+      &#x2022; P/L = <strong>今年1年間の成績表</strong>（売上から引き算して利益を出す）<br>
+      &#x2022; <strong>ROA ＝ 会社全体の実力</strong>（A = All 全部の資本でどれだけ稼いだか）<br>
+      &#x2022; <strong>ROE ＝ 株主投資の効率</strong>（自分だけの資本でどれだけ稼いだか）<br>
+      &#x2022; 割り算する理由 = <strong>大きさが違う会社を公平に比べるため</strong><br>
+      &#x2022; 計算は<strong>公式に数字を入れるだけ</strong>！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 1: 入門 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab1">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F530; このタブのゴール</h4>
+      <p>経営分析で<strong>最低限これだけ</strong>知っていれば大丈夫！という超重要指標を厳選。まずはここだけ押さえよう。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-pm">&#x1F4CB;</div>
+      <div class="bubble-body b-purple">
+        <div class="bubble-name">PM</div>
+        経営分析って何を見ればいいの？を<strong>4つの視点</strong>で整理したよ。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">経営分析 = 会社の健康診断</div>
+      <div style="display:flex; justify-content:center; gap:0.8rem; flex-wrap:wrap; padding:0.5rem 0;">
+        <div class="flow-box fb-orange">&#x1F4B0; 収益性<small>もうかってる？</small></div>
+        <div class="flow-box fb-blue">&#x1F6E1; 安全性<small>つぶれない？</small></div>
+        <div class="flow-box fb-green">&#x1F504; 効率性<small>ムダなく回してる？</small></div>
+        <div class="flow-box fb-purple">&#x1F3ED; 生産性<small>ヒトが稼いでる？</small></div>
+      </div>
+      <div class="scene-caption" style="margin-top:0.8rem;">この4つの視点で会社の「通知表」をつける = 経営分析</div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x2B50;</span> 超厳選！まず覚える6指標</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-creator">&#x270D;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">作成エージェント</div>
+        試験で<strong>ほぼ毎年出る</strong>超重要指標を6つだけに絞りました。まずはこれだけ！
+      </div>
+    </div>
+
+    <!-- 収益性 -->
+    <div class="card card-orange">
+      <h4>&#x1F4B0; ① 売上高営業利益率 ―「本業でどれだけ稼いだ？」</h4>
+      <div class="formula-box">売上高営業利益率 = 営業利益 &#xF7; 売上高 &#xD7; 100（%）</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">ラーメン屋でいうと「ラーメンを売って、材料費・家賃・バイト代を引いた後、いくら残った？」の割合。<strong>高いほど本業上手</strong>。</p>
+    </div>
+
+    <div class="card card-orange">
+      <h4>&#x1F4B0; ② ROA（総資本経常利益率） ―「持ってるモノ全部でどれだけ稼いだ？」</h4>
+      <div class="formula-box">ROA = 経常利益 &#xF7; 総資本 &#xD7; 100（%）</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">お店の設備・在庫・現金、ぜんぶひっくるめて「いくら使って、いくら稼いだ？」。<strong>高いほど資産の使い方が上手</strong>。</p>
+      <div class="roa-roe-tag">
+        💡 <span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+      </div>
+    </div>
+
+    <!-- 安全性 -->
+    <div class="card card-blue">
+      <h4>&#x1F6E1; ③ 流動比率 ―「すぐ払えるお金、足りてる？」</h4>
+      <div class="formula-box">流動比率 = 流動資産 &#xF7; 流動負債 &#xD7; 100（%）</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">1年以内に現金化できるもの &#xF7; 1年以内に払う借金。<strong>200%以上</strong>が理想。100%切ると危険信号。</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F6E1; ④ 自己資本比率 ―「借金に頼りすぎてない？」</h4>
+      <div class="formula-box">自己資本比率 = 自己資本 &#xF7; 総資本 &#xD7; 100（%）</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">全財産のうち「自分のお金」がどれだけあるか。<strong>高いほど安全</strong>。借金だらけだと低くなる。</p>
+    </div>
+
+    <!-- 効率性 -->
+    <div class="card card-green">
+      <h4>&#x1F504; ⑤ 総資本回転率 ―「資産をうまく回転させてる？」</h4>
+      <div class="formula-box">総資本回転率 = 売上高 &#xF7; 総資本（回）</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">持ってる全資産で何回分の売上を稼いだか。<strong>高い（回転が速い）ほど効率的</strong>。</p>
+    </div>
+
+    <!-- 生産性 -->
+    <div class="card card-purple">
+      <h4>&#x1F3ED; ⑥ 労働生産性 ―「ひとりあたりいくら稼いだ？」</h4>
+      <div class="formula-box">労働生産性 = 付加価値 &#xF7; 従業員数（円/人）</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">社員ひとりが生みだした価値。<strong>高いほど人材活用が上手</strong>。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-critic">&#x1F9D0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">批評エージェント</div>
+        いいですね。ただし<strong>「高いほうがいい」「低いほうがいい」</strong>を最後にまとめておきましょう。ここが試験のひっかけポイントです。
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>方向の覚え方まとめ</strong><br>
+      &#x2B06; <strong>高いほうがいい</strong>：売上高営業利益率、ROA、流動比率、自己資本比率、総資本回転率、労働生産性<br>
+      &#x2B07; <strong>低いほうがいい</strong>：固定比率、負債比率、労働分配率<br>
+      &#x1F4A1; 入門6指標は<strong>全部「高いほうがいい」</strong>！迷ったらまずこれを思い出そう。
+    </div>
+
+    <div class="alert-exam">
+      <strong>勘定科目のヒント</strong><br>
+      &#x2022; <strong>経常利益</strong> = 営業利益 + 営業外収益 &#x2212; 営業外費用（本業＋副業の合計）<br>
+      &#x2022; <strong>流動資産</strong> = 現金・預金、売掛金、棚卸資産など（1年以内に現金化できるもの）<br>
+      &#x2022; <strong>流動負債</strong> = 買掛金、短期借入金など（1年以内に返すもの）<br>
+      &#x2022; <strong>付加価値</strong> = 売上高 &#x2212; 外部購入価値（材料費など外から買ったもの）
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: 基本事項 (GREEN) ==================== -->
+  <div class="tab-panel theme-green" id="tab2">
+
+    <div class="point-box pb-green">
+      <h4>&#x1F4D7; このタブで学ぶこと</h4>
+      <ul>
+        <li><strong>収益性・安全性・効率性・生産性</strong>の4カテゴリすべての主要指標</li>
+        <li>各指標の<strong>公式・目安・高低の意味</strong></li>
+        <li>指標どうしの<strong>つながり</strong>（ROAの分解など）</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-planner">&#x1F5FA;</div>
+      <div class="bubble-body b-teal">
+        <div class="bubble-name">計画エージェント</div>
+        入門タブの6指標に加えて、試験範囲のすべてを網羅していきます。<strong>カテゴリごとに色分け</strong>しているので、迷ったら色で判断してください。
+      </div>
+    </div>
+
+    <!-- ===== 収益性分析 ===== -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F4B0;</span> 収益性分析 ―「もうかっているか？」</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-creator">&#x270D;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">作成エージェント</div>
+        収益性は「売上高〇〇利益率」シリーズと「資本利益率」シリーズの<strong>2グループ</strong>に分かれます。P/Lを上から下へ見ていく順番で覚えると自然です！
+      </div>
+    </div>
+
+    <table class="tbl-orange">
+      <tr><th style="width:30%;">指標名</th><th>計算式</th><th style="width:12%;">方向</th></tr>
+      <tr><td><strong>売上高総利益率</strong><br><span style="font-size:0.75rem;color:var(--gray-mid);">（粗利率）</span></td><td>売上総利益 &#xF7; 売上高 &#xD7; 100</td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>売上高営業利益率</strong></td><td>営業利益 &#xF7; 売上高 &#xD7; 100</td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>売上高経常利益率</strong></td><td>経常利益 &#xF7; 売上高 &#xD7; 100</td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>売上高当期純利益率</strong></td><td>当期純利益 &#xF7; 売上高 &#xD7; 100</td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>ROA</strong><br><span style="font-size:0.75rem;color:var(--gray-mid);">総資本経常利益率</span><br><span style="font-size:0.72rem;color:var(--orange-dark);font-weight:700;">🏢 会社全体の実力</span></td><td>経常利益 &#xF7; <strong>総資本</strong> &#xD7; 100<br><span style="font-size:0.72rem;color:var(--red-main);">※ 総資本は期中平均</span></td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>ROE</strong><br><span style="font-size:0.75rem;color:var(--gray-mid);">自己資本当期純利益率</span><br><span style="font-size:0.72rem;color:var(--purple-dark);font-weight:700;">💰 株主投資の効率</span></td><td>当期純利益 &#xF7; <strong>自己資本</strong> &#xD7; 100<br><span style="font-size:0.72rem;color:var(--red-main);">※ 自己資本は期中平均</span></td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+    </table>
+
+    <div class="roa-roe-tag">
+      💡 <span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+    </div>
+
+    <!-- フロー vs ストック -->
+    <div class="alert-danger">
+      <strong>フロー &#xD7; ストック問題 ― なぜ「期中平均」を使う？</strong><br>
+      &#x2022; <strong>フロー</strong>（P/L）＝ 1年間の累計値（売上高、利益など）<br>
+      &#x2022; <strong>ストック</strong>（B/S）＝ ある1日時点の残高（総資本、自己資本など）<br><br>
+      ROAやROEのように<strong>フロー &#xF7; ストック</strong>を計算すると、「1年間の数字」と「ある1日の数字」を割ることになり、基準がズレる。<br>
+      そこでストック側は<strong>（期首＋期末）&#xF7; 2 ＝ 期中平均</strong>を使って基準を合わせる。
+    </div>
+
+    <div class="card card-red">
+      <h4>期中平均が必要な指標一覧</h4>
+      <p style="font-size:0.85rem;margin-bottom:0.5rem;">分子がフロー（P/L）、分母がストック（B/S）の指標すべてが対象。</p>
+      <table class="tbl-orange" style="font-size:0.85rem;">
+        <tr><th>指標</th><th>分子（フロー）</th><th>分母（ストック）→ 期中平均</th></tr>
+        <tr><td><strong>ROA</strong></td><td>経常利益</td><td>総資本</td></tr>
+        <tr><td><strong>ROE</strong></td><td>当期純利益</td><td>自己資本</td></tr>
+        <tr><td><strong>総資本回転率</strong></td><td>売上高</td><td>総資本</td></tr>
+        <tr><td><strong>売上債権回転率</strong></td><td>売上高</td><td>売上債権</td></tr>
+        <tr><td><strong>棚卸資産回転率</strong></td><td>売上高</td><td>棚卸資産</td></tr>
+        <tr><td><strong>有形固定資産回転率</strong></td><td>売上高</td><td>有形固定資産</td></tr>
+      </table>
+      <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4A1; 流動比率・自己資本比率・固定比率などは<strong>ストック÷ストック</strong>（同じ時点）なので期中平均は不要。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方のコツ</div>
+        P/Lの<strong>利益の順番</strong>で覚えよう！<br>
+        <strong>売上総利益</strong>（粗利）→ <strong>営業利益</strong> → <strong>経常利益</strong> → <strong>当期純利益</strong><br>
+        ぜんぶ「その利益 &#xF7; 売上高」だから、利益の名前さえ覚えれば公式は自動で出てくる！
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F52C;</span> ROAの分解（超重要！）</h2>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--orange-dark);">ROA = 売上高経常利益率 &#xD7; 総資本回転率</div>
+      <div class="flow-row">
+        <div class="flow-box fb-orange" style="min-width:120px;">ROA<small>経常利益&#xF7;総資本</small></div>
+        <div class="flow-arrow" style="color:var(--orange-main);">=</div>
+        <div class="flow-box fb-red" style="min-width:140px;">売上高経常利益率<small>経常利益&#xF7;売上高</small></div>
+        <div class="flow-arrow" style="color:var(--orange-main);">&#xD7;</div>
+        <div class="flow-box fb-green" style="min-width:120px;">総資本回転率<small>売上高&#xF7;総資本</small></div>
+      </div>
+      <div class="roa-roe-tag" style="margin-top:0.6rem;">
+        💡 <span class="roa-label">ROA＝会社全体の実力</span>は「利益率×回転率」で決まる<span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>とは視点が違う！
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        ROAは「<strong>利益率</strong>（1個あたりの儲け）&#xD7; <strong>回転率</strong>（何個売ったか）」。<br>
+        &#x1F35C; 高級フレンチ＝利益率は高いけど回転少ない<br>
+        &#x1F363; 回転寿司＝1皿の利益は薄いけど回転がすごい<br>
+        どちらも<strong>ROAは高くできる</strong>。やり方がちがうだけ！
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>ROA vs ROE ― A = All で覚える！</strong><br>
+      &#x2022; <strong>ROA</strong>（A = <strong>All 全部</strong>）＝<strong>全部</strong>の資本（総資本）で<strong>途中</strong>の利益（経常利益）を割る<br>
+      &#x2022; <strong>ROE</strong>（Allじゃないほう）＝<strong>自分だけ</strong>の資本（自己資本）で<strong>最終</strong>の利益（当期純利益）を割る<br>
+      &#x1F4A1; <strong>ROAのA = All</strong> を覚えれば、ROEは「残り＝自分だけ」と自動で出る！
+      <div class="roa-roe-tag" style="margin-top:0.5rem;">
+        📌 <strong>一言で</strong>：<span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+      </div>
+    </div>
+
+    <!-- ===== 安全性分析 ===== -->
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F6E1;</span> 安全性分析 ―「つぶれないか？」</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-critic">&#x1F9D0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">批評エージェント</div>
+        安全性は「短期の支払能力」と「長期の財務構造」に分けると整理しやすいです。<strong>目安の数字</strong>も一緒に覚えましょう。
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x23F1; 短期の安全性（支払能力）</h4>
+    </div>
+
+    <table class="tbl-blue">
+      <tr><th style="width:28%;">指標名</th><th>計算式</th><th style="width:14%;">目安</th></tr>
+      <tr><td><strong>流動比率</strong></td><td>流動資産 &#xF7; 流動負債 &#xD7; 100</td><td style="color:var(--green-main);font-weight:700;">200%&#x2191;</td></tr>
+      <tr><td><strong>当座比率</strong></td><td>当座資産 &#xF7; 流動負債 &#xD7; 100</td><td style="color:var(--green-main);font-weight:700;">100%&#x2191;</td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">流動比率 vs 当座比率</div>
+        <strong>流動比率</strong>＝お財布の中身ぜんぶ（現金+在庫+売掛金）&#xF7; 来月の支払い<br>
+        <strong>当座比率</strong>＝在庫を除いた「すぐ現金化できるもの」だけ &#xF7; 来月の支払い<br>
+        当座比率のほうが<strong>より厳しい</strong>チェック。在庫は売れなきゃお金にならないから！
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>当座資産</strong> = 現金預金 + 受取手形 + 売掛金 + 有価証券 &#x2212; 貸倒引当金<br>
+      &#x2192; 流動資産から<strong>棚卸資産</strong>（在庫）と<strong>前払費用</strong>を引いたもの。<br>
+      勘定科目が出たら「すぐ現金化できる？」で判断しよう！
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">&#x1F3B5; げんきん・うけ・うり・あり・だおれ</div>
+      <div class="desc">
+        <strong>げんきん</strong>＝現金預金　<strong>うけ</strong>＝受取手形　<strong>うり</strong>＝売掛金　<strong>あり</strong>＝有価証券（有り）　<strong>だおれ</strong>＝貸倒引当金（マイナス）<br>
+        &#x1F4A1; 「元気な受売（うけうり）、有りだけど倒れる」&#x2192; 当座資産の5項目を一気に思い出せる！
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F3E6; 長期の安全性（財務構造）</h4>
+    </div>
+
+    <table class="tbl-blue">
+      <tr><th style="width:28%;">指標名</th><th>計算式</th><th style="width:14%;">方向</th></tr>
+      <tr><td><strong>自己資本比率</strong></td><td>自己資本 &#xF7; 総資本 &#xD7; 100</td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>負債比率</strong></td><td>負債 &#xF7; 自己資本 &#xD7; 100</td><td style="color:var(--red-main);font-weight:700;">&#x2B07; 低い</td></tr>
+      <tr><td><strong>固定比率</strong></td><td>固定資産 &#xF7; 自己資本 &#xD7; 100</td><td style="color:var(--red-main);font-weight:700;">&#x2B07; 低い</td></tr>
+      <tr><td><strong>固定長期適合率</strong></td><td>固定資産 &#xF7;（自己資本+固定負債）&#xD7; 100</td><td style="color:var(--red-main);font-weight:700;">&#x2B07; 低い</td></tr>
+    </table>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>&#x1F4CA; 固定比率</h4>
+        <p>固定資産を<strong>自己資本だけ</strong>でまかなえているか。<strong>100%以下</strong>なら理想的。</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">家で言うと「家の値段が貯金の範囲内か」</p>
+      </div>
+      <div class="card card-green">
+        <h4>&#x1F4CA; 固定長期適合率</h4>
+        <p>自己資本だけで足りなくても、<strong>長期借入</strong>を足してまかなえればOK。<strong>100%以下</strong>が必要。</p>
+        <p style="font-size:0.82rem;color:var(--gray-mid);">「家の値段が貯金+住宅ローンの範囲内か」</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">引っかけ注意</div>
+        <strong>固定比率</strong>と<strong>固定長期適合率</strong>、分母のちがいに注意！<br>
+        &#x2022; 固定比率 → 分母は<strong>自己資本だけ</strong><br>
+        &#x2022; 固定長期適合率 → 分母は<strong>自己資本 + 固定負債</strong><br>
+        固定長期適合率のほうが分母が大きい分、数値は<strong>必ず固定比率以下</strong>になる！
+      </div>
+    </div>
+
+    <!-- ===== 効率性分析 ===== -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F504;</span> 効率性分析 ―「ムダなく回してるか？」</h2>
+
+    <table class="tbl-green">
+      <tr><th style="width:30%;">指標名</th><th>計算式</th><th style="width:12%;">方向</th></tr>
+      <tr><td><strong>総資本回転率</strong></td><td>売上高 &#xF7; 総資本<br><span style="font-size:0.72rem;color:var(--red-main);">※ 期中平均</span></td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>売上債権回転率</strong></td><td>売上高 &#xF7; 売上債権<br><span style="font-size:0.72rem;color:var(--red-main);">※ 期中平均</span></td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>棚卸資産回転率</strong></td><td>売上高 &#xF7; 棚卸資産<br><span style="font-size:0.72rem;color:var(--red-main);">※ 期中平均</span></td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>有形固定資産回転率</strong></td><td>売上高 &#xF7; 有形固定資産<br><span style="font-size:0.72rem;color:var(--red-main);">※ 期中平均</span></td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方のコツ</div>
+        回転率シリーズは全部<strong>「売上高 &#xF7; ○○」</strong>で、分母が変わるだけ！<br>
+        「この資産をどれだけ効率よく使って売上を上げたか」を測る。<strong>回転が速い＝在庫が残りにくい＝効率的</strong>。
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4A1; 回転率と回転期間の関係</h4>
+      <div class="formula-box">回転期間（日） = 365 &#xF7; 回転率</div>
+      <p style="font-size:0.85rem;margin-top:0.3rem;">回転率10回 → 365&#xF7;10 = <strong>36.5日</strong>で1回転。回転期間は<strong>短いほど</strong>効率的。</p>
+    </div>
+
+    <!-- ===== 生産性分析 ===== -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3ED;</span> 生産性分析 ―「ヒトが稼いでるか？」</h2>
+
+    <table class="tbl-blue">
+      <tr><th style="width:28%;">指標名</th><th>計算式</th><th style="width:12%;">方向</th></tr>
+      <tr><td><strong>労働生産性</strong></td><td>付加価値 &#xF7; 従業員数</td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+      <tr><td><strong>労働分配率</strong></td><td>人件費 &#xF7; 付加価値 &#xD7; 100</td><td style="color:var(--red-main);font-weight:700;">&#x2B07; 低い</td></tr>
+      <tr><td><strong>労働装備率</strong></td><td>有形固定資産 &#xF7; 従業員数</td><td>業種による</td></tr>
+      <tr><td><strong>付加価値率</strong></td><td>付加価値 &#xF7; 売上高 &#xD7; 100</td><td style="color:var(--green-main);font-weight:700;">&#x2B06; 高い</td></tr>
+    </table>
+
+    <div class="alert-danger">
+      <strong>労働分配率は「低い」ほうがいい！</strong><br>
+      &#x2022; 付加価値のうち人件費がどれだけ占めるか → 高すぎると利益が残らない<br>
+      &#x2022; ただし<strong>低すぎる</strong>と従業員の待遇が悪い可能性も<br>
+      &#x2022; 試験では「労働分配率が高い＝良い」という引っかけが出る！
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-critic">&#x1F9D0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">批評エージェント</div>
+        付加価値の計算方法が2つあることも試験で問われます。<strong>控除法と加算法</strong>を区別しておきましょう。
+      </div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--blue-main);">
+        <h4 style="color:var(--blue-main);">控除法（中小企業庁方式）</h4>
+        <p style="font-size:0.85rem;">売上高 &#x2212; 外部購入価値<br><span style="font-size:0.78rem;color:var(--gray-mid);">材料費・外注費・動力費など</span></p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--green-main);">
+        <h4 style="color:var(--green-main);">加算法（日銀方式）</h4>
+        <p style="font-size:0.85rem;">経常利益 + 人件費 + 賃借料<br>+ 減価償却費 + 金融費用 + 租税公課</p>
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>試験頻出ポイントまとめ</strong><br>
+      &#x2022; ROAの分解 = <strong>売上高経常利益率 &#xD7; 総資本回転率</strong><br>
+      &#x2022; 当座資産 = 流動資産 &#x2212; <strong>棚卸資産</strong> &#x2212; 前払費用<br>
+      &#x2022; 固定長期適合率の分母 = 自己資本 + <strong>固定負債</strong><br>
+      &#x2022; 労働分配率 = <strong>人件費 &#xF7; 付加価値</strong>（高い ≠ 良い）<br>
+      &#x1F4DA; 過去問：<strong>R6-11、R5-9、R4-11、R3-9</strong>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: 自己資本比率 (ORANGE) ==================== -->
+  <div class="tab-panel theme-orange" id="tab3">
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F3E6;</span> 自己資本比率</h2>
+
+    <!-- ===== 自己資本比率 ===== -->
+    <div class="card card-blue" style="border-left:5px solid var(--blue-main);">
+      <h4>&#x1F3E6; 自己資本比率って何？</h4>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        自己資本比率ってよく聞くけど、なんでそんなに大事なの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ひとことで言うと<strong>「会社の体力」</strong>だよ。<br>
+        会社のお金には2種類ある。<strong>返さなくていいお金</strong>（自己資本）と<strong>返さないといけないお金</strong>（借金＝負債）。<br>
+        自己資本比率は「全財産のうち、返さなくていいお金が何%か？」を見る指標なんだ。
+      </div>
+    </div>
+
+    <div class="formula-box" style="margin:0.8rem 0;">自己資本比率 ＝ 自己資本 &#xF7; 総資本 &#xD7; 100（%）</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        「返さなくていいお金の割合」...それが高いと何がいいの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        たとえば2人の人がいるとするよ。<br><br>
+        <strong>Aさん</strong>：貯金1,000万円、ローン0円 → 全部自分のお金<br>
+        <strong>Bさん</strong>：貯金1,000万円、でもうち900万は借金<br><br>
+        同じ1,000万円持っていても、不況が来たらどっちがヤバい？
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        Bさん！借金の返済があるから、収入が減ったら詰む...
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        そのとおり！会社も同じ。自己資本比率が高い会社は、<strong>売上が落ちても借金の返済に追われない</strong>。つまり<strong>不況に強い＝つぶれにくい</strong>ということなんだ。
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>自己資本比率でわかること</strong><br>
+      &#x2022; <strong>倒産リスク</strong> ― 低いと借金依存で危険、高いと安定<br>
+      &#x2022; <strong>不況への耐性</strong> ― 売上が落ちても持ちこたえる体力があるか<br>
+      &#x2022; <strong>経営の自由度</strong> ― 借金が少ないほど、新しい投資や挑戦ができる
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4CA; 目安はどれくらい？</h4>
+      <table style="width:100%;font-size:0.85rem;margin-top:0.3rem;">
+        <tr><th style="background:var(--gray-pale);width:30%;">水準</th><th>意味</th></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--red-main);">10%未満</td><td>&#x26A0; 危険信号。借金だらけで倒産リスクが高い</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--orange-main);">20&#x301C;30%</td><td>中小企業の平均的な水準</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--green-main);">40%以上</td><td>&#x2705; 安定経営。銀行からの信用も高い</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--blue-main);">70%以上</td><td>&#x1F3C6; 超優良。無借金経営に近い</td></tr>
+      </table>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        でも、なんで<strong>「40%」</strong>なの？ 30%とか50%じゃなくて。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        実は「40%」に理論的な根拠はないんだ。<strong>過去の倒産データ</strong>から導き出された経験則だよ。
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>&#x1F4CA; なぜ「40%」が目安なのか？</strong><br>
+      &#x2022; 帝国データバンク・東京商工リサーチの統計で、<strong>倒産企業の自己資本比率は平均10&#x301C;15%</strong>に集中<br>
+      &#x2022; 一方、<strong>40%を超える企業の倒産率は極めて低い</strong>というデータが繰り返し確認されている<br>
+      &#x2022; 中小企業庁の調査でも、業種問わず<strong>黒字企業の中央値がおおむね30&#x301C;40%台</strong><br>
+      &#x27A1; つまり理論値ではなく<strong>「統計的にここを超えると倒産率がガクッと下がる」境界線</strong>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        なるほど、データから来てるんだ。じゃあ「銀行からの信用が高い」ってどういうこと？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        銀行は「貸したお金がちゃんと返ってくるか？」だけを気にしている。<br>
+        具体的な数字で考えてみよう。
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>&#x2705; 自己資本比率 40% の会社</h4>
+        <p>総資産1,000万のうち<strong>400万が自分のお金</strong>。</p>
+        <p>業績悪化で資産価値が<strong>40%減っても</strong>、借金600万は全額返せる。</p>
+        <p style="font-size:0.82rem;color:var(--green-dark);font-weight:700;">&#x27A1; 銀行「安心して貸せる。金利も低くていいよ」</p>
+      </div>
+      <div class="card" style="background:#fce4ec;border:1px solid #ef9a9a;">
+        <h4>&#x26A0; 自己資本比率 10% の会社</h4>
+        <p>総資産1,000万のうち<strong>100万しか自分のお金がない</strong>。</p>
+        <p>資産価値がたった<strong>10%下がるだけ</strong>で、借金900万を返しきれない。</p>
+        <p style="font-size:0.82rem;color:var(--red-dark);font-weight:700;">&#x27A1; 銀行「危ないな...金利上げるか、貸さない」</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ポイント</div>
+        自己資本比率 ＝ <strong>資産が目減りしても借金を返せる「クッションの厚さ」</strong>。<br>
+        40%あれば資産が4割減っても耐えられる。だから銀行は<strong>低い金利で貸してくれる</strong>し、融資の審査も通りやすくなる。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">注意ポイント</div>
+        自己資本比率が高ければ無条件でいい、とは限らない！<br>
+        &#x2022; 借金をうまく使って成長する会社もある（<strong>レバレッジ経営</strong>）<br>
+        &#x2022; 業種によって平均値が違う（銀行・不動産は低めが普通）<br>
+        試験では「高いほうがいい」でOKだけど、<strong>事例問題では業種も考慮</strong>しよう！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        最後にまとめると ―<br>
+        <strong>自己資本比率 ＝「この会社、借金でどれくらい回してる？」を一発で見る指標</strong>。<br>
+        高いほど安全、低いほどリスクあり。安全性分析の中でも<strong>最も基本的で最も出題される</strong>指標だから、式だけじゃなく意味まで理解しておこう！
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: 固定比率 (TEAL) ==================== -->
+  <div class="tab-panel theme-teal" id="tab4">
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F3D7;</span> 固定比率</h2>
+
+    <div class="card card-blue" style="border-left:5px solid var(--teal-main);">
+      <h4>&#x1F3D7; 固定比率って何？</h4>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        固定比率って名前からして難しそう...何を見る指標なの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ひとことで言うと<strong>「固定資産を、返さなくていいお金でまかなえているか？」</strong>を見る指標だよ。<br><br>
+        固定資産っていうのは、建物・機械・土地みたいに<strong>長期間使い続けるもの</strong>。これを買うのに短期の借金を使っていたら危険だよね？
+      </div>
+    </div>
+
+    <div class="formula-box" style="margin:0.8rem 0;">固定比率 ＝ 固定資産 &#xF7; 自己資本 &#xD7; 100（%）</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        なんで短期の借金で買うと危険なの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        たとえば、マイホームを買うときを想像してみて。<br><br>
+        <strong>Aさん</strong>：3,000万の家を<strong>全額貯金</strong>で購入 → 返済なし、安心！<br>
+        <strong>Bさん</strong>：3,000万の家を<strong>1年で返す短期ローン</strong>で購入 → 毎月250万返済...無理！<br><br>
+        長く使うものは、<strong>長く使えるお金（返さなくていいお金＝自己資本）</strong>で買うのが鉄則なんだ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        なるほど！じゃあ固定比率が低いほうがいいってこと？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        そのとおり！<strong>100%以下なら理想的</strong>。<br>
+        「固定資産が全部、自己資本でまかなえている」という意味だからね。<br><br>
+        でも実際は100%を超える会社がほとんど。だから<strong>「低いほど安全」</strong>と覚えておこう。
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>固定比率でわかること</strong><br>
+      &#x2022; <strong>設備投資の安全度</strong> ― 固定資産を返済不要な資金でまかなえているか<br>
+      &#x2022; <strong>財務の堅実さ</strong> ― 低いほど、無理のない設備投資をしている<br>
+      &#x2022; <strong>資金繰りリスク</strong> ― 高すぎると、借金返済に追われる危険がある
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4CA; 目安はどれくらい？</h4>
+      <table style="width:100%;font-size:0.85rem;margin-top:0.3rem;">
+        <tr><th style="background:var(--gray-pale);width:30%;">水準</th><th>意味</th></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--blue-main);">100%以下</td><td>&#x1F3C6; 理想的。固定資産を全額自己資本でカバー</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--green-main);">100&#x301C;150%</td><td>&#x2705; 良好。多くの優良企業がこの範囲</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--orange-main);">150&#x301C;200%</td><td>&#x26A0; やや高い。借入への依存度が大きい</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--red-main);">200%超</td><td>&#x1F6A8; 危険信号。固定資産の半分以上が借金頼み</td></tr>
+      </table>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        具体的な数字で見てみたい！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        OK、2つの会社を比べてみよう。
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>&#x2705; 固定比率 80% の会社</h4>
+        <p>自己資本 1,000万 に対し、固定資産は <strong>800万</strong>。</p>
+        <p>固定資産のすべてが自己資本の範囲内。<strong>借金に頼らず設備を持てている</strong>。</p>
+        <p style="font-size:0.82rem;color:var(--green-dark);font-weight:700;">&#x27A1; 安定経営。設備の返済プレッシャーなし</p>
+      </div>
+      <div class="card" style="background:#fce4ec;border:1px solid #ef9a9a;">
+        <h4>&#x26A0; 固定比率 250% の会社</h4>
+        <p>自己資本 1,000万 に対し、固定資産は <strong>2,500万</strong>。</p>
+        <p>自己資本の2.5倍の設備投資。<strong>1,500万は借金で工場や機械を買っている</strong>。</p>
+        <p style="font-size:0.82rem;color:var(--red-dark);font-weight:700;">&#x27A1; 借金の返済が重い。売上が落ちると資金ショートの危険</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ポイント</div>
+        固定比率 ＝ <strong>「長く使う資産を、返さなくていいお金でどれだけカバーできているか」</strong>。<br>
+        100%以下が理想だけど、製造業など設備が多い業種では高くなりやすい。<strong>業種ごとの平均値と比較する</strong>ことが大事！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">注意ポイント</div>
+        固定比率が100%を超えていても、すぐに危険とは限らない！<br>
+        &#x2022; 超えた分を<strong>長期借入金</strong>でまかなっていれば、まだ安全（→ 固定長期適合率で判断）<br>
+        &#x2022; 製造業・インフラ業は<strong>設備投資が大きいので高くなりやすい</strong><br>
+        試験では「低いほうが良い」が基本だけど、<strong>100%超でも固定長期適合率が100%以下なら許容範囲</strong>と覚えよう！
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>&#x1F4DD; 試験での頻出ポイント</strong><br>
+      &#x2022; 固定比率は<strong>「低いほうが良い」</strong>指標（自己資本比率とは分子・分母が違うので混同注意）<br>
+      &#x2022; 分母は<strong>自己資本のみ</strong>（固定負債は含まない → 固定長期適合率との違い）<br>
+      &#x2022; 固定比率が高くても<strong>固定長期適合率が100%以下ならセーフ</strong>、というのが定番の出題パターン
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        最後にまとめると ―<br>
+        <strong>固定比率 ＝「この会社、設備投資を自分のお金でどれだけまかなえてる？」を見る指標</strong>。<br>
+        低いほど安全。100%以下が理想だけど、超えた場合は<strong>固定長期適合率もセットで確認</strong>するのが鉄則だよ！
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 5: 固定長期適合率 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab5">
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3D7;</span> 固定長期適合率</h2>
+
+    <div class="card card-blue" style="border-left:5px solid var(--blue-main);">
+      <h4>&#x1F3D7; 固定長期適合率って何？</h4>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        固定比率は分かったけど、固定長期適合率って何が違うの？名前が長くてややこしい...
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        固定比率の<strong>「ゆるい版」</strong>だと思えばOK！<br><br>
+        固定比率は「固定資産を<strong>自己資本だけ</strong>でカバーできてる？」だったよね。<br>
+        固定長期適合率は「固定資産を<strong>自己資本＋固定負債（長期の借金）</strong>でカバーできてる？」を見るんだ。
+      </div>
+    </div>
+
+    <div class="formula-box" style="margin:0.8rem 0;">固定長期適合率 ＝ 固定資産 &#xF7;（自己資本 ＋ 固定負債）&#xD7; 100（%）</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        なんで固定負債（長期の借金）も足すの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        さっきのマイホームの例で考えよう。<br><br>
+        <strong>Aさん</strong>：3,000万の家を全額貯金で購入 → 固定比率100%以下、最強！<br>
+        <strong>Bさん</strong>：3,000万の家を貯金1,000万＋<strong>35年住宅ローン2,000万</strong>で購入<br>
+        <strong>Cさん</strong>：3,000万の家を貯金1,000万＋<strong>1年の短期ローン2,000万</strong>で購入<br><br>
+        BさんとCさん、どっちが危険？
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        Cさん！1年で2,000万返すなんて無理だよ...でもBさんの35年ローンなら月々の返済は少ないから大丈夫そう。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        そう！これがまさに固定長期適合率の考え方。<br>
+        長く使う資産は、<strong>「返さなくていいお金」＋「長期で返せばいい借金」</strong>でまかなえていれば安全なんだ。<br><br>
+        短期の借金で固定資産を買ってしまうと、<strong>すぐに返済期限が来てお金が足りなくなる</strong>。これが一番ヤバい。
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>固定長期適合率でわかること</strong><br>
+      &#x2022; <strong>資金の調達バランス</strong> ― 長期資産を長期資金でまかなえているか<br>
+      &#x2022; <strong>資金ショートのリスク</strong> ― 100%を超えると、短期借入に頼っている危険な状態<br>
+      &#x2022; <strong>経営の安全性の最低ライン</strong> ― 固定比率が高くても、これが100%以下なら許容範囲
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4CA; 目安はどれくらい？</h4>
+      <table style="width:100%;font-size:0.85rem;margin-top:0.3rem;">
+        <tr><th style="background:var(--gray-pale);width:30%;">水準</th><th>意味</th></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--blue-main);">80%以下</td><td>&#x1F3C6; 非常に安全。長期資金に十分な余裕あり</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--green-main);">80&#x301C;100%</td><td>&#x2705; 安全圏。固定資産を長期資金でカバーできている</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--orange-main);">100&#x301C;120%</td><td>&#x26A0; 注意。一部の固定資産を短期借入でまかなっている</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--red-main);">120%超</td><td>&#x1F6A8; 危険。短期資金への依存が大きく、資金ショートのリスク</td></tr>
+      </table>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        固定比率と固定長期適合率、両方見るってことは、2段階チェックみたいな感じ？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        いい質問！まさにそう。具体例で見てみよう。
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>&#x2705; ケース：町工場A社</h4>
+        <p><strong>固定資産</strong> 3,000万</p>
+        <p><strong>自己資本</strong> 2,000万 / <strong>固定負債</strong> 1,500万</p>
+        <p>固定比率 ＝ 3,000&#xF7;2,000 ＝ <strong>150%</strong>（自己資本だけでは足りない）</p>
+        <p>固定長期適合率 ＝ 3,000&#xF7;3,500 ＝ <strong>約86%</strong></p>
+        <p style="font-size:0.82rem;color:var(--green-dark);font-weight:700;">&#x27A1; 固定比率は高いが、長期資金で十分カバー。安全！</p>
+      </div>
+      <div class="card" style="background:#fce4ec;border:1px solid #ef9a9a;">
+        <h4>&#x26A0; ケース：町工場B社</h4>
+        <p><strong>固定資産</strong> 3,000万</p>
+        <p><strong>自己資本</strong> 1,000万 / <strong>固定負債</strong> 500万</p>
+        <p>固定比率 ＝ 3,000&#xF7;1,000 ＝ <strong>300%</strong>（自己資本の3倍！）</p>
+        <p>固定長期適合率 ＝ 3,000&#xF7;1,500 ＝ <strong>200%</strong></p>
+        <p style="font-size:0.82rem;color:var(--red-dark);font-weight:700;">&#x27A1; 長期資金でも全然足りない。1,500万を短期借入で回している → 危険！</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ポイント</div>
+        <strong>2段階で安全性をチェック</strong>するのがコツ！<br>
+        &#x2460; まず固定比率 → 100%以下なら理想的（自己資本だけでOK）<br>
+        &#x2461; 超えていたら固定長期適合率 → <strong>100%以下なら合格ライン</strong>（長期資金でカバーOK）<br>
+        &#x2462; これも超えていたら → <strong>短期借入に頼っていて危険</strong>！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">注意ポイント</div>
+        固定長期適合率が100%を超えるということは ―<br>
+        &#x2022; 固定資産の一部を<strong>流動負債（短期の借金）</strong>でまかなっている<br>
+        &#x2022; つまり<strong>長く使うモノを、すぐ返す借金で買っている</strong>状態<br>
+        &#x2022; 返済期限が来ても現金が足りず、<strong>借り換えを繰り返す自転車操業</strong>になりやすい<br>
+        試験では<strong>「100%以下が必須条件」</strong>と出題されることが多い！
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>&#x1F4DD; 試験での頻出ポイント</strong><br>
+      &#x2022; 固定長期適合率の分母は<strong>「自己資本＋固定負債」</strong>（固定比率との違いを必ず問われる）<br>
+      &#x2022; <strong>100%以下が安全性の最低ライン</strong>。これを超えると短期借入依存で危険<br>
+      &#x2022; 固定比率が高くても、固定長期適合率が100%以下なら<strong>「長期資金でカバーできている」</strong>と判断<br>
+      &#x2022; 固定比率と固定長期適合率は<strong>セットで出題</strong>されることが非常に多い
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        最後にまとめると ―<br>
+        <strong>固定長期適合率 ＝「この会社、設備投資を長期の資金でまかなえてる？」を見る指標</strong>。<br>
+        固定比率の「ゆるい版」で、<strong>100%以下が安全性の最低ライン</strong>。<br>
+        固定比率が100%を超えていても、固定長期適合率が100%以下なら<strong>「長期の借金でちゃんとカバーできてるから大丈夫」</strong>と判断できるよ！
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 6: ROA (ORANGE) ==================== -->
+  <div class="tab-panel theme-orange" id="tab_roa">
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F3E2;</span> ROA（総資本経常利益率）</h2>
+
+    <div class="roa-roe-tag" style="font-size:1.02rem;">
+      💡 <strong>一言でいうと</strong>：<span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+    </div>
+
+    <!-- 2大ポイント -->
+    <div class="point-box pb-orange">
+      <h4>&#x2B50; ROAの2大ポイント</h4>
+      <div class="two-col">
+        <div class="card card-orange" style="margin:0;">
+          <h4>① 会社全体の稼ぐ実力</h4>
+          <p style="font-size:0.88rem;">借金も自分の金も<strong>全部</strong>ひっくるめて、どれだけ稼げたか。<br>経営者・取引先が見る「会社の実力値」。</p>
+        </div>
+        <div class="card card-red" style="margin:0;">
+          <h4>② 2要素の掛け算に分解できる</h4>
+          <p style="font-size:0.88rem;"><strong>ROA ＝ 売上高経常利益率 × 総資本回転率</strong><br>利益率（1個あたり儲け）×回転率（何個売った）。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 公式 -->
+    <div class="formula-box">
+      ROA ＝ 経常利益 ÷ 総資本 × 100（%）<br>
+      <span style="font-size:0.8rem;color:#ffb74d;">※ 総資本は期中平均（期首＋期末）÷2 を使う</span>
+    </div>
+
+    <!-- 会話 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        なぜ「経常利益」なの？営業利益や純利益じゃダメ？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ROAは<strong>会社全体</strong>を見る指標だから、本業（営業利益）＋副業（営業外）もひっくるめた<strong>経常利益</strong>を使うんだ。「<strong>総資本で稼いだすべての利益</strong>」を見るから経常利益がしっくりくるんだよ。
+      </div>
+    </div>
+
+    <!-- 🧩 分解公式 -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F52C;</span> ROAの分解（超重要！）</h2>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--orange-dark);">ROA ＝ 売上高経常利益率 × 総資本回転率</div>
+      <div class="flow-row">
+        <div class="flow-box fb-orange" style="min-width:130px;">ROA<small>経常利益÷総資本</small></div>
+        <div class="flow-arrow" style="color:var(--orange-main);">=</div>
+        <div class="flow-box fb-red" style="min-width:150px;">売上高経常利益率<small>経常利益÷売上高</small></div>
+        <div class="flow-arrow" style="color:var(--orange-main);">×</div>
+        <div class="flow-box fb-green" style="min-width:130px;">総資本回転率<small>売上高÷総資本</small></div>
+      </div>
+      <p style="text-align:center; font-size:0.85rem; color:var(--gray-mid); margin-top:0.6rem;">💡 売上高が<strong>約分</strong>されて元のROAに戻る！</p>
+    </div>
+
+    <!-- 数式で確認 -->
+    <div class="card card-purple">
+      <h4>&#x1F9EE; 式変形で確認</h4>
+      <div style="background:var(--gray-pale); padding:0.6rem 0.8rem; border-radius:6px; font-family:monospace; font-size:0.95rem; line-height:2; text-align:center;">
+        ROA ＝ 経常利益 ÷ 総資本<br>
+        ＝ (経常利益 ÷ <strong style="color:var(--red-main);">売上高</strong>) × (<strong style="color:var(--red-main);">売上高</strong> ÷ 総資本)<br>
+        ＝ 売上高経常利益率 × 総資本回転率
+      </div>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.4rem;">分子と分母の間に<strong>「売上高」を挟み込む</strong>と、2つの指標の掛け算に分解できる！</p>
+    </div>
+
+    <!-- 身近な例え -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        ROAは「<strong>1個あたりの儲け</strong>（利益率）× <strong>何個売ったか</strong>（回転率）」。<br>
+        &#x1F363; <strong>回転寿司（くら寿司）</strong>：利益率低いが回転率高い → ROA高い<br>
+        &#x1F35A; <strong>高級フレンチ</strong>：利益率高いが回転率低い → ROA高い<br>
+        <strong>どちらのビジネスモデルでも</strong>ROAは高くできる！
+      </div>
+    </div>
+
+    <!-- 2社比較 -->
+    <div class="card card-orange">
+      <h4>&#x1F4CA; 2社比較で実感しよう</h4>
+      <table class="tbl-orange" style="font-size:0.9rem;">
+        <tr><th>会社</th><th>利益率</th><th>×</th><th>回転率</th><th>=</th><th>ROA</th></tr>
+        <tr><td>🍣 回転寿司A</td><td>3%</td><td>×</td><td>2.0回</td><td>=</td><td style="font-weight:700; color:var(--orange-dark);">6%</td></tr>
+        <tr><td>🍽 高級店B</td><td>15%</td><td>×</td><td>0.4回</td><td>=</td><td style="font-weight:700; color:var(--orange-dark);">6%</td></tr>
+      </table>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.4rem;">💡 同じROAでも<strong>戦略は真逆</strong>。分解するから見える！</p>
+    </div>
+
+    <!-- 目安 -->
+    <div class="card card-green">
+      <h4>&#x1F4CA; 目安水準</h4>
+      <table style="width:100%;font-size:0.85rem;">
+        <tr><th style="background:var(--gray-pale);width:25%;">水準</th><th>意味</th></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--red-main);">2%未満</td><td>&#x26A0; 低い。利益率か回転率のどちらかに問題あり</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--orange-main);">3〜5%</td><td>日本企業の中央値</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--green-main);">5〜10%</td><td>&#x2705; 良好。資産効率が高い</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--blue-main);">10%以上</td><td>&#x1F3C6; 優良企業</td></tr>
+      </table>
+    </div>
+
+    <!-- ひっかけ -->
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">試験での引っかけ</div>
+        ① 分子が<strong>「経常利益」</strong>であって営業利益や純利益ではない！<br>
+        ② 分母は<strong>期中平均</strong>（期首＋期末）÷2 を使う（フロー÷ストックの基準合わせ）<br>
+        ③ <strong>ROAの分解 ＝ 売上高"経常"利益率 × 総資本回転率</strong>（分子の利益種類に注意）
+      </div>
+    </div>
+
+    <!-- 穴埋め -->
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270D;&#xFE0F;</span> ROA 穴埋めチェック</h2>
+    <div class="fill-card">
+      <div class="fill-header st-orange">ROA クイック確認</div>
+      <div class="fill-body">
+        <div class="fill-group">① ROA ＝ <span class="fill-blank">経常利益</span> ÷ <span class="fill-blank">総資本</span> × 100</div>
+        <div class="fill-group">② 一言で：ROA ＝ <span class="fill-blank">会社全体の実力</span></div>
+        <div class="fill-group">③ 分解公式：ROA ＝ <span class="fill-blank">売上高経常利益率</span> × <span class="fill-blank">総資本回転率</span></div>
+        <div class="fill-group">④ 約分で消える項目は <span class="fill-blank">売上高</span></div>
+        <div class="fill-group">⑤ 経常利益200・総資本2,500 → ROA＝<span class="fill-blank">8%</span></div>
+        <div class="fill-group">⑥ 利益率5%・回転率1.5回 → ROA＝<span class="fill-blank">7.5%</span></div>
+        <div class="fill-group">⑦ 分母の総資本は<span class="fill-blank">期中平均</span>を使う（フロー÷ストックのため）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 7: ROE (PURPLE) ==================== -->
+  <div class="tab-panel theme-purple" id="tab_roe">
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4B0;</span> ROE（自己資本当期純利益率）</h2>
+
+    <div class="roa-roe-tag" style="font-size:1.02rem;">
+      💡 <strong>一言でいうと</strong>：<span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+    </div>
+
+    <!-- 2大ポイント -->
+    <div class="point-box pb-purple">
+      <h4>&#x2B50; ROEの2大ポイント</h4>
+      <div class="two-col">
+        <div class="card card-purple" style="margin:0;">
+          <h4>① 株主から見た投資効率</h4>
+          <p style="font-size:0.88rem;">「<strong>俺が出した金</strong>で最終いくら残った？」<br>株主・投資家が投資判断で最も重視する指標。</p>
+        </div>
+        <div class="card card-red" style="margin:0;">
+          <h4>② 3要素に分解できる（デュポン分解）</h4>
+          <p style="font-size:0.88rem;"><strong>ROE ＝ 利益率 × 回転率 × 財務レバレッジ</strong><br>収益性・効率性・借入活用の3軸で見る。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 公式 -->
+    <div class="formula-box">
+      ROE ＝ 当期純利益 ÷ 自己資本 × 100（%）<br>
+      <span style="font-size:0.8rem;color:#ffb74d;">※ 自己資本は期中平均を使う</span>
+    </div>
+
+    <!-- 会話 -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        ROAと違って「当期純利益」を使うのはなぜ？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ROEは<strong>株主の取り分</strong>を見る指標。税金もすべて引いた<strong>最終利益（当期純利益）</strong>こそが、株主に配当・内部留保として回せるお金。だから純利益を使うんだ。
+      </div>
+    </div>
+
+    <!-- 🧩 デュポン分解 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F52C;</span> ROEの分解（デュポン分解）</h2>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--purple-dark);">ROE ＝ 売上高当期純利益率 × 総資本回転率 × 財務レバレッジ</div>
+      <div class="flow-row" style="flex-wrap:wrap;">
+        <div class="flow-box fb-purple" style="min-width:120px;">ROE<small>純利益÷自己資本</small></div>
+        <div class="flow-arrow" style="color:var(--purple-main);">=</div>
+        <div class="flow-box fb-red" style="min-width:130px;">利益率<small>純利益÷売上高</small></div>
+        <div class="flow-arrow" style="color:var(--purple-main);">×</div>
+        <div class="flow-box fb-green" style="min-width:120px;">回転率<small>売上高÷総資本</small></div>
+        <div class="flow-arrow" style="color:var(--purple-main);">×</div>
+        <div class="flow-box fb-orange" style="min-width:130px;">財務レバレッジ<small>総資本÷自己資本</small></div>
+      </div>
+      <p style="text-align:center; font-size:0.85rem; color:var(--gray-mid); margin-top:0.6rem;">💡 <strong>収益性 × 効率性 × 安全性</strong> の3つを一気に見られる式！</p>
+    </div>
+
+    <!-- 数式で確認 -->
+    <div class="card card-purple">
+      <h4>&#x1F9EE; 式変形で確認</h4>
+      <div style="background:var(--gray-pale); padding:0.6rem 0.8rem; border-radius:6px; font-family:monospace; font-size:0.9rem; line-height:2; text-align:center;">
+        ROE ＝ 純利益 ÷ 自己資本<br>
+        ＝ (純利益 ÷ <strong style="color:var(--red-main);">売上高</strong>) × (<strong style="color:var(--red-main);">売上高</strong> ÷ <strong style="color:var(--blue-main);">総資本</strong>) × (<strong style="color:var(--blue-main);">総資本</strong> ÷ 自己資本)<br>
+        ＝ 売上高純利益率 × 総資本回転率 × 財務レバレッジ
+      </div>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.4rem;"><strong>「売上高」と「総資本」を挟み込む</strong>と、3つの指標の掛け算になる！</p>
+    </div>
+
+    <!-- 3要素の意味 -->
+    <div class="card card-blue">
+      <h4>&#x1F9ED; 3要素がそれぞれ何を表すか</h4>
+      <table class="tbl-blue" style="font-size:0.88rem;">
+        <tr><th>要素</th><th>式</th><th>見ているもの</th></tr>
+        <tr><td><strong>売上高純利益率</strong></td><td>純利益÷売上高</td><td>💰 <strong>収益性</strong>（1円売って何円残るか）</td></tr>
+        <tr><td><strong>総資本回転率</strong></td><td>売上高÷総資本</td><td>🔄 <strong>効率性</strong>（資産を何回回したか）</td></tr>
+        <tr><td><strong>財務レバレッジ</strong></td><td>総資本÷自己資本</td><td>⚖ <strong>借入の活用度</strong>（自己資本比率の逆数）</td></tr>
+      </table>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.4rem;">💡 財務レバレッジ ＝ 1 ÷ 自己資本比率。自己資本比率40% → レバレッジ2.5倍。</p>
+    </div>
+
+    <!-- レバレッジ効果の例え -->
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">レバレッジの仕組み</div>
+        借金で資産を増やすと、<strong>同じ利益でもROEは上がる</strong>。<br>
+        例：自己資本100万で利益10万 → ROE 10%<br>
+        借金を200万足し、合計300万の資産で利益30万なら（利益率は同じ）→ ROE 30%！<br>
+        ただし<strong>リスクも3倍</strong>になる点が要注意。
+      </div>
+    </div>
+
+    <!-- 具体例 -->
+    <div class="card card-orange">
+      <h4>&#x1F4CA; 2社比較でROEの仕組みを体感</h4>
+      <table class="tbl-orange" style="font-size:0.88rem;">
+        <tr><th>会社</th><th>利益率</th><th>回転率</th><th>レバレッジ</th><th>= ROE</th></tr>
+        <tr><td>A社（無借金）</td><td>5%</td><td>1.0回</td><td>1.0倍</td><td style="font-weight:700; color:var(--purple-dark);">5%</td></tr>
+        <tr><td>B社（平均）</td><td>5%</td><td>1.0回</td><td>2.5倍</td><td style="font-weight:700; color:var(--purple-dark);">12.5%</td></tr>
+        <tr><td>C社（高レバ）</td><td>5%</td><td>1.0回</td><td>5.0倍</td><td style="font-weight:700; color:var(--purple-dark);">25%</td></tr>
+      </table>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.4rem;">💡 利益率・回転率が同じでも<strong>借入を増やすだけでROEは倍々</strong>に！ただしC社は倒産リスクも最大。</p>
+    </div>
+
+    <!-- ROA vs ROE の関係 -->
+    <div class="alert-danger">
+      <strong>&#x1F517; ROAとROEの関係式</strong><br>
+      <div style="background:var(--white); padding:0.5rem 0.8rem; border-radius:6px; font-family:monospace; font-weight:700; margin:0.4rem 0; text-align:center;">
+        ROE ≒ ROA × 財務レバレッジ
+      </div>
+      （厳密には分子の利益種類が異なるが、概念的にはこの関係）<br>
+      &#x27A1; <strong>ROAが同じでも、借金を増やせばROEは上がる</strong>。だから投資家は<strong>ROAとROEの両方</strong>を見て判断する！
+    </div>
+
+    <!-- 目安 -->
+    <div class="card card-green">
+      <h4>&#x1F4CA; 目安水準</h4>
+      <table style="width:100%;font-size:0.85rem;">
+        <tr><th style="background:var(--gray-pale);width:25%;">水準</th><th>意味</th></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--red-main);">5%未満</td><td>&#x26A0; 低い。株主目線で魅力に欠ける</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--orange-main);">5〜8%</td><td>日本企業の平均（やや低め）</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--green-main);">8〜15%</td><td>&#x2705; 良好。株主にとって魅力的</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:var(--blue-main);">15%以上</td><td>&#x1F3C6; 優良。ただし借入レバレッジの確認必須</td></tr>
+      </table>
+      <p style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.4rem;">💡 米国企業の平均ROEは約15%、日本は約8%。伊藤レポートが「8%以上」を目指すよう提言。</p>
+    </div>
+
+    <!-- ひっかけ -->
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">試験での引っかけ</div>
+        ① 分子は<strong>「当期純利益」</strong>（経常利益ではない！）<br>
+        ② 分母は<strong>「自己資本」だけ</strong>（総資本ではない！）<br>
+        ③ <strong>ROEが高い＝健全とは限らない</strong>（高レバレッジで押し上げているケース）<br>
+        ④ デュポン分解の要素は<strong>利益率・回転率・財務レバレッジ</strong>の3つ
+      </div>
+    </div>
+
+    <!-- ROA vs ROE 比較 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x2696;</span> ROA vs ROE 完全比較</h2>
+
+    <table class="tbl-blue" style="font-size:0.88rem;">
+      <tr><th style="width:22%;"></th><th style="background:var(--orange-pale);color:var(--orange-dark);">ROA</th><th style="background:var(--purple-light);color:var(--purple-dark);">ROE</th></tr>
+      <tr><td><strong>一言で</strong></td><td>🏢 会社全体の実力</td><td>💰 株主投資の効率</td></tr>
+      <tr><td><strong>視点</strong></td><td>経営者・取引先</td><td>株主・投資家</td></tr>
+      <tr><td><strong>分子</strong></td><td>経常利益（途中）</td><td>当期純利益（最終）</td></tr>
+      <tr><td><strong>分母</strong></td><td>総資本（All 全部）</td><td>自己資本（自分だけ）</td></tr>
+      <tr><td><strong>分解</strong></td><td>利益率 × 回転率<br><small>（2要素）</small></td><td>利益率 × 回転率 × 財務レバレッジ<br><small>（3要素＝デュポン分解）</small></td></tr>
+      <tr><td><strong>目安</strong></td><td>5%以上で良好</td><td>8%以上で良好</td></tr>
+      <tr><td><strong>注意点</strong></td><td>業種による差が大きい</td><td>借入で操作可能 → 要ROAと併用</td></tr>
+    </table>
+
+    <div class="mnemonic">
+      <div class="big" style="font-size:1.2rem;">ROA × 財務レバレッジ ≒ ROE</div>
+      <div class="desc">
+        ROE の「かさ上げ部分」は<strong>借入から</strong>。<br>
+        ROEが高い会社を見たら「本当の実力（ROA）はいくら？」を必ず確認！
+      </div>
+    </div>
+
+    <!-- 穴埋め -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x270D;&#xFE0F;</span> ROE 穴埋めチェック</h2>
+    <div class="fill-card">
+      <div class="fill-header st-purple">ROE クイック確認</div>
+      <div class="fill-body">
+        <div class="fill-group">① ROE ＝ <span class="fill-blank">当期純利益</span> ÷ <span class="fill-blank">自己資本</span> × 100</div>
+        <div class="fill-group">② 一言で：ROE ＝ <span class="fill-blank">株主投資の効率</span></div>
+        <div class="fill-group">③ デュポン分解：ROE ＝ <span class="fill-blank">売上高純利益率</span> × <span class="fill-blank">総資本回転率</span> × <span class="fill-blank">財務レバレッジ</span></div>
+        <div class="fill-group">④ 財務レバレッジ ＝ <span class="fill-blank">総資本</span> ÷ 自己資本 ＝ 1 ÷ <span class="fill-blank">自己資本比率</span></div>
+        <div class="fill-group">⑤ 自己資本比率40% → 財務レバレッジ＝<span class="fill-blank">2.5倍</span></div>
+        <div class="fill-group">⑥ 関係式：ROE ≒ <span class="fill-blank">ROA</span> × 財務レバレッジ</div>
+        <div class="fill-group">⑦ ROEが高い＝健全とは限らない。借入による<span class="fill-blank">レバレッジ</span>で押し上げているケースに注意</div>
+        <div class="fill-group">⑧ 利益率5%・回転率1.0・レバレッジ2.5倍 → ROE＝<span class="fill-blank">12.5%</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 8: 語呂合わせ穴埋め (PURPLE) ==================== -->
+  <div class="tab-panel theme-purple" id="tab6">
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3B5;</span> 語呂合わせ穴埋め</h2>
+
+    <div style="background:var(--white);border-radius:var(--radius);padding:0.7rem;margin-bottom:0.8rem;box-shadow:var(--shadow);">
+      <p style="font-size:0.9rem;line-height:1.7;">語呂で覚えた内容を穴埋めでチェック！<br>語呂のキーワードから正式な勘定科目を思い出そう。</p>
+    </div>
+
+    <button class="fill-reveal-btn" onclick="revealAllFill()" style="background:#7b1fa2;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAllFill()" style="background:#64748b;">&#x1F504; リセット</button>
+
+    <div class="fill-card">
+      <div class="fill-header st-purple">Q1. 当座資産の構成要素（5つ）</div>
+      <div class="fill-body">
+        <div class="fill-group">
+          当座資産 ＝ <span class="fill-blank">現金預金</span> + <span class="fill-blank">受取手形</span> + <span class="fill-blank">売掛金</span> + <span class="fill-blank">有価証券</span> &#x2212; <span class="fill-blank">貸倒引当金</span>
+        </div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div style="margin-top:0.5rem;">
+          <button class="fill-reveal-btn hint-toggle-btn" style="background:#7b1fa2;" onclick="this.nextElementSibling.style.display='block';this.style.display='none';">&#x1F4A1; 語呂ヒントを見る</button>
+          <div class="hint-panel" style="display:none;background:#f3e5f5;border-radius:8px;padding:0.6rem 0.8rem;margin-top:0.3rem;font-size:0.9rem;line-height:1.8;">
+            <strong style="color:#7b1fa2;letter-spacing:0.1em;">げんきん・うけ・うり・あり・だおれ</strong><br>
+            <strong>げんきん</strong> ＝ <span class="fill-blank">現金預金</span>
+            <strong>うけ</strong> ＝ <span class="fill-blank">受取手形</span>
+            <strong>うり</strong> ＝ <span class="fill-blank">売掛金</span><br>
+            <strong>あり</strong> ＝ <span class="fill-blank">有価証券</span>
+            <strong>だおれ</strong> ＝ <span class="fill-blank">貸倒引当金</span>（マイナス）
+            <br><button class="fill-reveal-btn" onclick="revealBlanks(this.parentElement)" style="margin-top:0.3rem;">語呂の対応を見る</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<!-- ==================== TAB 7: 穴埋めチェック ==================== -->
+<div class="tab-panel theme-red" id="tab7">
+
+  <h2 class="section-title st-red"><span class="st-icon">&#x270D;&#xFE0F;</span> 穴埋めチェック</h2>
+
+  <div style="background:var(--white);border-radius:var(--radius);padding:0.7rem;margin-bottom:0.8rem;box-shadow:var(--shadow);">
+    <p style="font-size:0.9rem;line-height:1.7;">入門・基本事項の重要ポイントを穴埋めで総チェック！<br>各穴をクリックしても答えが出るよ。</p>
+  </div>
+
+  <div style="text-align:right;margin-bottom:0.8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFill()" style="background:#059669;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAllFill()" style="background:#64748b;">&#x1F504; リセット</button>
+  </div>
+
+  <!-- Q1: 収益性の基本指標 -->
+  <div class="fill-card">
+    <div class="fill-header st-blue">Q1. 収益性の基本指標</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x2460; 売上高営業利益率 ＝ <span class="fill-blank">営業利益</span> ÷ <span class="fill-blank">売上高</span> × 100（%）<br>&#x2461; ROA（総資本経常利益率）＝ <span class="fill-blank">経常利益</span> ÷ <span class="fill-blank">総資本</span> × 100（%）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+      <div class="fill-group">&#x2462; ROE（自己資本当期純利益率）＝ <span class="fill-blank">当期純利益</span> ÷ <span class="fill-blank">自己資本</span> × 100（%）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462; の答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q2: ROAとROEの違い -->
+  <div class="fill-card">
+    <div class="fill-header st-blue">Q2. ROAとROEの覚え方</div>
+    <div class="fill-body">
+      <div class="fill-group">ROAのA ＝ <span class="fill-blank">All（全部の資本）</span> → 分母は<span class="fill-blank">総資本</span>、分子は<span class="fill-blank">経常利益</span><br>ROEのE ＝ <span class="fill-blank">Equity（自分の資本）</span> → 分母は<span class="fill-blank">自己資本</span>、分子は<span class="fill-blank">当期純利益</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group" style="margin-top:0.4rem;">一言で：ROA ＝ <span class="fill-blank">会社全体の実力</span>／ROE ＝ <span class="fill-blank">株主投資の効率</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="roa-roe-tag">
+        💡 <span class="roa-label">ROA＝会社全体の実力</span><span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3: ROAの分解 -->
+  <div class="fill-card">
+    <div class="fill-header st-blue">Q3. ROAの分解公式</div>
+    <div class="fill-body">
+      <div class="fill-group">ROA ＝ <span class="fill-blank">売上高経常利益率</span> × <span class="fill-blank">総資本回転率</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">つまり「<span class="fill-blank">利益率</span>」と「<span class="fill-blank">資産の回転効率</span>」の掛け算で総合力が決まる。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q4: 安全性（短期） -->
+  <div class="fill-card">
+    <div class="fill-header st-green">Q4. 安全性分析（短期）</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x2460; 流動比率 ＝ <span class="fill-blank">流動資産</span> ÷ <span class="fill-blank">流動負債</span> × 100（%）　目安：<span class="fill-blank">200%</span>以上<br>&#x2461; 当座比率 ＝ <span class="fill-blank">当座資産</span> ÷ 流動負債 × 100（%）　目安：<span class="fill-blank">100%</span>以上</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+      <div class="fill-group">当座資産 ＝ 流動資産 - <span class="fill-blank">棚卸資産</span> - <span class="fill-blank">前払費用</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q5: 安全性（長期） -->
+  <div class="fill-card">
+    <div class="fill-header st-green">Q5. 安全性分析（長期・財務構造）</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x2460; 自己資本比率 ＝ <span class="fill-blank">自己資本</span> ÷ 総資本 × 100（%）→ <span class="fill-blank">高い</span>ほうがいい<br>&#x2461; 負債比率 ＝ <span class="fill-blank">負債</span> ÷ 自己資本 × 100（%）→ <span class="fill-blank">低い</span>ほうがいい</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+      <div class="fill-group">&#x2462; 固定比率 ＝ <span class="fill-blank">固定資産</span> ÷ <span class="fill-blank">自己資本</span> × 100（%）→ 目安<span class="fill-blank">100%</span>以下<br>&#x2463; 固定長期適合率 ＝ 固定資産 ÷ （自己資本 + <span class="fill-blank">固定負債</span>）× 100（%）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462;&#x2463; の答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q6: 効率性分析 -->
+  <div class="fill-card">
+    <div class="fill-header st-orange">Q6. 効率性分析</div>
+    <div class="fill-body">
+      <div class="fill-group">効率性の指標は基本的に <span class="fill-blank">売上高</span> ÷ ○○ で計算する。<br>&#x2460; 総資本回転率 ＝ 売上高 ÷ <span class="fill-blank">総資本</span>（回）<br>&#x2461; 売上債権回転率 ＝ 売上高 ÷ <span class="fill-blank">売上債権</span>（回）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+      <div class="fill-group">&#x2462; 棚卸資産回転率 ＝ 売上高 ÷ <span class="fill-blank">棚卸資産</span>（回）<br>回転期間（日）＝ <span class="fill-blank">365</span> ÷ 回転率 → <span class="fill-blank">短い</span>ほうがいい</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462; と回転期間の答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q7: 生産性分析 -->
+  <div class="fill-card">
+    <div class="fill-header st-purple">Q7. 生産性分析</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x2460; 労働生産性 ＝ <span class="fill-blank">付加価値</span> ÷ <span class="fill-blank">従業員数</span>（円/人）→ 高いほうがいい<br>&#x2461; 労働分配率 ＝ <span class="fill-blank">人件費</span> ÷ 付加価値 × 100（%）→ <span class="fill-blank">低い</span>ほうがいい</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+      <div class="fill-group">&#x2462; 労働装備率 ＝ <span class="fill-blank">有形固定資産</span> ÷ 従業員数<br>&#x2463; 付加価値率 ＝ 付加価値 ÷ <span class="fill-blank">売上高</span> × 100（%）→ <span class="fill-blank">高い</span>ほうがいい</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462;&#x2463; の答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q8: 方向性（高い vs 低い） -->
+  <div class="fill-card">
+    <div class="fill-header st-red">Q8. 高い・低いどっちがいい？</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x30FB; 売上高営業利益率 → <span class="fill-blank">高い</span>ほうがいい<br>&#x30FB; 流動比率 → <span class="fill-blank">高い</span>ほうがいい<br>&#x30FB; 負債比率 → <span class="fill-blank">低い</span>ほうがいい</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">&#x30FB; 固定比率 → <span class="fill-blank">低い</span>ほうがいい<br>&#x30FB; 総資本回転率 → <span class="fill-blank">高い</span>ほうがいい<br>&#x30FB; 労働分配率 → <span class="fill-blank">低い</span>ほうがいい</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q9: フロー vs ストックと期中平均 -->
+  <div class="fill-card">
+    <div class="fill-header st-red">Q9. フロー vs ストックと期中平均</div>
+    <div class="fill-body">
+      <div class="fill-group">P/Lの数字（利益・売上高）＝ 1年間の累計 → <span class="fill-blank">フロー</span><br>B/Sの数字（資本・資産）＝ ある1日の残高 → <span class="fill-blank">ストック</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">フロー ÷ ストック の指標では、基準を合わせるためにストック側に<span class="fill-blank">期中平均</span>を使う。<br>期中平均 ＝ （<span class="fill-blank">期首</span> + <span class="fill-blank">期末</span>）÷ 2</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">期中平均が必要な指標：<span class="fill-blank">ROA</span>・<span class="fill-blank">ROE</span>・<span class="fill-blank">総資本回転率</span>・売上債権回転率・棚卸資産回転率・有形固定資産回転率</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">流動比率・自己資本比率・固定比率などは<span class="fill-blank">ストック÷ストック</span>なので期中平均は<span class="fill-blank">不要</span>。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+</div>
+
+  <!-- ==================== TAB 8: シミュレーション (TEAL) ==================== -->
+  <div class="tab-panel theme-teal" id="tab8">
+
+    <div class="point-box pb-teal">
+      <h4>&#x1F3EA; このタブで学ぶこと</h4>
+      <ul>
+        <li>架空の中小企業の<strong>リアルな数字</strong>を使って経営分析を実践</li>
+        <li>数字から<strong>問題点を見つけ</strong>、改善策を考える</li>
+        <li>勘定科目がどう指標に<strong>結びつくか</strong>を体感する</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-pm">&#x1F4CB;</div>
+      <div class="bubble-body b-purple">
+        <div class="bubble-name">PM</div>
+        実際の数字を使ってシミュレーションしましょう。中小企業あるあるの<strong>3つのパターン</strong>を用意しました。
+      </div>
+    </div>
+
+    <!-- Simulation 1 -->
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F35C;</span> ケース1：ラーメン屋「麺太郎」</h2>
+
+    <div class="sim-company">
+      <h3>&#x1F35C; ラーメン屋「麺太郎」の財務データ</h3>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-bottom:0.5rem;">創業5年目の個人経営ラーメン店。最近売上は好調だが、なぜか手元にお金が残らない...</p>
+      <div class="sim-data">
+        <div class="sim-data-item"><div class="sim-label">売上高</div><div class="sim-value">3,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">売上総利益</div><div class="sim-value">1,800万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">営業利益</div><div class="sim-value">150万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">経常利益</div><div class="sim-value">120万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">総資本</div><div class="sim-value">2,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">自己資本</div><div class="sim-value">400万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">流動資産</div><div class="sim-value">500万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">流動負債</div><div class="sim-value">600万円</div></div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-creator">&#x270D;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">作成エージェント</div>
+        では、この数字で経営分析してみましょう！
+      </div>
+    </div>
+
+    <div class="sim-result">
+      <h4 style="color:var(--green-dark);margin-bottom:0.5rem;">&#x1F4CA; 分析結果</h4>
+      <table class="tbl-teal">
+        <tr><th>指標</th><th>計算</th><th>結果</th><th>判定</th></tr>
+        <tr><td>売上高総利益率</td><td>1,800&#xF7;3,000</td><td>60%</td><td style="color:var(--green-main);font-weight:700;">&#x2B55; 良い</td></tr>
+        <tr><td>売上高営業利益率</td><td>150&#xF7;3,000</td><td>5%</td><td style="color:var(--orange-main);font-weight:700;">&#x25B3; 低め</td></tr>
+        <tr><td>ROA<br><span style="font-size:0.7rem;color:var(--orange-dark);">🏢 会社全体の実力</span></td><td>120&#xF7;2,000</td><td>6%</td><td style="color:var(--orange-main);font-weight:700;">&#x25B3; 低め</td></tr>
+        <tr><td>流動比率</td><td>500&#xF7;600</td><td>83%</td><td style="color:var(--red-main);font-weight:700;">&#x2716; 危険！</td></tr>
+        <tr><td>自己資本比率</td><td>400&#xF7;2,000</td><td>20%</td><td style="color:var(--red-main);font-weight:700;">&#x2716; 低い</td></tr>
+      </table>
+      <div class="roa-roe-tag" style="margin-top:0.5rem;">
+        💡 <span class="roa-label">ROA＝会社全体の実力</span>6%は低め<span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>も見ればさらに深い分析ができる
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-critic">&#x1F9D0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">批評エージェント</div>
+        <strong>問題点が見えました！</strong><br>
+        &#x2460; 粗利率60%は良いのに営業利益率5%→<strong>販管費（人件費・家賃）が高すぎる</strong><br>
+        &#x2461; 流動比率83%→<strong>100%未満で短期の支払いが危険</strong><br>
+        &#x2462; 自己資本比率20%→<strong>借金頼みの経営</strong>
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4A1; 麺太郎への処方箋</h4>
+      <ul>
+        <li><strong>人件費の見直し</strong>：シフトの最適化で販管費を下げる → 営業利益率の改善</li>
+        <li><strong>在庫管理の徹底</strong>：スープの食材ロスを減らす → 粗利率の維持</li>
+        <li><strong>短期借入金の返済</strong>：流動負債を減らして流動比率を改善</li>
+      </ul>
+    </div>
+
+    <!-- Simulation 2 -->
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F6CD;</span> ケース2：雑貨店「ひなた商店」</h2>
+
+    <div class="sim-company">
+      <h3>&#x1F6CD; 雑貨店「ひなた商店」の財務データ</h3>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-bottom:0.5rem;">地方の商店街でハンドメイド雑貨を販売。常連客はいるが、在庫がどんどん増えていく...</p>
+      <div class="sim-data">
+        <div class="sim-data-item"><div class="sim-label">売上高</div><div class="sim-value">1,200万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">営業利益</div><div class="sim-value">60万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">経常利益</div><div class="sim-value">40万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">総資本</div><div class="sim-value">1,500万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">棚卸資産</div><div class="sim-value">800万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">売上債権</div><div class="sim-value">200万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">従業員数</div><div class="sim-value">3人</div></div>
+        <div class="sim-data-item"><div class="sim-label">付加価値</div><div class="sim-value">600万円</div></div>
+      </div>
+    </div>
+
+    <div class="sim-result">
+      <h4 style="color:var(--green-dark);margin-bottom:0.5rem;">&#x1F4CA; 分析結果</h4>
+      <table class="tbl-teal">
+        <tr><th>指標</th><th>計算</th><th>結果</th><th>判定</th></tr>
+        <tr><td>総資本回転率</td><td>1,200&#xF7;1,500</td><td>0.8回</td><td style="color:var(--red-main);font-weight:700;">&#x2716; 低い</td></tr>
+        <tr><td>棚卸資産回転率</td><td>1,200&#xF7;800</td><td>1.5回</td><td style="color:var(--red-main);font-weight:700;">&#x2716; 超低い</td></tr>
+        <tr><td>売上債権回転率</td><td>1,200&#xF7;200</td><td>6回</td><td style="color:var(--orange-main);font-weight:700;">&#x25B3; やや低い</td></tr>
+        <tr><td>労働生産性</td><td>600&#xF7;3</td><td>200万/人</td><td style="color:var(--orange-main);font-weight:700;">&#x25B3; 低め</td></tr>
+      </table>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-planner">&#x1F5FA;</div>
+      <div class="bubble-body b-teal">
+        <div class="bubble-name">計画エージェント</div>
+        <strong>棚卸資産回転率1.5回</strong>は深刻です。在庫が売上高の約67%もある。<strong>在庫が8ヶ月分</strong>もたまっている計算です！回転期間で言うと365&#xF7;1.5＝<strong>約243日</strong>。
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4A1; ひなた商店への処方箋</h4>
+      <ul>
+        <li><strong>セール・在庫処分</strong>：売れない在庫を特価で処分 → 棚卸資産回転率アップ</li>
+        <li><strong>仕入れの見直し</strong>：少量多頻度仕入れに切り替え → 在庫の適正化</li>
+        <li><strong>ECサイト開設</strong>：販路拡大で売上アップ → 総資本回転率の改善</li>
+      </ul>
+    </div>
+
+    <!-- Simulation 3 -->
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F3D7;</span> ケース3：建設会社「丸山建設」</h2>
+
+    <div class="sim-company">
+      <h3>&#x1F3D7; 建設会社「丸山建設」の財務データ</h3>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-bottom:0.5rem;">創業30年の中堅建設会社。最近、大型設備投資をしたが、受注が伸びず不安...</p>
+      <div class="sim-data">
+        <div class="sim-data-item"><div class="sim-label">売上高</div><div class="sim-value">5,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">経常利益</div><div class="sim-value">250万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">当期純利益</div><div class="sim-value">180万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">固定資産</div><div class="sim-value">4,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">自己資本</div><div class="sim-value">2,500万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">固定負債</div><div class="sim-value">2,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">総資本</div><div class="sim-value">6,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">人件費</div><div class="sim-value">1,500万円</div></div>
+      </div>
+    </div>
+
+    <div class="sim-result">
+      <h4 style="color:var(--green-dark);margin-bottom:0.5rem;">&#x1F4CA; 分析結果</h4>
+      <table class="tbl-teal">
+        <tr><th>指標</th><th>計算</th><th>結果</th><th>判定</th></tr>
+        <tr><td>固定比率</td><td>4,000&#xF7;2,500</td><td>160%</td><td style="color:var(--red-main);font-weight:700;">&#x2716; 高い</td></tr>
+        <tr><td>固定長期適合率</td><td>4,000&#xF7;(2,500+2,000)</td><td>89%</td><td style="color:var(--green-main);font-weight:700;">&#x2B55; OK</td></tr>
+        <tr><td>ROA<br><span style="font-size:0.7rem;color:var(--orange-dark);">🏢 会社全体の実力</span></td><td>250&#xF7;6,000</td><td>4.2%</td><td style="color:var(--orange-main);font-weight:700;">&#x25B3; 低め</td></tr>
+        <tr><td>ROE（参考）<br><span style="font-size:0.7rem;color:var(--purple-dark);">💰 株主投資の効率</span></td><td>180&#xF7;2,500</td><td>7.2%</td><td style="color:var(--orange-main);font-weight:700;">&#x25B3; 普通</td></tr>
+        <tr><td>自己資本比率</td><td>2,500&#xF7;6,000</td><td>42%</td><td style="color:var(--green-main);font-weight:700;">&#x2B55; まずまず</td></tr>
+      </table>
+      <div class="roa-roe-tag" style="margin-top:0.5rem;">
+        💡 <span class="roa-label">ROA＝会社全体の実力</span>4.2%／<span class="roe-label">ROE＝株主投資の効率</span>7.2%。借入レバレッジでROEが押し上げられている典型例
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-critic">&#x1F9D0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">批評エージェント</div>
+        <strong>固定比率160%</strong>→ 自己資本だけでは固定資産をまかなえていない。しかし<strong>固定長期適合率89%</strong>→ 長期借入を含めれば問題なし。これが<strong>2つの指標を見比べる意味</strong>です！
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>シミュレーションの学び</strong><br>
+      &#x2022; 1つの指標だけでは<strong>全体像が見えない</strong><br>
+      &#x2022; <strong>複数の指標を組み合わせて</strong>初めて正しい判断ができる<br>
+      &#x2022; 試験でも「この会社の問題点はどれか」形式で出題される！
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 9: 事例クイズ (ORANGE) ==================== -->
+  <div class="tab-panel theme-orange" id="tab9">
+
+    <div class="point-box pb-orange">
+      <h4>&#x1F3AF; このタブのゴール</h4>
+      <ul>
+        <li>身近な企業・お店の事例で<strong>親近感を持ちながら</strong>テスト</li>
+        <li>全8問で<strong>4カテゴリ</strong>すべてをカバー</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-pm">&#x1F4CB;</div>
+      <div class="bubble-body b-purple">
+        <div class="bubble-name">PM</div>
+        実際のお店や会社をイメージしたクイズです。まちがえたらタブ1・2に戻って復習しよう！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div><span class="quiz-cat qc-orange">収益性</span>
+      <div class="quiz-question">近所のパン屋さん。パンの売上が年間2,000万円、パンの材料費が600万円だった。売上高総利益率（粗利率）はいくらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q1', 2)">
+        <li data-idx="0">30%</li>
+        <li data-idx="1">60%</li>
+        <li data-idx="2">70%</li>
+        <li data-idx="3">40%</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>&#x2705; 正解：70%</strong><br>
+        売上総利益 = 2,000 &#x2212; 600 = 1,400万円<br>
+        売上高総利益率 = 1,400 &#xF7; 2,000 &#xD7; 100 = <strong>70%</strong><br>
+        パン屋さんは原材料費が比較的安く、粗利率が高い業種です！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div><span class="quiz-cat qc-blue">安全性</span>
+      <div class="quiz-question">あなたの家計で、来月までに使えるお金（流動資産）が50万円、来月までに払わなきゃいけないお金（流動負債）が30万円。流動比率として正しいのはどれ？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q2', 0)">
+        <li data-idx="0">約167%</li>
+        <li data-idx="1">約60%</li>
+        <li data-idx="2">約200%</li>
+        <li data-idx="3">約150%</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>&#x2705; 正解：約167%</strong><br>
+        流動比率 = 50 &#xF7; 30 &#xD7; 100 = <strong>約167%</strong><br>
+        100%以上あるので当面の支払いは問題なし。でも理想の200%にはもう少し！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div><span class="quiz-cat qc-green">効率性</span>
+      <div class="quiz-question">古着屋さんの売上高が年間1,000万円、棚卸資産（在庫）が500万円。棚卸資産回転率は何回？ また、在庫が1回転するのに何日かかる？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q3', 3)">
+        <li data-idx="0">5回、73日</li>
+        <li data-idx="1">0.5回、730日</li>
+        <li data-idx="2">2回、365日</li>
+        <li data-idx="3">2回、約183日</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>&#x2705; 正解：2回、約183日</strong><br>
+        回転率 = 1,000 &#xF7; 500 = <strong>2回</strong><br>
+        回転期間 = 365 &#xF7; 2 = <strong>約183日</strong><br>
+        在庫が半年に1回しか入れ替わらない...古着が売れ残っているかも？
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div><span class="quiz-cat qc-orange">収益性</span>
+      <div class="quiz-question">ROA（総資本経常利益率）を2つの指標に分解したとき、正しい組み合わせはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q4', 1)">
+        <li data-idx="0">売上高総利益率 &#xD7; 自己資本回転率</li>
+        <li data-idx="1">売上高経常利益率 &#xD7; 総資本回転率</li>
+        <li data-idx="2">売上高営業利益率 &#xD7; 総資本回転率</li>
+        <li data-idx="3">売上高当期純利益率 &#xD7; 固定資産回転率</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>&#x2705; 正解：売上高経常利益率 &#xD7; 総資本回転率</strong><br>
+        ROA = 経常利益/総資本 = (経常利益/売上高) &#xD7; (売上高/総資本)<br>
+        分子の「売上高」が約分されて消える！ <strong>ROAの分子は経常利益</strong>だから、売上高<strong>経常</strong>利益率がペアになる。
+        <div class="roa-roe-tag" style="margin-top:0.4rem;">
+          💡 <span class="roa-label">ROA＝会社全体の実力</span>＝利益率×回転率の掛け算<span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div><span class="quiz-cat qc-blue">安全性</span>
+      <div class="quiz-question">カフェを開くために3,000万円の物件を購入。自己資本は2,000万円、残りは10年の長期ローン。固定比率と固定長期適合率は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q5', 0)">
+        <li data-idx="0">固定比率150%、固定長期適合率100%</li>
+        <li data-idx="1">固定比率100%、固定長期適合率150%</li>
+        <li data-idx="2">固定比率67%、固定長期適合率100%</li>
+        <li data-idx="3">固定比率150%、固定長期適合率67%</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>&#x2705; 正解：固定比率150%、固定長期適合率100%</strong><br>
+        固定比率 = 3,000 &#xF7; 2,000 &#xD7; 100 = <strong>150%</strong>（自己資本だけでは足りない）<br>
+        固定長期適合率 = 3,000 &#xF7; (2,000+1,000) &#xD7; 100 = <strong>100%</strong>（長期資金でちょうどまかなえる）<br>
+        固定比率は100%超えても、固定長期適合率が100%以下なら「長期で見ればOK」と判断できる！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div><span class="quiz-cat qc-teal">生産性</span>
+      <div class="quiz-question">小さなIT企業。付加価値2,400万円、従業員4人、人件費1,800万円。労働分配率について正しいのはどれ？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q6', 2)">
+        <li data-idx="0">75%で、とても健全な水準</li>
+        <li data-idx="1">30%で、従業員に還元が少ない</li>
+        <li data-idx="2">75%で、人件費の割合がやや高い</li>
+        <li data-idx="3">50%で、バランスが良い</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>&#x2705; 正解：75%で、人件費の割合がやや高い</strong><br>
+        労働分配率 = 1,800 &#xF7; 2,400 &#xD7; 100 = <strong>75%</strong><br>
+        付加価値の4分の3が人件費に消えている。利益が残りにくい構造。労働分配率は<strong>低いほうが良い</strong>（ただし低すぎると待遇問題）。
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q7">
+      <div class="quiz-num">7</div><span class="quiz-cat qc-blue">安全性</span>
+      <div class="quiz-question">当座比率を計算するとき「当座資産」に含まれないものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q7', 3)">
+        <li data-idx="0">現金預金</li>
+        <li data-idx="1">受取手形</li>
+        <li data-idx="2">売掛金</li>
+        <li data-idx="3">棚卸資産</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        <strong>&#x2705; 正解：棚卸資産</strong><br>
+        当座資産 = 現金預金 + 受取手形 + 売掛金 + 有価証券<br>
+        <strong>棚卸資産（在庫）はすぐに現金化できないので除外</strong>する。これが流動比率との違い！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q8">
+      <div class="quiz-num">8</div><span class="quiz-cat qc-orange">収益性</span>
+      <div class="quiz-question">回転寿司チェーンA社と高級フレンチB社。どちらもROAは同じ10%だった。この理由として最も適切なのはどれ？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q8', 1)">
+        <li data-idx="0">両社とも売上高経常利益率と総資本回転率が同じだから</li>
+        <li data-idx="1">A社は薄利多売（低利益率・高回転）、B社は厚利少売（高利益率・低回転）で結果が同じ</li>
+        <li data-idx="2">回転寿司のほうが利益率が高いから</li>
+        <li data-idx="3">ROAは業種に関係なく常に同じになるから</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        <strong>&#x2705; 正解：A社は薄利多売、B社は厚利少売で結果が同じ</strong><br>
+        ROA = 売上高経常利益率 &#xD7; 総資本回転率<br>
+        A社：利益率2% &#xD7; 回転率5回 = <strong>10%</strong><br>
+        B社：利益率10% &#xD7; 回転率1回 = <strong>10%</strong><br>
+        <strong>利益率と回転率の掛け算</strong>なので、組み合わせが違っても同じROAになりうる！
+        <div class="roa-roe-tag" style="margin-top:0.4rem;">
+          💡 両社とも<span class="roa-label">ROA＝会社全体の実力</span>は同じ！<span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>は借入の使い方で差が出る
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+  </div>
+
+  <!-- ==================== TAB 10: 実例で学ぶ (PURPLE) ==================== -->
+  <div class="tab-panel theme-purple" id="tab10">
+
+    <div class="point-box pb-purple">
+      <h4>&#x1F4F0; このタブで学ぶこと</h4>
+      <p>表とにらめっこして覚えるのもいいですが、正直飽きてきますよね。少しでも覚えやすくなるように<strong>実際の企業の事例</strong>を集めました！「なぜその数字になったのか？」に思いをはせると理解が深まります。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-pm">&#x1F4CB;</div>
+      <div class="bubble-body b-purple">
+        <div class="bubble-name">PM</div>
+        有名企業のリアルな経営分析の事例です。「あの会社ってそうだったんだ！」と思えると記憶に残りますよ。
+      </div>
+    </div>
+
+    <!-- Story 1 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4B0;</span> 収益性の実例</h2>
+
+    <div class="story-card">
+      <h3>&#x1F363; くら寿司 vs 銀座の高級寿司店 ― ROAの分解を体感</h3>
+      <div class="story-meta">収益性分析 ｜ ROA＝売上高経常利益率&#xD7;総資本回転率</div>
+      <div class="story-body">
+        <p>回転寿司チェーン大手の<strong>くら寿司</strong>。1皿100〜150円の低価格で勝負し、1店舗あたりの回転数が非常に高いビジネスモデルです。</p>
+        <p>一方、<strong>銀座の高級寿司店</strong>は1回のお会計が2〜3万円。客数は少ないですが、1組あたりの利益率が圧倒的に高い。</p>
+        <p>どちらも経営として成立しているのは、<strong>ROAの分解</strong>で説明できます。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 経営分析の視点</strong><br>
+        &#x2022; くら寿司：売上高経常利益率は<strong>約3〜5%</strong>と低いが、総資本回転率が<strong>約1.5〜2回</strong>と高い<br>
+        &#x2022; 高級寿司：売上高経常利益率は<strong>約15〜20%</strong>と高いが、回転率は<strong>約0.5〜0.8回</strong>と低い<br>
+        &#x2022; 掛け算の結果（ROA）は、<strong>どちらも5〜10%程度</strong>になりうる<br>
+        &#x27A1; 「薄利多売」と「厚利少売」は<strong>どちらが正解でもない</strong>。ビジネスモデルに合った戦略が大事！
+      </div>
+      <div class="roa-roe-tag">
+        💡 <span class="roa-label">ROA＝会社全体の実力</span>を示す（両社とも優秀！）<span class="divider">／</span><span class="roe-label">ROE＝株主投資の効率</span>は別視点
+      </div>
+    </div>
+
+    <!-- Story 2 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F6E1;</span> 安全性の実例</h2>
+
+    <div class="story-card">
+      <h3>&#x2708; スカイマーク ― 自己資本比率が語る経営危機</h3>
+      <div class="story-meta">安全性分析 ｜ 自己資本比率・流動比率</div>
+      <div class="story-body">
+        <p>格安航空会社の<strong>スカイマーク</strong>は、2015年に経営破綻（民事再生法申請）しました。</p>
+        <p>破綻の数年前から兆候はありました。エアバスA380の大量発注（約1,900億円）を決めたものの、資金繰りが悪化。<strong>自己資本比率</strong>は急速に低下し、<strong>流動比率</strong>も100%を大きく割り込みました。</p>
+        <p>2014年度の決算では、自己資本比率が<strong>マイナス</strong>（債務超過）に転落。つまり、借金が資産を上回る状態に。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 経営分析の視点</strong><br>
+        &#x2022; <strong>自己資本比率の急低下</strong> → 借金頼みの投資が過大だった<br>
+        &#x2022; <strong>流動比率の悪化</strong> → 短期の支払いが回らなくなった<br>
+        &#x2022; <strong>固定比率の高騰</strong> → 大型航空機という固定資産を自己資本でまかなえなかった<br>
+        &#x27A1; 安全性指標を定期的にチェックしていれば「危ないサイン」に気づけたはず！
+      </div>
+    </div>
+
+    <!-- Story 3 -->
+    <div class="story-card">
+      <h3>&#x1F3E0; 大塚家具 ― 在庫と効率性の失敗</h3>
+      <div class="story-meta">効率性分析 ｜ 棚卸資産回転率・総資本回転率</div>
+      <div class="story-body">
+        <p><strong>大塚家具</strong>は、2015年の経営権争い（お家騒動）以降、業績が急速に悪化しました。</p>
+        <p>会員制の高級路線からカジュアル路線への転換を図りましたが、高級家具の<strong>在庫が大量に残った</strong>まま、新しい低価格商品も仕入れたため、<strong>棚卸資産が膨張</strong>。</p>
+        <p>結果として<strong>棚卸資産回転率</strong>が低迷。売れない在庫を抱えたまま現金が減り、2022年にヤマダホールディングスの完全子会社となりました。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 経営分析の視点</strong><br>
+        &#x2022; <strong>棚卸資産回転率の低下</strong> → 在庫が売上に見合わない量まで膨張<br>
+        &#x2022; 回転期間が<strong>200日以上</strong> → 半年以上売れない在庫を抱えていた<br>
+        &#x2022; <strong>総資本回転率も低下</strong> → 資産全体の効率が悪化<br>
+        &#x27A1; 「回転率」が下がり始めたら、<strong>ビジネスモデルの転換がうまくいっていない</strong>サイン！
+      </div>
+    </div>
+
+    <!-- Story 4 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3ED;</span> 生産性の実例</h2>
+
+    <div class="story-card">
+      <h3>&#x1F4BB; キーエンス ― 驚異の労働生産性</h3>
+      <div class="story-meta">生産性分析 ｜ 労働生産性・付加価値率</div>
+      <div class="story-body">
+        <p>FA（ファクトリーオートメーション）用センサーのメーカー<strong>キーエンス</strong>は「社員の平均年収2,000万円超」で有名です。</p>
+        <p>なぜこれほど高い給料を払えるのか？それは<strong>付加価値率（粗利率）が約80%</strong>と驚異的に高いから。自社工場を持たず（ファブレス）、企画・開発・営業に特化することで、外部購入費を最小化しています。</p>
+        <p><strong>労働生産性</strong>（付加価値&#xF7;従業員数）も国内トップクラス。従業員ひとりあたり<strong>数千万円</strong>の付加価値を生みだしています。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 経営分析の視点</strong><br>
+        &#x2022; <strong>付加価値率80%超</strong> → 売上のほとんどが「自社で生みだした価値」<br>
+        &#x2022; <strong>労働生産性が超高い</strong> → だから高い給料を払える<br>
+        &#x2022; <strong>労働分配率</strong>は高い給料を払っても余裕がある → 利益も十分に確保<br>
+        &#x27A1; 「付加価値を最大化する」ことが、従業員にも株主にもwin-winになる好例！
+      </div>
+    </div>
+
+    <!-- Story 5 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F50D;</span> 中小企業のリアル</h2>
+
+    <div class="story-card">
+      <h3>&#x1F3EA; 町のクリーニング店 ― 経営分析で見える改善ポイント</h3>
+      <div class="story-meta">総合分析 ｜ 中小企業の経営改善</div>
+      <div class="story-body">
+        <p>ある町のクリーニング店。売上は年間1,500万円、従業員はパート含め5人。長年の常連客はいるが、最近は大手チェーンに押されて売上が減少傾向。</p>
+        <p>中小企業診断士に相談したところ、こんな分析結果が出ました。</p>
+        <ul style="margin:0.5rem 0;">
+          <li><strong>売上高営業利益率 3%</strong> → 「本業でほとんど儲かっていない」</li>
+          <li><strong>労働生産性 180万円/人</strong> → 「ひとり当たりの稼ぎが少ない」</li>
+          <li><strong>流動比率 220%</strong> → 「短期の支払能力は問題なし」</li>
+          <li><strong>自己資本比率 65%</strong> → 「財務基盤は安定している」</li>
+        </ul>
+        <p>安全性は問題ないが、<strong>収益性と生産性に課題あり</strong>。診断士は「付加価値の高いサービス（シミ抜き専門、高級衣類ケア）を始めましょう」とアドバイスしました。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 中小企業診断士の視点</strong><br>
+        &#x2022; 安全性が高い ＝「余力がある」ので<strong>新しい挑戦ができる</strong><br>
+        &#x2022; 収益性が低い → <strong>高付加価値サービスの導入</strong>で改善<br>
+        &#x2022; 生産性が低い → <strong>業務効率化</strong>（集配の最適化など）で改善<br>
+        &#x27A1; 経営分析は「何がダメ」だけでなく「<strong>何ができるか</strong>」を見つけるツール！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-critic">&#x1F9D0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">批評エージェント</div>
+        実例を通じて気づいてほしいのは、<strong>指標は「覚えるもの」ではなく「使うもの」</strong>だということ。公式を暗記するより、「この会社はなぜこの数字になったのか？」を考えるクセをつけると、自然と頭に入りますよ。
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>実例から学ぶ経営分析のまとめ</strong><br>
+      &#x2022; <strong>ROAの分解</strong>：くら寿司と高級寿司で「薄利多売 vs 厚利少売」を理解<br>
+      &#x2022; <strong>安全性指標</strong>：スカイマークの破綻で「自己資本比率の重要性」を実感<br>
+      &#x2022; <strong>効率性指標</strong>：大塚家具の失敗で「棚卸資産回転率の意味」を体感<br>
+      &#x2022; <strong>生産性指標</strong>：キーエンスの成功で「付加価値の最大化」を納得<br>
+      &#x2022; <strong>総合分析</strong>：町のクリーニング店で「診断士としての実務」をイメージ
+    </div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="red" onclick="switchTab(0)">&#x1F476; ゼロから理解</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F530; 入門</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(2)">&#x1F4D7; 基本事項</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(3)">&#x1F3E6; 自己資本比率</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(4)">&#x1F3D7; 固定比率</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(5)">&#x1F3D7; 固定長期適合率</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">&#x1F3E2; ROA</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(7)">&#x1F4B0; ROE</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(8)">&#x1F3B5; 語呂合わせ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(9)">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(10)">&#x1F3EA; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(11)">&#x270F;&#xFE0F; 事例クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(12)">&#x1F4F0; 実例で学ぶ</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 経営分析 学習まとめ</div>
+
+<script>
+function switchTab(idx) {
+  const numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % numTabs === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+let answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 6 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  if(grp){
+    grp.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  }
+  btn.textContent = '\u2705 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAllFill(){
+  var tab = document.querySelector('.tab-panel.active');
+  tab.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  tab.querySelectorAll('.fill-reveal-btn').forEach(function(b){ b.textContent = '\u2705 表示済み'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAllFill(){
+  var tab = document.querySelector('.tab-panel.active');
+  tab.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  tab.querySelectorAll('.fill-reveal-btn').forEach(function(b){ b.innerHTML = '\uD83D\uDC41 答えを見る'; b.disabled = false; b.style.opacity = '1'; });
+  tab.querySelectorAll('.hint-toggle-btn').forEach(function(b){ b.style.display = ''; b.disabled = false; b.style.opacity = '1'; b.innerHTML = '\uD83D\uDCA1 語呂ヒントを見る'; });
+  tab.querySelectorAll('.hint-panel').forEach(function(p){ p.style.display = 'none'; });
+}
+document.addEventListener('click', function(e){
+  var el = e.target;
+  if(el.classList && el.classList.contains('fill-blank')){
+    el.classList.toggle('show');
+  }
+});
+</script>
+</body>
+</html>

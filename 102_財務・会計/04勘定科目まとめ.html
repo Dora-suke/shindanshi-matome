@@ -1,0 +1,3193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勘定科目まとめ｜中小企業診断士 財務・会計</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans JP", sans-serif;
+  background: #f0f4f8;
+  color: #2d3748;
+  line-height: 1.85;
+  font-size: 16px;
+}
+:root {
+  --primary: #1a5276;
+  --primary-light: #2980b9;
+  --primary-lighter: #ebf5fb;
+  --accent: #27ae60;
+  --accent-light: #e8f8f0;
+  --danger: #e74c3c;
+  --danger-light: #fdedec;
+  --warning: #f39c12;
+  --warning-light: #fef9e7;
+  --purple: #8e44ad;
+  --purple-light: #f4ecf7;
+}
+.page-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff; text-align: center; padding: 32px 20px 24px;
+  position: relative; overflow: hidden;
+}
+.page-header::after {
+  content: ""; position: absolute; bottom: -30px; left: -10%;
+  width: 120%; height: 60px; background: #f0f4f8; border-radius: 50% 50% 0 0;
+}
+.page-header h1 { font-size: 2rem; margin-bottom: 6px; letter-spacing: 0.05em; position: relative; z-index: 1; }
+.page-header .subtitle { font-size: 1rem; opacity: 0.85; position: relative; z-index: 1; }
+.page-header .rank-label {
+  display: inline-block; background: var(--danger); color: #fff;
+  font-size: 0.8rem; font-weight: 800; padding: 4px 16px; border-radius: 20px;
+  margin-top: 8px; position: relative; z-index: 1; letter-spacing: 0.08em;
+}
+.tab-nav-wrapper {
+  background: var(--primary); position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.tab-nav {
+  display: flex; max-width: 1100px; margin: 0 auto;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.tab-btn {
+  flex: 1 0 auto; background: transparent; color: rgba(255,255,255,0.7);
+  border: none; padding: 14px 24px; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  border-bottom: 3px solid transparent; font-family: inherit;
+}
+.tab-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.tab-btn.active {
+  color: var(--primary); background: #fff;
+  border-bottom: 3px solid var(--accent); border-radius: 6px 6px 0 0;
+}
+.tab-content { display: none; max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+.tab-content.active { display: block; }
+.section-overview {
+  background: #fff; border-radius: 10px; margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
+}
+.section-overview-header {
+  background: var(--primary); color: #fff; padding: 16px 24px;
+  font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px;
+}
+.section-overview-header.green { background: var(--accent); }
+.section-overview-header.red { background: var(--danger); }
+.section-overview-header.orange { background: #e67e22; }
+.section-overview-header.purple { background: var(--purple); }
+.section-overview-body { padding: 24px 28px; }
+.section-overview-body p { margin-bottom: 14px; }
+.section-overview-body ul, .section-overview-body ol { margin-bottom: 14px; padding-left: 1.5em; }
+.section-overview-body li { margin-bottom: 6px; }
+.section-overview-body h3 {
+  color: var(--primary); font-size: 1.15rem; margin: 24px 0 12px;
+  padding-left: 12px; border-left: 4px solid var(--primary-light);
+}
+.section-overview-body h3:first-child { margin-top: 0; }
+.chara-bubble { display: flex; gap: 14px; align-items: flex-start; margin: 16px 0; }
+.chara-bubble.reverse { flex-direction: row-reverse; }
+.chara-icon {
+  flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.chara-icon.pm { background: #fef3c7; }
+.chara-icon.planner { background: #dbeafe; }
+.chara-icon.creator { background: #d1fae5; }
+.chara-icon.critic { background: #fce7f3; }
+.chara-icon.sensei { background: #ebf5fb; }
+.chara-icon.student { background: #fff5f5; }
+.chara-text {
+  background: #f7fafc; border: 1px solid #e2e8f0;
+  border-radius: 0 14px 14px 14px; padding: 14px 18px;
+  font-size: 0.95rem; line-height: 1.8; position: relative; flex: 1;
+}
+.chara-bubble.reverse .chara-text { border-radius: 14px 0 14px 14px; }
+.chara-text::before {
+  content: ""; position: absolute; left: -8px; top: 14px;
+  border: 8px solid transparent; border-right-color: #e2e8f0; border-left: 0;
+}
+.chara-text::after {
+  content: ""; position: absolute; left: -6px; top: 15px;
+  border: 7px solid transparent; border-right-color: #f7fafc; border-left: 0;
+}
+.chara-bubble.reverse .chara-text::before {
+  left: auto; right: -8px; border-right-color: transparent;
+  border-left-color: #e2e8f0; border-right: 0;
+}
+.chara-bubble.reverse .chara-text::after {
+  left: auto; right: -6px; border-right-color: transparent;
+  border-left-color: #f7fafc; border-right: 0;
+}
+.chara-name { font-weight: 700; font-size: 0.78rem; margin-bottom: 4px; display: block; }
+.chara-name.pm-name { color: #92400e; }
+.chara-name.planner-name { color: #1e40af; }
+.chara-name.creator-name { color: #065f46; }
+.chara-name.critic-name { color: #9d174d; }
+.chara-name.sensei-name { color: #2b6cb0; }
+.chara-name.student-name { color: #c53030; }
+.analogy {
+  background: var(--primary-lighter); border-left: 4px solid var(--primary-light);
+  padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 0.95rem;
+}
+.analogy::before {
+  content: "🎯 たとえるなら..."; display: block; font-weight: 700;
+  color: var(--primary-light); margin-bottom: 4px;
+}
+.exam-point {
+  background: var(--danger-light); border: 2px solid var(--danger);
+  border-radius: 8px; padding: 18px 22px; margin: 24px 0 12px;
+}
+.exam-point-title { color: var(--danger); font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
+.exam-point-title::before { content: "🔥 "; }
+.exam-point ul { padding-left: 1.3em; margin-bottom: 0; }
+.exam-point li { color: #c0392b; margin-bottom: 4px; }
+.highlight {
+  background: linear-gradient(135deg, #fef9e7, #fdebd0);
+  padding: 2px 8px; border-radius: 4px; font-weight: 700;
+  box-shadow: 0 1px 3px rgba(243,156,18,0.2);
+}
+.keyword { font-weight: 800; color: #c0392b; border-bottom: 2px solid var(--danger); padding: 0 2px; }
+.element-cards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px; margin: 16px 0;
+}
+.element-card {
+  border-radius: 10px; padding: 16px; text-align: center;
+  font-weight: 700; font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s;
+}
+.element-card:hover { transform: translateY(-2px); }
+.element-card .el-icon { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+.element-card .el-sub { font-size: 0.78rem; font-weight: 400; margin-top: 4px; display: block; color: #555; }
+.el-asset { background: #ebf5fb; border: 2px solid #3498db; color: #2471a3; }
+.el-liability { background: #fdedec; border: 2px solid #e74c3c; color: #c0392b; }
+.el-equity { background: #f4ecf7; border: 2px solid #8e44ad; color: #7d3c98; }
+.el-revenue { background: #e8f8f0; border: 2px solid #27ae60; color: #1e8449; }
+.el-expense { background: #fef9e7; border: 2px solid #f39c12; color: #b7950b; }
+.debit-credit-box {
+  display: flex; border: 3px solid var(--primary); border-radius: 10px;
+  overflow: hidden; margin: 16px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.dc-side { flex: 1; padding: 16px; text-align: center; }
+.dc-debit { background: #ebf5fb; border-right: 3px solid var(--primary); }
+.dc-credit { background: #fdedec; }
+.dc-title {
+  font-weight: 800; font-size: 1.1rem; margin-bottom: 8px;
+  padding-bottom: 6px; border-bottom: 2px dashed rgba(0,0,0,0.15);
+}
+.dc-debit .dc-title { color: #2471a3; }
+.dc-credit .dc-title { color: #c0392b; }
+.dc-item { margin: 4px 0; font-size: 0.95rem; }
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { border: 1px solid #cbd5e0; padding: 10px 14px; text-align: left; vertical-align: top; }
+th { background: var(--primary); color: #fff; font-weight: 600; white-space: nowrap; }
+th.th-blue { background: #2471a3; }
+th.th-red { background: #c0392b; }
+th.th-green { background: #1e8449; }
+th.th-orange { background: #b7950b; }
+th.th-purple { background: #7d3c98; }
+tbody tr:nth-child(even) { background: #f0f4f8; }
+tbody tr:nth-child(odd) { background: #fff; }
+tbody tr:hover { background: #e2e8f0; }
+tbody tr { transition: background 0.15s ease; }
+.goro-box {
+  background: linear-gradient(135deg, var(--purple-light), #e8daef);
+  border: 2px solid var(--purple); border-radius: 12px;
+  padding: 16px 20px; margin: 16px 0;
+  box-shadow: 0 3px 12px rgba(142,68,173,0.15);
+}
+.goro-box::before {
+  content: "🧠 ゴロで暗記！"; display: inline-block;
+  background: var(--purple); color: #fff; font-size: 0.78rem; font-weight: 700;
+  padding: 3px 12px; border-radius: 12px; margin-bottom: 8px;
+}
+.goro-box .goro-main { font-size: 1.2rem; font-weight: 800; color: #6c3483; margin: 8px 0 6px; letter-spacing: 0.03em; line-height: 1.6; }
+.goro-box .goro-main .goro-highlight { background: linear-gradient(135deg, #fef9e7, #fdebd0); padding: 1px 5px; border-radius: 4px; color: #c0392b; }
+.goro-box .goro-decode { font-size: 0.88rem; color: #7d3c98; margin-top: 4px; line-height: 1.7; }
+.goro-box .goro-decode strong { color: var(--danger); }
+.one-point {
+  background: linear-gradient(135deg, #fef9e7, #fdebd0);
+  border: 2px solid var(--warning); border-radius: 10px;
+  padding: 16px 20px; margin: 16px 0 6px; text-align: center;
+  font-weight: 700; font-size: 1.05rem; color: #7d6608;
+}
+.one-point::before {
+  content: "⭐ ひとことで言うと..."; display: block;
+  font-size: 0.8rem; font-weight: 600; color: #b7950b; margin-bottom: 6px;
+}
+.example-box {
+  background: var(--accent-light); border-left: 4px solid var(--accent);
+  padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 12px 0;
+  font-size: 0.93rem; line-height: 1.8;
+}
+.example-box::before {
+  content: "💡 たとえばこんな感じ！"; display: block;
+  font-weight: 700; color: #1e8449; margin-bottom: 6px; font-size: 0.88rem;
+}
+.memo-bubble {
+  background: var(--primary-lighter); border-left: 4px solid var(--primary-light);
+  padding: 12px 16px; margin: 14px 0; border-radius: 0 8px 8px 0; font-size: 0.93rem;
+}
+.memo-bubble::before {
+  content: "💡 MEMO"; display: inline-block; background: var(--primary-light);
+  color: #fff; font-size: 0.7rem; font-weight: 700; padding: 1px 8px;
+  border-radius: 3px; margin-right: 8px;
+}
+.step-cards { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+.step-card {
+  display: flex; gap: 14px; align-items: flex-start; background: #fff;
+  border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px 18px;
+  transition: border-color 0.2s;
+}
+.step-card:hover { border-color: var(--primary-light); }
+.step-num {
+  flex-shrink: 0; width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.9rem;
+}
+.step-card-body { flex: 1; }
+.step-card-body strong { color: var(--primary); }
+.compare-box { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.compare-item { background: #fff; border-radius: 10px; overflow: hidden; border: 2px solid #e2e8f0; }
+.compare-item-header { padding: 10px 16px; font-weight: 700; color: #fff; text-align: center; font-size: 0.95rem; }
+.compare-item-body { padding: 14px 16px; font-size: 0.93rem; }
+.compare-item-body p { margin-bottom: 8px; }
+.ci-blue .compare-item-header { background: #2471a3; }
+.ci-red .compare-item-header { background: #c0392b; }
+.ci-green .compare-item-header { background: #1e8449; }
+.ci-orange .compare-item-header { background: #b7950b; }
+.ci-purple .compare-item-header { background: #7d3c98; }
+.compare-box-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+/* シミュレーション用 */
+.sim-section {
+  background: #fff; border-radius: 12px; margin-bottom: 28px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07); overflow: hidden;
+}
+.sim-header {
+  background: linear-gradient(135deg, #1a5276, #2980b9);
+  color: #fff; padding: 16px 22px; font-size: 1.15rem; font-weight: 700;
+}
+.sim-header .sim-num {
+  background: var(--warning); color: #fff; font-size: 0.75rem;
+  padding: 2px 12px; border-radius: 10px; margin-right: 10px; font-weight: 700;
+}
+.sim-body { padding: 22px 26px; line-height: 2; }
+.sim-body p { margin-bottom: 14px; }
+.sim-scenario {
+  background: #fff8e1; border: 2px solid #ffc107; border-radius: 10px;
+  padding: 16px 20px; margin: 14px 0;
+}
+.sim-scenario::before {
+  content: "📋 シナリオ"; display: block; font-weight: 700;
+  color: #f57f17; margin-bottom: 6px; font-size: 0.9rem;
+}
+.sim-result {
+  background: var(--accent-light); border: 2px solid var(--accent);
+  border-radius: 10px; padding: 16px 20px; margin: 14px 0;
+}
+.sim-result::before {
+  content: "📊 仕訳結果"; display: block; font-weight: 700;
+  color: #1e8449; margin-bottom: 6px; font-size: 0.9rem;
+}
+.sim-advice {
+  background: var(--primary-lighter); border: 2px solid var(--primary-light);
+  border-radius: 10px; padding: 16px 20px; margin: 14px 0;
+}
+.sim-advice::before {
+  content: "💊 ポイント解説"; display: block; font-weight: 700;
+  color: var(--primary); margin-bottom: 6px; font-size: 0.9rem;
+}
+.formula-box {
+  background: #f8f9fa; border: 2px solid var(--primary-light);
+  border-radius: 10px; padding: 16px 24px; margin: 14px 0;
+  text-align: center; font-size: 1.1rem; font-weight: 700;
+  color: var(--primary);
+}
+.formula-box .formula-label {
+  display: block; font-size: 0.8rem; color: #718096;
+  font-weight: 600; margin-bottom: 6px;
+}
+/* 4択クイズ */
+.scenario-quiz {
+  background: #fff; border-radius: 12px; margin-bottom: 28px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07); overflow: hidden;
+}
+.quiz-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; padding: 14px 22px; font-size: 1.1rem; font-weight: 700;
+}
+.quiz-header .q-num {
+  background: var(--warning); color: #fff; font-size: 0.75rem;
+  padding: 2px 10px; border-radius: 10px; margin-right: 10px; font-weight: 700;
+}
+.quiz-body-area { padding: 22px 26px; }
+.quiz-question-text {
+  font-size: 1rem; font-weight: 600; margin-bottom: 16px;
+  padding: 14px 18px; background: #f8f9fa; border-radius: 8px;
+  border-left: 4px solid var(--primary-light);
+}
+.quiz-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.quiz-option {
+  display: block; width: 100%; text-align: left; padding: 14px 18px;
+  background: #fff; border: 2px solid #d5dbdb; border-radius: 10px;
+  font-size: 0.95rem; font-family: inherit; cursor: pointer;
+  transition: all 0.2s; font-weight: 500;
+}
+.quiz-option:hover { border-color: var(--primary-light); background: var(--primary-lighter); }
+.quiz-option.correct { border-color: var(--accent); background: var(--accent-light); color: #1e8449; font-weight: 700; }
+.quiz-option.wrong { border-color: var(--danger); background: var(--danger-light); color: #c0392b; opacity: 0.7; }
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback {
+  display: none; padding: 14px 18px; border-radius: 8px;
+  margin-top: 12px; font-size: 0.95rem; line-height: 1.8;
+}
+.quiz-feedback.show { display: block; animation: fadeSlideIn 0.35s ease-out; }
+.quiz-feedback.is-correct { background: var(--accent-light); border: 2px solid var(--accent); }
+.quiz-feedback.is-wrong { background: var(--danger-light); border: 2px solid var(--danger); }
+.score-display {
+  text-align: center; padding: 30px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 14px; color: #fff; margin-top: 20px;
+}
+.score-display .score-num { font-size: 3rem; font-weight: 800; display: block; margin: 10px 0; }
+.score-display .score-label { font-size: 1rem; opacity: 0.9; }
+.score-display .score-msg { font-size: 1.1rem; margin-top: 12px; font-weight: 600; }
+.score-display .retry-btn {
+  margin-top: 16px; padding: 12px 36px; background: var(--accent);
+  color: #fff; border: none; border-radius: 8px; font-size: 1rem;
+  font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s;
+}
+.score-display .retry-btn:hover { background: #219a52; transform: translateY(-1px); }
+.page-footer { text-align: center; padding: 30px 20px; color: #718096; font-size: 0.85rem; }
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* 事例カード */
+.case-card {
+  background: #fff; border-radius: 12px; margin-bottom: 28px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07); overflow: hidden;
+  border-left: 5px solid var(--primary-light);
+}
+.case-header {
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  color: #fff; padding: 16px 22px; font-size: 1.15rem; font-weight: 700;
+}
+.case-header .case-num {
+  background: #fbbf24; color: #78350f; font-size: 0.75rem;
+  padding: 2px 12px; border-radius: 10px; margin-right: 10px; font-weight: 700;
+}
+.case-body { padding: 22px 26px; line-height: 2; }
+.case-body p { margin-bottom: 14px; }
+.case-point {
+  background: #ecfdf5; border: 2px solid #10b981;
+  border-radius: 10px; padding: 16px 20px; margin: 14px 0;
+}
+.case-point::before {
+  content: "📝 勘定科目の視点"; display: block; font-weight: 700;
+  color: #065f46; margin-bottom: 6px; font-size: 0.9rem;
+}
+.journal-entry { margin: 16px 0; border: 2px solid #d5dbdb; border-radius: 8px; overflow: hidden; background: #fff; }
+.journal-entry table { width: 100%; border-collapse: collapse; }
+.journal-entry th { padding: 8px 14px; font-size: 0.85rem; font-weight: 600; }
+.journal-entry .jh-debit { background: #2471a3; color: #fff; }
+.journal-entry .jh-credit { background: #c0392b; color: #fff; }
+.journal-entry td { padding: 10px 14px; border: 1px solid #eaecee; text-align: center; font-weight: 600; }
+.journal-entry tbody tr:nth-child(even) { background: #f8f9f9; }
+/* カテゴリラベル */
+.cat-label {
+  display: inline-block; font-size: 0.72rem; font-weight: 700;
+  padding: 2px 10px; border-radius: 10px; margin-left: 6px;
+}
+.cat-asset { background: #dbeafe; color: #1e40af; }
+.cat-liability { background: #fee2e2; color: #991b1b; }
+.cat-equity { background: #f3e8ff; color: #6b21a8; }
+.cat-revenue { background: #dcfce7; color: #166534; }
+.cat-expense { background: #fef3c7; color: #92400e; }
+/* 区分ドリル */
+.classify-card {
+  background: #fff; border-radius: 12px; margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07); overflow: hidden;
+}
+.classify-header {
+  padding: 12px 20px; font-size: 1rem; font-weight: 700; color: #fff;
+  display: flex; align-items: center; gap: 10px;
+}
+.classify-body { padding: 18px 22px; }
+.classify-subject {
+  font-size: 1.15rem; font-weight: 800; text-align: center;
+  padding: 14px; margin-bottom: 14px; border-radius: 10px;
+  border: 3px dashed #94a3b8; background: #f8fafc; color: #1e293b;
+}
+.classify-btn-group { margin-bottom: 10px; }
+.classify-btn-group .cbg-label {
+  font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 6px; display: block;
+}
+.classify-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.classify-choice {
+  padding: 8px 16px; border: 2px solid #d5dbdb; border-radius: 8px;
+  background: #fff; font-family: inherit; font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.classify-choice:hover { border-color: var(--primary-light); background: var(--primary-lighter); }
+.classify-choice.cc-correct { border-color: var(--accent); background: var(--accent-light); color: #1e8449; }
+.classify-choice.cc-wrong { border-color: var(--danger); background: var(--danger-light); color: #c0392b; opacity: 0.7; }
+.classify-choice:disabled { cursor: default; }
+.classify-feedback {
+  display: none; padding: 12px 16px; border-radius: 8px;
+  margin-top: 10px; font-size: 0.9rem; line-height: 1.8;
+}
+.classify-feedback.show { display: block; animation: fadeSlideIn 0.35s ease-out; }
+.classify-feedback.is-correct { background: var(--accent-light); border: 2px solid var(--accent); }
+.classify-feedback.is-wrong { background: var(--danger-light); border: 2px solid var(--danger); }
+.classify-score-display {
+  text-align: center; padding: 28px;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  border-radius: 14px; color: #fff; margin-top: 20px;
+}
+.classify-score-display .score-num { font-size: 3rem; font-weight: 800; display: block; margin: 10px 0; }
+.classify-score-display .score-label { font-size: 1rem; opacity: 0.9; }
+.classify-score-display .score-msg { font-size: 1.1rem; margin-top: 12px; font-weight: 600; }
+.classify-score-display .retry-btn {
+  margin-top: 16px; padding: 12px 36px; background: var(--accent);
+  color: #fff; border: none; border-radius: 8px; font-size: 1rem;
+  font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s;
+}
+.classify-score-display .retry-btn:hover { background: #219a52; transform: translateY(-1px); }
+/* 区分ラベル */
+.at-sub { background: #e0f2fe; color: #0369a1; }
+/* ミニマップ */
+.mini-map {
+  display: none; margin-top: 14px; padding: 16px 18px;
+  background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px;
+  font-size: 0.82rem; line-height: 1.7;
+}
+.mini-map.show { display: block; animation: fadeSlideIn 0.35s ease-out; }
+.mini-map-title { font-weight: 700; color: #475569; margin-bottom: 10px; font-size: 0.78rem; }
+.mini-map-title::before { content: "🗺️ "; }
+.mm-section-label {
+  grid-column: 1 / -1; font-size: 0.72rem; font-weight: 700;
+  color: #fff; padding: 3px 10px; border-radius: 4px; margin-top: 4px;
+}
+.mm-section-label:first-child { margin-top: 0; }
+.mm-label-bs { background: #334155; }
+.mm-label-pl { background: #0f766e; }
+.mm-sub-label {
+  grid-column: 1 / -1; font-size: 0.68rem; font-weight: 700;
+  color: #64748b; padding: 1px 8px; margin-top: 2px;
+  border-left: 3px solid #cbd5e1;
+}
+.mini-map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
+.mm-item {
+  padding: 3px 8px; border-radius: 5px; font-weight: 500;
+  border: 1px solid #e2e8f0; background: #fff; color: #94a3b8; font-size: 0.78rem;
+}
+.mm-item.mm-hit {
+  font-weight: 800; border-width: 2.5px; font-size: 0.82rem;
+  position: relative; color: #000;
+  box-shadow: 0 0 8px rgba(0,0,0,0.15);
+  animation: mmPulse 1.5s ease-in-out 2;
+}
+.mm-item.mm-hit::after {
+  content: " 👈 いまココ！"; font-size: 0.7rem; font-weight: 800;
+}
+@keyframes mmPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(0,0,0,0.15); }
+  50% { transform: scale(1.04); box-shadow: 0 0 14px rgba(0,0,0,0.25); }
+}
+.mm-hit-asset-c { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+.mm-hit-asset-f { background: #cffafe; border-color: #06b6d4; color: #0e7490; }
+.mm-hit-liab-c { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+.mm-hit-liab-f { background: #fecaca; border-color: #dc2626; color: #7f1d1d; }
+.mm-hit-eq { background: #f3e8ff; border-color: #a855f7; color: #6b21a8; }
+.mm-hit-eq-r { background: #ede9fe; border-color: #8b5cf6; color: #5b21b6; }
+.mm-hit-rev-o { background: #dcfce7; border-color: #22c55e; color: #166534; }
+.mm-hit-rev-x { background: #d1fae5; border-color: #10b981; color: #065f46; }
+.mm-hit-rev-s { background: #ecfdf5; border-color: #34d399; color: #047857; }
+.mm-hit-exp-c { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+.mm-hit-exp-s { background: #fef9c3; border-color: #eab308; color: #854d0e; }
+.mm-hit-exp-x { background: #fde68a; border-color: #d97706; color: #78350f; }
+.mm-hit-exp-sp { background: #fed7aa; border-color: #f97316; color: #9a3412; }
+@media (max-width: 768px) {
+  .mini-map-grid { grid-template-columns: 1fr; }
+  .mm-item.mm-hit::after { content: " 👈"; }
+}
+/* 仕分けドリル */
+.drill-card {
+  background: #fff; border-radius: 12px; margin-bottom: 24px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07); overflow: hidden;
+}
+.drill-header {
+  padding: 14px 22px; font-size: 1.05rem; font-weight: 700; color: #fff;
+  display: flex; align-items: center; gap: 10px;
+}
+.drill-header .drill-num {
+  background: rgba(255,255,255,0.25); font-size: 0.75rem;
+  padding: 2px 12px; border-radius: 10px; font-weight: 700;
+}
+.drill-body { padding: 20px 24px; }
+.drill-prompt {
+  font-size: 1rem; font-weight: 600; margin-bottom: 14px;
+  padding: 12px 16px; background: #f8f9fa; border-radius: 8px;
+  border-left: 4px solid #94a3b8;
+}
+.drill-choices { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.drill-choice {
+  padding: 10px 18px; border: 2px solid #d5dbdb; border-radius: 10px;
+  background: #fff; font-family: inherit; font-size: 0.93rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.drill-choice:hover { border-color: var(--primary-light); background: var(--primary-lighter); }
+.drill-choice.dc-correct { border-color: var(--accent); background: var(--accent-light); color: #1e8449; }
+.drill-choice.dc-wrong { border-color: var(--danger); background: var(--danger-light); color: #c0392b; opacity: 0.7; }
+.drill-choice:disabled { cursor: default; }
+.drill-feedback {
+  display: none; padding: 14px 18px; border-radius: 8px;
+  margin-top: 10px; font-size: 0.93rem; line-height: 1.8;
+}
+.drill-feedback.show { display: block; animation: fadeSlideIn 0.35s ease-out; }
+.drill-feedback.is-correct { background: var(--accent-light); border: 2px solid var(--accent); }
+.drill-feedback.is-wrong { background: var(--danger-light); border: 2px solid var(--danger); }
+.drill-score-display {
+  text-align: center; padding: 28px;
+  background: linear-gradient(135deg, #6c3483, #af7ac5);
+  border-radius: 14px; color: #fff; margin-top: 20px;
+}
+.drill-score-display .score-num { font-size: 3rem; font-weight: 800; display: block; margin: 10px 0; }
+.drill-score-display .score-label { font-size: 1rem; opacity: 0.9; }
+.drill-score-display .score-msg { font-size: 1.1rem; margin-top: 12px; font-weight: 600; }
+.drill-score-display .retry-btn {
+  margin-top: 16px; padding: 12px 36px; background: var(--accent);
+  color: #fff; border: none; border-radius: 8px; font-size: 1rem;
+  font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s;
+}
+.drill-score-display .retry-btn:hover { background: #219a52; transform: translateY(-1px); }
+/* 判定ラベル */
+.answer-tag {
+  display: inline-block; font-size: 0.78rem; font-weight: 700;
+  padding: 2px 10px; border-radius: 8px; margin-right: 4px;
+}
+.at-group { background: #dbeafe; color: #1e40af; }
+.at-debit { background: #ebf5fb; color: #2471a3; }
+.at-credit { background: #fdedec; color: #c0392b; }
+/* ツリー図 */
+.tree-wrap {
+  margin: 20px 0; padding: 18px 20px; background: #f8fafc;
+  border: 2px solid #e2e8f0; border-radius: 12px;
+}
+.tree-wrap .tree-title {
+  font-weight: 700; font-size: 0.88rem; margin-bottom: 12px; color: #475569;
+}
+.tree-wrap .tree-title::before { content: "🌳 "; }
+.tree { margin: 0; padding: 0; list-style: none; }
+.tree ul { margin: 0; padding: 0; list-style: none; }
+.tree li {
+  position: relative; padding-left: 28px; margin: 0;
+  line-height: 2.2;
+}
+.tree li::before {
+  content: ""; position: absolute; left: 0; top: 0;
+  border-left: 2px solid #94a3b8; height: 100%;
+}
+.tree li::after {
+  content: ""; position: absolute; left: 0; top: 1.1em;
+  border-top: 2px solid #94a3b8; width: 20px;
+}
+.tree li:last-child::before { height: 1.1em; }
+.tree > li::before { border-left-color: transparent; }
+.tree > li::after { border-top-color: transparent; }
+.tree > li { padding-left: 0; }
+/* ツリー root ノード */
+.tree-root {
+  display: inline-block; font-weight: 800; font-size: 1.05rem;
+  padding: 4px 16px; border-radius: 8px; margin-bottom: 4px;
+  color: #fff;
+}
+.tree-root.tr-blue { background: #2471a3; }
+.tree-root.tr-red { background: #c0392b; }
+.tree-root.tr-purple { background: #7d3c98; }
+.tree-root.tr-green { background: #1e8449; }
+.tree-root.tr-orange { background: #b7950b; }
+/* ツリー branch ノード */
+.tree-branch {
+  display: inline-block; font-weight: 700; font-size: 0.92rem;
+  padding: 2px 12px; border-radius: 6px; color: #fff;
+}
+.tree-branch.tb-blue { background: #5dade2; }
+.tree-branch.tb-red { background: #ec7063; }
+.tree-branch.tb-purple { background: #af7ac5; }
+.tree-branch.tb-green { background: #58d68d; color: #14532d; }
+.tree-branch.tb-orange { background: #f4d03f; color: #7d6608; }
+.tree-branch.tb-teal { background: #48c9b0; color: #0e4f40; }
+/* ツリー leaf ノード */
+.tree-leaf {
+  display: inline-block; font-size: 0.88rem; font-weight: 600;
+  padding: 1px 10px; border-radius: 4px; margin: 1px 0;
+  background: #fff; border: 1px solid #cbd5e0; color: #334155;
+}
+.tree-leaf .leaf-hint {
+  font-weight: 400; color: #64748b; font-size: 0.8rem; margin-left: 6px;
+}
+/* レスポンシブ */
+@media (max-width: 768px) {
+  body { font-size: 15px; }
+  .page-header h1 { font-size: 1.5rem; }
+  .tab-btn { padding: 12px 16px; font-size: 0.85rem; }
+  .tab-content { padding: 16px 12px 40px; }
+  .section-overview-header { font-size: 1.1rem; padding: 14px 18px; }
+  .section-overview-body { padding: 18px 16px; }
+  .element-cards { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  .debit-credit-box { flex-direction: column; }
+  .dc-debit { border-right: none; border-bottom: 3px solid var(--primary); }
+  .compare-box, .compare-box-3 { grid-template-columns: 1fr; }
+  .sim-body, .quiz-body-area, .case-body { padding: 16px 18px; }
+}
+@media print {
+  .tab-nav-wrapper { display: none; }
+  .tab-content { display: block !important; }
+  .page-header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .section-overview-header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>勘定科目 完全攻略</h1>
+  <div class="subtitle">中小企業診断士 財務・会計｜覚え方のコツ付き</div>
+  <span class="rank-label">頻出 Rank A</span>
+</header>
+
+<nav class="tab-nav-wrapper">
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="tab1">🔰 入門</button>
+    <button class="tab-btn" data-tab="tab2">📘 基本事項</button>
+    <button class="tab-btn" data-tab="tab3">🏷️ 区分ドリル</button>
+    <button class="tab-btn" data-tab="tab4">🧩 仕分け特訓</button>
+    <button class="tab-btn" data-tab="tab5">📖 シミュレーション</button>
+    <button class="tab-btn" data-tab="tab6">📋 クイズ</button>
+    <button class="tab-btn" data-tab="tab7">🏢 実例で学ぶ</button>
+  </div>
+</nav>
+
+<!-- ========== タブ1: 入門 ========== -->
+<div class="tab-content active" id="tab1">
+
+  <div class="exam-point" style="border-color:#f59e0b;background:#fef9e7;">
+    <div class="exam-point-title" style="color:#b7950b;">このタブで学ぶこと</div>
+    <ul style="color:#7d6608;">
+      <li>勘定科目 ＝ お金の動きにつける「名前（ラベル）」</li>
+      <li>全ての科目は <strong>5グループ</strong> のどれかに分類される</li>
+      <li>借方（左）・貸方（右）のルールで仕訳ができる</li>
+    </ul>
+  </div>
+
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:linear-gradient(135deg,#f59e0b,#f97316);">🔰 このタブだけ読めば最低限OK！</div>
+    <div class="section-overview-body">
+      <p>勘定科目とは、会社のお金の動きにつける<span class="highlight">名前（ラベル）</span>です。</p>
+      <p>覚えることは <strong>たった3つ</strong> だけ。</p>
+    </div>
+  </div>
+
+  <!-- ポイント1: 5グループ -->
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#2563eb;">1. 全ての科目は5グループのどれか</div>
+    <div class="section-overview-body">
+      <div class="element-cards">
+        <div class="element-card el-asset">
+          <span class="el-icon">💰</span>資産
+          <span class="el-sub">持っているもの</span>
+        </div>
+        <div class="element-card el-liability">
+          <span class="el-icon">📝</span>負債
+          <span class="el-sub">返す義務</span>
+        </div>
+        <div class="element-card el-equity">
+          <span class="el-icon">🏛️</span>純資産
+          <span class="el-sub">自分のお金</span>
+        </div>
+        <div class="element-card el-revenue">
+          <span class="el-icon">📈</span>収益
+          <span class="el-sub">稼いだ</span>
+        </div>
+        <div class="element-card el-expense">
+          <span class="el-icon">💸</span>費用
+          <span class="el-sub">使った</span>
+        </div>
+      </div>
+      <div class="analogy">
+        お財布（資産）、ローン（負債）、貯金（純資産）、給料日（収益）、買い物（費用）。日常生活でも同じ5つに分けられます。
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:16px 0;">
+        <div style="background:#ebf5fb;border:2px solid #3498db;border-radius:8px;padding:8px 14px;font-weight:700;text-align:center;font-size:0.9rem;">資産・負債・純資産</div>
+        <div style="font-size:1.3rem;font-weight:800;color:#2471a3;">→</div>
+        <div style="background:#2471a3;color:#fff;border-radius:8px;padding:8px 14px;font-weight:700;text-align:center;font-size:0.9rem;">B/S（貸借対照表）</div>
+        <div style="width:100%;height:0;"></div>
+        <div style="background:#e8f8f0;border:2px solid #27ae60;border-radius:8px;padding:8px 14px;font-weight:700;text-align:center;font-size:0.9rem;">収益・費用</div>
+        <div style="font-size:1.3rem;font-weight:800;color:#1e8449;">→</div>
+        <div style="background:#1e8449;color:#fff;border-radius:8px;padding:8px 14px;font-weight:700;text-align:center;font-size:0.9rem;">P/L（損益計算書）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ポイント2: 借方・貸方 -->
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#059669;">2. 借方（左）・貸方（右）のルール</div>
+    <div class="section-overview-body">
+      <div class="debit-credit-box">
+        <div class="dc-side dc-debit">
+          <div class="dc-title">借方（左）で増える</div>
+          <div class="dc-item"><strong>資産</strong></div>
+          <div class="dc-item"><strong>費用</strong></div>
+        </div>
+        <div class="dc-side dc-credit">
+          <div class="dc-title">貸方（右）で増える</div>
+          <div class="dc-item"><strong>負債</strong></div>
+          <div class="dc-item"><strong>純資産</strong></div>
+          <div class="dc-item"><strong>収益</strong></div>
+        </div>
+      </div>
+      <div class="goro-box">
+        <div class="goro-main">覚え方：「<span class="goro-highlight">資</span>産と<span class="goro-highlight">費</span>用だけ<span class="goro-highlight">左</span>、残りは<span class="goro-highlight">右</span>」</div>
+        <div class="goro-decode">たった2つ（資産・費用）が左。あとの3つ（負債・純資産・収益）は右。これだけ！</div>
+      </div>
+      <div class="analogy">
+        ノートの見開きを想像してください。<strong>左ページ</strong>に「持っているもの」と「使ったお金」を書き、<strong>右ページ</strong>に「借りたお金」「元手」「稼いだお金」を書く。これが仕訳帳です！
+      </div>
+    </div>
+  </div>
+
+  <!-- ポイント3: 最頻出の科目だけ -->
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#7c3aed;">3. まずこれだけ覚える！頻出10科目</div>
+    <div class="section-overview-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>科目名</th><th>グループ</th><th>増えたら</th><th>ひとこと</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>現金</strong></td>
+              <td><span class="answer-tag at-group">資産</span></td>
+              <td><span class="answer-tag at-debit">左（借方）</span></td>
+              <td>手元のお金</td>
+            </tr>
+            <tr>
+              <td><strong>売掛金</strong></td>
+              <td><span class="answer-tag at-group">資産</span></td>
+              <td><span class="answer-tag at-debit">左（借方）</span></td>
+              <td>ツケで売った（もらう権利）</td>
+            </tr>
+            <tr>
+              <td><strong>建物</strong></td>
+              <td><span class="answer-tag at-group">資産</span></td>
+              <td><span class="answer-tag at-debit">左（借方）</span></td>
+              <td>会社のビルや店舗</td>
+            </tr>
+            <tr>
+              <td><strong>買掛金</strong></td>
+              <td><span class="answer-tag at-group">負債</span></td>
+              <td><span class="answer-tag at-credit">右（貸方）</span></td>
+              <td>ツケで買った（払う義務）</td>
+            </tr>
+            <tr>
+              <td><strong>借入金</strong></td>
+              <td><span class="answer-tag at-group">負債</span></td>
+              <td><span class="answer-tag at-credit">右（貸方）</span></td>
+              <td>銀行から借りたお金</td>
+            </tr>
+            <tr>
+              <td><strong>資本金</strong></td>
+              <td><span class="answer-tag at-group">純資産</span></td>
+              <td><span class="answer-tag at-credit">右（貸方）</span></td>
+              <td>株主が出したお金</td>
+            </tr>
+            <tr>
+              <td><strong>売上</strong></td>
+              <td><span class="answer-tag at-group">収益</span></td>
+              <td><span class="answer-tag at-credit">右（貸方）</span></td>
+              <td>本業で稼いだ</td>
+            </tr>
+            <tr>
+              <td><strong>仕入</strong></td>
+              <td><span class="answer-tag at-group">費用</span></td>
+              <td><span class="answer-tag at-debit">左（借方）</span></td>
+              <td>商品の材料を買った</td>
+            </tr>
+            <tr>
+              <td><strong>給料</strong></td>
+              <td><span class="answer-tag at-group">費用</span></td>
+              <td><span class="answer-tag at-debit">左（借方）</span></td>
+              <td>従業員のお給料</td>
+            </tr>
+            <tr>
+              <td><strong>支払家賃</strong></td>
+              <td><span class="answer-tag at-group">費用</span></td>
+              <td><span class="answer-tag at-debit">左（借方）</span></td>
+              <td>お店の家賃</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 仕訳の具体例1つだけ -->
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#0891b2;">実際に仕訳してみよう（1問だけ）</div>
+    <div class="section-overview-body">
+      <p><strong>場面：</strong>パンを1万円で売って、現金を受け取った。</p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方（左）</th><th class="jh-debit">金額</th><th class="jh-credit">貸方（右）</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>現金 <span class="cat-label cat-asset">資産</span></td>
+              <td>1万</td>
+              <td>売上 <span class="cat-label cat-revenue">収益</span></td>
+              <td>1万</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="memo-bubble">
+        現金（資産）が<strong>増えた → 左</strong>。売上（収益）が<strong>増えた → 右</strong>。ルール通り！左右の金額は必ず一致します。
+      </div>
+    </div>
+  </div>
+
+  <div class="one-point">
+    まとめ：5グループに分ける → 資産・費用は左、残りは右<br>
+    これだけで仕訳の基本はOK！詳しくは「基本事項」タブへ
+  </div>
+
+</div>
+
+<!-- ========== タブ2: 基本事項 ========== -->
+<div class="tab-content" id="tab2">
+
+  <div class="exam-point" style="border-color:#2980b9;background:#ebf5fb;">
+    <div class="exam-point-title" style="color:#1a5276;">このタブで学ぶこと</div>
+    <ul style="color:#2c3e50;">
+      <li>5グループの詳細と各勘定科目の一覧（ツリー図付き）</li>
+      <li>借方・貸方のルールとゴロ合わせ暗記法</li>
+      <li>間違えやすい紛らわしい科目の見分け方</li>
+    </ul>
+  </div>
+
+  <!-- 1. 勘定科目とは -->
+  <div class="section-overview">
+    <div class="section-overview-header">📌 勘定科目ってなに？</div>
+    <div class="section-overview-body">
+      <p>勘定科目とは、お金の出入りに<span class="highlight">名前をつけたラベル</span>のこと。</p>
+      <div class="analogy">
+        スーパーの「レシート」を想像してください。「野菜」「お菓子」「飲料」など分類されていますよね。会社のお金の動きも同じように分類するのが勘定科目です。
+      </div>
+      <p>全ての勘定科目は、次の<span class="keyword">5つのグループ</span>のどれかに属します。</p>
+    </div>
+  </div>
+
+  <!-- 2. 5大分類カード -->
+  <div class="section-overview">
+    <div class="section-overview-header">🏷️ 5つのグループ（5大分類）</div>
+    <div class="section-overview-body">
+      <div class="element-cards">
+        <div class="element-card el-asset">
+          <span class="el-icon">💰</span>資産
+          <span class="el-sub">持っているもの・権利</span>
+        </div>
+        <div class="element-card el-liability">
+          <span class="el-icon">📝</span>負債
+          <span class="el-sub">返す義務があるもの</span>
+        </div>
+        <div class="element-card el-equity">
+          <span class="el-icon">🏛️</span>純資産
+          <span class="el-sub">自分のお金（元手＋利益）</span>
+        </div>
+        <div class="element-card el-revenue">
+          <span class="el-icon">📈</span>収益
+          <span class="el-sub">稼いだお金</span>
+        </div>
+        <div class="element-card el-expense">
+          <span class="el-icon">💸</span>費用
+          <span class="el-sub">使ったお金</span>
+        </div>
+      </div>
+
+      <div class="one-point">
+        資産・負債・純資産 → <strong>貸借対照表（B/S）</strong>に載る<br>
+        収益・費用 → <strong>損益計算書（P/L）</strong>に載る
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 借方・貸方ルール -->
+  <div class="section-overview">
+    <div class="section-overview-header">⚖️ 借方・貸方 ＝ 増える側のルール</div>
+    <div class="section-overview-body">
+      <p>各グループの科目が<strong>増えるとき</strong>に記入する側が決まっています。</p>
+
+      <div class="debit-credit-box">
+        <div class="dc-side dc-debit">
+          <div class="dc-title">借方（左）で増える</div>
+          <div class="dc-item"><strong>資産</strong>（現金が増えた等）</div>
+          <div class="dc-item"><strong>費用</strong>（給料を払った等）</div>
+        </div>
+        <div class="dc-side dc-credit">
+          <div class="dc-title">貸方（右）で増える</div>
+          <div class="dc-item"><strong>負債</strong>（借入が増えた等）</div>
+          <div class="dc-item"><strong>純資産</strong>（出資を受けた等）</div>
+          <div class="dc-item"><strong>収益</strong>（売上があった等）</div>
+        </div>
+      </div>
+
+      <div class="goro-box">
+        <div class="goro-main">「<span class="goro-highlight">借</span>方は<span class="goro-highlight">か</span>りかた → 左の「か」の払いが<span class="goro-highlight">左</span>向き」</div>
+        <div class="goro-decode">「<strong>貸</strong>方は<strong>か</strong>しかた → 右の「し」の払いが<strong>右</strong>向き」で覚える！</div>
+      </div>
+
+      <div class="goro-box">
+        <div class="goro-main">借方で増えるもの：「<span class="goro-highlight">し</span>（資産）<span class="goro-highlight">ひ</span>（費用）＝<span class="goro-highlight">しひ</span>」</div>
+        <div class="goro-decode">→ 「<strong>資</strong>産と<strong>費</strong>用は<strong>左（借方）</strong>で増える」の頭文字。残りの負債・純資産・収益は右（貸方）。</div>
+      </div>
+      <div class="analogy">
+        回転寿司で例えると、<strong>左手でお皿を取る（資産GET・費用発生）</strong>、<strong>右手でお会計を出す（負債・純資産・収益）</strong>。左右の皿の枚数は必ず一致します！
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 主要勘定科目一覧 -->
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#2471a3;">💰 資産の勘定科目</div>
+    <div class="section-overview-body">
+      <p>「会社が<strong>持っているもの・もらう権利</strong>」です。増えたら<strong>借方（左）</strong>。</p>
+
+      <div class="tree-wrap">
+        <div class="tree-title">資産のツリー構造</div>
+        <ul class="tree">
+          <li><span class="tree-root tr-blue">資産（もっているもの）</span>
+            <ul>
+              <li><span class="tree-branch tb-blue">流動資産</span><span class="leaf-hint"> ← 1年以内に現金化できる</span>
+                <ul>
+                  <li><span class="tree-leaf">現金 <span class="leaf-hint">手元のお金</span></span></li>
+                  <li><span class="tree-leaf">普通預金・当座預金 <span class="leaf-hint">銀行口座</span></span></li>
+                  <li><span class="tree-leaf">売掛金 <span class="leaf-hint">本業のツケ売り</span></span></li>
+                  <li><span class="tree-leaf">受取手形 <span class="leaf-hint">約束手形をもらった</span></span></li>
+                  <li><span class="tree-leaf">商品 <span class="leaf-hint">売るための在庫</span></span></li>
+                  <li><span class="tree-leaf">前払金 <span class="leaf-hint">先に払った（権利）</span></span></li>
+                  <li><span class="tree-leaf">貸付金（短期） <span class="leaf-hint">1年以内に返ってくる</span></span></li>
+                </ul>
+              </li>
+              <li><span class="tree-branch tb-teal">固定資産</span><span class="leaf-hint"> ← 長期間使い続けるもの</span>
+                <ul>
+                  <li><span class="tree-leaf">建物 <span class="leaf-hint">オフィス・店舗</span></span></li>
+                  <li><span class="tree-leaf">土地 <span class="leaf-hint">駐車場・敷地</span></span></li>
+                  <li><span class="tree-leaf">備品 <span class="leaf-hint">パソコン・机</span></span></li>
+                  <li><span class="tree-leaf">車両運搬具 <span class="leaf-hint">トラック・社用車</span></span></li>
+                  <li><span class="tree-leaf">のれん <span class="leaf-hint">買収時のブランド価値</span></span></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="memo-bubble">
+        「1年以内にお金に変わるか？」が流動 vs 固定の分かれ目。<strong>ワンイヤールール</strong>と呼ばれます。
+      </div>
+      <div class="analogy">
+        コンビニの商品棚を想像してください。<strong>おにぎり（すぐ売れる）＝流動資産</strong>。<strong>レジの機械（何年も使う）＝固定資産</strong>。「すぐ現金化できるか？」がポイントです。
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="th-blue">科目名</th><th class="th-blue">ひとこと</th><th class="th-blue">身近な例</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>現金</td><td>手元のお金</td><td>お財布の中身</td></tr>
+            <tr><td>当座預金</td><td>小切手を使える口座</td><td>ビジネス用の銀行口座</td></tr>
+            <tr><td>普通預金</td><td>一般的な銀行預金</td><td>普段の口座</td></tr>
+            <tr><td>売掛金</td><td>ツケで売った代金（後でもらう）</td><td>飲み屋のツケ</td></tr>
+            <tr><td>受取手形</td><td>「後で払います」と書いた紙</td><td>約束手形をもらった</td></tr>
+            <tr><td>商品</td><td>売るために持っている物</td><td>お店の在庫</td></tr>
+            <tr><td>貸付金</td><td>他人に貸したお金</td><td>友人への貸し</td></tr>
+            <tr><td>建物</td><td>会社の建物</td><td>オフィスビル</td></tr>
+            <tr><td>土地</td><td>会社の土地</td><td>駐車場用地</td></tr>
+            <tr><td>備品</td><td>長く使う道具</td><td>パソコン・机</td></tr>
+            <tr><td>車両運搬具</td><td>業務用の車</td><td>配送トラック</td></tr>
+            <tr><td>のれん</td><td>買収時の上乗せ価値</td><td>ブランド力への対価</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#c0392b;">📝 負債の勘定科目</div>
+    <div class="section-overview-body">
+      <p>「会社が<strong>返さなければならない義務</strong>」です。増えたら<strong>貸方（右）</strong>。</p>
+
+      <div class="tree-wrap">
+        <div class="tree-title">負債のツリー構造</div>
+        <ul class="tree">
+          <li><span class="tree-root tr-red">負債（返す義務）</span>
+            <ul>
+              <li><span class="tree-branch tb-red">流動負債</span><span class="leaf-hint"> ← 1年以内に返すもの</span>
+                <ul>
+                  <li><span class="tree-leaf">買掛金 <span class="leaf-hint">本業の仕入ツケ</span></span></li>
+                  <li><span class="tree-leaf">支払手形 <span class="leaf-hint">約束手形を渡した</span></span></li>
+                  <li><span class="tree-leaf">未払金 <span class="leaf-hint">本業以外の後払い</span></span></li>
+                  <li><span class="tree-leaf">前受金 <span class="leaf-hint">先にもらった（義務）</span></span></li>
+                  <li><span class="tree-leaf">預り金 <span class="leaf-hint">他人から預かったお金</span></span></li>
+                </ul>
+              </li>
+              <li><span class="tree-branch tb-red">固定負債</span><span class="leaf-hint"> ← 返済が1年超のもの</span>
+                <ul>
+                  <li><span class="tree-leaf">借入金（長期） <span class="leaf-hint">銀行ローン等</span></span></li>
+                  <li><span class="tree-leaf">社債 <span class="leaf-hint">会社が発行した借金の証書</span></span></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="memo-bubble">
+        負債も「1年以内に返すか？」で流動 vs 固定に分かれます。資産と同じワンイヤールール！
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="th-red">科目名</th><th class="th-red">ひとこと</th><th class="th-red">身近な例</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>買掛金</td><td>ツケで買った代金（後で払う）</td><td>お店への未払い</td></tr>
+            <tr><td>支払手形</td><td>「後で払います」と書いた紙</td><td>約束手形を渡した</td></tr>
+            <tr><td>借入金</td><td>銀行などから借りたお金</td><td>住宅ローン的なもの</td></tr>
+            <tr><td>未払金</td><td>商品以外の未払い</td><td>備品代の後払い</td></tr>
+            <tr><td>前受金</td><td>まだ届けていない商品の代金</td><td>予約の手付金</td></tr>
+            <tr><td>社債</td><td>会社が発行した借金の証書</td><td>会社版の借用書</td></tr>
+            <tr><td>預り金</td><td>他人から預かったお金</td><td>従業員の源泉税</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#7d3c98;">🏛️ 純資産の勘定科目</div>
+    <div class="section-overview-body">
+      <p>「<strong>返す必要がない自分のお金</strong>」です。増えたら<strong>貸方（右）</strong>。</p>
+
+      <div class="analogy">
+        <strong>まず大前提！</strong><br>
+        会社のお金の出どころは2つだけ：<br>
+        &emsp;(1) <strong>他人から借りたお金</strong> → 負債（いつか返す）<br>
+        &emsp;(2) <strong>自分たちのお金</strong> → 純資産（返さなくてOK）<br><br>
+        つまり <strong>「資産 − 負債 ＝ 純資産」</strong>。<br>
+        純資産が大きいほど「借金に頼っていない健全な会社」ということ！
+      </div>
+
+      <div class="analogy">
+        <strong>マイホームでイメージしよう</strong><br>
+        家の価値（資産）3,000万円のうち…<br>
+        &emsp;住宅ローン（負債）＝ 2,000万 → いつか返すお金<br>
+        &emsp;<strong>自分の持ち分（純資産）＝ 1,000万</strong> → 返さなくていいお金<br><br>
+        この1,000万の中身をさらに分解すると…<br>
+        &emsp;頭金として最初に払った分 → <strong>資本金</strong>（株主が出資したお金）<br>
+        &emsp;毎月コツコツ返済して増えた持ち分 → <strong>利益剰余金</strong>（稼いで貯めたお金）<br>
+        これが純資産の基本イメージです！
+      </div>
+
+      <div class="tree-wrap">
+        <div class="tree-title">純資産のツリー構造 ― ここが一番わかりにくい！</div>
+        <ul class="tree">
+          <li><span class="tree-root tr-purple">純資産（返さなくていい自分のお金）</span>
+            <ul>
+              <li><span class="tree-branch tb-purple">株主資本</span><span class="leaf-hint"> ← 純資産のメイン。試験で最頻出！</span>
+                <ul>
+                  <li><span class="tree-branch tb-purple">資本金</span><span class="leaf-hint"> ← 株主が「出資します！」と払い込んだお金</span>
+                    <ul>
+                      <li><span class="tree-leaf">起業時：「会社を作ろう！」と出した元手</span></li>
+                      <li><span class="tree-leaf">増資時：「もっと大きくしよう！」と追加で集めたお金</span></li>
+                      <li><span class="tree-leaf">登記簿に載る公式な金額</span></li>
+                    </ul>
+                  </li>
+                  <li><span class="tree-branch tb-purple">資本剰余金</span><span class="leaf-hint"> ← 出資なのに資本金に入れなかった「おまけ」部分</span>
+                    <ul>
+                      <li><span class="tree-leaf"><strong>資本準備金</strong> <span class="leaf-hint">← 株式発行額の半分まで、資本金にしなくてOK。その分がここ</span></span></li>
+                      <li><span class="tree-leaf"><strong>その他資本剰余金</strong> <span class="leaf-hint">← 自己株式の処分差益など（出題頻度は低い）</span></span></li>
+                    </ul>
+                  </li>
+                  <li><span class="tree-branch tb-purple">利益剰余金</span><span class="leaf-hint"> ← 会社が稼いで貯めた利益の合計。「会社の貯金箱」</span>
+                    <ul>
+                      <li><span class="tree-leaf"><strong>利益準備金</strong> <span class="leaf-hint">← 法律で「配当するなら10分の1を積み立てなさい」と決まっている分</span></span></li>
+                      <li><span class="tree-leaf"><strong>繰越利益剰余金</strong> <span class="leaf-hint">← まだ「配当する？再投資する？」を決めていない利益のプール</span></span></li>
+                    </ul>
+                  </li>
+                  <li><span class="tree-branch tb-purple">自己株式</span><span class="leaf-hint"> ← 自社の株を買い戻したもの（マイナス項目！）</span>
+                    <ul>
+                      <li><span class="tree-leaf">純資産から差し引かれる。持っていると純資産が減る</span></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li><span class="tree-branch tb-purple">評価・換算差額等</span><span class="leaf-hint"> ← まだ確定していない含み損益</span>
+                <ul>
+                  <li><span class="tree-leaf">その他有価証券評価差額金 <span class="leaf-hint">持っている株の値上がり・値下がり分</span></span></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="example-box">
+        <strong>超重要！ 2つの「出どころ」を見分けるコツ</strong><br><br>
+        株主資本は<strong>お金の出どころ</strong>で2つに分かれます：<br><br>
+        &emsp;<span style="display:inline-block;background:#f3e8ff;padding:2px 10px;border-radius:6px;border:2px solid #a855f7;font-weight:700;">株主が出してくれた</span>
+        → 資本金 ＋ 資本剰余金<br>
+        &emsp;&emsp;例：友人3人が100万ずつ出資 → 資本金150万＋資本準備金150万<br><br>
+        &emsp;<span style="display:inline-block;background:#ede9fe;padding:2px 10px;border-radius:6px;border:2px solid #8b5cf6;font-weight:700;">会社が自分で稼いだ</span>
+        → 利益剰余金<br>
+        &emsp;&emsp;例：今期の利益100万 → 繰越利益剰余金に追加<br><br>
+        <strong>試験での聞かれ方：</strong>「資本金と利益剰余金の違いは？」<br>
+        → 出どころが違う！ 出資されたお金 vs 稼いで貯めたお金
+      </div>
+
+      <div class="example-box">
+        <strong>資本金 vs 資本剰余金 ― なぜ分ける？</strong><br><br>
+        1株 1,000円で100株を発行して10万円を調達！<br>
+        &emsp;→ 法律では「最低半分（5万円）を資本金にすればOK」<br>
+        &emsp;→ 残りの5万円は<strong>資本準備金</strong>（資本剰余金の一部）に<br><br>
+        <strong>なぜわざわざ分けるの？</strong><br>
+        &emsp;→ 資本金は「会社の信用の看板」。簡単に減らせないように法律で保護<br>
+        &emsp;→ 資本準備金は「いざという時の予備のお金」。少し柔軟に使える<br>
+        &emsp;→ どちらも<strong>株主がくれたお金</strong>という点は同じ！
+      </div>
+
+      <div class="example-box">
+        <strong>利益剰余金の流れ ― 稼いだ後どうなる？</strong><br><br>
+        <strong>Step 1：</strong>今年100万円の利益が出た！<br>
+        &emsp;→ まず全額「<strong>繰越利益剰余金</strong>」に入る<br><br>
+        <strong>Step 2：</strong>株主総会で使い道を決める<br>
+        &emsp;→ 30万円は株主に配当<br>
+        &emsp;→ 10万円は利益準備金に積立て（法律上の義務）<br>
+        &emsp;→ 残り60万円はそのまま繰越利益剰余金に残る<br><br>
+        <strong>ポイント：</strong>利益剰余金 ＝ 利益準備金 ＋ 繰越利益剰余金（上位概念）
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="th-purple">科目名</th><th class="th-purple">ひとこと</th><th class="th-purple">お金の出どころ</th><th class="th-purple">身近な例</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>資本金</strong></td><td>株主が出資した公式なお金</td><td rowspan="2" style="vertical-align:middle;background:#f3e8ff;">株主が<br>出してくれた</td><td>起業時の元手300万円</td></tr>
+            <tr><td><strong>資本剰余金</strong></td><td>出資のうち資本金に入れなかった分</td><td>発行額のうち準備金に回した分</td></tr>
+            <tr><td><strong>利益剰余金</strong></td><td>過去に稼いで貯めた利益の合計</td><td rowspan="2" style="vertical-align:middle;background:#ede9fe;">会社が<br>自分で稼いだ</td><td>会社の貯金箱</td></tr>
+            <tr><td><strong>繰越利益剰余金</strong></td><td>配当や積立てに回す前の利益</td><td>まだ使い道を決めてない分</td></tr>
+            <tr><td><strong>自己株式</strong></td><td>自社株を買い戻した分（マイナス）</td><td style="background:#fee2e2;">純資産から<br>差し引き</td><td>市場から自社株を買い戻し</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#1e8449;">📈 収益の勘定科目</div>
+    <div class="section-overview-body">
+      <p>「会社が<strong>稼いだお金</strong>」です。増えたら<strong>貸方（右）</strong>。</p>
+
+      <div class="tree-wrap">
+        <div class="tree-title">収益のツリー構造</div>
+        <ul class="tree">
+          <li><span class="tree-root tr-green">収益（稼いだお金）</span>
+            <ul>
+              <li><span class="tree-branch tb-green">営業収益</span><span class="leaf-hint"> ← 本業で稼いだ</span>
+                <ul>
+                  <li><span class="tree-leaf">売上 <span class="leaf-hint">商品・サービスの販売</span></span></li>
+                </ul>
+              </li>
+              <li><span class="tree-branch tb-green">営業外収益</span><span class="leaf-hint"> ← 本業以外で定期的に入る</span>
+                <ul>
+                  <li><span class="tree-leaf">受取利息 <span class="leaf-hint">預金や貸付金の利息</span></span></li>
+                  <li><span class="tree-leaf">受取配当金 <span class="leaf-hint">持っている株の配当</span></span></li>
+                  <li><span class="tree-leaf">雑収入 <span class="leaf-hint">自販機手数料など</span></span></li>
+                </ul>
+              </li>
+              <li><span class="tree-branch tb-green">特別利益</span><span class="leaf-hint"> ← たまにしか起こらない</span>
+                <ul>
+                  <li><span class="tree-leaf">固定資産売却益 <span class="leaf-hint">土地等を帳簿より高く売った</span></span></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="memo-bubble">
+        P/L（損益計算書）では「営業利益 → 経常利益 → 当期純利益」と段階的に計算します。上の分類は各段階のどこに入るかに対応しています。
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="th-green">科目名</th><th class="th-green">ひとこと</th><th class="th-green">身近な例</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>売上</td><td>本業の稼ぎ</td><td>パン屋のパン販売</td></tr>
+            <tr><td>受取利息</td><td>お金を貸して得た利息</td><td>預金の利息</td></tr>
+            <tr><td>受取配当金</td><td>持っている株の配当金</td><td>株の配当</td></tr>
+            <tr><td>固定資産売却益</td><td>建物等を帳簿より高く売った利益</td><td>土地を高く売れた差額</td></tr>
+            <tr><td>雑収入</td><td>本業以外の小さな収入</td><td>自販機の手数料</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#b7950b;">💸 費用の勘定科目</div>
+    <div class="section-overview-body">
+      <p>「会社が<strong>使ったお金</strong>」です。増えたら<strong>借方（左）</strong>。</p>
+
+      <div class="tree-wrap">
+        <div class="tree-title">費用のツリー構造</div>
+        <ul class="tree">
+          <li><span class="tree-root tr-orange">費用（使ったお金）</span>
+            <ul>
+              <li><span class="tree-branch tb-orange">売上原価</span><span class="leaf-hint"> ← 売った商品の仕入コスト</span>
+                <ul>
+                  <li><span class="tree-leaf">仕入 <span class="leaf-hint">材料・商品の購入</span></span></li>
+                </ul>
+              </li>
+              <li><span class="tree-branch tb-orange">販売費及び一般管理費（販管費）</span><span class="leaf-hint"> ← 日常の運営コスト</span>
+                <ul>
+                  <li><span class="tree-leaf">給料 <span class="leaf-hint">従業員の報酬</span></span></li>
+                  <li><span class="tree-leaf">広告宣伝費 <span class="leaf-hint">チラシ・Web広告</span></span></li>
+                  <li><span class="tree-leaf">水道光熱費 <span class="leaf-hint">電気・ガス・水道</span></span></li>
+                  <li><span class="tree-leaf">通信費 <span class="leaf-hint">電話・ネット代</span></span></li>
+                  <li><span class="tree-leaf">支払家賃 <span class="leaf-hint">オフィスの家賃</span></span></li>
+                  <li><span class="tree-leaf">減価償却費 <span class="leaf-hint">設備の年間の価値低下</span></span></li>
+                  <li><span class="tree-leaf">租税公課 <span class="leaf-hint">固定資産税・印紙代</span></span></li>
+                </ul>
+              </li>
+              <li><span class="tree-branch tb-orange">営業外費用</span><span class="leaf-hint"> ← 本業以外の定期コスト</span>
+                <ul>
+                  <li><span class="tree-leaf">支払利息 <span class="leaf-hint">借入金の利息</span></span></li>
+                </ul>
+              </li>
+              <li><span class="tree-branch tb-orange">特別損失</span><span class="leaf-hint"> ← たまにしか起こらない</span>
+                <ul>
+                  <li><span class="tree-leaf">貸倒損失 <span class="leaf-hint">回収不能になった売掛金</span></span></li>
+                  <li><span class="tree-leaf">固定資産売却損 <span class="leaf-hint">帳簿より安く売った損</span></span></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="memo-bubble">
+        費用は「どの利益計算に影響するか」で場所が変わります。仕入→売上総利益、販管費→営業利益、支払利息→経常利益、特別損失→税引前当期純利益。
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;margin:16px 0;font-size:0.88rem;">
+        <div style="background:#1e8449;color:#fff;border-radius:8px;padding:6px 18px;font-weight:700;">売上 − 仕入 ＝ 売上総利益</div>
+        <div style="font-weight:800;color:#94a3b8;">↓</div>
+        <div style="background:#27ae60;color:#fff;border-radius:8px;padding:6px 18px;font-weight:700;">− 販管費 ＝ 営業利益</div>
+        <div style="font-weight:800;color:#94a3b8;">↓</div>
+        <div style="background:#2980b9;color:#fff;border-radius:8px;padding:6px 18px;font-weight:700;">± 営業外損益 ＝ 経常利益</div>
+        <div style="font-weight:800;color:#94a3b8;">↓</div>
+        <div style="background:#8e44ad;color:#fff;border-radius:8px;padding:6px 18px;font-weight:700;">± 特別損益 ＝ 税引前当期純利益</div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="th-orange">科目名</th><th class="th-orange">ひとこと</th><th class="th-orange">身近な例</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>仕入</td><td>売るために買った材料代</td><td>パン屋の小麦粉代</td></tr>
+            <tr><td>給料</td><td>従業員への報酬</td><td>毎月のお給料</td></tr>
+            <tr><td>広告宣伝費</td><td>宣伝に使ったお金</td><td>チラシ・Web広告</td></tr>
+            <tr><td>水道光熱費</td><td>水道・電気・ガス代</td><td>毎月の電気代</td></tr>
+            <tr><td>通信費</td><td>電話・ネット代</td><td>スマホの月額料金</td></tr>
+            <tr><td>支払家賃</td><td>借りている場所の家賃</td><td>オフィスの家賃</td></tr>
+            <tr><td>支払利息</td><td>借金の利息</td><td>ローンの利息</td></tr>
+            <tr><td>減価償却費</td><td>高額な物の価値の目減り分</td><td>車の年間の価値低下</td></tr>
+            <tr><td>貸倒損失</td><td>回収できなくなった売掛金</td><td>相手が倒産して取れない</td></tr>
+            <tr><td>租税公課</td><td>税金や公的な負担</td><td>固定資産税・印紙代</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 紛らわしい科目 -->
+  <div class="section-overview">
+    <div class="section-overview-header red">⚠️ 間違えやすい！紛らわしい勘定科目</div>
+    <div class="section-overview-body">
+
+      <h3>売掛金 vs 未収入金</h3>
+      <div class="compare-box">
+        <div class="compare-item ci-blue">
+          <div class="compare-item-header">売掛金 <span class="cat-label cat-asset">資産</span></div>
+          <div class="compare-item-body">
+            <p><strong>本業</strong>の商品・サービスを売った未回収金</p>
+            <p>例：パン屋がパンをツケで売った</p>
+          </div>
+        </div>
+        <div class="compare-item ci-orange">
+          <div class="compare-item-header">未収入金 <span class="cat-label cat-asset">資産</span></div>
+          <div class="compare-item-body">
+            <p><strong>本業以外</strong>のもので未回収のお金</p>
+            <p>例：パン屋が不要な車を売った代金が未回収</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>買掛金 vs 未払金</h3>
+      <div class="compare-box">
+        <div class="compare-item ci-red">
+          <div class="compare-item-header">買掛金 <span class="cat-label cat-liability">負債</span></div>
+          <div class="compare-item-body">
+            <p><strong>本業</strong>の仕入を後払いにしたもの</p>
+            <p>例：小麦粉をツケで仕入れた</p>
+          </div>
+        </div>
+        <div class="compare-item ci-orange">
+          <div class="compare-item-header">未払金 <span class="cat-label cat-liability">負債</span></div>
+          <div class="compare-item-body">
+            <p><strong>本業以外</strong>の支払いが残っている</p>
+            <p>例：パソコンを買って後払い</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>前払金 vs 前受金</h3>
+      <div class="compare-box">
+        <div class="compare-item ci-blue">
+          <div class="compare-item-header">前払金 <span class="cat-label cat-asset">資産</span></div>
+          <div class="compare-item-body">
+            <p>商品を受け取る<strong>前に払った</strong>お金</p>
+            <p>自分が先に払った → 商品をもらう<strong>権利</strong></p>
+          </div>
+        </div>
+        <div class="compare-item ci-red">
+          <div class="compare-item-header">前受金 <span class="cat-label cat-liability">負債</span></div>
+          <div class="compare-item-body">
+            <p>商品を届ける<strong>前にもらった</strong>お金</p>
+            <p>先にもらった → 届ける<strong>義務</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="analogy">
+        映画チケットの前売りで覚えよう！ <strong>お客さん目線</strong>：先にお金を払った → 映画を見る権利 → <strong>前払金（資産）</strong>。<strong>映画館目線</strong>：先にお金をもらった → 映画を見せる義務 → <strong>前受金（負債）</strong>。同じ取引でも立場が逆なら科目も逆！
+      </div>
+
+      <h3>貸付金 vs 借入金</h3>
+      <div class="compare-box">
+        <div class="compare-item ci-blue">
+          <div class="compare-item-header">貸付金 <span class="cat-label cat-asset">資産</span></div>
+          <div class="compare-item-body">
+            <p>他人に<strong>貸した</strong>お金 → 返してもらう権利</p>
+          </div>
+        </div>
+        <div class="compare-item ci-red">
+          <div class="compare-item-header">借入金 <span class="cat-label cat-liability">負債</span></div>
+          <div class="compare-item-body">
+            <p>他人から<strong>借りた</strong>お金 → 返す義務</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exam-point">
+        <div class="exam-point-title">試験での頻出ひっかけ</div>
+        <ul>
+          <li>「売掛金」と「未収入金」 → <strong>本業かどうか</strong>で判断</li>
+          <li>「前払」と「前受」 → <strong>自分が払ったか・もらったか</strong>で判断</li>
+          <li>「受取手形」は<strong>資産</strong>、「支払手形」は<strong>負債</strong></li>
+          <li>「のれん」は<strong>資産</strong>（買収時にのみ発生）</li>
+          <li>「減価償却累計額」は資産の<strong>マイナス</strong>（控除項目）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. まとめ -->
+  <div class="one-point">
+    勘定科目 ＝ お金の動きにつける「名札」<br>
+    5グループ（資産・負債・純資産・収益・費用）を押さえれば<br>
+    どの科目も「どこに属するか」で借方・貸方が決まる！
+  </div>
+
+</div>
+
+<!-- ========== タブ3: 区分ドリル ========== -->
+<div class="tab-content" id="tab3">
+
+  <div class="exam-point" style="border-color:#0f766e;background:#ecfdf5;">
+    <div class="exam-point-title" style="color:#0f766e;">このタブで学ぶこと</div>
+    <ul style="color:#134e4a;">
+      <li>各勘定科目がB/S・P/Lのどの区分に入るか判定する</li>
+      <li>判断基準は「1年ルール」「本業か否か」「毎期か臨時か」</li>
+      <li>2ステップのドリルで区分力を鍛える</li>
+    </ul>
+  </div>
+
+  <!-- おさらい -->
+  <div class="section-overview">
+    <div class="section-overview-header">📐 区分の全体マップ</div>
+    <div class="section-overview-body">
+      <h3>B/S（貸借対照表）の区分</h3>
+      <div class="compare-box-3">
+        <div class="compare-item ci-blue">
+          <div class="compare-item-header">資産の区分</div>
+          <div class="compare-item-body">
+            <p><strong>流動資産</strong>：1年以内に現金化<br>（現金、売掛金、商品 等）</p>
+            <p><strong>固定資産</strong>：長期間使う<br>（建物、土地、備品、のれん 等）</p>
+          </div>
+        </div>
+        <div class="compare-item ci-red">
+          <div class="compare-item-header">負債の区分</div>
+          <div class="compare-item-body">
+            <p><strong>流動負債</strong>：1年以内に返す<br>（買掛金、前受金、預り金 等）</p>
+            <p><strong>固定負債</strong>：返済が1年超<br>（長期借入金、社債 等）</p>
+          </div>
+        </div>
+        <div class="compare-item ci-purple">
+          <div class="compare-item-header">純資産の区分</div>
+          <div class="compare-item-body">
+            <p><strong>資本金</strong>：株主が出資したお金<br>（起業時の元手、増資 等）</p>
+            <p><strong>資本剰余金</strong>：出資のうち資本金に入れなかった分<br>（資本準備金 等）</p>
+            <p><strong>利益剰余金</strong>：稼いで貯めた利益の合計<br>（繰越利益剰余金、利益準備金）</p>
+            <p><strong>評価・換算差額等</strong>：未確定の含み損益<br>（有価証券評価差額金 等）</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>P/L（損益計算書）の区分</h3>
+      <div class="compare-box">
+        <div class="compare-item ci-green">
+          <div class="compare-item-header">収益の区分</div>
+          <div class="compare-item-body">
+            <p><strong>営業収益</strong>：本業の稼ぎ（売上）</p>
+            <p><strong>営業外収益</strong>：定期的な副収入（受取利息 等）</p>
+            <p><strong>特別利益</strong>：臨時・例外的（固定資産売却益 等）</p>
+          </div>
+        </div>
+        <div class="compare-item ci-orange">
+          <div class="compare-item-header">費用の区分</div>
+          <div class="compare-item-body">
+            <p><strong>売上原価</strong>：商品の仕入コスト（仕入）</p>
+            <p><strong>販管費</strong>：日常の運営コスト（給料、家賃 等）</p>
+            <p><strong>営業外費用</strong>：定期的な副支出（支払利息 等）</p>
+            <p><strong>特別損失</strong>：臨時・例外的（貸倒損失 等）</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="goro-box">
+        <div class="goro-main">判断基準：「<span class="goro-highlight">1年</span>」と「<span class="goro-highlight">本業</span>」と「<span class="goro-highlight">いつも？たまに？</span>」</div>
+        <div class="goro-decode">
+          B/S → <strong>1年以内か否か</strong>（ワンイヤールール）<br>
+          P/L → <strong>本業か副業か</strong> × <strong>毎期か臨時か</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C1: 売掛金 -->
+  <div class="classify-card">
+    <div class="classify-header" style="background:#2471a3;"><span>C1</span> 売掛金</div>
+    <div class="classify-body">
+      <div class="classify-subject">売掛金（本業の商品をツケで売った代金）</div>
+      <div class="classify-btn-group">
+        <span class="cbg-label">Step 1：どのグループ？</span>
+        <div class="classify-choices" id="c1s1">
+          <button class="classify-choice" onclick="classifyCheck('c1s1','c1s2','c1fb1',this,true,'c1map')">資産</button>
+          <button class="classify-choice" onclick="classifyCheck('c1s1','c1s2','c1fb1',this,false,'c1map')">負債</button>
+          <button class="classify-choice" onclick="classifyCheck('c1s1','c1s2','c1fb1',this,false,'c1map')">収益</button>
+          <button class="classify-choice" onclick="classifyCheck('c1s1','c1s2','c1fb1',this,false,'c1map')">費用</button>
+        </div>
+      </div>
+      <div class="classify-btn-group" id="c1s2" style="display:none;">
+        <span class="cbg-label">Step 2：どの区分？</span>
+        <div class="classify-choices" id="c1s2c">
+          <button class="classify-choice" onclick="classifyCheck('c1s2c',null,'c1fb2',this,true,'c1map')">流動資産</button>
+          <button class="classify-choice" onclick="classifyCheck('c1s2c',null,'c1fb2',this,false,'c1map')">固定資産</button>
+        </div>
+      </div>
+      <div class="classify-feedback" id="c1fb1"><strong>資産</strong> ← 代金をもらう「権利」を持っている</div>
+      <div class="classify-feedback" id="c1fb2"><strong><span class="answer-tag at-sub">流動資産</span></strong> ← 通常1年以内に回収する債権。ワンイヤールールで流動。</div>
+      <div class="mini-map" id="c1map">
+        <div class="mini-map-title">いまココ！全体マップ</div>
+        <div class="mini-map-grid">
+          <span class="mm-section-label mm-label-bs">B/S 貸借対照表</span>
+          <span class="mm-sub-label">【資産】</span>
+          <span class="mm-item mm-hit mm-hit-asset-c">▶ 流動資産（売掛金）</span>
+          <span class="mm-item">固定資産（有形・無形）</span>
+          <span class="mm-sub-label">【負債】</span>
+          <span class="mm-item">流動負債</span>
+          <span class="mm-item">固定負債</span>
+          <span class="mm-sub-label">【純資産】</span>
+          <span class="mm-item">資本金・資本剰余金</span>
+          <span class="mm-item">利益剰余金</span>
+          <span class="mm-item">評価・換算差額等</span>
+          <span class="mm-section-label mm-label-pl">P/L 損益計算書</span>
+          <span class="mm-sub-label">【営業損益】</span>
+          <span class="mm-item">営業収益（売上）</span>
+          <span class="mm-item">売上原価</span>
+          <span class="mm-item">販管費</span>
+          <span class="mm-sub-label">【営業外損益】</span>
+          <span class="mm-item">営業外収益</span>
+          <span class="mm-item">営業外費用</span>
+          <span class="mm-sub-label">【特別損益】</span>
+          <span class="mm-item">特別利益</span>
+          <span class="mm-item">特別損失</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C2: 建物 -->
+  <div class="classify-card">
+    <div class="classify-header" style="background:#0e7490;"><span>C2</span> 建物</div>
+    <div class="classify-body">
+      <div class="classify-subject">建物（会社が持っているオフィスビル）</div>
+      <div class="classify-btn-group">
+        <span class="cbg-label">Step 1：どのグループ？</span>
+        <div class="classify-choices" id="c2s1">
+          <button class="classify-choice" onclick="classifyCheck('c2s1','c2s2','c2fb1',this,true,'c2map')">資産</button>
+          <button class="classify-choice" onclick="classifyCheck('c2s1','c2s2','c2fb1',this,false,'c2map')">負債</button>
+          <button class="classify-choice" onclick="classifyCheck('c2s1','c2s2','c2fb1',this,false,'c2map')">費用</button>
+          <button class="classify-choice" onclick="classifyCheck('c2s1','c2s2','c2fb1',this,false,'c2map')">純資産</button>
+        </div>
+      </div>
+      <div class="classify-btn-group" id="c2s2" style="display:none;">
+        <span class="cbg-label">Step 2：どの区分？</span>
+        <div class="classify-choices" id="c2s2c">
+          <button class="classify-choice" onclick="classifyCheck('c2s2c',null,'c2fb2',this,false,'c2map')">流動資産</button>
+          <button class="classify-choice" onclick="classifyCheck('c2s2c',null,'c2fb2',this,true,'c2map')">固定資産</button>
+        </div>
+      </div>
+      <div class="classify-feedback" id="c2fb1"><strong>資産</strong> ← 会社が所有している財産</div>
+      <div class="classify-feedback" id="c2fb2"><strong><span class="answer-tag at-sub">固定資産</span></strong> ← 何年も使い続けるもの。1年で売る予定ではないので固定。</div>
+      <div class="mini-map" id="c2map">
+        <div class="mini-map-title">いまココ！全体マップ</div>
+        <div class="mini-map-grid">
+          <span class="mm-section-label mm-label-bs">B/S 貸借対照表</span>
+          <span class="mm-sub-label">【資産】</span>
+          <span class="mm-item">流動資産</span>
+          <span class="mm-item mm-hit mm-hit-asset-f">▶ 固定資産（建物）</span>
+          <span class="mm-sub-label">【負債】</span>
+          <span class="mm-item">流動負債</span>
+          <span class="mm-item">固定負債</span>
+          <span class="mm-sub-label">【純資産】</span>
+          <span class="mm-item">資本金・資本剰余金</span>
+          <span class="mm-item">利益剰余金</span>
+          <span class="mm-item">評価・換算差額等</span>
+          <span class="mm-section-label mm-label-pl">P/L 損益計算書</span>
+          <span class="mm-sub-label">【営業損益】</span>
+          <span class="mm-item">営業収益（売上）</span>
+          <span class="mm-item">売上原価</span>
+          <span class="mm-item">販管費</span>
+          <span class="mm-sub-label">【営業外損益】</span>
+          <span class="mm-item">営業外収益</span>
+          <span class="mm-item">営業外費用</span>
+          <span class="mm-sub-label">【特別損益】</span>
+          <span class="mm-item">特別利益</span>
+          <span class="mm-item">特別損失</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C3: 買掛金 -->
+  <div class="classify-card">
+    <div class="classify-header" style="background:#c0392b;"><span>C3</span> 買掛金</div>
+    <div class="classify-body">
+      <div class="classify-subject">買掛金（本業の材料をツケで仕入れた代金）</div>
+      <div class="classify-btn-group">
+        <span class="cbg-label">Step 1：どのグループ？</span>
+        <div class="classify-choices" id="c3s1">
+          <button class="classify-choice" onclick="classifyCheck('c3s1','c3s2','c3fb1',this,false,'c3map')">資産</button>
+          <button class="classify-choice" onclick="classifyCheck('c3s1','c3s2','c3fb1',this,true,'c3map')">負債</button>
+          <button class="classify-choice" onclick="classifyCheck('c3s1','c3s2','c3fb1',this,false,'c3map')">費用</button>
+          <button class="classify-choice" onclick="classifyCheck('c3s1','c3s2','c3fb1',this,false,'c3map')">純資産</button>
+        </div>
+      </div>
+      <div class="classify-btn-group" id="c3s2" style="display:none;">
+        <span class="cbg-label">Step 2：どの区分？</span>
+        <div class="classify-choices" id="c3s2c">
+          <button class="classify-choice" onclick="classifyCheck('c3s2c',null,'c3fb2',this,true,'c3map')">流動負債</button>
+          <button class="classify-choice" onclick="classifyCheck('c3s2c',null,'c3fb2',this,false,'c3map')">固定負債</button>
+        </div>
+      </div>
+      <div class="classify-feedback" id="c3fb1"><strong>負債</strong> ← 代金を支払う「義務」がある</div>
+      <div class="classify-feedback" id="c3fb2"><strong><span class="answer-tag at-sub">流動負債</span></strong> ← 通常1〜2ヶ月以内に支払う短期の義務。</div>
+      <div class="mini-map" id="c3map">
+        <div class="mini-map-title">いまココ！全体マップ</div>
+        <div class="mini-map-grid">
+          <span class="mm-section-label mm-label-bs">B/S 貸借対照表</span>
+          <span class="mm-sub-label">【資産】</span>
+          <span class="mm-item">流動資産</span>
+          <span class="mm-item">固定資産（有形・無形）</span>
+          <span class="mm-sub-label">【負債】</span>
+          <span class="mm-item mm-hit mm-hit-liab-c">▶ 流動負債（買掛金）</span>
+          <span class="mm-item">固定負債</span>
+          <span class="mm-sub-label">【純資産】</span>
+          <span class="mm-item">資本金・資本剰余金</span>
+          <span class="mm-item">利益剰余金</span>
+          <span class="mm-item">評価・換算差額等</span>
+          <span class="mm-section-label mm-label-pl">P/L 損益計算書</span>
+          <span class="mm-sub-label">【営業損益】</span>
+          <span class="mm-item">営業収益（売上）</span>
+          <span class="mm-item">売上原価</span>
+          <span class="mm-item">販管費</span>
+          <span class="mm-sub-label">【営業外損益】</span>
+          <span class="mm-item">営業外収益</span>
+          <span class="mm-item">営業外費用</span>
+          <span class="mm-sub-label">【特別損益】</span>
+          <span class="mm-item">特別利益</span>
+          <span class="mm-item">特別損失</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C4: 社債 -->
+  <div class="classify-card">
+    <div class="classify-header" style="background:#7d3c98;"><span>C4</span> 社債</div>
+    <div class="classify-body">
+      <div class="classify-subject">社債（会社が発行した借金の証書。償還期限5年）</div>
+      <div class="classify-btn-group">
+        <span class="cbg-label">Step 1：どのグループ？</span>
+        <div class="classify-choices" id="c4s1">
+          <button class="classify-choice" onclick="classifyCheck('c4s1','c4s2','c4fb1',this,false,'c4map')">資産</button>
+          <button class="classify-choice" onclick="classifyCheck('c4s1','c4s2','c4fb1',this,true,'c4map')">負債</button>
+          <button class="classify-choice" onclick="classifyCheck('c4s1','c4s2','c4fb1',this,false,'c4map')">純資産</button>
+          <button class="classify-choice" onclick="classifyCheck('c4s1','c4s2','c4fb1',this,false,'c4map')">収益</button>
+        </div>
+      </div>
+      <div class="classify-btn-group" id="c4s2" style="display:none;">
+        <span class="cbg-label">Step 2：どの区分？</span>
+        <div class="classify-choices" id="c4s2c">
+          <button class="classify-choice" onclick="classifyCheck('c4s2c',null,'c4fb2',this,false,'c4map')">流動負債</button>
+          <button class="classify-choice" onclick="classifyCheck('c4s2c',null,'c4fb2',this,true,'c4map')">固定負債</button>
+        </div>
+      </div>
+      <div class="classify-feedback" id="c4fb1"><strong>負債</strong> ← 投資家にお金を返す義務がある</div>
+      <div class="classify-feedback" id="c4fb2"><strong><span class="answer-tag at-sub">固定負債</span></strong> ← 償還（返済）が1年超。ワンイヤールールで固定負債。</div>
+      <div class="mini-map" id="c4map">
+        <div class="mini-map-title">いまココ！全体マップ</div>
+        <div class="mini-map-grid">
+          <span class="mm-section-label mm-label-bs">B/S 貸借対照表</span>
+          <span class="mm-sub-label">【資産】</span>
+          <span class="mm-item">流動資産</span>
+          <span class="mm-item">固定資産（有形・無形）</span>
+          <span class="mm-sub-label">【負債】</span>
+          <span class="mm-item">流動負債</span>
+          <span class="mm-item mm-hit mm-hit-liab-f">▶ 固定負債（社債）</span>
+          <span class="mm-sub-label">【純資産】</span>
+          <span class="mm-item">資本金・資本剰余金</span>
+          <span class="mm-item">利益剰余金</span>
+          <span class="mm-item">評価・換算差額等</span>
+          <span class="mm-section-label mm-label-pl">P/L 損益計算書</span>
+          <span class="mm-sub-label">【営業損益】</span>
+          <span class="mm-item">営業収益（売上）</span>
+          <span class="mm-item">売上原価</span>
+          <span class="mm-item">販管費</span>
+          <span class="mm-sub-label">【営業外損益】</span>
+          <span class="mm-item">営業外収益</span>
+          <span class="mm-item">営業外費用</span>
+          <span class="mm-sub-label">【特別損益】</span>
+          <span class="mm-item">特別利益</span>
+          <span class="mm-item">特別損失</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C5: 仕入 -->
+  <div class="classify-card">
+    <div class="classify-header" style="background:#b7950b;"><span>C5</span> 仕入</div>
+    <div class="classify-body">
+      <div class="classify-subject">仕入（パン屋が小麦粉を購入した代金）</div>
+      <div class="classify-btn-group">
+        <span class="cbg-label">Step 1：どのグループ？</span>
+        <div class="classify-choices" id="c5s1">
+          <button class="classify-choice" onclick="classifyCheck('c5s1','c5s2','c5fb1',this,false,'c5map')">資産</button>
+          <button class="classify-choice" onclick="classifyCheck('c5s1','c5s2','c5fb1',this,false,'c5map')">負債</button>
+          <button class="classify-choice" onclick="classifyCheck('c5s1','c5s2','c5fb1',this,false,'c5map')">収益</button>
+          <button class="classify-choice" onclick="classifyCheck('c5s1','c5s2','c5fb1',this,true,'c5map')">費用</button>
+        </div>
+      </div>
+      <div class="classify-btn-group" id="c5s2" style="display:none;">
+        <span class="cbg-label">Step 2：P/Lのどの区分？</span>
+        <div class="classify-choices" id="c5s2c">
+          <button class="classify-choice" onclick="classifyCheck('c5s2c',null,'c5fb2',this,true,'c5map')">売上原価</button>
+          <button class="classify-choice" onclick="classifyCheck('c5s2c',null,'c5fb2',this,false,'c5map')">販管費</button>
+          <button class="classify-choice" onclick="classifyCheck('c5s2c',null,'c5fb2',this,false,'c5map')">営業外費用</button>
+          <button class="classify-choice" onclick="classifyCheck('c5s2c',null,'c5fb2',this,false,'c5map')">特別損失</button>
+        </div>
+      </div>
+      <div class="classify-feedback" id="c5fb1"><strong>費用</strong> ← 商品を作るために使ったお金</div>
+      <div class="classify-feedback" id="c5fb2"><strong><span class="answer-tag at-sub">売上原価</span></strong> ← 売った商品の元値。「売上 − 売上原価 ＝ 売上総利益（粗利）」の計算に使う。</div>
+      <div class="mini-map" id="c5map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item mm-hit mm-hit-exp-c">▶ 売上原価（仕入）</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div>
+    </div>
+  </div>
+
+  <!-- C6〜C19: ミニマップ付き -->
+  <div class="classify-card"><div class="classify-header" style="background:#e67e22;"><span>C6</span> 広告宣伝費</div><div class="classify-body"><div class="classify-subject">広告宣伝費（Web広告やチラシに使ったお金）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c6s1"><button class="classify-choice" onclick="classifyCheck('c6s1','c6s2','c6fb1',this,false,'c6map')">資産</button><button class="classify-choice" onclick="classifyCheck('c6s1','c6s2','c6fb1',this,true,'c6map')">費用</button><button class="classify-choice" onclick="classifyCheck('c6s1','c6s2','c6fb1',this,false,'c6map')">負債</button><button class="classify-choice" onclick="classifyCheck('c6s1','c6s2','c6fb1',this,false,'c6map')">収益</button></div></div><div class="classify-btn-group" id="c6s2" style="display:none;"><span class="cbg-label">Step 2：P/Lのどの区分？</span><div class="classify-choices" id="c6s2c"><button class="classify-choice" onclick="classifyCheck('c6s2c',null,'c6fb2',this,false,'c6map')">売上原価</button><button class="classify-choice" onclick="classifyCheck('c6s2c',null,'c6fb2',this,true,'c6map')">販管費</button><button class="classify-choice" onclick="classifyCheck('c6s2c',null,'c6fb2',this,false,'c6map')">営業外費用</button><button class="classify-choice" onclick="classifyCheck('c6s2c',null,'c6fb2',this,false,'c6map')">特別損失</button></div></div><div class="classify-feedback" id="c6fb1"><strong>費用</strong> ← 使ったらすぐ効果が終わるお金</div><div class="classify-feedback" id="c6fb2"><strong><span class="answer-tag at-sub">販管費</span></strong> ← 商品そのもののコストではなく、売るため・会社を回すためのコスト。</div><div class="mini-map" id="c6map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item mm-hit mm-hit-exp-s">▶ 販管費（広告宣伝費）</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <div class="classify-card"><div class="classify-header" style="background:#1e8449;"><span>C7</span> 支払利息</div><div class="classify-body"><div class="classify-subject">支払利息（銀行からの借入金に対する利息）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c7s1"><button class="classify-choice" onclick="classifyCheck('c7s1','c7s2','c7fb1',this,false,'c7map')">負債</button><button class="classify-choice" onclick="classifyCheck('c7s1','c7s2','c7fb1',this,true,'c7map')">費用</button><button class="classify-choice" onclick="classifyCheck('c7s1','c7s2','c7fb1',this,false,'c7map')">資産</button><button class="classify-choice" onclick="classifyCheck('c7s1','c7s2','c7fb1',this,false,'c7map')">純資産</button></div></div><div class="classify-btn-group" id="c7s2" style="display:none;"><span class="cbg-label">Step 2：P/Lのどの区分？</span><div class="classify-choices" id="c7s2c"><button class="classify-choice" onclick="classifyCheck('c7s2c',null,'c7fb2',this,false,'c7map')">売上原価</button><button class="classify-choice" onclick="classifyCheck('c7s2c',null,'c7fb2',this,false,'c7map')">販管費</button><button class="classify-choice" onclick="classifyCheck('c7s2c',null,'c7fb2',this,true,'c7map')">営業外費用</button><button class="classify-choice" onclick="classifyCheck('c7s2c',null,'c7fb2',this,false,'c7map')">特別損失</button></div></div><div class="classify-feedback" id="c7fb1"><strong>費用</strong> ← お金を借りるコスト</div><div class="classify-feedback" id="c7fb2"><strong><span class="answer-tag at-sub">営業外費用</span></strong> ← 本業とは関係ない定期的なコスト。「経常利益」の計算で引かれる。</div><div class="mini-map" id="c7map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item mm-hit mm-hit-exp-x">▶ 営業外費用（支払利息）</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <div class="classify-card"><div class="classify-header" style="background:#2471a3;"><span>C8</span> 受取利息</div><div class="classify-body"><div class="classify-subject">受取利息（銀行預金についた利息）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c8s1"><button class="classify-choice" onclick="classifyCheck('c8s1','c8s2','c8fb1',this,false,'c8map')">資産</button><button class="classify-choice" onclick="classifyCheck('c8s1','c8s2','c8fb1',this,true,'c8map')">収益</button><button class="classify-choice" onclick="classifyCheck('c8s1','c8s2','c8fb1',this,false,'c8map')">費用</button><button class="classify-choice" onclick="classifyCheck('c8s1','c8s2','c8fb1',this,false,'c8map')">純資産</button></div></div><div class="classify-btn-group" id="c8s2" style="display:none;"><span class="cbg-label">Step 2：P/Lのどの区分？</span><div class="classify-choices" id="c8s2c"><button class="classify-choice" onclick="classifyCheck('c8s2c',null,'c8fb2',this,false,'c8map')">営業収益</button><button class="classify-choice" onclick="classifyCheck('c8s2c',null,'c8fb2',this,true,'c8map')">営業外収益</button><button class="classify-choice" onclick="classifyCheck('c8s2c',null,'c8fb2',this,false,'c8map')">特別利益</button></div></div><div class="classify-feedback" id="c8fb1"><strong>収益</strong> ← もらえるお金</div><div class="classify-feedback" id="c8fb2"><strong><span class="answer-tag at-sub">営業外収益</span></strong> ← 預金の利息は本業ではない。毎期発生するので「営業外」。</div><div class="mini-map" id="c8map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item mm-hit mm-hit-rev-x">▶ 営業外収益（受取利息）</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <div class="classify-card"><div class="classify-header" style="background:#c0392b;"><span>C9</span> 固定資産売却益</div><div class="classify-body"><div class="classify-subject">固定資産売却益（土地を帳簿価額より高く売った差額）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c9s1"><button class="classify-choice" onclick="classifyCheck('c9s1','c9s2','c9fb1',this,false,'c9map')">資産</button><button class="classify-choice" onclick="classifyCheck('c9s1','c9s2','c9fb1',this,true,'c9map')">収益</button><button class="classify-choice" onclick="classifyCheck('c9s1','c9s2','c9fb1',this,false,'c9map')">費用</button><button class="classify-choice" onclick="classifyCheck('c9s1','c9s2','c9fb1',this,false,'c9map')">純資産</button></div></div><div class="classify-btn-group" id="c9s2" style="display:none;"><span class="cbg-label">Step 2：P/Lのどの区分？</span><div class="classify-choices" id="c9s2c"><button class="classify-choice" onclick="classifyCheck('c9s2c',null,'c9fb2',this,false,'c9map')">営業収益</button><button class="classify-choice" onclick="classifyCheck('c9s2c',null,'c9fb2',this,false,'c9map')">営業外収益</button><button class="classify-choice" onclick="classifyCheck('c9s2c',null,'c9fb2',this,true,'c9map')">特別利益</button></div></div><div class="classify-feedback" id="c9fb1"><strong>収益</strong> ← 帳簿より高く売れた「儲け」</div><div class="classify-feedback" id="c9fb2"><strong><span class="answer-tag at-sub">特別利益</span></strong> ← 臨時・例外的な利益。営業外収益（毎期ある利息等）と区別！</div><div class="mini-map" id="c9map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item mm-hit mm-hit-rev-s">▶ 特別利益（固定資産売却益）</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <div class="classify-card"><div class="classify-header" style="background:#7d3c98;"><span>C10</span> 貸倒損失</div><div class="classify-body"><div class="classify-subject">貸倒損失（取引先が倒産して売掛金が回収不能に）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c10s1"><button class="classify-choice" onclick="classifyCheck('c10s1','c10s2','c10fb1',this,false,'c10map')">負債</button><button class="classify-choice" onclick="classifyCheck('c10s1','c10s2','c10fb1',this,false,'c10map')">資産</button><button class="classify-choice" onclick="classifyCheck('c10s1','c10s2','c10fb1',this,true,'c10map')">費用</button><button class="classify-choice" onclick="classifyCheck('c10s1','c10s2','c10fb1',this,false,'c10map')">収益</button></div></div><div class="classify-btn-group" id="c10s2" style="display:none;"><span class="cbg-label">Step 2：P/Lのどの区分？</span><div class="classify-choices" id="c10s2c"><button class="classify-choice" onclick="classifyCheck('c10s2c',null,'c10fb2',this,false,'c10map')">売上原価</button><button class="classify-choice" onclick="classifyCheck('c10s2c',null,'c10fb2',this,false,'c10map')">販管費</button><button class="classify-choice" onclick="classifyCheck('c10s2c',null,'c10fb2',this,false,'c10map')">営業外費用</button><button class="classify-choice" onclick="classifyCheck('c10s2c',null,'c10fb2',this,true,'c10map')">特別損失</button></div></div><div class="classify-feedback" id="c10fb1"><strong>費用</strong> ← 回収できなくなった＝損失＝費用</div><div class="classify-feedback" id="c10fb2"><strong><span class="answer-tag at-sub">特別損失</span></strong> ← 臨時・例外的な損失。</div><div class="mini-map" id="c10map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item mm-hit mm-hit-exp-sp">▶ 特別損失（貸倒損失）</span></div></div></div></div>
+
+  <div class="classify-card"><div class="classify-header" style="background:#0e7490;"><span>C11</span> のれん</div><div class="classify-body"><div class="classify-subject">のれん（他社を買収した際のブランド価値への上乗せ）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c11s1"><button class="classify-choice" onclick="classifyCheck('c11s1','c11s2','c11fb1',this,true,'c11map')">資産</button><button class="classify-choice" onclick="classifyCheck('c11s1','c11s2','c11fb1',this,false,'c11map')">費用</button><button class="classify-choice" onclick="classifyCheck('c11s1','c11s2','c11fb1',this,false,'c11map')">純資産</button><button class="classify-choice" onclick="classifyCheck('c11s1','c11s2','c11fb1',this,false,'c11map')">負債</button></div></div><div class="classify-btn-group" id="c11s2" style="display:none;"><span class="cbg-label">Step 2：どの区分？</span><div class="classify-choices" id="c11s2c"><button class="classify-choice" onclick="classifyCheck('c11s2c',null,'c11fb2',this,false,'c11map')">流動資産</button><button class="classify-choice" onclick="classifyCheck('c11s2c',null,'c11fb2',this,true,'c11map')">固定資産（無形）</button></div></div><div class="classify-feedback" id="c11fb1"><strong>資産</strong> ← 目に見えないが将来利益を生む「無形」の財産</div><div class="classify-feedback" id="c11fb2"><strong><span class="answer-tag at-sub">固定資産（無形）</span></strong> ← 形がない長期資産。特許権やソフトウェアも同じ。</div><div class="mini-map" id="c11map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item mm-hit mm-hit-asset-f">▶ 固定資産・無形（のれん）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <div class="classify-card"><div class="classify-header" style="background:#e67e22;"><span>C12</span> 前受金</div><div class="classify-body"><div class="classify-subject">前受金（商品を届ける前にお客さんからもらった手付金）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c12s1"><button class="classify-choice" onclick="classifyCheck('c12s1','c12s2','c12fb1',this,false,'c12map')">資産</button><button class="classify-choice" onclick="classifyCheck('c12s1','c12s2','c12fb1',this,true,'c12map')">負債</button><button class="classify-choice" onclick="classifyCheck('c12s1','c12s2','c12fb1',this,false,'c12map')">収益</button><button class="classify-choice" onclick="classifyCheck('c12s1','c12s2','c12fb1',this,false,'c12map')">純資産</button></div></div><div class="classify-btn-group" id="c12s2" style="display:none;"><span class="cbg-label">Step 2：どの区分？</span><div class="classify-choices" id="c12s2c"><button class="classify-choice" onclick="classifyCheck('c12s2c',null,'c12fb2',this,true,'c12map')">流動負債</button><button class="classify-choice" onclick="classifyCheck('c12s2c',null,'c12fb2',this,false,'c12map')">固定負債</button></div></div><div class="classify-feedback" id="c12fb1"><strong>負債</strong> ← 商品を届ける「義務」がある</div><div class="classify-feedback" id="c12fb2"><strong><span class="answer-tag at-sub">流動負債</span></strong> ← 通常すぐに届けるので1年以内。</div><div class="mini-map" id="c12map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item mm-hit mm-hit-liab-c">▶ 流動負債（前受金）</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <div class="classify-card"><div class="classify-header" style="background:#1e8449;"><span>C13</span> 減価償却費</div><div class="classify-body"><div class="classify-subject">減価償却費（建物の今年分の価値低下を費用に計上）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c13s1"><button class="classify-choice" onclick="classifyCheck('c13s1','c13s2','c13fb1',this,false,'c13map')">資産</button><button class="classify-choice" onclick="classifyCheck('c13s1','c13s2','c13fb1',this,false,'c13map')">負債</button><button class="classify-choice" onclick="classifyCheck('c13s1','c13s2','c13fb1',this,true,'c13map')">費用</button><button class="classify-choice" onclick="classifyCheck('c13s1','c13s2','c13fb1',this,false,'c13map')">収益</button></div></div><div class="classify-btn-group" id="c13s2" style="display:none;"><span class="cbg-label">Step 2：P/Lのどの区分？</span><div class="classify-choices" id="c13s2c"><button class="classify-choice" onclick="classifyCheck('c13s2c',null,'c13fb2',this,false,'c13map')">売上原価</button><button class="classify-choice" onclick="classifyCheck('c13s2c',null,'c13fb2',this,true,'c13map')">販管費</button><button class="classify-choice" onclick="classifyCheck('c13s2c',null,'c13fb2',this,false,'c13map')">営業外費用</button><button class="classify-choice" onclick="classifyCheck('c13s2c',null,'c13fb2',this,false,'c13map')">特別損失</button></div></div><div class="classify-feedback" id="c13fb1"><strong>費用</strong> ← 設備の価値が年々目減りする分。「資産」と間違えやすい！</div><div class="classify-feedback" id="c13fb2"><strong><span class="answer-tag at-sub">販管費</span></strong> ← 毎期計上する日常の管理コスト。</div><div class="mini-map" id="c13map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item mm-hit mm-hit-exp-s">▶ 販管費（減価償却費）</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <div class="classify-card"><div class="classify-header" style="background:#7d3c98;"><span>C14</span> 資本金</div><div class="classify-body"><div class="classify-subject">資本金（株主が出資してくれたお金）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c14s1"><button class="classify-choice" onclick="classifyCheck('c14s1','c14s2','c14fb1',this,false,'c14map')">負債</button><button class="classify-choice" onclick="classifyCheck('c14s1','c14s2','c14fb1',this,false,'c14map')">収益</button><button class="classify-choice" onclick="classifyCheck('c14s1','c14s2','c14fb1',this,true,'c14map')">純資産</button><button class="classify-choice" onclick="classifyCheck('c14s1','c14s2','c14fb1',this,false,'c14map')">資産</button></div></div><div class="classify-btn-group" id="c14s2" style="display:none;"><span class="cbg-label">Step 2：純資産のどの区分？</span><div class="classify-choices" id="c14s2c"><button class="classify-choice" onclick="classifyCheck('c14s2c',null,'c14fb2',this,true,'c14map')">株主資本（資本金）</button><button class="classify-choice" onclick="classifyCheck('c14s2c',null,'c14fb2',this,false,'c14map')">株主資本（利益剰余金）</button></div></div><div class="classify-feedback" id="c14fb1"><strong>純資産</strong> ← 返す必要がない自己資金</div><div class="classify-feedback" id="c14fb2"><strong><span class="answer-tag at-sub">株主資本（資本金）</span></strong> ← 株主が「出資した」お金。利益剰余金とは出所が違う。</div><div class="mini-map" id="c14map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item mm-hit mm-hit-eq">▶ 資本金（資本金）</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <!-- C15: 売上 -->
+  <div class="classify-card"><div class="classify-header" style="background:#166534;"><span>C15</span> 売上</div><div class="classify-body"><div class="classify-subject">売上（パン屋がパンを販売して得た収入）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c15s1"><button class="classify-choice" onclick="classifyCheck('c15s1','c15s2','c15fb1',this,false,'c15map')">資産</button><button class="classify-choice" onclick="classifyCheck('c15s1','c15s2','c15fb1',this,false,'c15map')">費用</button><button class="classify-choice" onclick="classifyCheck('c15s1','c15s2','c15fb1',this,true,'c15map')">収益</button><button class="classify-choice" onclick="classifyCheck('c15s1','c15s2','c15fb1',this,false,'c15map')">純資産</button></div></div><div class="classify-btn-group" id="c15s2" style="display:none;"><span class="cbg-label">Step 2：P/Lのどの区分？</span><div class="classify-choices" id="c15s2c"><button class="classify-choice" onclick="classifyCheck('c15s2c',null,'c15fb2',this,true,'c15map')">営業収益</button><button class="classify-choice" onclick="classifyCheck('c15s2c',null,'c15fb2',this,false,'c15map')">営業外収益</button><button class="classify-choice" onclick="classifyCheck('c15s2c',null,'c15fb2',this,false,'c15map')">特別利益</button></div></div><div class="classify-feedback" id="c15fb1"><strong>収益</strong> ← 本業で稼いだお金</div><div class="classify-feedback" id="c15fb2"><strong><span class="answer-tag at-sub">営業収益</span></strong> ← 本業そのものの売上。P/Lの一番上に来る。</div><div class="mini-map" id="c15map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item mm-hit mm-hit-rev-o">▶ 営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <!-- C16: 商品 -->
+  <div class="classify-card"><div class="classify-header" style="background:#2471a3;"><span>C16</span> 商品</div><div class="classify-body"><div class="classify-subject">商品（お店に並んでいる売り物の在庫）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c16s1"><button class="classify-choice" onclick="classifyCheck('c16s1','c16s2','c16fb1',this,true,'c16map')">資産</button><button class="classify-choice" onclick="classifyCheck('c16s1','c16s2','c16fb1',this,false,'c16map')">費用</button><button class="classify-choice" onclick="classifyCheck('c16s1','c16s2','c16fb1',this,false,'c16map')">負債</button><button class="classify-choice" onclick="classifyCheck('c16s1','c16s2','c16fb1',this,false,'c16map')">収益</button></div></div><div class="classify-btn-group" id="c16s2" style="display:none;"><span class="cbg-label">Step 2：どの区分？</span><div class="classify-choices" id="c16s2c"><button class="classify-choice" onclick="classifyCheck('c16s2c',null,'c16fb2',this,true,'c16map')">流動資産</button><button class="classify-choice" onclick="classifyCheck('c16s2c',null,'c16fb2',this,false,'c16map')">固定資産</button></div></div><div class="classify-feedback" id="c16fb1"><strong>資産</strong> ← まだ売っていない在庫 ＝ 持っているもの。「仕入（費用）」と間違えやすい！</div><div class="classify-feedback" id="c16fb2"><strong><span class="answer-tag at-sub">流動資産</span></strong> ← 売れば現金になる。1年以内に販売予定なので流動。</div><div class="mini-map" id="c16map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item mm-hit mm-hit-asset-c">▶ 流動資産（商品）</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <!-- C17: 利益剰余金 -->
+  <div class="classify-card"><div class="classify-header" style="background:#7d3c98;"><span>C17</span> 利益剰余金</div><div class="classify-body"><div class="classify-subject">利益剰余金（会社が過去に稼いで貯めた利益の蓄積）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c17s1"><button class="classify-choice" onclick="classifyCheck('c17s1','c17s2','c17fb1',this,false,'c17map')">資産</button><button class="classify-choice" onclick="classifyCheck('c17s1','c17s2','c17fb1',this,false,'c17map')">収益</button><button class="classify-choice" onclick="classifyCheck('c17s1','c17s2','c17fb1',this,true,'c17map')">純資産</button><button class="classify-choice" onclick="classifyCheck('c17s1','c17s2','c17fb1',this,false,'c17map')">負債</button></div></div><div class="classify-btn-group" id="c17s2" style="display:none;"><span class="cbg-label">Step 2：純資産のどの区分？</span><div class="classify-choices" id="c17s2c"><button class="classify-choice" onclick="classifyCheck('c17s2c',null,'c17fb2',this,false,'c17map')">株主資本（資本金）</button><button class="classify-choice" onclick="classifyCheck('c17s2c',null,'c17fb2',this,true,'c17map')">株主資本（利益剰余金）</button></div></div><div class="classify-feedback" id="c17fb1"><strong>純資産</strong> ← 稼いで貯めたお金。「収益」と混同注意！収益は1年分、利益剰余金は過去の累積。</div><div class="classify-feedback" id="c17fb2"><strong><span class="answer-tag at-sub">株主資本（利益剰余金）</span></strong> ← 「稼いで貯めた」お金。資本金（出資されたお金）とは出所が違う。</div><div class="mini-map" id="c17map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item mm-hit mm-hit-eq-r">▶ 利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <!-- C18: 租税公課 -->
+  <div class="classify-card"><div class="classify-header" style="background:#b7950b;"><span>C18</span> 租税公課</div><div class="classify-body"><div class="classify-subject">租税公課（固定資産税や印紙代など税金・公的負担）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c18s1"><button class="classify-choice" onclick="classifyCheck('c18s1','c18s2','c18fb1',this,false,'c18map')">負債</button><button class="classify-choice" onclick="classifyCheck('c18s1','c18s2','c18fb1',this,true,'c18map')">費用</button><button class="classify-choice" onclick="classifyCheck('c18s1','c18s2','c18fb1',this,false,'c18map')">資産</button><button class="classify-choice" onclick="classifyCheck('c18s1','c18s2','c18fb1',this,false,'c18map')">純資産</button></div></div><div class="classify-btn-group" id="c18s2" style="display:none;"><span class="cbg-label">Step 2：P/Lのどの区分？</span><div class="classify-choices" id="c18s2c"><button class="classify-choice" onclick="classifyCheck('c18s2c',null,'c18fb2',this,false,'c18map')">売上原価</button><button class="classify-choice" onclick="classifyCheck('c18s2c',null,'c18fb2',this,true,'c18map')">販管費</button><button class="classify-choice" onclick="classifyCheck('c18s2c',null,'c18fb2',this,false,'c18map')">営業外費用</button><button class="classify-choice" onclick="classifyCheck('c18s2c',null,'c18fb2',this,false,'c18map')">特別損失</button></div></div><div class="classify-feedback" id="c18fb1"><strong>費用</strong> ← 会社が負担する税金コスト。「預り金」（他人の税金を預かる＝負債）と間違えやすい！</div><div class="classify-feedback" id="c18fb2"><strong><span class="answer-tag at-sub">販管費</span></strong> ← 毎期発生する通常の管理コスト。臨時ではないので特別損失ではない。</div><div class="mini-map" id="c18map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item">流動資産</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item mm-hit mm-hit-exp-s">▶ 販管費（租税公課）</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <!-- C19: 未収入金 -->
+  <div class="classify-card"><div class="classify-header" style="background:#c0392b;"><span>C19</span> 未収入金</div><div class="classify-body"><div class="classify-subject">未収入金（本業以外で売却した代金の未回収分）</div><div class="classify-btn-group"><span class="cbg-label">Step 1：どのグループ？</span><div class="classify-choices" id="c19s1"><button class="classify-choice" onclick="classifyCheck('c19s1','c19s2','c19fb1',this,true,'c19map')">資産</button><button class="classify-choice" onclick="classifyCheck('c19s1','c19s2','c19fb1',this,false,'c19map')">負債</button><button class="classify-choice" onclick="classifyCheck('c19s1','c19s2','c19fb1',this,false,'c19map')">収益</button><button class="classify-choice" onclick="classifyCheck('c19s1','c19s2','c19fb1',this,false,'c19map')">費用</button></div></div><div class="classify-btn-group" id="c19s2" style="display:none;"><span class="cbg-label">Step 2：どの区分？</span><div class="classify-choices" id="c19s2c"><button class="classify-choice" onclick="classifyCheck('c19s2c',null,'c19fb2',this,true,'c19map')">流動資産</button><button class="classify-choice" onclick="classifyCheck('c19s2c',null,'c19fb2',this,false,'c19map')">固定資産</button></div></div><div class="classify-feedback" id="c19fb1"><strong>資産</strong> ← まだ受け取っていないお金をもらう「権利」</div><div class="classify-feedback" id="c19fb2"><strong><span class="answer-tag at-sub">流動資産</span></strong> ← 通常1年以内に回収。売掛金と同じ流動資産だが、本業以外という点が違う。</div><div class="mini-map" id="c19map"><div class="mini-map-title">いまココ！全体マップ</div><div class="mini-map-grid"><span class="mm-section-label mm-label-bs">B/S 貸借対照表</span><span class="mm-sub-label">【資産】</span><span class="mm-item mm-hit mm-hit-asset-c">▶ 流動資産（未収入金）</span><span class="mm-item">固定資産（有形・無形）</span><span class="mm-sub-label">【負債】</span><span class="mm-item">流動負債</span><span class="mm-item">固定負債</span><span class="mm-sub-label">【純資産】</span><span class="mm-item">資本金・資本剰余金</span><span class="mm-item">利益剰余金</span><span class="mm-item">評価・換算差額等</span><span class="mm-section-label mm-label-pl">P/L 損益計算書</span><span class="mm-sub-label">【営業損益】</span><span class="mm-item">営業収益（売上）</span><span class="mm-item">売上原価</span><span class="mm-item">販管費</span><span class="mm-sub-label">【営業外損益】</span><span class="mm-item">営業外収益</span><span class="mm-item">営業外費用</span><span class="mm-sub-label">【特別損益】</span><span class="mm-item">特別利益</span><span class="mm-item">特別損失</span></div></div></div></div>
+
+  <!-- まとめ早見表 -->
+  <div class="section-overview">
+    <div class="section-overview-header" style="background:#0f766e;">📊 区分の早見表 ― これを丸ごと頭に入れよう</div>
+    <div class="section-overview-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>勘定科目</th>
+              <th>グループ</th>
+              <th>区分</th>
+              <th>判断のポイント</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>現金・普通預金</td><td><span class="answer-tag at-group">資産</span></td><td><span class="answer-tag at-sub">流動資産</span></td><td>すぐ使えるお金</td></tr>
+            <tr><td>売掛金・受取手形</td><td><span class="answer-tag at-group">資産</span></td><td><span class="answer-tag at-sub">流動資産</span></td><td>1年以内に回収</td></tr>
+            <tr><td>商品</td><td><span class="answer-tag at-group">資産</span></td><td><span class="answer-tag at-sub">流動資産</span></td><td>売れば現金化</td></tr>
+            <tr><td>前払金</td><td><span class="answer-tag at-group">資産</span></td><td><span class="answer-tag at-sub">流動資産</span></td><td>すぐ商品をもらう権利</td></tr>
+            <tr><td>建物・土地</td><td><span class="answer-tag at-group">資産</span></td><td><span class="answer-tag at-sub">固定資産（有形）</span></td><td>長期間使う形あるもの</td></tr>
+            <tr><td>備品・車両運搬具</td><td><span class="answer-tag at-group">資産</span></td><td><span class="answer-tag at-sub">固定資産（有形）</span></td><td>長期間使う形あるもの</td></tr>
+            <tr><td>のれん</td><td><span class="answer-tag at-group">資産</span></td><td><span class="answer-tag at-sub">固定資産（無形）</span></td><td>形がない長期資産</td></tr>
+            <tr style="background:#fee2e2;"><td>買掛金・支払手形</td><td><span class="answer-tag at-group">負債</span></td><td><span class="answer-tag at-sub">流動負債</span></td><td>1年以内に支払い</td></tr>
+            <tr style="background:#fee2e2;"><td>未払金・前受金・預り金</td><td><span class="answer-tag at-group">負債</span></td><td><span class="answer-tag at-sub">流動負債</span></td><td>1年以内に履行</td></tr>
+            <tr style="background:#fee2e2;"><td>借入金（長期）・社債</td><td><span class="answer-tag at-group">負債</span></td><td><span class="answer-tag at-sub">固定負債</span></td><td>返済が1年超</td></tr>
+            <tr style="background:#f3e8ff;"><td>資本金・資本剰余金</td><td><span class="answer-tag at-group">純資産</span></td><td><span class="answer-tag at-sub">株主資本</span></td><td>出資されたお金</td></tr>
+            <tr style="background:#f3e8ff;"><td>利益剰余金</td><td><span class="answer-tag at-group">純資産</span></td><td><span class="answer-tag at-sub">株主資本</span></td><td>稼いで貯めたお金</td></tr>
+            <tr style="background:#dcfce7;"><td>売上</td><td><span class="answer-tag at-group">収益</span></td><td><span class="answer-tag at-sub">営業収益</span></td><td>本業の稼ぎ</td></tr>
+            <tr style="background:#dcfce7;"><td>受取利息・受取配当金</td><td><span class="answer-tag at-group">収益</span></td><td><span class="answer-tag at-sub">営業外収益</span></td><td>本業以外の定期収入</td></tr>
+            <tr style="background:#dcfce7;"><td>固定資産売却益</td><td><span class="answer-tag at-group">収益</span></td><td><span class="answer-tag at-sub">特別利益</span></td><td>臨時の利益</td></tr>
+            <tr style="background:#fef3c7;"><td>仕入</td><td><span class="answer-tag at-group">費用</span></td><td><span class="answer-tag at-sub">売上原価</span></td><td>商品の元値</td></tr>
+            <tr style="background:#fef3c7;"><td>給料・広告宣伝費・家賃 等</td><td><span class="answer-tag at-group">費用</span></td><td><span class="answer-tag at-sub">販管費</span></td><td>日常の運営コスト</td></tr>
+            <tr style="background:#fef3c7;"><td>減価償却費</td><td><span class="answer-tag at-group">費用</span></td><td><span class="answer-tag at-sub">販管費</span></td><td>設備の年間目減り</td></tr>
+            <tr style="background:#fef3c7;"><td>支払利息</td><td><span class="answer-tag at-group">費用</span></td><td><span class="answer-tag at-sub">営業外費用</span></td><td>借金の利息コスト</td></tr>
+            <tr style="background:#fef3c7;"><td>貸倒損失</td><td><span class="answer-tag at-group">費用</span></td><td><span class="answer-tag at-sub">特別損失</span></td><td>臨時の損失</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="classify-score-display" id="classifyScoreDisplay" style="display:none;">
+    <span class="score-label">区分ドリルスコア</span>
+    <span class="score-num" id="classifyScoreNum"></span>
+    <div class="score-msg" id="classifyScoreMsg"></div>
+    <button class="retry-btn" onclick="retryClassify()">もう一度チャレンジ</button>
+  </div>
+
+</div>
+
+<!-- ========== タブ4: 仕分け特訓 ========== -->
+<div class="tab-content" id="tab4">
+
+  <div class="exam-point" style="border-color:#6c3483;background:#f4ecf7;">
+    <div class="exam-point-title" style="color:#6c3483;">このタブで学ぶこと</div>
+    <ul style="color:#4a235a;">
+      <li>勘定科目の選び方と借方・貸方の判定を実践する</li>
+      <li>「本業か否か」で科目が変わるパターンを身につける</li>
+      <li>10問のドリルで紛らわしい科目を確実に区別する</li>
+    </ul>
+  </div>
+
+  <!-- ルールおさらい -->
+  <div class="section-overview">
+    <div class="section-overview-header">📐 まず確認！仕分けの2ステップ</div>
+    <div class="section-overview-body">
+      <div class="step-cards">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-card-body">
+            <strong>どのグループ？</strong><br>
+            その科目が 資産・負債・純資産・収益・費用 のどれかを判定する
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-card-body">
+            <strong>借方？貸方？</strong><br>
+            増えた場合：<span class="answer-tag at-debit">借方（左）</span> 資産・費用 ／ <span class="answer-tag at-credit">貸方（右）</span> 負債・純資産・収益
+          </div>
+        </div>
+      </div>
+      <div class="goro-box">
+        <div class="goro-main">迷ったら →「<span class="goro-highlight">し</span>（資産）<span class="goro-highlight">ひ</span>（費用）は<span class="goro-highlight">左</span>、残りは<span class="goro-highlight">右</span>」</div>
+        <div class="goro-decode">増えたとき借方（左）に書くのは<strong>資産</strong>と<strong>費用</strong>だけ。他の3つ（負債・純資産・収益）は貸方（右）。</div>
+      </div>
+
+      <h3>「本業か否か」判断フロー</h3>
+      <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:16px 0;">
+        <div style="background:#fff;border:3px solid #2471a3;border-radius:10px;padding:10px 16px;font-weight:700;text-align:center;font-size:0.9rem;">商品を売って<br>未回収？</div>
+        <div style="font-size:1.2rem;font-weight:800;color:#2471a3;">→</div>
+        <div style="background:#fff;border:3px dashed #f39c12;border-radius:10px;padding:10px 16px;font-weight:700;text-align:center;font-size:0.9rem;">本業の<br>商品？</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-left:4px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-weight:800;color:#1e8449;font-size:0.85rem;">Yes→</span>
+            <span style="background:#ebf5fb;border:2px solid #3498db;border-radius:8px;padding:4px 12px;font-weight:700;font-size:0.85rem;">売掛金</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-weight:800;color:#c0392b;font-size:0.85rem;">No →</span>
+            <span style="background:#fef9e7;border:2px solid #f39c12;border-radius:8px;padding:4px 12px;font-weight:700;font-size:0.85rem;">未収入金</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル1 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#2471a3;"><span class="drill-num">DRILL 1</span>商品を売って、代金は来月もらう約束にした</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        この「来月もらう権利」を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d1q1">
+        <button class="drill-choice" onclick="drillCheck('d1q1','d1q2','d1fb', this, false)">買掛金</button>
+        <button class="drill-choice" onclick="drillCheck('d1q1','d1q2','d1fb', this, true)">売掛金</button>
+        <button class="drill-choice" onclick="drillCheck('d1q1','d1q2','d1fb', this, false)">未収入金</button>
+        <button class="drill-choice" onclick="drillCheck('d1q1','d1q2','d1fb', this, false)">前受金</button>
+      </div>
+      <div class="drill-prompt" id="d1q2" style="display:none;">
+        売掛金は<strong>増えた</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d1q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d1q2c','d1fb2', this, true)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d1q2c','d1fb2', this, false)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d1fb">
+        <strong>売掛金 <span class="answer-tag at-group">資産</span></strong><br>
+        本業の商品を売った → 「売掛金」。未収入金は本業<em>以外</em>の取引。買掛金は買った側。前受金は先にお金をもらった場合。
+      </div>
+      <div class="drill-feedback" id="d1fb2">
+        <strong><span class="answer-tag at-debit">借方（左）</span></strong><br>
+        売掛金は<strong>資産</strong>。資産が増える → 借方（左）に記入。相手科目は売上（収益）が貸方。
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル2 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#c0392b;"><span class="drill-num">DRILL 2</span>使わなくなった社用車を売って、代金は来月振込予定</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        この「来月もらう代金」を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d2q1">
+        <button class="drill-choice" onclick="drillCheck('d2q1','d2q2','d2fb', this, false)">売掛金</button>
+        <button class="drill-choice" onclick="drillCheck('d2q1','d2q2','d2fb', this, false)">前払金</button>
+        <button class="drill-choice" onclick="drillCheck('d2q1','d2q2','d2fb', this, false)">貸付金</button>
+        <button class="drill-choice" onclick="drillCheck('d2q1','d2q2','d2fb', this, true)">未収入金</button>
+      </div>
+      <div class="drill-prompt" id="d2q2" style="display:none;">
+        未収入金は<strong>増えた</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d2q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d2q2c','d2fb2', this, true)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d2q2c','d2fb2', this, false)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d2fb">
+        <strong>未収入金 <span class="answer-tag at-group">資産</span></strong><br>
+        車の売却は<strong>本業ではない</strong> → 売掛金ではなく「未収入金」。判断基準は「本業の商品を売ったか？」だけ。
+      </div>
+      <div class="drill-feedback" id="d2fb2">
+        <strong><span class="answer-tag at-debit">借方（左）</span></strong><br>
+        未収入金は<strong>資産</strong>。資産が増える → 借方（左）。売掛金と同じ資産だから借方・貸方のルールは同じです。
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル3 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#7d3c98;"><span class="drill-num">DRILL 3</span>仕入先から材料を50万円分購入、支払いは来月末</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        この「来月払う義務」を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d3q1">
+        <button class="drill-choice" onclick="drillCheck('d3q1','d3q2','d3fb', this, false)">未払金</button>
+        <button class="drill-choice" onclick="drillCheck('d3q1','d3q2','d3fb', this, true)">買掛金</button>
+        <button class="drill-choice" onclick="drillCheck('d3q1','d3q2','d3fb', this, false)">支払手形</button>
+        <button class="drill-choice" onclick="drillCheck('d3q1','d3q2','d3fb', this, false)">前払金</button>
+      </div>
+      <div class="drill-prompt" id="d3q2" style="display:none;">
+        買掛金は<strong>増えた</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d3q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d3q2c','d3fb2', this, false)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d3q2c','d3fb2', this, true)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d3fb">
+        <strong>買掛金 <span class="answer-tag at-group">負債</span></strong><br>
+        本業の材料の仕入れ → 「買掛金」。未払金は本業<em>以外</em>の後払い（例：パソコン購入）。支払手形は手形を渡した場合。
+      </div>
+      <div class="drill-feedback" id="d3fb2">
+        <strong><span class="answer-tag at-credit">貸方（右）</span></strong><br>
+        買掛金は<strong>負債</strong>。負債が増える → 貸方（右）。同時に仕入（費用）が借方（左）に入ります。
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル4 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#e67e22;"><span class="drill-num">DRILL 4</span>新しいパソコンを20万円で購入、来月払い</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        この「来月払う義務」を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d4q1">
+        <button class="drill-choice" onclick="drillCheck('d4q1','d4q2','d4fb', this, false)">買掛金</button>
+        <button class="drill-choice" onclick="drillCheck('d4q1','d4q2','d4fb', this, false)">借入金</button>
+        <button class="drill-choice" onclick="drillCheck('d4q1','d4q2','d4fb', this, true)">未払金</button>
+        <button class="drill-choice" onclick="drillCheck('d4q1','d4q2','d4fb', this, false)">預り金</button>
+      </div>
+      <div class="drill-prompt" id="d4q2" style="display:none;">
+        未払金は<strong>増えた</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d4q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d4q2c','d4fb2', this, false)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d4q2c','d4fb2', this, true)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d4fb">
+        <strong>未払金 <span class="answer-tag at-group">負債</span></strong><br>
+        パソコンは本業の商品ではない → 買掛金ではなく「未払金」。<strong>「本業の仕入=買掛金」「それ以外=未払金」</strong>これだけ！
+      </div>
+      <div class="drill-feedback" id="d4fb2">
+        <strong><span class="answer-tag at-credit">貸方（右）</span></strong><br>
+        未払金は<strong>負債</strong>。負債が増える → 貸方（右）。買掛金と同じ負債だから同じ側です。
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル5 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#1e8449;"><span class="drill-num">DRILL 5</span>お客さんから商品の予約金として3万円をもらった（まだ届けていない）</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        この「先にもらったお金」を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d5q1">
+        <button class="drill-choice" onclick="drillCheck('d5q1','d5q2','d5fb', this, false)">売上</button>
+        <button class="drill-choice" onclick="drillCheck('d5q1','d5q2','d5fb', this, false)">売掛金</button>
+        <button class="drill-choice" onclick="drillCheck('d5q1','d5q2','d5fb', this, false)">前払金</button>
+        <button class="drill-choice" onclick="drillCheck('d5q1','d5q2','d5fb', this, true)">前受金</button>
+      </div>
+      <div class="drill-prompt" id="d5q2" style="display:none;">
+        前受金は<strong>増えた</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d5q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d5q2c','d5fb2', this, false)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d5q2c','d5fb2', this, true)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d5fb">
+        <strong>前受金 <span class="answer-tag at-group">負債</span></strong><br>
+        商品をまだ届けていない → 届ける<strong>義務</strong>がある → 負債！ 売上はサービス提供後。前払金は自分が<em>払った</em>場合（逆）。
+      </div>
+      <div class="drill-feedback" id="d5fb2">
+        <strong><span class="answer-tag at-credit">貸方（右）</span></strong><br>
+        前受金は<strong>負債</strong>。負債が増える → 貸方（右）。同時に現金（資産）が借方（左）に入ります。
+      </div>
+    </div>
+  </div>
+
+  <div class="memo-bubble">
+    前払金と前受金は試験の超頻出ペア！ <strong>「前払＝払った側＝資産」「前受＝もらった側＝負債」</strong>。主語が誰かを確認する癖をつけよう。
+  </div>
+
+  <!-- ドリル6 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#b7950b;"><span class="drill-num">DRILL 6</span>来月届く商品の代金として仕入先に10万円を先に振り込んだ</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        この「先に払ったお金」を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d6q1">
+        <button class="drill-choice" onclick="drillCheck('d6q1','d6q2','d6fb', this, true)">前払金</button>
+        <button class="drill-choice" onclick="drillCheck('d6q1','d6q2','d6fb', this, false)">前受金</button>
+        <button class="drill-choice" onclick="drillCheck('d6q1','d6q2','d6fb', this, false)">仕入</button>
+        <button class="drill-choice" onclick="drillCheck('d6q1','d6q2','d6fb', this, false)">買掛金</button>
+      </div>
+      <div class="drill-prompt" id="d6q2" style="display:none;">
+        前払金は<strong>増えた</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d6q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d6q2c','d6fb2', this, true)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d6q2c','d6fb2', this, false)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d6fb">
+        <strong>前払金 <span class="answer-tag at-group">資産</span></strong><br>
+        先に払った → 商品をもらう<strong>権利</strong>がある → 資産！ 前受金は逆で「先にもらった＝義務＝負債」。仕入は商品が届いてから。
+      </div>
+      <div class="drill-feedback" id="d6fb2">
+        <strong><span class="answer-tag at-debit">借方（左）</span></strong><br>
+        前払金は<strong>資産</strong>。資産が増える → 借方（左）。前受金（負債）と逆の側になるのがポイント！
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル7 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#2471a3;"><span class="drill-num">DRILL 7</span>建物の今年分の減価償却を計上する</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        「価値の目減り分」を費用として記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d7q1">
+        <button class="drill-choice" onclick="drillCheck('d7q1','d7q2','d7fb', this, false)">建物</button>
+        <button class="drill-choice" onclick="drillCheck('d7q1','d7q2','d7fb', this, true)">減価償却費</button>
+        <button class="drill-choice" onclick="drillCheck('d7q1','d7q2','d7fb', this, false)">修繕費</button>
+        <button class="drill-choice" onclick="drillCheck('d7q1','d7q2','d7fb', this, false)">租税公課</button>
+      </div>
+      <div class="drill-prompt" id="d7q2" style="display:none;">
+        減価償却費は<strong>発生した</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d7q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d7q2c','d7fb2', this, true)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d7q2c','d7fb2', this, false)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d7fb">
+        <strong>減価償却費 <span class="answer-tag at-group">費用</span></strong><br>
+        設備の価値が年々下がる分を費用化。修繕費は壊れた物の修理代。租税公課は税金関連。名前に「費」がつくので費用グループ。
+      </div>
+      <div class="drill-feedback" id="d7fb2">
+        <strong><span class="answer-tag at-debit">借方（左）</span></strong><br>
+        減価償却費は<strong>費用</strong>。費用が増える → 借方（左）。相手科目は建物や備品（資産の減少）が貸方に入ります。
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル8 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#c0392b;"><span class="drill-num">DRILL 8</span>取引先が倒産して、売掛金20万円が回収できなくなった</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        この回収不能を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d8q1">
+        <button class="drill-choice" onclick="drillCheck('d8q1','d8q2','d8fb', this, false)">売掛金</button>
+        <button class="drill-choice" onclick="drillCheck('d8q1','d8q2','d8fb', this, false)">雑損失</button>
+        <button class="drill-choice" onclick="drillCheck('d8q1','d8q2','d8fb', this, true)">貸倒損失</button>
+        <button class="drill-choice" onclick="drillCheck('d8q1','d8q2','d8fb', this, false)">未収入金</button>
+      </div>
+      <div class="drill-prompt" id="d8q2" style="display:none;">
+        貸倒損失は<strong>発生した</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d8q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d8q2c','d8fb2', this, true)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d8q2c','d8fb2', this, false)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d8fb">
+        <strong>貸倒損失 <span class="answer-tag at-group">費用</span></strong><br>
+        回収不能 → 損失 → 費用として計上。売掛金は相手科目（貸方で消す）。「損失」とつく科目は基本的に費用グループ。
+      </div>
+      <div class="drill-feedback" id="d8fb2">
+        <strong><span class="answer-tag at-debit">借方（左）</span></strong><br>
+        貸倒損失は<strong>費用</strong>。費用が増える → 借方（左）。同時に売掛金（資産）が貸方で減少します。
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル9 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#7d3c98;"><span class="drill-num">DRILL 9</span>従業員の給料から源泉所得税5万円を天引きした</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        天引きして一時的に預かっている税金を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d9q1">
+        <button class="drill-choice" onclick="drillCheck('d9q1','d9q2','d9fb', this, false)">租税公課</button>
+        <button class="drill-choice" onclick="drillCheck('d9q1','d9q2','d9fb', this, true)">預り金</button>
+        <button class="drill-choice" onclick="drillCheck('d9q1','d9q2','d9fb', this, false)">未払金</button>
+        <button class="drill-choice" onclick="drillCheck('d9q1','d9q2','d9fb', this, false)">給料</button>
+      </div>
+      <div class="drill-prompt" id="d9q2" style="display:none;">
+        預り金は<strong>増えた</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d9q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d9q2c','d9fb2', this, false)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d9q2c','d9fb2', this, true)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d9fb">
+        <strong>預り金 <span class="answer-tag at-group">負債</span></strong><br>
+        従業員の税金を<strong>代わりに預かっている</strong> → 税務署に納める義務がある → 負債。租税公課は自社が負担する税金。未払金とは性質が違います。
+      </div>
+      <div class="drill-feedback" id="d9fb2">
+        <strong><span class="answer-tag at-credit">貸方（右）</span></strong><br>
+        預り金は<strong>負債</strong>。負債が増える → 貸方（右）。給料（費用）の借方と、預り金（負債）の貸方がセットです。
+      </div>
+    </div>
+  </div>
+
+  <!-- ドリル10 -->
+  <div class="drill-card">
+    <div class="drill-header" style="background:#1e8449;"><span class="drill-num">DRILL 10</span>株主が会社に500万円を出資した</div>
+    <div class="drill-body">
+      <div class="drill-prompt">
+        この出資金を記録する勘定科目は？
+      </div>
+      <div class="drill-choices" id="d10q1">
+        <button class="drill-choice" onclick="drillCheck('d10q1','d10q2','d10fb', this, false)">借入金</button>
+        <button class="drill-choice" onclick="drillCheck('d10q1','d10q2','d10fb', this, false)">利益剰余金</button>
+        <button class="drill-choice" onclick="drillCheck('d10q1','d10q2','d10fb', this, false)">売上</button>
+        <button class="drill-choice" onclick="drillCheck('d10q1','d10q2','d10fb', this, true)">資本金</button>
+      </div>
+      <div class="drill-prompt" id="d10q2" style="display:none;">
+        資本金は<strong>増えた</strong>。借方（左）？ 貸方（右）？
+      </div>
+      <div class="drill-choices" id="d10q2c" style="display:none;">
+        <button class="drill-choice" onclick="drillCheckDC('d10q2c','d10fb2', this, false)">借方（左）</button>
+        <button class="drill-choice" onclick="drillCheckDC('d10q2c','d10fb2', this, true)">貸方（右）</button>
+      </div>
+      <div class="drill-feedback" id="d10fb">
+        <strong>資本金 <span class="answer-tag at-group">純資産</span></strong><br>
+        株主からの出資 → 返す義務なし → 純資産。借入金は「返す必要あり」で負債。利益剰余金は「稼いで貯めた」もので出資とは別。
+      </div>
+      <div class="drill-feedback" id="d10fb2">
+        <strong><span class="answer-tag at-credit">貸方（右）</span></strong><br>
+        資本金は<strong>純資産</strong>。純資産が増える → 貸方（右）。同時に普通預金（資産）が借方で増えます。
+      </div>
+    </div>
+  </div>
+
+  <!-- まとめ整理表 -->
+  <div class="section-overview">
+    <div class="section-overview-header purple">📊 間違えやすい科目の早見表</div>
+    <div class="section-overview-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>場面</th>
+              <th>正しい科目</th>
+              <th>グループ</th>
+              <th>増えたら</th>
+              <th>よくある間違い</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>本業の商品を売って未回収</td>
+              <td><strong>売掛金</strong></td>
+              <td><span class="answer-tag at-group">資産</span></td>
+              <td><span class="answer-tag at-debit">借方</span></td>
+              <td>未収入金と混同</td>
+            </tr>
+            <tr>
+              <td>本業以外のもの（車など）を売って未回収</td>
+              <td><strong>未収入金</strong></td>
+              <td><span class="answer-tag at-group">資産</span></td>
+              <td><span class="answer-tag at-debit">借方</span></td>
+              <td>売掛金と混同</td>
+            </tr>
+            <tr>
+              <td>本業の材料を仕入れて後払い</td>
+              <td><strong>買掛金</strong></td>
+              <td><span class="answer-tag at-group">負債</span></td>
+              <td><span class="answer-tag at-credit">貸方</span></td>
+              <td>未払金と混同</td>
+            </tr>
+            <tr>
+              <td>本業以外のもの（PCなど）を買って後払い</td>
+              <td><strong>未払金</strong></td>
+              <td><span class="answer-tag at-group">負債</span></td>
+              <td><span class="answer-tag at-credit">貸方</span></td>
+              <td>買掛金と混同</td>
+            </tr>
+            <tr>
+              <td>商品代を先に払った（届いていない）</td>
+              <td><strong>前払金</strong></td>
+              <td><span class="answer-tag at-group">資産</span></td>
+              <td><span class="answer-tag at-debit">借方</span></td>
+              <td>前受金と混同</td>
+            </tr>
+            <tr>
+              <td>商品代を先にもらった（届けていない）</td>
+              <td><strong>前受金</strong></td>
+              <td><span class="answer-tag at-group">負債</span></td>
+              <td><span class="answer-tag at-credit">貸方</span></td>
+              <td>前払金と混同</td>
+            </tr>
+            <tr>
+              <td>他人にお金を貸した</td>
+              <td><strong>貸付金</strong></td>
+              <td><span class="answer-tag at-group">資産</span></td>
+              <td><span class="answer-tag at-debit">借方</span></td>
+              <td>借入金と混同</td>
+            </tr>
+            <tr>
+              <td>他人からお金を借りた</td>
+              <td><strong>借入金</strong></td>
+              <td><span class="answer-tag at-group">負債</span></td>
+              <td><span class="answer-tag at-credit">貸方</span></td>
+              <td>貸付金と混同</td>
+            </tr>
+            <tr>
+              <td>従業員の税金を天引きして預かった</td>
+              <td><strong>預り金</strong></td>
+              <td><span class="answer-tag at-group">負債</span></td>
+              <td><span class="answer-tag at-credit">貸方</span></td>
+              <td>租税公課と混同</td>
+            </tr>
+            <tr>
+              <td>設備の年間の価値低下を費用化</td>
+              <td><strong>減価償却費</strong></td>
+              <td><span class="answer-tag at-group">費用</span></td>
+              <td><span class="answer-tag at-debit">借方</span></td>
+              <td>資産と混同</td>
+            </tr>
+            <tr>
+              <td>売掛金が回収不能になった</td>
+              <td><strong>貸倒損失</strong></td>
+              <td><span class="answer-tag at-group">費用</span></td>
+              <td><span class="answer-tag at-debit">借方</span></td>
+              <td>売掛金の処理忘れ</td>
+            </tr>
+            <tr>
+              <td>株主がお金を出資した</td>
+              <td><strong>資本金</strong></td>
+              <td><span class="answer-tag at-group">純資産</span></td>
+              <td><span class="answer-tag at-credit">貸方</span></td>
+              <td>借入金と混同</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="exam-point">
+        <div class="exam-point-title">判断の黄金ルール</div>
+        <ul>
+          <li><strong>本業か否か</strong> → 売掛金/買掛金 vs 未収入金/未払金</li>
+          <li><strong>自分が払ったか/もらったか</strong> → 前払金（資産） vs 前受金（負債）</li>
+          <li><strong>貸したか/借りたか</strong> → 貸付金（資産） vs 借入金（負債）</li>
+          <li><strong>権利か義務か</strong> → 権利＝資産（借方）、義務＝負債（貸方）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="drill-score-display" id="drillScoreDisplay" style="display:none;">
+    <span class="score-label">仕分け特訓スコア</span>
+    <span class="score-num" id="drillScoreNum"></span>
+    <div class="score-msg" id="drillScoreMsg"></div>
+    <button class="retry-btn" onclick="retryDrill()">もう一度チャレンジ</button>
+  </div>
+
+</div>
+
+<!-- ========== タブ5: シミュレーション ========== -->
+<div class="tab-content" id="tab5">
+
+  <div class="exam-point" style="border-color:#2980b9;background:#ebf5fb;">
+    <div class="exam-point-title" style="color:#1a5276;">このタブで学ぶこと</div>
+    <ul style="color:#2c3e50;">
+      <li>パン屋の開業から決算まで、一連の仕訳をストーリーで体験</li>
+      <li>B/Sの等式「資産＝負債＋純資産」が常に成り立つことを確認</li>
+      <li>減価償却・貸倒損失など決算特有の処理を理解する</li>
+    </ul>
+  </div>
+
+  <!-- シミュレーション1 -->
+  <div class="sim-section">
+    <div class="sim-header"><span class="sim-num">CASE 1</span>町のパン屋さんが開業する</div>
+    <div class="sim-body">
+      <div class="sim-scenario">
+        田中さんは脱サラしてパン屋を始めます。自己資金500万円を元手に開業。銀行から300万円を借り入れ、内装工事に400万円、オーブン等の備品に200万円、残り200万円は運転資金として普通預金に入れました。
+      </div>
+
+      <p><strong>Step 1：元手と借入</strong></p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方（左）</th><th class="jh-debit">金額</th><th class="jh-credit">貸方（右）</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr><td>普通預金 <span class="cat-label cat-asset">資産</span></td><td>800万</td><td>資本金 <span class="cat-label cat-equity">純資産</span></td><td>500万</td></tr>
+            <tr><td></td><td></td><td>借入金 <span class="cat-label cat-liability">負債</span></td><td>300万</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Step 2：設備投資</strong></p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方（左）</th><th class="jh-debit">金額</th><th class="jh-credit">貸方（右）</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr><td>建物 <span class="cat-label cat-asset">資産</span></td><td>400万</td><td>普通預金 <span class="cat-label cat-asset">資産</span></td><td>600万</td></tr>
+            <tr><td>備品 <span class="cat-label cat-asset">資産</span></td><td>200万</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sim-result">
+        <strong>最終的な残高：</strong><br>
+        普通預金200万（資産）／建物400万（資産）／備品200万（資産）<br>
+        借入金300万（負債）／資本金500万（純資産）<br>
+        → 資産合計800万 ＝ 負債300万 ＋ 純資産500万 ✓
+      </div>
+
+      <div class="sim-advice">
+        普通預金は「お金が入ったとき借方、出たとき貸方」。建物・備品は「手に入れたら借方」。資本金は純資産なので「増えたら貸方」。借入金は負債なので「増えたら貸方」。<strong>5グループのルール通り</strong>になっています。
+      </div>
+      <div class="debit-credit-box" style="margin-top:16px;">
+        <div class="dc-side dc-debit" style="text-align:center;">
+          <div class="dc-title">資産（左）= 800万</div>
+          <div class="dc-item">普通預金 200万</div>
+          <div class="dc-item">建物 400万</div>
+          <div class="dc-item">備品 200万</div>
+        </div>
+        <div class="dc-side dc-credit" style="text-align:center;">
+          <div class="dc-title">負債+純資産（右）= 800万</div>
+          <div class="dc-item">借入金 300万</div>
+          <div class="dc-item">資本金 500万</div>
+          <div class="dc-item" style="font-weight:800;color:#1e8449;">左右ピッタリ一致!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- シミュレーション2 -->
+  <div class="sim-section">
+    <div class="sim-header"><span class="sim-num">CASE 2</span>パン屋の1ヶ月の営業</div>
+    <div class="sim-body">
+      <div class="sim-scenario">
+        パン屋の1ヶ月：小麦粉等を掛けで仕入50万円。パンの売上は現金で80万円、近所のカフェへの卸売は掛けで30万円。アルバイトに給料15万円を現金で支払い、家賃10万円と水道光熱費3万円を普通預金から支払った。
+      </div>
+
+      <p><strong>仕入（掛け）</strong></p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方</th><th class="jh-debit">金額</th><th class="jh-credit">貸方</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr><td>仕入 <span class="cat-label cat-expense">費用</span></td><td>50万</td><td>買掛金 <span class="cat-label cat-liability">負債</span></td><td>50万</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>現金売上</strong></p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方</th><th class="jh-debit">金額</th><th class="jh-credit">貸方</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr><td>現金 <span class="cat-label cat-asset">資産</span></td><td>80万</td><td>売上 <span class="cat-label cat-revenue">収益</span></td><td>80万</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>掛け売上</strong></p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方</th><th class="jh-debit">金額</th><th class="jh-credit">貸方</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr><td>売掛金 <span class="cat-label cat-asset">資産</span></td><td>30万</td><td>売上 <span class="cat-label cat-revenue">収益</span></td><td>30万</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>給料・家賃・光熱費の支払い</strong></p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方</th><th class="jh-debit">金額</th><th class="jh-credit">貸方</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr><td>給料 <span class="cat-label cat-expense">費用</span></td><td>15万</td><td>現金 <span class="cat-label cat-asset">資産</span></td><td>15万</td></tr>
+            <tr><td>支払家賃 <span class="cat-label cat-expense">費用</span></td><td>10万</td><td>普通預金 <span class="cat-label cat-asset">資産</span></td><td>13万</td></tr>
+            <tr><td>水道光熱費 <span class="cat-label cat-expense">費用</span></td><td>3万</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sim-result">
+        <strong>損益の計算：</strong><br>
+        収益：売上110万円（80万＋30万）<br>
+        費用：仕入50万＋給料15万＋家賃10万＋光熱費3万 ＝ 78万円<br>
+        <strong style="color:#1e8449;">利益 ＝ 110万 − 78万 ＝ 32万円！</strong>
+      </div>
+
+      <div class="sim-advice">
+        「掛け」は<strong>本業の商品</strong>の取引 → 売掛金・買掛金を使う。もし本業以外なら未収入金・未払金。ここが試験の狙い目です！
+      </div>
+    </div>
+  </div>
+
+  <!-- シミュレーション3 -->
+  <div class="sim-section">
+    <div class="sim-header"><span class="sim-num">CASE 3</span>決算時のやっかいな調整</div>
+    <div class="sim-body">
+      <div class="sim-scenario">
+        期末を迎えました。オーブン（備品、取得原価200万円、耐用年数10年、残存価額ゼロ、定額法）の減価償却を行います。また、カフェへの売掛金30万のうち5万円が回収不能になりました。
+      </div>
+
+      <p><strong>減価償却</strong></p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方</th><th class="jh-debit">金額</th><th class="jh-credit">貸方</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr><td>減価償却費 <span class="cat-label cat-expense">費用</span></td><td>20万</td><td>備品 <span class="cat-label cat-asset">資産</span></td><td>20万</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="formula-box">
+        <span class="formula-label">定額法の計算式</span>
+        減価償却費 ＝ 取得原価200万 ÷ 耐用年数10年 ＝ <strong>20万円／年</strong>
+      </div>
+
+      <p><strong>貸倒損失</strong></p>
+      <div class="journal-entry">
+        <table>
+          <thead><tr><th class="jh-debit">借方</th><th class="jh-debit">金額</th><th class="jh-credit">貸方</th><th class="jh-credit">金額</th></tr></thead>
+          <tbody>
+            <tr><td>貸倒損失 <span class="cat-label cat-expense">費用</span></td><td>5万</td><td>売掛金 <span class="cat-label cat-asset">資産</span></td><td>5万</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sim-advice">
+        減価償却費は<strong>費用</strong>（借方で増える）、備品の価値が減るので<strong>資産が貸方</strong>で減る。貸倒損失も費用。回収できない売掛金（資産）が消えるので貸方。どちらも「費用が増えて資産が減る」パターンです。
+      </div>
+      <div class="analogy">
+        コンビニのおにぎり（150円）は買った瞬間に全額費用。でも冷蔵庫（120万円）は6年使うから<strong>毎年20万円ずつ費用化</strong>。高額で長く使うものは「分割払い」ならぬ「分割費用化」。これが減価償却の本質です！
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== タブ6: クイズ ========== -->
+<div class="tab-content" id="tab6">
+
+  <div class="exam-point" style="border-color:#2980b9;background:#ebf5fb;">
+    <div class="exam-point-title" style="color:#1a5276;">このタブで学ぶこと</div>
+    <ul style="color:#2c3e50;">
+      <li>本番形式の4択クイズで実力を試す（全8問）</li>
+      <li>試験頻出の「ひっかけパターン」を体感する</li>
+      <li>間違えた問題から弱点を発見し、復習ポイントを把握する</li>
+    </ul>
+  </div>
+
+  <!-- Q1 -->
+  <div class="scenario-quiz">
+    <div class="quiz-header"><span class="q-num">Q1</span>ラーメン屋の開業資金</div>
+    <div class="quiz-body-area">
+      <div class="quiz-question-text">
+        鈴木さんは自己資金300万円でラーメン屋を始めました。この300万円を記録する勘定科目として正しいものは？
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="checkAnswer(this, false)">A. 現金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">B. 利益剰余金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, true)">C. 資本金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">D. 売上</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>正解：C. 資本金（純資産）</strong><br>
+        オーナーが事業のために出したお金は「資本金」。Aの現金は借方側に記録されますが、貸方の相手科目が資本金です。Bの利益剰余金は「稼いで貯めたお金」で開業時には発生しません。Dの売上は営業による稼ぎで、出資とは無関係です。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="scenario-quiz">
+    <div class="quiz-header"><span class="q-num">Q2</span>ネット通販の「ツケ払い」</div>
+    <div class="quiz-body-area">
+      <div class="quiz-question-text">
+        アパレルのネットショップが、仕入先から商品を50万円分仕入れ、来月末払いにしました。この「後で払う義務」を表す科目は？
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="checkAnswer(this, true)">A. 買掛金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">B. 未払金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">C. 売掛金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">D. 前払金</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>正解：A. 買掛金（負債）</strong><br>
+        本業の商品の仕入れを後払いにしたら「買掛金」。Bの未払金は本業以外の後払い（例：パソコン購入）。Cの売掛金は売った側の未回収金。Dの前払金は先にお金を払って商品を待つケース。<strong>「本業の仕入＝買掛金」</strong>と覚えましょう。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="scenario-quiz">
+    <div class="quiz-header"><span class="q-num">Q3</span>町工場の新しい機械</div>
+    <div class="quiz-body-area">
+      <div class="quiz-question-text">
+        町工場が新型の旋盤（工作機械）を150万円で購入し、現金で支払いました。この旋盤を記録する勘定科目の分類は？
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="checkAnswer(this, false)">A. 費用</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">B. 収益</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">C. 負債</button>
+        <button class="quiz-option" onclick="checkAnswer(this, true)">D. 資産</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>正解：D. 資産（備品 or 機械装置）</strong><br>
+        長期間使うものは「資産」として記録します。「買ったから費用」と思いがちですが、何年も使える設備は費用ではなく資産。毎年「減価償却費」という費用で少しずつ費用化していきます。これが費用と資産を間違えやすいポイントです。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="scenario-quiz">
+    <div class="quiz-header"><span class="q-num">Q4</span>カフェの家賃</div>
+    <div class="quiz-body-area">
+      <div class="quiz-question-text">
+        カフェのオーナーが今月分の家賃20万円を銀行振込で支払いました。この仕訳で「支払家賃」はどちら側に記入する？
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="checkAnswer(this, false)">A. 貸方（右）</button>
+        <button class="quiz-option" onclick="checkAnswer(this, true)">B. 借方（左）</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">C. 仕訳不要</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">D. どちらでもよい</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>正解：B. 借方（左）</strong><br>
+        支払家賃は<strong>費用</strong>。費用は増えたとき<strong>借方（左）</strong>に書きます。「借方＝資産・費用が増える側」がルール。同時に普通預金（資産）が減るので貸方に記入します。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="scenario-quiz">
+    <div class="quiz-header"><span class="q-num">Q5</span>美容室の予約金</div>
+    <div class="quiz-body-area">
+      <div class="quiz-question-text">
+        人気美容室が、結婚式の特別ヘアメイクの予約として、お客様から3万円を先に受け取りました。この3万円の勘定科目は？
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="checkAnswer(this, false)">A. 売上</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">B. 前払金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">C. 売掛金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, true)">D. 前受金</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>正解：D. 前受金（負債）</strong><br>
+        まだサービスを提供していないのに先にもらったお金は「前受金」。サービスを届ける義務があるので<strong>負債</strong>です。Aの売上はサービス提供後に計上。Bの前払金は自分が先に払った場合。Cの売掛金はサービス後の未回収金です。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="scenario-quiz">
+    <div class="quiz-header"><span class="q-num">Q6</span>配送業者のトラック売却</div>
+    <div class="quiz-body-area">
+      <div class="quiz-question-text">
+        配送会社が古いトラック（帳簿価額50万円）を70万円で売却し、代金は来月入金予定。この「来月もらう70万円」の科目は？
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="checkAnswer(this, false)">A. 売掛金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, true)">B. 未収入金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">C. 貸付金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">D. 前払金</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>正解：B. 未収入金（資産）</strong><br>
+        配送会社の本業はトラックを売ることではなく「配送」。本業以外の取引で後から受け取るお金は「未収入金」。Aの売掛金は本業の売上の未回収。なお、差額20万円（70万−50万）は「固定資産売却益」として収益に計上します。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="scenario-quiz">
+    <div class="quiz-header"><span class="q-num">Q7</span>IT企業の銀行借入</div>
+    <div class="quiz-body-area">
+      <div class="quiz-question-text">
+        IT企業が開発資金として銀行から500万円を借り入れ、普通預金に入金されました。この仕訳の貸方に来る科目は？
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="checkAnswer(this, false)">A. 普通預金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">B. 資本金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, true)">C. 借入金</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">D. 貸付金</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>正解：C. 借入金（負債）</strong><br>
+        銀行から借りたお金は「借入金」（負債）。負債が増えると貸方。借方には普通預金（資産の増加）が入ります。Bの資本金は株主の出資。Dの貸付金は自分が他人に貸した場合なので逆です。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="scenario-quiz">
+    <div class="quiz-header"><span class="q-num">Q8</span>飲食店の月末決算</div>
+    <div class="quiz-body-area">
+      <div class="quiz-question-text">
+        飲食店で使用している冷蔵庫（取得原価120万円、耐用年数6年、残存価額ゼロ、定額法）の1年分の減価償却費はいくら？
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="checkAnswer(this, true)">A. 20万円</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">B. 12万円</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">C. 60万円</button>
+        <button class="quiz-option" onclick="checkAnswer(this, false)">D. 6万円</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>正解：A. 20万円</strong><br>
+        定額法：120万円 ÷ 6年 ＝ <strong>20万円</strong>。Bの12万は120÷10で耐用年数を間違えたケース。Cの60万は120÷2で半分にしてしまったケース。<strong>「取得原価 ÷ 耐用年数」</strong>がシンプルな公式です。
+      </div>
+    </div>
+  </div>
+
+  <div class="score-display" id="scoreDisplay" style="display:none;">
+    <span class="score-label">あなたのスコア</span>
+    <span class="score-num" id="scoreNum"></span>
+    <div class="score-msg" id="scoreMsg"></div>
+    <button class="retry-btn" onclick="retryQuiz()">もう一度チャレンジ</button>
+  </div>
+
+</div>
+
+<!-- ========== タブ7: 実例で学ぶ ========== -->
+<div class="tab-content" id="tab7">
+
+  <div class="exam-point" style="border-color:#0f766e;background:#ecfdf5;">
+    <div class="exam-point-title" style="color:#0f766e;">このタブで学ぶこと</div>
+    <ul style="color:#134e4a;">
+      <li>実在する企業の事例で勘定科目が実際にどう使われるかを知る</li>
+      <li>のれん・社債・減価償却・貸倒損失の実務イメージをつかむ</li>
+      <li>ニュースを見て「仕訳を想像する」習慣のきっかけを作る</li>
+    </ul>
+  </div>
+
+  <!-- 事例1: 武田薬品の吸収合併 -->
+  <div class="case-card">
+    <div class="case-header"><span class="case-num">CASE 1</span>武田薬品 × シャイヤー ― 6.8兆円の大型買収と「のれん」</div>
+    <div class="case-body">
+      <p>2019年、武田薬品工業はアイルランドの製薬大手シャイヤーを<strong>約6兆8,000億円</strong>で買収しました。日本企業による海外M&Aとして過去最大級です。</p>
+
+      <p>買収後、2020年にはグループ内の再編として子会社「シャイアー・ジャパン」を<strong>吸収合併</strong>。武田薬品工業が<strong>存続会社</strong>、シャイアー・ジャパンが<strong>消滅会社</strong>となりました。</p>
+
+      <div class="case-point">
+        <strong>のれん（資産）</strong>：買収価格が相手の純資産を上回った差額。シャイヤーのブランド力・技術力・パイプラインに対する評価額です。武田薬品のB/Sには約4兆円の「のれん」が計上されました。<br><br>
+        <strong>なぜ「のれん」は資産？</strong><br>
+        → 目に見えないけど将来利益を生むと期待されるもの。日本基準では毎年<strong>のれん償却費（費用）</strong>として少しずつ費用化します。<br><br>
+        <strong>関連する主な勘定科目：</strong>
+        <ul style="margin-top:8px; padding-left:1.5em;">
+          <li><strong>のれん</strong> <span class="cat-label cat-asset">資産</span> ← 買収プレミアム</li>
+          <li><strong>のれん償却費</strong> <span class="cat-label cat-expense">費用</span> ← 毎年の費用化</li>
+          <li><strong>資本金・資本剰余金</strong> <span class="cat-label cat-equity">純資産</span> ← 株式交換で増加</li>
+          <li><strong>社債・借入金</strong> <span class="cat-label cat-liability">負債</span> ← 買収資金の一部</li>
+        </ul>
+      </div>
+
+      <div class="memo-bubble">
+        のれんが大きすぎると、減損テスト（価値が下がっていないかチェック）で一気に「のれん減損損失（費用）」が発生するリスクがあります。東芝のウェスチングハウス買収でのれん減損が巨額に上り、経営危機に発展した事例は記憶に新しいところです。
+      </div>
+      <div class="analogy">
+        「のれん」は料理店でいう「老舗の暖簾（のれん）の価値」。お店の建物や食材だけでなく、ブランド力や常連客という<strong>目に見えない価値</strong>にお金を払っているのです。試験では「のれんは資産！」と即答できるようにしておきましょう。
+      </div>
+    </div>
+  </div>
+
+  <!-- 事例2: ソフトバンクの社債 -->
+  <div class="case-card">
+    <div class="case-header"><span class="case-num">CASE 2</span>ソフトバンクグループ ― 巨額の社債発行と支払利息</div>
+    <div class="case-body">
+      <p>ソフトバンクグループは積極的な投資のために<strong>社債</strong>を大量に発行することで有名です。有利子負債は約10兆円規模に上ります。</p>
+
+      <p>社債を発行すると、投資家からお金が入り、その代わり定期的に利息を支払い、満期には元本を返す義務が生じます。</p>
+
+      <div class="case-point">
+        <strong>社債発行時：</strong><br>
+        → 普通預金（資産）が増える ／ 社債（負債）が増える<br><br>
+        <strong>利息支払い時：</strong><br>
+        → 支払利息（費用）が発生 ／ 普通預金（資産）が減る<br><br>
+        <strong>満期償還時：</strong><br>
+        → 社債（負債）が減る ／ 普通預金（資産）が減る<br><br>
+        <strong>関連する主な勘定科目：</strong>
+        <ul style="margin-top:8px; padding-left:1.5em;">
+          <li><strong>社債</strong> <span class="cat-label cat-liability">負債</span> ← 借金の証書</li>
+          <li><strong>支払利息</strong> <span class="cat-label cat-expense">費用</span> ← 利息コスト</li>
+          <li><strong>普通預金</strong> <span class="cat-label cat-asset">資産</span> ← 入出金</li>
+        </ul>
+      </div>
+
+      <div class="memo-bubble">
+        中小企業の場合は社債より「借入金」が一般的。でも構造は同じです。お金を借りる → 負債が増える → 利息を払う → 費用が発生。
+      </div>
+    </div>
+  </div>
+
+  <!-- 事例3: 街のパン屋がキッチンカーを始める -->
+  <div class="case-card">
+    <div class="case-header"><span class="case-num">CASE 3</span>街のパン屋さん ― キッチンカー事業を始める</div>
+    <div class="case-body">
+      <p>個人でパン屋を営む佐藤さんは、イベント出店用にキッチンカーを<strong>200万円</strong>で購入。うち100万円は自己資金、残り100万円は日本政策金融公庫から借入れました。</p>
+
+      <p>初月のイベント売上は現金で25万円。キッチンカーの燃料代（ガソリン）は2万円、イベント出店料5万円は来月払い。</p>
+
+      <div class="case-point">
+        <strong>キッチンカー購入時：</strong>
+        <ul style="margin-top:8px; padding-left:1.5em;">
+          <li><strong>車両運搬具 200万</strong> <span class="cat-label cat-asset">資産</span> ← キッチンカーを取得</li>
+          <li><strong>普通預金 100万</strong> <span class="cat-label cat-asset">資産</span> ← 自己資金の支出（貸方で減少）</li>
+          <li><strong>借入金 100万</strong> <span class="cat-label cat-liability">負債</span> ← 公庫からの借入</li>
+        </ul>
+        <br>
+        <strong>イベント売上と経費：</strong>
+        <ul style="margin-top:8px; padding-left:1.5em;">
+          <li><strong>現金 25万 ／ 売上 25万</strong> ← 本業の売上</li>
+          <li><strong>旅費交通費(燃料代) 2万 ／ 現金 2万</strong> ← 費用の発生</li>
+          <li><strong>支払手数料 5万 ／ 未払金 5万</strong> ← 出店料は本業の仕入ではないので「未払金」</li>
+        </ul>
+      </div>
+
+      <div class="memo-bubble">
+        出店料を「買掛金」にしないのがポイント！買掛金は「本業の仕入（パンの材料など）」の後払いだけ。出店料は本業の商品仕入ではないので「未払金」を使います。
+      </div>
+    </div>
+  </div>
+
+  <!-- 事例4: ユニクロの減価償却 -->
+  <div class="case-card">
+    <div class="case-header"><span class="case-num">CASE 4</span>ファーストリテイリング（ユニクロ）― 店舗の減価償却と広告宣伝費</div>
+    <div class="case-body">
+      <p>ユニクロは世界中に店舗を展開しています。新店舗を出すたびに<strong>建物の内装工事費（建物附属設備）</strong>や<strong>備品（什器・マネキンなど）</strong>が資産に計上されます。</p>
+
+      <p>これらは購入時に一括で費用にするのではなく、耐用年数にわたって<strong>減価償却</strong>していきます。また、テレビCMやSNS広告には年間数百億円の<strong>広告宣伝費</strong>を使います。</p>
+
+      <div class="case-point">
+        <strong>「資産」になるもの vs 「費用」になるもの ― この違いが重要！</strong><br><br>
+        <div class="compare-box">
+          <div class="compare-item ci-blue">
+            <div class="compare-item-header">資産になる（何年も使える）</div>
+            <div class="compare-item-body">
+              <p>建物附属設備 <span class="cat-label cat-asset">資産</span></p>
+              <p>備品（什器） <span class="cat-label cat-asset">資産</span></p>
+              <p>→ 毎年「減価償却費」で費用化</p>
+            </div>
+          </div>
+          <div class="compare-item ci-orange">
+            <div class="compare-item-header">すぐ費用になる（効果が短い）</div>
+            <div class="compare-item-body">
+              <p>広告宣伝費 <span class="cat-label cat-expense">費用</span></p>
+              <p>水道光熱費 <span class="cat-label cat-expense">費用</span></p>
+              <p>→ 使った期に全額費用</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="memo-bubble">
+        「長く使えるもの＝資産 → 徐々に費用化」「使ったらすぐ終わり＝即費用」。この判断基準が減価償却を理解するカギです。
+      </div>
+      <div class="analogy">
+        試験の引っかけ注意！「150万円の機械を買った → 費用？」と聞かれたら<strong>NO！資産です</strong>。費用になるのは毎年の減価償却費だけ。「買った＝費用」と反射的に答えないよう注意しましょう。
+      </div>
+    </div>
+  </div>
+
+  <!-- 事例5: 飲食店の貸倒 -->
+  <div class="case-card">
+    <div class="case-header"><span class="case-num">CASE 5</span>居酒屋チェーン ― コロナ禍での貸倒損失</div>
+    <div class="case-body">
+      <p>ある居酒屋チェーンでは、法人向けの宴会プランを売掛金で受けていました。しかし2020年のコロナ禍で取引先の中小企業が複数倒産。<strong>売掛金300万円が回収不能</strong>になりました。</p>
+
+      <div class="case-point">
+        <strong>回収不能が確定したとき：</strong>
+        <ul style="margin-top:8px; padding-left:1.5em;">
+          <li><strong>貸倒損失 300万</strong> <span class="cat-label cat-expense">費用</span> ← 回収できない損失</li>
+          <li><strong>売掛金 300万</strong> <span class="cat-label cat-asset">資産</span> ← 消滅（貸方で減少）</li>
+        </ul>
+        <br>
+        <strong>「貸倒引当金」で事前に備えていた場合：</strong>
+        <ul style="margin-top:8px; padding-left:1.5em;">
+          <li>決算時に「将来回収できないかも」と見積って引当金を計上しておく</li>
+          <li>貸倒引当金繰入額（費用）／ 貸倒引当金（資産のマイナス）</li>
+          <li>→ 実際に回収不能になったら：貸倒引当金 ／ 売掛金</li>
+        </ul>
+      </div>
+
+      <div class="memo-bubble">
+        引当金を設定しておくと、実際に貸倒れたときの損益へのインパクトを平準化できます。中小企業でも売掛金が多い業種は貸倒引当金の計上が重要です。
+      </div>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="one-point">
+    実例のポイント：「その取引でどの勘定科目が動くか？」を考えるクセをつけると<br>
+    表の丸暗記から卒業できる。ニュースを見たら仕訳を想像してみよう！
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  中小企業診断士 財務・会計｜勘定科目まとめ
+</footer>
+
+<script>
+(function() {
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  var tabContents = document.querySelectorAll('.tab-content');
+
+  function activateTab(tabId) {
+    tabBtns.forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+    });
+    tabContents.forEach(function(content) {
+      content.classList.toggle('active', content.id === tabId);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  tabBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      activateTab(tabId);
+      history.replaceState(null, null, '#' + tabId);
+    });
+  });
+
+  function checkHash() {
+    var hash = window.location.hash.replace('#', '');
+    if (hash && document.getElementById(hash)) {
+      activateTab(hash);
+    }
+  }
+  checkHash();
+  window.addEventListener('hashchange', checkHash);
+})();
+
+/* === 区分ドリル === */
+var classifyScore = 0;
+var classifyAnswered = 0;
+var totalClassify = 38; // 19問 × 2ステップ
+
+function classifyCheck(choicesId, nextGroupId, fbId, btn, isCorrect, mapId) {
+  var container = document.getElementById(choicesId);
+  var choices = container.querySelectorAll('.classify-choice');
+  var feedback = document.getElementById(fbId);
+
+  if (btn.disabled) return;
+
+  choices.forEach(function(c) { c.disabled = true; });
+
+  choices.forEach(function(c) {
+    if (c.getAttribute('onclick') && c.getAttribute('onclick').indexOf('true') !== -1) {
+      c.classList.add('cc-correct');
+    }
+  });
+
+  classifyAnswered++;
+  if (isCorrect) {
+    classifyScore++;
+    btn.classList.add('cc-correct');
+    feedback.classList.add('is-correct');
+  } else {
+    btn.classList.add('cc-wrong');
+    feedback.classList.add('is-wrong');
+  }
+  feedback.classList.add('show');
+
+  if (nextGroupId) {
+    var nextGroup = document.getElementById(nextGroupId);
+    if (nextGroup) nextGroup.style.display = 'block';
+  }
+
+  if (mapId && !nextGroupId) {
+    var mapEl = document.getElementById(mapId);
+    if (mapEl) mapEl.classList.add('show');
+  }
+
+  if (classifyAnswered >= totalClassify) {
+    setTimeout(showClassifyScore, 500);
+  }
+}
+
+function showClassifyScore() {
+  var d = document.getElementById('classifyScoreDisplay');
+  var n = document.getElementById('classifyScoreNum');
+  var m = document.getElementById('classifyScoreMsg');
+
+  d.style.display = 'block';
+  n.textContent = classifyScore + ' / ' + totalClassify;
+
+  var pct = classifyScore / totalClassify;
+  if (pct === 1) {
+    m.textContent = '\uD83C\uDFC6 パーフェクト！区分マスター！';
+  } else if (pct >= 0.8) {
+    m.textContent = '\uD83C\uDF89 素晴らしい！財務諸表の構造がよく理解できています！';
+  } else if (pct >= 0.6) {
+    m.textContent = '\uD83D\uDC4D いい感じ！間違えた科目を早見表で確認！';
+  } else {
+    m.textContent = '\uD83D\uDCDA 基本事項タブのツリー図をもう一度チェック！';
+  }
+  d.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retryClassify() {
+  classifyScore = 0;
+  classifyAnswered = 0;
+
+  document.querySelectorAll('.classify-card').forEach(function(card) {
+    card.querySelectorAll('.classify-choice').forEach(function(c) {
+      c.classList.remove('cc-correct', 'cc-wrong');
+      c.disabled = false;
+    });
+    card.querySelectorAll('.classify-feedback').forEach(function(fb) {
+      fb.classList.remove('show', 'is-correct', 'is-wrong');
+    });
+    card.querySelectorAll('.classify-btn-group[id$="s2"]').forEach(function(el) {
+      el.style.display = 'none';
+    });
+    card.querySelectorAll('.mini-map').forEach(function(mm) {
+      mm.classList.remove('show');
+    });
+  });
+
+  document.getElementById('classifyScoreDisplay').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* === 仕分けドリル === */
+var drillScore = 0;
+var drillAnswered = 0;
+var totalDrills = 20; // 10問 × 2ステップ
+
+function drillCheck(choicesId, nextQId, fbId, btn, isCorrect) {
+  var container = document.getElementById(choicesId);
+  var choices = container.querySelectorAll('.drill-choice');
+  var feedback = document.getElementById(fbId);
+
+  if (btn.disabled) return;
+
+  choices.forEach(function(c) { c.disabled = true; });
+
+  // Mark correct
+  choices.forEach(function(c) {
+    if (c.getAttribute('onclick') && c.getAttribute('onclick').indexOf('true') !== -1) {
+      c.classList.add('dc-correct');
+    }
+  });
+
+  drillAnswered++;
+  if (isCorrect) {
+    drillScore++;
+    btn.classList.add('dc-correct');
+    feedback.classList.add('is-correct');
+    // Show next question
+    var nextQ = document.getElementById(nextQId);
+    var nextQC = document.getElementById(nextQId + 'c');
+    if (nextQ) nextQ.style.display = 'block';
+    if (nextQC) nextQC.style.display = 'flex';
+  } else {
+    btn.classList.add('dc-wrong');
+    feedback.classList.add('is-wrong');
+    // Still show next question after wrong answer
+    var nextQ = document.getElementById(nextQId);
+    var nextQC = document.getElementById(nextQId + 'c');
+    if (nextQ) nextQ.style.display = 'block';
+    if (nextQC) nextQC.style.display = 'flex';
+  }
+  feedback.classList.add('show');
+
+  if (drillAnswered >= totalDrills) {
+    setTimeout(showDrillScore, 500);
+  }
+}
+
+function drillCheckDC(choicesId, fbId, btn, isCorrect) {
+  var container = document.getElementById(choicesId);
+  var choices = container.querySelectorAll('.drill-choice');
+  var feedback = document.getElementById(fbId);
+
+  if (btn.disabled) return;
+
+  choices.forEach(function(c) { c.disabled = true; });
+
+  choices.forEach(function(c) {
+    if (c.getAttribute('onclick') && c.getAttribute('onclick').indexOf('true') !== -1) {
+      c.classList.add('dc-correct');
+    }
+  });
+
+  drillAnswered++;
+  if (isCorrect) {
+    drillScore++;
+    btn.classList.add('dc-correct');
+    feedback.classList.add('is-correct');
+  } else {
+    btn.classList.add('dc-wrong');
+    feedback.classList.add('is-wrong');
+  }
+  feedback.classList.add('show');
+
+  if (drillAnswered >= totalDrills) {
+    setTimeout(showDrillScore, 500);
+  }
+}
+
+function showDrillScore() {
+  var d = document.getElementById('drillScoreDisplay');
+  var n = document.getElementById('drillScoreNum');
+  var m = document.getElementById('drillScoreMsg');
+
+  d.style.display = 'block';
+  n.textContent = drillScore + ' / ' + totalDrills;
+
+  var pct = drillScore / totalDrills;
+  if (pct === 1) {
+    m.textContent = '\uD83C\uDFC6 パーフェクト！仕分けマスター！';
+  } else if (pct >= 0.8) {
+    m.textContent = '\uD83C\uDF89 素晴らしい！ほぼ完璧です！';
+  } else if (pct >= 0.6) {
+    m.textContent = '\uD83D\uDC4D いい感じ！間違えた部分を確認しましょう！';
+  } else {
+    m.textContent = '\uD83D\uDCDA 基本事項タブで5グループのルールを復習！';
+  }
+  d.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retryDrill() {
+  drillScore = 0;
+  drillAnswered = 0;
+
+  document.querySelectorAll('.drill-card').forEach(function(card) {
+    card.querySelectorAll('.drill-choice').forEach(function(c) {
+      c.classList.remove('dc-correct', 'dc-wrong');
+      c.disabled = false;
+    });
+    card.querySelectorAll('.drill-feedback').forEach(function(fb) {
+      fb.classList.remove('show', 'is-correct', 'is-wrong');
+    });
+    // Hide step 2 questions
+    card.querySelectorAll('[id$="q2"], [id$="q2c"]').forEach(function(el) {
+      el.style.display = 'none';
+    });
+  });
+
+  document.getElementById('drillScoreDisplay').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* === タブ3 クイズ === */
+var quizScore = 0;
+var quizAnswered = 0;
+var totalQuestions = 8;
+
+function checkAnswer(btn, isCorrect) {
+  var quizBlock = btn.closest('.scenario-quiz');
+  var options = quizBlock.querySelectorAll('.quiz-option');
+  var feedback = quizBlock.querySelector('.quiz-feedback');
+
+  if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+  if (btn.disabled) return;
+
+  options.forEach(function(opt) {
+    opt.disabled = true;
+  });
+
+  // Mark the correct answer
+  var allBtns = quizBlock.querySelectorAll('.quiz-option');
+  allBtns.forEach(function(b) {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf('true') !== -1) {
+      b.classList.add('correct');
+    }
+  });
+
+  quizAnswered++;
+  if (isCorrect) {
+    quizScore++;
+    btn.classList.add('correct');
+    feedback.classList.add('is-correct');
+  } else {
+    btn.classList.add('wrong');
+    feedback.classList.add('is-wrong');
+  }
+  feedback.classList.add('show');
+
+  if (quizAnswered >= totalQuestions) {
+    setTimeout(showScore, 500);
+  }
+}
+
+function showScore() {
+  var scoreDisplay = document.getElementById('scoreDisplay');
+  var scoreNum = document.getElementById('scoreNum');
+  var scoreMsg = document.getElementById('scoreMsg');
+
+  scoreDisplay.style.display = 'block';
+  scoreNum.textContent = quizScore + ' / ' + totalQuestions;
+
+  var pct = quizScore / totalQuestions;
+  if (pct === 1) {
+    scoreMsg.textContent = '\uD83C\uDFC6 パーフェクト！勘定科目マスターです！';
+  } else if (pct >= 0.75) {
+    scoreMsg.textContent = '\uD83C\uDF89 素晴らしい！よく理解できています！';
+  } else if (pct >= 0.5) {
+    scoreMsg.textContent = '\uD83D\uDC4D まずまず！間違えた問題を復習しましょう！';
+  } else {
+    scoreMsg.textContent = '\uD83D\uDCDA 基本事項タブを復習してもう一度チャレンジ！';
+  }
+
+  scoreDisplay.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retryQuiz() {
+  quizScore = 0;
+  quizAnswered = 0;
+
+  document.querySelectorAll('.scenario-quiz').forEach(function(quiz) {
+    quiz.querySelectorAll('.quiz-option').forEach(function(opt) {
+      opt.classList.remove('correct', 'wrong');
+      opt.disabled = false;
+    });
+    var fb = quiz.querySelector('.quiz-feedback');
+    fb.classList.remove('show', 'is-correct', 'is-wrong');
+  });
+
+  document.getElementById('scoreDisplay').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>機関設計まとめ ver.02｜中小企業診断士 経営法務</title>
+<style>
+:root {
+  --bg: #f0f4f8; --card: #fff; --ink: #1a202c; --muted: #64748b; --line: #e2e8f0;
+  --accent: #0d9488; --accent-light: #ccfbf1;
+  --orange: #ea580c; --orange-light: #fff7ed;
+  --blue: #2563eb; --blue-light: #eff6ff;
+  --red: #dc2626; --red-light: #fef2f2;
+  --purple: #7c3aed; --purple-light: #f5f3ff;
+  --yellow: #d97706; --yellow-light: #fffbeb;
+  --green: #059669; --green-light: #ecfdf5;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --radius: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans JP", sans-serif;
+  background: var(--bg); color: var(--ink); line-height: 1.85; font-size: 15.5px;
+}
+
+/* ===== Header ===== */
+.page-header {
+  background: linear-gradient(135deg, #1a365d 0%, #2a4a7f 50%, #0d9488 100%);
+  color: #fff; text-align: center; padding: 40px 20px 32px;
+  position: relative; overflow: hidden;
+}
+.page-header::before {
+  content: ''; position: absolute; top: -60%; left: -20%;
+  width: 140%; height: 200%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(13,148,136,0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+.page-header::after {
+  content:''; position:absolute; bottom:-30px; left:50%; transform:translateX(-50%);
+  width:120%; height:60px; background:var(--bg); border-radius:50%;
+}
+.page-header .header-icon { font-size: 2.8rem; display: block; margin-bottom: 6px; position: relative; }
+.page-header h1 { font-size: clamp(1.5rem, 4vw, 1.9rem); margin-bottom: 6px; letter-spacing: 0.05em; position: relative; font-weight: 800; }
+.page-header .subtitle { font-size: 1rem; opacity: 0.85; position: relative; }
+.version-badge {
+  display: inline-block; background: #fbbf24; color: #1a202c;
+  font-weight: 800; font-size: 0.75rem; padding: 3px 12px;
+  border-radius: 999px; margin-left: 8px; vertical-align: middle;
+}
+.header-badges {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  margin-top: 14px; position: relative;
+}
+.header-badges span {
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 999px; padding: 4px 14px; font-size: 0.8rem;
+}
+.agent-note {
+  margin: 16px auto 0; max-width: 800px;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px; padding: 12px 16px; font-size: 0.85rem;
+  text-align: left; position: relative; line-height: 1.7;
+}
+
+/* ===== Tab Nav ===== */
+.tab-nav-wrapper {
+  background: #1a365d; position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.tab-nav { display: flex; max-width: 960px; margin: 0 auto; justify-content: center; }
+.tab-btn {
+  flex: 1; max-width: 260px; background: transparent;
+  color: rgba(255,255,255,0.7); border: none;
+  padding: 14px 10px; font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  border-bottom: 3px solid transparent; font-family: inherit; text-align: center;
+}
+.tab-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.tab-btn.active {
+  color: #1a365d; background: #fff;
+  border-bottom: 3px solid #e53e3e; border-radius: 6px 6px 0 0;
+}
+.tab-btn-beg.active { border-bottom-color: #0d9488; color: #0d9488; }
+.tab-btn-mid.active { border-bottom-color: #2563eb; color: #2563eb; }
+.tab-btn-adv.active { border-bottom-color: #7c3aed; color: #7c3aed; }
+.tab-btn-beg { color: rgba(153,246,228,0.85); }
+.tab-btn-mid { color: rgba(191,219,254,0.85); }
+.tab-btn-adv { color: rgba(221,214,254,0.85); }
+.tab-content { display: none; max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+.tab-content.active { display: block; animation: fadeUp .35s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+/* ===== Card ===== */
+.card {
+  background: var(--card); border-radius: 14px; margin-bottom: 24px;
+  box-shadow: var(--shadow); overflow: hidden;
+}
+.card-header {
+  padding: 16px 22px; font-size: 1.15rem; font-weight: 700;
+  color: #fff; display: flex; align-items: center; gap: 10px;
+}
+.card-header .card-num {
+  background: rgba(255,255,255,0.25);
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; font-weight: 800; flex-shrink: 0;
+}
+.card-body { padding: 22px 24px; }
+.card-body p { margin-bottom: 12px; }
+.card-body ul, .card-body ol { margin: 8px 0 14px 22px; }
+.card-body li { margin-bottom: 6px; }
+.card-body h3 {
+  color: #1a365d; font-size: 1.1rem; margin: 22px 0 10px;
+  padding-left: 12px; border-left: 4px solid #1a365d;
+}
+.card-body h3:first-child { margin-top: 0; }
+
+.card-head {
+  padding: 16px 22px; font-size: 1.15rem; font-weight: 700;
+  color: #fff; display: flex; align-items: center; gap: 10px;
+}
+.card-head .num {
+  background: rgba(255,255,255,0.25);
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; font-weight: 800; flex-shrink: 0;
+}
+
+.bg-navy { background: linear-gradient(135deg, #1a365d, #2a4a7f); }
+.bg-teal { background: linear-gradient(135deg, #134e4a, #0d9488); }
+.bg-orange { background: linear-gradient(135deg, #9a3412, #ea580c); }
+.bg-red { background: linear-gradient(135deg, #991b1b, #dc2626); }
+.bg-purple { background: linear-gradient(135deg, #4c1d95, #7c3aed); }
+.bg-green { background: linear-gradient(135deg, #064e3b, #059669); }
+.bg-blue { background: linear-gradient(135deg, #1e3a5f, #2563eb); }
+.bg-yellow { background: linear-gradient(135deg, #92400e, #d97706); }
+.bg-indigo { background: linear-gradient(135deg, #4f46e5, #4338ca); }
+.bg-amber { background: linear-gradient(135deg, #b45309, #d97706); }
+.bg-slate { background: linear-gradient(135deg, #475569, #334155); }
+.bg-cyan { background: linear-gradient(135deg, #0891b2, #0e7490); }
+
+/* ===== Agent Bubble ===== */
+.agent {
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.agent .a-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0; color: #fff;
+}
+.agent .a-body { flex: 1; }
+.agent .a-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 4px; }
+.agent .a-text { font-size: 0.92rem; line-height: 1.75; }
+.agent.pm   { background: #f0fdfa; border: 1px solid #99f6e4; }
+.agent.pm .a-avatar { background: #0d9488; }
+.agent.pm .a-name { color: #0d9488; }
+.agent.plan { background: #fffbeb; border: 1px solid #fde68a; }
+.agent.plan .a-avatar { background: #d97706; }
+.agent.plan .a-name { color: #d97706; }
+.agent.make { background: #eff6ff; border: 1px solid #bfdbfe; }
+.agent.make .a-avatar { background: #2563eb; }
+.agent.make .a-name { color: #2563eb; }
+.agent.rev  { background: #fef2f2; border: 1px solid #fecaca; }
+.agent.rev .a-avatar  { background: #dc2626; }
+.agent.rev .a-name { color: #dc2626; }
+
+/* ===== Bubble Conversation ===== */
+.bubble-wrap { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0; }
+.bubble-icon {
+  flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.bubble-icon.owner { background: #fef3c7; }
+.bubble-icon.sensei { background: #dbeafe; }
+.bubble-icon.staff { background: #fce7f3; }
+.bubble-icon.lawyer { background: #e0e7ff; }
+.bubble-text {
+  background: #f7fafc; border: 1px solid var(--line);
+  border-radius: 0 14px 14px 14px; padding: 14px 18px;
+  font-size: 0.93rem; line-height: 1.8; flex: 1;
+}
+.bubble-text .name { font-weight: 700; font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+
+/* ===== VS Grid ===== */
+.vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.vs-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 14px 0; }
+@media(max-width:640px){ .vs-grid, .vs-grid3 { grid-template-columns: 1fr; } }
+.vs-card {
+  border-radius: 12px; padding: 16px; border: 2px solid; font-size: 0.9rem;
+}
+.vs-card.blue { background: #ebf8ff; border-color: #90cdf4; }
+.vs-card.red { background: #fff5f5; border-color: #feb2b2; }
+.vs-card.green { background: #f0fff4; border-color: #9ae6b4; }
+.vs-card.orange { background: #fffff0; border-color: #fbd38d; }
+.vs-card.purple { background: #faf5ff; border-color: #d6bcfa; }
+.vs-card.teal { background: #f0fdfa; border-color: #81e6d9; }
+.vs-card h4 { text-align: center; margin-bottom: 8px; font-size: 0.95rem; }
+
+/* ===== Table ===== */
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 0.93rem; }
+th, td { border: 1px solid #cbd5e0; padding: 10px 14px; text-align: left; vertical-align: top; }
+th { background: #1a365d; color: #fff; font-weight: 600; white-space: nowrap; }
+th.th-green { background: #276749; }
+th.th-orange { background: #c05621; }
+th.th-red { background: #c53030; }
+th.th-purple { background: #6b46c1; }
+th.th-teal { background: #0d9488; }
+tbody tr:nth-child(even) { background: #f0f4f8; }
+tbody tr:nth-child(odd) { background: #fff; }
+tbody tr:hover { background: #e2e8f0; }
+
+/* ===== Highlight / Keyword ===== */
+.hl { background: linear-gradient(transparent 60%, #fef08a 60%); font-weight: 700; padding: 0 2px; }
+.kw { display: inline-block; font-weight: 700; color: #fff; background: #dc2626; border-radius: 4px; padding: 1px 8px; font-size: 0.85rem; margin: 0 2px; }
+.kw.blue { background: #2563eb; }
+.kw.green { background: #059669; }
+.kw.purple { background: #7c3aed; }
+.kw.orange { background: #ea580c; }
+.kw.teal { background: #0d9488; }
+.kw-red { display: inline-block; background: #fee2e2; color: #b91c1c; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+.kw-green { display: inline-block; background: #d1fae5; color: #065f46; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+.kw-purple { display: inline-block; background: #ede9fe; color: #5b21b6; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+.kw-orange { display: inline-block; background: #ffedd5; color: #9a3412; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+.kw-blue { display: inline-block; background: #dbeafe; color: #1e40af; padding: 1px 8px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; margin: 0 2px; white-space: nowrap; }
+
+/* ===== Highlight Box ===== */
+.hl-box {
+  border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8;
+}
+.hl-box.yellow { background: #fffbeb; border: 2px solid #f59e0b; }
+.hl-box.blue { background: #eff6ff; border: 2px solid #3b82f6; }
+.hl-box.green { background: #ecfdf5; border: 2px solid #10b981; }
+.hl-box.red { background: #fef2f2; border: 2px solid #ef4444; }
+.hl-box.purple { background: #f5f3ff; border: 2px solid #8b5cf6; }
+.hl-box.teal { background: #f0fdfa; border: 2px solid #14b8a6; }
+/* border-left style variants */
+.hl-teal { background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-orange { background: var(--orange-light); border-left: 4px solid var(--orange); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-blue { background: var(--blue-light); border-left: 4px solid var(--blue); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-red { background: var(--red-light); border-left: 4px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-purple { background: var(--purple-light); border-left: 4px solid var(--purple); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-yellow { background: var(--yellow-light); border-left: 4px solid var(--yellow); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+.hl-green { background: var(--green-light); border-left: 4px solid var(--green); border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 0.93rem; line-height: 1.8; }
+
+/* ===== One Point ===== */
+.one-point {
+  background: linear-gradient(135deg, #fffff0 0%, #fefcbf 100%);
+  border: 2px solid #d69e2e; border-radius: 10px;
+  padding: 16px 20px; margin: 16px 0 6px;
+  text-align: center; font-weight: 700; font-size: 1.05rem; color: #744210;
+}
+.one-point::before {
+  content: "ひとことで言うと...";
+  display: block; font-size: 0.8rem; font-weight: 600; color: #b7791f; margin-bottom: 6px;
+}
+
+/* ===== Exam Point ===== */
+.exam-point {
+  background: #fff5f5; border: 2px solid #e53e3e; border-radius: 8px;
+  padding: 18px 22px; margin: 20px 0 12px;
+}
+.exam-point-title { color: #e53e3e; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
+.exam-point ul { padding-left: 1.3em; margin-bottom: 0; }
+.exam-point li { color: #c53030; margin-bottom: 4px; }
+
+/* ===== Tree Diagram ===== */
+.tree {
+  background: #f8fafc; border: 1px solid var(--line); border-radius: 14px;
+  padding: 20px 22px; margin: 14px 0; font-size: 0.9rem; line-height: 1.6;
+}
+.tree .t-root { font-weight: 800; font-size: 1rem; color: #0f172a; margin-bottom: 8px; }
+.tree .t-branch { margin-left: 18px; padding-left: 18px; border-left: 2.5px solid #94a3b8; }
+.tree .t-item { position: relative; padding: 5px 0 5px 16px; font-weight: 600; }
+.tree .t-item::before { content:''; position:absolute; left:-18px; top:50%; width:16px; height:0; border-top:2.5px solid #94a3b8; }
+.tree .t-item .t-label { display: inline-block; padding: 3px 10px; border-radius: 8px; font-size: 0.85rem; margin-right: 6px; }
+.tree .t-note { font-weight: 400; font-size: 0.82rem; color: var(--muted); }
+.t-blue { background: #dbeafe; color: #1d4ed8; }
+.t-green { background: #d1fae5; color: #065f46; }
+.t-red { background: #fee2e2; color: #b91c1c; }
+.t-purple { background: #ede9fe; color: #5b21b6; }
+.t-amber { background: #fef3c7; color: #92400e; }
+.t-teal { background: #ccfbf1; color: #0f766e; }
+
+/* ===== Flow Diagram ===== */
+.flow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 14px 0; font-size: 0.9rem; }
+.flow .f-box { background: #fff; border: 2px solid var(--line); border-radius: 10px; padding: 8px 14px; font-weight: 600; text-align: center; min-width: 80px; }
+.flow .f-box.f-yes { border-color: var(--green); background: var(--green-light); }
+.flow .f-box.f-no { border-color: var(--red); background: var(--red-light); }
+.flow .f-arrow { font-size: 1.2rem; color: var(--muted); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.flow-box { background: #fff; border: 2px solid var(--blue); border-radius: 10px; padding: 10px 16px; text-align: center; font-size: 0.88rem; font-weight: 600; }
+.flow-arrow { font-size: 1.3rem; color: var(--blue); font-weight: 700; }
+
+/* ===== Quiz ===== */
+.quiz-box { margin: 18px 0; }
+.quiz-q { background: #f1f5f9; border-radius: 12px; padding: 16px 18px; font-weight: 600; margin-bottom: 12px; line-height: 1.7; }
+.quiz-choices { list-style: none; padding: 0; margin: 0; }
+.quiz-choices li {
+  background: #fff; border: 2px solid var(--line); border-radius: 10px;
+  padding: 12px 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+  font-size: 0.93rem; line-height: 1.7;
+}
+.quiz-choices li:hover { border-color: var(--accent); background: var(--accent-light); }
+.quiz-choices li.correct { border-color: var(--green); background: var(--green-light); pointer-events: none; }
+.quiz-choices li.wrong { border-color: var(--red); background: var(--red-light); opacity: 0.7; pointer-events: none; }
+.quiz-explanation {
+  display: none; margin-top: 12px; padding: 16px 18px;
+  background: var(--blue-light); border-radius: 12px; border-left: 4px solid var(--blue);
+  font-size: 0.92rem; line-height: 1.8;
+}
+.quiz-explanation.show { display: block; animation: fadeUp .3s ease; }
+
+/* ===== Disc-log (Agent Discussion) ===== */
+.disc-log {
+  background: #f8fafc; border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; margin: 16px 0; font-size: 0.85rem; line-height: 1.7;
+}
+.disc-log .role {
+  display: inline-block; padding: 2px 8px; border-radius: 6px;
+  font-weight: 700; font-size: 0.78rem; margin-right: 6px; color: #fff;
+}
+.disc-log .role-pm { background: #4f46e5; }
+.disc-log .role-plan { background: #0891b2; }
+.disc-log .role-create { background: #059669; }
+.disc-log .role-critic { background: #dc2626; }
+.disc-log p { margin: 8px 0; }
+
+/* ===== Discussion Badge ===== */
+.discussion-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  color: #e2e8f0; border-radius: 999px; padding: 6px 16px;
+  font-size: 0.78rem; font-weight: 600; margin-bottom: 20px;
+}
+.discussion-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+.discussion-badge .dot.g { background: #34d399; }
+.discussion-badge .dot.y { background: #fbbf24; }
+.discussion-badge .dot.b { background: #60a5fa; }
+.discussion-badge .dot.r { background: #f87171; }
+
+/* ===== Bar Chart ===== */
+.bar-chart { margin: 20px 0; }
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.bar-label { width: 120px; text-align: right; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
+.bar-track { flex: 1; height: 36px; background: var(--line); border-radius: 8px; position: relative; overflow: visible; }
+.bar-fill {
+  height: 100%; border-radius: 8px; display: flex; align-items: center;
+  padding: 0 12px; font-weight: 700; font-size: 0.82rem; color: #fff;
+  transition: width 0.8s cubic-bezier(.4,0,.2,1); position: relative; white-space: nowrap;
+}
+.bar-fill.teal { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+.bar-fill.blue { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.bar-fill.purple { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+.bar-fill.orange { background: linear-gradient(90deg, #ea580c, #fb923c); }
+.bar-fill.green { background: linear-gradient(90deg, #059669, #34d399); }
+.bar-fill.red { background: linear-gradient(90deg, #dc2626, #f87171); }
+.bar-extend {
+  position: absolute; top: 0; height: 100%; border-radius: 8px;
+  border: 2px dashed; opacity: 0.4; display: flex; align-items: center;
+  justify-content: flex-end; padding-right: 10px; font-size: 0.75rem; font-weight: 700;
+}
+.bar-extend.teal { border-color: #0d9488; background: rgba(13,148,136,0.08); color: #0d9488; }
+.bar-extend.blue { border-color: #2563eb; background: rgba(37,99,235,0.08); color: #2563eb; }
+.bar-extend.purple { border-color: #7c3aed; background: rgba(124,58,237,0.08); color: #7c3aed; }
+.bar-extend.orange { border-color: #ea580c; background: rgba(234,88,12,0.08); color: #ea580c; }
+
+/* ===== Timeline ===== */
+.timeline { position: relative; padding-left: 28px; margin: 16px 0; }
+.timeline::before { content:''; position:absolute; left:12px; top:0; bottom:0; width:3px; background:var(--line); border-radius:2px; }
+.timeline-item { position: relative; margin-bottom: 20px; }
+.timeline-item::before {
+  content:''; position:absolute; left:-22px; top:6px;
+  width:14px; height:14px; border-radius:50%; background:var(--accent);
+  border:3px solid #fff; box-shadow:0 0 0 2px var(--accent);
+}
+.timeline-item.red::before { background:var(--red); box-shadow:0 0 0 2px var(--red); }
+.timeline-item.blue::before { background:var(--blue); box-shadow:0 0 0 2px var(--blue); }
+.timeline-item.purple::before { background:var(--purple); box-shadow:0 0 0 2px var(--purple); }
+
+/* ===== Story ===== */
+.story-intro {
+  font-size: 0.95rem; color: var(--muted); line-height: 1.8;
+  padding: 0 4px 16px; border-bottom: 1px dashed var(--line); margin-bottom: 24px;
+}
+.story-section { margin: 18px 0; }
+.story-section h4 { font-size: 0.95rem; font-weight: 700; color: #134e4a; margin-bottom: 8px; }
+.tip-box {
+  background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px;
+  padding: 14px 18px; margin: 14px 0; font-size: 0.92rem; line-height: 1.75;
+  border-left: 4px solid var(--yellow);
+}
+
+/* ===== Example Box ===== */
+.example-box {
+  background: #f0fff4; border-left: 4px solid #38a169;
+  padding: 14px 18px; border-radius: 0 10px 10px 0;
+  margin: 12px 0; font-size: 0.93rem; line-height: 1.8;
+}
+
+/* ===== Matrix (for organ combinations) ===== */
+.matrix-wrap { overflow-x: auto; margin: 16px 0; }
+.matrix-wrap table th { font-size: 0.82rem; }
+.matrix-wrap table td { text-align: center; font-size: 0.88rem; }
+.mark-req { background: #dcfce7; color: #166534; font-weight: 800; }
+.mark-opt { background: #fefce8; color: #854d0e; font-weight: 600; }
+.mark-ban { background: #fef2f2; color: #991b1b; font-weight: 800; }
+
+/* ===== Tutor Comment ===== */
+.tutor-comment {
+  background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px;
+  padding: 12px 16px; margin: 12px 0; font-size: 0.9rem;
+  display: flex; gap: 10px; align-items: flex-start; line-height: 1.7;
+}
+.tutor-comment .tc-icon { font-size: 1.2rem; flex-shrink: 0; }
+.tutor-comment.warn { background: #fff5f5; border-color: #feb2b2; }
+.tutor-comment.idea { background: #faf5ff; border-color: #d6bcfa; }
+
+/* ===== Responsive ===== */
+@media(max-width:640px) {
+  .page-header h1 { font-size: 1.4rem; }
+  .tab-btn { font-size: 0.72rem; padding: 12px 6px; }
+  .card-body { padding: 16px 14px; }
+  .flow-row { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .bar-label { width: 80px; font-size: 0.8rem; }
+  .bar-fill { font-size: 0.72rem; padding: 0 6px; }
+  .tree .t-branch { margin-left: 10px; padding-left: 12px; }
+  table { font-size: 0.8rem; }
+  th, td { padding: 7px 8px; }
+}
+strong { color: var(--ink); }
+
+/* ===== Fill-Blank ===== */
+.fill-card{background:var(--card);border-radius:14px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden}
+.fill-card .fill-header{padding:12px 18px;font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px}
+.fill-card .fill-body{padding:18px 20px}
+.fill-group{margin-bottom:4px;font-size:.95rem;line-height:2}
+.fill-blank{display:inline-block;min-width:100px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="page-header">
+  <span class="header-icon">&#x1F3DB;</span>
+  <h1>機関設計まとめ <span class="version-badge">ver.02</span></h1>
+  <p class="subtitle">中小企業診断士 経営法務｜会社法の最重要テーマ</p>
+  <div class="header-badges">
+    <span>&#x1F3AF; 出題頻度A</span>
+    <span>&#x1F4D6; 会社法326〜400条</span>
+    <span>&#x1F916; 4エージェント討議版 ver.02</span>
+  </div>
+
+</header>
+
+<!-- ===== TAB NAV ===== -->
+<nav class="tab-nav-wrapper">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">&#x1F530; 入門</button>
+    <button class="tab-btn" onclick="switchTab(1)">&#x1F4CB; 基本事項</button>
+    <button class="tab-btn" onclick="switchTab(2)">&#x23F1; 任期の延長・短縮</button>
+    <button class="tab-btn tab-btn-beg" onclick="switchTab(3)">&#x1F331; 穴埋め:初級</button>
+    <button class="tab-btn tab-btn-mid" onclick="switchTab(4)">&#x1F4D8; 穴埋め:中級</button>
+    <button class="tab-btn tab-btn-adv" onclick="switchTab(5)">&#x1F3AF; 穴埋め:上級</button>
+    <button class="tab-btn" onclick="switchTab(6)">&#x1F3ED; シミュレーション</button>
+    <button class="tab-btn" onclick="switchTab(7)">&#x1F9E9; 実例クイズ</button>
+    <button class="tab-btn" onclick="switchTab(8)">&#x1F4D6; 実例で覚える</button>
+  </div>
+</nav>
+
+<!-- ===== TAB SWITCHING JS ===== -->
+<script>
+function switchTab(n){
+  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(el){ el.classList.remove('active'); });
+  var target = document.getElementById('tab'+n);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('.tab-btn')[n].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===== 穴埋めチェック機能 ===== */
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  while(grp && !grp.classList.contains('fill-group')){ grp = grp.previousElementSibling; }
+  if(grp){ grp.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); }); }
+  btn.textContent = '\u2705 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function getActiveFillTab(){
+  var active = document.querySelector('.tab-content.active');
+  if(active && ['tab3','tab4','tab5'].indexOf(active.id) !== -1) return active;
+  return null;
+}
+function revealAllBlanks(){
+  var t = getActiveFillTab(); if(!t) return;
+  t.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  t.querySelectorAll('.fill-reveal-btn').forEach(function(b){
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').indexOf('revealBlanks') !== -1){
+      b.textContent = '\u2705 表示済み'; b.disabled = true; b.style.opacity = '.5';
+    }
+  });
+}
+function resetAllBlanks(){
+  var t = getActiveFillTab(); if(!t) return;
+  t.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  t.querySelectorAll('.fill-reveal-btn').forEach(function(b){
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').indexOf('revealBlanks') !== -1){
+      b.innerHTML = '&#x1F441; 答えを見る'; b.disabled = false; b.style.opacity = '1';
+    }
+  });
+}
+document.addEventListener('click', function(e){
+  if(e.target.classList && e.target.classList.contains('fill-blank')){ e.target.classList.toggle('show'); }
+});
+</script>
+
+<!-- ============================================================ -->
+<!-- TAB 0: 入門                                                    -->
+<!-- ============================================================ -->
+<div class="tab-content active" id="tab0">
+
+
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・「機関」＝会社の役割分担（6種類のプレイヤー）<br>
+    ・チェック体制の3パターン（監査役会型・監査等委員会型・指名委員会等型）<br>
+    ・会社の大きさで必要な機関が変わるフロー
+  </div>
+
+  <!-- Card 1: 機関とは -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">&#x1F4A1;</span>「機関」ってなに？</div>
+    <div class="card-body">
+      <p>株式会社には「こういう役割の人を置きなさい」というルールがあります。その役割ひとつひとつを<strong>「機関」</strong>と呼びます。</p>
+
+      <div class="tree">
+        <div class="t-root">&#x1F3E2; 株式会社の機関ツリー</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-amber">株主総会</span> オーナー（株主）の最高会議</div>
+          <div class="t-item"><span class="t-label t-blue">取締役</span> 経営する人 <span class="t-note">&#x2190; 最低1人は絶対必要</span></div>
+          <div class="t-item"><span class="t-label t-blue">取締役会</span> 取締役3人以上の会議 <span class="t-note">&#x2190; 重要な決定＆取締役の監督</span></div>
+          <div class="t-item"><span class="t-label t-green">監査役</span> 見張る人 <span class="t-note">&#x2190; 経営にはタッチしない</span></div>
+          <div class="t-item"><span class="t-label t-purple">会計参与</span> 決算書を「作る」人 <span class="t-note">&#x2190; 税理士もなれる</span></div>
+          <div class="t-item"><span class="t-label t-red">会計監査人</span> 決算書を「チェック」する人 <span class="t-note">&#x2190; 公認会計士だけ</span></div>
+        </div>
+      </div>
+
+      <div class="hl-teal">
+        <strong>&#x1F4CC; ポイント：</strong>「<strong>作る</strong>のが参与、<strong>チェック</strong>するのが監査人」。<br>
+        税理士がなれるのは会計<strong>参与</strong>だけ。会計監査人は公認会計士<strong>限定</strong>。
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+  <!-- Card 2: 3つのパターン -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">&#x2B50;</span>3つのパターンだけ覚えよう</div>
+    <div class="card-body">
+      <p>大きな会社（公開＋大会社）は、「誰がチェックするか」で次の3パターンのどれかを選びます。</p>
+
+      <div class="tree">
+        <div class="t-root">&#x1F50D; チェック体制の3パターン</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-green">&#9312; 監査役会型</span> 外の人がチェック（監査役）<span class="t-note"> &#x2026;一番オーソドックス</span></div>
+          <div class="t-item"><span class="t-label t-blue">&#9313; 監査等委員会型</span> 中の人がチェック（取締役が兼任）<span class="t-note"> &#x2026;2015年〜の中間型</span></div>
+          <div class="t-item"><span class="t-label t-purple">&#9314; 指名委員会等型</span> 3つの委員会で完全分離 <span class="t-note">&#x2026;最も厳格</span></div>
+        </div>
+      </div>
+
+      <div class="hl-box red">
+        <strong>&#x1F6A8; 超大事：</strong>&#9313;と&#9314;は監査役を<strong>「置けない」</strong>（禁止！）。「いらない」じゃなくて「ダメ」。
+      </div>
+
+
+
+
+      <p style="margin-top:14px">イメージ図で見るとこう：</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin:10px 0;">
+        <div style="flex:1;min-width:180px;background:#ecfdf5;border:2px solid #059669;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-weight:800;color:#059669;margin-bottom:6px;">&#9312; 監査役会型</div>
+          <div style="font-size:.85rem;">取締役会（経営）<br>&#x2191; 外からチェック &#x2191;<br><strong>監査役会</strong></div>
+        </div>
+        <div style="flex:1;min-width:180px;background:#eff6ff;border:2px solid #2563eb;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-weight:800;color:#2563eb;margin-bottom:6px;">&#9313; 監査等委員会型</div>
+          <div style="font-size:.85rem;">取締役会（経営）<br>&#x2191; 中にチェック役がいる &#x2191;<br><strong>監査等委員＝取締役</strong></div>
+        </div>
+        <div style="flex:1;min-width:180px;background:#f5f3ff;border:2px solid #7c3aed;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-weight:800;color:#7c3aed;margin-bottom:6px;">&#9314; 指名委員会等型</div>
+          <div style="font-size:.85rem;">取締役会（<strong>監督</strong>のみ）<br>&#x2193;<br><strong>執行役</strong>が経営する</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: 公開会社・大会社 -->
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">&#x1F4DD;</span>公開会社・大会社を知ろう</div>
+    <div class="card-body">
+      <p>「公開会社」「大会社」は試験に超出る言葉。でも意味はシンプル！</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin:10px 0;">
+        <div style="flex:1;min-width:200px;background:#eff6ff;border:2px solid #2563eb;border-radius:12px;padding:16px;">
+          <div style="font-weight:800;color:#2563eb;margin-bottom:6px;">&#x1F513; 公開会社</div>
+          <div style="font-size:.9rem;">株を<strong>自由に売り買いできる</strong>会社<br><span style="font-size:.82rem;color:var(--muted);">（＝譲渡制限がない。上場企業に限らない！）</span></div>
+        </div>
+      </div>
+
+
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin:10px 0;">
+        <div style="flex:1;min-width:200px;background:#fff7ed;border:2px solid #ea580c;border-radius:12px;padding:16px;">
+          <div style="font-weight:800;color:#ea580c;margin-bottom:6px;">&#x1F3E6; 大会社</div>
+          <div style="font-size:.9rem;">資本金<strong>5億円以上</strong> <span class="kw">or</span> 負債<strong>200億円以上</strong><br><span style="font-size:.82rem;color:var(--muted);">（「かつ」じゃなくて「どちらか片方」でOK）</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: 会社の大きさでフロー -->
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">&#x1F4CA;</span>会社の大きさで何が必要？フローで見よう</div>
+    <div class="card-body">
+      <p>「うちの会社にはどの機関が必要？」はこのフローでわかります。</p>
+      <div class="tree">
+        <div class="t-root">&#x1F3E2; あなたの会社は&#x2026;</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-teal">小さな非公開会社</span> &#x2192; 取締役<strong>1人</strong>だけでOK！</div>
+          <div class="t-item"><span class="t-label t-blue">公開会社</span> &#x2192; 取締役会（<strong>3人以上</strong>）＋ 監査役が必要</div>
+          <div class="t-item"><span class="t-label t-amber">大会社</span> &#x2192; 上に加えて<strong>会計監査人</strong>も必要</div>
+          <div class="t-item"><span class="t-label t-red">公開会社＋大会社</span> &#x2192; 3パターンのどれかを選ぶ</div>
+          <div class="t-item"><span class="t-label t-purple">上場会社</span> &#x2192; <strong>社外取締役1人以上</strong>が義務</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: 数字だけ5つ -->
+  <div class="card">
+    <div class="card-header bg-amber"><span class="card-num">&#x1F522;</span>数字だけ5つ！</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>何？</th><th>数字</th></tr></thead>
+        <tbody>
+          <tr><td>取締役会の人数</td><td><strong>3人</strong>以上</td></tr>
+          <tr><td>監査役会の人数</td><td><strong>3人</strong>以上（半数以上が社外）</td></tr>
+          <tr><td>各委員会の人数</td><td><strong>3人</strong>以上（過半数が社外取締役）</td></tr>
+          <tr><td>大会社の基準</td><td>資本金<strong>5億</strong> or 負債<strong>200億</strong></td></tr>
+          <tr><td>監査役の任期</td><td><strong>4年</strong>（短くできない）</td></tr>
+        </tbody>
+      </table></div>
+      <div class="hl-green">ここまでわかればバッチリ！ 次の「基本事項」タブで詳しく見ていこう。</div>
+
+
+
+    </div>
+  </div>
+
+  <!-- Card 6: NEW 機関設計の全体マップ -->
+  <div class="card">
+    <div class="card-header bg-slate"><span class="card-num">&#x1F5FA;</span>NEW: 機関設計の全体マップ</div>
+    <div class="card-body">
+      <p>すべての会社の機関設計パターンを1枚の図にまとめました。上から下へ「会社が大きくなるにつれて機関が増える」流れです。</p>
+
+      <!-- CSS Flowchart -->
+      <div style="margin:20px 0;">
+        <!-- Level 1: All companies -->
+        <div style="text-align:center;margin-bottom:8px;">
+          <div style="display:inline-block;background:#0f766e;color:#fff;padding:12px 28px;border-radius:12px;font-weight:800;font-size:1rem;">
+            &#x1F3E2; すべての株式会社
+          </div>
+        </div>
+        <div style="text-align:center;font-size:1.4rem;color:var(--muted);margin-bottom:8px;">&#x2193;</div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+          <div style="background:#ccfbf1;border:2px solid #0d9488;border-radius:10px;padding:10px 18px;font-weight:700;font-size:0.9rem;text-align:center;">
+            &#x1F4CB; 株主総会<br><span style="font-size:0.78rem;font-weight:400;color:var(--muted);">必置</span>
+          </div>
+          <div style="background:#dbeafe;border:2px solid #2563eb;border-radius:10px;padding:10px 18px;font-weight:700;font-size:0.9rem;text-align:center;">
+            &#x1F464; 取締役 1人以上<br><span style="font-size:0.78rem;font-weight:400;color:var(--muted);">必置</span>
+          </div>
+        </div>
+
+        <!-- Level 2: Public company -->
+        <div style="text-align:center;font-size:1.4rem;color:var(--muted);margin:8px 0;">&#x2193; <span style="font-size:0.8rem;">公開会社になると</span> &#x2193;</div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+          <div style="background:#dbeafe;border:2px solid #2563eb;border-radius:10px;padding:10px 18px;font-weight:700;font-size:0.9rem;text-align:center;">
+            &#x1F3DB; 取締役会（3人以上）<br><span style="font-size:0.78rem;font-weight:400;color:var(--muted);">公開会社は必置</span>
+          </div>
+          <div style="background:#d1fae5;border:2px solid #059669;border-radius:10px;padding:10px 18px;font-weight:700;font-size:0.9rem;text-align:center;">
+            &#x1F50D; 監査役（原則）<br><span style="font-size:0.78rem;font-weight:400;color:var(--muted);">取締役会ありなら原則必置</span>
+          </div>
+        </div>
+
+        <!-- Level 3: Large company -->
+        <div style="text-align:center;font-size:1.4rem;color:var(--muted);margin:8px 0;">&#x2193; <span style="font-size:0.8rem;">大会社になると</span> &#x2193;</div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+          <div style="background:#fee2e2;border:2px solid #dc2626;border-radius:10px;padding:10px 18px;font-weight:700;font-size:0.9rem;text-align:center;">
+            &#x1F4D0; 会計監査人<br><span style="font-size:0.78rem;font-weight:400;color:var(--muted);">大会社は必置</span>
+          </div>
+        </div>
+
+        <!-- Level 4: Public + Large -->
+        <div style="text-align:center;font-size:1.4rem;color:var(--muted);margin:8px 0;">&#x2193; <span style="font-size:0.8rem;">公開＋大会社は3択</span> &#x2193;</div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+          <div style="background:#ecfdf5;border:2px solid #059669;border-radius:10px;padding:10px 16px;font-weight:700;font-size:0.85rem;text-align:center;min-width:140px;">
+            &#9312; 監査役会型<br><span style="font-size:0.75rem;font-weight:400;">監査役会＋会計監査人</span>
+          </div>
+          <div style="background:#eff6ff;border:2px solid #2563eb;border-radius:10px;padding:10px 16px;font-weight:700;font-size:0.85rem;text-align:center;min-width:140px;">
+            &#9313; 監査等委員会型<br><span style="font-size:0.75rem;font-weight:400;">監査等委員会＋会計監査人</span>
+          </div>
+          <div style="background:#f5f3ff;border:2px solid #7c3aed;border-radius:10px;padding:10px 16px;font-weight:700;font-size:0.85rem;text-align:center;min-width:140px;">
+            &#9314; 指名委員会等型<br><span style="font-size:0.75rem;font-weight:400;">3委員会＋執行役＋会計監査人</span>
+          </div>
+        </div>
+
+        <!-- Level 5: Listed -->
+        <div style="text-align:center;font-size:1.4rem;color:var(--muted);margin:8px 0;">&#x2193; <span style="font-size:0.8rem;">上場会社は追加で</span> &#x2193;</div>
+        <div style="display:flex;justify-content:center;margin-bottom:4px;">
+          <div style="background:#ede9fe;border:2px solid #7c3aed;border-radius:10px;padding:10px 18px;font-weight:700;font-size:0.9rem;text-align:center;">
+            &#x1F465; 社外取締役1人以上（327条の2）
+          </div>
+        </div>
+      </div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F4A1; 読み方：</strong>上から順に「自分の会社がどこに当てはまるか」を確認していくと、必要な機関がわかります。非公開＋小会社なら一番上だけでOK！
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 1: 基本事項                                                -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab1">
+
+
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・必置ルール（公開会社→大会社→と段階的に義務が増える）<br>
+    ・監査役を省略できる例外3つ＆禁止の組み合わせ<br>
+    ・3パターンの詳細比較＆必須機関マトリクス
+  </div>
+
+  <!-- Card 1: 共通ルール -->
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">1</span>全株式会社に共通のルール（326条1項）</div>
+    <div class="card-body">
+      <p>どんな会社でも<span class="kw teal">株主総会</span>＋<span class="kw blue">取締役1人</span>は絶対必要。<br>
+      逆に言えば、小さい非公開会社はこれだけでOK。</p>
+      <div class="hl-orange">
+        <strong>&#x26A0; ひっかけ：</strong>「株主総会は設置が<strong>任意</strong>」&#x2192; <strong>ウソ</strong>。すべての株式会社で必ず置く。
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Card 2: 必置ルール -->
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">2</span>「この会社はコレが必要！」ツリー（必置ルール）</div>
+    <div class="card-body">
+      <p>会社の規模や種類が大きくなるほど、必要な機関が増えていくイメージです。</p>
+      <div class="tree">
+        <div class="t-root">&#x1F4CF; 会社が大きくなると&#x2026; 必要な機関が増える</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-teal">すべての株式会社</span> 株主総会 ＋ 取締役1人</div>
+          <div class="t-item"><span class="t-label t-blue">公開会社</span> ＋ <strong>取締役会</strong>（&#x2192;3人以上に）<span class="t-note">327条1項</span></div>
+          <div class="t-item"><span class="t-label t-green">取締役会あり</span> ＋ <strong>監査役</strong>（原則）<span class="t-note">327条2項</span></div>
+          <div class="t-item"><span class="t-label t-amber">大会社</span> ＋ <strong>会計監査人</strong> <span class="t-note">328条</span></div>
+          <div class="t-item"><span class="t-label t-red">公開＋大会社</span> &#x2192; 3パターンのどれかを選ぶ <span class="t-note">328条1項</span></div>
+          <div class="t-item"><span class="t-label t-purple">上場会社</span> ＋ <strong>社外取締役1人以上</strong> <span class="t-note">327条の2</span></div>
+        </div>
+      </div>
+
+      <div class="hl-orange">
+        <strong>&#x26A0; ひっかけ注意</strong><br>
+        ・「非公開会社は取締役会を置けない」&#x2192; ウソ。<strong>任意で置ける</strong><br>
+        ・「大会社じゃないと会計監査人は置けない」&#x2192; ウソ。定款で<strong>任意に置ける</strong>（326条2項）<br>
+        ・取締役会あり &#x2192; 監査役が必要。ただし<strong>例外3つ</strong>（下のカード参照）
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Card 3: 監査役を省略できるケース -->
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">3</span>「監査役なし」にできる例外3つ</div>
+    <div class="card-body">
+      <p>取締役会がある会社は原則、監査役が必要。でもこの3つなら不要に：</p>
+      <div class="tree">
+        <div class="t-root">&#x2705; 監査役が不要になるケース</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-blue">&#9312;</span> <strong>監査等委員会</strong>設置会社にする <span class="t-note">&#x2192; 監査役は「置けない」</span></div>
+          <div class="t-item"><span class="t-label t-purple">&#9313;</span> <strong>指名委員会等</strong>設置会社にする <span class="t-note">&#x2192; 監査役は「置けない」</span></div>
+          <div class="t-item"><span class="t-label t-green">&#9314;</span> <strong>非公開会社</strong>で<strong>会計参与</strong>を置く <span class="t-note">&#x2192; 327条2項ただし書</span></div>
+        </div>
+      </div>
+      <div class="hl-box red">
+        <strong>&#x1F6A8; 超ひっかけ：</strong>&#9314;の会計参与で代替できるのは<span class="kw">非公開会社だけ</span>！ 公開会社ではダメ。
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Card 4: 絶対にダメな組み合わせ -->
+  <div class="card">
+    <div class="card-header bg-red"><span class="card-num">4</span>「絶対にダメ！」な組み合わせ</div>
+    <div class="card-body">
+      <p>3パターンは「どれか1つを選ぶ」もの。混ぜるのは<strong>禁止</strong>！</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;">
+        <div style="flex:1;min-width:240px;background:#fef2f2;border:2px solid #dc2626;border-radius:12px;padding:14px;font-size:.9rem;">
+          <strong style="color:#dc2626;">&#x1F6AB; 監査等委員会 or 指名委員会等 を選んだら&#x2026;</strong><br>
+          &#x2192; 監査役・監査役会は<strong>置けない</strong>（327条4項）
+        </div>
+        <div style="flex:1;min-width:240px;background:#fef2f2;border:2px solid #dc2626;border-radius:12px;padding:14px;font-size:.9rem;">
+          <strong style="color:#dc2626;">&#x1F6AB; 3パターンは排他的選択</strong><br>
+          &#x2192; 監査役会型・監査等委員会型・指名委員会等型は同時に選べない
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Card 5: 3パターン比較表 -->
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">5</span>3パターン くらべてみよう</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead>
+          <tr><th>くらべる点</th><th class="th-green">&#9312; 監査役会型</th><th class="th-teal">&#9313; 監査等委員会型</th><th class="th-purple">&#9314; 指名委員会等型</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>チェックする人</strong></td>
+            <td>監査役<br><span style="font-size:.82rem;color:var(--muted);">（取締役じゃない）</span></td>
+            <td>監査等委員<br><span style="font-size:.82rem;color:var(--muted);">（<strong>取締役</strong>の一種）</span></td>
+            <td>委員<br><span style="font-size:.82rem;color:var(--muted);">（<strong>取締役</strong>の一種）</span></td>
+          </tr>
+          <tr>
+            <td><strong>人数</strong></td>
+            <td>3人以上</td>
+            <td>3人以上</td>
+            <td>各委員会3人以上</td>
+          </tr>
+          <tr>
+            <td><strong>社外の割合</strong></td>
+            <td><span class="kw blue">半数以上</span>が社外</td>
+            <td><span class="kw">過半数</span>が社外</td>
+            <td><span class="kw">過半数</span>が社外</td>
+          </tr>
+          <tr>
+            <td><strong>常勤いる？</strong></td>
+            <td><span class="kw">必要</span>（1人以上）</td>
+            <td>いなくてOK</td>
+            <td>いなくてOK</td>
+          </tr>
+          <tr>
+            <td><strong>取締役会で投票？</strong></td>
+            <td>&#x274C; できない</td>
+            <td>&#x2705; できる！</td>
+            <td>&#x2705; できる！</td>
+          </tr>
+          <tr>
+            <td><strong>経営するのは</strong></td>
+            <td>代表取締役</td>
+            <td>代表取締役</td>
+            <td><span class="kw-purple">代表執行役</span></td>
+          </tr>
+          <tr>
+            <td><strong>監査役</strong></td>
+            <td>必要</td>
+            <td>&#x1F6AB; 置けない</td>
+            <td>&#x1F6AB; 置けない</td>
+          </tr>
+          <tr>
+            <td><strong>有名企業</strong></td>
+            <td>パナソニックHD</td>
+            <td>トヨタ（2025〜）</td>
+            <td>ソニーG、メルカリ</td>
+          </tr>
+        </tbody>
+      </table></div>
+
+      <div class="hl-orange">
+        <strong>&#x26A0; ひっかけ注意</strong><br>
+        ・「監査等委員は監査<strong>役</strong>の一種」&#x2192; ウソ。<strong>取締役</strong>の一種！<br>
+        ・監査役会は「<strong>半数以上</strong>が社外」、委員会は「<strong>過半数</strong>が社外」&#x2192; 微妙に違う！<br>
+        ・&#9314;だけ「代表<strong>取締役</strong>」ではなく「代表<strong>執行役</strong>」
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Card 6: 会計参与 vs 会計監査人 -->
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">6</span>会計参与 vs 会計監査人（混同しやすい！）</div>
+    <div class="card-body">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin:8px 0;">
+        <div style="flex:1;min-width:200px;background:#ede9fe;border:2px solid #7c3aed;border-radius:12px;padding:16px;text-align:center;">
+          <div style="font-weight:800;color:#7c3aed;font-size:1rem;">&#x1F4DD; 会計参<strong>与</strong></div>
+          <div style="font-size:2rem;margin:6px 0;">&#x270D;</div>
+          <div style="font-size:.88rem;line-height:1.8;">
+            一緒に決算書を<strong>作る</strong><br>
+            税理士も <span class="kw-green">OK</span><br>
+            <strong>役員</strong>である<br>
+            設置は<strong>任意</strong><br>
+            任期：原則<strong>2年</strong>
+          </div>
+        </div>
+        <div style="flex:1;min-width:200px;background:#eff6ff;border:2px solid #2563eb;border-radius:12px;padding:16px;text-align:center;">
+          <div style="font-weight:800;color:#2563eb;font-size:1rem;">&#x1F50D; 会計監査<strong>人</strong></div>
+          <div style="font-size:2rem;margin:6px 0;">&#x1F9D0;</div>
+          <div style="font-size:.88rem;line-height:1.8;">
+            外から決算書を<strong>チェック</strong><br>
+            公認会計士 <span class="kw-red">のみ</span><br>
+            <strong>役員じゃない</strong><br>
+            大会社は<strong>必須</strong>（328条）<br>
+            任期：<strong>1年</strong>（自動再任あり）
+          </div>
+        </div>
+      </div>
+      <div class="hl-blue">
+        「<strong>参</strong>与＝一緒に<strong>作</strong>る」「監査<strong>人</strong>＝外から<strong>チェック</strong>」。税理士がなれるのは<strong>参与</strong>だけ！
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <!-- Card 7: 監査役のポイント -->
+  <div class="card">
+    <div class="card-header bg-indigo"><span class="card-num">7</span>監査役のポイント</div>
+    <div class="card-body">
+      <p>監査役は「見張り番」なので、簡単にクビにできないよう特別に守られています。</p>
+      <div class="table-wrap"><table>
+        <thead>
+          <tr><th>何？</th><th>ルール</th><th>なぜ？</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>任期</strong></td><td><span class="kw">4年</span>（短縮ダメ）</td><td>取締役(2年)より長い＝安定した監査</td></tr>
+          <tr><td><strong>解任</strong></td><td><span class="kw">特別決議</span></td><td>取締役(普通決議)より厳しい＝簡単にクビにさせない</td></tr>
+          <tr><td><strong>監査役会</strong></td><td>3人以上、半数以上が社外、常勤1人以上</td><td>独立性＋常に会社を見る体制</td></tr>
+          <tr><td><strong>取締役会</strong></td><td>出席して意見は言える。でも<strong>投票はできない</strong></td><td>あくまで「見張り番」だから</td></tr>
+          <tr><td><strong>兼任</strong></td><td>取締役や従業員との兼任<strong>ダメ</strong>（335条2項）</td><td>チェックする側とされる側を分ける</td></tr>
+        </tbody>
+      </table></div>
+
+
+
+    </div>
+  </div>
+
+  <!-- Card 8: 数字一気見 -->
+  <div class="card">
+    <div class="card-header bg-amber"><span class="card-num">&#x2714;</span>直前チェック｜数字だけ一気見</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>何？</th><th>数字</th></tr></thead>
+        <tbody>
+          <tr><td>取締役会の人数</td><td><strong>3人</strong>以上</td></tr>
+          <tr><td>監査役会の人数</td><td><strong>3人</strong>以上（半数以上が社外）</td></tr>
+          <tr><td>各委員会の人数</td><td><strong>3人</strong>以上（過半数が社外取締役）</td></tr>
+          <tr><td>大会社の基準</td><td>資本金<strong>5億</strong> or 負債<strong>200億</strong></td></tr>
+          <tr><td>監査役の任期</td><td><strong>4年</strong>（短くできない）</td></tr>
+          <tr><td>会計監査人の任期</td><td><strong>1年</strong>（自動再任あり）</td></tr>
+          <tr><td>監査等委員の任期</td><td><strong>2年</strong>（短くできない）</td></tr>
+          <tr><td>その他取締役（監査等委員会設置会社）</td><td><strong>1年</strong></td></tr>
+          <tr><td>機関設計の変更に必要な決議</td><td>株主総会の<strong>特別決議</strong>（定款変更）</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- Card 9: NEW 必須機関マトリクス -->
+  <div class="card">
+    <div class="card-header bg-slate"><span class="card-num">&#x1F5FA;</span>NEW: 各機関設計パターンの必須機関マトリクス</div>
+    <div class="card-body">
+      <p>会社のタイプごとに、どの機関が必須(&#x25CE;)・任意(&#x25CB;)・禁止(&#x2717;)かを一覧にしました。</p>
+      <div class="matrix-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>機関</th>
+              <th style="background:#0f766e;">非公開<br>小会社</th>
+              <th style="background:#1d4ed8;">非公開<br>大会社</th>
+              <th style="background:#b45309;">公開<br>非大会社</th>
+              <th style="background:#991b1b;">公開<br>大会社<br>(&#9312;監査役会型)</th>
+              <th style="background:#4c1d95;">公開大会社<br>(&#9313;監査等<br>委員会型)</th>
+              <th style="background:#334155;">公開大会社<br>(&#9314;指名<br>委員会等型)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>株主総会</strong></td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+            </tr>
+            <tr>
+              <td><strong>取締役</strong></td>
+              <td class="mark-req">&#x25CE;1人〜</td>
+              <td class="mark-req">&#x25CE;1人〜</td>
+              <td class="mark-req">&#x25CE;3人〜</td>
+              <td class="mark-req">&#x25CE;3人〜</td>
+              <td class="mark-req">&#x25CE;3人〜</td>
+              <td class="mark-req">&#x25CE;3人〜</td>
+            </tr>
+            <tr>
+              <td><strong>取締役会</strong></td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+            </tr>
+            <tr>
+              <td><strong>監査役</strong></td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-ban">&#x2717;禁止</td>
+              <td class="mark-ban">&#x2717;禁止</td>
+            </tr>
+            <tr>
+              <td><strong>監査役会</strong></td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-ban">&#x2717;禁止</td>
+              <td class="mark-ban">&#x2717;禁止</td>
+            </tr>
+            <tr>
+              <td><strong>会計監査人</strong></td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-req">&#x25CE;必須</td>
+            </tr>
+            <tr>
+              <td><strong>会計参与</strong></td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+              <td class="mark-opt">&#x25CB;任意</td>
+            </tr>
+            <tr>
+              <td><strong>監査等委員会</strong></td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-req">&#x25CE;必須</td>
+              <td class="mark-ban">&#x2717;</td>
+            </tr>
+            <tr>
+              <td><strong>指名委員会等</strong></td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-req">&#x25CE;必須</td>
+            </tr>
+            <tr>
+              <td><strong>執行役</strong></td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-ban">&#x2717;</td>
+              <td class="mark-req">&#x25CE;必須</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F4A1; 読み方のコツ：</strong><br>
+        ・<span class="mark-req" style="padding:2px 8px;border-radius:4px;">&#x25CE;必須</span> は法律で義務づけ<br>
+        ・<span class="mark-opt" style="padding:2px 8px;border-radius:4px;">&#x25CB;任意</span> は定款で置ける（326条2項）<br>
+        ・<span class="mark-ban" style="padding:2px 8px;border-radius:4px;">&#x2717;禁止</span> は法律で置けない<br>
+        ・監査等委員会と指名委員会等の「&#x2717;」は、そのパターンを「選んでいない」＝該当なしの意味です
+      </div>
+
+      <div class="hl-red">
+        <strong>&#x26A0; 試験のツボ：</strong>「非公開小会社の監査役は必須か？」&#x2192; <strong>任意</strong>。取締役会を置かなければ監査役もいらない。ただし取締役会を置いたら監査役が原則必要に！
+      </div>
+
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 2: 任期の延長・短縮（NEW）                                 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab2">
+
+
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・各機関の原則任期（取2・参2・監4・会1）<br>
+    ・延長・短縮の完全ルール（監査役だけ短縮NG！）<br>
+    ・補欠・権利義務者・自動再任の周辺知識
+  </div>
+
+  <!-- 任期の基本 -->
+  <div class="card">
+    <div class="card-head bg-teal"><span class="num">1</span>各機関の任期 &#x2015; 基本ルール</div>
+    <div class="card-body">
+      <p>まずは原則の任期を押さえましょう。「<strong>取2・参2・監4・会1</strong>」が基本です。</p>
+      <div class="tbl-wrap"><table>
+        <tr><th>機関</th><th>原則任期</th><th>起算点</th><th>条文</th></tr>
+        <tr><td><strong>取締役</strong></td><td><span class="kw">2年</span></td><td>選任後2年以内に終了する事業年度のうち最終のものに関する定時株主総会終結時まで</td><td>332条1項</td></tr>
+        <tr><td><strong>監査役</strong></td><td><span class="kw-red kw">4年</span></td><td>同上（4年）</td><td>336条1項</td></tr>
+        <tr><td><strong>会計参与</strong></td><td><span class="kw">2年</span></td><td>取締役と同じ</td><td>334条→332条準用</td></tr>
+        <tr><td><strong>会計監査人</strong></td><td><span class="kw-purple kw">1年</span></td><td>選任後1年以内の最終事業年度の定時株主総会終結時</td><td>338条1項</td></tr>
+        <tr><td><strong>監査等委員である取締役</strong></td><td><span class="kw">2年</span></td><td>取締役と同じ</td><td>332条3項</td></tr>
+        <tr><td><strong>指名委員会等の取締役</strong></td><td><span class="kw-orange kw">1年</span></td><td>同上</td><td>332条6項</td></tr>
+      </table></div>
+
+      <div class="hl-box hl-teal">
+        <strong>&#x1F4A1; 覚え方：</strong>「<strong>取2・参2・監4・会1</strong>」<br>
+        見張り番（監査役）は長く安定（4年）、外のチェック係（会計監査人）は毎年更新（1年）。
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <!-- 任期ビジュアルバーチャート -->
+  <div class="card">
+    <div class="card-head bg-blue"><span class="num">2</span>任期ビジュアル比較（バーチャート）</div>
+    <div class="card-body">
+      <p>長さを見比べると一目瞭然です。破線部分は非公開会社での延長可能範囲。</p>
+
+      <!-- Bar chart -->
+      <div style="margin:20px 0;">
+        <!-- 取締役 -->
+        <div style="display:flex;align-items:center;margin-bottom:10px;gap:8px;">
+          <div style="width:130px;font-weight:700;font-size:.85rem;text-align:right;">取締役</div>
+          <div style="flex:1;position:relative;height:30px;">
+            <div style="position:absolute;height:100%;width:20%;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;">2年</div>
+            <div style="position:absolute;height:100%;left:20%;width:80%;border:2px dashed #2563eb;border-radius:0 6px 6px 0;border-left:0;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.75rem;color:var(--blue);">← 非公開は最長10年</div>
+          </div>
+        </div>
+        <!-- 監査役 -->
+        <div style="display:flex;align-items:center;margin-bottom:10px;gap:8px;">
+          <div style="width:130px;font-weight:700;font-size:.85rem;text-align:right;color:var(--red);">監査役 &#x2605;</div>
+          <div style="flex:1;position:relative;height:30px;">
+            <div style="position:absolute;height:100%;width:40%;background:linear-gradient(135deg,#dc2626,#b91c1c);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;">4年（短縮NG!）</div>
+            <div style="position:absolute;height:100%;left:40%;width:60%;border:2px dashed #dc2626;border-radius:0 6px 6px 0;border-left:0;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.75rem;color:var(--red);">← 非公開は最長10年</div>
+          </div>
+        </div>
+        <!-- 会計参与 -->
+        <div style="display:flex;align-items:center;margin-bottom:10px;gap:8px;">
+          <div style="width:130px;font-weight:700;font-size:.85rem;text-align:right;">会計参与</div>
+          <div style="flex:1;position:relative;height:30px;">
+            <div style="position:absolute;height:100%;width:20%;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;">2年</div>
+            <div style="position:absolute;height:100%;left:20%;width:80%;border:2px dashed #7c3aed;border-radius:0 6px 6px 0;border-left:0;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.75rem;color:var(--purple);">← 非公開は最長10年</div>
+          </div>
+        </div>
+        <!-- 会計監査人 -->
+        <div style="display:flex;align-items:center;margin-bottom:10px;gap:8px;">
+          <div style="width:130px;font-weight:700;font-size:.85rem;text-align:right;">会計監査人</div>
+          <div style="flex:1;position:relative;height:30px;">
+            <div style="position:absolute;height:100%;width:10%;background:linear-gradient(135deg,#ea580c,#c2410c);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.75rem;">1年</div>
+            <div style="position:absolute;height:100%;left:10%;width:10%;background:repeating-linear-gradient(90deg,#ea580c 0,#ea580c 3px,transparent 3px,transparent 6px);border-radius:0 6px 6px 0;opacity:.3;"></div>
+            <div style="position:absolute;left:22%;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--orange);font-weight:600;">自動再任（延長不可）</div>
+          </div>
+        </div>
+        <!-- 監査等委員 -->
+        <div style="display:flex;align-items:center;margin-bottom:10px;gap:8px;">
+          <div style="width:130px;font-weight:700;font-size:.85rem;text-align:right;">監査等委員</div>
+          <div style="flex:1;position:relative;height:30px;">
+            <div style="position:absolute;height:100%;width:20%;background:linear-gradient(135deg,#059669,#047857);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;">2年固定</div>
+            <div style="position:absolute;left:22%;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--green);font-weight:600;">短縮も延長も不可</div>
+          </div>
+        </div>
+        <!-- 指名委員会等の取締役 -->
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:130px;font-weight:700;font-size:.85rem;text-align:right;">指名委員会等</div>
+          <div style="flex:1;position:relative;height:30px;">
+            <div style="position:absolute;height:100%;width:10%;background:linear-gradient(135deg,#d97706,#b45309);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.75rem;">1年</div>
+            <div style="position:absolute;left:12%;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--yellow);font-weight:600;">毎年株主の信任を得る</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 延長・短縮ルール -->
+  <div class="card">
+    <div class="card-head bg-red"><span class="num">3</span>&#x1F525; 任期の延長・短縮 完全ルール表</div>
+    <div class="card-body">
+      <p>これが試験に超出る！<strong>「誰の任期を変えられるか」</strong>を正確に覚えましょう。</p>
+      <div class="tbl-wrap"><table>
+        <tr><th>役職</th><th>原則</th><th>短縮</th><th>延長（非公開）</th><th>条文</th><th>備考</th></tr>
+        <tr><td><strong>取締役</strong></td><td>2年</td><td><span class="kw-green kw">可</span></td><td><span class="kw-green kw">最長10年</span></td><td>332条</td><td>公開会社は短縮のみ可</td></tr>
+        <tr><td><strong>監査役</strong></td><td>4年</td><td><span class="kw-red kw">不可!</span></td><td><span class="kw-green kw">最長10年</span></td><td>336条</td><td>&#x2605;短縮NGが超重要！</td></tr>
+        <tr><td><strong>会計参与</strong></td><td>2年</td><td><span class="kw-green kw">可</span></td><td><span class="kw-green kw">最長10年</span></td><td>334条</td><td>取締役と同じルール</td></tr>
+        <tr><td><strong>会計監査人</strong></td><td>1年</td><td>&#x2015;</td><td><span class="kw-red kw">不可</span></td><td>338条</td><td>自動再任（みなし再任）</td></tr>
+        <tr><td><strong>監査等委員</strong></td><td>2年</td><td><span class="kw-red kw">不可</span></td><td><span class="kw-red kw">不可</span></td><td>332条3項</td><td>完全固定（独立性確保）</td></tr>
+        <tr><td><strong>指名委員会等の取締役</strong></td><td>1年</td><td>&#x2015;</td><td><span class="kw-red kw">不可</span></td><td>332条6項</td><td>毎年株主の信任</td></tr>
+        <tr><td><strong>その他の取締役（監査等委員会設置）</strong></td><td>1年</td><td>&#x2015;</td><td><span class="kw-red kw">不可</span></td><td>332条3項</td><td>監査等委員以外は1年</td></tr>
+      </table></div>
+
+      <div class="hl-box hl-red">
+        <strong>&#x1F6A8; 最重要ポイント3つ：</strong><br>
+        &#x2460; 監査役の任期は<strong>短縮不可</strong>！（取締役・会計参与は短縮OK）← 超頻出<br>
+        &#x2461; 非公開会社は取締役・監査役・会計参与を<strong>最長10年</strong>に延長可能<br>
+        &#x2462; 会計監査人は<strong>自動再任</strong>（338条2項）。不再任にするには普通決議が必要
+      </div>
+
+      <!-- 短縮可否 visual -->
+      <h3>&#x2702; 短縮できる？できない？ ビジュアル判定</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0;">
+        <div style="background:var(--green-light);border:2px solid var(--green);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:1.3rem;">&#x2705;</div>
+          <div style="font-weight:700;font-size:.88rem;">取締役</div>
+          <div style="font-size:.78rem;color:var(--green);">短縮OK</div>
+        </div>
+        <div style="background:var(--red-light);border:2px solid var(--red);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:1.3rem;">&#x1F6AB;</div>
+          <div style="font-weight:700;font-size:.88rem;">監査役</div>
+          <div style="font-size:.78rem;color:var(--red);font-weight:700;">短縮NG!</div>
+        </div>
+        <div style="background:var(--green-light);border:2px solid var(--green);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:1.3rem;">&#x2705;</div>
+          <div style="font-weight:700;font-size:.88rem;">会計参与</div>
+          <div style="font-size:.78rem;color:var(--green);">短縮OK</div>
+        </div>
+        <div style="background:var(--purple-light);border:2px solid var(--purple);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:1.3rem;">&#x2015;</div>
+          <div style="font-weight:700;font-size:.88rem;">会計監査人</div>
+          <div style="font-size:.78rem;color:var(--purple);">1年固定</div>
+        </div>
+        <div style="background:var(--red-light);border:2px solid var(--red);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:1.3rem;">&#x1F6AB;</div>
+          <div style="font-weight:700;font-size:.88rem;">監査等委員</div>
+          <div style="font-size:.78rem;color:var(--red);">2年固定</div>
+        </div>
+      </div>
+
+      <div class="hl-box hl-blue">
+        <strong>&#x1F4A1; なぜ監査役だけ短縮NG？</strong><br>
+        監査役は「見張り番」。任期を短くできたら、社長が「言うこと聞かない監査役は1年でクビにしよう」とできてしまう。<br>
+        <strong>独立性を守るため</strong>に、最低4年は保証されている。
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <!-- 周辺知識 -->
+  <div class="card">
+    <div class="card-head bg-purple"><span class="num">4</span>試験で差がつく周辺知識</div>
+    <div class="card-body">
+      <h3>&#x1F504; 補欠のルール</h3>
+      <div class="tbl-wrap"><table>
+        <tr><th>補欠の種類</th><th>任期</th><th>条文</th></tr>
+        <tr><td><strong>補欠監査役</strong></td><td><span class="kw-red kw">前任者の残任期</span></td><td>336条3項</td></tr>
+        <tr><td><strong>補欠取締役</strong></td><td>前任者の残任期（<strong>定款で定めた場合</strong>）</td><td>332条</td></tr>
+        <tr><td><strong>補欠会計参与</strong></td><td>前任者の残任期（定款で定めた場合）</td><td>334条→332条準用</td></tr>
+      </table></div>
+
+
+
+      <h3>&#x26A0; 権利義務者（346条）</h3>
+      <div class="hl-box hl-orange">
+        任期満了・辞任で退任しても、<strong>後任が決まるまで</strong>は権利義務を有する。<br>
+        ・権利義務取締役は<strong>自分から辞任できない</strong>！<br>
+        ・速やかに株主総会で後任を選任→変更登記を行う<br>
+        ・<strong>登記懈怠は100万円以下の過料</strong>（976条）
+      </div>
+
+      <h3>&#x1F50D; 会計監査人の自動再任（みなし再任）</h3>
+      <div class="hl-box hl-purple">
+        会計監査人の任期は1年だが、定時株主総会で<strong>別段の決議がなければ再任されたものとみなされる</strong>（338条2項）。<br>
+        ・不再任にするには株主総会の<strong>普通決議</strong>が必要<br>
+        ・実質的に「自動更新」＝ずっと同じ会計監査人が続くリスク<br>
+        ・東芝事件のような「なれ合い」の原因にもなりうる
+      </div>
+
+
+    </div>
+  </div>
+
+</div><!-- /tab2 -->
+
+<!-- ============================================================ -->
+<!-- TAB 3: 穴埋めチェック                                         -->
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<!-- TAB 3: 穴埋め 初級                                             -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab3">
+
+  <div class="hl-box green" style="margin-bottom:16px;">
+    <strong>&#x1F331; 穴埋め・初級 ─ 機関設計の土台（必ず全問正解）</strong><br>
+    必置機関の原則／公開会社・大会社の定義／3パターンの名前／任期の基本数字。<br>
+    <span style="color:#dc2626;font-weight:700;">目標：90%以上正解</span>
+  </div>
+
+  <div style="text-align:center; margin-bottom:16px;">
+    <button class="fill-reveal-btn" onclick="revealAllBlanks()" style="margin-right:8px;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAllBlanks()" style="background:#64748b;">&#x1F504; リセット</button>
+  </div>
+
+  <!-- B-Q1 必置機関 -->
+  <div class="fill-card">
+    <div class="fill-header bg-teal">&#x1F3AF; B-Q1 ─ すべての株式会社に必要な機関</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#0d9488; margin-bottom:8px;">&#x1F4CC; 最低ラインの機関はこれだけ</p>
+      <div class="fill-group">
+        &#x2460; どんな株式会社でも<span class="fill-blank">株主総会</span>と<span class="fill-blank">取締役</span>（最低<span class="fill-blank">1人</span>）は必須。<br>
+        &#x2461; 取締役会を置く場合は取締役<span class="fill-blank">3人</span>以上。<br>
+        &#x2462; 取締役会設置会社は原則<span class="fill-blank">監査役</span>もセットで必要。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- B-Q2 公開会社・大会社 -->
+  <div class="fill-card">
+    <div class="fill-header bg-teal">&#x1F3AF; B-Q2 ─ 公開会社・大会社の定義</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#0d9488; margin-bottom:8px;">&#x1F4CC; 用語の定義は試験の出発点</p>
+      <div class="fill-group">
+        &#x2460; 公開会社とは、株式の<span class="fill-blank">譲渡制限</span>がない会社（上場会社に限らない）。<br>
+        &#x2461; 公開会社では<span class="fill-blank">取締役会</span>が必須。<br>
+        &#x2462; 大会社の基準：資本金<span class="fill-blank">5億円</span>以上、または負債<span class="fill-blank">200億円</span>以上。<br>
+        &#x2463; 大会社では<span class="fill-blank">会計監査人</span>が必須。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- B-Q3 3パターン -->
+  <div class="fill-card">
+    <div class="fill-header bg-teal">&#x1F3AF; B-Q3 ─ チェック体制の3パターン</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#0d9488; margin-bottom:8px;">&#x1F4CC; 名前と概要を押さえる</p>
+      <div class="fill-group">
+        &#x2460; パターン①：<span class="fill-blank">監査役会</span>型 ─ 外の人がチェック。もっともオーソドックス。<br>
+        &#x2461; パターン②：<span class="fill-blank">監査等委員会</span>型 ─ 中の人（取締役）がチェック。2015年導入。<br>
+        &#x2462; パターン③：<span class="fill-blank">指名委員会等</span>型 ─ 3つの委員会で分離。最も厳格。<br>
+        &#x2463; ②と③は監査役を<span class="fill-blank">置けない</span>（禁止）。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- B-Q4 任期の基本 -->
+  <div class="fill-card">
+    <div class="fill-header bg-teal">&#x1F3AF; B-Q4 ─ 任期の基本数字（暗記必須）</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#0d9488; margin-bottom:8px;">&#x1F4CC; 「取2・参2・監4・会1」</p>
+      <div class="fill-group">
+        &#x2460; 取締役：<span class="fill-blank">2年</span><br>
+        &#x2461; 会計参与：<span class="fill-blank">2年</span><br>
+        &#x2462; 監査役：<span class="fill-blank">4年</span>（全役職で最長）<br>
+        &#x2463; 会計監査人：<span class="fill-blank">1年</span>（自動再任）<br>
+        &#x2464; 監査役が長い理由：<span class="fill-blank">見張り番</span>を安定させるため。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- B-Q5 解任決議 -->
+  <div class="fill-card">
+    <div class="fill-header bg-teal">&#x1F3AF; B-Q5 ─ 解任決議の区別</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#0d9488; margin-bottom:8px;">&#x1F4CC; 監査役だけ特別</p>
+      <div class="fill-group">
+        &#x2460; 取締役の解任 &#x2192; <span class="fill-blank">普通決議</span>（過半数）。<br>
+        &#x2461; 会計参与・会計監査人の解任 &#x2192; <span class="fill-blank">普通決議</span>。<br>
+        &#x2462; <span class="hl">監査役</span>の解任 &#x2192; <span class="fill-blank">特別決議</span>（2/3以上）。<br>
+        &#x2463; 機関設計の変更は定款変更なので<span class="fill-blank">特別決議</span>。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+</div><!-- /tab3 (初級) -->
+
+<!-- ============================================================ -->
+<!-- TAB 4: 穴埋め 中級                                             -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab4">
+
+  <div class="hl-box blue" style="margin-bottom:16px;">
+    <strong>&#x1F4D8; 穴埋め・中級 ─ 試験頻出の実務論点</strong><br>
+    必置ルールの段階的増加／監査役省略3ケース／3パターン比較／社外要件の罠／会計2機関の違い。<br>
+    <span style="color:#dc2626;font-weight:700;">目標：8割正解で合格ライン</span>
+  </div>
+
+  <div style="text-align:center; margin-bottom:16px;">
+    <button class="fill-reveal-btn" onclick="revealAllBlanks()" style="margin-right:8px;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAllBlanks()" style="background:#64748b;">&#x1F504; リセット</button>
+  </div>
+
+  <!-- M-Q1 必置ルール段階増加 -->
+  <div class="fill-card">
+    <div class="fill-header bg-blue">&#x1F4CA; M-Q1 ─ 必置ルールの段階的増加</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#2563eb; margin-bottom:8px;">&#x1F4CC; 条文番号付きで押さえる</p>
+      <div class="fill-group">
+        &#x2460; すべての株式会社 → <span class="fill-blank">株主総会</span>＋取締役1人<br>
+        &#x2461; 公開会社 → ＋<span class="fill-blank">取締役会</span>（<span class="fill-blank">327条1項</span>）<br>
+        &#x2462; 取締役会設置会社 → ＋<span class="fill-blank">監査役</span>（原則／<span class="fill-blank">327条2項</span>）<br>
+        &#x2463; 大会社 → ＋<span class="fill-blank">会計監査人</span>（<span class="fill-blank">328条</span>）<br>
+        &#x2464; 上場会社 → ＋<span class="fill-blank">社外取締役</span>1人以上（<span class="fill-blank">327条の2</span>）
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- M-Q2 監査役省略3パターン -->
+  <div class="fill-card">
+    <div class="fill-header bg-blue">&#x1F6AB; M-Q2 ─ 監査役を省略できる3ケース</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#2563eb; margin-bottom:8px;">&#x1F4CC; 原則必要だが例外あり</p>
+      <div class="fill-group">
+        &#x2460; <span class="fill-blank">監査等委員会</span>設置会社にする → 監査役は置けない。<br>
+        &#x2461; <span class="fill-blank">指名委員会等</span>設置会社にする → 監査役は置けない。<br>
+        &#x2462; <span class="fill-blank">非公開会社</span>で<span class="fill-blank">会計参与</span>を置く（327条2項ただし書）→ 監査役不要。<br>
+        &#x2463; ③の会計参与代替は<span class="fill-blank">非公開会社</span>限定！公開会社ではダメ。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- M-Q3 3パターン比較 -->
+  <div class="fill-card">
+    <div class="fill-header bg-blue">&#x1F4CB; M-Q3 ─ 3パターン比較（社外・常勤・代表）</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#2563eb; margin-bottom:8px;">&#x1F4CC; 表で覚えるのが最速</p>
+      <div class="fill-group">
+        &#x2460; 監査役会型：社外<span class="fill-blank">半数以上</span>／常勤<span class="fill-blank">必要</span>／代表<span class="fill-blank">取締役</span>。<br>
+        &#x2461; 監査等委員会型：社外<span class="fill-blank">過半数</span>／常勤<span class="fill-blank">不要</span>／代表<span class="fill-blank">取締役</span>。<br>
+        &#x2462; 指名委員会等型：社外<span class="fill-blank">過半数</span>／常勤<span class="fill-blank">不要</span>／代表<span class="fill-blank">執行役</span>。<br>
+        &#x2463; 4人の場合の罠：「半数以上」＝<span class="fill-blank">2人</span>OK、「過半数」＝<span class="fill-blank">3人</span>必要。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- M-Q4 監査役会 -->
+  <div class="fill-card">
+    <div class="fill-header bg-blue">&#x1F465; M-Q4 ─ 監査役会の構成とルール</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#2563eb; margin-bottom:8px;">&#x1F4CC; 「3・半・1」で覚える</p>
+      <div class="fill-group">
+        &#x2460; 員数：監査役<span class="fill-blank">3人</span>以上。<br>
+        &#x2461; 社外：<span class="fill-blank">半数以上</span>。<br>
+        &#x2462; 常勤：<span class="fill-blank">1人</span>以上必須。<br>
+        &#x2463; 監査役は取締役会に<span class="fill-blank">出席</span>義務・意見陳述権あり、ただし<span class="fill-blank">投票</span>はできない。<br>
+        &#x2464; 取締役・使用人との<span class="fill-blank">兼任</span>は不可（<span class="fill-blank">335条2項</span>）。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- M-Q5 会計参与vs会計監査人 -->
+  <div class="fill-card">
+    <div class="fill-header bg-blue">&#x1F4CA; M-Q5 ─ 会計参与 vs 会計監査人</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#2563eb; margin-bottom:8px;">&#x1F4CC; 役割・資格・任期の横断整理</p>
+      <div class="fill-group">
+        &#x2460; 会計参与は決算書を<span class="fill-blank">作る</span>／会計監査人は<span class="fill-blank">チェック</span>する。<br>
+        &#x2461; 会計参与の資格：<span class="fill-blank">税理士</span>or公認会計士。会計監査人：<span class="fill-blank">公認会計士</span>のみ。<br>
+        &#x2462; 会計参与は<span class="fill-blank">役員</span>。会計監査人は<span class="fill-blank">役員ではない</span>。<br>
+        &#x2463; 設置：会計参与は<span class="fill-blank">任意</span>、会計監査人は大会社で<span class="fill-blank">必須</span>。<br>
+        &#x2464; 任期：会計参与<span class="fill-blank">2年</span>／会計監査人<span class="fill-blank">1年</span>（自動再任）。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- M-Q6 数字総まとめ -->
+  <div class="fill-card">
+    <div class="fill-header bg-blue">&#x1F522; M-Q6 ─ 数字の総まとめ</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#2563eb; margin-bottom:8px;">&#x1F4CC; 試験で問われる主要数値</p>
+      <div class="fill-group">
+        &#x2460; 取締役会の員数：<span class="fill-blank">3人</span>以上<br>
+        &#x2461; 監査役会の員数：<span class="fill-blank">3人</span>以上（半数以上が社外）<br>
+        &#x2462; 各委員会の員数：<span class="fill-blank">3人</span>以上（過半数が社外取締役）<br>
+        &#x2463; 大会社：資本金<span class="fill-blank">5億円</span>／負債<span class="fill-blank">200億円</span><br>
+        &#x2464; 取締役会の開催頻度：<span class="fill-blank">3か月</span>に1回以上<br>
+        &#x2465; 取締役会議事録の保管：<span class="fill-blank">10年間</span>
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+</div><!-- /tab4 (中級) -->
+
+<!-- ============================================================ -->
+<!-- TAB 5: 穴埋め 上級                                             -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab5">
+
+  <div class="hl-box purple" style="margin-bottom:16px;">
+    <strong>&#x1F3AF; 穴埋め・上級 ─ 条文・例外で差をつける応用論点</strong><br>
+    任期の短縮・延長マトリクス／自動再任制度／補欠・権利義務／条文番号の横断整理。<br>
+    <span style="color:#dc2626;font-weight:700;">目標：ここを押さえて上位合格へ</span>
+  </div>
+
+  <div style="text-align:center; margin-bottom:16px;">
+    <button class="fill-reveal-btn" onclick="revealAllBlanks()" style="margin-right:8px;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAllBlanks()" style="background:#64748b;">&#x1F504; リセット</button>
+  </div>
+
+  <!-- A-Q1 任期マトリクス -->
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F4C5; A-Q1 ─ 任期の短縮・延長マトリクス</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#7c3aed; margin-bottom:8px;">&#x1F4CC; 役職ごとの可否を条文と共に</p>
+      <div class="fill-group">
+        &#x2460; 取締役：2年／短縮<span class="fill-blank">可</span>／非公開で最長<span class="fill-blank">10年</span>（<span class="fill-blank">332条</span>）<br>
+        &#x2461; 監査役：4年／短縮<span class="fill-blank">不可</span>／非公開で最長10年（<span class="fill-blank">336条</span>）<br>
+        &#x2462; 会計参与：2年／短縮可／非公開で最長10年（<span class="fill-blank">334条</span>）<br>
+        &#x2463; 会計監査人：1年／延長<span class="fill-blank">不可</span>（<span class="fill-blank">自動再任</span>／<span class="fill-blank">338条</span>）<br>
+        &#x2464; 監査等委員：2年／短縮<span class="fill-blank">不可</span>／延長<span class="fill-blank">不可</span>（332条<span class="fill-blank">3項</span>）<br>
+        &#x2465; 指名委員会等の取締役：1年／延長<span class="fill-blank">不可</span>（332条<span class="fill-blank">6項</span>）
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- A-Q2 短縮不可の趣旨 -->
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F512; A-Q2 ─ 短縮不可の制度趣旨</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#7c3aed; margin-bottom:8px;">&#x1F4CC; なぜ動かせないのかを理解する</p>
+      <div class="fill-group">
+        &#x2460; 短縮できないのは「<span class="fill-blank">監視する側</span>」（監査役・監査等委員）。<br>
+        &#x2461; 理由：任期短縮を自由に許せば<span class="fill-blank">独立性</span>が脅かされるから。<br>
+        &#x2462; 延長できるのは<span class="fill-blank">非公開会社</span>限定。株主が<span class="fill-blank">固定的</span>だから。<br>
+        &#x2463; 会計監査人は延長不可だが<span class="fill-blank">自動再任</span>で継続性を確保。<br>
+        &#x2464; 不再任にするには株主総会の<span class="fill-blank">普通決議</span>が必要。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- A-Q3 補欠・権利義務・登記 -->
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F504; A-Q3 ─ 補欠・権利義務・登記懈怠</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#7c3aed; margin-bottom:8px;">&#x1F4CC; 欠員処理の条文と過料</p>
+      <div class="fill-group">
+        &#x2460; 補欠監査役の任期：前任者の<span class="fill-blank">残任期</span>（<span class="fill-blank">336条3項</span>）。<br>
+        &#x2461; 権利義務者：後任が就任するまで<span class="fill-blank">権利義務</span>を有する（<span class="fill-blank">346条</span>）。<br>
+        &#x2462; 権利義務者は自分から<span class="fill-blank">辞任できない</span>。<br>
+        &#x2463; 登記懈怠：<span class="fill-blank">100万円</span>以下の過料（<span class="fill-blank">976条</span>）。<br>
+        &#x2464; 変更登記の期間：本店所在地で<span class="fill-blank">2週間</span>以内。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- A-Q4 機関設計変更の手続 -->
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F501; A-Q4 ─ 機関設計を変更するとき</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#7c3aed; margin-bottom:8px;">&#x1F4CC; 定款変更と連動するルール</p>
+      <div class="fill-group">
+        &#x2460; 機関設計の変更は<span class="fill-blank">定款変更</span>にあたるため、株主総会の<span class="fill-blank">特別決議</span>が必要。<br>
+        &#x2461; 委員会型への移行時、旧監査役は<span class="fill-blank">退任</span>となる（任期中でも終了）。<br>
+        &#x2462; 大会社になったら<span class="fill-blank">会計監査人</span>を必ず置かなければならない。<br>
+        &#x2463; 委員会設置会社は<span class="fill-blank">取締役会</span>と<span class="fill-blank">会計監査人</span>の両方が必須。
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+  <!-- A-Q5 条文番号横断 -->
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F4DA; A-Q5 ─ 条文番号の横断整理</div>
+    <div class="fill-body">
+      <p style="font-weight:700; color:#7c3aed; margin-bottom:8px;">&#x1F4CC; 選択肢で問われる主要条文</p>
+      <div class="fill-group">
+        &#x2460; 取締役会・監査役の設置義務：<span class="fill-blank">327条</span><br>
+        &#x2461; 上場会社の社外取締役義務：<span class="fill-blank">327条の2</span><br>
+        &#x2462; 大会社の会計監査人義務：<span class="fill-blank">328条</span><br>
+        &#x2463; 取締役任期：<span class="fill-blank">332条</span>／会計参与：<span class="fill-blank">334条</span>／監査役：<span class="fill-blank">336条</span>／会計監査人：<span class="fill-blank">338条</span><br>
+        &#x2464; 監査役の兼任禁止：<span class="fill-blank">335条2項</span><br>
+        &#x2465; 役員の権利義務：<span class="fill-blank">346条</span>／登記懈怠の過料：<span class="fill-blank">976条</span>
+      </div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+    </div>
+  </div>
+
+</div><!-- /tab5 (上級) -->
+
+
+<!-- ============================================================ -->
+<!-- TAB 6: シミュレーション                                       -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab6">
+
+
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・中小企業の「あるある」な悩みで機関設計ルールを体感<br>
+    ・上場・大会社化で義務がどう変わるか<br>
+    ・監査役省略の方法＆任期延長のリスク
+  </div>
+
+  <!-- Case 1 -->
+  <div class="card">
+    <div class="card-head bg-teal"><span class="num">1</span>小さい会社に取締役会って必要？</div>
+    <div class="card-body">
+      <div class="bubble-wrap"><div class="bubble-icon owner">&#x1F468;&#x200D;&#x1F4BC;</div>
+        <div class="bubble-text"><div class="name">ケーキ屋の社長（従業員5人）</div>うちにも取締役会いるの？ 3人も集めるの無理…</div></div>
+      <div class="bubble-wrap"><div class="bubble-icon sensei">&#x1F468;&#x200D;&#x2696;&#xFE0F;</div>
+        <div class="bubble-text"><div class="name">先生</div>大丈夫！ <strong>非公開会社</strong>なら取締役会はいらないよ。<strong>取締役1人</strong>でOK。<br>ただし定款に「取締役会を置く」と書いたら、3人以上＋監査役が必要になるから注意ね。</div></div>
+
+      <div class="tree">
+        <div class="t-root">このケースの答え</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-teal">最小構成</span> 株主総会 ＋ 取締役<strong>1人</strong></div>
+          <div class="t-item"><span class="t-label t-amber">注意</span> 取締役会を置くと → 3人以上＋監査役が必要</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Case 2 -->
+  <div class="card">
+    <div class="card-head bg-blue"><span class="num">2</span>上場したい！何が変わる？</div>
+    <div class="card-body">
+      <div class="bubble-wrap"><div class="bubble-icon owner">&#x1F468;&#x200D;&#x1F4BB;</div>
+        <div class="bubble-text"><div class="name">ITスタートアップ社長</div>アプリが伸びてきた！上場したいんだけど今は取締役が自分1人…</div></div>
+      <div class="bubble-wrap"><div class="bubble-icon sensei">&#x1F468;&#x200D;&#x2696;&#xFE0F;</div>
+        <div class="bubble-text"><div class="name">先生</div>上場＝公開会社だから、一気に変わるよ！</div></div>
+
+      <!-- Flow -->
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;margin:14px 0;">
+        <div style="background:var(--accent-light);border:2px solid var(--accent);border-radius:10px;padding:8px 14px;font-weight:600;font-size:.85rem;text-align:center;">
+          現在：取締役1人
+        </div>
+        <div style="font-size:1.2rem;color:var(--muted);">&#x27A1;</div>
+        <div style="background:var(--blue-light);border:2px solid var(--blue);border-radius:10px;padding:8px 14px;font-weight:600;font-size:.85rem;text-align:center;">
+          +取締役会<br>(3人以上)
+        </div>
+        <div style="font-size:1.2rem;color:var(--muted);">&#x27A1;</div>
+        <div style="background:var(--green-light);border:2px solid var(--green);border-radius:10px;padding:8px 14px;font-weight:600;font-size:.85rem;text-align:center;">
+          +監査役 or 委員会
+        </div>
+        <div style="font-size:1.2rem;color:var(--muted);">&#x27A1;</div>
+        <div style="background:var(--purple-light);border:2px solid var(--purple);border-radius:10px;padding:8px 14px;font-weight:600;font-size:.85rem;text-align:center;">
+          +社外取締役<br>1人以上義務
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Case 3 -->
+  <div class="card">
+    <div class="card-head bg-orange"><span class="num">3</span>監査役を置きたくない！</div>
+    <div class="card-body">
+      <div class="bubble-wrap"><div class="bubble-icon owner">&#x1F468;&#x200D;&#x1F4BC;</div>
+        <div class="bubble-text"><div class="name">製造業社長（非公開・取締役会あり）</div>監査役って何してるかわからないし、コストもかかる。なくせない？</div></div>
+      <div class="bubble-wrap"><div class="bubble-icon sensei">&#x1F468;&#x200D;&#x2696;&#xFE0F;</div>
+        <div class="bubble-text"><div class="name">先生</div>取締役会があると原則必要だけど、回避策が3つあるよ！</div></div>
+
+      <div class="tree">
+        <div class="t-root">&#x2705; 監査役ナシにする3つの方法</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-green">方法1</span> <strong>会計参与</strong>を置く <span class="t-note">← 非公開会社だけ！</span></div>
+          <div class="t-item"><span class="t-label t-blue">方法2</span> <strong>監査等委員会</strong>設置会社にする</div>
+          <div class="t-item"><span class="t-label t-amber">方法3</span> <strong>取締役会をやめる</strong> <span class="t-note">← 非公開会社だけ！</span></div>
+        </div>
+      </div>
+      <div class="hl-box hl-red"><strong>超ひっかけ：</strong>方法1の会計参与で代替は<span class="kw-red kw">非公開会社限定</span>。公開会社ではダメ！</div>
+
+    </div>
+  </div>
+
+  <!-- Case 4 -->
+  <div class="card">
+    <div class="card-head bg-purple"><span class="num">4</span>社外取締役にお金払うの嫌！</div>
+    <div class="card-body">
+      <div class="bubble-wrap"><div class="bubble-icon owner">&#x1F468;&#x200D;&#x1F4BC;</div>
+        <div class="bubble-text"><div class="name">食品メーカー社長（上場準備中）</div>うちの事業も知らない外部の人に年間何百万も…意味ある？</div></div>
+      <div class="bubble-wrap"><div class="bubble-icon sensei">&#x1F468;&#x200D;&#x2696;&#xFE0F;</div>
+        <div class="bubble-text"><div class="name">先生</div>気持ちはわかるけど、上場会社なら<strong>法律上の義務</strong>だよ（327条の2）。2021年に完全義務化されたんだ。</div></div>
+      <div class="hl-box hl-teal">
+        <strong>ポイント整理</strong><br>
+        ・上場会社 = 社外取締役<strong>義務</strong><br>
+        ・委員会の<span class="kw-red kw">過半数</span> = 社外取締役 / 監査役会の<span class="kw">半数以上</span> = 社外監査役（混同注意！）
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Case 5 -->
+  <div class="card">
+    <div class="card-head bg-green"><span class="num">5</span>大会社になった！何が変わる？</div>
+    <div class="card-body">
+      <div class="bubble-wrap"><div class="bubble-icon owner">&#x1F468;&#x200D;&#x1F4BC;</div>
+        <div class="bubble-text"><div class="name">建設業社長（資本金5億超え）</div>資本金が5億超えたんだけど、何か変わるの？</div></div>
+      <div class="bubble-wrap"><div class="bubble-icon sensei">&#x1F468;&#x200D;&#x2696;&#xFE0F;</div>
+        <div class="bubble-text"><div class="name">先生</div>おめでとう！でも義務が増えるよ。</div></div>
+
+      <div class="tree">
+        <div class="t-root">大会社になると追加される義務</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-red">&#9312;</span> <strong>会計監査人</strong>が必須（328条）</div>
+          <div class="t-item"><span class="t-label t-green">&#9313;</span> → <strong>監査役</strong>も必須（委員会型を除く）</div>
+          <div class="t-item"><span class="t-label t-blue">&#9314;</span> 公開会社なら → <strong>監査役会 or 委員会</strong>が必須</div>
+          <div class="t-item"><span class="t-label t-purple">&#9315;</span> <strong>内部統制システム</strong>の整備が義務</div>
+        </div>
+      </div>
+      <div class="hl-box hl-orange">
+        ・大会社 = 資本金5億以上 <span class="kw-red kw">or</span> 負債200億以上（「かつ」じゃない！）<br>
+        ・内部統制は<strong>決議義務</strong>（努力義務ではない）
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Case 6 NEW -->
+  <div class="card">
+    <div class="card-head bg-amber"><span class="num">6</span>&#x1F195; 任期10年にしたら大変なことに！</div>
+    <div class="card-body">
+      <div class="bubble-wrap"><div class="bubble-icon owner">&#x1F468;&#x200D;&#x1F527;</div>
+        <div class="bubble-text"><div class="name">非公開会社の社長</div>登記費用を節約するために取締役と監査役の任期を10年にしたんだけど、10年後に任期が切れてるのを忘れてた…。しかも監査役の任期を途中で2年に短くしたいんだけど…</div></div>
+      <div class="bubble-wrap"><div class="bubble-icon sensei">&#x1F468;&#x200D;&#x2696;&#xFE0F;</div>
+        <div class="bubble-text"><div class="name">先生</div>2つ問題があります。<br>
+        &#x2460; 任期満了を忘れていた場合、その取締役・監査役は<strong>権利義務者</strong>（346条）として継続しますが、<strong>登記懈怠で100万円以下の過料</strong>の対象です。<br>
+        &#x2461; 監査役の任期は<strong>短縮不可</strong>（336条4項）！定款を変更しても現任者の任期は短くできません。一方、取締役や会計参与の任期は短縮できます。</div></div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin:14px 0;">
+        <div style="flex:1;min-width:180px;background:var(--green-light);border:2px solid var(--green);border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-weight:800;color:var(--green);">&#x2705; 取締役の任期</div>
+          <div style="font-size:.88rem;">短縮OK・延長OK<br>（非公開は最長10年）</div>
+        </div>
+        <div style="flex:1;min-width:180px;background:var(--red-light);border:2px solid var(--red);border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-weight:800;color:var(--red);">&#x1F6AB; 監査役の任期</div>
+          <div style="font-size:.88rem;"><strong>短縮NG</strong>・延長OK<br>（非公開は最長10年）</div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+</div><!-- /tab6 (シミュレーション) -->
+
+<!-- ============================================================ -->
+<!-- TAB 7: 実例クイズ                                             -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab7">
+
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・実在企業の事例で機関設計ルールを実践確認<br>
+    ・3パターンの選択理由と禁止事項の応用力<br>
+    ・任期の延長・短縮・権利義務者の応用問題
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:20px;font-size:.92rem;">クリックで正解＆解説が出るよ！</p>
+
+  <!-- Q1 -->
+  <div class="card" id="q1">
+    <div class="card-head bg-teal"><span class="num">Q1</span>ソニーが委員会型を選んだ理由</div>
+    <div class="card-body">
+      <div class="quiz-q">ソニーGは2003年に「委員会等設置会社」へ移行。その理由として<strong>正しい</strong>のは？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q1',this,false)"><strong>A:</strong> 監査役が足りなかったから</li>
+        <li onclick="checkAnswer('q1',this,true)"><strong>B:</strong> 監督と執行を完全分離し、透明性を高めるため</li>
+        <li onclick="checkAnswer('q1',this,false)"><strong>C:</strong> 法改正で全上場企業に義務づけられたから</li>
+        <li onclick="checkAnswer('q1',this,false)"><strong>D:</strong> 取締役会だけで（株主総会なしに）移行した</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>正解：B</strong><br>戦略的に選択。C：義務ではなく任意。D：定款変更＝<strong>株主総会の特別決議</strong>が必要！
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="card" id="q2">
+    <div class="card-head bg-blue"><span class="num">Q2</span>トヨタが2025年に選んだ型は？</div>
+    <div class="card-body">
+      <div class="quiz-q">トヨタは長年「監査役会設置会社」だったが2025年に変更。何を選んだ？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q2',this,false)"><strong>A:</strong> 指名委員会等設置会社</li>
+        <li onclick="checkAnswer('q2',this,false)"><strong>B:</strong> 合同会社に組織変更</li>
+        <li onclick="checkAnswer('q2',this,false)"><strong>C:</strong> 変更なし（監査役会を維持）</li>
+        <li onclick="checkAnswer('q2',this,true)"><strong>D:</strong> 監査等委員会設置会社</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>正解：D</strong><br>監査等委員が取締役として<strong>議決権を持てる</strong>こと、業務執行の決定を委任でき<strong>意思決定が速くなる</strong>のが理由。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="card" id="q3">
+    <div class="card-head bg-red"><span class="num">Q3</span>東芝の不正会計で「ウソ」はどれ？</div>
+    <div class="card-body">
+      <div class="quiz-q">東芝は委員会設置会社なのに不正会計が発覚。<strong>誤っている</strong>のは？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q3',this,false)"><strong>A:</strong> 指名・監査・報酬の3委員会があった</li>
+        <li onclick="checkAnswer('q3',this,true)"><strong>B:</strong> 委員会設置会社だったので、監査役も併設していた</li>
+        <li onclick="checkAnswer('q3',this,false)"><strong>C:</strong> 歴代3社長が利益水増しに関与</li>
+        <li onclick="checkAnswer('q3',this,false)"><strong>D:</strong> 形だけのガバナンスでは不正を防げないことを示した</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>正解：B（これがウソ）</strong><br>指名委員会等設置会社では監査役を<strong>「置けない」</strong>（327条4項）。「併設」は絶対NG！
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="card" id="q4">
+    <div class="card-head bg-purple"><span class="num">Q4</span>一番シンプルな機関設計は？</div>
+    <div class="card-body">
+      <div class="quiz-q">友人が「譲渡制限つきの小さい株式会社を作りたい。一番シンプルに」と相談。最小構成は？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q4',this,false)"><strong>A:</strong> 取締役1名＋監査役1名</li>
+        <li onclick="checkAnswer('q4',this,false)"><strong>B:</strong> 取締役3名（取締役会）のみ</li>
+        <li onclick="checkAnswer('q4',this,true)"><strong>C:</strong> 取締役1名のみ（＋株主総会）</li>
+        <li onclick="checkAnswer('q4',this,false)"><strong>D:</strong> 取締役1名＋会計参与1名</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>正解：C</strong><br>非公開・非大会社なら<strong>株主総会＋取締役1人</strong>だけでOK（326条1項）。監査役も会計参与もなくて大丈夫。夫婦で始めるカフェの法人化＝これが最小構成。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="card" id="q5">
+    <div class="card-head bg-green"><span class="num">Q5</span>メルカリのガバナンス進化</div>
+    <div class="card-body">
+      <div class="quiz-q">メルカリは2018年に上場。その後の変化で<strong>正しい</strong>のは？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q5',this,false)"><strong>A:</strong> 上場時から指名委員会等設置会社だった</li>
+        <li onclick="checkAnswer('q5',this,false)"><strong>B:</strong> 上場時は監査等委員会設置会社で現在も同じ</li>
+        <li onclick="checkAnswer('q5',this,false)"><strong>C:</strong> 監査役会設置会社のまま</li>
+        <li onclick="checkAnswer('q5',this,true)"><strong>D:</strong> 上場時は監査役会 → 2023年に指名委員会等に移行</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>正解：D</strong><br>上場時はハードル低い監査役会→成長に合わせて5年後に指名委員会等へ。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="card" id="q6">
+    <div class="card-head bg-indigo"><span class="num">Q6</span>機関設計ルール、正しいのは？</div>
+    <div class="card-body">
+      <div class="quiz-q">会社法の機関設計ルールで<strong>正しい</strong>のは？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q6',this,false)"><strong>A:</strong> 公開会社は必ず監査役会を置く</li>
+        <li onclick="checkAnswer('q6',this,true)"><strong>B:</strong> 大会社でなくても、定款で会計監査人を任意に置ける</li>
+        <li onclick="checkAnswer('q6',this,false)"><strong>C:</strong> 監査等委員会設置会社でも追加で監査役を置ける</li>
+        <li onclick="checkAnswer('q6',this,false)"><strong>D:</strong> 指名委員会等設置会社では執行役は不要</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>正解：B</strong><br>会計監査人は<strong>定款で任意に</strong>置ける（326条2項）。C：監査等委員会型に監査役は<strong>絶対NG</strong>。D：執行役<strong>1人以上が必須</strong>（402条）。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 NEW -->
+  <div class="card" id="q7">
+    <div class="card-head bg-amber"><span class="num">Q7</span>&#x1F195; 監査役の任期について</div>
+    <div class="card-body">
+      <div class="quiz-q">監査役の任期に関する記述のうち、<strong>正しい</strong>のはどれ？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q7',this,false)"><strong>A:</strong> 監査役の任期は定款で2年に短縮できる</li>
+        <li onclick="checkAnswer('q7',this,false)"><strong>B:</strong> 公開会社でも監査役の任期を10年に伸長できる</li>
+        <li onclick="checkAnswer('q7',this,true)"><strong>C:</strong> 非公開会社では定款で監査役の任期を最長10年に伸長できるが、短縮はできない</li>
+        <li onclick="checkAnswer('q7',this,false)"><strong>D:</strong> 補欠監査役の任期は新たに4年間となる</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        <strong>正解：C</strong><br>
+        A→監査役の任期は<strong>短縮不可</strong>！ B→10年伸長は<strong>非公開会社のみ</strong>。D→補欠監査役は<strong>前任者の残任期</strong>（336条3項）。
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Q8 NEW -->
+  <div class="card" id="q8">
+    <div class="card-head bg-cyan"><span class="num">Q8</span>&#x1F195; 監査等委員の任期</div>
+    <div class="card-body">
+      <div class="quiz-q">監査等委員会設置会社の取締役の任期について<strong>正しい</strong>のは？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q8',this,false)"><strong>A:</strong> 監査等委員である取締役もその他の取締役も任期2年</li>
+        <li onclick="checkAnswer('q8',this,false)"><strong>B:</strong> 監査等委員である取締役は1年、その他は2年</li>
+        <li onclick="checkAnswer('q8',this,true)"><strong>C:</strong> 監査等委員である取締役は2年（短縮不可）、その他は1年</li>
+        <li onclick="checkAnswer('q8',this,false)"><strong>D:</strong> どちらも非公開会社なら最長10年に伸長可能</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        <strong>正解：C</strong><br>
+        監査等委員＝<strong>2年（短縮も延長も不可）</strong>、その他＝<strong>1年</strong>（332条3項）。D→監査等委員会設置会社の取締役は伸長不可。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q9 NEW -->
+  <div class="card" id="q9">
+    <div class="card-head bg-slate"><span class="num">Q9</span>&#x1F195; 権利義務取締役</div>
+    <div class="card-body">
+      <div class="quiz-q">非公開会社で取締役の任期を10年としていたが、任期満了後も後任未選任のまま2年が経過。この場合の記述で<strong>誤っている</strong>のは？</div>
+      <ul class="quiz-choices">
+        <li onclick="checkAnswer('q9',this,false)"><strong>A:</strong> 当該取締役は権利義務取締役として職務を継続する</li>
+        <li onclick="checkAnswer('q9',this,true)"><strong>B:</strong> 権利義務取締役は自由に辞任できる</li>
+        <li onclick="checkAnswer('q9',this,false)"><strong>C:</strong> 登記懈怠として100万円以下の過料の対象になりうる</li>
+        <li onclick="checkAnswer('q9',this,false)"><strong>D:</strong> 速やかに株主総会で後任選任すべきである</li>
+      </ul>
+      <div class="quiz-explanation" id="q9-exp">
+        <strong>正解：B（これが誤り）</strong><br>
+        権利義務取締役は<strong>自分から辞任できない</strong>（346条1項）。後任が選任されるまで継続。登記懈怠＝<strong>100万円以下の過料</strong>。実務では地方の老舗企業で「10年任期→失念→登記懈怠」が実際に多発している。
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab7 (実例クイズ) -->
+
+<!-- ============================================================ -->
+<!-- TAB 8: 実例で覚える                                           -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab8">
+
+
+
+  <div class="hl-box teal" style="margin-bottom:20px;">
+    <strong>&#x1F4CB; このタブで学ぶこと</strong><br>
+    ・5社の実例で3パターンの選択理由を理解<br>
+    ・条文チートシートで試験直前の総復習<br>
+    ・日本のガバナンス改革の歴史の流れ
+  </div>
+
+  <p style="margin-bottom:18px;font-size:.95rem;color:var(--muted);line-height:1.8;">
+    「どうしてこの機関設計を選んだの？」を実例で見ると、すっと頭に入ります。
+  </p>
+
+  <!-- Story 1: ソニー -->
+  <div class="card">
+    <div class="card-head bg-teal"><span class="num">1</span>ソニーG &#x2015; 日本で最初に委員会型を採用</div>
+    <div class="card-body">
+      <p>2003年に<strong>指名委員会等設置会社</strong>へ移行。3委員会（各過半数が社外取締役）で監督に専念し、経営は<strong>執行役</strong>が担当。</p>
+      <div class="tree">
+        <div class="t-root">ソニーの試験ポイント</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-purple">型</span> 指名委員会等設置会社</div>
+          <div class="t-item"><span class="t-label t-blue">特徴</span> 各委員会3人以上・<strong>過半数が社外</strong>（400条）</div>
+          <div class="t-item"><span class="t-label t-amber">注意</span> 代表<strong>取締役</strong>ではなく代表<strong>執行役</strong>（420条）</div>
+          <div class="t-item"><span class="t-label t-red">禁止</span> 監査役は置けない（327条4項）</div>
+          <div class="t-item"><span class="t-label t-green">任期</span> 取締役は<strong>1年</strong>（332条6項）← 延長不可</div>
+        </div>
+      </div>
+      <div class="hl-box hl-yellow"><strong>覚え方：</strong>「ソニーは<strong>So New</strong>」→ 最も早く新制度を採用した先駆者</div>
+
+    </div>
+  </div>
+
+  <!-- Story 2: トヨタ -->
+  <div class="card">
+    <div class="card-head bg-blue"><span class="num">2</span>トヨタ &#x2015; 2025年に監査等委員会型へ</div>
+    <div class="card-body">
+      <p>長年の監査役会型から、2025年に<strong>監査等委員会設置会社</strong>へ移行。社外取締役を10人中5人に。</p>
+
+      <!-- Timeline -->
+      <div style="position:relative;padding-left:30px;margin:14px 0;">
+        <div style="position:absolute;left:12px;top:0;bottom:0;width:3px;background:var(--blue);"></div>
+        <div style="position:relative;margin-bottom:14px;padding:8px 14px;background:var(--blue-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid #fff;"></div>
+          <strong>〜2024年</strong> 監査役会設置会社（伝統的スタイル）
+        </div>
+        <div style="position:relative;padding:8px 14px;background:var(--green-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid #fff;"></div>
+          <strong>2025年〜</strong> 監査等委員会設置会社（社外取締役5人）
+        </div>
+      </div>
+
+      <div class="tree">
+        <div class="t-root">トヨタの試験ポイント</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-blue">型</span> 監査等委員会設置会社（2015年法改正で導入）</div>
+          <div class="t-item"><span class="t-label t-green">特徴</span> 監査等委員 ＝ <strong>取締役</strong>（役じゃない！）→ 議決権あり</div>
+          <div class="t-item"><span class="t-label t-amber">任期</span> 監査等委員 <strong>2年（固定）</strong>/ その他 <strong>1年</strong></div>
+          <div class="t-item"><span class="t-label t-teal">メリット</span> 業務執行の委任OK → 意思決定が速い</div>
+        </div>
+      </div>
+      <div class="hl-box hl-yellow"><strong>覚え方：</strong>「トヨタが<strong>等（とう）</strong>委員会に<strong>到（とう）</strong>着」</div>
+
+    </div>
+  </div>
+
+  <!-- Story 3: 東芝 -->
+  <div class="card">
+    <div class="card-head bg-red"><span class="num">3</span>東芝 &#x2015; 形だけのガバナンスの限界</div>
+    <div class="card-body">
+      <p>2003年に委員会設置会社に移行→2015年に歴代3社長の不正会計（約2,000億円超）が発覚。</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin:14px 0;">
+        <div style="flex:1;min-width:200px;background:var(--red-light);border:2px solid var(--red);border-radius:12px;padding:14px;">
+          <div style="font-weight:800;color:var(--red);margin-bottom:6px;">&#x274C; 教訓</div>
+          <div style="font-size:.88rem;">
+            ・制度の「形式」だけでは不正は防げない<br>
+            ・社外取締役が過半数でも機能しないことも<br>
+            ・会計監査人の長期担当→「なれ合い」リスク
+          </div>
+        </div>
+        <div style="flex:1;min-width:200px;background:var(--blue-light);border:2px solid var(--blue);border-radius:12px;padding:14px;">
+          <div style="font-weight:800;color:var(--blue);margin-bottom:6px;">&#x1F4DD; 試験ポイント</div>
+          <div style="font-size:.88rem;">
+            ・大会社は<strong>内部統制システム</strong>決議が義務（362条5項）<br>
+            ・指名委員会等型では監査役は<strong>置けない</strong>（327条4項）<br>
+            ・会計監査人の任期は<strong>1年</strong>だが自動再任
+          </div>
+        </div>
+      </div>
+      <div class="hl-box hl-yellow"><strong>覚え方：</strong>「<strong>東</strong>芝は<strong>とう</strong>に限界を示した」→ 形式と実質のギャップ</div>
+
+    </div>
+  </div>
+
+  <!-- Story 4: パナソニック -->
+  <div class="card">
+    <div class="card-head bg-green"><span class="num">4</span>パナソニックHD &#x2015; あえて監査役会型を堅持</div>
+    <div class="card-body">
+      <p>2022年に持株会社化したが、<strong>監査役会設置会社を維持</strong>。「外からチェックする方が独立性が高い」という判断。</p>
+      <div class="tree">
+        <div class="t-root">パナソニックの試験ポイント</div>
+        <div class="t-branch">
+          <div class="t-item"><span class="t-label t-green">構成</span> 3人以上・<strong>半数以上が社外</strong>・常勤1人以上</div>
+          <div class="t-item"><span class="t-label t-blue">任期</span> <strong>4年</strong>（短縮不可！取締役2年より長い）</div>
+          <div class="t-item"><span class="t-label t-red">解任</span> <strong>特別決議</strong>（取締役は普通決議）</div>
+        </div>
+      </div>
+      <div class="hl-box hl-yellow"><strong>覚え方：</strong>「パナは<strong>番</strong>人を外に置く」→ 外部の見張り番を重視</div>
+
+
+
+    </div>
+  </div>
+
+  <!-- Story 5: メルカリ -->
+  <div class="card">
+    <div class="card-head bg-purple"><span class="num">5</span>メルカリ &#x2015; 上場後にガバナンスを進化</div>
+    <div class="card-body">
+      <p>2018年に監査役会型で上場 → 5年後の2023年に<strong>指名委員会等設置会社</strong>へ移行。</p>
+
+      <!-- Timeline -->
+      <div style="position:relative;padding-left:30px;margin:14px 0;">
+        <div style="position:absolute;left:12px;top:0;bottom:0;width:3px;background:var(--purple);"></div>
+        <div style="position:relative;margin-bottom:14px;padding:8px 14px;background:var(--green-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid #fff;"></div>
+          <strong>2018年</strong> 監査役会型で上場（ハードル低い）
+        </div>
+        <div style="position:relative;padding:8px 14px;background:var(--purple-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--purple);border:2px solid #fff;"></div>
+          <strong>2023年</strong> 指名委員会等設置会社へ移行
+        </div>
+      </div>
+
+      <div class="hl-box hl-purple">
+        <strong>ポイント：</strong>機関設計の変更 ＝ 定款変更 ＝ <strong>特別決議</strong>が必要。<br>
+        スタートアップは上場時は監査役会型→成長後に委員会型へアップグレードするのが典型パターン。
+      </div>
+      <div class="hl-box hl-yellow"><strong>覚え方：</strong>「メルカリは<strong>売って（IPO）から体制を変えた</strong>」</div>
+
+
+    </div>
+  </div>
+
+  <!-- 条文チートシート -->
+  <div class="card">
+    <div class="card-head bg-slate"><span class="num">&#x1F4CB;</span>条文チートシート</div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <tr><th>テーマ</th><th>条文</th><th>ひとこと</th><th>頻度</th></tr>
+        <tr style="background:#fff5f5;"><td><strong>株式会社の機関</strong></td><td>326条</td><td>株主総会＋取締役は必ず置く</td><td><span class="kw">A</span></td></tr>
+        <tr style="background:#fff5f5;"><td><strong>取締役会の義務</strong></td><td>327条1項</td><td>公開会社は必須</td><td><span class="kw">A</span></td></tr>
+        <tr style="background:#fff5f5;"><td><strong>監査役の義務</strong></td><td>327条2項</td><td>取締役会あり→原則必要</td><td><span class="kw">A</span></td></tr>
+        <tr style="background:#fff5f5;"><td><strong>委員会と監査役</strong></td><td>327条4項</td><td>委員会型は監査役NG</td><td><span class="kw">A</span></td></tr>
+        <tr><td><strong>社外取締役</strong></td><td>327条の2</td><td>上場会社は1人以上</td><td><span class="kw blue">B</span></td></tr>
+        <tr style="background:#fff5f5;"><td><strong>会計監査人の義務</strong></td><td>328条</td><td>大会社は必須</td><td><span class="kw">A</span></td></tr>
+        <tr style="background:#fff5f5;"><td><strong>取締役の任期</strong></td><td>332条</td><td>原則2年、非公開は最長10年</td><td><span class="kw">A</span></td></tr>
+        <tr><td><strong>監査等委員の任期</strong></td><td>332条3項</td><td>2年固定（短縮・延長不可）</td><td><span class="kw blue">B</span></td></tr>
+        <tr><td><strong>指名委員会等の任期</strong></td><td>332条6項</td><td>1年固定</td><td><span class="kw blue">B</span></td></tr>
+        <tr><td><strong>会計参与の任期</strong></td><td>334条</td><td>332条準用（取締役と同じ）</td><td><span class="kw blue">B</span></td></tr>
+        <tr style="background:#fff5f5;"><td><strong>監査役の任期</strong></td><td>336条</td><td>4年（<strong>短縮NG</strong>）、非公開は最長10年</td><td><span class="kw">A</span></td></tr>
+        <tr><td><strong>補欠監査役の任期</strong></td><td>336条3項</td><td>前任者の残任期</td><td><span class="kw blue">B</span></td></tr>
+        <tr style="background:#fff5f5;"><td><strong>会計監査人の任期</strong></td><td>338条</td><td>1年（自動再任）</td><td><span class="kw">A</span></td></tr>
+        <tr><td><strong>監査等委員会</strong></td><td>399条の2〜</td><td>2015年導入の中間型</td><td><span class="kw blue">B</span></td></tr>
+        <tr style="background:#fff5f5;"><td><strong>3委員会の構成</strong></td><td>400条</td><td>各3人以上・過半数社外</td><td><span class="kw">A</span></td></tr>
+        <tr><td><strong>執行役</strong></td><td>402条</td><td>指名委員会等に1人以上必須</td><td><span class="kw blue">B</span></td></tr>
+        <tr><td><strong>権利義務者</strong></td><td>346条</td><td>後任未選任なら継続</td><td><span class="kw blue">B</span></td></tr>
+        <tr><td><strong>登記懈怠</strong></td><td>976条</td><td>100万円以下の過料</td><td><span class="kw blue">B</span></td></tr>
+      </table></div>
+
+    </div>
+  </div>
+
+  <!-- 制度改革タイムライン -->
+  <div class="card">
+    <div class="card-head bg-amber"><span class="num">&#x1F4C5;</span>日本のガバナンス改革タイムライン</div>
+    <div class="card-body">
+      <div style="position:relative;padding-left:30px;">
+        <div style="position:absolute;left:12px;top:0;bottom:0;width:3px;background:var(--yellow);"></div>
+        <div style="position:relative;margin-bottom:14px;padding:8px 14px;background:var(--yellow-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--yellow);border:2px solid #fff;"></div>
+          <strong>2003年</strong> 委員会等設置会社制度の導入（ソニー・東芝が先行採用）
+        </div>
+        <div style="position:relative;margin-bottom:14px;padding:8px 14px;background:var(--blue-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid #fff;"></div>
+          <strong>2006年</strong> 新会社法施行。<strong>会計参与</strong>制度の新設
+        </div>
+        <div style="position:relative;margin-bottom:14px;padding:8px 14px;background:var(--green-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid #fff;"></div>
+          <strong>2015年</strong> <strong>監査等委員会設置会社</strong>制度の導入
+        </div>
+        <div style="position:relative;margin-bottom:14px;padding:8px 14px;background:var(--red-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid #fff;"></div>
+          <strong>2021年</strong> <strong>社外取締役</strong>の義務化（上場会社は1人以上必須）
+        </div>
+        <div style="position:relative;padding:8px 14px;background:var(--purple-light);border-radius:8px;">
+          <div style="position:absolute;left:-24px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--purple);border:2px solid #fff;"></div>
+          <strong>2025年</strong> トヨタが監査等委員会設置会社へ移行
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+</div><!-- /tab8 (実例で覚える) -->
+
+<!-- ===== FOOTER ===== -->
+<footer style="text-align:center;padding:32px 16px;color:var(--muted);font-size:.8rem;border-top:1px solid var(--line);">
+  中小企業診断士 経営法務｜機関設計まとめ ver.02 &#x2015; 4エージェント討議版<br>
+  作成日: 2026-03-10
+</footer>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+function switchTab(i) {
+  document.querySelectorAll('.tab-btn').forEach((b, j) => b.classList.toggle('active', j === i));
+  document.querySelectorAll('.tab-content').forEach((c, j) => c.classList.toggle('active', j === i));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function checkAnswer(qId, el, ok) {
+  const box = document.getElementById(qId);
+  if (box.dataset.answered) return;
+  box.dataset.answered = 'true';
+  const items = box.querySelectorAll('.quiz-choices li');
+  items.forEach(li => {
+    li.style.pointerEvents = 'none';
+    if (li !== el) li.style.opacity = '0.5';
+  });
+  if (ok) {
+    el.classList.add('correct');
+    el.innerHTML = '&#x2B55; ' + el.innerHTML;
+  } else {
+    el.classList.add('wrong');
+    el.innerHTML = '&#x274C; ' + el.innerHTML;
+    items.forEach(li => {
+      if (li.getAttribute('onclick') && li.getAttribute('onclick').includes('true')) {
+        li.classList.add('correct');
+        li.innerHTML = '&#x2B55; ' + li.innerHTML;
+        li.style.opacity = '1';
+      }
+    });
+  }
+  const exp = document.getElementById(qId + '-exp');
+  if (exp) exp.classList.add('show');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リース取引・税効果会計 - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef; --purple-bg: #f5eef8;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-main) 50%, #5dade2 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem;
+}
+
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before {
+  left: -14px; border-right-color: var(--white);
+}
+.bubble-wrap.right .bubble-body::before {
+  right: -14px; border-left-color: var(--white);
+}
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-body strong { color: #e65100; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+
+.tab-container { max-width: 920px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+.tab-panel.theme-purple { background: var(--purple-bg); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.section-title {
+  font-size: 1.2rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); color: white; }
+.st-icon { font-size: 1.1rem; }
+
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-box strong { color: inherit; }
+
+.vs-box {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;
+  margin: 0.8rem 0;
+}
+.vs-side {
+  background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center;
+  box-shadow: var(--shadow);
+}
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+
+.diagram {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram-title {
+  text-align: center; font-weight: 700; font-size: 1rem;
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0;
+}
+.dt-blue { color: var(--blue-dark); }
+.dt-red { color: var(--red-dark); }
+.dt-green { color: var(--green-dark); }
+.dt-purple { color: var(--purple-dark); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.88rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); box-shadow: 0 2px 6px rgba(41,128,185,0.3); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); box-shadow: 0 2px 6px rgba(231,76,60,0.3); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); box-shadow: 0 2px 6px rgba(39,174,96,0.3); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); box-shadow: 0 2px 6px rgba(230,126,34,0.3); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); box-shadow: 0 2px 6px rgba(142,68,173,0.3); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.9rem; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-red th { background: var(--red-main); color: white; }
+.tbl-red tr:nth-child(even) { background: var(--red-light); }
+.tbl-purple th { background: var(--purple-main); color: white; }
+.tbl-purple tr:nth-child(even) { background: var(--purple-light); }
+
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.8rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 0.95rem; font-weight: 600; text-align: center;
+}
+
+.point-box {
+  border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0;
+}
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #bb8fce; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.5rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.15em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+
+.scene {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center;
+}
+.scene-img { font-size: 3rem; margin-bottom: 0.3rem; }
+.scene-caption { font-size: 0.85rem; color: var(--gray-mid); }
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0; transition: border-color 0.3s;
+}
+.quiz-num {
+  display: inline-block; background: var(--orange-main); color: white;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-purple { background: var(--purple-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.9rem;
+}
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation {
+  display: none; margin-top: 0.7rem; padding: 0.8rem;
+  border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7;
+}
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score {
+  text-align: center; padding: 1rem; background: var(--orange-pale);
+  border-radius: var(--radius); margin-top: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none;
+}
+
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+
+@media (max-width: 600px) {
+  .two-col, .vs-box { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.68rem; padding: 0.7rem 0.2rem; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 78%; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>リース取引・税効果会計</h1>
+  <div class="subtitle">中小企業診断士 財務・会計</div>
+  <div class="badge">全5タブ構成 学習サイト</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F4D8; 基本事項</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(2)">&#x1F3ED; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(3)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">&#x1F30D; 実例で学ぶ</button>
+  </nav>
+
+  <!-- ==================== TAB 1: 入門 (GREEN) ==================== -->
+  <div class="tab-panel active theme-green" id="tab0">
+
+    <div class="point-box pb-green">
+      <h4>&#x1F4D6; このタブで学ぶこと</h4>
+      <ul>
+        <li>リース取引＝<strong>「借りて使う」取引</strong>の2タイプをざっくり理解</li>
+        <li>税効果会計＝<strong>会計と税法のズレを調整</strong>するしくみ</li>
+        <li>覚える用語はたった<strong>4つだけ</strong>！</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3E0;</span> リース取引って何？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        リース取引って、レンタルとなにが違うの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        レンタルは<strong>短期で好きなとき返せる</strong>（DVDレンタルとか）。リースは<strong>長期契約で途中解約できない</strong>のがポイント！会社がコピー機や車を「買わずに借りる」ときに使うよ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        <strong>レンタル＝TSUTAYAでDVDを借りる</strong>（いつでも返せる）。<strong>リース＝マンションの2年契約</strong>（途中で出ると違約金！）。リースのほうがずっと「重い」契約だね。
+      </div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--blue-main);">
+        <h4 style="color:var(--blue-main);">&#x1F3E2; ファイナンスリース</h4>
+        <p style="font-size:0.85rem;"><strong>ほぼ購入と同じ</strong><br>途中解約できない＋<br>ほぼ全額を払う</p>
+        <p style="font-size:0.8rem;color:var(--gray-mid);margin-top:0.3rem;">例：会社のコピー機を5年リース</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--green-main);">
+        <h4 style="color:var(--green-main);">&#x1F4CB; オペレーティングリース</h4>
+        <p style="font-size:0.85rem;"><strong>ふつうの賃貸</strong><br>ファイナンスリース<br>以外のリース</p>
+        <p style="font-size:0.8rem;color:var(--gray-mid);margin-top:0.3rem;">例：オフィスのウォーターサーバー</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        入門ではこれだけ覚えて！<br><strong>ファイナンス＝「ほぼ買った」</strong>→ 資産・負債に計上<br><strong>オペレーティング＝「ふつうに借りた」</strong>→ 毎月の費用で処理
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4B0;</span> 税効果会計って何？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        税効果会計って名前からしてむずかしそう...
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        かんたんに言うと、<strong>会計のルールと税金のルールのズレを調整する</strong>だけ！会計では費用なのに税法では認めてくれない、みたいなケースがあるんだ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        あなたが家計簿で「今月の食費は5万円」と書いても、税務署が「いや、経費として認めるのは3万円までね」と言うことがある。このズレを調整するのが税効果会計。<strong>家計簿（会計）と確定申告（税法）の通訳</strong>みたいなもの！
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x1F4D2;</div>
+          <div class="label">会計：費用100</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x2260;</div>
+          <div class="label">ズレ発生！</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F3E6;</div>
+          <div class="label">税法：費用60だけOK</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F504;</div>
+          <div class="label">税効果会計で<br>調整！</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4DD;</span> まず4つの用語だけ覚えよう</h2>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>&#x23F3; 一時差異</h4>
+        <p><strong>いつか解消される</strong>ズレ<br><span style="font-size:0.82rem;color:var(--gray-mid);">例：今年ダメでも来年OKになる費用</span></p>
+      </div>
+      <div class="card card-red">
+        <h4>&#x267B;&#xFE0F; 永久差異</h4>
+        <p><strong>永遠に解消されない</strong>ズレ<br><span style="font-size:0.82rem;color:var(--gray-mid);">例：交際費の一部（ずっとダメ）</span></p>
+      </div>
+      <div class="card card-green">
+        <h4>&#x1F4E5; 繰延税金資産</h4>
+        <p>税金の<strong>前払い</strong><br><span style="font-size:0.82rem;color:var(--gray-mid);">「今多く払ったぶん、あとで戻ってくる」</span></p>
+      </div>
+      <div class="card card-purple">
+        <h4>&#x1F4E4; 繰延税金負債</h4>
+        <p>税金の<strong>後払い</strong><br><span style="font-size:0.82rem;color:var(--gray-mid);">「今少なく払ったぶん、あとで追加で払う」</span></p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方のコツ</div>
+        繰延税金<strong>資産</strong>＝<strong>「先に払った＝プリペイド」</strong>（Suicaのチャージと同じ！先に払って後で使う）<br>
+        繰延税金<strong>負債</strong>＝<strong>「ツケ払い」</strong>（居酒屋のツケと同じ！後で払わないといけない）
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>入門のまとめ</strong><br>
+      &#x2022; リース取引 → <strong>ファイナンス（ほぼ購入）</strong>と<strong>オペレーティング（ふつうの賃貸）</strong>の2種類<br>
+      &#x2022; 税効果会計 → <strong>会計と税法のズレ</strong>を調整する仕組み<br>
+      &#x2022; 一時差異（いつか解消）/ 永久差異（永遠にそのまま）<br>
+      &#x2022; 繰延税金資産（前払い）/ 繰延税金負債（後払い）
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: 基本事項 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab1">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F4D6; このタブで学ぶこと</h4>
+      <ul>
+        <li>ファイナンスリースの<strong>2つの条件</strong>と<strong>会計処理</strong>を区別できる</li>
+        <li>一時差異の<strong>将来減算・将来加算</strong>の違いを仕訳で理解する</li>
+        <li><strong>法定実効税率</strong>の使い方を覚える</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CB;</span> リース取引の分類</h2>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">リース取引の分類ツリー</div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+        <div class="flow-box fb-blue" style="width:70%;">&#x1F4C4; リース取引</div>
+        <div style="display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; width:100%;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem; flex:1; min-width:180px;">
+            <div style="font-size:1.2rem; color:var(--blue-main);">&#x2B07;&#xFE0F;</div>
+            <div class="flow-box fb-orange" style="width:100%;">&#x1F3E2; ファイナンスリース<small>ほぼ購入＝売買処理</small></div>
+            <div style="display:flex; gap:0.5rem; width:100%; flex-wrap:wrap;">
+              <div class="flow-box fb-red" style="flex:1; min-width:80px; font-size:0.78rem;">所有権移転<small>自分のモノになる</small></div>
+              <div class="flow-box fb-purple" style="flex:1; min-width:80px; font-size:0.78rem;">所有権移転外<small>リース終了で返す</small></div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem; flex:1; min-width:180px;">
+            <div style="font-size:1.2rem; color:var(--green-main);">&#x2B07;&#xFE0F;</div>
+            <div class="flow-box fb-green" style="width:100%;">&#x1F4CB; オペレーティングリース<small>ふつうの賃貸＝賃貸借処理</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x2705; ファイナンスリースの2条件</h4>
+      <p>つぎの<strong>両方</strong>を満たすとファイナンスリース：</p>
+      <ul>
+        <li><strong>&#x2460; ノンキャンセラブル</strong>：途中解約できない（or 解約に多額のペナルティ）</li>
+        <li><strong>&#x2461; フルペイアウト</strong>：リース料の総額 &#x2248; 資産の購入価額（ほぼ全額負担）</li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F3EA; 例：コピー機100万円相当を、月2万円×50ヶ月＝100万円のリース契約。途中解約不可 → これはファイナンスリース！</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">覚え方のコツ</div>
+        <strong>「ノンキャン・フルペイ」</strong>で覚えよう！「キャンセルできない＆全額払う」＝ もう実質買ったのと同じだよね → だから<strong>売買処理</strong>にする！
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4B5;</span> リースの会計処理</h2>
+
+    <table class="tbl-blue">
+      <tr><th style="width:30%;">種類</th><th>会計処理</th><th style="width:25%;">減価償却</th></tr>
+      <tr>
+        <td><strong>所有権移転<br>ファイナンス</strong></td>
+        <td><strong>売買処理</strong>（資産＆負債に計上）</td>
+        <td>自己所有と<strong>同じ方法</strong><br><span style="font-size:0.8rem;">耐用年数で償却</span></td>
+      </tr>
+      <tr>
+        <td><strong>所有権移転外<br>ファイナンス</strong></td>
+        <td><strong>売買処理</strong>（資産＆負債に計上）</td>
+        <td><strong>リース期間</strong>で償却<br><span style="font-size:0.8rem;">残存価額ゼロ</span></td>
+      </tr>
+      <tr>
+        <td><strong>オペレーティング</strong></td>
+        <td><strong>賃貸借処理</strong>（支払リース料を費用計上）</td>
+        <td>減価償却<strong>なし</strong><br><span style="font-size:0.8rem;">（資産計上しないから）</span></td>
+      </tr>
+    </table>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">引っかけ注意</div>
+        所有権移転<strong>外</strong>は<strong>リース期間・残存価額ゼロ</strong>で償却。「耐用年数で償却」と書いてあったらバツ！所有権が移転しないので、リース期間で使い切るイメージ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        <strong>所有権移転</strong>＝住宅ローンで家を買う（最後は自分の家！→ 建物の寿命で償却）<br>
+        <strong>所有権移転外</strong>＝カーリース（契約終了で返す → リース期間で使い切り前提）<br>
+        <strong>オペレーティング</strong>＝月極駐車場（毎月料金を払うだけ → 資産計上しない）
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F504;</span> 税効果会計のしくみ</h2>
+
+    <div class="card card-orange">
+      <h4>&#x1F50D; なぜズレが生じるのか？</h4>
+      <p>会計は<strong>「適正な期間損益」</strong>を重視、税法は<strong>「公平な課税」</strong>を重視。目的がちがうから、費用や収益の認めるタイミングがズレる！</p>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F3EA; 例：貸倒引当金を100万円計上。会計では費用OK、でも税法では「まだ実際に貸し倒れてないでしょ？50万円までしか認めないよ」→ 50万円のズレ発生！</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">一時差異の2パターン</div>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; background:var(--blue-light); border-radius:8px; padding:0.8rem; text-align:center;">
+          <div style="font-weight:700; color:var(--blue-dark); margin-bottom:0.3rem;">&#x1F4E5; 将来減算一時差異</div>
+          <div style="font-size:0.85rem;">将来の税金が<strong>減る</strong></div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">今多く税金を払った<br>→ <strong>繰延税金資産</strong>（前払い）</div>
+          <div style="font-size:0.78rem; background:white; border-radius:4px; padding:0.3rem; margin-top:0.3rem;">例：引当金の損金不算入超過額</div>
+        </div>
+        <div style="flex:1; min-width:200px; background:var(--red-light); border-radius:8px; padding:0.8rem; text-align:center;">
+          <div style="font-weight:700; color:var(--red-dark); margin-bottom:0.3rem;">&#x1F4E4; 将来加算一時差異</div>
+          <div style="font-size:0.85rem;">将来の税金が<strong>増える</strong></div>
+          <div style="font-size:0.82rem; color:var(--gray-mid); margin-top:0.3rem;">今少なく税金を払った<br>→ <strong>繰延税金負債</strong>（後払い）</div>
+          <div style="font-size:0.78rem; background:white; border-radius:4px; padding:0.3rem; margin-top:0.3rem;">例：その他有価証券の評価差益</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">超カンタンな覚え方</div>
+        将来<strong>「減」算</strong>→ 税金が<strong>減る</strong>→ 前払い→ <strong>資産</strong>（うれしい！）<br>
+        将来<strong>「加」算</strong>→ 税金が<strong>加わる</strong>→ 後払い→ <strong>負債</strong>（つらい...）<br>
+        <strong>「減ったらうれしい＝資産、加わったらつらい＝負債」</strong>で一発！
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 税効果会計の仕訳パターン</h2>
+
+    <div class="card card-green">
+      <h4>&#x1F4D7; 将来減算一時差異のとき（繰延税金資産）</h4>
+      <div class="formula-box">（借方）繰延税金資産 ×× ／（貸方）法人税等調整額 ××</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.4rem;">&#x1F4A1; 意味：「今年多く税金を払ったぶん、資産として計上しておく」→ P/Lの法人税等が減って、当期純利益が増える</p>
+    </div>
+
+    <div class="card card-red">
+      <h4>&#x1F4D5; 将来加算一時差異のとき（繰延税金負債）</h4>
+      <div class="formula-box">（借方）法人税等調整額 ×× ／（貸方）繰延税金負債 ××</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.4rem;">&#x1F4A1; 意味：「今年少なく払ったぶん、負債として計上しておく」→ P/Lの法人税等が増えて、当期純利益が減る</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F522; 金額の計算</h4>
+      <div class="formula-box">繰延税金資産（負債） = 一時差異の金額 × 法定実効税率</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.4rem;">&#x1F3EA; 例：一時差異100万円、税率30% → 繰延税金資産 = 100万×30% = <strong>30万円</strong></p>
+    </div>
+
+    <div class="alert-danger">
+      <strong>永久差異は税効果会計の対象外！</strong><br>
+      交際費の損金不算入や受取配当金の益金不算入は、将来も永遠にズレたまま。解消されないから調整の必要がない → <strong>仕訳なし</strong>！
+    </div>
+
+    <div class="alert-exam">
+      <strong>試験の超頻出ポイント</strong><br>
+      &#x2022; 一時差異 vs 永久差異 → <strong>永久差異は税効果の対象外</strong><br>
+      &#x2022; 将来減算 → <strong>繰延税金資産</strong> / 将来加算 → <strong>繰延税金負債</strong><br>
+      &#x2022; リースの「所有権移転 vs 移転外」→ <strong>償却方法のちがい</strong><br>
+      &#x1F4DA; 過去問：<strong>R5-6、R4-7、R3-9、R2-6</strong>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: シミュレーション (RED) ==================== -->
+  <div class="tab-panel theme-red" id="tab2">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F4D6; このタブで学ぶこと</h4>
+      <ul>
+        <li>中小企業の<strong>コピー機リース</strong>を題材に仕訳を体験する</li>
+        <li><strong>引当金の損金不算入</strong>で税効果を実際に計算する</li>
+        <li>勘定科目が<strong>B/SとP/Lのどこに入るか</strong>を確認する</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F3ED;</span> ケース1：町工場のコピー機リース</h2>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x1F3ED;</div>
+          <div class="label">町田製作所（従業員15名）</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F5A8;&#xFE0F;</div>
+          <div class="label">業務用コピー機<br>購入価額：300万円</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4C5;</div>
+          <div class="label">リース期間5年<br>月額リース料5.5万円</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        リース料の合計は5.5万×60ヶ月＝330万円。300万円の機械に330万払うの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        差額の30万円は<strong>利息に相当する部分</strong>だね。ノンキャンセラブル（解約不可）＆フルペイアウト（ほぼ全額支払い）だから<strong>ファイナンスリース</strong>だよ！
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F4DD; リース開始時の仕訳</h4>
+      <div class="formula-box">（借方）リース資産 300万 ／（貸方）リース債務 300万</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4A1; 「買ったのと同じ」処理だから、資産に載せて、同額の借金（債務）も載せる。住宅ローンで家を買ったときと同じイメージ！</p>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4DD; 毎月のリース料支払いの仕訳</h4>
+      <div class="formula-box">（借方）リース債務 5万 + 支払利息 0.5万 ／（貸方）現金 5.5万</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4A1; 月々の支払いは「借金の返済」＋「利息」に分解される。住宅ローンの月々返済とまったく同じ構造！</p>
+    </div>
+
+    <div class="card card-red">
+      <h4>&#x1F4DD; 決算時の減価償却（所有権移転外の場合）</h4>
+      <div class="formula-box">（借方）減価償却費 60万 ／（貸方）リース資産 60万</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">300万 ÷ 5年 ＝ 60万円/年。所有権移転<strong>外</strong>なので<strong>リース期間5年</strong>・<strong>残存価額ゼロ</strong>で償却！</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">勘定科目チェック</div>
+        <strong>リース資産</strong>→ B/S固定資産、<strong>リース債務</strong>→ B/S負債、<strong>減価償却費</strong>→ P/L費用、<strong>支払利息</strong>→ P/L営業外費用。「資産を持って、借金を返しながら、減価償却する」── この流れが見えればOK！
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4CA;</span> ケース2：飲食店の税効果会計</h2>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x1F35C;</div>
+          <div class="label">ラーメン花道<br>（個人経営）</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4B8;</div>
+          <div class="label">貸倒引当金<br>100万円を計上</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F3E6;</div>
+          <div class="label">税法上の限度額<br>40万円まで</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        会計で100万の費用を計上したけど、税法では40万しか認めない。差額60万が<strong>将来減算一時差異</strong>だよ。法定実効税率を30%として計算してみよう！
+      </div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x1F522; 計算ステップ</h4>
+      <ul>
+        <li>&#x2460; 一時差異 = 会計上の引当金100万 − 税法上の限度額40万 = <strong>60万円</strong></li>
+        <li>&#x2461; 繰延税金資産 = 60万 × 30% = <strong>18万円</strong></li>
+      </ul>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x270D;&#xFE0F; 仕訳</h4>
+      <div class="formula-box">（借方）繰延税金資産 18万 ／（貸方）法人税等調整額 18万</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4A1; 「今年多く払った税金18万円は、来年以降に取り戻せるから資産に計上しておこう」という意味！</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">B/S・P/Lでの見え方</div>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <div style="flex:1; min-width:180px; text-align:center;">
+          <div style="font-weight:700; color:var(--blue-dark); margin-bottom:0.5rem;">&#x1F4CA; B/S</div>
+          <div style="background:var(--blue-light); border-radius:6px; padding:0.5rem; font-size:0.85rem;">
+            投資その他の資産<br><strong>繰延税金資産 18万円</strong>
+          </div>
+        </div>
+        <div style="flex:1; min-width:180px; text-align:center;">
+          <div style="font-weight:700; color:var(--red-dark); margin-bottom:0.5rem;">&#x1F4C8; P/L</div>
+          <div style="background:var(--red-light); border-radius:6px; padding:0.5rem; font-size:0.85rem;">
+            法人税等の下に<br><strong>法人税等調整額 △18万</strong><br><span style="font-size:0.78rem;">→ 税金費用が減る！</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F9EE;</span> ケース3：翌年に差異が解消されたら？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        翌年に実際に貸し倒れが起きて、一時差異が解消されたらどうなるの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        前年に計上した繰延税金資産を<strong>取り崩す</strong>よ。逆仕訳をすればいいだけ！
+      </div>
+    </div>
+
+    <div class="card card-red">
+      <h4>&#x270D;&#xFE0F; 取崩しの仕訳</h4>
+      <div class="formula-box">（借方）法人税等調整額 18万 ／（貸方）繰延税金資産 18万</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4A1; 前払いした税金を「使った」ので、資産を減らす。Suicaの残高が減るのと同じ！</p>
+    </div>
+
+    <div class="alert-tip">
+      <strong>勘定科目の覚え方まとめ</strong><br>
+      &#x2022; <strong>繰延税金資産</strong> → B/Sの<strong>投資その他の資産</strong>（固定資産）<br>
+      &#x2022; <strong>繰延税金負債</strong> → B/Sの<strong>固定負債</strong><br>
+      &#x2022; <strong>法人税等調整額</strong> → P/Lの<strong>法人税等の次</strong>（税引前当期純利益の下）<br>
+      &#x2022; <strong>リース資産</strong> → B/Sの<strong>有形固定資産</strong><br>
+      &#x2022; <strong>リース債務</strong> → B/Sの<strong>負債</strong>（1年以内は流動負債、それ以上は固定負債）
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: クイズ (ORANGE) ==================== -->
+  <div class="tab-panel theme-orange" id="tab3">
+
+    <div class="point-box pb-orange">
+      <h4>&#x1F3AF; このタブで学ぶこと</h4>
+      <ul>
+        <li>タブ1〜3の内容を<strong>全8問のクイズ</strong>で総チェック</li>
+        <li>実際の中小企業をイメージした<strong>親近感ある出題</strong></li>
+        <li>まちがえたらタブに戻って<strong>ピンポイント復習</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> りかい度チェック</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ぜんぶで8問！中小企業の日常にからめた問題だから、場面を想像しながら解いてみよう！
+      </div>
+    </div>
+
+    <!-- Q1 正解:C(idx2) -->
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div><span class="quiz-cat qc-green">リース基礎</span>
+      <div class="quiz-question">町の印刷会社が業務用プリンターを「途中解約不可・リース料総額がほぼ購入価額」の条件でリース契約した。この取引の分類として正しいものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q1', 2)">
+        <li data-idx="0">オペレーティングリース</li>
+        <li data-idx="1">賃貸借取引</li>
+        <li data-idx="2">ファイナンスリース</li>
+        <li data-idx="3">レンタル取引</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>&#x2705; 正解：ファイナンスリース</strong><br>
+        ノンキャンセラブル（途中解約不可）＋フルペイアウト（ほぼ全額支払い）→ ファイナンスリース！この2条件がそろえば「ほぼ購入」として売買処理するよ。
+      </div>
+    </div>
+
+    <!-- Q2 正解:A(idx0) -->
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div><span class="quiz-cat qc-green">リース処理</span>
+      <div class="quiz-question">ベーカリーが製パン機（購入価額500万円）をファイナンスリース（所有権移転外・リース期間5年）で導入した。年間の減価償却費はいくらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q2', 0)">
+        <li data-idx="0">100万円</li>
+        <li data-idx="1">50万円</li>
+        <li data-idx="2">125万円</li>
+        <li data-idx="3">減価償却しない</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>&#x2705; 正解：100万円</strong><br>
+        所有権移転<strong>外</strong>なので、<strong>リース期間（5年）</strong>で残存価額<strong>ゼロ</strong>として償却。500万÷5年＝<strong>100万円/年</strong>。耐用年数ではなくリース期間を使うのがポイント！
+      </div>
+    </div>
+
+    <!-- Q3 正解:D(idx3) -->
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div><span class="quiz-cat qc-blue">税効果基礎</span>
+      <div class="quiz-question">税効果会計の目的として、もっとも適切なものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q3', 3)">
+        <li data-idx="0">法人税を節税すること</li>
+        <li data-idx="1">税務署への申告を簡素化すること</li>
+        <li data-idx="2">すべての費用を損金算入すること</li>
+        <li data-idx="3">会計上の税金費用と法人税等を合理的に対応させること</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>&#x2705; 正解：会計上の税金費用と法人税等を合理的に対応させること</strong><br>
+        税効果会計は節税のためではなく、<strong>会計と税法のズレを適正に表示する</strong>ための仕組み。P/Lの「税引前当期純利益」と「法人税等」がちゃんと対応するようにするのが目的！
+      </div>
+    </div>
+
+    <!-- Q4 正解:B(idx1) -->
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div><span class="quiz-cat qc-blue">税効果計算</span>
+      <div class="quiz-question">美容室チェーンが貸倒引当金200万円を計上したが、税法上の限度額は120万円だった。法定実効税率30%のとき、計上する繰延税金資産はいくらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q4', 1)">
+        <li data-idx="0">60万円</li>
+        <li data-idx="1">24万円</li>
+        <li data-idx="2">36万円</li>
+        <li data-idx="3">80万円</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>&#x2705; 正解：24万円</strong><br>
+        &#x2460; 一時差異 = 200万−120万 = <strong>80万円</strong><br>
+        &#x2461; 繰延税金資産 = 80万×30% = <strong>24万円</strong><br>
+        「差異 × 税率」のシンプルな計算。差異の金額を正しく出すのがポイント！
+      </div>
+    </div>
+
+    <!-- Q5 正解:A(idx0) -->
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div><span class="quiz-cat qc-blue">一時差異</span>
+      <div class="quiz-question">つぎのうち、<strong>永久差異</strong>に分類されるものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q5', 0)">
+        <li data-idx="0">交際費の損金不算入額</li>
+        <li data-idx="1">減価償却超過額</li>
+        <li data-idx="2">貸倒引当金の繰入超過額</li>
+        <li data-idx="3">棚卸資産の評価損の損金不算入額</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>&#x2705; 正解：交際費の損金不算入額</strong><br>
+        交際費の損金不算入は<strong>永久に解消されないズレ</strong>。減価償却超過額・引当金超過額・評価損は、将来解消されるので<strong>一時差異</strong>。永久差異は<strong>税効果会計の対象外</strong>だよ！
+      </div>
+    </div>
+
+    <!-- Q6 正解:C(idx2) -->
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div><span class="quiz-cat qc-green">リース応用</span>
+      <div class="quiz-question">所有権移転ファイナンスリースの減価償却について、正しいものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q6', 2)">
+        <li data-idx="0">リース期間で償却し、残存価額はゼロ</li>
+        <li data-idx="1">減価償却は不要</li>
+        <li data-idx="2">自己所有の固定資産と同じ方法で償却</li>
+        <li data-idx="3">リース料を毎月費用計上するだけ</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>&#x2705; 正解：自己所有の固定資産と同じ方法で償却</strong><br>
+        所有権が<strong>移転する</strong>→ 最終的に自分のモノになる → だから<strong>自己所有と同じ</strong>（耐用年数・残存価額も同じ）。「リース期間・残存ゼロ」は所有権移転<strong>外</strong>の話！
+      </div>
+    </div>
+
+    <!-- Q7 正解:D(idx3) -->
+    <div class="quiz-item" id="q7">
+      <div class="quiz-num">7</div><span class="quiz-cat qc-blue">仕訳</span>
+      <div class="quiz-question">将来減算一時差異が発生したときの仕訳として正しいものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q7', 3)">
+        <li data-idx="0">（借方）法人税等調整額 ／（貸方）繰延税金資産</li>
+        <li data-idx="1">（借方）法人税等調整額 ／（貸方）繰延税金負債</li>
+        <li data-idx="2">（借方）繰延税金負債 ／（貸方）法人税等調整額</li>
+        <li data-idx="3">（借方）繰延税金資産 ／（貸方）法人税等調整額</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        <strong>&#x2705; 正解：（借方）繰延税金資産 ／（貸方）法人税等調整額</strong><br>
+        将来<strong>減算</strong>→ 将来税金が<strong>減る</strong>→ 前払い→ <strong>繰延税金資産（借方）</strong>に計上！「減→資産→借方」のセットで覚えよう。
+      </div>
+    </div>
+
+    <!-- Q8 正解:B(idx1) -->
+    <div class="quiz-item" id="q8">
+      <div class="quiz-num">8</div><span class="quiz-cat qc-purple">総合</span>
+      <div class="quiz-question">繰延税金資産がB/S上で計上される区分として正しいものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q8', 1)">
+        <li data-idx="0">流動資産</li>
+        <li data-idx="1">投資その他の資産（固定資産）</li>
+        <li data-idx="2">繰延資産</li>
+        <li data-idx="3">無形固定資産</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        <strong>&#x2705; 正解：投資その他の資産（固定資産）</strong><br>
+        繰延税金<strong>資産</strong>は<strong>投資その他の資産</strong>に計上。「繰延資産」と名前が似てるから引っかけに注意！繰延資産（開業費など）とは全くの別物だよ。
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+  </div>
+
+  <!-- ==================== TAB 5: 実例で学ぶ (PURPLE) ==================== -->
+  <div class="tab-panel theme-purple" id="tab4">
+
+    <div class="point-box pb-purple">
+      <h4>&#x1F4D6; このタブで学ぶこと</h4>
+      <ul>
+        <li>実在する企業の事例で<strong>リース取引の活用法</strong>を知る</li>
+        <li>税効果会計が<strong>実際の決算書でどう見えるか</strong>を確認する</li>
+        <li>表を暗記するのではなく<strong>「なぜそうするか」</strong>を体感する</li>
+      </ul>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        表とにらめっこして覚えるのもいいけど、正直飽きてくるよね。実例を読みながら「どうしてその処理になるのか」を考えると、理解がグッと深まるよ！
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x2708;&#xFE0F;</span> 事例1：ANAの飛行機リース</h2>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item">
+          <div class="emoji">&#x2708;&#xFE0F;</div>
+          <div class="label">ボーイング787<br>1機あたり約150億円</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4B0;</div>
+          <div class="label">全部買うと<br>数兆円の資金が必要</div>
+        </div>
+        <div class="scene-item">
+          <div class="emoji">&#x1F4CB;</div>
+          <div class="label">保有機の約4割が<br>リース機</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x2708;&#xFE0F; なぜ航空会社はリースを多用するのか？</h4>
+      <ul>
+        <li><strong>初期投資の軽減</strong>：1機150億円を買わなくても済む</li>
+        <li><strong>機材の柔軟な入替</strong>：需要に合わせて機種変更しやすい</li>
+        <li><strong>B/Sのスリム化</strong>：オペレーティングリースなら資産計上不要だった（旧基準）</li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.4rem;">&#x1F4A1; ただし新基準（IFRS16）では、オペレーティングリースでも<strong>使用権資産</strong>としてB/Sに計上が必要に。ANAの総資産は新基準適用で<strong>約1兆円増加</strong>した！</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">試験のポイント</div>
+        新リース基準（IFRS16 / 日本では2027年度〜適用予定）では、借手はほぼすべてのリースを<strong>資産・負債に計上</strong>する。「オペレーティングだからB/Sに載らない」は旧基準の話。今後の出題に注意！
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3EA;</span> 事例2：コンビニのPOSレジ</h2>
+
+    <div class="card card-blue">
+      <h4>&#x1F3EA; セブンイレブンのPOSレジ導入</h4>
+      <p>全国約21,000店舗に設置されているPOSレジ。1台あたり約100万円以上するこれらの機器は、多くが<strong>ファイナンスリース</strong>で導入されています。</p>
+      <ul>
+        <li><strong>途中解約不可</strong>（ノンキャンセラブル &#x2705;）</li>
+        <li>リース料の総額 &#x2248; 購入価額（<strong>フルペイアウト &#x2705;</strong>）</li>
+        <li>リース期間終了後は返却（<strong>所有権移転外</strong>）</li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">→ ファイナンスリース（所有権移転外）として売買処理。<strong>リース期間で残存価額ゼロ</strong>で減価償却される。数年ごとに新型に入れ替えるので、所有権は要らない！</p>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4F1;</span> 事例3：ソフトバンクの繰延税金資産</h2>
+
+    <div class="card card-red">
+      <h4>&#x1F4F1; ソフトバンクグループの巨額繰延税金資産</h4>
+      <p>ソフトバンクグループは、投資先の評価損などにより巨額の<strong>繰延税金資産</strong>を計上していた時期があります。</p>
+      <ul>
+        <li>投資先の株価下落 → 会計上は<strong>評価損</strong>を計上</li>
+        <li>税法ではまだ<strong>損金として認めない</strong>（売却するまでダメ）</li>
+        <li>→ 将来減算一時差異が発生 → <strong>繰延税金資産</strong>を計上</li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.4rem;">&#x1F4A1; ただし「将来本当に回収できるか？」が問題に。回収可能性が低いと判断されると、<strong>評価性引当額</strong>として取り崩さなければならない。繰延税金資産は「あれば必ず載せていい」わけではない！</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">試験の引っかけ</div>
+        「繰延税金資産は一時差異があれば必ず計上する」→ <strong>バツ！</strong>回収可能性が十分な場合にのみ計上できる。ここは試験でよく問われるポイント！
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F30D;</span> 事例4：IFRSと新リース基準</h2>
+
+    <div class="card card-orange">
+      <h4>&#x1F30D; IFRS16号が世界を変えた</h4>
+      <p>2019年にIFRS16号「リース」が適用開始。最大の変更点は：</p>
+      <div class="formula-box">借手はほぼすべてのリースを「使用権資産」と「リース負債」に計上</div>
+      <ul style="margin-top:0.5rem;">
+        <li><strong>航空業界</strong>：機体リースが一気にB/Sに → 総資産・負債が急増</li>
+        <li><strong>小売業界</strong>：店舗の賃貸借が資産計上に → 不動産を持ってないのにB/Sが膨らんだ</li>
+        <li><strong>財務指標への影響</strong>：自己資本比率の低下、EBITDAの改善</li>
+      </ul>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-purple">旧基準 vs 新基準（IFRS16）のインパクト</div>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; text-align:center;">
+          <div style="font-weight:700; margin-bottom:0.5rem;">&#x1F4C4; 旧基準</div>
+          <div style="background:var(--gray-pale); border-radius:6px; padding:0.6rem; font-size:0.85rem;">
+            オペレーティングリース<br>→ <strong>B/S計上なし</strong><br>→ 毎月リース料を費用処理<br><span style="font-size:0.78rem; color:var(--gray-mid);">B/Sがスリムに見えた</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; font-size:1.5rem; font-weight:800; color:var(--purple-main);">→</div>
+        <div style="flex:1; min-width:200px; text-align:center;">
+          <div style="font-weight:700; margin-bottom:0.5rem;">&#x1F4CB; 新基準</div>
+          <div style="background:var(--purple-light); border-radius:6px; padding:0.6rem; font-size:0.85rem;">
+            ほぼすべてのリース<br>→ <strong>使用権資産＆リース負債</strong><br>→ B/Sに計上<br><span style="font-size:0.78rem; color:var(--gray-mid);">実態に即した表示に</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        今まではマンションを借りても「家賃を払ってるだけ」で自分の資産にならなかった。新基準では「住む権利」を資産に載せ、「家賃の残り」を負債に載せる。<strong>実質的に住宅ローンと同じ見え方</strong>になったってこと！
+      </div>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3E2;</span> 事例5：武田薬品の大型買収と税効果</h2>
+
+    <div class="card card-green">
+      <h4>&#x1F48A; 武田薬品×シャイヤー：約6.8兆円の買収</h4>
+      <p>2019年、武田薬品工業はアイルランドの製薬大手シャイヤーを<strong>約6兆8,000億円</strong>で買収。日本企業による海外M&Aとして過去最大です。</p>
+      <ul>
+        <li>買収により巨額の<strong>のれん</strong>（約4兆円）が発生</li>
+        <li>日本基準では「のれん」は<strong>毎年均等に償却</strong> → 費用計上</li>
+        <li>IFRSでは「のれん」は<strong>償却しない</strong>（減損テストのみ）</li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">&#x1F4A1; 武田薬品はIFRSを採用しているので、のれん4兆円は償却されない。もし日本基準だったら毎年数千億円の費用が発生するところだった。<strong>会計基準の選択が利益に大きく影響する</strong>好例！</p>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x1F4B0; 買収と税効果の関係</h4>
+      <p>大型買収では、被買収企業の資産・負債を<strong>時価で評価し直す</strong>ため、帳簿価額との差額が生まれます。</p>
+      <ul>
+        <li>時価 ＞ 帳簿 → <strong>将来加算一時差異</strong> → 繰延税金<strong>負債</strong></li>
+        <li>時価 ＜ 帳簿 → <strong>将来減算一時差異</strong> → 繰延税金<strong>資産</strong></li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">2020年にはシナジー最大化のため、子会社シャイアー・ジャパンを<strong>吸収合併</strong>（武田薬品が存続会社、シャイアー・ジャパンが消滅会社）。グループ再編でも税効果の再計算が必要になるよ。</p>
+    </div>
+
+    <div class="alert-exam">
+      <strong>実例から学ぶ試験のポイント</strong><br>
+      &#x2022; リースを多用する業界（航空・小売・コンビニ）→ <strong>新基準でB/Sへの影響大</strong><br>
+      &#x2022; 繰延税金資産は<strong>回収可能性</strong>の検討が必須<br>
+      &#x2022; 日本基準 vs IFRS → のれんの<strong>償却 vs 非償却</strong>のちがい<br>
+      &#x2022; M&Aでは時価評価差額から<strong>一時差異</strong>が発生する
+    </div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F4D8; 基本事項</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(2)">&#x1F3ED; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(3)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">&#x1F30D; 実例で学ぶ</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 リース取引・税効果会計 学習まとめ</div>
+
+<script>
+function switchTab(idx) {
+  var numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) { b.classList.toggle('active', i % numTabs === idx); });
+  document.querySelectorAll('.tab-panel').forEach(function(p, i) { p.classList.toggle('active', i === idx); });
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+var answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  var li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  var idx = parseInt(li.dataset.idx);
+  var expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    var s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 6 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+</script>
+</body>
+</html>

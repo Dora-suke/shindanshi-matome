@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>投資評価の現在価値 - 中小企業診断士 財務・会計</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef;
+  --teal-dark: #0e6655; --teal-main: #1abc9c; --teal-light: #d1f2eb; --teal-bg: #e8f8f5;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--teal-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal-main) 50%, #48c9b0 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem;
+}
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-pm { background: linear-gradient(135deg, #5c6bc0, #3949ab); }
+.avatar-planner { background: linear-gradient(135deg, #26a69a, #00897b); }
+.avatar-creator { background: linear-gradient(135deg, #ffa726, #fb8c00); }
+.avatar-critic { background: linear-gradient(135deg, #ef5350, #e53935); }
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%; font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0; border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before { left: -14px; border-right-color: var(--white); }
+.bubble-wrap.right .bubble-body::before { right: -14px; border-left-color: var(--white); }
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-body.b-purple { background: #f3e5f5; border: 1px solid #ce93d8; }
+.bubble-body.b-purple::before { border-right-color: #f3e5f5; }
+.bubble-body.b-teal { background: #e0f2f1; border: 1px solid #80cbc4; }
+.bubble-body.b-teal::before { border-right-color: #e0f2f1; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-wrap.right .bubble-body.b-purple::before { border-right-color: transparent; border-left-color: #f3e5f5; }
+.bubble-wrap.right .bubble-body.b-teal::before { border-right-color: transparent; border-left-color: #e0f2f1; }
+.bubble-body strong { color: #e65100; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+.tab-container { max-width: 920px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; flex-wrap: wrap; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.78rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn[data-color="teal"] { color: var(--teal-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active[data-color="teal"] { border-bottom-color: var(--teal-main); background: var(--teal-light); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+.tab-panel.theme-teal { background: var(--teal-bg); }
+.tab-panel.theme-purple { background: #f8f0ff; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.section-title {
+  font-size: 1.2rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); color: white; }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); color: white; }
+.st-icon { font-size: 1.1rem; }
+.card {
+  background: var(--white); border-radius: var(--radius-sm); padding: 1rem 1.2rem;
+  margin: 0.7rem 0; border-left: 4px solid var(--gray-light); box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card-teal { border-left-color: var(--teal-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem; margin: 0.8rem 0;
+  position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-box strong { color: inherit; }
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f); color: white;
+  padding: 0.8rem 1.2rem; border-radius: var(--radius-sm); margin: 0.7rem 0;
+  font-size: 0.95rem; font-weight: 600; text-align: center;
+}
+.point-box { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-teal { background: linear-gradient(135deg, var(--teal-light), #fff); border: 2px solid #80cbc4; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.5rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.15em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+.scene {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center;
+}
+.scene-img { font-size: 3rem; margin-bottom: 0.3rem; }
+.scene-caption { font-size: 0.85rem; color: var(--gray-mid); }
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.9rem; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-teal th { background: var(--teal-main); color: white; }
+.tbl-teal tr:nth-child(even) { background: var(--teal-light); }
+.tbl-red th { background: var(--red-main); color: white; }
+.tbl-red tr:nth-child(even) { background: var(--red-light); }
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+.diagram {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram-title {
+  text-align: center; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;
+  padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0;
+}
+.dt-teal { color: var(--teal-dark); }
+.dt-blue { color: var(--blue-dark); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px; font-weight: 700;
+  font-size: 0.88rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); box-shadow: 0 2px 6px rgba(41,128,185,0.3); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); box-shadow: 0 2px 6px rgba(231,76,60,0.3); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); box-shadow: 0 2px 6px rgba(39,174,96,0.3); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); box-shadow: 0 2px 6px rgba(230,126,34,0.3); }
+.fb-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); box-shadow: 0 2px 6px rgba(26,188,156,0.3); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); box-shadow: 0 2px 6px rgba(142,68,173,0.3); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+.vs-box { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center; margin: 0.8rem 0; }
+.vs-side { background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center; box-shadow: var(--shadow); }
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+.quiz-item {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 1rem 0; border: 3px solid #e0e0e0; transition: border-color 0.3s;
+}
+.quiz-num {
+  display: inline-block; background: var(--teal-main); color: white; width: 28px; height: 28px;
+  border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px; font-size: 0.72rem;
+  font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-teal { background: var(--teal-main); }
+.qc-orange { background: var(--orange-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white; transition: all 0.2s; font-size: 0.9rem;
+}
+.quiz-options li:hover { border-color: var(--teal-main); background: var(--teal-light); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation {
+  display: none; margin-top: 0.7rem; padding: 0.8rem; border-radius: var(--radius-sm);
+  font-size: 0.88rem; line-height: 1.7;
+}
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score {
+  text-align: center; padding: 1rem; background: var(--teal-light); border-radius: var(--radius);
+  margin-top: 1rem; font-size: 1.1rem; font-weight: 700; color: var(--teal-dark); display: none;
+}
+.sim-step {
+  background: var(--white); border-radius: var(--radius); padding: 1rem 1.2rem;
+  margin: 0.6rem 0; box-shadow: var(--shadow); border-left: 5px solid var(--teal-main);
+}
+.sim-step-num {
+  display: inline-block; background: var(--teal-main); color: white; width: 26px; height: 26px;
+  border-radius: 50%; text-align: center; line-height: 26px; font-size: 0.8rem; font-weight: 700; margin-right: 0.4rem;
+}
+.story-box {
+  background: var(--white); border-radius: var(--radius); padding: 1.2rem;
+  margin: 0.8rem 0; box-shadow: var(--shadow); border-top: 4px solid var(--purple-main);
+}
+.story-title { font-size: 1rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.5rem; }
+.story-point {
+  background: #f3e5f5; border-radius: var(--radius-sm); padding: 0.8rem;
+  margin-top: 0.6rem; font-size: 0.88rem; line-height: 1.7;
+}
+/* Fill-in-the-blank */
+.fill-card { background: var(--white); border-radius: var(--radius); margin-bottom: 1rem; box-shadow: var(--shadow); overflow: hidden; }
+.fill-header { padding: 0.7rem 1rem; font-weight: 700; font-size: 0.95rem; color: white; display: flex; align-items: center; gap: 0.5rem; }
+.fill-body { padding: 1rem 1.2rem; }
+.fill-group { margin-bottom: 4px; font-size: 0.92rem; line-height: 2; }
+.fill-blank { display: inline-block; min-width: 90px; border-bottom: 2.5px solid #94a3b8; text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer; font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px; transition: all 0.25s; user-select: none; font-size: 0.92rem; }
+.fill-blank.show { color: #dc2626; background: #fef2f2; border-color: #dc2626; }
+.fill-reveal-btn { display: inline-block; background: var(--teal-main); color: white; border: none; border-radius: 8px; padding: 8px 18px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 8px; }
+.fill-reveal-btn:hover { opacity: 0.85; }
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+@media (max-width: 600px) {
+  .two-col, .three-col, .vs-box { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.68rem; padding: 0.7rem 0.5rem; flex: 0 0 auto; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 78%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<div class="header">
+  <h1>投資評価の現在価値</h1>
+  <div class="subtitle">中小企業診断士 財務・会計 | 「今の100万円」と「未来の100万円」は違う</div>
+  <div class="badge">全11タブ構成 &#x1F916; 4エージェント討議版</div>
+</div>
+
+<!-- ==================== TAB CONTAINER ==================== -->
+<div class="tab-container">
+  <!-- Tab Navigation (top) -->
+  <div class="tab-nav">
+    <button class="tab-btn active" data-color="red" onclick="switchTab(0)">&#x1F476; ゼロから理解</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(2)">&#x1F4D6; 基本事項</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x2B50; NPV法</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(4)">&#x1F4C8; IRR法</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">&#x23F1; 回収期間法</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(6)">&#x1F4CA; PI法</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴埋め</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(8)">&#x1F527; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(9)">&#x1F3AF; 事例クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(10)">&#x1F30D; 実例で学ぶ</button>
+  </div>
+
+  <!-- ==================== TAB 0: ゼロから理解 ==================== -->
+  <div class="tab-panel theme-red active" id="tab0">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F476; このタブで学ぶこと</h4>
+      <ul>
+        <li>基本事項に出てくる<strong>6つの専門用語</strong>を日常語で理解する</li>
+        <li>「利益」と「CF（手元のお金）」の違いを図で理解する</li>
+        <li>計算の仕組みを<strong>電卓で叩ける</strong>最小ステップで体験する</li>
+      </ul>
+    </div>
+
+    <!-- ① 用語辞書 -->
+    <div class="section-title st-red"><span class="st-icon">&#x1F4D6;</span> まず用語を日本語に翻訳しよう</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        基本事項タブを見たら、CF・NPV・IRR...知らない単語だらけで頭が真っ白に&#x2026;
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        大丈夫！全部<strong>日常語に翻訳</strong>できるよ。まずこの表を見て。
+      </div>
+    </div>
+
+    <table class="tbl-red">
+      <thead>
+        <tr><th style="width:28%;">専門用語</th><th style="width:32%;">日常語でいうと</th><th>ひとこと</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>CF</strong>（キャッシュフロー）</td><td>手元に残るお金</td><td>利益&#x2260;手元の現金</td></tr>
+        <tr><td><strong>割引率（r）</strong></td><td>お金の時間コスト</td><td>高い&#x2192;将来のお金の価値&#x2193;</td></tr>
+        <tr><td><strong>n</strong></td><td>何年後か</td><td>遠い未来ほど価値&#x2193;</td></tr>
+        <tr><td><strong>NPV</strong></td><td>「儲かるか」の判定値</td><td>プラス&#x2192;GO!</td></tr>
+        <tr><td><strong>減価償却費</strong></td><td>帳簿上だけの費用</td><td>実際にはお金が出ない</td></tr>
+        <tr><td><strong>資本コスト</strong></td><td>お金を借りるコスト</td><td>割引率に使う数字</td></tr>
+      </tbody>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        この6つだけ頭に入れれば、基本事項タブの公式が<strong>何の話をしているか</strong>わかるようになるよ。
+      </div>
+    </div>
+
+    <!-- ② 利益 vs CF -->
+    <div class="section-title st-red"><span class="st-icon">&#x1F4B5;</span> 「利益」と「CF」はなぜ違う？</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        利益が出てるのにお金がない、ってどういうこと？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        たとえば<strong>500万円の機械</strong>を買ったとする。お金は初日に500万円払う。でも帳簿では5年に分けて毎年100万円ずつ費用にする。これが<strong>減価償却</strong>だよ。
+      </div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--blue-main);">
+        <h4 style="color:var(--blue-dark);">&#x1F4D2; 帳簿（利益）</h4>
+        <p style="font-size:0.85rem;">売上 300万<br>&#x2212; 費用 100万<br>&#x2212; 減価償却 100万<br>＝ <strong>利益 100万</strong></p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:3px solid var(--green-main);">
+        <h4 style="color:var(--green-dark);">&#x1F4B0; 実際（CF）</h4>
+        <p style="font-size:0.85rem;">売上 300万<br>&#x2212; 費用 100万<br>（減価償却は支出なし）<br>＝ <strong>CF 200万</strong></p>
+      </div>
+    </div>
+
+    <div class="alert-box alert-tip">
+      <strong>だからCF ＝ 利益 ＋ 減価償却費</strong><br>
+      減価償却費は帳簿上の費用だけど実際にはお金が出ていない。だから利益に足し戻すと<strong>本当に手元に残ったお金</strong>がわかる。
+    </div>
+
+    <!-- ③ 累乗の計算 -->
+    <div class="section-title st-red"><span class="st-icon">&#x1F5A9;</span> (1+r)<sup>n</sup> を電卓で叩いてみよう</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        (1+r)<sup>n</sup> って数学っぽくて怖い&#x2026;
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        やってることは<strong>同じ数を何回かけるか</strong>だけ。電卓3回で終わるよ。
+      </div>
+    </div>
+
+    <div class="card card-red" style="border-left-color:var(--red-main);">
+      <h4>&#x1F4F1; 例：割引率5%、3年後の100万円の現在価値</h4>
+    </div>
+
+    <div class="sim-step" style="border-left-color:var(--red-main);">
+      <span class="sim-step-num" style="background:var(--red-main);">1</span>
+      <strong>1 + r を計算</strong><br>
+      1 + 0.05 ＝ <strong>1.05</strong>
+    </div>
+
+    <div class="sim-step" style="border-left-color:var(--red-main);">
+      <span class="sim-step-num" style="background:var(--red-main);">2</span>
+      <strong>n回かける（3年なら3回）</strong><br>
+      1.05 &#xD7; 1.05 &#xD7; 1.05 ＝ <strong>1.1576</strong>
+    </div>
+
+    <div class="sim-step" style="border-left-color:var(--red-main);">
+      <span class="sim-step-num" style="background:var(--red-main);">3</span>
+      <strong>将来の金額を割る</strong><br>
+      100万 &#xF7; 1.1576 ＝ <strong style="color:var(--red-dark); font-size:1.1rem;">86.4万円</strong>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        つまり<strong>3年後の100万円は、今の86.4万円と同じ価値</strong>。割引率が高いほど、年数が長いほど、現在価値は小さくなる。
+      </div>
+    </div>
+
+    <!-- ④ 減価償却の正体 -->
+    <div class="section-title st-red"><span class="st-icon">&#x1F3ED;</span> 減価償却費の正体</div>
+
+    <div class="diagram">
+      <div class="diagram-title" style="color:var(--red-dark);">&#x1F3ED; 500万円の機械を5年で使い切る場合</div>
+      <div class="flow-row">
+        <div class="flow-box fb-red">機械購入<small>500万円支出</small></div>
+        <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+        <div class="flow-box fb-orange">5年で分割<small>&#xF7; 5年</small></div>
+        <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+        <div class="flow-box fb-purple">毎年100万を費用に<small>帳簿上だけ</small></div>
+      </div>
+      <div style="text-align:center; margin:0.8rem 0; font-size:0.88rem; color:var(--gray-mid);">
+        &#x2B07;&#xFE0F; お金は初年度に払い済み。2年目以降はお金が出ない。<strong>だからCFに戻す</strong>。
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-red" style="text-align:center;">
+        <h4>&#x274C; よくある誤解</h4>
+        <p style="font-size:0.85rem;">「減価償却費100万 ＝ 毎年100万円が出ていく」</p>
+      </div>
+      <div class="card card-green" style="text-align:center;">
+        <h4>&#x2705; 正しい理解</h4>
+        <p style="font-size:0.85rem;">「お金は最初に払い済み。帳簿で毎年100万を費用にするだけ」</p>
+      </div>
+    </div>
+
+    <!-- ⑤ 基本事項への橋渡し -->
+    <div class="section-title st-red"><span class="st-icon">&#x1F6A9;</span> 基本事項タブに進む前のチェック</div>
+
+    <table class="tbl-red">
+      <thead>
+        <tr><th>チェック項目</th><th>OK？</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>CFは「手元に残るお金」で、利益とは違う</td><td style="text-align:center;">&#x2705;</td></tr>
+        <tr><td>(1+r)<sup>n</sup> は「同じ数をn回かける」だけ</td><td style="text-align:center;">&#x2705;</td></tr>
+        <tr><td>減価償却費は帳簿上の費用で、実際にはお金が出ない</td><td style="text-align:center;">&#x2705;</td></tr>
+        <tr><td>割引率 ＝ お金の時間コスト。高いほど現在価値は小さい</td><td style="text-align:center;">&#x2705;</td></tr>
+        <tr><td>NPVはプラスなら投資GO、マイナスならNG</td><td style="text-align:center;">&#x2705;</td></tr>
+      </tbody>
+    </table>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        全部&#x2705;がついたら、<strong>入門タブ</strong>で「なぜ割り引くのか」を学んで、そのあと<strong>基本事項タブ</strong>に進もう！
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 1: 入門 ==================== -->
+  <div class="tab-panel theme-blue" id="tab1">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F393; このタブで学ぶこと</h4>
+      <ul>
+        <li>今のお金と将来のお金はなぜ価値が違うのか</li>
+        <li>「割り引く」とは何か</li>
+        <li>企業が投資判断で使う理由</li>
+      </ul>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section-title st-blue"><span class="st-icon">&#x1F331;</span> まずはこれだけ &#x2014; 現在価値のキホン</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        現在価値って何ですか？100万円は100万円じゃないんですか？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        いい質問だね。じゃあ聞くよ。<strong>今もらえる100万円</strong>と<strong>1年後にもらえる100万円</strong>、どっちがうれしい？
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        そりゃ今でしょ！貯金すれば利息もつくし。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        その通り！それが<strong>「時間の価値」</strong>なんだ。1年後の100万円は、今の価値に直すと100万円より少なくなる。これが現在価値の基本的な考え方だよ。
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-img">&#x1F4B0; &#x27A1;&#xFE0F; &#x1F4B0;&#x2728;</div>
+      <div class="scene-caption">今の100万円 &#x2192;（年利5%で運用）&#x2192; 1年後105万円に！</div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section-title st-blue"><span class="st-icon">&#x1F381;</span> お年玉で考えてみよう</div>
+
+    <div class="card card-blue">
+      <h4>&#x1F9D3; おじいちゃんからの提案</h4>
+      <p>「今すぐ1万円あげる」 vs 「3年後に1万円あげる」&#x2014; どっちがいい？</p>
+      <p style="font-size:0.88rem; color:var(--gray-mid); margin-top:0.3rem;">もちろん今もらうほうがいい！その理由は3つ &#x2B07;&#xFE0F;</p>
+    </div>
+
+    <div class="three-col">
+      <div class="card card-blue" style="text-align:center;">
+        <h4>&#x2460; 利息がもらえない</h4>
+        <p style="font-size:0.85rem;">今もらえば銀行に預けて3年分の利息がつく</p>
+      </div>
+      <div class="card card-blue" style="text-align:center;">
+        <h4>&#x2461; 物価が上がるかも</h4>
+        <p style="font-size:0.85rem;">3年後にはお菓子の値段が上がっているかも</p>
+      </div>
+      <div class="card card-blue" style="text-align:center;">
+        <h4>&#x2462; 約束が破られるかも</h4>
+        <p style="font-size:0.85rem;">3年後に本当にもらえる保証はない（リスク）</p>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section-title st-blue"><span class="st-icon">&#x23F3;</span> 「現在価値」＝ 未来のお金を今に逆算すること</div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">&#x1F4B5; お金の時間旅行</div>
+      <div style="margin-bottom:1rem;">
+        <p style="text-align:center; font-weight:700; color:var(--blue-dark); margin-bottom:0.5rem;">&#x25B6; 増やす方向（複利計算）</p>
+        <div class="flow-row">
+          <div class="flow-box fb-blue">今の100万<small>現在</small></div>
+          <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+          <div class="flow-box fb-teal">利息で増やす<small>&#xD7;(1+r)</small></div>
+          <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+          <div class="flow-box fb-green">1年後105万<small>将来</small></div>
+        </div>
+      </div>
+      <div>
+        <p style="text-align:center; font-weight:700; color:var(--red-dark); margin-bottom:0.5rem;">&#x25C0; 割り引く方向（現在価値の計算）</p>
+        <div class="flow-row">
+          <div class="flow-box fb-orange">今の???万<small>現在価値</small></div>
+          <span class="flow-arrow">&#x2B05;&#xFE0F;</span>
+          <div class="flow-box fb-red">割り引く<small>&#xF7;(1+r)</small></div>
+          <span class="flow-arrow">&#x2B05;&#xFE0F;</span>
+          <div class="flow-box fb-purple">1年後100万<small>将来</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section-title st-blue"><span class="st-icon">&#x1F3ED;</span> 企業がこの計算を使う場面</div>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>&#x1F3ED; 工場の新しい機械</h4>
+        <p style="font-size:0.88rem;">500万円の機械を買って、5年間で毎年150万円の利益が出る。投資すべき？</p>
+      </div>
+      <div class="card card-teal">
+        <h4>&#x1F680; 新規事業への参入</h4>
+        <p style="font-size:0.88rem;">1,000万円を使って新事業を始める。3年後から利益が出始めるが、回収できる？</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        こういう場面で、将来の利益を<strong>単純に足し算してはダメ</strong>なんだ。将来の利益を<strong>現在価値に直してから</strong>比べる。これが投資評価の基本だよ。
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F4F1; スマホの分割払いでも同じ</h4>
+      <p style="font-size:0.88rem;">12万円のスマホ。「一括12万円」と「月々1,100円&#xD7;12回（合計13.2万円）」&#x2014; 分割が高いのは「今払わなくていい」という時間の価値の分だけ上乗せされているから。身近なところにも現在価値の考え方は使われている！</p>
+    </div>
+
+    <div class="alert-box alert-tip">
+      <strong>&#x1F3AF; 入門まとめ 3つのポイント</strong><br>
+      &#x2460; 今のお金のほうが将来のお金より価値が高い（時間の価値）<br>
+      &#x2461; 将来のお金を今の価値に直すことを「割り引く」という<br>
+      &#x2462; 企業は投資判断で必ず現在価値を使う
+    </div>
+  </div>
+
+  <!-- ==================== TAB 2: 基本事項 ==================== -->
+  <div class="tab-panel theme-teal" id="tab2">
+
+    <div class="point-box pb-teal">
+      <h4>&#x1F4D6; このタブで学ぶこと</h4>
+      <ul>
+        <li>PVの公式と年金現価係数</li>
+        <li>NPV法を中心とした4つの投資評価手法</li>
+        <li>税引後CF・埋没コスト・機会コストの扱い</li>
+      </ul>
+    </div>
+
+    <!-- Section 1: PV公式 -->
+    <div class="section-title st-teal"><span class="st-icon">&#x1F4D0;</span> PV（現在価値）の公式</div>
+
+    <div class="formula-box">
+      PV ＝ 将来の金額 &#xF7; (1 + r)<sup>n</sup>
+    </div>
+
+    <div class="card card-teal">
+      <h4>&#x1F4DD; 各記号の意味</h4>
+      <ul>
+        <li><strong>PV</strong>（Present Value）：現在価値</li>
+        <li><strong>r</strong>：割引率（年利）</li>
+        <li><strong>n</strong>：年数</li>
+      </ul>
+    </div>
+
+    <div class="card card-teal">
+      <h4>&#x1F4CB; 計算例</h4>
+      <p>3年後の100万円を年利5%で割り引く：</p>
+      <div class="formula-box">
+        PV = 100万 &#xF7; (1 + 0.05)<sup>3</sup> = 100万 &#xF7; 1.1576 &#x2248; <span style="color:#ffd700; font-size:1.1rem;">86.4万円</span>
+      </div>
+      <p style="font-size:0.85rem; color:var(--gray-mid);">&#x2192; 3年後の100万円は、今の86.4万円と同じ価値ということ</p>
+    </div>
+
+    <!-- Section 2: 年金現価係数 -->
+    <div class="section-title st-teal"><span class="st-icon">&#x1F4CA;</span> 年金現価係数</div>
+
+    <div class="card card-teal">
+      <h4>年金現価係数とは？</h4>
+      <p>毎年同じ金額のCF（キャッシュフロー）が入ってくる場合、それをまとめて割り引くための便利な係数。</p>
+      <div class="formula-box">
+        CFの現在価値合計 ＝ 毎年のCF &#xD7; 年金現価係数
+      </div>
+      <p style="font-size:0.85rem; margin-top:0.5rem;">例：毎年100万円 &#xD7; 5年 &#xD7; 割引率10% &#x2192; 年金現価係数 3.791 &#x2192; PV = 100万 &#xD7; 3.791 = 379.1万円</p>
+    </div>
+
+    <div class="alert-box alert-exam">
+      <strong>&#x2757; 試験で表が配られる！暗記不要！</strong><br>
+      年金現価係数は試験問題に表として添付されます。公式の暗記は不要。表の読み方（割引率と年数の交差点を読む）だけ練習しておきましょう。
+    </div>
+
+    <!-- Section 3: NPV法 -->
+    <div class="section-title st-teal"><span class="st-icon">&#x2B50;</span> NPV法（正味現在価値法）&#x2014; 最重要！</div>
+
+    <div class="formula-box">
+      NPV ＝ CFの現在価値合計 &#x2212; 初期投資額
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-teal">NPV計算の3ステップ</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">STEP 1<small>毎年のCFを求める</small></div>
+        <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+        <div class="flow-box fb-teal">STEP 2<small>CFを現在価値に割引</small></div>
+        <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+        <div class="flow-box fb-green">STEP 3<small>合計 &#x2212; 初期投資</small></div>
+      </div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border: 3px solid var(--green-main);">
+        <h4 style="color:var(--green-dark);">NPV &gt; 0</h4>
+        <p style="font-size:0.88rem;">&#x2705; 投資すべき！<br>投資額以上のリターンが得られる</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border: 3px solid var(--red-main);">
+        <h4 style="color:var(--red-dark);">NPV &#x2264; 0</h4>
+        <p style="font-size:0.88rem;">&#x274C; 投資すべきでない<br>投資額を回収できない</p>
+      </div>
+    </div>
+
+    <div class="card card-teal">
+      <h4>&#x1F4CB; NPV計算例</h4>
+      <p>初期投資500万円、毎年のCF150万円、5年間、割引率8%、年金現価係数3.993</p>
+      <div class="formula-box">
+        NPV = 150万 &#xD7; 3.993 &#x2212; 500万 = 599.0万 &#x2212; 500万 = <span style="color:#ffd700; font-size:1.1rem;">+99.0万円</span>
+      </div>
+      <p style="font-size:0.85rem; color:var(--green-dark);">&#x2192; NPV &gt; 0 なので投資すべき！</p>
+    </div>
+
+    <!-- Section 4: 4つの投資評価法 -->
+    <div class="section-title st-teal"><span class="st-icon">&#x1F4CA;</span> 4つの投資評価法</div>
+
+    <table class="tbl-teal">
+      <thead>
+        <tr><th>手法</th><th>判断基準</th><th>特徴</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>NPV法</strong><br>正味現在価値法</td><td>NPV &gt; 0 なら投資</td><td>最も理論的。金額で判断</td></tr>
+        <tr><td><strong>IRR法</strong><br>内部収益率法</td><td>IRR &gt; 資本コスト なら投資</td><td>NPV=0となる割引率。%で判断</td></tr>
+        <tr><td><strong>回収期間法</strong></td><td>目標期間内に回収できるか</td><td>簡単だが時間価値を無視</td></tr>
+        <tr><td><strong>PI法</strong><br>収益性指数法</td><td>PI &gt; 1 なら投資</td><td>CF現在価値 &#xF7; 初期投資</td></tr>
+      </tbody>
+    </table>
+
+    <div class="mnemonic">
+      <div class="big">NI回P</div>
+      <div class="desc">NPV &#x30FB; IRR &#x30FB; 回収期間 &#x30FB; PI &#x2014; 4つの投資評価法を覚えよう</div>
+    </div>
+
+    <!-- Section 5: 割引率 -->
+    <div class="section-title st-teal"><span class="st-icon">&#x1F4C9;</span> 割引率 ＝ 資本コスト</div>
+
+    <div class="card card-teal">
+      <p>割引率には通常<strong>資本コスト（WACC）</strong>を使う。企業が資金調達するために支払うコスト。</p>
+    </div>
+
+    <table class="tbl-teal">
+      <thead>
+        <tr><th>割引率</th><th>現在価値</th><th>意味</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>低い（3%）</td><td>大きい</td><td>将来のお金の価値があまり下がらない</td></tr>
+        <tr><td>高い（15%）</td><td>小さい</td><td>将来のお金の価値が大きく下がる</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert-box alert-danger">
+      <strong>割引率が高い ＝ ハイリスク</strong><br>
+      リスクの高い投資ほど高い割引率を使う &#x2192; 現在価値が小さくなる &#x2192; NPVが通りにくくなる
+    </div>
+
+    <!-- Section 6: 税引後CF -->
+    <div class="section-title st-teal"><span class="st-icon">&#x1F4B0;</span> 税引後キャッシュフロー</div>
+
+    <div class="formula-box">
+      税引後CF ＝ 税引後利益 ＋ 減価償却費
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-teal">税引後CFの計算フロー</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">売上<small>Revenue</small></div>
+        <span class="flow-arrow">&#x2212;</span>
+        <div class="flow-box fb-orange">費用<small>現金支出</small></div>
+        <span class="flow-arrow">&#x2212;</span>
+        <div class="flow-box fb-purple">減価償却費<small>非現金</small></div>
+        <span class="flow-arrow">&#x3D;</span>
+        <div class="flow-box fb-teal">税引前利益</div>
+      </div>
+      <div style="text-align:center; margin:0.5rem 0;">&#x2B07;&#xFE0F;</div>
+      <div class="flow-row">
+        <div class="flow-box fb-teal">税引前利益</div>
+        <span class="flow-arrow">&#x2212;</span>
+        <div class="flow-box fb-red">税金<small>&#xD7;税率</small></div>
+        <span class="flow-arrow">&#x3D;</span>
+        <div class="flow-box fb-green">税引後利益</div>
+        <span class="flow-arrow">&#x2B;</span>
+        <div class="flow-box fb-purple">減価償却費</div>
+        <span class="flow-arrow">&#x3D;</span>
+        <div class="flow-box fb-green" style="font-size:0.82rem;">税引後CF</div>
+      </div>
+    </div>
+
+    <!-- Section 7: タックスシールド -->
+    <div class="card card-teal">
+      <h4>&#x1F6E1;&#xFE0F; タックスシールド（税の節約効果）</h4>
+      <p>減価償却費は<strong>現金の支出はない</strong>のに費用として計上できるため、<strong>税金を減らす効果</strong>がある。</p>
+      <div class="formula-box">
+        タックスシールド ＝ 減価償却費 &#xD7; 税率
+      </div>
+      <p style="font-size:0.85rem; margin-top:0.5rem;">例：減価償却費100万 &#xD7; 税率30% = 30万円の節税。だから税引後CFに減価償却費を足し戻す。</p>
+    </div>
+
+    <!-- Section 8: 埋没コスト vs 機会コスト -->
+    <div class="section-title st-teal"><span class="st-icon">&#x26A0;&#xFE0F;</span> 埋没コスト vs 機会コスト</div>
+
+    <div class="two-col">
+      <div class="card card-red">
+        <h4>&#x274C; 埋没コスト（サンクコスト）</h4>
+        <p style="font-size:0.88rem;">すでに支払って<strong>取り返せない</strong>コスト。</p>
+        <p style="font-size:0.85rem; color:var(--red-dark); font-weight:700;">&#x2192; NPVに含めない！</p>
+        <p style="font-size:0.82rem; color:var(--gray-mid);">例：過去の市場調査費用</p>
+      </div>
+      <div class="card card-green">
+        <h4>&#x2705; 機会コスト</h4>
+        <p style="font-size:0.88rem;">他の選択肢を選んでいたら<strong>得られたはず</strong>の利益。</p>
+        <p style="font-size:0.85rem; color:var(--green-dark); font-weight:700;">&#x2192; NPVに含める！</p>
+        <p style="font-size:0.82rem; color:var(--gray-mid);">例：自社ビルを事業に使う場合の賃貸収入</p>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-teal">NPVに含めるもの・含めないもの</div>
+      <div class="flow-row">
+        <div class="flow-box fb-green">将来のCF<small>&#x2705; 含める</small></div>
+        <span class="flow-arrow">&#x2B;</span>
+        <div class="flow-box fb-green">機会コスト<small>&#x2705; 含める</small></div>
+        <span class="flow-arrow" style="color:var(--red-main);">&#x2716;</span>
+        <div class="flow-box fb-red">埋没コスト<small>&#x274C; 含めない</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 3: NPV法 ==================== -->
+  <div class="tab-panel theme-green" id="tab3">
+
+    <div class="point-box pb-green">
+      <h4>&#x2B50; このタブで学ぶこと</h4>
+      <ul>
+        <li>NPV法とは何か &#x2014; 一番大事な投資評価法</li>
+        <li>計算の手順を<strong>3ステップ</strong>で理解する</li>
+        <li>身近な例で「NPVがプラス＝得」を実感する</li>
+      </ul>
+    </div>
+
+    <div class="section-title st-green"><span class="st-icon">&#x2B50;</span> NPV法って何？</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        NPVってそもそも何の略？何をする計算なの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>Net Present Value（正味現在価値）</strong>の略。ひとことで言うと<strong>「この投資で儲かるか？」を1つの数字で判定する方法</strong>だよ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        たとえば君が<strong>たこ焼き屋台を30万円</strong>で買うとする。毎年<strong>12万円</strong>の利益が<strong>3年間</strong>出る見込み。割引率は5%。これ、買うべき？
+      </div>
+    </div>
+
+    <div class="section-title st-green"><span class="st-icon">&#x1F4DD;</span> 3ステップで計算してみよう</div>
+
+    <div class="sim-step">
+      <span class="sim-step-num" style="background:var(--green-main);">1</span>
+      <strong>将来のCFを現在価値に直す</strong><br>
+      毎年12万円 &#xD7; 3年 &#xD7; 割引率5%<br>
+      年金現価係数（5%, 3年）＝ <strong>2.723</strong><br>
+      12万 &#xD7; 2.723 ＝ <strong>32.7万円</strong>（将来の利益の「今の価値」）
+    </div>
+
+    <div class="sim-step">
+      <span class="sim-step-num" style="background:var(--green-main);">2</span>
+      <strong>初期投資を引く</strong><br>
+      32.7万 &#x2212; 30万 ＝ <strong style="color:var(--green-dark); font-size:1.1rem;">+2.7万円</strong>
+    </div>
+
+    <div class="sim-step">
+      <span class="sim-step-num" style="background:var(--green-main);">3</span>
+      <strong>判定する</strong><br>
+      NPV ＝ <strong>+2.7万円 ＞ 0</strong> &#x2192; &#x2705; <strong>買うべき！</strong>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--green-main);">
+        <h4 style="color:var(--green-dark);">NPV ＞ 0</h4>
+        <p style="font-size:0.88rem;">&#x2705; <strong>投資すべき</strong><br>「今の価値」に直しても初期投資より多い</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:3px solid var(--red-main);">
+        <h4 style="color:var(--red-dark);">NPV &#x2264; 0</h4>
+        <p style="font-size:0.88rem;">&#x274C; <strong>投資しない</strong><br>お金の時間コストを考えると元が取れない</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        NPVは<strong>「儲かる金額そのもの」</strong>を教えてくれる。プラス2.7万円なら、「時間の価値を考えても2.7万円分トクをする」という意味。だから<strong>試験で最も出る最重要手法</strong>！
+      </div>
+    </div>
+
+    <div class="alert-box alert-exam">
+      <strong>NPV法のまとめ</strong><br>
+      &#x2022; NPV ＝ CFの現在価値合計 &#x2212; 初期投資額<br>
+      &#x2022; プラスなら投資GO、マイナスならNG<br>
+      &#x2022; 複数案があるときは<strong>NPVが大きいほうを選ぶ</strong><br>
+      &#x2022; 4手法の中で<strong>最も理論的で試験に出やすい</strong>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 4: IRR法 ==================== -->
+  <div class="tab-panel theme-blue" id="tab4">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F4C8; このタブで学ぶこと</h4>
+      <ul>
+        <li>IRR法とは何か &#x2014; 「利回り」で判断する方法</li>
+        <li>NPV法との違いを図で理解する</li>
+        <li>試験では自分で計算する必要がほぼないこと</li>
+      </ul>
+    </div>
+
+    <div class="section-title st-blue"><span class="st-icon">&#x1F4C8;</span> IRR法って何？</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        IRRって何の略？ NPVとどう違うの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>Internal Rate of Return（内部収益率）</strong>の略。ひとことで言うと<strong>「この投資の利回りは何%？」を出す方法</strong>だよ。
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        銀行に預金するとき「年利0.1%」って言うでしょ？ IRRはそれと同じで、<strong>「この投資は年利何%に相当するか」を逆算した数字</strong>なんだ。
+      </div>
+    </div>
+
+    <div class="section-title st-blue"><span class="st-icon">&#x1F50D;</span> IRRの正体 ＝ NPV=0になる割引率</div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">IRRのイメージ</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">割引率を<br>少しずつ上げる</div>
+        <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+        <div class="flow-box fb-teal">NPVが<br>だんだん下がる</div>
+        <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+        <div class="flow-box fb-orange">NPV ＝ 0に<br>なった！</div>
+        <span class="flow-arrow">&#x27A1;&#xFE0F;</span>
+        <div class="flow-box fb-green">その割引率<br>＝ IRR</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        それでIRRが何%なら投資していいの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>IRR ＞ 資本コスト</strong>（お金を借りるコスト）なら投資OK！<br>
+        たとえば銀行の金利が5%で、投資のIRRが12%なら？ 借りて投資したほうが<strong>7%分トク</strong>するよね。
+      </div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--green-main);">
+        <h4 style="color:var(--green-dark);">IRR ＞ 資本コスト</h4>
+        <p style="font-size:0.88rem;">&#x2705; <strong>投資すべき</strong><br>例：IRR 12% ＞ 借入金利 5%</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:3px solid var(--red-main);">
+        <h4 style="color:var(--red-dark);">IRR &#x2264; 資本コスト</h4>
+        <p style="font-size:0.88rem;">&#x274C; <strong>投資しない</strong><br>例：IRR 3% &#x2264; 借入金利 5%</p>
+      </div>
+    </div>
+
+    <div class="section-title st-blue"><span class="st-icon">&#x2696;&#xFE0F;</span> NPV法 vs IRR法</div>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>&#x2B50; NPV法</h4>
+        <p style="font-size:0.85rem;"><strong>金額</strong>で答える<br>「この投資で○万円儲かる」</p>
+        <p style="font-size:0.82rem; color:var(--gray-mid);">社長に「いくら儲かる？」と聞かれたとき</p>
+      </div>
+      <div class="card card-blue">
+        <h4>&#x1F4C8; IRR法</h4>
+        <p style="font-size:0.85rem;"><strong>利率（%）</strong>で答える<br>「この投資は年利○%に相当する」</p>
+        <p style="font-size:0.82rem; color:var(--gray-mid);">銀行に「利回りは？」と聞かれたとき</p>
+      </div>
+    </div>
+
+    <div class="alert-box alert-exam">
+      <strong>IRR法のまとめ</strong><br>
+      &#x2022; IRR ＝ NPVが0になる割引率（＝投資の「利回り」）<br>
+      &#x2022; IRR ＞ 資本コスト なら投資GO<br>
+      &#x2022; 試験ではIRRは<strong>問題文で与えられる</strong>ことが多い。自分で計算する必要はほぼない<br>
+      &#x2022; NPV法と結論が食い違う場合は<strong>NPV法を優先</strong>する
+    </div>
+  </div>
+
+  <!-- ==================== TAB 5: 回収期間法 ==================== -->
+  <div class="tab-panel theme-orange" id="tab5">
+
+    <div class="point-box pb-orange">
+      <h4>&#x23F1; このタブで学ぶこと</h4>
+      <ul>
+        <li>回収期間法とは何か &#x2014; 最もシンプルな方法</li>
+        <li>計算は<strong>割り算1回</strong>で終わること</li>
+        <li>便利だけど<strong>弱点がある</strong>ことも知る</li>
+      </ul>
+    </div>
+
+    <div class="section-title st-orange"><span class="st-icon">&#x23F1;</span> 回収期間法って何？</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        NPVもIRRも公式があって大変&#x2026;もっと簡単な方法はないの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        あるよ！<strong>「投資したお金が何年で戻ってくるか」</strong>を計算するだけ。町の商店街のお店の社長さんがよく使う、一番シンプルな方法だよ。
+      </div>
+    </div>
+
+    <div class="formula-box">回収期間 ＝ 初期投資額 &#xF7; 毎年のCF</div>
+
+    <div class="section-title st-orange"><span class="st-icon">&#x1F4DD;</span> やってみよう &#x2014; 割り算1回で終わる</div>
+
+    <div class="card card-orange">
+      <h4>&#x1F35C; 例：ラーメン屋の自動券売機</h4>
+      <p>券売機 <strong>100万円</strong>。人件費が毎年 <strong>25万円</strong> 浮く。何年で元が取れる？</p>
+    </div>
+
+    <div class="sim-step" style="border-left-color:var(--orange-main);">
+      <span class="sim-step-num" style="background:var(--orange-main);">&#x2460;</span>
+      100万 &#xF7; 25万 ＝ <strong style="font-size:1.1rem;">4年</strong> &#x2192; 4年で元が取れる！
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        これは簡単！ でもさっきの時間の価値はどうなるの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        するどい！ そこが<strong>回収期間法の弱点</strong>なんだ。
+      </div>
+    </div>
+
+    <div class="section-title st-orange"><span class="st-icon">&#x26A0;&#xFE0F;</span> 便利だけど弱点が2つある</div>
+
+    <div class="two-col">
+      <div class="card card-red">
+        <h4>&#x274C; 弱点1：時間の価値を無視</h4>
+        <p style="font-size:0.85rem;">1年後の25万と4年後の25万を<strong>同じ価値として扱ってしまう</strong>。本当は遠い未来のお金ほど価値が低いのに。</p>
+      </div>
+      <div class="card card-red">
+        <h4>&#x274C; 弱点2：回収後の利益を無視</h4>
+        <p style="font-size:0.85rem;">「4年で回収」の後に<strong>何年利益が続くか</strong>を考えない。10年続くのと5年で終わるのでは大違い。</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        だから中小企業の現場では「直感的に判断」するとき便利だけど、試験では<strong>「回収期間法の限界は？」と問われる</strong>ことが多い。NPV法と組み合わせて使うのがベスト！
+      </div>
+    </div>
+
+    <div class="alert-box alert-exam">
+      <strong>回収期間法のまとめ</strong><br>
+      &#x2022; 回収期間 ＝ 初期投資 &#xF7; 年間CF（割り算1回！）<br>
+      &#x2022; 回収期間が<strong>目標年数以内</strong>なら投資OK<br>
+      &#x2022; 弱点：<strong>時間の価値を無視</strong>する／回収後の利益を無視する<br>
+      &#x2022; 中小企業の社長が直感で判断するときに使われる
+    </div>
+  </div>
+
+  <!-- ==================== TAB 6: PI法 ==================== -->
+  <div class="tab-panel theme-purple" id="tab6">
+
+    <div class="point-box" style="background:linear-gradient(135deg, var(--purple-light), #fff); border:2px solid #ce93d8;">
+      <h4>&#x1F4CA; このタブで学ぶこと</h4>
+      <ul>
+        <li>PI法とは何か &#x2014; 「効率」で順位をつける方法</li>
+        <li>NPV法との違いを理解する</li>
+        <li>「予算が限られているとき」に威力を発揮する理由</li>
+      </ul>
+    </div>
+
+    <div class="section-title st-purple"><span class="st-icon">&#x1F4CA;</span> PI法って何？</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        PI法って何の略？ NPVとどう違うの？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>Profitability Index（収益性指数）</strong>の略。ひとことで言うと<strong>「1円投資したら何円返ってくる？」</strong>という<strong>効率</strong>を見る方法だよ。
+      </div>
+    </div>
+
+    <div class="formula-box">PI ＝ CFの現在価値合計 &#xF7; 初期投資額</div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        たとえばPI ＝ 1.2 なら、<strong>1円投資するごとに1.2円返ってくる</strong>。0.2円分がトク。PI ＝ 0.8 なら1円投資して0.8円しか返らない。赤字。
+      </div>
+    </div>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--green-main);">
+        <h4 style="color:var(--green-dark);">PI ＞ 1</h4>
+        <p style="font-size:0.88rem;">&#x2705; <strong>投資すべき</strong><br>投資額以上が返ってくる</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:3px solid var(--red-main);">
+        <h4 style="color:var(--red-dark);">PI &#x2264; 1</h4>
+        <p style="font-size:0.88rem;">&#x274C; <strong>投資しない</strong><br>投資額分すら返ってこない</p>
+      </div>
+    </div>
+
+    <div class="section-title st-purple"><span class="st-icon">&#x1F3C6;</span> PI法が活躍する場面 ＝ 予算が限られているとき</div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F468;&#x200D;&#x1F4BC;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        NPVがプラスなら投資すべきなんでしょ？ PIが必要な場面ってある？
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        いい質問！ <strong>予算500万円しかない</strong>のに、2つの案があるケースを考えてみよう。
+      </div>
+    </div>
+
+    <table class="tbl-teal">
+      <thead>
+        <tr><th>案</th><th>初期投資</th><th>CFの現在価値</th><th>NPV</th><th>PI</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>A案</strong></td><td>500万</td><td>600万</td><td style="color:var(--green-dark);font-weight:700;">+100万</td><td><strong>1.20</strong></td></tr>
+        <tr><td><strong>B案</strong></td><td>200万</td><td>280万</td><td style="color:var(--green-dark);font-weight:700;">+80万</td><td><strong>1.40</strong></td></tr>
+      </tbody>
+    </table>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;&#x200D;&#x1F3EB;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        NPVだけ見ると<strong>A案（+100万）が上</strong>。でもB案は200万しか使わないから、<strong>残り300万で別の投資もできる</strong>。<strong>1円あたりの効率</strong>ではB案（PI=1.40）のほうが上。予算が限られているときはPIで<strong>効率の良い順にランキング</strong>するのが賢い！
+      </div>
+    </div>
+
+    <div class="alert-box alert-exam">
+      <strong>PI法のまとめ</strong><br>
+      &#x2022; PI ＝ CFの現在価値合計 &#xF7; 初期投資額<br>
+      &#x2022; PI ＞ 1 なら投資GO、PI &#x2264; 1 ならNG<br>
+      &#x2022; <strong>予算制約があるとき</strong>に効率の良い順に選ぶのに便利<br>
+      &#x2022; NPV法が「金額」、PI法が「効率」。見ている視点が違う
+    </div>
+  </div>
+
+  <!-- ==================== TAB 7: 穴埋めチェック ==================== -->
+  <div class="tab-panel theme-red" id="tab7">
+
+    <div class="section-title st-red"><span class="st-icon">&#x270D;&#xFE0F;</span> 穴埋めチェック &#x2014; 重要ポイントを確認しよう</div>
+
+    <p style="font-size:0.88rem; color:var(--gray-mid); margin-bottom:0.5rem;">&#x1F4A1; 空欄をクリックすると個別に答えが表示されます</p>
+
+    <div style="text-align:right; margin-bottom:1rem;">
+      <button class="fill-reveal-btn" onclick="revealAll()" style="margin-right:0.5rem;">全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAll()" style="background:var(--gray-mid);">リセット</button>
+    </div>
+
+    <!-- Section A: 入門の復習 -->
+    <div class="fill-card">
+      <div class="fill-header" style="background:linear-gradient(135deg, var(--blue-main), #3498db);">&#x1F476; Section A：入門の復習</div>
+      <div class="fill-body">
+        <div class="fill-group">Q1. 今の100万円と1年後の100万円では、<span class="fill-blank">今の100万円</span>のほうが価値が高い。</div>
+        <div class="fill-group">Q2. 将来のお金を今の価値に換算することを<span class="fill-blank">割り引く</span>という。</div>
+        <div class="fill-group">Q3. 将来のお金の価値が下がる理由は<span class="fill-blank">利息</span>・<span class="fill-blank">インフレ</span>・<span class="fill-blank">リスク</span>の3つ。</div>
+        <div class="fill-group">Q4. 未来のお金を今の価値に直したものを<span class="fill-blank">現在価値</span>という。</div>
+        <div class="fill-group">Q5. 投資判断では将来の利益を<span class="fill-blank">現在価値</span>に直してから比べる。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+
+    <!-- Section B: 基本事項の復習 -->
+    <div class="fill-card">
+      <div class="fill-header" style="background:linear-gradient(135deg, var(--teal-main), #48c9b0);">&#x1F4D6; Section B：基本事項の復習</div>
+      <div class="fill-body">
+        <div class="fill-group">Q1. PVの公式：PV ＝ 将来の金額 &#xF7; (1 + <span class="fill-blank">割引率</span>)のn乗</div>
+        <div class="fill-group">Q2. 割引率が高いほど、現在価値は<span class="fill-blank">小さく</span>なる。</div>
+        <div class="fill-group">Q3. 毎年同額のCFを一括で割り引くには<span class="fill-blank">年金現価係数</span>を使う。</div>
+        <div class="fill-group">Q4. 年金現価係数は試験で<span class="fill-blank">表</span>が配られるため暗記不要。</div>
+        <div class="fill-group">Q5. NPV ＝ CFの現在価値合計 &#x2212; <span class="fill-blank">初期投資額</span></div>
+        <div class="fill-group">Q6. NPVが<span class="fill-blank">プラス（正）</span>なら投資すべき。</div>
+        <div class="fill-group">Q7. NPV ＝ 0 となる割引率を<span class="fill-blank">IRR（内部収益率）</span>という。</div>
+        <div class="fill-group">Q8. 税引後CF ＝ 税引後利益 + <span class="fill-blank">減価償却費</span></div>
+        <div class="fill-group">Q9. すでに支払って取り返せないコストを<span class="fill-blank">埋没コスト</span>という。これはNPVに<span class="fill-blank">含めない</span>。</div>
+        <div class="fill-group">Q10. 他の選択肢で得られたはずの利益を<span class="fill-blank">機会コスト</span>という。これはNPVに<span class="fill-blank">含める</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 3: シミュレーション ==================== -->
+  <div class="tab-panel theme-green" id="tab8">
+
+    <div class="section-title st-green"><span class="st-icon">&#x1F527;</span> シミュレーション &#x2014; 実際に計算してみよう</div>
+
+    <!-- Case 1 -->
+    <div class="card card-green">
+      <h4>&#x1F35C; Case 1：ラーメン店「麺太郎」の製麺機導入</h4>
+    </div>
+
+    <div class="sim-step">
+      <p><strong>&#x1F4CB; 問題設定</strong></p>
+      <ul>
+        <li>製麺機の購入費用：<strong>300万円</strong></li>
+        <li>耐用年数：<strong>5年</strong>（定額法、残存価値ゼロ）</li>
+        <li>年間売上増加：<strong>120万円</strong></li>
+        <li>年間費用増加：<strong>30万円</strong></li>
+        <li>税率：<strong>30%</strong></li>
+        <li>割引率：<strong>6%</strong></li>
+        <li>年金現価係数（6%, 5年）：<strong>4.212</strong></li>
+      </ul>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">1</span><strong>減価償却費を求める</strong></p>
+      <div class="formula-box">300万 &#xF7; 5年 ＝ 60万円/年</div>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">2</span><strong>税引前利益を求める</strong></p>
+      <div class="formula-box">120万（売上増）&#x2212; 30万（費用増）&#x2212; 60万（減価償却）＝ 30万円</div>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">3</span><strong>税引後利益を求める</strong></p>
+      <div class="formula-box">30万 &#xD7; (1 &#x2212; 0.30) ＝ 21万円</div>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">4</span><strong>税引後CFを求める</strong></p>
+      <div class="formula-box">21万（税引後利益）＋ 60万（減価償却費）＝ 81万円/年</div>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">5</span><strong>NPVを求める</strong></p>
+      <div class="formula-box">NPV = 81万 &#xD7; 4.212 &#x2212; 300万 = 341.2万 &#x2212; 300万 = <span style="color:#ffd700; font-size:1.1rem;">+41.2万円</span></div>
+    </div>
+
+    <div class="alert-box alert-tip">
+      <strong>&#x2705; NPV = +41.2万円 &gt; 0 &#x2192; 投資すべき！</strong><br>
+      製麺機への投資は十分なリターンが期待できる。
+    </div>
+
+    <!-- Case 2 -->
+    <div class="card card-green" style="margin-top:2rem;">
+      <h4>&#x1F487; Case 2：美容室「BLOOM」のリニューアル vs 移転</h4>
+    </div>
+
+    <div class="sim-step">
+      <p><strong>&#x1F4CB; 問題設定</strong></p>
+      <div class="two-col">
+        <div class="card card-blue">
+          <h4>プランA：リニューアル</h4>
+          <ul>
+            <li>投資額：<strong>400万円</strong></li>
+            <li>年間CF：<strong>100万円</strong></li>
+            <li>5年間</li>
+          </ul>
+        </div>
+        <div class="card card-orange">
+          <h4>プランB：移転</h4>
+          <ul>
+            <li>投資額：<strong>800万円</strong></li>
+            <li>年間CF：<strong>210万円</strong></li>
+            <li>5年間</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:0.5rem;">割引率：<strong>8%</strong>、年金現価係数（8%, 5年）：<strong>3.993</strong></p>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">1</span><strong>プランAのNPV</strong></p>
+      <div class="formula-box">NPV(A) = 100万 &#xD7; 3.993 &#x2212; 400万 = 399.3万 &#x2212; 400万 = <span style="color:#ef9a9a;">&#x2212;0.7万円</span></div>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">2</span><strong>プランBのNPV</strong></p>
+      <div class="formula-box">NPV(B) = 210万 &#xD7; 3.993 &#x2212; 800万 = 838.5万 &#x2212; 800万 = <span style="color:#ffd700; font-size:1.1rem;">+38.5万円</span></div>
+    </div>
+
+    <div class="alert-box alert-tip">
+      <strong>&#x2705; プランBの移転を選ぶべき！</strong><br>
+      プランA（NPV=&#x2212;0.7万）は投資価値なし。プランB（NPV=+38.5万）のみ投資すべき。
+    </div>
+
+    <!-- Case 3 -->
+    <div class="card card-green" style="margin-top:2rem;">
+      <h4>&#x1F69A; Case 3：運送会社「はやて便」の新型トラック</h4>
+    </div>
+
+    <div class="sim-step">
+      <p><strong>&#x1F4CB; 問題設定</strong></p>
+      <ul>
+        <li>新型トラック購入費用：<strong>600万円</strong></li>
+        <li>旧トラック売却額：<strong>80万円</strong>（実質投資 = 600万 &#x2212; 80万 = 520万円）</li>
+        <li>年間コスト削減額：<strong>160万円</strong>（= CF）</li>
+        <li>耐用年数：<strong>5年</strong></li>
+        <li>割引率：<strong>10%</strong></li>
+        <li>年金現価係数（10%, 5年）：<strong>3.791</strong></li>
+      </ul>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">1</span><strong>実質投資額を求める</strong></p>
+      <div class="formula-box">600万 &#x2212; 80万（旧車売却）＝ 520万円</div>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">2</span><strong>CFの現在価値合計</strong></p>
+      <div class="formula-box">160万 &#xD7; 3.791 ＝ 606.6万円</div>
+    </div>
+
+    <div class="sim-step">
+      <p><span class="sim-step-num">3</span><strong>NPVを求める</strong></p>
+      <div class="formula-box">NPV = 606.6万 &#x2212; 520万（実質投資）＝ <span style="color:#ffd700; font-size:1.1rem;">+86.6万円</span></div>
+    </div>
+
+    <div class="alert-box alert-tip">
+      <strong>&#x2705; NPV = +86.6万円 &gt; 0 &#x2192; 買い替えすべき！</strong><br>
+      旧トラックの売却額を差し引いた実質投資に対して、十分なリターンが得られる。
+    </div>
+  </div>
+
+  <!-- ==================== TAB 4: 事例クイズ ==================== -->
+  <div class="tab-panel theme-orange" id="tab9">
+
+    <div class="section-title st-orange"><span class="st-icon">&#x1F3AF;</span> 事例クイズ &#x2014; 実戦力を鍛えよう</div>
+
+    <p style="font-size:0.88rem; color:var(--gray-mid); margin-bottom:1rem;">全8問。選択肢をクリックして解答してください。</p>
+
+    <!-- Q1: correct = C (idx 2) -->
+    <div class="quiz-item" id="q1">
+      <span class="quiz-num">1</span><span class="quiz-cat qc-blue">PV計算</span>
+      <div class="quiz-question">1年後にもらえる100万円の現在価値は？（割引率5%）</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q1',2)">
+        <li data-idx="0">A. 約100万円</li>
+        <li data-idx="1">B. 約90.7万円</li>
+        <li data-idx="2">C. 約95.2万円</li>
+        <li data-idx="3">D. 約105万円</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        PV = 100万 &#xF7; (1+0.05)<sup>1</sup> = 100万 &#xF7; 1.05 &#x2248; 95.24万円。将来の金額を(1+r)で割り引きます。
+      </div>
+    </div>
+
+    <!-- Q2: correct = A (idx 0) -->
+    <div class="quiz-item" id="q2">
+      <span class="quiz-num">2</span><span class="quiz-cat qc-teal">NPV</span>
+      <div class="quiz-question">たこ焼き屋が200万円の機械を導入。毎年80万円のCFが3年間。割引率10%、年金現価係数2.487。NPVは？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q2',0)">
+        <li data-idx="0">A. &#x2212;1.0万円（投資すべきでない）</li>
+        <li data-idx="1">B. +40万円（投資すべき）</li>
+        <li data-idx="2">C. +98.7万円（投資すべき）</li>
+        <li data-idx="3">D. &#x2212;50万円（投資すべきでない）</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        NPV = 80万 &#xD7; 2.487 &#x2212; 200万 = 199.0万 &#x2212; 200万 = &#x2212;1.0万円。NPV &lt; 0 なので投資すべきでない。ギリギリですが、数字はシビアに判断します。
+      </div>
+    </div>
+
+    <!-- Q3: correct = D (idx 3) -->
+    <div class="quiz-item" id="q3">
+      <span class="quiz-num">3</span><span class="quiz-cat qc-red">埋没コスト</span>
+      <div class="quiz-question">花屋が新規出店を検討。すでに50万円で市場調査を実施済み。NPV計算に市場調査費用は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q3',3)">
+        <li data-idx="0">A. 初期投資に加える</li>
+        <li data-idx="1">B. 毎年のCFから差し引く</li>
+        <li data-idx="2">C. 割引率に上乗せする</li>
+        <li data-idx="3">D. 含めない（埋没コスト）</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        すでに支払って取り返せない費用は<strong>埋没コスト（サンクコスト）</strong>。NPVの計算には含めません。「もったいない」という感情に引っ張られないことが重要。
+      </div>
+    </div>
+
+    <!-- Q4: correct = B (idx 1) -->
+    <div class="quiz-item" id="q4">
+      <span class="quiz-num">4</span><span class="quiz-cat qc-green">税引後CF</span>
+      <div class="quiz-question">パン屋が新オーブン導入。売上増200万、費用増80万、減価償却費40万、税率30%。税引後CFは？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q4',1)">
+        <li data-idx="0">A. 84万円</li>
+        <li data-idx="1">B. 96万円</li>
+        <li data-idx="2">C. 120万円</li>
+        <li data-idx="3">D. 56万円</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        税引前利益 = 200万 &#x2212; 80万 &#x2212; 40万 = 80万<br>
+        税金 = 80万 &#xD7; 0.30 = 24万<br>
+        税引後利益 = 80万 &#x2212; 24万 = 56万<br>
+        税引後CF = 56万 + 40万（減価償却費）= <strong>96万円</strong>
+      </div>
+    </div>
+
+    <!-- Q5: correct = A (idx 0) -->
+    <div class="quiz-item" id="q5">
+      <span class="quiz-num">5</span><span class="quiz-cat qc-teal">IRR</span>
+      <div class="quiz-question">ある投資案のIRRが12%、資本コストが8%。この投資は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q5',0)">
+        <li data-idx="0">A. 行うべき（IRR &gt; 資本コスト）</li>
+        <li data-idx="1">B. 行うべきでない（IRR &lt; 資本コスト）</li>
+        <li data-idx="2">C. 情報不足で判断できない</li>
+        <li data-idx="3">D. IRRだけでは判断できない</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        IRR（12%）が資本コスト（8%）を上回っているので投資すべき。IRR &gt; 資本コスト のとき NPV &gt; 0 となります。
+      </div>
+    </div>
+
+    <!-- Q6: correct = C (idx 2) -->
+    <div class="quiz-item" id="q6">
+      <span class="quiz-num">6</span><span class="quiz-cat qc-blue">年金現価係数</span>
+      <div class="quiz-question">割引率が上がると、年金現価係数はどうなる？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q6',2)">
+        <li data-idx="0">A. 大きくなる</li>
+        <li data-idx="1">B. 変わらない</li>
+        <li data-idx="2">C. 小さくなる</li>
+        <li data-idx="3">D. 年数による</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        割引率が高い &#x2192; 将来のCFがより大きく割り引かれる &#x2192; 現在価値が小さくなる &#x2192; <strong>年金現価係数も小さくなる</strong>。
+      </div>
+    </div>
+
+    <!-- Q7: correct = D (idx 3) -->
+    <div class="quiz-item" id="q7">
+      <span class="quiz-num">7</span><span class="quiz-cat qc-orange">回収期間法</span>
+      <div class="quiz-question">初期投資600万円、毎年のCF150万円。回収期間は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q7',3)">
+        <li data-idx="0">A. 3年</li>
+        <li data-idx="1">B. 3.5年</li>
+        <li data-idx="2">C. 5年</li>
+        <li data-idx="3">D. 4年</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        回収期間 = 初期投資 &#xF7; 毎年のCF = 600万 &#xF7; 150万 = <strong>4年</strong>。回収期間法は時間価値を考慮しないシンプルな手法です。
+      </div>
+    </div>
+
+    <!-- Q8: correct = B (idx 1) -->
+    <div class="quiz-item" id="q8">
+      <span class="quiz-num">8</span><span class="quiz-cat qc-green">機会コスト</span>
+      <div class="quiz-question">自社倉庫（年100万円で賃貸可能）を新事業に使う場合、この賃貸収入はNPV計算で？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event,'q8',1)">
+        <li data-idx="0">A. 無視する</li>
+        <li data-idx="1">B. コストとして含める（機会コスト）</li>
+        <li data-idx="2">C. 収入として加える</li>
+        <li data-idx="3">D. 埋没コストなので含めない</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        自社倉庫を事業に使うことで失われる賃貸収入100万円/年は<strong>機会コスト</strong>。NPV計算ではコスト（CFのマイナス）として含める必要があります。
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+  </div>
+
+  <!-- ==================== TAB 5: 実例で学ぶ ==================== -->
+  <div class="tab-panel theme-purple" id="tab10">
+
+    <div class="section-title st-purple"><span class="st-icon">&#x1F30D;</span> 実例で学ぶ &#x2014; ニュースで見る現在価値</div>
+
+    <!-- Story 1 -->
+    <div class="story-box">
+      <div class="story-title">&#x1F48A; 武田薬品のシャイヤー買収（2019年）</div>
+      <p>武田薬品工業は約<strong>6.8兆円</strong>という日本企業最大の買収を実施。この巨額の判断には<strong>NPV法・DCF法</strong>が活用されました。</p>
+      <div class="story-point">
+        <strong>&#x1F4A1; 学びのポイント：</strong>シャイヤーが将来生み出すCFを割り引いて現在価値を計算し、買収価格が妥当かどうかを評価。数兆円規模の意思決定でも、基本はNPV法と同じ「将来のCFを割り引いて比較する」考え方。
+      </div>
+    </div>
+
+    <!-- Story 2 -->
+    <div class="story-box">
+      <div class="story-title">&#x2708;&#xFE0F; コンコルドの失敗 &#x2014; 埋没コストの罠</div>
+      <p>英仏が共同開発した超音速旅客機コンコルド。開発費が膨らみ続けたが、「ここまで投資したのだから」と撤退できず、最終的に商業的に失敗。</p>
+      <div class="story-point">
+        <strong>&#x1F4A1; 学びのポイント：</strong>「コンコルドの誤り」は<strong>埋没コスト</strong>に引きずられる典型例。すでに使った開発費は取り返せない。NPVの判断では過去のコストは無視し、「今からの将来CF」だけで判断すべき。
+      </div>
+    </div>
+
+    <!-- Story 3 -->
+    <div class="story-box">
+      <div class="story-title">&#x2615; スターバックス日本進出（1996年）</div>
+      <p>スターバックスが日本1号店を銀座に出店。当時「日本人はコーヒーにそんな高い金を払わない」と言われたが、綿密な投資評価を行い進出を決定。</p>
+      <div class="story-point">
+        <strong>&#x1F4A1; 学びのポイント：</strong><strong>NPV法＋回収期間法</strong>の組み合わせで判断。1店舗あたりの初期投資に対して、将来のCFを保守的に見積もっても十分なNPVがあると判断。海外展開の投資評価の成功事例。
+      </div>
+    </div>
+
+    <!-- Story 4 -->
+    <div class="story-box">
+      <div class="story-title">&#x1F4F1; ソフトバンクのARM買収（2016年）</div>
+      <p>孫正義氏率いるソフトバンクが英ARMを約<strong>3.3兆円</strong>で買収。当時のARMの利益規模からは「高すぎる」との声が多かった。</p>
+      <div class="story-point">
+        <strong>&#x1F4A1; 学びのポイント：</strong><strong>IRR的な発想</strong>で将来の成長を大きく見込んだ投資。IoT時代にARMのチップ設計が爆発的に普及すると予測し、将来CFを非常に高く見積もった。割引率の設定と将来予測が投資判断を大きく左右する実例。
+      </div>
+    </div>
+
+    <!-- Story 5 -->
+    <div class="story-box">
+      <div class="story-title">&#x1F370; 町のケーキ屋の設備投資</div>
+      <p>地方のケーキ屋が300万円のオーブンを導入するか検討。銀行の融資担当に「回収期間は？」と聞かれた。</p>
+      <div class="story-point">
+        <strong>&#x1F4A1; 学びのポイント：</strong>中小企業では<strong>回収期間法</strong>がよく使われる。計算が簡単で直感的にわかりやすいため。ただし時間価値を無視する弱点がある。診断士としては、NPV法と併用することを提案できると理想的。
+      </div>
+    </div>
+
+    <div class="alert-box alert-tip">
+      <strong>&#x1F393; 実例から学ぶ共通点</strong><br>
+      規模が6.8兆円でも300万円でも、「将来のCFを見積もり、現在価値に直して比較する」という考え方は同じ。試験では小規模な事例が多いが、本質は実際のビジネスと同じです。
+    </div>
+  </div>
+
+  <!-- Tab Navigation (bottom) -->
+  <div class="tab-nav" style="border-radius:0 0 var(--radius) var(--radius); margin-top:-1px;">
+    <button class="tab-btn active" data-color="red" onclick="switchTab(0)">&#x1F476; ゼロから理解</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(2)">&#x1F4D6; 基本事項</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(3)">&#x2B50; NPV法</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(4)">&#x1F4C8; IRR法</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">&#x23F1; 回収期間法</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(6)">&#x1F4CA; PI法</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴埋め</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(8)">&#x1F527; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(9)">&#x1F3AF; 事例クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(10)">&#x1F30D; 実例で学ぶ</button>
+  </div>
+</div>
+
+<div class="footer">財務・会計 投資評価の現在価値 学習まとめ</div>
+
+<script>
+function switchTab(idx) {
+  var numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) { b.classList.toggle('active', i % numTabs === idx); });
+  document.querySelectorAll('.tab-panel').forEach(function(p, i) { p.classList.toggle('active', i === idx); });
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+var answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  var li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  var idx = parseInt(li.dataset.idx);
+  var expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    var s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '\u554F\u4E2D ' + correct + '\u554F\u6B63\u89E3\uFF01' + (correct === total ? ' \u30D1\u30FC\u30D5\u30A7\u30AF\u30C8\uFF01' : correct >= 6 ? ' \u3044\u3044\u8ABF\u5B50\uFF01' : ' \u3082\u3046\u4E00\u56DE\u5FA9\u7FD2\u3057\u3088\u3046\uFF01');
+  }
+}
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('fill-blank')) {
+    e.target.classList.toggle('show');
+  }
+});
+function revealBlanks(el) {
+  var card = el.closest('.fill-card');
+  card.querySelectorAll('.fill-blank').forEach(function(b) { b.classList.add('show'); });
+  el.textContent = '\u2705 \u8868\u793A\u6E08\u307F';
+  el.disabled = true;
+  el.style.opacity = '.5';
+}
+function revealAll() {
+  var tab = document.querySelector('.tab-panel.active');
+  tab.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  tab.querySelectorAll('.fill-reveal-btn').forEach(function(b){ b.textContent = '\u2705 \u8868\u793A\u6E08\u307F'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAll() {
+  var tab = document.querySelector('.tab-panel.active');
+  tab.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  tab.querySelectorAll('.fill-reveal-btn').forEach(function(b){ b.innerHTML = '\uD83D\uDC41 \u7B54\u3048\u3092\u898B\u308B'; b.disabled = false; b.style.opacity = '1'; });
+}
+</script>
+</body>
+</html>

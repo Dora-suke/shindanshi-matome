@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>損益分岐点分析（CVP分析） - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef;
+  --teal-dark: #0e6655; --teal-main: #1abc9c; --teal-light: #d1f2eb; --teal-bg: #e8f8f5;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange-main) 50%, var(--orange-light) 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem;
+}
+.agent-discussion { max-width: 920px; margin: 1rem auto; padding: 0 0.8rem; }
+.agent-discussion-title {
+  text-align: center; font-size: 0.85rem; font-weight: 700; color: var(--gray-mid);
+  margin-bottom: 0.8rem; padding: 0.5rem; background: rgba(255,255,255,0.7);
+  border-radius: var(--radius); border: 1px dashed var(--gray-light);
+}
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-pm { background: linear-gradient(135deg, #5c6bc0, #3949ab); }
+.avatar-planner { background: linear-gradient(135deg, #26a69a, #00897b); }
+.avatar-creator { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-critic { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before { content: ''; position: absolute; top: 14px; width: 0; height: 0; border: 8px solid transparent; }
+.bubble-wrap:not(.right) .bubble-body::before { left: -14px; border-right-color: var(--white); }
+.bubble-wrap.right .bubble-body::before { right: -14px; border-left-color: var(--white); }
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-body.b-purple { background: #f3e5f5; border: 1px solid #ce93d8; }
+.bubble-body.b-purple::before { border-right-color: #f3e5f5; }
+.bubble-body.b-teal { background: #e0f2f1; border: 1px solid #80cbc4; }
+.bubble-body.b-teal::before { border-right-color: #e0f2f1; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-wrap.right .bubble-body.b-purple::before { border-right-color: transparent; border-left-color: #f3e5f5; }
+.bubble-wrap.right .bubble-body.b-teal::before { border-right-color: transparent; border-left-color: #e0f2f1; }
+.bubble-body strong { color: #e65100; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+.tab-container { max-width: 920px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; gap: 0; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow);
+}
+.tab-btn {
+  flex: 1; min-width: 0; padding: 0.85rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.78rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn[data-color="teal"] { color: var(--teal-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active[data-color="teal"] { border-bottom-color: var(--teal-main); background: var(--teal-light); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+.tab-panel.theme-teal { background: var(--teal-bg); }
+.tab-panel.theme-purple { background: #f8f0ff; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.section-title {
+  font-size: 1.2rem; font-weight: 800; margin: 1.5rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); color: white; }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); color: white; }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); color: white; }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; }
+.st-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); color: white; }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); color: white; }
+.st-icon { font-size: 1.1rem; }
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card-teal { border-left-color: var(--teal-main); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+.alert-box strong { color: inherit; }
+.vs-box { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center; margin: 0.8rem 0; }
+.vs-side { background: var(--white); border-radius: var(--radius); padding: 1rem; text-align: center; box-shadow: var(--shadow); }
+.vs-side h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.vs-mid { font-size: 1.5rem; font-weight: 800; color: var(--gray-mid); text-align: center; }
+.diagram { background: var(--white); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto; }
+.diagram-title { text-align: center; font-weight: 700; font-size: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed #e0e0e0; }
+.dt-blue { color: var(--blue-dark); }
+.dt-red { color: var(--red-dark); }
+.dt-green { color: var(--green-dark); }
+.dt-teal { color: var(--teal-dark); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box { color: white; padding: 0.6rem 1.1rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; text-align: center; min-width: 70px; }
+.flow-box small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); box-shadow: 0 2px 6px rgba(41,128,185,0.3); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); box-shadow: 0 2px 6px rgba(231,76,60,0.3); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); box-shadow: 0 2px 6px rgba(39,174,96,0.3); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); box-shadow: 0 2px 6px rgba(230,126,34,0.3); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); box-shadow: 0 2px 6px rgba(142,68,173,0.3); }
+.fb-teal { background: linear-gradient(135deg, var(--teal-main), #48c9b0); box-shadow: 0 2px 6px rgba(26,188,156,0.3); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.88rem; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) { background: var(--green-light); }
+.tbl-red th { background: var(--red-main); color: white; }
+.tbl-red tr:nth-child(even) { background: var(--red-light); }
+.tbl-teal th { background: var(--teal-main); color: white; }
+.tbl-teal tr:nth-child(even) { background: var(--teal-light); }
+.tbl-orange th { background: var(--orange-main); color: white; }
+.tbl-orange tr:nth-child(even) { background: var(--orange-pale); }
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.8rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 0.95rem; font-weight: 600; text-align: center;
+}
+.point-box { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-teal { background: linear-gradient(135deg, var(--teal-light), #fff); border: 2px solid #80cbc4; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #ce93d8; }
+.point-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.2rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.5rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.15em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+.scene { background: var(--white); border-radius: var(--radius); padding: 1.2rem; margin: 0.8rem 0; box-shadow: var(--shadow); text-align: center; }
+.scene-row { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+.scene-caption { font-size: 0.85rem; color: var(--gray-mid); }
+.quiz-item { background: var(--white); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0; transition: border-color 0.3s; }
+.quiz-num { display: inline-block; background: var(--orange-main); color: white; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
+.quiz-cat { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle; }
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-teal { background: var(--teal-main); }
+.qc-orange { background: var(--orange-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li { padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm); cursor: pointer; border: 2px solid #e0e0e0; background: white; transition: all 0.2s; font-size: 0.9rem; }
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation { display: none; margin-top: 0.7rem; padding: 0.8rem; border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7; }
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score { text-align: center; padding: 1rem; background: var(--orange-pale); border-radius: var(--radius); margin-top: 1rem; font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none; }
+.sim-company { background: var(--white); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); border-top: 4px solid var(--green-main); }
+.sim-company h3 { font-size: 1rem; font-weight: 800; color: var(--green-dark); margin-bottom: 0.5rem; }
+.sim-data { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.5rem 0; }
+.sim-data-item { background: var(--gray-pale); border-radius: var(--radius-sm); padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+.sim-data-item .sim-label { font-weight: 700; color: var(--gray-mid); font-size: 0.75rem; }
+.sim-data-item .sim-value { font-weight: 800; color: var(--gray-dark); font-size: 1.1rem; }
+.sim-result { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid var(--green-main); border-radius: var(--radius); padding: 1rem; margin-top: 0.8rem; }
+.story-card { background: var(--white); border-radius: var(--radius); padding: 1.5rem; margin: 1rem 0; box-shadow: var(--shadow-lg); border-top: 5px solid var(--purple-main); }
+.story-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.3rem; }
+.story-card .story-meta { font-size: 0.78rem; color: var(--gray-mid); margin-bottom: 0.8rem; padding-bottom: 0.5rem; border-bottom: 1px dashed #e0e0e0; }
+.story-card .story-body { font-size: 0.9rem; line-height: 1.8; }
+.story-point { background: #fff3e0; border-radius: var(--radius-sm); padding: 0.8rem; margin-top: 0.8rem; border-left: 4px solid var(--orange-main); }
+.story-point strong { color: var(--orange-dark); }
+/* ===== Fill-in Check ===== */
+.fill-card { background: var(--white); border-radius: var(--radius); margin-bottom: 1rem; box-shadow: var(--shadow); overflow: hidden; }
+.fill-card .fill-header { padding: 0.6rem 0.9rem; font-weight: 700; font-size: 0.92rem; color: #fff; }
+.fill-card .fill-body { padding: 0.8rem 1rem; }
+.fill-blank {
+  display: inline-block; min-width: 80px; border-bottom: 2.5px solid #94a3b8;
+  text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: 0.9rem;
+}
+.fill-blank.show { color: #dc2626 !important; background: #fef2f2 !important; border-color: #dc2626 !important; }
+.fill-reveal-btn {
+  display: inline-block; background: #1a365d; color: #fff; border: none;
+  border-radius: 8px; padding: 6px 14px; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; margin-top: 6px; font-family: inherit;
+}
+.fill-reveal-btn:hover { background: #2a4a7f; }
+.fill-group { margin-bottom: 4px; font-size: 0.9rem; line-height: 2; }
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+@media (max-width: 600px) {
+  .two-col, .vs-box, .sim-data { grid-template-columns: 1fr; }
+  .vs-mid { transform: rotate(90deg); }
+  .tab-btn { font-size: 0.68rem; padding: 0.7rem 0.3rem; }
+  .header h1 { font-size: 1.4rem; }
+  .bubble-body { max-width: 78%; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>損益分岐点分析（CVP分析）</h1>
+  <div class="subtitle">中小企業診断士 財務・会計 | 固定費・変動費・限界利益</div>
+  <div class="badge">全6タブ構成 &#x1F916; 4エージェント議論形式</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="red" onclick="switchTab(0)">&#x1F476; ゼロから理解</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F530; 入門</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(2)">&#x1F4D7; 基本事項</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(3)">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(4)">&#x1F3EA; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">&#x270F;&#xFE0F; 事例クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(6)">&#x1F4F0; 実例で学ぶ</button>
+  </nav>
+
+  <!-- ==================== TAB 0: ゼロから理解 (RED) ==================== -->
+  <div class="tab-panel active theme-red" id="tab0">
+
+    <div class="point-box pb-red">
+      <h4>&#x1F476; このタブで学ぶこと</h4>
+      <ul>
+        <li>「売上」「費用」「利益」の<strong>お金の流れ</strong></li>
+        <li>費用を<strong>2つに分ける理由</strong></li>
+        <li>お弁当屋さんの数字で<strong>全公式を体験</strong></li>
+      </ul>
+    </div>
+
+    <!-- ===== 1. お金の流れ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4B0;</span> まず3つの言葉だけ覚えよう</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        「売上高」「費用」「利益」ってよく聞くけど、違いがわからない...
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        お小遣い帳で考えてみよう。<strong>もらったお金 &#x2212; 使ったお金 ＝ 残ったお金</strong>。これだけ！
+      </div>
+    </div>
+
+    <!-- 図1：お金の流れフロー -->
+    <div class="diagram">
+      <div class="diagram-title dt-red">お金の流れ ＝ たった3つ</div>
+      <div style="display:flex; flex-direction:column; gap:4px; max-width:400px; margin:0 auto; align-items:center;">
+        <div class="flow-box fb-blue" style="width:90%;">&#x1F4B0; 売上高<small>お客さんからもらった全額</small></div>
+        <div style="font-size:1.2rem; color:var(--red-main); font-weight:700;">&#x2B07; ここから費用を引く</div>
+        <div class="flow-box fb-red" style="width:70%;">&#x1F4B8; 費用<small>お店を動かすのにかかったお金</small></div>
+        <div style="font-size:1.2rem; color:var(--green-main); font-weight:700;">&#x2B07; 残ったのが</div>
+        <div class="flow-box fb-green" style="width:50%;">&#x2728; 利益<small>手元に残ったもうけ</small></div>
+      </div>
+      <div style="text-align:center; margin-top:0.5rem; font-size:0.85rem; color:var(--gray-mid);">売上 &#x2212; 費用 ＝ 利益。お小遣い帳と同じ！</div>
+    </div>
+
+    <!-- ===== 2. なぜ2つに分ける？ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x2753;</span> なぜ費用を2つに分けるの？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        費用は費用でしょ？なんでわざわざ分けるの？全部まとめて「経費」じゃダメ？
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        分けると<strong>「あといくら売れば赤字じゃなくなるか」が計算できる</strong>ようになるんだ。これが損益分岐点分析の一番の目的！
+      </div>
+    </div>
+
+    <!-- 図2：分ける vs 分けない 比較図 -->
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--gray-light);">
+        <h4 style="color:var(--gray-mid);">&#x274C; 分けない場合</h4>
+        <p style="font-size:0.85rem;">「経費が500万かかった」</p>
+        <p style="font-size:0.78rem;color:var(--gray-mid);margin-top:0.3rem;">&#x2192; で、何をどうすれば<br>黒字になるの？<br><strong>わからない...</strong></p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:3px solid var(--green-main);">
+        <h4 style="color:var(--green-main);">&#x2B55; 分ける場合</h4>
+        <p style="font-size:0.85rem;">「固定費300万、変動費200万」</p>
+        <p style="font-size:0.78rem;color:var(--gray-mid);margin-top:0.3rem;">&#x2192; 固定費300万を回収するには<br>あと○○万売ればいい！<br><strong>具体的に計算できる！</strong></p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F5BC;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        家計で例えると、<strong>固定費＝家賃・スマホ代</strong>（毎月決まって出ていく）。<strong>変動費＝食費・交際費</strong>（使った分だけ出ていく）。分けると「最低いくら稼げば生活できるか」が見えるよね！
+      </div>
+    </div>
+
+    <!-- ===== 3. 日常例で理解 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F371;</span> お弁当屋さんの1日で全部わかる</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F5BC;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">図解さん</div>
+        お弁当屋「まごころ」の1日の数字を使って、用語を全部つなげてみよう！
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-red">&#x1F371; お弁当屋「まごころ」の1日</div>
+      <div style="max-width:450px; margin:0 auto;">
+        <div style="background:var(--gray-pale); border-radius:8px; padding:0.8rem; margin-bottom:0.5rem;">
+          <div style="font-size:0.88rem;">
+            &#x1F371; お弁当1個 <strong>500円</strong>で販売<br>
+            &#x1F4E6; 材料費（変動費）は1個 <strong>200円</strong><br>
+            &#x1F3E0; 家賃+光熱費（固定費）は1日 <strong>6,000円</strong><br>
+            &#x1F4C5; 今日は <strong>30個</strong> 売れた！
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 4. 用語まとめ ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x1F4D6;</span> 5つの基本用語</h2>
+
+    <table class="tbl-red">
+      <tr><th style="width:28%;">用語</th><th>意味</th><th style="width:28%;">お弁当屋では</th></tr>
+      <tr><td><strong>売上高</strong></td><td>お客さんからもらった全額</td><td>500円 &#xD7; 30個 ＝ <strong>15,000円</strong></td></tr>
+      <tr><td><strong>変動費</strong></td><td>売れた分だけかかるお金</td><td>200円 &#xD7; 30個 ＝ <strong>6,000円</strong></td></tr>
+      <tr><td><strong>固定費</strong></td><td>売上ゼロでもかかるお金</td><td>家賃+光熱費 ＝ <strong>6,000円</strong></td></tr>
+      <tr><td><strong>限界利益</strong></td><td>売上から変動費を引いた残り</td><td>15,000 &#x2212; 6,000 ＝ <strong>9,000円</strong></td></tr>
+      <tr><td><strong>営業利益</strong></td><td>限界利益から固定費を引いた残り</td><td>9,000 &#x2212; 6,000 ＝ <strong>3,000円</strong></td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F476;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        「限界利益」って、要するに<strong>「1個売るごとに固定費を返せる力」</strong>ってことか！お弁当1個で300円ずつ返してるんだね。
+      </div>
+    </div>
+
+    <!-- ===== 5. いちばん簡単な計算 ===== -->
+    <h2 class="section-title st-red"><span class="st-icon">&#x270F;&#xFE0F;</span> お弁当屋で全公式を体験！</h2>
+
+    <!-- 計算ステップ1 -->
+    <div class="card card-orange">
+      <h4>Step 1 &#x1F4B0; 限界利益率を出す</h4>
+      <div style="font-size:0.88rem;">
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">限界利益（1個）＝ 500円 &#x2212; 200円 ＝ 300円</div>
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">限界利益率 ＝ 300 &#xF7; 500 ＝ <strong>60%</strong></div>
+        <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">&#x2192; 売上100円のうち60円が固定費の回収に使える！</div>
+      </div>
+    </div>
+
+    <!-- 計算ステップ2 -->
+    <div class="card card-blue">
+      <h4>Step 2 &#x1F3AF; 損益分岐点売上高を出す</h4>
+      <div style="font-size:0.88rem;">
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">固定費 &#xF7; 限界利益率 ＝ 6,000 &#xF7; 0.6</div>
+        <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">＝ <strong>10,000円</strong>（お弁当20個分）売れば赤字にならない！</div>
+      </div>
+    </div>
+
+    <!-- 計算ステップ3 -->
+    <div class="card card-green">
+      <h4>Step 3 &#x1F6E1; 安全余裕率を出す</h4>
+      <div style="font-size:0.88rem;">
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">（15,000 &#x2212; 10,000）&#xF7; 15,000 &#xD7; 100</div>
+        <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">＝ <strong>約33%</strong> &#x2192; あと33%売上が落ちても赤字にならない余裕あり！</div>
+      </div>
+    </div>
+
+    <!-- 計算ステップ4 -->
+    <div class="card card-purple">
+      <h4>Step 4 &#x1F4B5; 目標利益5,000円を出すには？</h4>
+      <div style="font-size:0.88rem;">
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">（固定費 ＋ 目標利益）&#xF7; 限界利益率 ＝（6,000 ＋ 5,000）&#xF7; 0.6</div>
+        <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">＝ <strong>約18,333円</strong>（お弁当37個）売れば目標達成！</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        できた！ぜんぶ<strong>同じお弁当屋の数字</strong>で計算できたよね。公式は難しそうに見えるけど、やってることは「割り算」だけ。この感覚をつかんだら入門タブに進もう！
+      </div>
+    </div>
+
+    <div class="alert-exam">
+      <strong>ここまでのまとめ</strong><br>
+      &#x2022; 売上 &#x2212; 費用 ＝ 利益（<strong>お小遣い帳と同じ</strong>）<br>
+      &#x2022; 費用を固定費と変動費に分けると<strong>「あといくらで黒字か」が計算できる</strong><br>
+      &#x2022; 限界利益 ＝ 売上 &#x2212; 変動費（<strong>1個売るごとに固定費を返す力</strong>）<br>
+      &#x2022; 損益分岐点売上高 ＝ 固定費 &#xF7; 限界利益率<br>
+      &#x2022; 安全余裕率 ＝ あと何%下がったら赤字か<br>
+      &#x2022; 目標利益 ＝ 固定費に目標を足して割るだけ
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 1: 入門 (BLUE) ==================== -->
+  <div class="tab-panel theme-blue" id="tab1">
+
+    <div class="point-box pb-blue">
+      <h4>&#x1F530; このタブのゴール</h4>
+      <p><strong>「あといくら売れば赤字じゃなくなる？」</strong>これが損益分岐点。最低限の3つだけ覚えよう。</p>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x2753;</span> そもそも損益分岐点って？</h2>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">受験生</div>
+        損益分岐点って何？
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        <strong>売上と費用がちょうど同じになるポイント</strong>。ここを超えれば黒字、下回れば赤字。
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">損益分岐点 ＝ 赤字と黒字の境目</div>
+      <div style="display:flex; align-items:center; justify-content:center; gap:0.5rem; flex-wrap:wrap;">
+        <div class="flow-box fb-red" style="min-width:100px;">&#x1F4C9; 赤字<small>売上 ＜ 費用</small></div>
+        <div class="flow-arrow" style="color:var(--gray-mid);">&#x2190;</div>
+        <div class="flow-box fb-orange" style="min-width:140px; font-size:0.95rem;">&#x1F3AF; 損益分岐点<small>売上 ＝ 費用<br>利益ゼロ</small></div>
+        <div class="flow-arrow" style="color:var(--gray-mid);">&#x2192;</div>
+        <div class="flow-box fb-green" style="min-width:100px;">&#x1F4C8; 黒字<small>売上 ＞ 費用</small></div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">&#x1F9D1;</div>
+      <div class="bubble-body b-blue">
+        <div class="bubble-name">新人くん</div>
+        でも、お店の費用って色々あるよね？材料費、家賃、バイト代...どう整理すればいいの？
+      </div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        じつは費用はたった<strong>2種類</strong>に分けるだけ！「売上がゼロでもかかる？」で判断するよ。
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4B0;</span> 費用は2種類だけ</h2>
+
+    <div class="vs-box">
+      <div class="vs-side" style="border:3px solid var(--red-main);">
+        <h4 style="color:var(--red-main);">&#x1F3E0; 固定費</h4>
+        <p style="font-size:0.88rem;"><strong>売上ゼロでもかかるお金</strong></p>
+        <p style="font-size:0.8rem;color:var(--gray-mid);">家賃・正社員の給料・保険料</p>
+        <p style="font-size:0.78rem;margin-top:0.3rem;">お客さんが来なくても<br>毎月払うもの</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:3px solid var(--blue-main);">
+        <h4 style="color:var(--blue-main);">&#x1F4E6; 変動費</h4>
+        <p style="font-size:0.88rem;"><strong>売れた分だけかかるお金</strong></p>
+        <p style="font-size:0.8rem;color:var(--gray-mid);">材料費・仕入原価・販売手数料</p>
+        <p style="font-size:0.78rem;margin-top:0.3rem;">売上が増えるほど<br>比例して増えるもの</p>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">回転寿司で考えてみよう</div>
+        &#x1F363; <strong>固定費</strong>：レーンの設備費、店舗家賃、正社員の給料 → お客ゼロでもかかる<br>
+        &#x1F363; <strong>変動費</strong>：ネタ（魚）の仕入、醤油・わさび、持ち帰り容器 → 注文が増えた分だけかかる
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title dt-blue">損益分岐点 ＝ バケツの水がちょうど溢れるポイント</div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem;">
+        <div style="font-size:0.85rem; color:var(--gray-mid);">売上（蛇口から水が入る）&#x1F6B0;</div>
+        <div style="font-size:1.3rem;">&#x2B07;&#xFE0F;</div>
+        <div style="background:var(--blue-light); border:3px solid var(--blue-main); border-radius:0 0 12px 12px; padding:0.6rem 1.5rem; text-align:center; min-width:200px;">
+          <div style="font-weight:800; color:var(--blue-dark);">&#x1FAA3; バケツ＝固定費</div>
+          <div style="font-size:0.78rem;">まずバケツ（固定費）を<br>いっぱいにしないと溢れない</div>
+        </div>
+        <div style="font-size:0.85rem; color:var(--green-main); font-weight:700;">&#x2B07; バケツが溢れた ＝ 損益分岐点を超えた ＝ 黒字！</div>
+      </div>
+      <div style="text-align:center; margin-top:0.5rem; font-size:0.82rem; color:var(--gray-mid);">水（限界利益）でバケツ（固定費）を満たすイメージ。バケツが大きいほど溢れにくい＝損益分岐点が高い</div>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x2B50;</span> 3つの公式だけ覚えよう</h2>
+
+    <div class="card card-green">
+      <h4>&#x2460; 限界利益 ＝ 売上から変動費を引いた残り</h4>
+      <div class="formula-box">限界利益 ＝ 売上高 &#x2212; 変動費</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">ラーメン1杯800円、材料費300円 → 限界利益は<strong>500円</strong>。この500円で固定費を回収する。</p>
+      <p style="font-size:0.82rem;color:var(--gray-mid);margin-top:0.2rem;">&#x1F4A1; 「限界」は怖い意味じゃなく、<strong>「1個追加で売ったときに増える利益」</strong>という経済学の用語だよ。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ②の公式で使う<strong>限界利益率</strong>は、限界利益を売上高で割ったもの。「売上100円のうち何円が固定費回収に使えるか」の割合だよ。
+      </div>
+    </div>
+
+    <div class="card card-orange">
+      <h4>&#x2461; 損益分岐点売上高 ＝ 固定費を限界利益率で割る</h4>
+      <div class="formula-box">損益分岐点売上高 ＝ 固定費 &#xF7; 限界利益率</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">限界利益率 ＝ 限界利益 &#xF7; 売上高。ラーメン屋なら 500&#xF7;800 ＝ <strong>62.5%</strong>。</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x2462; 安全余裕率 ＝ どれだけ余裕があるか</h4>
+      <div class="formula-box">安全余裕率 ＝（売上高 &#x2212; 損益分岐点売上高）&#xF7; 売上高 &#xD7; 100</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">「あと何%売上が落ちたら赤字か」を示す。<strong>高いほど安全</strong>。</p>
+    </div>
+
+    <div class="card card-purple">
+      <h4>&#x2463; 目標利益を出すには？</h4>
+      <div class="formula-box">目標利益達成売上高 ＝（固定費 ＋ 目標利益）&#xF7; 限界利益率</div>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.3rem;">損益分岐点の公式の固定費に<strong>「ほしい利益」を足すだけ</strong>。映画でいうと「制作費（固定費）＋目標興行収入（利益）を、1枚あたりの儲け率で割る」。</p>
+    </div>
+
+    <div class="alert-tip">
+      <strong>入門まとめ</strong><br>
+      &#x2022; 損益分岐点 ＝ <strong>赤字と黒字の境目</strong>（利益ゼロの売上高）<br>
+      &#x2022; 費用は<strong>固定費</strong>（売上ゼロでもかかる）と<strong>変動費</strong>（売れた分だけかかる）の2つ<br>
+      &#x2022; 限界利益 ＝ <strong>売上 &#x2212; 変動費</strong>（固定費を回収する力）<br>
+      &#x2022; 損益分岐点売上高 ＝ <strong>固定費 &#xF7; 限界利益率</strong><br>
+      &#x2022; 安全余裕率 ＝ <strong>あと何%下がったら赤字か</strong>（高いほど安全）<br>
+      &#x2022; 目標利益を出したいとき ＝ <strong>（固定費＋目標利益）&#xF7; 限界利益率</strong>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: 基本事項 (GREEN) ==================== -->
+  <div class="tab-panel theme-green" id="tab2">
+
+    <div class="point-box pb-green">
+      <h4>&#x1F4D7; このタブで学ぶこと</h4>
+      <ul>
+        <li><strong>固定費と変動費</strong>の分類と代表的な勘定科目</li>
+        <li>限界利益・変動費率・限界利益率の<strong>関係</strong></li>
+        <li>損益分岐点売上高・安全余裕率・経営レバレッジの<strong>公式と使い方</strong></li>
+      </ul>
+    </div>
+
+    <!-- 固定費 vs 変動費 -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4CA;</span> 固定費 vs 変動費 ― 勘定科目の分類</h2>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-creator">&#x270D;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">作成エージェント</div>
+        勘定科目が出たら<strong>「売上がゼロでもかかる？」</strong>と自問しよう。Yesなら固定費、Noなら変動費！
+      </div>
+    </div>
+
+    <table class="tbl-green">
+      <tr><th style="width:15%;">分類</th><th style="width:40%;">代表的な勘定科目</th><th>覚え方</th></tr>
+      <tr><td style="color:var(--red-main);font-weight:700;">固定費</td><td>家賃、減価償却費、正社員給与、保険料、リース料、固定資産税</td><td>お店を<strong>閉めても</strong>かかる</td></tr>
+      <tr><td style="color:var(--blue-main);font-weight:700;">変動費</td><td>材料費、仕入原価、外注費、販売手数料、運送費、歩合給</td><td>売上に<strong>比例</strong>して増減する</td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">判定のコツ</div>
+        迷ったら「<strong>お客さんが1人も来ない月</strong>を想像」しよう。<br>
+        家賃 → 払う → <strong>固定費</strong><br>
+        材料費 → 買わない → <strong>変動費</strong><br>
+        電気代 → 基本料金は固定、使用量は変動 → <strong>準固定費</strong>（試験では問題文の指示に従う）
+      </div>
+    </div>
+
+    <!-- 公式体系 -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F522;</span> 公式の全体像</h2>
+
+    <div class="diagram">
+      <div class="diagram-title dt-green">CVP分析の公式マップ</div>
+      <div style="display:flex; flex-direction:column; gap:0.5rem; align-items:center;">
+        <div class="flow-box fb-blue" style="width:85%;">売上高<small>お客さんからもらった全額</small></div>
+        <div style="font-size:1.2rem; color:var(--red-main);">&#x2B07; 変動費を引く</div>
+        <div class="flow-box fb-green" style="width:70%;">限界利益 ＝ 売上高 &#x2212; 変動費<small>固定費を回収する力</small></div>
+        <div style="font-size:1.2rem; color:var(--red-main);">&#x2B07; 固定費を引く</div>
+        <div class="flow-box fb-orange" style="width:55%;">営業利益 ＝ 限界利益 &#x2212; 固定費<small>最終的なもうけ</small></div>
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>&#x1F4CA; 変動費率と限界利益率</h4>
+      <div class="formula-box">変動費率 ＝ 変動費 &#xF7; 売上高</div>
+      <div class="formula-box">限界利益率 ＝ 限界利益 &#xF7; 売上高 ＝ 1 &#x2212; 変動費率</div>
+      <p style="font-size:0.85rem;margin-top:0.3rem;">変動費率と限界利益率は<strong>足すと必ず1（100%）</strong>になる。片方がわかればもう片方は引き算で出せる！</p>
+    </div>
+
+    <!-- 100%バー図 -->
+    <div class="diagram">
+      <div class="diagram-title dt-green">変動費率 + 限界利益率 ＝ 必ず100%</div>
+      <div style="max-width:450px; margin:0 auto;">
+        <div style="display:flex; height:40px; border-radius:8px; overflow:hidden; box-shadow:var(--shadow);">
+          <div style="flex:4; background:linear-gradient(135deg, var(--red-main), #e57373); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.82rem;">変動費率 40%</div>
+          <div style="flex:6; background:linear-gradient(135deg, var(--green-main), #2ecc71); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.82rem;">限界利益率 60%</div>
+        </div>
+        <div style="text-align:center; font-size:0.78rem; color:var(--gray-mid); margin-top:0.3rem;">&#x1F4A1; 片方が分かれば、もう片方は <strong>100% &#x2212; ○○%</strong> で出せる！</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">料理で考えると</div>
+        1,000円のハンバーグ定食を作るとき、材料費400円（変動費率40%）。残り600円（限界利益率60%）が家賃・人件費の回収に回る。<strong>材料費が安ければ安いほど、限界利益率は高くなる</strong>！
+      </div>
+    </div>
+
+    <div class="alert-danger">
+      <strong>限界利益 vs 限界利益率 ― 混同注意！</strong><br>
+      &#x2022; <strong>限界利益</strong> ＝ 金額（円）。売上 &#x2212; 変動費<br>
+      &#x2022; <strong>限界利益率</strong> ＝ 割合（%）。限界利益 &#xF7; 売上高<br>
+      損益分岐点の公式で使うのは<strong>「率」のほう</strong>！
+    </div>
+
+    <!-- 損益分岐点売上高 -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3AF;</span> 損益分岐点売上高</h2>
+
+    <div class="card card-orange">
+      <h4>&#x1F3AF; 損益分岐点売上高の公式</h4>
+      <div class="formula-box">損益分岐点売上高 ＝ 固定費 &#xF7; 限界利益率</div>
+      <p style="font-size:0.85rem;margin-top:0.3rem;">利益がちょうどゼロになる売上高。これより売上が多ければ黒字、少なければ赤字。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">なぜこの公式で出るの？</div>
+        限界利益率が60%なら、売上100円ごとに60円が固定費の回収に使える。固定費が600万円なら、600万 &#xF7; 0.6 ＝ <strong>1,000万円</strong>売ればちょうど回収完了！
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">&#x1F468;</div>
+      <div class="bubble-body b-orange">
+        <div class="bubble-name">先生</div>
+        ECサイトで考えると、商品原価（変動費）500円のものを1,000円で売る。限界利益率50%。サーバー代（固定費）が月10万円なら、BEP ＝ 10万 &#xF7; 0.5 ＝ <strong>月20万円</strong>の売上で黒字だ。
+      </div>
+    </div>
+
+    <!-- BEP改善の2ルート -->
+    <div class="diagram">
+      <div class="diagram-title dt-green">損益分岐点を下げるには？（2つのルート）</div>
+      <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+        <div style="background:var(--red-light); border:2px solid var(--red-main); border-radius:8px; padding:0.8rem; text-align:center; min-width:180px;">
+          <div style="font-weight:800; color:var(--red-dark);">ルート&#x2460; 固定費を下げる</div>
+          <div style="font-size:0.78rem; margin-top:0.3rem;">家賃交渉、人員適正化<br>リースの見直し</div>
+          <div style="font-size:0.75rem; color:var(--gray-mid); margin-top:0.2rem;">&#x2192; 公式の分子が小さくなる</div>
+        </div>
+        <div style="background:var(--green-light); border:2px solid var(--green-main); border-radius:8px; padding:0.8rem; text-align:center; min-width:180px;">
+          <div style="font-weight:800; color:var(--green-dark);">ルート&#x2461; 限界利益率を上げる</div>
+          <div style="font-size:0.78rem; margin-top:0.3rem;">値上げ、仕入コスト削減<br>高付加価値化</div>
+          <div style="font-size:0.75rem; color:var(--gray-mid); margin-top:0.2rem;">&#x2192; 公式の分母が大きくなる</div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:0.5rem; font-size:0.82rem; font-weight:700; color:var(--green-dark);">どちらも結果は同じ：損益分岐点売上高が下がる！</div>
+    </div>
+
+    <div class="card card-blue">
+      <h4>&#x1F4B0; 目標利益を達成する売上高</h4>
+      <div class="formula-box">目標利益達成売上高 ＝（固定費 ＋ 目標利益）&#xF7; 限界利益率</div>
+      <p style="font-size:0.85rem;margin-top:0.3rem;">損益分岐点の公式で固定費に<strong>目標利益を足すだけ</strong>！「利益ゼロ ＋ 目標分を上乗せ」と考えよう。</p>
+    </div>
+
+    <!-- 安全余裕率 -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F6E1;</span> 安全余裕率</h2>
+
+    <div class="card card-teal">
+      <h4>&#x1F6E1; 安全余裕率の公式</h4>
+      <div class="formula-box">安全余裕率 ＝（売上高 &#x2212; 損益分岐点売上高）&#xF7; 売上高 &#xD7; 100</div>
+      <p style="font-size:0.85rem;margin-top:0.3rem;">「あと何%売上が落ちたら赤字になるか」を示す指標。<strong>高いほど安全</strong>。</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">引っかけ注意</div>
+        安全余裕率の分母は<strong>「実際の売上高」</strong>！損益分岐点売上高で割るのは間違い。試験でよく出る引っかけです。
+      </div>
+    </div>
+
+    <!-- 経営レバレッジ -->
+    <h2 class="section-title st-green"><span class="st-icon">&#x2696;</span> 経営レバレッジ係数</h2>
+
+    <div class="card card-purple">
+      <h4>&#x2696; 経営レバレッジ係数</h4>
+      <div class="formula-box">経営レバレッジ係数 ＝ 限界利益 &#xF7; 営業利益</div>
+      <p style="font-size:0.85rem;margin-top:0.3rem;">「売上が1%変わると、利益が何%変わるか」を示す。<strong>固定費が大きい会社ほど高くなる</strong>。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">身近な例え</div>
+        固定費が大きい＝<strong>ジェットコースター経営</strong>。売上が少し増えれば利益がドカンと増えるが、売上が少し減ると利益もドカンと減る。固定費が小さい＝<strong>ゆりかご経営</strong>。ゆっくり安定。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">スポーツで考えると</div>
+        &#x26BD; サッカーで<strong>守備（固定費）にお金をかけすぎた</strong>チーム。1点取れば大勝ちだけど、無得点なら大敗。これが<strong>高レバレッジ</strong>。バランス型チーム（固定費小）は勝ちも負けも小さい。
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>安全余裕率と経営レバレッジ係数の関係</strong><br>
+      経営レバレッジ係数 ＝ <strong>1 &#xF7; 安全余裕率</strong>（安全余裕率は小数で計算）<br>
+      つまり安全余裕率が低い会社ほどレバレッジが高い＝リスクが大きい！<br>
+      &#x1F4A1; 安全余裕率20%（0.2）なら → レバレッジ＝1&#xF7;0.2＝<strong>5倍</strong>。売上1%変動→利益5%変動！
+    </div>
+
+    <div class="alert-exam">
+      <strong>試験頻出ポイントまとめ</strong><br>
+      &#x2022; 変動費率 + 限界利益率 ＝ <strong>1（100%）</strong><br>
+      &#x2022; 損益分岐点売上高 ＝ <strong>固定費 &#xF7; 限界利益率</strong><br>
+      &#x2022; 安全余裕率の分母 ＝ <strong>実際の売上高</strong>（損益分岐点ではない！）<br>
+      &#x2022; 経営レバレッジ ＝ <strong>限界利益 &#xF7; 営業利益</strong> ＝ <strong>1 &#xF7; 安全余裕率</strong><br>
+      &#x1F4DA; 過去問：<strong>R6-12、R5-12、R4-22、R3-11</strong>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 3: 穴埋めチェック ==================== -->
+<div class="tab-panel theme-red" id="tab3">
+
+  <h2 class="section-title st-red"><span class="st-icon">&#x270D;&#xFE0F;</span> 穴埋めチェック</h2>
+
+  <div style="background:var(--white);border-radius:var(--radius);padding:0.7rem;margin-bottom:0.8rem;box-shadow:var(--shadow);">
+    <p style="font-size:0.9rem;line-height:1.7;">入門・基本事項の重要ポイントを穴埋めで総チェック！<br>各穴をクリックしても答えが出るよ。</p>
+  </div>
+
+  <div style="text-align:right;margin-bottom:0.8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFill()" style="background:#059669;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAllFill()" style="background:#64748b;">&#x1F504; リセット</button>
+  </div>
+
+  <!-- Q1: 費用の分類 -->
+  <div class="fill-card">
+    <div class="fill-header st-red">Q1. 費用の2分類</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x2460; <span class="fill-blank">固定費</span> ＝ 売上がゼロでもかかる費用（例：家賃、減価償却費、正社員給与）<br>&#x2461; <span class="fill-blank">変動費</span> ＝ 売上に比例して増減する費用（例：材料費、仕入原価、外注費）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q2: 基本公式 -->
+  <div class="fill-card">
+    <div class="fill-header st-blue">Q2. 基本の公式</div>
+    <div class="fill-body">
+      <div class="fill-group">限界利益 ＝ <span class="fill-blank">売上高</span> − <span class="fill-blank">変動費</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">限界利益率 ＝ 限界利益 ÷ <span class="fill-blank">売上高</span> ＝ 1 − <span class="fill-blank">変動費率</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q3: 限界利益と限界利益率 -->
+  <div class="fill-card">
+    <div class="fill-header st-blue">Q3. 限界利益 vs 限界利益率</div>
+    <div class="fill-body">
+      <div class="fill-group">限界利益 ＝ <span class="fill-blank">金額</span>（円）<br>限界利益率 ＝ <span class="fill-blank">割合</span>（%）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">損益分岐点の公式で使うのは<span class="fill-blank">限界利益率</span>（割合のほう）！</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q4: 損益分岐点売上高 -->
+  <div class="fill-card">
+    <div class="fill-header st-green">Q4. 損益分岐点売上高</div>
+    <div class="fill-body">
+      <div class="fill-group">損益分岐点売上高 ＝ <span class="fill-blank">固定費</span> ÷ <span class="fill-blank">限界利益率</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">損益分岐点を下げるには2つのルートがある：<br>&#x2460; <span class="fill-blank">固定費</span>を減らす（分子↓）<br>&#x2461; <span class="fill-blank">限界利益率</span>を上げる（分母↑）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q5: 安全余裕率 -->
+  <div class="fill-card">
+    <div class="fill-header st-green">Q5. 安全余裕率</div>
+    <div class="fill-body">
+      <div class="fill-group">安全余裕率 ＝ （<span class="fill-blank">売上高</span> − <span class="fill-blank">損益分岐点売上高</span>）÷ <span class="fill-blank">売上高</span> × 100</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">注意：分母は損益分岐点売上高ではなく<span class="fill-blank">実際の売上高</span>！<br>（試験のひっかけポイント！）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q6: 目標利益達成売上高 -->
+  <div class="fill-card">
+    <div class="fill-header st-green">Q6. 目標利益達成売上高</div>
+    <div class="fill-body">
+      <div class="fill-group">目標利益達成売上高 ＝ （<span class="fill-blank">固定費</span> + <span class="fill-blank">目標利益</span>）÷ <span class="fill-blank">限界利益率</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">損益分岐点の公式の分子に<span class="fill-blank">目標利益</span>を足すだけ！</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q7: 経営レバレッジ係数 -->
+  <div class="fill-card">
+    <div class="fill-header st-teal">Q7. 経営レバレッジ係数</div>
+    <div class="fill-body">
+      <div class="fill-group">経営レバレッジ係数 ＝ <span class="fill-blank">限界利益</span> ÷ <span class="fill-blank">営業利益</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">安全余裕率の逆数でもある：1 ÷ <span class="fill-blank">安全余裕率</span><br>例：安全余裕率20%なら → 1 ÷ 0.2 ＝ <span class="fill-blank">5</span>倍</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">売上が10%変動すると、利益は 10% × 5倍 ＝ <span class="fill-blank">50%</span>変動する。</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q8: 固定費と変動費の分類 -->
+  <div class="fill-card">
+    <div class="fill-header st-red">Q8. 固定費 or 変動費？</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x30FB; 家賃 → <span class="fill-blank">固定費</span><br>&#x30FB; 材料費 → <span class="fill-blank">変動費</span><br>&#x30FB; 減価償却費 → <span class="fill-blank">固定費</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      <div class="fill-group">&#x30FB; 外注費 → <span class="fill-blank">変動費</span><br>&#x30FB; 正社員給与 → <span class="fill-blank">固定費</span><br>&#x30FB; 販売手数料 → <span class="fill-blank">変動費</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <!-- Q9: 変動費率と限界利益率の関係 -->
+  <div class="fill-card">
+    <div class="fill-header st-blue">Q9. 変動費率と限界利益率</div>
+    <div class="fill-body">
+      <div class="fill-group">変動費率 + 限界利益率 ＝ <span class="fill-blank">100%</span><br>変動費率40%なら、限界利益率は<span class="fill-blank">60%</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+</div>
+
+  <!-- ==================== TAB 4: シミュレーション (TEAL) ==================== -->
+  <div class="tab-panel theme-teal" id="tab4">
+
+    <div class="point-box pb-teal">
+      <h4>&#x1F3EA; このタブで学ぶこと</h4>
+      <ul>
+        <li>架空の中小企業の数字で<strong>損益分岐点を実際に計算</strong></li>
+        <li>「固定費を減らすか、限界利益率を上げるか」の<strong>経営判断</strong>を体験</li>
+      </ul>
+    </div>
+
+    <!-- ケース1 -->
+    <h2 class="section-title st-teal"><span class="st-icon">&#x2615;</span> ケース1：カフェ「ほっと」</h2>
+
+    <div class="sim-company">
+      <h3>&#x2615; カフェ「ほっと」の財務データ</h3>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-bottom:0.5rem;">駅前の小さなカフェ。常連客は多いけど、最近売上が落ちてきて不安...</p>
+      <div class="sim-data">
+        <div class="sim-data-item"><div class="sim-label">売上高</div><div class="sim-value">600万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">変動費</div><div class="sim-value">240万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">固定費</div><div class="sim-value">300万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">営業利益</div><div class="sim-value">60万円</div></div>
+      </div>
+    </div>
+
+    <div class="sim-result">
+      <h4 style="color:var(--green-dark);margin-bottom:0.5rem;">&#x1F4CA; ステップ計算</h4>
+      <div class="card card-green">
+        <h4>Step 1：限界利益と限界利益率を求める</h4>
+        <div style="font-size:0.88rem;">
+          <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">限界利益 ＝ 600万 &#x2212; 240万 ＝ <strong>360万円</strong></div>
+          <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">限界利益率 ＝ 360万 &#xF7; 600万 ＝ <strong>60%</strong></div>
+        </div>
+      </div>
+      <div class="card card-orange">
+        <h4>Step 2：損益分岐点売上高を求める</h4>
+        <div style="font-size:0.88rem;">
+          <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">損益分岐点売上高 ＝ 300万 &#xF7; 0.6 ＝ <strong>500万円</strong></div>
+        </div>
+      </div>
+      <div class="card card-blue">
+        <h4>Step 3：安全余裕率を求める</h4>
+        <div style="font-size:0.88rem;">
+          <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">安全余裕率 ＝（600万 &#x2212; 500万）&#xF7; 600万 &#xD7; 100 ＝ <strong>約16.7%</strong></div>
+          <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">売上があと<strong>16.7%</strong>下がったら赤字。余裕はあまりない...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-purple">
+      <h4>Step 4：経営レバレッジ係数</h4>
+      <div style="font-size:0.88rem;">
+        <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">360万（限界利益）&#xF7; 60万（営業利益）＝ <strong>6倍</strong></div>
+        <div style="background:var(--red-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">売上が10%下がると利益は<strong>60%も減る</strong>！かなりハイリスク。</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-critic">&#x1F9D0;</div>
+      <div class="bubble-body b-red">
+        <div class="bubble-name">批評エージェント</div>
+        安全余裕率16.7%は<strong>やや危険</strong>。対策は2つ：<strong>固定費を下げる</strong>か、<strong>限界利益率を上げる</strong>（値上げ or 材料費を下げる）。
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">コンビニで例えると</div>
+        コンビニのオーナーも同じ悩み。家賃・ロイヤリティ（固定費）が高い店舗は、<strong>1日の売上が一定額を下回ると即赤字</strong>。だから深夜営業で売上を稼ぐか、固定費が安い立地に移るかの判断になる。
+      </div>
+    </div>
+
+    <!-- ケース2 -->
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F4BB;</span> ケース2：Web制作会社「デジタル工房」</h2>
+
+    <div class="sim-company">
+      <h3>&#x1F4BB; Web制作会社「デジタル工房」</h3>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-bottom:0.5rem;">社員5人の小さなWeb制作会社。来期は利益200万円を目標にしたい。</p>
+      <div class="sim-data">
+        <div class="sim-data-item"><div class="sim-label">売上高</div><div class="sim-value">2,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">変動費</div><div class="sim-value">800万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">固定費</div><div class="sim-value">1,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">目標利益</div><div class="sim-value">200万円</div></div>
+      </div>
+    </div>
+
+    <div class="sim-result">
+      <h4 style="color:var(--green-dark);margin-bottom:0.5rem;">&#x1F4CA; 目標利益を達成するには？</h4>
+      <div class="card card-green">
+        <h4>Step 1：限界利益率を求める</h4>
+        <div style="font-size:0.88rem;">
+          <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">変動費率 ＝ 800万 &#xF7; 2,000万 ＝ 40%</div>
+          <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">限界利益率 ＝ 1 &#x2212; 0.4 ＝ <strong>60%</strong></div>
+        </div>
+      </div>
+      <div class="card card-orange">
+        <h4>Step 2：目標利益達成売上高を求める</h4>
+        <div style="font-size:0.88rem;">
+          <div style="background:var(--gray-pale);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;">（1,000万 ＋ 200万）&#xF7; 0.6 ＝ <strong>2,000万円</strong></div>
+          <div style="background:var(--green-light);padding:0.4rem 0.8rem;border-radius:6px;margin:0.3rem 0;font-weight:700;">現在の売上2,000万をキープすれば目標達成！</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ケース3 -->
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F3ED;</span> ケース3：町工場「鈴木製作所」</h2>
+
+    <div class="sim-company">
+      <h3>&#x1F3ED; 町工場「鈴木製作所」</h3>
+      <p style="font-size:0.85rem;color:var(--gray-mid);margin-bottom:0.5rem;">新しい機械を導入して固定費が増えたが、変動費は下がった。どう変わる？</p>
+      <div class="sim-data">
+        <div class="sim-data-item"><div class="sim-label">売上高</div><div class="sim-value">3,000万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">変動費（導入前）</div><div class="sim-value">1,800万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">固定費（導入前）</div><div class="sim-value">900万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">変動費（導入後）</div><div class="sim-value">1,200万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">固定費（導入後）</div><div class="sim-value">1,500万円</div></div>
+        <div class="sim-data-item"><div class="sim-label">売上高</div><div class="sim-value">3,000万円（変化なし）</div></div>
+      </div>
+    </div>
+
+    <div class="sim-result">
+      <h4 style="color:var(--green-dark);margin-bottom:0.5rem;">&#x1F4CA; 導入前 vs 導入後の比較</h4>
+      <table class="tbl-teal">
+        <tr><th>指標</th><th>導入前</th><th>導入後</th></tr>
+        <tr><td>限界利益率</td><td>(3,000-1,800)&#xF7;3,000＝<strong>40%</strong></td><td>(3,000-1,200)&#xF7;3,000＝<strong>60%</strong></td></tr>
+        <tr><td>損益分岐点売上高</td><td>900&#xF7;0.4＝<strong>2,250万</strong></td><td>1,500&#xF7;0.6＝<strong>2,500万</strong></td></tr>
+        <tr><td>営業利益</td><td>3,000&#x2212;1,800&#x2212;900＝<strong>300万</strong></td><td>3,000&#x2212;1,200&#x2212;1,500＝<strong>300万</strong></td></tr>
+        <tr><td>安全余裕率</td><td>(3,000&#x2212;2,250)&#xF7;3,000＝<strong>25%</strong></td><td>(3,000&#x2212;2,500)&#xF7;3,000＝<strong>16.7%</strong></td></tr>
+      </table>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-planner">&#x1F5FA;</div>
+      <div class="bubble-body b-teal">
+        <div class="bubble-name">計画エージェント</div>
+        利益は同じ300万だけど、<strong>損益分岐点が上がり、安全余裕率が下がった</strong>。機械化で限界利益率は良くなったが、固定費増でリスクも増えた。これが<strong>経営レバレッジの増大</strong>！
+      </div>
+    </div>
+
+    <div class="card card-red">
+      <h4>&#x26A0; もし売上が10%減ったら？（what-if分析）</h4>
+      <div class="two-col">
+        <div style="font-size:0.85rem;">
+          <div style="font-weight:700;color:var(--gray-dark);">導入前（レバレッジ4倍）</div>
+          <div>利益変動 ＝ 10% &#xD7; 4 ＝ <strong>40%減</strong></div>
+          <div>300万 &#xD7; 0.6 ＝ <strong>利益180万</strong></div>
+        </div>
+        <div style="font-size:0.85rem;">
+          <div style="font-weight:700;color:var(--red-dark);">導入後（レバレッジ6倍）</div>
+          <div>利益変動 ＝ 10% &#xD7; 6 ＝ <strong>60%減</strong></div>
+          <div>300万 &#xD7; 0.4 ＝ <strong>利益120万</strong></div>
+        </div>
+      </div>
+      <p style="font-size:0.82rem;color:var(--red-dark);font-weight:700;margin-top:0.3rem;">同じ10%の売上減でも、導入後のほうが利益の落ち込みが大きい！</p>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">学校で例えると</div>
+        テスト勉強に<strong>高い参考書（固定費）を大量に買った</strong>学生。勉強時間が確保できれば高得点だけど、急に部活が忙しくなると「買ったのに使えない」状態に。投資を回収できるかは<strong>勉強量（売上）次第</strong>。
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 4: 事例クイズ (ORANGE) ==================== -->
+  <div class="tab-panel theme-orange" id="tab5">
+
+    <div class="point-box pb-orange">
+      <h4>&#x1F3AF; このタブのゴール</h4>
+      <ul>
+        <li>身近なお店の事例で<strong>親近感を持ちながら</strong>テスト</li>
+        <li>全8問で損益分岐点分析の<strong>すべてをカバー</strong></li>
+      </ul>
+    </div>
+
+    <div class="quiz-item" id="q1">
+      <div class="quiz-num">1</div><span class="quiz-cat qc-blue">基本概念</span>
+      <div class="quiz-question">たこ焼き屋の屋台。売上がゼロでも毎月払う「場所代」は、固定費と変動費のどちらか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q1', 0)">
+        <li data-idx="0">固定費</li>
+        <li data-idx="1">変動費</li>
+        <li data-idx="2">どちらでもない</li>
+        <li data-idx="3">売上によって変わる</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">
+        <strong>&#x2705; 正解：固定費</strong><br>
+        売上がゼロでも払うお金 ＝ 固定費。たこ焼きが1個も売れなくても場所代はかかる！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q2">
+      <div class="quiz-num">2</div><span class="quiz-cat qc-green">限界利益</span>
+      <div class="quiz-question">クレープ屋さん。1個500円のクレープを作るのに材料費200円。1個あたりの限界利益はいくら？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q2', 2)">
+        <li data-idx="0">200円</li>
+        <li data-idx="1">500円</li>
+        <li data-idx="2">300円</li>
+        <li data-idx="3">700円</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">
+        <strong>&#x2705; 正解：300円</strong><br>
+        限界利益 ＝ 売上 &#x2212; 変動費 ＝ 500 &#x2212; 200 ＝ <strong>300円</strong>。この300円で家賃などの固定費を回収する！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q3">
+      <div class="quiz-num">3</div><span class="quiz-cat qc-orange">損益分岐点</span>
+      <div class="quiz-question">パン屋さん。固定費が月30万円、限界利益率が60%。赤字にならないために最低限必要な月の売上高は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q3', 3)">
+        <li data-idx="0">18万円</li>
+        <li data-idx="1">30万円</li>
+        <li data-idx="2">60万円</li>
+        <li data-idx="3">50万円</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">
+        <strong>&#x2705; 正解：50万円</strong><br>
+        損益分岐点売上高 ＝ 30万 &#xF7; 0.6 ＝ <strong>50万円</strong>。月50万売ればトントン！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q4">
+      <div class="quiz-num">4</div><span class="quiz-cat qc-blue">変動費率</span>
+      <div class="quiz-question">ネイルサロン。売上高200万円、変動費60万円。変動費率と限界利益率の正しい組み合わせはどれ？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q4', 1)">
+        <li data-idx="0">変動費率70%、限界利益率30%</li>
+        <li data-idx="1">変動費率30%、限界利益率70%</li>
+        <li data-idx="2">変動費率60%、限界利益率40%</li>
+        <li data-idx="3">変動費率40%、限界利益率60%</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">
+        <strong>&#x2705; 正解：変動費率30%、限界利益率70%</strong><br>
+        変動費率 ＝ 60 &#xF7; 200 ＝ 30%。限界利益率 ＝ 1 &#x2212; 0.3 ＝ <strong>70%</strong>。足すと100%！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q5">
+      <div class="quiz-num">5</div><span class="quiz-cat qc-teal">安全余裕率</span>
+      <div class="quiz-question">花屋さん。売上高400万円、損益分岐点売上高300万円。安全余裕率はいくら？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q5', 0)">
+        <li data-idx="0">25%</li>
+        <li data-idx="1">75%</li>
+        <li data-idx="2">33%</li>
+        <li data-idx="3">50%</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">
+        <strong>&#x2705; 正解：25%</strong><br>
+        (400 &#x2212; 300) &#xF7; <strong>400</strong> &#xD7; 100 ＝ 25%。分母は<strong>実際の売上高400万</strong>！300万で割るのは間違い。
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q6">
+      <div class="quiz-num">6</div><span class="quiz-cat qc-orange">目標利益</span>
+      <div class="quiz-question">居酒屋。固定費500万円、限界利益率50%。年間100万円の利益を出したい。必要な売上高は？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q6', 2)">
+        <li data-idx="0">1,000万円</li>
+        <li data-idx="1">600万円</li>
+        <li data-idx="2">1,200万円</li>
+        <li data-idx="3">1,100万円</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">
+        <strong>&#x2705; 正解：1,200万円</strong><br>
+        (500万 ＋ 100万) &#xF7; 0.5 ＝ <strong>1,200万円</strong>。固定費に目標利益を足して、限界利益率で割る！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q7">
+      <div class="quiz-num">7</div><span class="quiz-cat qc-green">勘定科目</span>
+      <div class="quiz-question">次のうち、一般的に「変動費」に分類されるものはどれか。</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q7', 3)">
+        <li data-idx="0">事務所の家賃</li>
+        <li data-idx="1">減価償却費</li>
+        <li data-idx="2">正社員の基本給</li>
+        <li data-idx="3">商品の仕入原価</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">
+        <strong>&#x2705; 正解：商品の仕入原価</strong><br>
+        仕入原価は売上に比例して増減する ＝ 変動費。家賃・減価償却費・基本給は売上ゼロでもかかる ＝ 固定費！
+      </div>
+    </div>
+
+    <div class="quiz-item" id="q8">
+      <div class="quiz-num">8</div><span class="quiz-cat qc-blue">経営レバレッジ</span>
+      <div class="quiz-question">ある会社の限界利益が500万円、営業利益が100万円。経営レバレッジ係数はいくつ？また、この会社で売上が10%増えると利益は約何%増える？</div>
+      <ul class="quiz-options" onclick="handleQuiz(event, 'q8', 1)">
+        <li data-idx="0">レバレッジ2倍、利益20%増</li>
+        <li data-idx="1">レバレッジ5倍、利益50%増</li>
+        <li data-idx="2">レバレッジ5倍、利益10%増</li>
+        <li data-idx="3">レバレッジ10倍、利益100%増</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">
+        <strong>&#x2705; 正解：レバレッジ5倍、利益50%増</strong><br>
+        500 &#xF7; 100 ＝ <strong>5倍</strong>。売上10% &#xD7; レバレッジ5 ＝ 利益<strong>50%増</strong>。固定費が大きいほどレバレッジが高く、利益の振れ幅が大きい！
+      </div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+  </div>
+
+  <!-- ==================== TAB 5: 実例で学ぶ (PURPLE) ==================== -->
+  <div class="tab-panel theme-purple" id="tab6">
+
+    <div class="point-box pb-purple">
+      <h4>&#x1F4F0; このタブで学ぶこと</h4>
+      <p>表とにらめっこして覚えるのもいいですが、正直飽きてきますよね。少しでも覚えやすくなるように<strong>実際の企業の事例</strong>を集めました！「なぜそうなったのか？」に思いをはせると理解が深まります。</p>
+    </div>
+
+    <!-- Story 1 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x2708;</span> 固定費の恐怖</h2>
+
+    <div class="story-card">
+      <h3>&#x2708; ANAホールディングス ― コロナ禍で見えた固定費リスク</h3>
+      <div class="story-meta">損益分岐点 ｜ 固定費が大きい業種の危険性</div>
+      <div class="story-body">
+        <p>航空業界は<strong>固定費の塊</strong>です。飛行機のリース料、パイロットの人件費、空港使用料...乗客がゼロでもこれらは毎日かかります。</p>
+        <p>2020年、コロナ禍で<strong>ANAの売上高は前年の約3割</strong>にまで落ち込みました。売上が損益分岐点を大きく下回り、<strong>約4,000億円の最終赤字</strong>を計上。</p>
+        <p>これに対し、ANAは<strong>固定費の削減</strong>（給与カット、路線縮小、機材の早期退役）と<strong>変動費化</strong>（正社員の一時帰休）で損益分岐点を下げる対策を取りました。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 損益分岐点分析の視点</strong><br>
+        &#x2022; 固定費が大きい＝<strong>損益分岐点が高い</strong>＝売上が少し減っただけで赤字に<br>
+        &#x2022; 経営レバレッジが高い＝<strong>好況時は大きく儲かるが、不況時は大きく損する</strong><br>
+        &#x2022; 対策：固定費を変動費化する（リースの解約、外注化など）で<strong>損益分岐点を下げる</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">自分の生活に置き換えると</div>
+        毎月の<strong>家賃・スマホ代・保険料</strong>が固定費。バイトのシフトが減って収入が落ちると、すぐ赤字に。固定費を下げる（格安SIMに変える、安い部屋に引っ越す）と<strong>「自分の損益分岐点」が下がって楽になる</strong>。
+      </div>
+    </div>
+
+    <!-- Story 2 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4F1;</span> 限界利益率の威力</h2>
+
+    <div class="story-card">
+      <h3>&#x1F4F1; サブスクリプションビジネス ― Netflixの高い限界利益率</h3>
+      <div class="story-meta">限界利益率 ｜ デジタルビジネスの変動費構造</div>
+      <div class="story-body">
+        <p><strong>Netflix</strong>のようなサブスクビジネスは、ユーザーが1人増えてもサーバー代がわずかに増えるだけ。つまり<strong>変動費がほぼゼロに近い</strong>。</p>
+        <p>コンテンツ制作費（固定費）は巨額ですが、会員が増えるほど<strong>1人あたりのコストは薄まる</strong>。会員数が損益分岐点を超えた瞬間から、増えた分の月額料金がほぼそのまま利益になります。</p>
+        <p>これが<strong>限界利益率が90%以上</strong>というデジタルビジネスの強み。逆に言えば、会員数が損益分岐点を下回ると一気に大赤字になるリスクもあります。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 損益分岐点分析の視点</strong><br>
+        &#x2022; 限界利益率が高い＝<strong>損益分岐点を超えた後の利益成長が爆発的</strong><br>
+        &#x2022; ただし固定費（コンテンツ制作費）が巨額＝<strong>損益分岐点自体は高い</strong><br>
+        &#x2022; 「高い限界利益率 &#xD7; 高い固定費」＝ <strong>ハイリスク・ハイリターン</strong>型のビジネスモデル
+      </div>
+    </div>
+
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">映画で考えると</div>
+        &#x1F3AC; 映画制作費（固定費）が100億円の大作。公開後の配信やグッズ（限界利益率が高い）で<strong>大ヒットすれば巨額の利益</strong>だが、コケたら巨額の赤字。Netflixと同じ構造！
+      </div>
+    </div>
+
+    <!-- Story 3 -->
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F35C;</span> 中小企業のリアル</h2>
+
+    <div class="story-card">
+      <h3>&#x1F35C; コロナ後のラーメン屋 ― 固定費を変動費に変えた生存戦略</h3>
+      <div class="story-meta">固定費の変動費化 ｜ 中小企業の損益分岐点対策</div>
+      <div class="story-body">
+        <p>コロナ禍で多くの飲食店が苦しむ中、ある町のラーメン屋は大胆な改革をしました。</p>
+        <ul style="margin:0.5rem 0;">
+          <li><strong>店舗を縮小</strong>：家賃月30万円の店から月15万円のテイクアウト専門店に移転（固定費削減）</li>
+          <li><strong>正社員をパートに</strong>：固定の人件費を、忙しい時だけシフトを増やす変動費型に（固定費の変動費化）</li>
+          <li><strong>ゴーストキッチン</strong>：デリバリー専門にして、客席の維持コスト（固定費）をゼロに</li>
+        </ul>
+        <p>結果、損益分岐点売上高が<strong>月80万→月40万</strong>にほぼ半減。売上は減ったものの黒字をキープできました。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 中小企業診断士の視点</strong><br>
+        &#x2022; 売上が減る局面では<strong>「売上を増やす」より「損益分岐点を下げる」</strong>が効果的<br>
+        &#x2022; 固定費削減と固定費の変動費化は<strong>中小企業の生命線</strong><br>
+        &#x2022; 損益分岐点分析は「いくら売るか」だけでなく<strong>「コスト構造をどう変えるか」</strong>の判断ツール
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">&#x1F4A1;</div>
+      <div class="bubble-body b-green">
+        <div class="bubble-name">ECサイトで考えると</div>
+        &#x1F6D2; 実店舗（高い家賃=固定費）からネット販売（サーバー代=低い固定費）に切り替えるのも<strong>「固定費の変動費化」</strong>。発送は注文が来た分だけ（変動費）。これでBEPが大幅に下がる。
+      </div>
+    </div>
+
+    <!-- Story 4 -->
+    <div class="story-card">
+      <h3>&#x1F697; トヨタ ― 原価低減で損益分岐点を下げ続ける経営</h3>
+      <div class="story-meta">変動費削減 ｜ 限界利益率の改善</div>
+      <div class="story-body">
+        <p><strong>トヨタ自動車</strong>は「乾いた雑巾をさらに絞る」と言われるほど原価低減を徹底しています。</p>
+        <p>部品1つ1つのコスト（変動費）を毎年見直し、サプライヤーと交渉して数円単位で削減。これにより<strong>限界利益率を継続的に改善</strong>し、不況に強い体質を築いています。</p>
+        <p>2008年リーマンショック時、売上が約3割減少しましたが、その後すぐに損益分岐点を引き下げ、翌期には黒字回復。「<strong>円高でも利益を出せる体質</strong>」は、CVP分析でいう損益分岐点の継続的な引き下げそのものです。</p>
+      </div>
+      <div class="story-point">
+        <strong>&#x1F4A1; 損益分岐点分析の視点</strong><br>
+        &#x2022; 変動費を下げる ＝ <strong>限界利益率が上がる</strong> ＝ 損益分岐点が下がる<br>
+        &#x2022; 好況時にコスト削減を怠らないから<strong>不況に耐えられる</strong><br>
+        &#x2022; 「損益分岐点を常に下げ続ける」は<strong>最強の経営戦略</strong>
+      </div>
+    </div>
+
+    <div class="alert-tip">
+      <strong>実例から学ぶ損益分岐点のまとめ</strong><br>
+      &#x2022; <strong>固定費が大きいリスク</strong>：ANAのコロナ禍で実感<br>
+      &#x2022; <strong>限界利益率が高いビジネス</strong>：Netflixで「変動費ゼロ」の威力を理解<br>
+      &#x2022; <strong>固定費の変動費化</strong>：ラーメン屋の生存戦略で中小企業の実務をイメージ<br>
+      &#x2022; <strong>変動費削減の継続</strong>：トヨタの原価低減で「最強の体質」を納得<br>
+      &#x2022; 損益分岐点分析は「<strong>いくら売るか</strong>」と「<strong>コスト構造をどう変えるか</strong>」の両方を考えるツール！
+    </div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="red" onclick="switchTab(0)">&#x1F476; ゼロから理解</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F530; 入門</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(2)">&#x1F4D7; 基本事項</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(3)">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(4)">&#x1F3EA; シミュレーション</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">&#x270F;&#xFE0F; 事例クイズ</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(6)">&#x1F4F0; 実例で学ぶ</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 損益分岐点分析（CVP分析） 学習まとめ | &#x1F916; 4エージェント議論形式</div>
+
+<script>
+function switchTab(idx) {
+  const numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % numTabs === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+let answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 6 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  if(grp && grp.classList.contains('fill-group')){
+    grp.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  }
+  btn.textContent = '\u2705 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAllFill(){
+  document.querySelectorAll('#tab3 .fill-blank').forEach(function(el){ el.classList.add('show'); });
+  document.querySelectorAll('#tab3 .fill-reveal-btn').forEach(function(b){ b.textContent = '\u2705 表示済み'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAllFill(){
+  document.querySelectorAll('#tab3 .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  document.querySelectorAll('#tab3 .fill-reveal-btn').forEach(function(b){ b.innerHTML = '\uD83D\uDC41 答えを見る'; b.disabled = false; b.style.opacity = '1'; });
+}
+document.addEventListener('click', function(e){
+  var el = e.target;
+  if(el.classList && el.classList.contains('fill-blank')){
+    el.classList.toggle('show');
+  }
+});
+</script>
+</body>
+</html>

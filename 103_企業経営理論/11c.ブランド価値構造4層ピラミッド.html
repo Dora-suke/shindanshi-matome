@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ブランド価値構造 4層ピラミッド</title>
+<style>
+:root {
+  --orange-bg: #fef9f3;
+  --gray-dark: #2c3e50;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg);
+  color: var(--gray-dark);
+  line-height: 1.75;
+}
+.header {
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 50%, #42a5f5 100%);
+  color: white;
+  padding: 2rem 1.5rem 1.2rem;
+  text-align: center;
+}
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.container { max-width: 860px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+.sec-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1565c0;
+  border-left: 4px solid #1976d2;
+  padding-left: 0.7rem;
+  margin: 2rem 0 1rem;
+}
+
+/* ===== 語呂カード複数 ===== */
+.yoro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+.yoro-item {
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  color: white;
+  box-shadow: var(--shadow);
+}
+.yoro-item.main  { background: linear-gradient(135deg, #1565c0, #1976d2); grid-column: 1 / -1; text-align: center; }
+.yoro-item.sub1  { background: linear-gradient(135deg, #2e7d32, #388e3c); }
+.yoro-item.sub2  { background: linear-gradient(135deg, #6a1b9a, #8e44ad); }
+.yoro-item .yi-phrase { font-size: 1.5rem; font-weight: 900; letter-spacing: 0.12em; margin-bottom: 0.3rem; }
+.yoro-item.main .yi-phrase { font-size: 2rem; }
+.yoro-item .yi-break { font-size: 0.82rem; opacity: 0.88; line-height: 1.8; }
+.yoro-item .yi-break b { background: rgba(255,255,255,0.25); border-radius: 4px; padding: 0 0.3rem; }
+.yoro-item .yi-label { font-size: 0.72rem; opacity: 0.7; margin-bottom: 0.3rem; }
+
+/* ===== ピラミッド ===== */
+.pyramid-wrap {
+  background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 16px;
+  padding: 2rem 1rem 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+}
+.pyramid-title {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0d47a1;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.08em;
+}
+
+/* ピラミッド本体：下から積む */
+.pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.pyramid-layer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 各層：台形をclip-pathで表現 */
+.layer-4 { /* 観念価値 - 頂点（最小） */
+  width: 200px;
+  background: linear-gradient(135deg, #e53935, #f44336);
+  clip-path: polygon(12% 100%, 88% 100%, 100% 0%, 0% 0%);
+  padding: 1rem 0.5rem 0.5rem;
+  margin-bottom: 0;
+  border-radius: 4px 4px 0 0;
+}
+.layer-3 { /* 感覚価値 */
+  width: 310px;
+  background: linear-gradient(135deg, #f57c00, #fb8c00);
+  clip-path: polygon(8% 100%, 92% 100%, 100% 0%, 0% 0%);
+  padding: 1rem 1rem 0.5rem;
+  margin-bottom: 0;
+}
+.layer-2 { /* 便宜価値 */
+  width: 430px;
+  background: linear-gradient(135deg, #388e3c, #43a047);
+  clip-path: polygon(5% 100%, 95% 100%, 100% 0%, 0% 0%);
+  padding: 1rem 1rem 0.5rem;
+  margin-bottom: 0;
+}
+.layer-1 { /* 基本価値 - 底辺（最大） */
+  width: 560px;
+  background: linear-gradient(135deg, #1565c0, #1976d2);
+  clip-path: polygon(3% 100%, 97% 100%, 100% 0%, 0% 0%);
+  padding: 1.1rem 1rem 0.6rem;
+  margin-bottom: 0;
+  border-radius: 0 0 8px 8px;
+}
+
+.layer-inner {
+  text-align: center;
+  color: white;
+  pointer-events: none;
+}
+.layer-num   { font-size: 0.65rem; opacity: 0.8; letter-spacing: 0.1em; display: block; }
+.layer-kana  { font-size: 1.4rem; font-weight: 900; letter-spacing: 0.05em; }
+.layer-name  { font-size: 0.85rem; font-weight: 700; display: block; margin-top: 0.1rem; }
+.layer-beer  { font-size: 0.72rem; opacity: 0.9; display: block; margin-top: 0.15rem; }
+
+/* 矢印ラベル（右側） */
+.pyramid-arrow {
+  text-align: center;
+  margin-top: 0.8rem;
+  color: #0d47a1;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ===== ビール登山ストーリー ===== */
+.story-box {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.4rem 1.6rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+  border-left: 5px solid #1976d2;
+}
+.story-box h2 { font-size: 1.1rem; font-weight: 800; color: #1565c0; margin-bottom: 0.8rem; }
+.story-box p { font-size: 0.93rem; line-height: 2; }
+.story-box .hl { background: #e3f2fd; border-radius: 4px; padding: 0.05rem 0.35rem; font-weight: 700; color: #0d47a1; }
+.story-box .hl-r { background: #ffebee; border-radius: 4px; padding: 0.05rem 0.35rem; font-weight: 700; color: #b71c1c; }
+.story-box .hl-o { background: #fff3e0; border-radius: 4px; padding: 0.05rem 0.35rem; font-weight: 700; color: #e65100; }
+.story-box .hl-g { background: #e8f5e9; border-radius: 4px; padding: 0.05rem 0.35rem; font-weight: 700; color: #1b5e20; }
+
+/* ===== 詳細テーブル ===== */
+.func-table {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin: 1.5rem 0;
+}
+.func-table table { width: 100%; border-collapse: collapse; }
+.func-table th {
+  background: linear-gradient(135deg, #1565c0, #1976d2);
+  color: white;
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+.func-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  border-bottom: 1px solid #e3f2fd;
+  vertical-align: top;
+}
+.func-table tr:last-child td { border-bottom: none; }
+.badge {
+  display: inline-block;
+  color: white;
+  border-radius: 5px;
+  padding: 0.1rem 0.5rem;
+  font-weight: 900;
+  font-size: 1rem;
+  margin-right: 0.3rem;
+}
+.bg-blue { background: #1976d2; }
+.bg-green { background: #388e3c; }
+.bg-orange { background: #f57c00; }
+.bg-red { background: #e53935; }
+
+/* ===== 記憶コツ ===== */
+.tip-box {
+  background: #fff8e1;
+  border: 2px dashed #ffa726;
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+}
+.tip-box h3 { font-size: 1rem; font-weight: 800; color: #e65100; margin-bottom: 0.6rem; }
+.tip-box ul { padding-left: 1.2rem; font-size: 0.9rem; line-height: 2.1; }
+.tip-box li { margin-bottom: 0.2rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏔️ ブランド価値構造 4層ピラミッド</h1>
+  <div class="subtitle">語呂合わせ：「ブランドの価値は基本に敏感な観察が必要」で4層を攻略</div>
+</div>
+
+<div class="container">
+
+  <!-- 語呂合わせ -->
+  <div class="sec-title">&#x1F5E3; 語呂合わせ</div>
+
+  <div style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);border:3px solid #64b5f6;border-radius:18px;padding:28px;margin:1rem 0 1.5rem;text-align:center;">
+
+    <p style="font-size:1.5rem;font-weight:900;color:#1565c0;margin:0 0 6px;">&#x1F4A1; ブランドの価値は</p>
+    <p style="font-size:1.8rem;font-weight:900;color:#d32f2f;margin:0 0 4px;letter-spacing:.08em;">「<span style="color:#1565c0;">基</span>本に<span style="color:#2e7d32;">敏</span><span style="color:#e65100;">感</span>な<span style="color:#c62828;">観</span>察が必要」</p>
+    <p style="font-size:.88rem;color:#455a64;margin:0 0 20px;">下から順に：<strong>基</strong>本価値 → <strong>便</strong>宜価値（敏→便） → <strong>感</strong>覚価値 → <strong>観</strong>念価値（観察→観念）</p>
+
+    <!-- 語呂の各キーワード写真 -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;">
+      <div style="flex:1;min-width:110px;max-width:160px;text-align:center;">
+        <img src="https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=250&h=160&fit=crop&auto=format" alt="ビール・基本機能" style="width:100%;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.12);object-fit:cover;height:110px;" onerror="this.parentElement.innerHTML='<div style=background:#e3f2fd;border-radius:12px;height:110px;display:flex;align-items:center;justify-content:center;font-size:2.5rem>&#x1F37A;</div><p style=font-size:.78rem;font-weight:700;color:#1565c0;margin:5px&#32;0&#32;0>&#x1F37A;&#32;基本価値</p>'">
+        <p style="font-size:.78rem;font-weight:700;color:#1565c0;margin:5px 0 0;">&#x1F37A; <span style="font-size:1.1rem;">基</span>本価値</p>
+        <p style="font-size:.7rem;color:#78909c;margin:2px 0 0;">製品の最低限の機能</p>
+      </div>
+      <div style="flex:1;min-width:110px;max-width:160px;text-align:center;">
+        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=250&h=160&fit=crop&auto=format" alt="便利な買い物" style="width:100%;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.12);object-fit:cover;height:110px;" onerror="this.parentElement.innerHTML='<div style=background:#e8f5e9;border-radius:12px;height:110px;display:flex;align-items:center;justify-content:center;font-size:2.5rem>&#x1F6D2;</div><p style=font-size:.78rem;font-weight:700;color:#2e7d32;margin:5px&#32;0&#32;0>&#x1F6D2;&#32;便宜価値</p>'">
+        <p style="font-size:.78rem;font-weight:700;color:#2e7d32;margin:5px 0 0;">&#x1F6D2; <span style="font-size:1.1rem;">敏</span>＝<span style="font-size:1.1rem;">便</span>宜価値</p>
+        <p style="font-size:.7rem;color:#78909c;margin:2px 0 0;">入手しやすさ・利便性</p>
+      </div>
+      <div style="flex:1;min-width:110px;max-width:160px;text-align:center;">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=250&h=160&fit=crop&auto=format" alt="おしゃれなデザイン" style="width:100%;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.12);object-fit:cover;height:110px;" onerror="this.parentElement.innerHTML='<div style=background:#fff3e0;border-radius:12px;height:110px;display:flex;align-items:center;justify-content:center;font-size:2.5rem>&#x2728;</div><p style=font-size:.78rem;font-weight:700;color:#e65100;margin:5px&#32;0&#32;0>&#x2728;&#32;感覚価値</p>'">
+        <p style="font-size:.78rem;font-weight:700;color:#e65100;margin:5px 0 0;">&#x2728; <span style="font-size:1.1rem;">感</span>覚価値</p>
+        <p style="font-size:.7rem;color:#78909c;margin:2px 0 0;">デザイン・五感に訴える</p>
+      </div>
+      <div style="flex:1;min-width:110px;max-width:160px;text-align:center;">
+        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=250&h=160&fit=crop&auto=format" alt="観察・ビジョン" style="width:100%;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.12);object-fit:cover;height:110px;" onerror="this.parentElement.innerHTML='<div style=background:#fce4ec;border-radius:12px;height:110px;display:flex;align-items:center;justify-content:center;font-size:2.5rem>&#x1F3C6;</div><p style=font-size:.78rem;font-weight:700;color:#c62828;margin:5px&#32;0&#32;0>&#x1F3C6;&#32;観念価値</p>'">
+        <p style="font-size:.78rem;font-weight:700;color:#c62828;margin:5px 0 0;">&#x1F3C6; <span style="font-size:1.1rem;">観</span>察＝<span style="font-size:1.1rem;">観</span>念価値</p>
+        <p style="font-size:.7rem;color:#78909c;margin:2px 0 0;">ライフスタイル・自己表現</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ピラミッド図 -->
+  <div class="sec-title">📐 4層ピラミッド図（ビールで具体例）</div>
+  <div class="pyramid-wrap">
+    <div class="pyramid-title">🍺 ビールブランドで理解する4層ピラミッド</div>
+    <div class="pyramid">
+
+      <!-- 頂点：観念価値 -->
+      <div class="pyramid-layer layer-4">
+        <div class="layer-inner">
+          <span class="layer-num">第4層 ▲ 最上位</span>
+          <span class="layer-kana">か（観）</span>
+          <span class="layer-name">観念価値</span>
+          <span class="layer-beer">🏆「このビールを飲む俺はかっこいい」プレミアム感・ライフスタイル</span>
+        </div>
+      </div>
+
+      <!-- 第3層：感覚価値 -->
+      <div class="pyramid-layer layer-3">
+        <div class="layer-inner">
+          <span class="layer-num">第3層</span>
+          <span class="layer-kana">か（感）</span>
+          <span class="layer-name">感覚価値</span>
+          <span class="layer-beer">✨ 高級感あるボトルデザイン・グラスの質感・広告の洗練されたイメージ</span>
+        </div>
+      </div>
+
+      <!-- 第2層：便宜価値 -->
+      <div class="pyramid-layer layer-2">
+        <div class="layer-inner">
+          <span class="layer-num">第2層</span>
+          <span class="layer-kana">べ（便）</span>
+          <span class="layer-name">便宜価値</span>
+          <span class="layer-beer">🛒 コンビニでも買いやすい・価格帯がわかりやすい・どこでも手に入る</span>
+        </div>
+      </div>
+
+      <!-- 底辺：基本価値 -->
+      <div class="pyramid-layer layer-1">
+        <div class="layer-inner">
+          <span class="layer-num">第1層 ▼ 基礎・土台</span>
+          <span class="layer-kana">き（基）</span>
+          <span class="layer-name">基本価値</span>
+          <span class="layer-beer">🍺 ビール本来の機能：「喉が渇いたときに飲める・アルコールが入っている」</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="pyramid-arrow">↑ 上層ほど感情・象徴・物語的な価値　／　下層ほど機能・実用的な価値 ↓</div>
+  </div>
+
+  <!-- ビール登山ストーリー -->
+  <div class="sec-title">📖 ビール登山ストーリー</div>
+  <div class="story-box">
+    <h2>「ブランドのビールで登る4層の山」</h2>
+    <p>
+      登山家のあなたは今日、4合目まである「ブランド価値の山」に登る。<br><br>
+      <span class="hl">【1合目：基本価値】</span><br>
+      「とにかく喉が渇いた。ビールなら水分補給になる」——これが最も根本的な価値。
+      ビールである<strong>以上、誰でも期待する最低限の機能</strong>だ。<br><br>
+      <span class="hl-g">【2合目：便宜価値】</span><br>
+      「このビール、コンビニで絶対売ってるし、値段もわかりやすい」——<strong>入手しやすさ・価格の明確さ</strong>など、買う際の利便性。
+      機能的価値より一段上の「使いやすさ」の層。<br><br>
+      <span class="hl-o">【3合目：感覚価値】</span><br>
+      「このボトル、めちゃくちゃオシャレだな。泡のクリーミーな感触もいい」——<strong>デザイン・質感・雰囲気など五感に訴える価値</strong>。
+      見た目や手触りで「いい気分」になれる層。<br><br>
+      <span class="hl-r">【頂上：観念価値】</span><br>
+      「このビールを飲むのは、成功した大人の証だ」——<strong>ブランドが象徴する意味・ライフスタイル・アイデンティティ</strong>。
+      消費者が「このブランドを選ぶ自分」に誇りや共感を感じる最高峰の価値。<br><br>
+      頂上（観念価値）に立った瞬間、あなたは思わず叫ぶ——<strong>「感謝！感激！」（か・か）</strong>。
+    </p>
+  </div>
+
+  <!-- 詳細テーブル -->
+  <div class="sec-title">📋 4層の詳細まとめ</div>
+  <div class="func-table">
+    <table>
+      <thead>
+        <tr><th>層</th><th>名称</th><th>頭文字</th><th>内容</th><th>ビール例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>第4層（頂点）</td>
+          <td><strong>観念価値</strong></td>
+          <td><span class="badge bg-red">か</span></td>
+          <td>ブランドが象徴する意味・ライフスタイル・自己表現・社会的アイデンティティ</td>
+          <td>「このブランドを飲む自分はかっこいい」という自己イメージ</td>
+        </tr>
+        <tr>
+          <td>第3層</td>
+          <td><strong>感覚価値</strong></td>
+          <td><span class="badge bg-orange">か</span></td>
+          <td>デザイン・パッケージ・質感・雰囲気など五感に訴える感性的な価値</td>
+          <td>高級感あるボトル・泡のきめ細かさ・CM映像の世界観</td>
+        </tr>
+        <tr>
+          <td>第2層</td>
+          <td><strong>便宜価値</strong></td>
+          <td><span class="badge bg-green">べ</span></td>
+          <td>入手しやすさ・価格の明確さ・利便性など購買行動を助ける機能的付加価値</td>
+          <td>どこでも売っている・価格帯がわかりやすい</td>
+        </tr>
+        <tr>
+          <td>第1層（底辺）</td>
+          <td><strong>基本価値</strong></td>
+          <td><span class="badge bg-blue">き</span></td>
+          <td>製品カテゴリーとして当然期待される最低限の機能・基本的な便益</td>
+          <td>喉の渇きを癒す・適度なアルコール感</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 記憶のコツ -->
+  <div class="tip-box">
+    <h3>&#x1F4A1; 試験直前！語呂で一発暗記</h3>
+    <ul>
+      <li>「ブランドの価値は<strong>基</strong>本に<strong>敏</strong><strong>感</strong>な<strong>観</strong>察が必要」で順番を覚える</li>
+      <li>下から：<strong>基</strong>本 → <strong>便</strong>宜（敏→便） → <strong>感</strong>覚 → <strong>観</strong>念（観察→観念）</li>
+      <li>「<strong>感</strong>覚」と「<strong>観</strong>念」で迷いやすい → 感覚は<strong>五感</strong>（デザイン・質感）、観念は<strong>価値観</strong>（ライフスタイル・自己表現）</li>
+      <li>ピラミッドの下ほど実用的、上ほど感情的・抽象的になる</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

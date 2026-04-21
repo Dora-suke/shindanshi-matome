@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ライン生産方式とセル生産方式 - 中小企業診断士まとめ</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff; --green: #27ae60; --green-light: #d5f5e3;
+  --red: #e74c3c; --red-light: #fadbd8; --blue: #2980b9; --blue-light: #d6eaf8;
+  --purple: #8e44ad; --purple-light: #e8daef; --teal: #00897b; --teal-light: #e0f2f1;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh; }
+.header { background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange-main) 50%, var(--orange-light) 100%); color: white; padding: 2rem 1.5rem 1.2rem; text-align: center; }
+.header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.95rem; opacity: 0.9; }
+.header .badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem; }
+.tutor-comment { background: linear-gradient(135deg, #fffde7, #fff9c4); border: 1px solid #f9e44c; border-radius: 12px; padding: 0.8rem 1rem 0.8rem 2.8rem; margin: 0.8rem 0; font-size: 0.9rem; line-height: 1.7; position: relative; color: #5d4037; box-shadow: 0 2px 8px rgba(249,228,76,0.2); }
+.tutor-comment::before { content: "\1F4AC"; position: absolute; left: 0.7rem; top: 0.65rem; font-size: 1.2rem; }
+.tutor-comment strong { color: #e65100; }
+.diagram { background: var(--white); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); overflow-x: auto; }
+.diagram-title { text-align: center; font-weight: 700; font-size: 1rem; color: var(--orange-dark); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px dashed var(--orange-pale); }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); color: white; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; box-shadow: 0 2px 6px rgba(230,126,34,0.3); min-width: 65px; }
+.flow-box.blue { background: linear-gradient(135deg, var(--blue), #3498db); }
+.flow-box.green { background: linear-gradient(135deg, var(--green), #2ecc71); }
+.flow-box.purple { background: linear-gradient(135deg, var(--purple), #9b59b6); }
+.flow-box.red { background: linear-gradient(135deg, var(--red), #e57373); }
+.flow-box.gray { background: linear-gradient(135deg, #546e7a, #78909c); }
+.flow-box.teal { background: linear-gradient(135deg, var(--teal), #26a69a); }
+.flow-box small { display: block; font-weight: 400; font-size: 0.72rem; opacity: 0.9; }
+.flow-arrow { font-size: 1.2rem; color: var(--orange-main); margin: 0 0.2rem; font-weight: 700; flex-shrink: 0; }
+.flow-arrow.blue { color: var(--blue); }
+
+.tab-container { max-width: 900px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav { display: flex; gap: 0; background: var(--white); border-radius: var(--radius) var(--radius) 0 0; overflow-x: auto; box-shadow: var(--shadow); }
+.tab-nav-bottom { border-radius: 0 0 var(--radius) var(--radius); box-shadow: var(--shadow); margin-top: 0; }
+.tab-nav-bottom .tab-btn { border-bottom: none; border-top: 3px solid transparent; }
+.tab-nav-bottom .tab-btn.active { border-top-color: var(--orange-main); border-bottom-color: transparent; }
+.tab-btn { flex: 1; min-width: 0; padding: 0.85rem 0.5rem; border: none; background: var(--white); color: var(--gray-mid); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border-bottom: 3px solid transparent; white-space: nowrap; text-align: center; }
+.tab-btn:hover { color: var(--orange-main); background: var(--orange-pale); }
+.tab-btn.active { color: var(--orange-dark); border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-panel { display: none; background: var(--white); box-shadow: var(--shadow); padding: 1.5rem; animation: fadeIn 0.3s ease; }
+.tab-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.section-title { font-size: 1.25rem; font-weight: 800; color: var(--orange-dark); margin: 1.5rem 0 0.8rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--orange-pale); display: flex; align-items: center; gap: 0.5rem; }
+.section-title:first-child { margin-top: 0; }
+.section-icon { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; color: white; flex-shrink: 0; }
+.icon-orange { background: var(--orange-main); } .icon-blue { background: var(--blue); } .icon-green { background: var(--green); } .icon-purple { background: var(--purple); } .icon-red { background: var(--red); } .icon-teal { background: var(--teal); }
+.card { background: var(--gray-pale); border-radius: var(--radius-sm); padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--orange-main); }
+.card-blue { border-left-color: var(--blue); background: var(--blue-light); }
+.card-green { border-left-color: var(--green); background: var(--green-light); }
+.card-purple { border-left-color: var(--purple); background: var(--purple-light); }
+.card-red { border-left-color: var(--red); background: var(--red-light); }
+.card-orange { border-left-color: var(--orange-main); background: var(--orange-pale); }
+.card-teal { border-left-color: var(--teal); background: var(--teal-light); }
+.card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.keyword { display: inline-block; background: var(--orange-pale); color: var(--orange-dark); padding: 0.1rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.88rem; }
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.88rem; }
+th, td { padding: 0.55rem 0.7rem; text-align: left; border-bottom: 1px solid #e8e8e8; }
+th { background: var(--orange-main); color: white; font-weight: 700; font-size: 0.82rem; }
+tr:nth-child(even) { background: var(--orange-bg); }
+tr:hover { background: var(--orange-pale); }
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+.formula-box { background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 0.8rem 1.2rem; border-radius: var(--radius-sm); margin: 0.7rem 0; font-size: 0.95rem; font-weight: 600; text-align: center; }
+.point-box { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid var(--orange-light); border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.point-box h4 { color: var(--orange-dark); font-size: 0.95rem; margin-bottom: 0.5rem; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+.mnemonic { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px dashed var(--purple); border-radius: var(--radius); padding: 1rem; margin: 0.8rem 0; text-align: center; }
+.mnemonic .big { font-size: 1.3rem; font-weight: 800; color: var(--purple); margin-bottom: 0.3rem; }
+.mnemonic .desc { font-size: 0.85rem; color: var(--gray-mid); }
+
+.cat-section { border-radius: var(--radius); padding: 1.2rem; margin: 1.2rem 0; border: 2px solid transparent; }
+.cat-section.cat-line { border-color: #2980b9; background: linear-gradient(135deg, rgba(41,128,185,0.04), transparent); }
+.cat-section.cat-cell { border-color: #27ae60; background: linear-gradient(135deg, rgba(39,174,96,0.04), transparent); }
+.cat-section.cat-balance { border-color: #8e44ad; background: linear-gradient(135deg, rgba(142,68,173,0.04), transparent); }
+.cat-section.cat-compare { border-color: #e67e22; background: linear-gradient(135deg, rgba(230,126,34,0.04), transparent); }
+.cat-section-label { display: inline-block; color: white; padding: 0.2rem 0.8rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.7rem; }
+.cat-section.cat-line .cat-section-label { background: #2980b9; }
+.cat-section.cat-cell .cat-section-label { background: #27ae60; }
+.cat-section.cat-balance .cat-section-label { background: #8e44ad; }
+.cat-section.cat-compare .cat-section-label { background: #e67e22; }
+
+/* Line production visual */
+.line-visual { display: flex; align-items: center; justify-content: center; gap: 0; padding: 1rem 0; flex-wrap: wrap; }
+.line-station { background: linear-gradient(180deg, #3498db, #2980b9); color: white; width: 65px; height: 65px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; font-size: 0.78rem; box-shadow: 0 3px 8px rgba(41,128,185,0.3); }
+.line-station span { font-size: 0.62rem; font-weight: 400; opacity: 0.85; margin-top: 2px; }
+.line-station.bottleneck { background: linear-gradient(180deg, #e53935, #c62828); box-shadow: 0 3px 8px rgba(229,57,53,0.3); }
+.line-conveyor { width: 25px; height: 4px; background: linear-gradient(90deg, #bdc3c7, #95a5a6); position: relative; }
+.line-conveyor::after { content: "\25B6"; position: absolute; right: -5px; top: 50%; transform: translateY(-50%); font-size: 0.6rem; color: #95a5a6; }
+
+/* U-cell visual */
+.ucell-container { display: flex; justify-content: center; padding: 1rem 0; }
+.ucell { position: relative; width: 260px; height: 190px; }
+.ucell-station { position: absolute; background: linear-gradient(135deg, var(--green), #2ecc71); color: white; width: 52px; height: 52px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; font-size: 0.72rem; box-shadow: 0 3px 8px rgba(39,174,96,0.3); z-index: 2; }
+.ucell-station span { font-size: 0.58rem; font-weight: 400; }
+.ucell-path { position: absolute; border: 3px dashed var(--orange-main); border-radius: 0 0 30px 30px; top: 25px; left: 25px; width: 210px; height: 140px; border-top: none; z-index: 1; }
+.ucell-worker { position: absolute; top: 70px; left: 102px; width: 54px; height: 54px; background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.65rem; font-weight: 700; box-shadow: 0 4px 12px rgba(230,126,34,0.4); z-index: 3; text-align: center; line-height: 1.1; }
+
+/* Pitch chart */
+.pitch-chart { display: flex; align-items: flex-end; justify-content: center; gap: 1.2rem; height: 180px; padding: 0 1rem 2rem; position: relative; }
+.pitch-bar-group { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+.pitch-bar { width: 55px; border-radius: 6px 6px 0 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.pitch-label { font-size: 0.8rem; font-weight: 600; color: var(--gray-dark); }
+.pitch-cycle-line { position: absolute; left: 0; right: 0; border-top: 3px dashed var(--red); z-index: 5; }
+.pitch-cycle-label { position: absolute; right: 0; top: -18px; font-size: 0.72rem; color: var(--red); font-weight: 700; background: white; padding: 0 0.3rem; }
+
+/* Sim */
+.sim-scenario { background: linear-gradient(135deg, var(--blue-light), #fff); border: 3px solid var(--blue); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; }
+.sim-scenario.sim-green { border-color: var(--green); background: linear-gradient(135deg, var(--green-light), #fff); }
+.sim-scenario.sim-green .sim-label { background: var(--green); }
+.sim-scenario.sim-purple { border-color: var(--purple); background: linear-gradient(135deg, var(--purple-light), #fff); }
+.sim-scenario.sim-purple .sim-label { background: var(--purple); }
+.sim-scenario.sim-orange { border-color: var(--orange-main); background: linear-gradient(135deg, var(--orange-pale), #fff); }
+.sim-scenario.sim-orange .sim-label { background: var(--orange-main); }
+.sim-label { display: inline-block; background: var(--blue); color: white; padding: 0.15rem 0.7rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+.sim-company { font-weight: 800; font-size: 1.05rem; color: var(--gray-dark); margin-bottom: 0.5rem; }
+.sim-advice { background: var(--green-light); border-left: 4px solid var(--green); padding: 0.8rem 1rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin-top: 0.7rem; }
+.sim-advice h4 { color: var(--green); font-size: 0.9rem; margin-bottom: 0.3rem; }
+
+/* Quiz */
+.quiz-item { background: var(--gray-pale); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; border: 3px solid #e8e8e8; }
+.quiz-num { display: inline-block; background: var(--orange-main); color: white; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li { padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm); cursor: pointer; border: 2px solid #e0e0e0; background: white; transition: all 0.2s; font-size: 0.9rem; }
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red); background: var(--red-light); }
+.quiz-explanation { display: none; margin-top: 0.7rem; padding: 0.8rem; border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7; }
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red); }
+.quiz-score { text-align: center; padding: 1rem; background: var(--orange-pale); border-radius: var(--radius); margin-top: 1rem; font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none; }
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+/* 1-person production visual */
+.solo-container { display: flex; justify-content: center; padding: 1rem 0; }
+.solo-bench { position: relative; width: 300px; height: 200px; }
+.solo-station { position: absolute; background: linear-gradient(135deg, var(--teal), #26a69a); color: white; width: 52px; height: 52px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; font-size: 0.72rem; box-shadow: 0 3px 8px rgba(0,137,123,0.3); z-index: 2; }
+.solo-station span { font-size: 0.58rem; font-weight: 400; }
+.solo-worker { position: absolute; width: 58px; height: 58px; background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.6rem; font-weight: 700; box-shadow: 0 4px 12px rgba(230,126,34,0.4); z-index: 3; text-align: center; line-height: 1.1; }
+.solo-arrow-path { position: absolute; z-index: 1; }
+.solo-arrow-path svg { width: 100%; height: 100%; }
+
+@media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } .tab-btn { font-size: 0.72rem; padding: 0.7rem 0.3rem; } .header h1 { font-size: 1.3rem; } .line-station { width: 50px; height: 50px; font-size: 0.68rem; } .ucell { width: 220px; height: 160px; } .ucell-station { width: 42px; height: 42px; font-size: 0.62rem; } .ucell-worker { top: 55px; left: 83px; width: 46px; height: 46px; } .ucell-path { left: 20px; top: 20px; width: 180px; height: 120px; } .pitch-chart { height: 150px; gap: 0.6rem; } .pitch-bar { width: 40px; font-size: 0.75rem; } .solo-bench { width: 260px; height: 180px; } .solo-station { width: 42px; height: 42px; font-size: 0.62rem; } .solo-worker { width: 48px; height: 48px; font-size: 0.55rem; } }
+
+/* ===== Fill-in-the-blank ===== */
+.fill-card { background: #fff; border-radius: 14px; margin-bottom: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+.fill-card .fill-header { padding: 12px 18px; font-weight: 700; font-size: .95rem; color: #fff; display: flex; align-items: center; gap: 8px; }
+.fill-card .fill-body { padding: 18px 20px; }
+.fill-blank {
+  display: inline-block; min-width: 100px; border-bottom: 2.5px solid #94a3b8;
+  text-align: center; padding: 2px 8px; margin: 0 2px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: .95rem;
+}
+.fill-blank:not(.show):hover { background: #e2e8f0; border-color: #64748b; }
+.fill-blank.show { color: #dc2626; background: #fef2f2; border-color: #dc2626; cursor: default; }
+.fill-reveal-btn {
+  display: inline-block; background: #1a365d; color: #fff; border: none;
+  border-radius: 8px; padding: 8px 18px; font-size: .85rem; font-weight: 600;
+  cursor: pointer; margin-top: 8px; font-family: inherit;
+}
+.fill-reveal-btn:hover { background: #2a4a7f; }
+.fill-group { margin-bottom: 4px; font-size: .95rem; line-height: 2; }
+.fill-section-header { background: #fff; border-radius: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+.fill-section-header .card-header { margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>ライン生産方式とセル生産方式</h1>
+  <div class="subtitle">中小企業診断士 運営管理 | 3-1 生産管理と生産方式</div>
+  <div class="badge">全6タブ構成 | ラインバランシング・ピッチダイアグラム対応</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">入門編</button>
+    <button class="tab-btn" onclick="switchTab(1)">基本事項</button>
+    <button class="tab-btn" onclick="switchTab(2)">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" onclick="switchTab(3)">シミュレーション</button>
+    <button class="tab-btn" onclick="switchTab(4)">実践クイズ</button>
+    <button class="tab-btn" onclick="switchTab(5)">実例で学ぶ</button>
+  </nav>
+
+  <!-- ==================== TAB 1: 入門編 ==================== -->
+  <div class="tab-panel active" id="tab0">
+
+    <div class="point-box" style="margin-bottom:1rem; border-color:var(--blue);">
+      <h4>このタブで学ぶこと</h4>
+      <ul style="margin:0.2rem 0 0;">
+        <li>ライン生産方式とセル生産方式の<strong>基本イメージ</strong></li>
+        <li>それぞれの<strong>メリット・デメリット</strong></li>
+        <li>U字ライン方式と1人生産方式の違い</li>
+      </ul>
+    </div>
+
+    <div class="cat-section cat-line">
+    <span class="cat-section-label">ライン生産方式</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-blue">&#9733;</span> ライン生産方式ってなに？</h2>
+
+    <div class="point-box">
+      <h4>ひとことで言うと</h4>
+      <p><strong>ベルトコンベアのように製品が流れながら加工されていく</strong>生産方式。少ない種類の製品を大量に作るのに向いている（少品種多量生産）。</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">ライン生産のイメージ</div>
+      <div class="line-visual">
+        <div style="font-size:0.75rem; font-weight:600; color:var(--gray-mid); margin-right:0.5rem;">資材</div>
+        <div class="line-station">工程1<span>プレス</span></div>
+        <div class="line-conveyor"></div>
+        <div class="line-station">工程2<span>溶接</span></div>
+        <div class="line-conveyor"></div>
+        <div class="line-station">工程3<span>塗装</span></div>
+        <div class="line-conveyor"></div>
+        <div class="line-station">工程4<span>組立</span></div>
+        <div class="line-conveyor"></div>
+        <div class="line-station">工程5<span>検査</span></div>
+        <div style="font-size:0.75rem; font-weight:600; color:var(--gray-mid); margin-left:0.5rem;">完成</div>
+      </div>
+    </div>
+
+    <div class="tutor-comment">
+      回転寿司をイメージしてみて！レーンの上をお皿が流れて、各ポジションの職人さんがネタを乗せていく。<strong>製品がラインを移動しながら加工される</strong>のがライン生産だよ！
+    </div>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>メリット</h4>
+        <ul>
+          <li><strong>生産性が高い</strong>：流れ作業で効率的</li>
+          <li><strong>管理しやすい</strong>：誰が何をするか明確</li>
+          <li><strong>単能工でOK</strong>：1人1工程だけ担当</li>
+        </ul>
+      </div>
+      <div class="card card-red">
+        <h4>デメリット</h4>
+        <ul>
+          <li>製品・生産量の<strong>変化に対応しにくい</strong></li>
+          <li>生産計画変更時に<strong>レイアウトを柔軟に変更しにくい</strong></li>
+          <li>作業が単調 → <strong>モチベーション低下</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tutor-comment">
+      ライン生産のデメリット「作業が単調でモチベーション低下」は、チャップリンの映画<strong>『モダン・タイムス』</strong>そのもの！ ネジを締め続けて人間がおかしくなるアレね。試験でも「作業者の疎外感」として出題されるよ。
+    </div>
+
+    <!-- レイアウト変更が難しい理由の詳細解説 -->
+    <div class="point-box" style="border-color:var(--red); margin-top:0.5rem;">
+      <h4 style="color:var(--red);">なぜライン生産は「レイアウトを変更しにくい」の？</h4>
+      <p>そもそも<strong>設備レイアウト</strong>とは、工場のどこにどの機械を置くかという<strong>設備の配置</strong>のこと。ライン生産のレイアウトが変更しにくい理由を、図で見てみよう。</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">ライン生産のレイアウト ＝ 製品別レイアウト（製品の加工順に一直線）</div>
+      <svg viewBox="0 0 520 250" style="width:100%; max-width:520px; display:block; margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrBlue2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#2980b9"/></marker>
+        </defs>
+
+        <!-- 説明テキスト -->
+        <text x="260" y="18" text-anchor="middle" font-size="11" font-weight="700" fill="#e53935">設備が「この製品専用」の順番で固定されている</text>
+
+        <!-- ライン（コンベア） -->
+        <rect x="30" y="55" width="460" height="8" rx="4" fill="#bdc3c7"/>
+        <!-- 矢印 -->
+        <text x="500" y="63" font-size="14" fill="#95a5a6">&#9654;</text>
+
+        <!-- 工程ボックス -->
+        <rect x="40" y="30" width="75" height="50" rx="8" fill="#2980b9"/>
+        <text x="77" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="white">工程1</text>
+        <text x="77" y="66" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.8)">プレス機</text>
+
+        <rect x="145" y="30" width="75" height="50" rx="8" fill="#2980b9"/>
+        <text x="182" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="white">工程2</text>
+        <text x="182" y="66" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.8)">溶接ロボット</text>
+
+        <rect x="250" y="30" width="75" height="50" rx="8" fill="#2980b9"/>
+        <text x="287" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="white">工程3</text>
+        <text x="287" y="66" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.8)">塗装ブース</text>
+
+        <rect x="355" y="30" width="75" height="50" rx="8" fill="#2980b9"/>
+        <text x="392" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="white">工程4</text>
+        <text x="392" y="66" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.8)">組立装置</text>
+
+        <!-- 固定のイメージ：ボルトアイコン -->
+        <text x="25" y="70" font-size="12">&#128297;</text>
+        <text x="130" y="70" font-size="12">&#128297;</text>
+        <text x="235" y="70" font-size="12">&#128297;</text>
+        <text x="340" y="70" font-size="12">&#128297;</text>
+        <text x="435" y="70" font-size="12">&#128297;</text>
+
+        <!-- 問題提起 -->
+        <rect x="30" y="95" width="460" height="40" rx="6" fill="#fadbd8" stroke="#e74c3c" stroke-width="1.5"/>
+        <text x="260" y="112" text-anchor="middle" font-size="11" font-weight="700" fill="#c0392b">&#9888; 「来月から別の製品を作りたい」「生産量を半分にしたい」</text>
+        <text x="260" y="127" text-anchor="middle" font-size="10" fill="#c0392b">→ 加工順序や必要な設備が変わるので、ライン全体の配置を変えなければならない</text>
+
+        <!-- 変更が大変な理由 -->
+        <rect x="30" y="150" width="145" height="85" rx="8" fill="#fdebd0" stroke="#e67e22" stroke-width="1"/>
+        <text x="102" y="170" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">&#9881; 設備が大型・専用</text>
+        <text x="102" y="186" text-anchor="middle" font-size="8" fill="#5d6d7e">プレス機や塗装ブースは</text>
+        <text x="102" y="198" text-anchor="middle" font-size="8" fill="#5d6d7e">簡単に動かせない</text>
+        <text x="102" y="215" text-anchor="middle" font-size="8" fill="#5d6d7e">（数トン〜数十トン）</text>
+        <text x="102" y="230" text-anchor="middle" font-size="8" font-weight="600" fill="#e74c3c">移動に数日〜数週間</text>
+
+        <rect x="190" y="150" width="145" height="85" rx="8" fill="#fdebd0" stroke="#e67e22" stroke-width="1"/>
+        <text x="262" y="170" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">&#128176; コストが巨大</text>
+        <text x="262" y="186" text-anchor="middle" font-size="8" fill="#5d6d7e">コンベア・配管・電気の</text>
+        <text x="262" y="198" text-anchor="middle" font-size="8" fill="#5d6d7e">配線もすべてやり直し</text>
+        <text x="262" y="215" text-anchor="middle" font-size="8" fill="#5d6d7e">レイアウト変更中は</text>
+        <text x="262" y="230" text-anchor="middle" font-size="8" font-weight="600" fill="#e74c3c">生産ストップ＝売上ゼロ</text>
+
+        <rect x="350" y="150" width="140" height="85" rx="8" fill="#fdebd0" stroke="#e67e22" stroke-width="1"/>
+        <text x="420" y="170" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">&#128279; 工程が連鎖</text>
+        <text x="420" y="186" text-anchor="middle" font-size="8" fill="#5d6d7e">1つの工程を変えると</text>
+        <text x="420" y="198" text-anchor="middle" font-size="8" fill="#5d6d7e">前後の工程にも影響</text>
+        <text x="420" y="215" text-anchor="middle" font-size="8" fill="#5d6d7e">ライン全体の再設計が</text>
+        <text x="420" y="230" text-anchor="middle" font-size="8" font-weight="600" fill="#e74c3c">必要になることも</text>
+      </svg>
+    </div>
+
+    <div class="tutor-comment">
+      たとえば<strong>自宅のキッチン</strong>で考えてみよう。冷蔵庫→シンク→コンロ→配膳台が一直線に並んでいたら効率的だけど、「明日から中華料理専門にするから配置を変えて！」と言われても、水道管やガス管が固定されているから<strong>簡単には動かせない</strong>よね。これがライン生産（製品別レイアウト）の宿命なんだ。
+    </div>
+
+    <div class="two-col">
+      <div class="card card-red">
+        <h4>ライン生産（製品別レイアウト）</h4>
+        <p>設備が<strong>「この製品を作る順番」で固定</strong>されているため、別の製品を作りたい・生産量を変えたい場合に、ライン全体を組み直す必要がある。</p>
+        <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">→ だから「少品種多量」＝<strong>同じものを大量に作り続ける</strong>場合に向いている</p>
+      </div>
+      <div class="card card-green">
+        <h4>セル生産（グループ別レイアウト）</h4>
+        <p><strong>汎用的な設備</strong>を小さなセルに配置しているため、生産計画が変わっても、セルの組み替えや作業者の担当変更で<strong>柔軟に対応</strong>できる。</p>
+        <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">→ だから「多品種少量」＝<strong>いろいろな種類を柔軟に作る</strong>場合に向いている</p>
+      </div>
+    </div>
+    </div>
+
+    <div class="cat-section cat-cell">
+    <span class="cat-section-label">セル生産方式</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-green">&#9733;</span> セル生産方式ってなに？</h2>
+
+    <div class="point-box">
+      <h4>ひとことで言うと</h4>
+      <p><strong>加工機械のグループ（＝セル）を作り、少人数で複数の工程を受け持つ</strong>生産方式。多品種少量生産に向いている。</p>
+      <p style="margin-top:0.3rem;">セル生産方式では<strong>グループテクノロジー（GT）</strong>を利用して、似た部品をグループ化し、それに適した機械を配置する。</p>
+    </div>
+
+    <div class="tutor-comment">
+      <strong>グループテクノロジー（GT＝Group Technology）</strong>とは、多種類の部品を形や加工方法の似たもの同士でグループにまとめる手法。多品種少量生産でも、グループにすれば<strong>大量生産に近い効率</strong>が出せるんだ！
+    </div>
+
+    <h2 class="section-title"><span class="section-icon icon-green">&#9878;</span> セル生産の2つの形態</h2>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>U字ライン方式</h4>
+        <p>U字型にラインを配置。1人で複数の工程を担当できるため、<strong>待ち時間が発生しにくい</strong>。生産計画の変更にも<strong>柔軟に対応</strong>できる。</p>
+        <p style="font-size:0.82rem; color:var(--gray-mid);">前提：<strong>多能工</strong>（複数の工程ができる作業者）が必要</p>
+      </div>
+      <div class="card card-teal">
+        <h4>1人生産方式</h4>
+        <p>1人で最初から最後まで全工程を担当。<strong>仕掛品（作りかけの製品）が発生しない</strong>。自分のペースで作業でき、<strong>モチベーションが高い</strong>。</p>
+        <p style="font-size:0.82rem; color:var(--gray-mid);">課題：作業者の能力に大きく依存し、<strong>習熟に時間がかかる</strong></p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="diagram" style="margin:0;">
+        <div class="diagram-title">U字ライン方式のイメージ</div>
+        <div class="ucell-container">
+          <div class="ucell">
+            <div class="ucell-station" style="top:0;left:0;">工程1<span>投入</span></div>
+            <div class="ucell-station" style="top:0;right:0;">工程2</div>
+            <div class="ucell-station" style="top:50%;right:0;transform:translateY(-50%);">工程3</div>
+            <div class="ucell-station" style="bottom:0;right:0;">工程4</div>
+            <div class="ucell-station" style="bottom:0;left:0;">工程5<span>完成</span></div>
+            <div class="ucell-path"></div>
+            <div class="ucell-worker">多能工<br>1人</div>
+          </div>
+        </div>
+        <div style="text-align:center; font-size:0.8rem; color:var(--gray-mid); margin-top:0.5rem;">
+          複数人の多能工がU字型ライン内を移動しながら<br>複数工程を担当（入口と出口が近い）
+        </div>
+      </div>
+
+      <div class="diagram" style="margin:0;">
+        <div class="diagram-title">1人生産方式のイメージ</div>
+        <div class="solo-container">
+          <div class="solo-bench">
+            <!-- 作業台を円形に配置 -->
+            <div class="solo-station" style="top:0; left:50%; transform:translateX(-50%);">工程1<span>投入</span></div>
+            <div class="solo-station" style="top:25%; right:0;">工程2<span>加工</span></div>
+            <div class="solo-station" style="bottom:15%; right:5%;">工程3<span>組立</span></div>
+            <div class="solo-station" style="bottom:15%; left:5%;">工程4<span>検査</span></div>
+            <div class="solo-station" style="top:25%; left:0;">工程5<span>完成</span></div>
+            <!-- 中央の作業者 -->
+            <div class="solo-worker" style="top:50%; left:50%; transform:translate(-50%,-50%);">1人で<br>全工程</div>
+            <!-- 循環矢印（SVG） -->
+            <svg style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1;" viewBox="0 0 300 200">
+              <defs>
+                <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6" fill="#00897b" />
+                </marker>
+              </defs>
+              <!-- 工程1→2 -->
+              <line x1="175" y1="35" x2="235" y2="60" stroke="#00897b" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowTeal)" />
+              <!-- 工程2→3 -->
+              <line x1="260" y1="100" x2="255" y2="135" stroke="#00897b" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowTeal)" />
+              <!-- 工程3→4 -->
+              <line x1="195" y1="165" x2="105" y2="165" stroke="#00897b" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowTeal)" />
+              <!-- 工程4→5 -->
+              <line x1="45" y1="135" x2="38" y2="100" stroke="#00897b" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowTeal)" />
+              <!-- 工程5→1（ループ） -->
+              <line x1="55" y1="60" x2="120" y2="35" stroke="#00897b" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowTeal)" />
+            </svg>
+          </div>
+        </div>
+        <div style="text-align:center; font-size:0.8rem; color:var(--gray-mid); margin-top:0.5rem;">
+          1人の作業者が全工程を最初から最後まで担当<br>仕掛品ゼロ・高いモチベーション
+        </div>
+      </div>
+    </div>
+
+    <div class="tutor-comment">
+      <strong>ライン生産 vs セル生産</strong>を一言でまとめると：<br>
+      <strong>ライン生産</strong> = 大量に同じものを効率よく作るのが得意（少品種多量）<br>
+      <strong>セル生産</strong> = 色々な種類を柔軟に作るのが得意（多品種少量）
+    </div>
+    </div>
+
+  </div><!-- /tab0 -->
+
+  <!-- ==================== TAB 2: 基本事項 ==================== -->
+  <div class="tab-panel" id="tab1">
+
+    <div class="point-box" style="margin-bottom:1rem; border-color:var(--purple);">
+      <h4>このタブで学ぶこと</h4>
+      <ul style="margin:0.2rem 0 0;">
+        <li><strong>生産形態の特徴</strong>（個別生産・ロット生産・連続生産）</li>
+        <li><strong>設備レイアウト</strong>（ジョブショップ型・フローショップ型）</li>
+        <li>ライン生産方式の<strong>分類</strong>（単一品種・多品種）</li>
+        <li><strong>ラインバランシング</strong>の公式と計算方法</li>
+        <li>ライン生産 vs セル生産の<strong>比較表</strong></li>
+      </ul>
+    </div>
+
+    <!-- 生産形態の特徴 -->
+    <div class="cat-section" style="border-color:#795548; background:linear-gradient(135deg, rgba(121,85,72,0.04), transparent);">
+    <span class="cat-section-label" style="background:#795548;">生産形態の全体像</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon" style="background:#795548;">&#9878;</span> 生産形態の特徴（個別・ロット・連続）</h2>
+
+    <div class="tutor-comment">
+      生産方式を理解するには、まず<strong>「何を・どれだけ・どうやって作るか」</strong>の全体像を押さえよう。個別生産→ロット生産→連続生産の順に、生産量が増え、品種数が減り、レイアウトも変わっていくんだ！
+    </div>
+
+    <table>
+      <tr>
+        <th style="background:#795548;">項目</th>
+        <th style="background:#2980b9;">個別生産</th>
+        <th style="background:#8e44ad;">ロット生産</th>
+        <th style="background:#e67e22;">連続生産</th>
+      </tr>
+      <tr><td><strong>生産量</strong></td><td>少ない</td><td>中</td><td>多い</td></tr>
+      <tr><td><strong>品種</strong></td><td>注文数</td><td>複数</td><td>基本的に単一</td></tr>
+      <tr><td><strong>生産形態<br>（タイミング）</strong></td><td><strong>受注生産</strong></td><td>受注生産／見込生産</td><td><strong>見込生産</strong></td></tr>
+      <tr><td><strong>生産形態<br>（品種・量）</strong></td><td><strong>多品種少量</strong>生産</td><td><strong>中品種中量</strong>生産</td><td><strong>少品種多量</strong>生産</td></tr>
+      <tr><td><strong>設備レイアウト</strong></td><td><span class="keyword">機能別レイアウト</span></td><td><span class="keyword">グループ別レイアウト</span></td><td><span class="keyword">製品別レイアウト</span></td></tr>
+      <tr><td><strong>段取り替え</strong></td><td>多い<br><span style="font-size:0.8rem; color:var(--gray-mid);">基本的に注文品ごと</span></td><td>中<br><span style="font-size:0.8rem; color:var(--gray-mid);">ロットサイズによる・品種ごと</span></td><td>少ない<br><span style="font-size:0.8rem; color:var(--gray-mid);">品種切り替えの場合のみ</span></td></tr>
+    </table>
+
+    <div class="tutor-comment">
+      覚え方のコツ：<strong>左から右に行くほど「量が増えて、種類が減る」</strong>。個別生産は「オーダーメイドスーツ」、ロット生産は「季節の限定商品」、連続生産は「ペットボトルの水」をイメージしよう！
+    </div>
+    </div>
+
+    <!-- ジョブショップ型 vs フローショップ型 -->
+    <div class="cat-section" style="border-color:#546e7a; background:linear-gradient(135deg, rgba(84,110,122,0.04), transparent);">
+    <span class="cat-section-label" style="background:#546e7a;">設備レイアウト</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon" style="background:#546e7a;">&#9881;</span> ジョブショップ型 vs フローショップ型レイアウト</h2>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>ジョブショップ型（＝機能別レイアウト）</h4>
+        <p><strong>同じ機能を持つ設備をまとめて配置</strong>する方式。製品によって加工経路が異なる。</p>
+        <ul style="margin-top:0.4rem;">
+          <li>旋盤は旋盤エリア、溶接は溶接エリアに集約</li>
+          <li>製品ごとに<strong>通る経路が違う</strong></li>
+          <li><strong>多品種少量生産</strong>（個別生産）に適する</li>
+          <li>汎用機械を使うため<strong>柔軟性が高い</strong></li>
+          <li>搬送距離が長く、仕掛品が多くなりやすい</li>
+        </ul>
+      </div>
+      <div class="card card-orange">
+        <h4>フローショップ型（＝製品別レイアウト）</h4>
+        <p><strong>製品の加工順序に沿って設備を直線的に配置</strong>する方式。全製品が同じ経路を通る。</p>
+        <ul style="margin-top:0.4rem;">
+          <li>工程1→工程2→工程3…と<strong>一方向に流れる</strong></li>
+          <li>全製品が<strong>同じ経路</strong>を通る</li>
+          <li><strong>少品種多量生産</strong>（連続生産）に適する</li>
+          <li>専用機械で<strong>生産効率が高い</strong></li>
+          <li>品種変更への柔軟性は低い</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">レイアウトの違いを図で比較</div>
+      <div class="two-col" style="gap:1.5rem;">
+        <!-- ジョブショップ型 -->
+        <div style="text-align:center;">
+          <div style="font-weight:700; font-size:0.9rem; color:var(--blue); margin-bottom:0.8rem;">ジョブショップ型（機能別）</div>
+          <svg viewBox="0 0 240 180" style="width:100%; max-width:240px;" xmlns="http://www.w3.org/2000/svg">
+            <!-- 機能別エリア -->
+            <rect x="10" y="10" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+            <text x="45" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">旋盤</text>
+            <text x="45" y="44" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+            <rect x="160" y="10" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+            <text x="195" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">フライス</text>
+            <text x="195" y="44" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+            <rect x="10" y="120" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+            <text x="45" y="140" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">溶接</text>
+            <text x="45" y="154" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+            <rect x="160" y="120" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+            <text x="195" y="140" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">検査</text>
+            <text x="195" y="154" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+            <!-- 製品Aの経路（赤） -->
+            <defs>
+              <marker id="arrRed" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#e53935"/></marker>
+              <marker id="arrGreen2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#43a047"/></marker>
+            </defs>
+            <polyline points="45,60 45,80 195,80 195,120" fill="none" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrRed)"/>
+            <text x="85" y="74" font-size="8" font-weight="700" fill="#e53935">製品A</text>
+            <!-- 製品Bの経路（緑） -->
+            <polyline points="195,60 195,90 45,90 45,120" fill="none" stroke="#43a047" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrGreen2)"/>
+            <text x="135" y="100" font-size="8" font-weight="700" fill="#43a047">製品B</text>
+          </svg>
+          <div style="font-size:0.75rem; color:var(--gray-mid); margin-top:0.3rem;">製品ごとに経路が異なる</div>
+        </div>
+        <!-- フローショップ型 -->
+        <div style="text-align:center;">
+          <div style="font-weight:700; font-size:0.9rem; color:var(--orange-dark); margin-bottom:0.8rem;">フローショップ型（製品別）</div>
+          <svg viewBox="0 0 240 180" style="width:100%; max-width:240px;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrOrange" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#e67e22"/></marker>
+            </defs>
+            <!-- 工程を直線に配置 -->
+            <rect x="10" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+            <text x="35" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程1</text>
+            <text x="35" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">旋盤</text>
+            <line x1="60" y1="90" x2="72" y2="90" stroke="#e67e22" stroke-width="2" marker-end="url(#arrOrange)"/>
+            <rect x="75" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+            <text x="100" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程2</text>
+            <text x="100" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">溶接</text>
+            <line x1="125" y1="90" x2="137" y2="90" stroke="#e67e22" stroke-width="2" marker-end="url(#arrOrange)"/>
+            <rect x="140" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+            <text x="165" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程3</text>
+            <text x="165" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">検査</text>
+            <!-- 全製品が同じ経路 -->
+            <text x="15" y="55" font-size="8" font-weight="700" fill="#e53935">製品A →</text>
+            <text x="15" y="140" font-size="8" font-weight="700" fill="#43a047">製品B →</text>
+            <line x1="55" y1="138" x2="165" y2="118" stroke="#43a047" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="55" y1="53" x2="165" y2="68" stroke="#e53935" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <!-- 同じ方向の矢印 -->
+            <text x="60" y="160" font-size="8" fill="#5d6d7e">全製品が同じ方向に流れる</text>
+          </svg>
+          <div style="font-size:0.75rem; color:var(--gray-mid); margin-top:0.3rem;">全製品が同じ経路を一方向に流れる</div>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th style="background:#546e7a;">比較項目</th>
+        <th style="background:#2980b9;">ジョブショップ型（機能別）</th>
+        <th style="background:#e67e22;">フローショップ型（製品別）</th>
+      </tr>
+      <tr><td><strong>設備配置</strong></td><td>同じ機能の設備をまとめる</td><td>加工順序に沿って配置</td></tr>
+      <tr><td><strong>加工経路</strong></td><td>製品ごとに異なる</td><td>全製品が同じ経路</td></tr>
+      <tr><td><strong>適する生産</strong></td><td>多品種少量（個別生産）</td><td>少品種多量（連続生産）</td></tr>
+      <tr><td><strong>使用設備</strong></td><td>汎用機械</td><td>専用機械</td></tr>
+      <tr><td><strong>柔軟性</strong></td><td>高い</td><td>低い</td></tr>
+      <tr><td><strong>生産効率</strong></td><td>低い（搬送距離が長い）</td><td>高い（直線的な流れ）</td></tr>
+      <tr><td><strong>仕掛品</strong></td><td>多くなりやすい</td><td>少ない</td></tr>
+      <tr><td><strong>管理</strong></td><td>複雑（経路がバラバラ）</td><td>容易（流れが一定）</td></tr>
+    </table>
+
+    <div class="tutor-comment">
+      <strong>ジョブショップ＝「病院」</strong>をイメージしよう。内科・外科・検査室と機能別に分かれていて、患者ごとに回る順番が違う。<strong>フローショップ＝「回転寿司」</strong>で、ネタが一方向にベルトコンベアで流れていく。試験では<strong>「機能別レイアウト＝ジョブショップ」「製品別レイアウト＝フローショップ」</strong>のセット暗記が大事だよ！
+    </div>
+
+    <div class="point-box" style="border-color:#546e7a;">
+      <h4>グループ別レイアウト（補足）</h4>
+      <p>ジョブショップ型とフローショップ型の<strong>中間的な位置づけ</strong>。<strong>GT（グループテクノロジー）</strong>で類似部品をグループ化し、グループ内ではフローショップ的な流れを作る。<strong>ロット生産・セル生産方式</strong>で採用される。</p>
+      <p style="font-size:0.85rem; margin-top:0.3rem; color:var(--gray-mid);">ジョブショップの柔軟性とフローショップの効率性を両立しようとするレイアウト。</p>
+    </div>
+    </div>
+
+    <div class="cat-section cat-line">
+    <span class="cat-section-label">ライン生産方式</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-blue">&#9733;</span> ライン生産方式の分類</h2>
+
+    <p>ライン生産方式は、品種の数で<strong>単一品種ライン</strong>と<strong>多品種ライン</strong>に分けられる。</p>
+
+    <div class="diagram">
+      <div class="diagram-title">ライン生産方式の分類フロー</div>
+      <div class="flow-row">
+        <div class="flow-box blue">ライン生産方式</div>
+        <div class="flow-arrow blue">→</div>
+        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+          <div class="flow-row">
+            <div class="flow-box" style="min-width:100px;">単一品種ライン<small>1種類を連続生産</small></div>
+          </div>
+          <div class="flow-row" style="gap:0.3rem;">
+            <div class="flow-box purple" style="min-width:100px;">多品種ライン<small>複数品種を生産</small></div>
+            <div class="flow-arrow" style="color:var(--purple);">→</div>
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+              <div class="flow-box red" style="min-width:120px;">切り替え方式<small>段取り替えあり</small></div>
+              <div class="flow-box green" style="min-width:120px;">混合ライン方式<small>段取り替えなし</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tutor-comment">
+      混合ライン方式は「幕の内弁当の製造ライン」をイメージしよう。ご飯もおかずも同じベルトコンベアに乗って流れてくる。わざわざラインを止めて切り替える必要がないんだ！
+    </div>
+
+    <table>
+      <tr><th>分類</th><th>内容</th><th>段取り替え</th></tr>
+      <tr><td><strong>単一品種ライン</strong></td><td>特定の1種類の製品を連続して生産</td><td>不要</td></tr>
+      <tr><td><strong>多品種ライン</strong></td><td>複数の品種を同じラインで生産。2つの方式がある</td><td>方式による</td></tr>
+    </table>
+
+    <div class="two-col">
+      <div class="card card-blue">
+        <h4>ライン切り替え方式</h4>
+        <p>一定期間は1品種を生産し、終わったら次の品種に<strong>ラインを切り替える</strong>。<strong>段取り替えが発生</strong>する。</p>
+      </div>
+      <div class="card card-green">
+        <h4>混合ライン方式</h4>
+        <p>同じラインで<strong>複数の品種を同時に混ぜて</strong>生産。加工の種類が似ている必要がある。<strong>段取り替えは発生しない</strong>。</p>
+      </div>
+    </div>
+    </div>
+
+    <div class="cat-section cat-balance">
+    <span class="cat-section-label">ラインバランシング</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-purple">&#9733;</span> ラインバランシングと重要公式</h2>
+
+    <div class="card card-purple">
+      <h4>ラインバランシングとは？</h4>
+      <p>ライン上の各工程（＝<strong>作業ステーション</strong>）の作業時間を<strong>なるべく均一にする</strong>こと。バランスが悪いと、遅い工程の前に仕掛品が溜まり、速い工程では手待ちが発生する。</p>
+    </div>
+
+    <div class="card card-orange">
+      <h4>サイクルタイム（＝ピッチタイム）</h4>
+      <p>製品1個が完成する時間間隔。<strong>最も作業時間が長い工程（＝ボトルネック）の時間</strong>で決まる。</p>
+      <p style="margin-top:0.4rem;">別の表現では、<strong>生産ラインに資材を投入する時間間隔</strong>ともいう。ボトルネック工程より速く資材を投入しても詰まってしまうため、結局サイクルタイム＝最も遅い工程の時間間隔で投入することになる。</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">ピッチダイアグラム（例：工程A=3分, 工程B=5分, 工程C=4分）</div>
+      <svg viewBox="0 0 520 310" style="width:100%; max-width:520px; display:block; margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- ロスタイム用の斜線パターン -->
+          <pattern id="hatchA" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#90caf9" stroke-width="1.5"/>
+          </pattern>
+          <pattern id="hatchC" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#a5d6a7" stroke-width="1.5"/>
+          </pattern>
+        </defs>
+
+        <!-- Y軸 -->
+        <line x1="80" y1="30" x2="80" y2="250" stroke="#5d6d7e" stroke-width="2"/>
+        <!-- Y軸ラベル -->
+        <text x="35" y="160" text-anchor="middle" font-size="13" font-weight="700" fill="#5d6d7e" transform="rotate(-90,35,160)">作業時間（分）</text>
+        <!-- Y軸目盛り -->
+        <line x1="75" y1="250" x2="80" y2="250" stroke="#5d6d7e" stroke-width="1.5"/>
+        <text x="68" y="254" text-anchor="end" font-size="12" fill="#5d6d7e">0</text>
+        <line x1="75" y1="210" x2="80" y2="210" stroke="#5d6d7e" stroke-width="1.5"/>
+        <text x="68" y="214" text-anchor="end" font-size="12" fill="#5d6d7e">1</text>
+        <line x1="75" y1="170" x2="80" y2="170" stroke="#5d6d7e" stroke-width="1.5"/>
+        <text x="68" y="174" text-anchor="end" font-size="12" fill="#5d6d7e">2</text>
+        <line x1="75" y1="130" x2="80" y2="130" stroke="#5d6d7e" stroke-width="1.5"/>
+        <text x="68" y="134" text-anchor="end" font-size="12" fill="#5d6d7e">3</text>
+        <line x1="75" y1="90" x2="80" y2="90" stroke="#5d6d7e" stroke-width="1.5"/>
+        <text x="68" y="94" text-anchor="end" font-size="12" fill="#5d6d7e">4</text>
+        <line x1="75" y1="50" x2="80" y2="50" stroke="#5d6d7e" stroke-width="1.5"/>
+        <text x="68" y="54" text-anchor="end" font-size="12" fill="#5d6d7e">5</text>
+        <!-- 横グリッド線（薄い） -->
+        <line x1="80" y1="210" x2="460" y2="210" stroke="#e0e0e0" stroke-width="0.8"/>
+        <line x1="80" y1="170" x2="460" y2="170" stroke="#e0e0e0" stroke-width="0.8"/>
+        <line x1="80" y1="130" x2="460" y2="130" stroke="#e0e0e0" stroke-width="0.8"/>
+        <line x1="80" y1="90" x2="460" y2="90" stroke="#e0e0e0" stroke-width="0.8"/>
+
+        <!-- X軸 -->
+        <line x1="80" y1="250" x2="460" y2="250" stroke="#5d6d7e" stroke-width="2"/>
+
+        <!-- サイクルタイム線（5分） -->
+        <line x1="80" y1="50" x2="460" y2="50" stroke="#e53935" stroke-width="2.5" stroke-dasharray="8,4"/>
+        <rect x="355" y="28" width="108" height="22" rx="4" fill="#e53935"/>
+        <text x="409" y="43" text-anchor="middle" font-size="11" font-weight="700" fill="white">サイクルタイム＝5分</text>
+
+        <!-- ===== 工程A（3分）===== -->
+        <!-- 作業時間バー -->
+        <rect x="110" y="130" width="80" height="120" rx="4" fill="#1e88e5" opacity="0.9"/>
+        <!-- ロスタイム（斜線） -->
+        <rect x="110" y="50" width="80" height="80" rx="4" fill="url(#hatchA)" stroke="#90caf9" stroke-width="1"/>
+        <!-- ロスタイムラベル -->
+        <text x="150" y="96" text-anchor="middle" font-size="11" font-weight="600" fill="#1565c0">ロス 2分</text>
+        <!-- 作業時間ラベル -->
+        <text x="150" y="198" text-anchor="middle" font-size="16" font-weight="800" fill="white">3分</text>
+        <!-- X軸ラベル -->
+        <text x="150" y="272" text-anchor="middle" font-size="14" font-weight="700" fill="#2c3e50">工程A</text>
+
+        <!-- ===== 工程B（5分・ボトルネック）===== -->
+        <!-- 作業時間バー -->
+        <rect x="230" y="50" width="80" height="200" rx="4" fill="#e53935" opacity="0.9"/>
+        <!-- ボトルネックマーク -->
+        <rect x="238" y="56" width="64" height="20" rx="3" fill="rgba(255,255,255,0.25)"/>
+        <text x="270" y="70" text-anchor="middle" font-size="10" font-weight="700" fill="white">BOTTLENECK</text>
+        <!-- 作業時間ラベル -->
+        <text x="270" y="160" text-anchor="middle" font-size="16" font-weight="800" fill="white">5分</text>
+        <!-- X軸ラベル -->
+        <text x="270" y="272" text-anchor="middle" font-size="14" font-weight="700" fill="#2c3e50">工程B</text>
+        <!-- ボトルネック注釈 -->
+        <text x="270" y="289" text-anchor="middle" font-size="10" font-weight="600" fill="#e53935">（最も遅い工程）</text>
+
+        <!-- ===== 工程C（4分）===== -->
+        <!-- 作業時間バー -->
+        <rect x="350" y="90" width="80" height="160" rx="4" fill="#43a047" opacity="0.9"/>
+        <!-- ロスタイム（斜線） -->
+        <rect x="350" y="50" width="80" height="40" rx="4" fill="url(#hatchC)" stroke="#a5d6a7" stroke-width="1"/>
+        <!-- ロスタイムラベル -->
+        <text x="390" y="76" text-anchor="middle" font-size="11" font-weight="600" fill="#2e7d32">ロス 1分</text>
+        <!-- 作業時間ラベル -->
+        <text x="390" y="178" text-anchor="middle" font-size="16" font-weight="800" fill="white">4分</text>
+        <!-- X軸ラベル -->
+        <text x="390" y="272" text-anchor="middle" font-size="14" font-weight="700" fill="#2c3e50">工程C</text>
+
+        <!-- 凡例 -->
+        <rect x="82" y="295" width="12" height="10" rx="2" fill="#1e88e5"/>
+        <text x="98" y="305" font-size="10" fill="#5d6d7e">作業時間</text>
+        <rect x="165" y="295" width="12" height="10" rx="2" fill="url(#hatchA)" stroke="#bdbdbd" stroke-width="0.5"/>
+        <text x="181" y="305" font-size="10" fill="#5d6d7e">ロスタイム（手待ち）</text>
+        <line x1="300" y1="300" x2="325" y2="300" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="330" y="305" font-size="10" fill="#5d6d7e">サイクルタイム</text>
+      </svg>
+    </div>
+
+    <div class="tutor-comment">
+      ピッチダイアグラムは各工程の作業時間を<strong>棒グラフ</strong>で並べたもの。一番高い棒（＝一番遅い工程＝<strong>ボトルネック</strong>）がサイクルタイムを決める。赤い点線と各棒の差が<strong>ロスタイム</strong>（斜線部分）で、ここが<strong>ムダな手待ち時間</strong>だよ！このロスタイムの合計がバランスロスで、ラインバランシング（山崩し）で減らしていくんだ。
+    </div>
+
+    <div class="card card-blue">
+      <h4>ライン編成効率（＝ラインバランス効率）</h4>
+      <div class="formula-box">ライン編成効率 = 作業時間の合計 &divide; （サイクルタイム &times; 作業ステーション数）</div>
+      <div style="background:white; border-radius:6px; padding:0.8rem; margin-top:0.5rem; font-size:0.88rem;">
+        <strong>計算例：</strong>A=3分, B=5分, C=4分の3工程<br>
+        ライン編成効率 = (3+5+4) &divide; (5&times;3) = 12 &divide; 15 = <strong>0.80 = 80%</strong>
+      </div>
+    </div>
+
+    <div class="card card-red">
+      <h4>バランスロス率</h4>
+      <div class="formula-box">バランスロス率 = 100% - ライン編成効率</div>
+      <div style="background:white; border-radius:6px; padding:0.8rem; margin-top:0.5rem; font-size:0.88rem;">
+        <strong>計算例：</strong>100% - 80% = <strong>20%</strong><br>
+        → ラインバランシング（山崩し）で全工程4分にすると → 編成効率<strong>100%</strong>、ロス率<strong>0%</strong>
+      </div>
+    </div>
+
+    <div class="card card-orange">
+      <h4>山崩し（ラインバランシングの改善）</h4>
+      <p><strong>ボトルネック工程</strong>（最も遅い工程）の作業の一部を、余裕のある工程に移動させること。これにより作業時間が均等化される。</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">山崩しビフォー・アフター</div>
+      <div style="display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; align-items:flex-end;">
+        <div style="text-align:center;">
+          <div style="font-weight:700; font-size:0.85rem; color:var(--red); margin-bottom:0.5rem;">Before（効率80%）</div>
+          <div style="display:flex; align-items:flex-end; gap:0.5rem; justify-content:center;">
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <div style="width:40px; height:60px; background:linear-gradient(180deg,#42a5f5,#1e88e5); border-radius:4px 4px 0 0; display:flex; align-items:center; justify-content:center; color:white; font-size:0.75rem; font-weight:700;">3分</div>
+              <div style="font-size:0.72rem; font-weight:600;">A</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <div style="width:40px; height:100px; background:linear-gradient(180deg,#ef5350,#e53935); border-radius:4px 4px 0 0; display:flex; align-items:center; justify-content:center; color:white; font-size:0.75rem; font-weight:700;">5分</div>
+              <div style="font-size:0.72rem; font-weight:600;">B</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <div style="width:40px; height:80px; background:linear-gradient(180deg,#66bb6a,#43a047); border-radius:4px 4px 0 0; display:flex; align-items:center; justify-content:center; color:white; font-size:0.75rem; font-weight:700;">4分</div>
+              <div style="font-size:0.72rem; font-weight:600;">C</div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:1.5rem; font-weight:700; color:var(--orange-main); align-self:center;">→</div>
+        <div style="text-align:center;">
+          <div style="font-weight:700; font-size:0.85rem; color:var(--green); margin-bottom:0.5rem;">After（効率100%）</div>
+          <div style="display:flex; align-items:flex-end; gap:0.5rem; justify-content:center;">
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <div style="width:40px; height:80px; background:linear-gradient(180deg,#42a5f5,#1e88e5); border-radius:4px 4px 0 0; display:flex; align-items:center; justify-content:center; color:white; font-size:0.75rem; font-weight:700;">4分</div>
+              <div style="font-size:0.72rem; font-weight:600;">A</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <div style="width:40px; height:80px; background:linear-gradient(180deg,#66bb6a,#43a047); border-radius:4px 4px 0 0; display:flex; align-items:center; justify-content:center; color:white; font-size:0.75rem; font-weight:700;">4分</div>
+              <div style="font-size:0.72rem; font-weight:600;">B</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <div style="width:40px; height:80px; background:linear-gradient(180deg,#66bb6a,#43a047); border-radius:4px 4px 0 0; display:flex; align-items:center; justify-content:center; color:white; font-size:0.75rem; font-weight:700;">4分</div>
+              <div style="font-size:0.72rem; font-weight:600;">C</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tutor-comment" style="margin-top:0.8rem;">
+        Bさん（5分）が忙しすぎるので、1分ぶんの仕事をAさん（3分）に渡した。<strong>「できる人に仕事が集中する」のは会社あるある</strong>だけど、生産ラインでは平等に分けるのが正義なんだ！
+      </div>
+    </div>
+
+    <div class="mnemonic">
+      <div class="big">ラインバランシング4ステップ</div>
+      <div class="desc">1. ピッチダイアグラムを作成 → 2. サイクルタイム＝最大時間を確認 → 3. ライン編成効率を計算 → 4. ボトルネックから山崩しで改善</div>
+    </div>
+    </div>
+
+    <!-- 仕掛品と手待ちの発生場所 -->
+    <div class="cat-section" style="border-color:#d84315; background:linear-gradient(135deg, rgba(216,67,21,0.04), transparent);">
+    <span class="cat-section-label" style="background:#d84315;">頻出テーマ</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon" style="background:#d84315;">&#9888;</span> 仕掛品と手待ちはどこで発生する？</h2>
+
+    <div class="tutor-comment">
+      バランスが悪いラインでは<strong>「仕掛品」と「手待ち」</strong>が発生する。この2つは混同しやすいけど、<strong>発生する場所と原因がまったく違う</strong>んだ。まず言葉の意味をしっかり押さえよう！
+    </div>
+
+    <div class="two-col">
+      <div class="card card-orange">
+        <h4>仕掛品（しかかりひん）とは？</h4>
+        <p><strong>前の工程から流れてきたけど、まだ次の工程に取りかかれない「作りかけの製品」</strong>のこと。</p>
+        <p style="margin-top:0.4rem; font-size:0.88rem;">次の工程が遅くて処理しきれないと、その工程の<strong>手前に</strong>製品がどんどん溜まっていく。</p>
+        <p style="margin-top:0.3rem; font-size:0.85rem; color:var(--gray-mid);">身近な例：ラーメン屋の行列。店内の調理（次の工程）が遅いから、店の<strong>前に</strong>お客さん（仕掛品）が溜まる。</p>
+      </div>
+      <div class="card card-blue">
+        <h4>手待ち（てまち）とは？</h4>
+        <p><strong>前の工程からの製品がまだ来ないので、作業者がやることがなく待っている状態</strong>のこと。</p>
+        <p style="margin-top:0.4rem; font-size:0.88rem;">前の工程が遅くて製品が届かないと、次の工程の作業者が<strong>暇になってしまう</strong>。</p>
+        <p style="margin-top:0.3rem; font-size:0.85rem; color:var(--gray-mid);">身近な例：レジが速いのにお客さんが来ない状態。前の「商品を選ぶ工程」が遅いから、レジ係が<strong>手持ち無沙汰</strong>になる。</p>
+      </div>
+    </div>
+
+    <div class="point-box" style="border-color:#d84315;">
+      <h4 style="color:#d84315;">最重要ルール：「遅い工程」の前後で何が起きるか</h4>
+      <p>ある工程が前後より<strong>遅い</strong>場合：</p>
+      <ul>
+        <li>その工程の<strong>手前に仕掛品が溜まる</strong>（前から来た製品を処理しきれない）</li>
+        <li>その工程の<strong>直後の工程で手待ちが発生</strong>（製品がなかなか来ないから暇）</li>
+      </ul>
+      <p style="margin-top:0.4rem;">つまり、<strong>仕掛品が最も多くなる場所</strong>＝作業時間が前の工程より<strong>最も遅くなるところの手前</strong>。<br><strong>手待ちが最も大きくなる場所</strong>＝作業時間が前の工程より<strong>最も遅いところの直後</strong>。</p>
+    </div>
+
+    <h3 style="font-size:1.05rem; font-weight:700; color:#d84315; margin-top:1.5rem;">具体例で理解しよう</h3>
+
+    <table>
+      <tr>
+        <th style="background:#d84315;">作業工程</th>
+        <th style="background:#2980b9;">A</th>
+        <th style="background:#8e44ad;">B</th>
+        <th style="background:#e53935;">C</th>
+        <th style="background:#43a047;">D</th>
+        <th style="background:#e67e22;">E</th>
+      </tr>
+      <tr style="text-align:center;">
+        <td><strong>作業時間（分）</strong></td>
+        <td><strong>5</strong></td>
+        <td><strong>4</strong></td>
+        <td><strong>8</strong></td>
+        <td><strong>6</strong></td>
+        <td><strong>7</strong></td>
+      </tr>
+    </table>
+
+    <div class="diagram">
+      <div class="diagram-title">どこで仕掛品と手待ちが発生するか？</div>
+      <svg viewBox="0 0 560 340" style="width:100%; max-width:560px; display:block; margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrD84" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#d84315"/></marker>
+        </defs>
+
+        <!-- ラインの流れ -->
+        <rect x="30" y="78" width="500" height="6" rx="3" fill="#e0e0e0"/>
+        <text x="540" y="85" font-size="12" fill="#bdbdbd">&#9654;</text>
+
+        <!-- 工程A (5分) -->
+        <rect x="40" y="50" width="80" height="55" rx="8" fill="#2980b9"/>
+        <text x="80" y="73" text-anchor="middle" font-size="12" font-weight="700" fill="white">A</text>
+        <text x="80" y="92" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.85)">5分</text>
+
+        <!-- 工程B (4分) -->
+        <rect x="150" y="50" width="80" height="55" rx="8" fill="#8e44ad"/>
+        <text x="190" y="73" text-anchor="middle" font-size="12" font-weight="700" fill="white">B</text>
+        <text x="190" y="92" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.85)">4分</text>
+
+        <!-- 工程C (8分) ★ボトルネック -->
+        <rect x="260" y="50" width="80" height="55" rx="8" fill="#e53935"/>
+        <text x="300" y="73" text-anchor="middle" font-size="12" font-weight="700" fill="white">C</text>
+        <text x="300" y="92" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.85)">8分</text>
+        <rect x="268" y="36" width="64" height="16" rx="3" fill="#e53935" stroke="white" stroke-width="1"/>
+        <text x="300" y="48" text-anchor="middle" font-size="8" font-weight="700" fill="white">最も遅い！</text>
+
+        <!-- 工程D (6分) -->
+        <rect x="370" y="50" width="80" height="55" rx="8" fill="#43a047"/>
+        <text x="410" y="73" text-anchor="middle" font-size="12" font-weight="700" fill="white">D</text>
+        <text x="410" y="92" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.85)">6分</text>
+
+        <!-- 工程E (7分) -->
+        <rect x="480" y="50" width="50" height="55" rx="8" fill="#e67e22"/>
+        <text x="505" y="73" text-anchor="middle" font-size="12" font-weight="700" fill="white">E</text>
+        <text x="505" y="92" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.85)">7分</text>
+
+        <!-- ★仕掛品（Cの手前＝BとCの間） -->
+        <!-- 積み上がった箱 -->
+        <rect x="237" y="56" width="16" height="12" rx="2" fill="#ff8f00" stroke="#e65100" stroke-width="0.8"/>
+        <rect x="237" y="68" width="16" height="12" rx="2" fill="#ffb300" stroke="#e65100" stroke-width="0.8"/>
+        <rect x="237" y="80" width="16" height="12" rx="2" fill="#ffd54f" stroke="#e65100" stroke-width="0.8"/>
+        <!-- ラベル -->
+        <line x1="245" y1="95" x2="245" y2="130" stroke="#d84315" stroke-width="1.5"/>
+        <rect x="188" y="130" width="115" height="42" rx="6" fill="#fff3e0" stroke="#d84315" stroke-width="1.5"/>
+        <text x="245" y="146" text-anchor="middle" font-size="9" font-weight="700" fill="#d84315">&#128230; 仕掛品が最大！</text>
+        <text x="245" y="162" text-anchor="middle" font-size="8" fill="#5d6d7e">Cが遅いから手前に溜まる</text>
+
+        <!-- 工程間の差の注釈 B(4分)→C(8分) = 差4分 -->
+        <line x1="230" y1="40" x2="260" y2="40" stroke="#d84315" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="200" y="16" width="90" height="22" rx="4" fill="#d84315"/>
+        <text x="245" y="31" text-anchor="middle" font-size="9" font-weight="700" fill="white">差 4分（最大）</text>
+
+        <!-- ★手待ち（Cの直後＝Dの作業者） -->
+        <!-- 待っている人アイコン -->
+        <circle cx="365" y="77" r="10" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+        <text x="365" y="81" text-anchor="middle" font-size="9">&#128564;</text>
+        <!-- ラベル -->
+        <line x1="365" y1="95" x2="365" y2="130" stroke="#2980b9" stroke-width="1.5"/>
+        <rect x="310" y="130" width="110" height="42" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+        <text x="365" y="146" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">&#128564; 手待ちが最大！</text>
+        <text x="365" y="162" text-anchor="middle" font-size="8" fill="#5d6d7e">Cが遅くて製品が来ない</text>
+
+        <!-- ===== 全体の流れ解説 ===== -->
+        <rect x="30" y="190" width="500" height="140" rx="10" fill="#fafafa" stroke="#e0e0e0" stroke-width="1"/>
+
+        <text x="50" y="212" font-size="11" font-weight="700" fill="#d84315">&#9654; なぜCの手前で仕掛品が最大になるのか？</text>
+        <text x="60" y="230" font-size="10" fill="#5d6d7e">B（4分）は速く作り終わる → C（8分）は処理が遅い</text>
+        <text x="60" y="246" font-size="10" fill="#5d6d7e">→ この差（4分）が全工程間で最大 → Cの手前に製品が最も多く溜まる</text>
+
+        <line x1="280" y1="255" x2="280" y2="260" stroke="#e0e0e0" stroke-width="1"/>
+
+        <text x="50" y="275" font-size="11" font-weight="700" fill="#2980b9">&#9654; なぜDの作業者に手待ちが発生するのか？</text>
+        <text x="60" y="293" font-size="10" fill="#5d6d7e">C（8分）は処理に時間がかかる → D（6分）は先に作業が終わる</text>
+        <text x="60" y="309" font-size="10" fill="#5d6d7e">→ Cからの製品が来るまでDは2分間やることがない（手待ち）</text>
+        <text x="60" y="325" font-size="10" font-weight="600" fill="#e53935">※ 最も遅い工程の「直後」に最大の手待ちが発生する</text>
+      </svg>
+    </div>
+
+    <div class="tutor-comment">
+      <strong>「〜の手前」</strong>という表現に注意！<strong>「Cの手前」＝「BとCの間」</strong>、つまりCに入る前の場所のこと。仕掛品はCに入りたいのに入れなくて<strong>Cの手前で</strong>渋滞しているイメージだよ。<br><br>
+      <strong>整理すると：遅い工程Cを中心に、<br>
+      ・手前（上流側）→ 仕掛品が溜まる<br>
+      ・直後（下流側）→ 手待ちが発生する</strong>
+    </div>
+
+    <div class="point-box" style="border-color:#d84315;">
+      <h4 style="color:#d84315;">試験対策：仕掛品が最大になる場所の見つけ方</h4>
+      <ol>
+        <li>各工程間の<strong>作業時間の差</strong>を計算する（後の工程 − 前の工程）</li>
+        <li>この差が<strong>プラスで最も大きい</strong>ところ＝仕掛品が最大になる場所</li>
+      </ol>
+      <table style="margin-top:0.5rem;">
+        <tr>
+          <th style="background:#d84315;">工程間</th>
+          <th style="background:#d84315;">A→B</th>
+          <th style="background:#d84315;">B→C</th>
+          <th style="background:#d84315;">C→D</th>
+          <th style="background:#d84315;">D→E</th>
+        </tr>
+        <tr style="text-align:center;">
+          <td><strong>差（後−前）</strong></td>
+          <td>4−5＝<strong>−1</strong></td>
+          <td>8−4＝<span style="color:#e53935; font-weight:700;">+4（最大）</span></td>
+          <td>6−8＝<strong>−2</strong></td>
+          <td>7−6＝<strong>+1</strong></td>
+        </tr>
+        <tr style="text-align:center;">
+          <td><strong>仕掛品</strong></td>
+          <td style="color:var(--gray-mid);">溜まらない</td>
+          <td style="color:#e53935; font-weight:700;">Cの手前に最大！</td>
+          <td style="color:var(--gray-mid);">溜まらない</td>
+          <td style="color:var(--gray-mid);">少し溜まる</td>
+        </tr>
+      </table>
+      <p style="font-size:0.88rem; margin-top:0.5rem;">差がマイナス（前の工程のほうが遅い）の場合、仕掛品は溜まらない。逆にその工程の作業者に<strong>手待ち</strong>が発生する。</p>
+    </div>
+
+    <div class="sim-scenario sim-orange" style="margin-top:1rem;">
+      <span class="sim-label" style="background:#d84315;">よく出る引っかけ問題</span>
+      <div class="sim-company" style="font-size:0.95rem;">「仕掛品が最も多いのは工程Eの手前である」→ &#10060; 不適切</div>
+      <p style="font-size:0.88rem;">工程Eは<strong>最後の工程</strong>だから仕掛品が最大と思いがちだが、仕掛品は「最後」ではなく<strong>「前の工程との差が最も大きいところ」</strong>で最大になる。この例では B(4分)→C(8分) の差4分が最大なので、<strong>仕掛品が最も多いのはCの手前</strong>（＝BとCの間）。</p>
+    </div>
+    </div>
+
+    <div class="cat-section cat-cell">
+    <span class="cat-section-label">セル生産方式</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-green">&#9733;</span> セル生産方式の体系</h2>
+
+    <table>
+      <tr><th>項目</th><th>U字ライン方式</th><th>1人生産方式</th></tr>
+      <tr><td><strong>作業者数</strong></td><td>少人数で複数工程</td><td>1人で全工程</td></tr>
+      <tr><td><strong>メリット</strong></td><td>待ち時間なし、柔軟に対応</td><td>仕掛品なし、モチベーション向上</td></tr>
+      <tr><td><strong>デメリット</strong></td><td>多能工が前提、習熟に時間</td><td>作業者の能力に依存</td></tr>
+    </table>
+
+    <div class="card card-teal">
+      <h4>セル生産方式の留意点</h4>
+      <ul>
+        <li><strong>作業者の育成</strong>：多能工を育てる仕組みが必要</li>
+        <li><strong>改善の仕組み</strong>：常に改善を行う体制が必要（作業者の習熟度に大きく依存するため）</li>
+      </ul>
+    </div>
+
+    <div class="card card-green">
+      <h4>モジュール生産方式（補足）</h4>
+      <p>あらかじめ一定数の部品を組み立てて<strong>モジュール</strong>（部品の塊）にしておき、最終製品の組み立てを容易にする方式。自動車やパソコン業界で採用。共通のインターフェース（接続規格）により、さまざまな組み合わせが可能。</p>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">身近な例：レゴブロック。決まった規格のブロック（モジュール）を組み合わせるだけで色々な作品が作れるのと同じ発想！</p>
+    </div>
+    </div>
+
+    <div class="cat-section cat-compare">
+    <span class="cat-section-label">ライン vs セル</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-orange">&#9878;</span> ライン生産 vs セル生産 比較表</h2>
+
+    <table>
+      <tr>
+        <th>比較項目</th>
+        <th style="background:var(--blue);">ライン生産方式</th>
+        <th style="background:var(--green);">セル生産方式</th>
+      </tr>
+      <tr><td><strong>一言でいうと</strong></td><td>ベルトコンベアで流れ作業</td><td>少人数チームで複数工程を担当</td></tr>
+      <tr><td><strong>向いている生産</strong></td><td><strong>少品種多量</strong>生産</td><td><strong>多品種少量</strong>生産</td></tr>
+      <tr><td><strong>作業者</strong></td><td><strong>単能工</strong>（1人1工程）</td><td><strong>多能工</strong>（1人で複数工程）</td></tr>
+      <tr><td><strong>柔軟性</strong></td><td>低い（変化に対応しにくい）</td><td>高い（変更に柔軟に対応）</td></tr>
+      <tr><td><strong>生産性</strong></td><td>高い（大量生産に最適）</td><td>ライン生産ほどではないが効率的</td></tr>
+      <tr><td><strong>設備レイアウト</strong></td><td>製品別レイアウト</td><td>グループ別レイアウト</td></tr>
+      <tr><td><strong>仕掛品</strong></td><td>バランスが悪いと滞留する</td><td>少ない（特に1人生産はゼロ）</td></tr>
+      <tr><td><strong>モチベーション</strong></td><td>低くなりがち（単調作業）</td><td>高い（全体が見える）</td></tr>
+    </table>
+    </div>
+
+    <div class="cat-section" style="border-color:#e74c3c; background:linear-gradient(135deg, rgba(231,76,60,0.04), transparent);">
+    <span class="cat-section-label" style="background:#e74c3c;">よくある疑問</span>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-red">&#10067;</span> バランスロスが少ないセル生産の方が生産性は高いのでは？</h2>
+
+    <div class="tutor-comment">
+      セル生産はバランスロスが発生しにくいのに、なぜライン生産の方が「生産性が高い」とされるの？——これは試験でも引っかけやすいポイントだよ。<strong>バランスロスの有無＝生産性の高さ</strong>ではないんだ！
+    </div>
+
+    <div class="point-box" style="border-color:var(--red);">
+      <h4>結論：バランスロスが少ない ≠ 生産性が高い</h4>
+      <p>セル生産はバランスロスが発生しにくいのは事実。しかし、<strong>生産性を決める要因はバランスロスだけではない</strong>。以下の3つの理由で、少品種多量生産ではライン生産の方が圧倒的に高い生産性を発揮する。</p>
+    </div>
+
+    <div class="card card-blue">
+      <h4>理由1：「単能工」による分業と作業スピードの極大化</h4>
+      <ul>
+        <li>ライン生産では、作業工程を細かく分割し、1人の作業者が<strong>単一の工程のみを繰り返し</strong>担当する</li>
+        <li>作業が非常に単純になるため、<strong>1人あたりの作業スピードが極めて速い</strong></li>
+        <li>少品種多量生産の場合、この「分業による速度の極大化」が圧倒的な効率を生む</li>
+      </ul>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">例：ネジ締めだけを8時間やり続ける作業者は、10種類の作業を切り替えながらやる作業者より圧倒的に速い。</p>
+    </div>
+
+    <div class="card card-teal">
+      <h4>理由2：機械化・自動化が容易</h4>
+      <ul>
+        <li>ライン生産（製品別レイアウト）は、加工順序に沿って<strong>直線的に設備を配置</strong>するため、生産ラインの機械化がしやすい</li>
+        <li>ロボットや自動搬送装置の導入により、<strong>人間の手作業以上のスピードアップ</strong>が可能</li>
+        <li>セル生産は多品種に対応するため、汎用的な設備が中心となり自動化の恩恵を受けにくい</li>
+      </ul>
+    </div>
+
+    <div class="card card-red">
+      <h4>理由3：セル生産は「多能工」ゆえの難しさがある</h4>
+      <ul>
+        <li>セル生産は1人の作業者が複数（場合によっては全て）の工程をこなす<strong>「多能工」が前提</strong></li>
+        <li>全工程を覚えて習熟するまでに<strong>教育・訓練に時間がかかる</strong></li>
+        <li><strong>個人の能力に生産性が大きく依存</strong>してしまい、作業者によってバラつきが出やすい</li>
+      </ul>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">熟練した多能工なら効率的だが、育成には時間とコストがかかるのがセル生産のネック。</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">バランスロスと生産性の関係を整理</div>
+      <table>
+        <tr>
+          <th>観点</th>
+          <th style="background:var(--blue);">ライン生産</th>
+          <th style="background:var(--green);">セル生産</th>
+        </tr>
+        <tr><td><strong>バランスロス</strong></td><td>発生しやすい（工程間の差）</td><td><strong>発生しにくい</strong>（1人で複数工程）</td></tr>
+        <tr><td><strong>1作業あたりの速度</strong></td><td><strong>極めて速い</strong>（単純作業の反復）</td><td>遅め（多様な作業の切替）</td></tr>
+        <tr><td><strong>機械化・自動化</strong></td><td><strong>容易</strong>（直線的配置）</td><td>難しい（汎用設備中心）</td></tr>
+        <tr><td><strong>作業者の習熟</strong></td><td><strong>短期間</strong>で戦力化</td><td>長期間の教育が必要</td></tr>
+        <tr><td><strong>総合的な生産性</strong></td><td><strong>高い</strong>（大量生産時）</td><td>個人の能力に依存</td></tr>
+      </table>
+    </div>
+
+    <div class="tutor-comment">
+      つまり、セル生産は「バランスロスがない」という<strong>1つの強み</strong>はあるけど、ライン生産には「分業による速度UP」「機械化しやすい」「短期間で戦力化」という<strong>複数の強み</strong>があるから、大量生産では総合的にライン生産の方が生産性が高くなるんだ。<strong>試験では「バランスロスが少ない＝生産性が高い」という短絡的な判断をしないように注意</strong>しよう！
+    </div>
+    </div>
+
+  </div><!-- /tab1 -->
+
+  <!-- ==================== TAB 2: 穴埋めチェック ==================== -->
+  <div class="tab-panel" id="tab2">
+
+    <div class="point-box" style="margin-bottom:1rem;">
+      <h4>このタブで学ぶこと</h4>
+      <ul style="margin:0.2rem 0 0;">
+        <li>入門編・基本事項の重要ポイントを穴埋めで確認</li>
+        <li>各カードの「答えを見る」ボタンで1問ずつチェックできるよ</li>
+      </ul>
+    </div>
+
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="fill-reveal-btn" onclick="revealAllFill()" style="background:#059669;">&#x1F50D; 全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFill()" style="background:#64748b;">&#x1F504; リセット</button>
+    </div>
+
+    <!-- ===== Section A: 入門編の範囲 ===== -->
+    <div class="card">
+      <div class="card-header" style="background:var(--blue); color:#fff; padding:0.6rem 1rem; border-radius:6px; font-weight:700;">A. 入門編の範囲</div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--blue);">Q1. ライン生産方式とは</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; ライン生産方式はベルトコンベアのように製品が流れながら加工される方式で、<span class="fill-blank">少品種多量</span>生産に向いている<br>&#x30FB; 作業者は1人1工程だけ担当する<span class="fill-blank">単能工</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">&#x30FB; デメリット：製品や生産量の変化に<span class="fill-blank">対応しにくい</span>、作業が単調で<span class="fill-blank">モチベーション</span>が低下しやすい</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--blue);">Q2. セル生産方式とは</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; セル生産方式は加工機械のグループ（＝セル）を作り、少人数で複数工程を受け持つ方式で、<span class="fill-blank">多品種少量</span>生産に向いている<br>&#x30FB; 作業者は複数工程をこなす<span class="fill-blank">多能工</span>が前提</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">&#x30FB; セル生産では<span class="fill-blank">グループテクノロジー（GT）</span>で類似部品をグループ化する</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--blue);">Q3. セル生産の2つの形態</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">U字ライン方式</span>：U字型にラインを配置し、1人で複数工程を担当。<span class="fill-blank">待ち時間が発生しにくい</span><br>&#x2461; <span class="fill-blank">1人生産方式</span>：1人で全工程を担当。<span class="fill-blank">仕掛品が発生しない</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+      </div>
+    </div>
+
+    <!-- ===== Section B: 基本事項の範囲 ===== -->
+    <div class="card">
+      <div class="card-header" style="background:var(--purple); color:#fff; padding:0.6rem 1rem; border-radius:6px; font-weight:700;">B. 基本事項の範囲</div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--purple);">Q4. 生産形態の分類</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x2460; <span class="fill-blank">個別生産</span>：多品種少量、受注生産、<span class="fill-blank">機能別レイアウト</span><br>&#x2461; <span class="fill-blank">ロット生産</span>：中品種中量、<span class="fill-blank">グループ別レイアウト</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+        <div class="fill-group">&#x2462; <span class="fill-blank">連続生産</span>：少品種多量、見込生産、<span class="fill-blank">製品別レイアウト</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462; の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--purple);">Q5. ジョブショップ型 vs フローショップ型</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; ジョブショップ型（＝<span class="fill-blank">機能別レイアウト</span>）：同じ機能の設備をまとめる。製品ごとに<span class="fill-blank">加工経路が異なる</span><br>&#x30FB; <span class="fill-blank">多品種少量</span>生産（個別生産）に適する。<span class="fill-blank">汎用</span>機械を使用</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">ジョブショップ型の答えを見る</button>
+        <div class="fill-group">&#x30FB; フローショップ型（＝<span class="fill-blank">製品別レイアウト</span>）：加工順序に沿って設備を直線的に配置。全製品が<span class="fill-blank">同じ経路</span>を通る<br>&#x30FB; <span class="fill-blank">少品種多量</span>生産（連続生産）に適する。<span class="fill-blank">専用</span>機械を使用</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">フローショップ型の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--purple);">Q6. ライン生産の分類</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; <span class="fill-blank">単一品種ライン</span>：1種類を連続生産。段取り替え<span class="fill-blank">不要</span><br>&#x30FB; 多品種ライン → <span class="fill-blank">切り替え方式</span>（段取り替えあり）と<span class="fill-blank">混合ライン方式</span>（段取り替えなし）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--purple);">Q7. ラインバランシングの公式</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; サイクルタイム（＝ピッチタイム）＝最も作業時間が長い工程（＝<span class="fill-blank">ボトルネック</span>）の時間<br>&#x30FB; 別の定義：生産ラインに<span class="fill-blank">資材を投入する時間間隔</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">サイクルタイムの答えを見る</button>
+        <div class="fill-group">&#x30FB; ライン編成効率 ＝ <span class="fill-blank">作業時間の合計</span> &divide; （サイクルタイム &times; <span class="fill-blank">作業ステーション数</span>）<br>&#x30FB; バランスロス率 ＝ <span class="fill-blank">100%</span> − ライン編成効率</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">公式の答えを見る</button>
+        <div class="fill-group">&#x30FB; 計算例：A=3分, B=5分, C=4分 → ライン編成効率 = (3+5+4)&divide;(5&times;3) = <span class="fill-blank">80%</span><br>&#x30FB; バランスロス率 = 100% − 80% = <span class="fill-blank">20%</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">計算例の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--purple);">Q8. 仕掛品と手待ちの発生場所</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; ある工程が前後より遅い場合、その工程の<span class="fill-blank">手前に仕掛品が溜まる</span><br>&#x30FB; その工程の<span class="fill-blank">直後の工程で手待ちが発生</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">基本ルールの答えを見る</button>
+        <div class="fill-group">&#x30FB; 仕掛品が最大になる場所の見つけ方：各工程間の作業時間の差（後−前）が<span class="fill-blank">プラスで最も大きい</span>ところの手前<br>&#x30FB; 例：A(5)→B(4)→C(8)→D(6)→E(7) → B→Cの差<span class="fill-blank">+4</span>が最大 → <span class="fill-blank">Cの手前</span>に仕掛品が最大</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">具体例の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--purple);">Q9. 山崩し（ラインバランシング改善）</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; 山崩しとは<span class="fill-blank">ボトルネック工程</span>（最も遅い工程）の作業の一部を、<span class="fill-blank">余裕のある工程</span>に移動させること<br>&#x30FB; 目的：各工程の作業時間を<span class="fill-blank">均等化</span>してライン編成効率を上げる</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--purple);">Q10. ライン生産 vs セル生産 比較</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; ライン生産：向いている生産＝<span class="fill-blank">少品種多量</span>、作業者＝<span class="fill-blank">単能工</span>、レイアウト＝<span class="fill-blank">製品別</span><br>&#x30FB; セル生産：向いている生産＝<span class="fill-blank">多品種少量</span>、作業者＝<span class="fill-blank">多能工</span>、レイアウト＝<span class="fill-blank">グループ別</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">上の答えを見る</button>
+        <div class="fill-group">&#x30FB; バランスロスが少ない＝生産性が高い、は<span class="fill-blank">間違い</span><br>&#x30FB; ライン生産が生産性高い理由：分業による<span class="fill-blank">作業スピードの極大化</span>、<span class="fill-blank">機械化・自動化</span>が容易、短期間で戦力化</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">下の答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header" style="background:var(--purple);">Q11. グループ別レイアウトとモジュール生産</div>
+      <div class="fill-body">
+        <div class="fill-group">&#x30FB; グループ別レイアウトはジョブショップとフローショップの<span class="fill-blank">中間的</span>な位置づけ<br>&#x30FB; <span class="fill-blank">GT（グループテクノロジー）</span>で類似部品をグループ化し、グループ内で<span class="fill-blank">フローショップ</span>的な流れを作る</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">グループ別の答えを見る</button>
+        <div class="fill-group">&#x30FB; モジュール生産方式：部品を<span class="fill-blank">モジュール</span>（部品の塊）にまとめて、最終組み立てを容易にする方式<br>&#x30FB; 共通の<span class="fill-blank">インターフェース</span>（接続規格）により、さまざまな組み合わせが可能</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">モジュール生産の答えを見る</button>
+      </div>
+    </div>
+
+  </div><!-- /tab2（穴埋めチェック） -->
+
+  <!-- ==================== TAB 3: シミュレーション ==================== -->
+  <div class="tab-panel" id="tab3">
+    <div class="point-box" style="margin-bottom:1rem; border-color:var(--orange-main);">
+      <h4>このタブで学ぶこと</h4>
+      <ul style="margin:0.2rem 0 0;">
+        <li>実際の中小企業の<strong>相談事例</strong>で知識を応用する練習</li>
+        <li>診断士として<strong>どの生産方式を提案すべきか</strong>の判断力</li>
+      </ul>
+    </div>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-orange">&#9733;</span> 中小企業の相談シミュレーション</h2>
+
+    <div class="sim-scenario">
+      <span class="sim-label">相談1</span>
+      <div class="sim-company">横浜精密部品 株式会社（従業員150名・少品種多量生産）</div>
+      <p style="font-size:0.9rem;">「ライン生産をしていますが、工程Bの前に仕掛品が山積みです。工程Cの作業者は暇そうにしていて...どうすれば効率が上がりますか？」</p>
+      <div class="sim-advice">
+        <h4>診断士のアドバイス</h4>
+        <p style="font-size:0.88rem;">まず<strong>ピッチダイアグラム</strong>を作成して各工程の作業時間を見える化しましょう。工程Bがボトルネック（最も遅い工程）になっています。<strong>ラインバランシング（山崩し）</strong>で工程Bの作業の一部を工程Aや工程Cに移し、作業時間を均等化すれば、仕掛品の滞留と手待ちが解消されます。</p>
+      </div>
+    </div>
+
+    <div class="sim-scenario sim-green">
+      <span class="sim-label">相談2</span>
+      <div class="sim-company">川崎電子機器 株式会社（従業員40名・多品種少量生産）</div>
+      <p style="font-size:0.9rem;">「得意先から色々な種類の基板を少量ずつ頼まれます。ライン生産だと段取り替えが多すぎて非効率です...」</p>
+      <div class="sim-advice">
+        <h4>診断士のアドバイス</h4>
+        <p style="font-size:0.88rem;"><strong>セル生産方式</strong>への転換を検討しましょう。<strong>グループテクノロジー（GT）</strong>で似た基板をグループ化し、U字ライン方式で多能工が複数工程を担当すれば、品種切り替えに柔軟に対応でき、段取り替えのムダも減ります。ただし、<strong>多能工の育成</strong>に時間がかかるので、計画的に進めましょう。</p>
+      </div>
+    </div>
+
+    <div class="sim-scenario sim-purple">
+      <span class="sim-label">相談3</span>
+      <div class="sim-company">大田区精密加工所（従業員10名・多品種少量・受注生産）</div>
+      <p style="font-size:0.9rem;">「熟練の職人が1人で製品を最初から最後まで仕上げています。品質は高いのですが、その職人が休むと生産が止まります...」</p>
+      <div class="sim-advice">
+        <h4>診断士のアドバイス</h4>
+        <p style="font-size:0.88rem;">これは<strong>1人生産方式</strong>の典型的な課題です。仕掛品がゼロでモチベーションも高い良い面もありますが、<strong>特定の作業者への依存度が高すぎる</strong>のが問題です。複数の作業者を<strong>多能工</strong>として育成し、U字ライン方式も併用することで、リスク分散と生産性向上の両立を図りましょう。</p>
+      </div>
+    </div>
+
+    <div class="tutor-comment">
+      3つの相談に共通するのは<strong>「生産方式に正解は1つじゃない」</strong>ということ。診断士試験では「この会社にはどの方式が適切か？」と聞かれるので、<strong>生産量・品種数・作業者のスキル</strong>の3点セットで判断しよう！
+    </div>
+  </div><!-- /tab3 -->
+
+  <!-- ==================== TAB 4: 実践クイズ ==================== -->
+  <div class="tab-panel" id="tab4">
+    <div class="point-box" style="margin-bottom:1rem; border-color:var(--red);">
+      <h4>このタブで学ぶこと</h4>
+      <ul style="margin:0.2rem 0 0;">
+        <li>全10問の4択クイズで<strong>理解度チェック</strong></li>
+        <li>計算問題（ライン編成効率）も含まれるので<strong>電卓不要レベル</strong>で練習</li>
+      </ul>
+    </div>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-orange">&#9733;</span> 実践4択クイズ</h2>
+    <p style="font-size:0.9rem; margin-bottom:0.5rem;">選択肢をクリックするとすぐに正解がわかります。</p>
+    <div id="quizContainer"></div>
+    <div class="quiz-score" id="quizScore"></div>
+    <div style="text-align:center; margin-top:1rem;">
+      <button onclick="submitQuiz()" style="padding:0.6rem 1.5rem; background:var(--orange-main); color:white; border:none; border-radius:var(--radius-sm); font-size:0.9rem; font-weight:700; cursor:pointer; margin-right:0.5rem;">全問まとめて答え合わせ</button>
+      <button onclick="resetQuiz()" style="padding:0.6rem 1.5rem; background:var(--gray-mid); color:white; border:none; border-radius:var(--radius-sm); font-size:0.9rem; font-weight:700; cursor:pointer;">リセット</button>
+    </div>
+  </div><!-- /tab4 -->
+
+  <!-- ==================== TAB 5: 実例で学ぶ ==================== -->
+  <div class="tab-panel" id="tab5">
+    <div class="point-box" style="margin-bottom:1rem; border-color:var(--green);">
+      <h4>このタブで学ぶこと</h4>
+      <ul style="margin:0.2rem 0 0;">
+        <li>自動車工場・パソコンBTO・寿司屋など<strong>身近な例</strong>で定着</li>
+        <li><strong>試験対策のポイント</strong>を総まとめ</li>
+      </ul>
+    </div>
+    <h2 class="section-title" style="margin-top:0;"><span class="section-icon icon-green">&#9733;</span> 身近な実例で理解しよう</h2>
+
+    <div class="card card-blue" style="margin-bottom:1.2rem;">
+      <h4>実例1：自動車工場 ＝ ライン生産方式の代表</h4>
+      <ul>
+        <li>ベルトコンベアに車体が乗って、プレス→溶接→塗装→組立→検査と流れていく</li>
+        <li>各工程の作業者は自分の担当だけを行う（<strong>単能工</strong>）</li>
+        <li>ボトルネック工程を改善するために<strong>ラインバランシング</strong>を実施</li>
+      </ul>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">トヨタ・日産など、少品種多量生産の典型。ただしトヨタは混合ライン方式で多品種にも対応。</p>
+    </div>
+
+    <div class="card card-green" style="margin-bottom:1.2rem;">
+      <h4>実例2：パソコンのBTO ＝ セル生産方式</h4>
+      <ul>
+        <li>デル（Dell）のパソコン工場が有名。お客さんの注文に合わせて1台ずつカスタマイズ</li>
+        <li>1人の作業者が<strong>最初から最後まで組み立て</strong>（1人生産方式に近い）</li>
+        <li>BTO（Build To Order＝受注してから組み立てる）で在庫を最小限に</li>
+      </ul>
+      <p style="font-size:0.85rem; color:var(--gray-mid); margin-top:0.3rem;">多品種少量生産＋受注生産の典型例。セル生産の柔軟性を活かした好例。</p>
+    </div>
+
+    <div class="card card-purple" style="margin-bottom:1.2rem;">
+      <h4>実例3：回転寿司 vs 高級寿司屋 ＝ ライン vs セル</h4>
+      <table>
+        <tr><th></th><th>回転寿司（ライン生産的）</th><th>高級寿司屋（セル生産的）</th></tr>
+        <tr><td><strong>流れ</strong></td><td>レーンで流れてくる（ベルトコンベア）</td><td>職人がお客さんの注文に応じて1貫ずつ握る</td></tr>
+        <tr><td><strong>品種</strong></td><td>決まったメニューを大量に（少品種多量）</td><td>お客さんごとに違う内容（多品種少量）</td></tr>
+        <tr><td><strong>作業者</strong></td><td>ネタ担当・シャリ担当と分業</td><td>1人の職人が全工程を担当</td></tr>
+        <tr><td><strong>柔軟性</strong></td><td>メニュー変更に時間がかかる</td><td>「今日のおすすめ」にすぐ対応</td></tr>
+      </table>
+    </div>
+
+    <div class="tutor-comment">
+      回転寿司と高級寿司屋、どちらが優れているかではなく<strong>「何を重視するか」で使い分ける</strong>のがポイント。大量に安く作るならライン生産、個別対応で高品質ならセル生産。試験ではこの使い分けの判断がよく問われるよ！
+    </div>
+
+    <div class="point-box" style="margin-top:1.5rem;">
+      <h4>試験対策のポイント</h4>
+      <ul>
+        <li>ライン生産のメリット3つ・デメリット3つ</li>
+        <li>単一品種ライン vs 多品種ライン（切替方式/混合方式）</li>
+        <li>サイクルタイム＝最も遅い工程の時間</li>
+        <li>ライン編成効率とバランスロス率の計算</li>
+        <li>ラインバランシングの手順（ピッチダイアグラム→山崩し）</li>
+        <li>セル生産＝グループテクノロジー（GT）を使った方式</li>
+        <li>U字ライン方式と1人生産方式の違い</li>
+        <li>モジュール生産方式の特徴</li>
+      </ul>
+    </div>
+  </div><!-- /tab5 -->
+
+  <!-- Bottom tab nav -->
+  <nav class="tab-nav tab-nav-bottom">
+    <button class="tab-btn active" onclick="switchTab(0)">入門編</button>
+    <button class="tab-btn" onclick="switchTab(1)">基本事項</button>
+    <button class="tab-btn" onclick="switchTab(2)">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" onclick="switchTab(3)">シミュレーション</button>
+    <button class="tab-btn" onclick="switchTab(4)">実践クイズ</button>
+    <button class="tab-btn" onclick="switchTab(5)">実例で学ぶ</button>
+  </nav>
+</div>
+
+<div class="footer">
+  運営管理 ライン生産方式とセル生産方式 まとめ | 中小企業診断士試験対策
+</div>
+
+<script>
+document.addEventListener('click', function(e){
+  if(e.target.classList.contains('fill-blank')){
+    e.target.classList.add('show');
+  }
+});
+function revealBlanks(btn){
+  var grp = btn.previousElementSibling;
+  if(grp && grp.classList.contains('fill-group')){
+    grp.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  }
+  btn.textContent = '\u2705 表示済み'; btn.disabled = true; btn.style.opacity = '.5';
+}
+function revealAllFill(){
+  var tab = document.getElementById('tab2');
+  tab.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.add('show'); });
+  tab.querySelectorAll('.fill-reveal-btn').forEach(function(b){ b.textContent = '\u2705 表示済み'; b.disabled = true; b.style.opacity = '.5'; });
+}
+function resetAllFill(){
+  var tab = document.getElementById('tab2');
+  tab.querySelectorAll('.fill-blank').forEach(function(el){ el.classList.remove('show'); });
+  tab.querySelectorAll('.fill-reveal-btn').forEach(function(b){ b.innerHTML = '\uD83D\uDC41 答えを見る'; b.disabled = false; b.style.opacity = '1'; });
+}
+
+function switchTab(index) {
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i % 6 === index);
+  });
+  document.querySelectorAll('.tab-panel').forEach((panel, i) => {
+    panel.classList.toggle('active', i === index);
+  });
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+const quizData = [
+  {
+    q: "ライン生産方式のメリットとして正しいものはどれですか？",
+    opts: ["多品種少量生産に向いている", "製品や生産量の変化に柔軟に対応できる", "生産性が高く、管理しやすい", "作業者のモチベーションが向上する"],
+    ans: 2, exp: "正解はC。ライン生産方式は「生産性が高い」「管理しやすい」「単能工による分業」がメリット。A・Bはセル生産のメリット、Dはむしろライン生産のデメリット（単調な作業でモチベーション低下）。"
+  },
+  {
+    q: "サイクルタイム（ピッチタイム）の定義として正しいものはどれですか？",
+    opts: ["全工程の作業時間の合計", "全工程の作業時間の平均", "最も作業時間が長い工程の時間", "最も作業時間が短い工程の時間"],
+    ans: 2, exp: "正解はC。サイクルタイムは最も作業時間が長い工程（ボトルネック）の時間。ライン全体の速度はこの工程で決まるため、合計でも平均でもない。"
+  },
+  {
+    q: "工程A=3分、工程B=5分、工程C=4分のライン。ライン編成効率は何%ですか？",
+    opts: ["60%", "80%", "75%", "90%"],
+    ans: 1, exp: "正解はB。ライン編成効率 = 作業時間の合計 / (サイクルタイム × ステーション数) = (3+5+4) / (5×3) = 12/15 = 0.80 = 80%。サイクルタイムは最大の5分。"
+  },
+  {
+    q: "ラインバランシングにおいて「山崩し」とは何ですか？",
+    opts: ["ライン全体を停止して段取り替えすること", "ボトルネック工程の作業の一部を他の工程に移動させること", "不良品を取り除いてラインを再開すること", "作業者を増員してライン速度を上げること"],
+    ans: 1, exp: "正解はB。山崩しとは、最も遅い工程（ボトルネック）の作業の一部を余裕のある工程に移動させ、作業時間を均等化すること。これにより仕掛品の滞留と手待ちが解消される。"
+  },
+  {
+    q: "セル生産方式の定義として最も適切なものはどれですか？",
+    opts: ["1本のベルトコンベアで製品を流す方式", "グループテクノロジーを使った生産方式", "計画に基づき上流から下流へ指示する方式", "1つの工程を大量の作業者で分担する方式"],
+    ans: 1, exp: "正解はB。セル生産方式は、グループテクノロジー（GT＝Group Technology）を利用して部品をグループ化し、加工機械のグループ（セル）単位で工程を編成する方式。Aはライン生産の説明。"
+  },
+  {
+    q: "U字ライン方式のメリットとして正しいものはどれですか？",
+    opts: ["単能工で運用できる", "待ち時間が発生しにくく、生産計画の変更に柔軟に対応", "作業者の習熟が不要である", "大量生産に最も適している"],
+    ans: 1, exp: "正解はB。U字ライン方式は1人で複数工程を担当するため待ち時間が発生しにくく、柔軟に対応できる。Aは誤り（多能工が必要）、Cも誤り（習熟に時間がかかる）、Dはライン生産の特徴。"
+  },
+  {
+    q: "1人生産方式の最大のデメリットは何ですか？",
+    opts: ["仕掛品が大量に発生する", "作業が単調でモチベーションが下がる", "作業者の能力に大きく依存し、習熟に時間がかかる", "設備レイアウトの制約が大きい"],
+    ans: 2, exp: "正解はC。1人生産方式は1人で全工程を行うため、作業者の能力に大きく依存する。仕掛品は発生しない（A誤り）、モチベーションはむしろ高い（B誤り）、設備の制約はライン生産の話（D誤り）。"
+  },
+  {
+    q: "多品種ラインの「混合ライン方式」の特徴として正しいものはどれですか？",
+    opts: ["一定期間ごとに品種を切り替えて生産する", "同じラインで複数品種を混ぜて同時に生産し、段取り替えが発生しない", "1人の作業者が全品種を担当する", "品種ごとに専用のラインを設置する"],
+    ans: 1, exp: "正解はB。混合ライン方式は同じラインで複数品種を混ぜて生産する方式で、段取り替えが不要。Aはライン切り替え方式の説明、Cは1人生産方式、Dは単一品種ラインの考え方。"
+  },
+  {
+    q: "グループテクノロジー（GT）の説明として正しいものはどれですか？",
+    opts: ["同じ製品を大量に生産する技術", "多種類の部品を類似性に基づいてグループ化し、多品種少量生産に大量生産的効果を与える手法", "1人で全工程を行う生産技術", "機械を自動的に停止させる技術"],
+    ans: 1, exp: "正解はB。GT（Group Technology）は多種類の部品を形状・寸法・素材・工程の類似性でグループ化する手法。多品種少量生産でも、グループ単位でまとめることでロットサイズを大きくし、大量生産的効果を得られる。"
+  },
+  {
+    q: "バランスロス率が0%とはどういう状態ですか？",
+    opts: ["ラインが停止している状態", "全工程の作業時間が完全に均一で、ムダが全くない状態", "生産量がゼロの状態", "不良品が発生していない状態"],
+    ans: 1, exp: "正解はB。バランスロス率＝100%−ライン編成効率。ロス率0%はライン編成効率100%、つまり全工程の作業時間が完全に均等でムダがない理想的な状態。"
+  }
+];
+
+function renderQuiz() {
+  const c = document.getElementById('quizContainer');
+  c.innerHTML = quizData.map((q, i) => `
+    <div class="quiz-item" id="quiz${i}">
+      <span class="quiz-num">${i+1}</span>
+      <div class="quiz-question">${q.q}</div>
+      <ul class="quiz-options">
+        ${q.opts.map((o,j) => `<li onclick="selectOption(${i},${j})" id="q${i}o${j}">${String.fromCharCode(65+j)}. ${o}</li>`).join('')}
+      </ul>
+      <div class="quiz-explanation" id="exp${i}">${q.exp}</div>
+    </div>
+  `).join('');
+}
+const userAnswers = {}, checkedQuestions = {};
+function selectOption(qi, oi) {
+  if (checkedQuestions[qi]) return;
+  userAnswers[qi] = oi; checkedQuestions[qi] = true;
+  const q = quizData[qi], expEl = document.getElementById(`exp${qi}`);
+  q.opts.forEach((_,j) => { document.getElementById(`q${qi}o${j}`).style.cursor = 'default'; });
+  document.getElementById(`q${qi}o${q.ans}`).classList.add('correct');
+  if (oi === q.ans) { expEl.className = 'quiz-explanation show correct-exp'; }
+  else { document.getElementById(`q${qi}o${oi}`).classList.add('wrong'); expEl.className = 'quiz-explanation show wrong-exp'; }
+  updateScore();
+}
+function submitQuiz() {
+  quizData.forEach((q,i) => {
+    if (!checkedQuestions[i]) { checkedQuestions[i]=true; document.getElementById(`q${i}o${q.ans}`).classList.add('correct'); q.opts.forEach((_,j)=>{document.getElementById(`q${i}o${j}`).style.cursor='default';}); document.getElementById(`exp${i}`).className='quiz-explanation show wrong-exp'; }
+  }); updateScore();
+}
+function updateScore() {
+  if (Object.keys(checkedQuestions).length === quizData.length) {
+    let s=0; quizData.forEach((q,i)=>{ if(userAnswers[i]===q.ans) s++; });
+    const el=document.getElementById('quizScore'); el.style.display='block';
+    el.textContent=`結果：${quizData.length}問中 ${s}問正解！（正答率 ${Math.round(s/quizData.length*100)}%）`;
+  }
+}
+function resetQuiz() { Object.keys(userAnswers).forEach(k=>delete userAnswers[k]); Object.keys(checkedQuestions).forEach(k=>delete checkedQuestions[k]); document.getElementById('quizScore').style.display='none'; renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>
