@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPU（Central Processing Unit：中央処理装置）の高速化技術・プロセッサの種類・入出力インタフェース - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.75;min-height:100vh}
+.header{background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue-main) 50%,#5dade2 100%);color:#fff;padding:2rem 1.5rem 1.2rem;text-align:center}.header h1{font-size:1.6rem;font-weight:800;letter-spacing:.05em;margin-bottom:.3rem}.header .subtitle{font-size:.9rem;opacity:.9}.header .badge{display:inline-block;background:rgba(255,255,255,.2);padding:.2rem .8rem;border-radius:20px;font-size:.8rem;margin-top:.5rem}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.6rem;margin:.8rem 0}.bubble-wrap.right{flex-direction:row-reverse}.bubble-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12)}.avatar-teacher{background:linear-gradient(135deg,#ff9800,#f57c00)}.avatar-student{background:linear-gradient(135deg,#42a5f5,#1e88e5)}.avatar-warn{background:linear-gradient(135deg,#ef5350,#c62828)}.avatar-hint{background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:.7rem 1rem;box-shadow:var(--shadow);position:relative;max-width:85%;font-size:.9rem;line-height:1.7}.bubble-body::before{content:'';position:absolute;top:14px;width:0;height:0;border:8px solid transparent}.bubble-wrap:not(.right) .bubble-body::before{left:-14px;border-right-color:var(--white)}.bubble-wrap.right .bubble-body::before{right:-14px;border-left-color:var(--white)}.bubble-body.b-orange{background:#fff8e1;border:1px solid #ffe082}.bubble-body.b-orange::before{border-right-color:#fff8e1}.bubble-body.b-blue{background:#e3f2fd;border:1px solid #90caf9}.bubble-body.b-blue::before{border-right-color:#e3f2fd}.bubble-body.b-red{background:#fce4ec;border:1px solid #ef9a9a}.bubble-body.b-red::before{border-right-color:#fce4ec}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-wrap.right .bubble-body.b-orange::before{border-right-color:transparent;border-left-color:#fff8e1}.bubble-wrap.right .bubble-body.b-green::before{border-right-color:transparent;border-left-color:#e8f5e9}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.72rem;font-weight:700;color:var(--gray-mid);margin-bottom:.2rem}
+.tab-container{max-width:920px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.75rem .35rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:1.5rem 1.2rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-purple{background:var(--purple-bg)}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}.tab-panel.theme-teal{background:var(--teal-light)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.15rem;font-weight:800;margin:1.5rem 0 .8rem;padding:.5rem .8rem;border-radius:8px;display:flex;align-items:center;gap:.5rem}.section-title:first-child{margin-top:0}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6);color:#fff}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db);color:#fff}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71);color:#fff}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light));color:#fff}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373);color:#fff}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a);color:#fff}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1rem 1.2rem;margin:.7rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-red{border-left-color:var(--red-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.alert-box,.alert-danger,.alert-tip,.alert-exam{border-radius:var(--radius);padding:.8rem 1rem .8rem 3rem;margin:.8rem 0;position:relative;font-size:.9rem;line-height:1.7}.alert-box::before,.alert-danger::before,.alert-tip::before,.alert-exam::before{position:absolute;left:.8rem;top:.7rem;font-size:1.2rem}.alert-danger{background:#fce4ec;border:1px solid #ef9a9a;color:#b71c1c}.alert-danger::before{content:"\26A0\FE0F"}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"\1F4A1"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"\1F4DD"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:1rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e0e0e0}.dt-purple{color:var(--purple-dark)}.dt-blue{color:var(--blue-dark)}.dt-green{color:var(--green-dark)}.dt-red{color:var(--red-dark)}.dt-orange{color:var(--orange-dark)}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:700;font-size:.85rem;text-align:center;min-width:70px;margin:.2rem}.flow-box small{display:block;font-weight:400;font-size:.72rem;opacity:.9}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.fb-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.fb-gray{background:linear-gradient(135deg,#7f8c8d,#95a5a6)}.flow-arrow{font-size:1.3rem;margin:0 .3rem;font-weight:700;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}th,td{padding:.5rem .6rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}tr:hover{background:rgba(0,0,0,.02)}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-green th{background:var(--green-main);color:#fff}.tbl-green tr:nth-child(even){background:var(--green-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}
+ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.9rem}
+.point-box{border-radius:var(--radius);padding:1rem 1.2rem;margin:.8rem 0}.pb-purple{background:linear-gradient(135deg,var(--purple-light),#fff);border:2px solid #ce93d8}.pb-blue{background:linear-gradient(135deg,var(--blue-light),#fff);border:2px solid #90caf9}.pb-green{background:linear-gradient(135deg,var(--green-light),#fff);border:2px solid #a5d6a7}.pb-orange{background:linear-gradient(135deg,var(--orange-pale),#fff);border:2px solid #ffcc80}.pb-red{background:linear-gradient(135deg,var(--red-light),#fff);border:2px solid #ef9a9a}.pb-teal{background:linear-gradient(135deg,var(--teal-light),#fff);border:2px solid #80cbc4}.point-box h4{font-size:.95rem;font-weight:700;margin-bottom:.5rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.7rem 0}.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;margin:.7rem 0}
+.mnemonic{background:linear-gradient(135deg,var(--purple-light),#fff);border:3px dashed var(--purple-main);border-radius:var(--radius);padding:1.2rem;margin:.8rem 0;text-align:center}.mnemonic .big{font-size:1.3rem;font-weight:800;color:var(--purple-dark);margin-bottom:.3rem;letter-spacing:.1em}.mnemonic .desc{font-size:.88rem;color:var(--gray-mid)}
+.scene{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:.8rem 0;box-shadow:var(--shadow);text-align:center}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;align-items:center;margin:.8rem 0}.vs-side{background:var(--white);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:var(--shadow)}.vs-side h4{font-size:.9rem;font-weight:700;margin-bottom:.3rem}.vs-mid{font-size:1.5rem;font-weight:800;color:var(--gray-mid);text-align:center}
+.sim-card{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;box-shadow:var(--shadow);border-top:4px solid var(--green-main)}.sim-card h4{font-size:1rem;font-weight:800;color:var(--green-dark);margin-bottom:.5rem}.sim-label{display:inline-block;padding:.15rem .6rem;border-radius:4px;font-size:.72rem;font-weight:700;color:#fff;background:var(--green-main);margin-bottom:.5rem}
+.quiz-item{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:28px;height:28px;border-radius:50%;text-align:center;line-height:28px;font-size:.85rem;font-weight:700;margin-bottom:.5rem}.quiz-cat{display:inline-block;padding:.15rem .6rem;border-radius:4px;font-size:.72rem;font-weight:700;color:#fff;margin-left:.5rem;vertical-align:middle}.qc-purple{background:var(--purple-main)}.qc-blue{background:var(--blue-main)}.qc-green{background:var(--green-main)}.qc-red{background:var(--red-main)}.quiz-question{font-weight:600;font-size:.95rem;margin-bottom:.8rem;line-height:1.7}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.55rem .8rem;margin:.3rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;transition:all .2s;font-size:.9rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.7rem;padding:.8rem;border-radius:var(--radius-sm);font-size:.88rem;line-height:1.7}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}.quiz-score{text-align:center;padding:1rem;background:var(--orange-pale);border-radius:var(--radius);margin-top:1rem;font-size:1.1rem;font-weight:700;color:var(--orange-dark);display:none}
+.footer{text-align:center;padding:1.5rem;color:var(--gray-light);font-size:.8rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.fill-card .fill-header{padding:12px 18px;font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px}
+.fill-card .fill-header.bg-purple{background:var(--purple-main)}.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}
+.fill-card .fill-body{padding:18px 20px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.92rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:4px;font-size:.92rem;line-height:2}
+.compare-diagram{background:var(--white);border-radius:var(--radius);padding:1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.pipe-diagram{background:#fff;border-radius:var(--radius);padding:1rem;overflow-x:auto}
+.pipe-diagram table{font-size:.8rem;min-width:480px}
+.pipe-diagram td{border:1px solid #ccc;padding:.35rem .5rem;text-align:center;font-weight:700;color:#fff}
+.pipe-diagram .st-if{background:#3498db}.pipe-diagram .st-id{background:#27ae60}.pipe-diagram .st-ex{background:#f39c12}.pipe-diagram .st-ma{background:#9b59b6}.pipe-diagram .st-wb{background:#e74c3c}
+.pipe-diagram .lbl{background:#ecf0f1!important;color:#2c3e50}
+.exam-pt{font-size:.82rem;margin-top:.4rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px}
+.exam-warn{font-size:.82rem;margin-top:.3rem;color:#b71c1c;background:#fce4ec;padding:.35rem .6rem;border-radius:6px}
+@media(max-width:600px){.two-col,.three-col,.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg)}.tab-btn{font-size:.62rem;padding:.6rem .2rem}.header h1{font-size:1.15rem}.bubble-body{max-width:78%}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>CPU・プロセッサ・入出力インタフェース</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム | ハードウェア基礎</div>
+  <div class="badge">全13タブ構成 | 重要度 &#x2B50;&#x2B50;&#x2B50;</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">&#x1F423; ゼロから</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(3)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">&#x1F3B5; 語呂</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F3B5; 語呂穴</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(6)">&#x270D;&#xFE0F; 穴&#x2460;</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴&#x2461;</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(8)">&#x270D;&#xFE0F; 穴&#x2462;</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(9)">&#x1F3E2; 事例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(10)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(11)">&#x1F4A1; 実例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(12)">&#x1F5FA;&#xFE0F; 図解</button>
+  </nav>
+
+  <!-- ===== TAB 0: ゼロから ===== -->
+  <div class="tab-panel active theme-green" id="tab0">
+    <div class="point-box pb-green"><h4>&#x1F423; このタブで学ぶこと</h4>
+      <ul>
+        <li>CPU（Central Processing Unit：中央処理装置）は<strong>コンピュータの頭脳</strong>。速くする工夫を身近な例えで</li>
+        <li>プロセッサの種類（CISC／RISC／GPU など）を<strong>ひとこと</strong>で</li>
+        <li>パソコンと周辺機器をつなぐ<strong>入出力インタフェース</strong>（USBなど）の全体像</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F524;</span> まず登場人物を知ろう</h2>
+    <table class="tbl-green">
+      <tr><th style="width:28%;">用語</th><th>意味（かみ砕き）</th><th style="width:30%;">身近な例え</th></tr>
+      <tr><td><strong>CPU</strong><br><small>中央処理装置</small></td><td>計算や判断をする「頭脳」</td><td>料理人（本人）</td></tr>
+      <tr><td><strong>コア</strong></td><td>CPU内の実際の処理ユニット（1コア＝1人の職人）</td><td>厨房の料理人の人数</td></tr>
+      <tr><td><strong>クロック<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：CPUの動作テンポ。1秒に何回動けるか（Hz）</span></strong></td><td>1秒間に何回動けるか（Hz）</td><td>包丁を振るリズム</td></tr>
+      <tr><td><strong>キャッシュ<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：CPUのすぐ近くの小さくて速い一時保管メモリ</span></strong></td><td>頻繁に使う情報を置く小型の高速メモリ</td><td>コンロ横の作業台</td></tr>
+      <tr><td><strong>入出力インタフェース</strong></td><td>周辺機器（キーボード・画面）との接続口</td><td>カウンター窓口</td></tr>
+    </table>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">イメージ</div>料理人（CPU）を速くするには：<strong>①手を素早く動かす（クロック）／②工程を流れ作業にする（パイプライン）／③職人を増やす（マルチコア）</strong>。このうち①は熱で限界が来たので、今は②と③が主流！</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x2753;</span> CPUを速くするって、どういうこと？</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">イメージ先行</div>CPUを「料理人」に例えると、速くする発想は<strong>3通り</strong>しかない：<br>&nbsp;&nbsp;&#x2460; <strong>工程を流れ作業化</strong>する（1人で順にやらない）<br>&nbsp;&nbsp;&#x2461; <strong>同時に複数</strong>の作業をする（手が2本あるイメージ）<br>&nbsp;&nbsp;&#x2462; <strong>料理人を増やす</strong>（コアを複数にする）<br>それぞれの正式名は「入門」タブで学ぶ！</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3ED;</span> 寿司屋で「工程を流す」を体感</h2>
+    <div class="compare-diagram">
+      <div class="two-col">
+        <div class="card card-red"><h4>&#x1F3EE; 普通（1人で順番に）</h4>
+          <p>1皿を握る→盛る→出す を完了してから次の1皿へ。お客を待たせる。</p>
+        </div>
+        <div class="card card-green"><h4>&#x1F363; 流れ作業化（パイプライン<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：1命令を工程ごとに分けて並行処理する方式</span>）</h4>
+          <p>1皿目を盛っている間に、2皿目を握り始める。工程を<strong>重ねて流す</strong>。</p>
+        </div>
+      </div>
+    </div>
+    <div class="alert-tip">発想さえ掴めればOK。<strong>工程の細かい名前（IF／ID／EX など）は診断士試験では問われない</strong>ので気にしなくて大丈夫。</div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F50C;</span> パソコンと周辺機器をつなぐ「接続口」</h2>
+    <div class="diagram"><div class="diagram-title dt-green">代表的な入出力インタフェース</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">USB<small>何でも<br>つなぐ汎用</small></div>
+        <div class="flow-box fb-purple">HDMI<small>画面＋音<br>テレビ・モニタ</small></div>
+        <div class="flow-box fb-orange">Thunderbolt<small>超高速<br>Mac系に多い</small></div>
+        <div class="flow-box fb-teal">Bluetooth<small>無線<br>マウス・イヤホン</small></div>
+      </div>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">イメージ</div>USB（Universal Serial Bus：汎用シリアルバス）は「何でもつなげる万能口」。HDMI（High-Definition Multimedia Interface）は「テレビ画面用」。Bluetoothは「無線でつなぐ」。用途が違うと覚えよう！</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x270D;&#xFE0F;</span> ゼロからチェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-green">ゼロから・キホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・コンピュータの頭脳＝<span class="fill-blank">CPU</span>／CPU内部の実働ユニット＝<span class="fill-blank">コア</span>／動作テンポ＝<span class="fill-blank">クロック</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・CPU高速化の発想：工程を流す＝<span class="fill-blank">パイプライン</span>／頭脳を増やす＝<span class="fill-blank">マルチコア</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・汎用接続口＝<span class="fill-blank">USB</span>／映像＋音声＝<span class="fill-blank">HDMI</span>／無線でマウス等＝<span class="fill-blank">Bluetooth</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="alert-exam"><strong>このタブを終えたら</strong>→「&#x1F331; 入門」で高速化技術の名前とイメージを覚えよう！</div>
+  </div>
+
+  <!-- ===== TAB 1: 入門 ===== -->
+  <div class="tab-panel theme-purple" id="tab1">
+    <div class="point-box pb-purple"><h4>&#x1F331; このタブで学ぶこと</h4>
+      <ul>
+        <li>CPU高速化の<strong>3大アプローチ</strong>（パイプライン／並列実行／マルチコア）</li>
+        <li>プロセッサの種類（CISC／RISC／GPU／SoC／ASIC／FPGA）をひとことで</li>
+        <li>入出力インタフェースの<strong>有線／無線</strong>分類と代表規格</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F680;</span> CPUを速くする3つの発想</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>料理人（CPU）を速くする方法は、次の3つ<strong>しか</strong>ない。覚えるのはこの「軸の違い」が最重要！
+      <ul style="margin-top:.3rem;">
+        <li><strong>&#x2460; 工程を流れ作業化</strong>（1皿を作りながら次の仕込みも進める）</li>
+        <li><strong>&#x2461; 同時に複数こなす</strong>（手を2本同時に動かす／作業を並べる）</li>
+        <li><strong>&#x2462; 料理人を増やす</strong>（コアを複数にする）</li>
+      </ul>
+    </div></div>
+    <div class="bubble-wrap right"><div class="bubble-avatar avatar-teacher">&#x1F468;</div><div class="bubble-body b-orange"><div class="bubble-name">先生</div>クロックを上げる手は熱と電力の壁で頭打ち。だから現代は上の<strong>3つの軸</strong>で速くする。それぞれ正式名があるので覚えよう！</div></div>
+
+    <div class="three-col">
+      <div class="card card-blue"><h4>&#x1F3ED; &#x2460; パイプライン</h4><p>命令を工程ごとに<strong>並行処理</strong>（流れ作業化）</p><p style="font-size:.8rem;color:var(--gray-mid);">寿司屋の厨房</p></div>
+      <div class="card card-green"><h4>&#x26A1; &#x2461; 並列実行</h4><p><strong>スーパースカラ<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：複数の演算器で同時に複数命令を実行する構造</span></strong>＝同時に複数命令／<strong>アウトオブオーダ<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：依存のない命令から順序を入れ替えて実行する方式</span></strong>＝順番入替</p><p style="font-size:.8rem;color:var(--gray-mid);">複数レジで同時会計</p></div>
+      <div class="card card-red"><h4>&#x1F9E0; &#x2462; マルチコア</h4><p>CPU内に<strong>コア（頭脳）を複数</strong>搭載して並列実行</p><p style="font-size:.8rem;color:var(--gray-mid);">店員を増やす</p></div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：高速化技術を問う選択肢で「パイプラインはコアを増やす技術」など<strong>軸違いの入れ替え</strong>が頻出。パイプライン＝1命令を分割／スーパースカラ＝複数命令を同時／マルチコア＝コア増設、で軸を即判別。</p>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4BB;</span> プロセッサの種類（ひとことで）</h2>
+    <div class="two-col">
+      <div class="card card-blue"><h4>CISC（Complex Instruction Set Computer：複雑命令セット）</h4><p>複雑な命令を多く持つ<strong>万能型</strong>。x86（Intel/AMD）</p></div>
+      <div class="card card-green"><h4>RISC（Reduced Instruction Set Computer：縮小命令セット）</h4><p>命令を<strong>単純化して高速化</strong>。ARM（スマホ）、Apple Silicon、RISC-V</p></div>
+      <div class="card card-orange"><h4>GPU（Graphics Processing Unit：画像処理装置）</h4><p>単純計算を<strong>大量並列</strong>。画像処理・AI学習（深層学習）</p></div>
+      <div class="card card-purple"><h4>SoC（System on a Chip）</h4><p>CPU・GPU・メモリ・通信などを<strong>1チップに統合</strong>。スマホの中身</p></div>
+      <div class="card card-red"><h4>ASIC（Application Specific Integrated Circuit：特定用途向け集積回路）</h4><p><strong>特定用途専用</strong>に設計。量産向き・書換不可</p></div>
+      <div class="card card-teal"><h4>FPGA（Field Programmable Gate Array）</h4><p>購入後に<strong>回路を書き換えられる</strong>。試作・少量生産向き</p></div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：ASIC vs FPGAの対比が頻出。「書換可能な専用LSIは？」→FPGA。「大量生産で単価を下げる専用回路は？」→ASIC。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「GPUはCPUより複雑な命令を少数のコアで処理する」は誤り。正は「<strong>単純な命令を大量のコアで並列処理</strong>」。CPU＝少数コア高性能／GPU＝大量コア並列、が正しい対比。</p>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F50C;</span> 入出力インタフェースの分類</h2>
+    <div class="diagram"><div class="diagram-title dt-purple">有線／無線の2大分類</div>
+      <div class="two-col">
+        <div class="card card-blue"><h4>&#x1F50C; 有線</h4>
+          <ul>
+            <li><strong>USB</strong>：汎用、ほぼ全周辺機器</li>
+            <li><strong>HDMI／DisplayPort</strong>：映像・音声</li>
+            <li><strong>Thunderbolt</strong>：超高速（映像＋データ兼用）</li>
+            <li><strong>シリアル／パラレル</strong>：旧規格</li>
+            <li><strong>IEEE1394<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：FireWireとも呼ばれた高速シリアルバス規格</span>（FireWire）</strong>：旧ビデオ機器用</li>
+          </ul>
+        </div>
+        <div class="card card-teal"><h4>&#x1F4F6; 無線</h4>
+          <ul>
+            <li><strong>Bluetooth</strong>：近距離（〜10m）、マウス・イヤホン</li>
+            <li><strong>Wi-Fi</strong>：中距離、ネットワーク接続</li>
+            <li><strong>NFC<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：近距離無線通信。数cm。ICカード・おサイフケータイ</span>（Near Field Communication）</strong>：数cm、決済</li>
+            <li><strong>赤外線（IrDA）</strong>：直進性、旧規格</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：R03問1・R07問1で<strong>USB転送速度の計算・規格の違い</strong>が出題。USB2.0＝480Mbps、USB3.0＝5Gbps、USB3.2 Gen2x2＝20Gbps、USB4＝40Gbpsの序列を押さえる（詳しくは基本・詳細タブ）。</p>
+
+    <div class="alert-exam"><strong>【1次試験】頻出キーワード</strong>：パイプライン／スーパースカラ／スーパーパイプライン／VLIW（Very Long Instruction Word）／アウトオブオーダ実行／分岐予測／投機実行／マルチコア／SMT（Simultaneous Multi-Threading：同時マルチスレッディング）／ハイパースレッディング／CISC／RISC／GPU／MPU（Micro Processing Unit）／DSP（Digital Signal Processor：デジタル信号処理装置）／SoC／ASIC／FPGA／USB／Type-C／HDMI／DisplayPort／Thunderbolt／IEEE1394／Bluetooth／Wi-Fi／NFC／キャッシュメモリ</div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x270D;&#xFE0F;</span> 入門チェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-purple">入門のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・高速化3大：<span class="fill-blank">パイプライン</span>／<span class="fill-blank">並列実行（スーパースカラ）</span>／<span class="fill-blank">マルチコア</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・命令が複雑＝<span class="fill-blank">CISC</span>／命令を単純化＝<span class="fill-blank">RISC</span>／画像・AI＝<span class="fill-blank">GPU</span>／1チップ統合＝<span class="fill-blank">SoC</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・書換可能な専用LSI＝<span class="fill-blank">FPGA</span>／書換不可・量産向き専用IC＝<span class="fill-blank">ASIC</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・汎用有線＝<span class="fill-blank">USB</span>／映像＋音声＝<span class="fill-blank">HDMI</span>／近距離無線＝<span class="fill-blank">Bluetooth</span>／数cmの無線＝<span class="fill-blank">NFC</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 基本 ===== -->
+  <div class="tab-panel theme-blue" id="tab2">
+    <div class="point-box pb-blue"><h4>&#x1F4D8; このタブで学ぶこと</h4>
+      <ul>
+        <li>CPU高速化の<strong>主要技術の対比</strong>（パイプライン／スーパースカラ／VLIW／アウトオブオーダ／分岐予測／マルチコア／SMT）</li>
+        <li>CISC vs RISC、GPU／MPU／DSP の違い</li>
+        <li>USB世代と転送速度、HDMI／Thunderbolt／Bluetooth の規格整理</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3ED;</span> パイプラインの核心（1分で理解）</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">要点</div>1命令を<strong>複数の工程に分け、工程を重ねて流す</strong>。洗濯→乾燥→畳む を1枚ずつ順にやらず、「2枚目を洗ってる間に1枚目を乾燥」のように重ねる。<br>→ 分岐命令（if文）で次が決まらないと止まる＝これが<strong>分岐予測<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：if文の行き先を先読みして止めない工夫</span></strong>で対策される理由。</div></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：工程の名前（IF/ID/EX等）や「3ハザード」の細部は診断士試験では不要。<strong>「パイプライン＝工程を重ねる」「分岐予測＝止まらないための先読み」</strong>が分かれば十分。H27問11・H28問1・R01問21は技術名と効果の対応を問う形式。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x26A1;</span> 主要な高速化技術（軸で整理）</h2>
+    <table class="tbl-blue">
+      <tr><th style="width:22%;">技術</th><th>内容（軸で覚える）</th><th style="width:28%;">例え</th></tr>
+      <tr><td><strong>パイプライン</strong></td><td>1命令を工程に分け、<strong>重ねて流す</strong></td><td>寿司屋の流れ作業</td></tr>
+      <tr><td><strong>スーパーパイプライン</strong></td><td>工程を<strong>より細かく分割</strong>（クロックを上げやすい）</td><td>寿司工程を10段階に</td></tr>
+      <tr><td><strong>スーパースカラ</strong></td><td><strong>同時に複数命令</strong>を実行（演算器を並列装備）</td><td>複数レジで同時会計</td></tr>
+      <tr><td><strong>VLIW</strong></td><td><strong>コンパイラ<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：プログラムを機械語に変換するソフト</span>が</strong>同時実行可能な命令を束ねる</td><td>ソフト側で段取り</td></tr>
+      <tr><td><strong>アウトオブオーダ実行</strong></td><td>依存のない命令から<strong>順序を入替</strong>て実行</td><td>先にできる仕事から片付ける</td></tr>
+      <tr><td><strong>分岐予測／投機実行<span style="font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;">ざっくり：予測に基づき先に実行し、外れたら結果を破棄する仕組み</span></strong></td><td>分岐先を<strong>先読み</strong>して実行／外れたら破棄</td><td>客の注文を先読み</td></tr>
+      <tr><td><strong>マルチコア／SMT</strong></td><td>コアを複数／1コアで複数スレッド（ハイパースレッディング）</td><td>料理人・手を増やす</td></tr>
+    </table>
+    <div class="alert-tip"><strong>覚え方の核</strong>：パイプライン＝<strong>細く流す</strong>、スーパースカラ＝<strong>横に広げる</strong>、マルチコア＝<strong>頭を増やす</strong>、SMT＝<strong>1頭で2人分</strong>。軸が違うので試験では「どれが並列実行？」を問われる。</div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：VLIWは「ハードではなく<strong>コンパイラ</strong>が並列命令を束ねる」が核心。選択肢で「VLIWはハードウェアが命令順を決める」と書かれたら誤り。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4BB;</span> プロセッサ：CISC vs RISC</h2>
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--red-main);"><h4 style="color:var(--red-main);">CISC</h4>
+        <p style="font-size:.85rem;"><strong>複雑命令セット</strong><br>命令数：多／長さ：可変<br>互換性重視</p>
+        <p style="font-size:.78rem;color:var(--gray-mid);">例：Intel Core、AMD Ryzen</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--green-main);"><h4 style="color:var(--green-main);">RISC</h4>
+        <p style="font-size:.85rem;"><strong>縮小命令セット</strong><br>命令数：少／長さ：固定<br>パイプライン向き</p>
+        <p style="font-size:.78rem;color:var(--gray-mid);">例：ARM、Apple M系、RISC-V</p>
+      </div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：RISCの特徴「命令長固定／レジスタ多数／ロード・ストア方式」が選択肢に頻出。<strong>「RISCは複雑な命令を豊富に持つ」は誤り（これはCISC）</strong>。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9E0;</span> 特殊プロセッサ（GPU／MPU／DSP）の使い分け</h2>
+    <table class="tbl-blue">
+      <tr><th>プロセッサ</th><th>特徴</th><th>用途例</th></tr>
+      <tr><td><strong>GPU</strong></td><td>単純計算の<strong>大量並列</strong>（数千コア）</td><td>3DCG、機械学習、仮想通貨マイニング</td></tr>
+      <tr><td><strong>MPU</strong></td><td>マイクロプロセッサ。CPUの一種としてほぼ同義で使われる</td><td>組込機器のメイン処理</td></tr>
+      <tr><td><strong>DSP</strong></td><td><strong>デジタル信号処理</strong>専用（音声・画像・通信）</td><td>音声コーデック、モデム、画像フィルタ</td></tr>
+      <tr><td><strong>SoC</strong></td><td>CPU・GPU・メモリ等を1チップ集約</td><td>スマホ、IoT機器</td></tr>
+      <tr><td><strong>ASIC</strong></td><td>特定用途専用・<strong>書換不可</strong>・量産安価</td><td>ビットコイン採掘機、家電制御</td></tr>
+      <tr><td><strong>FPGA</strong></td><td>購入後<strong>書換可能</strong>・試作向き</td><td>通信機器の試作、金融高頻度取引</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：GPUは<strong>汎用計算にも使える（GPGPU：General Purpose GPU）</strong>。AI学習・ディープラーニングの大量並列行列演算で主流。「GPUは画像表示専用」は現在では不正確。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F50C;</span> USB世代と転送速度</h2>
+    <table class="tbl-blue">
+      <tr><th>規格</th><th>最大転送速度</th><th>特徴・コネクタ</th></tr>
+      <tr><td>USB 1.1</td><td>12Mbps</td><td>Low/Full Speed</td></tr>
+      <tr><td>USB 2.0</td><td><strong>480Mbps</strong></td><td>Hi-Speed。今も多くの機器で利用</td></tr>
+      <tr><td>USB 3.0 / 3.1 Gen1</td><td><strong>5Gbps</strong></td><td>SuperSpeed。青コネクタ</td></tr>
+      <tr><td>USB 3.1 Gen2 / 3.2 Gen2</td><td>10Gbps</td><td>SuperSpeed+</td></tr>
+      <tr><td>USB 3.2 Gen2x2</td><td>20Gbps</td><td>Type-Cのみ対応</td></tr>
+      <tr><td>USB4</td><td><strong>40Gbps</strong></td><td>Thunderbolt 3と互換</td></tr>
+    </table>
+    <div class="alert-tip"><strong>速度計算の基本</strong>：bps（bit per second）→ 8で割ってB/s（byte per second）。例：USB2.0 480Mbps ≒ 60MB/s（理論値）。1GBのファイル転送 ≒ 約17秒。</div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：R03問1・R07問1で<strong>USB転送速度の計算問題</strong>が出題。「ファイルサイズ÷転送速度＝時間」の形で、bit/byte換算（÷8）を忘れない。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「USB3.0は3.0Gbps」は誤り。正は<strong>5Gbps</strong>。3.0は規格の世代名で、速度とは独立。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4FA;</span> 映像インタフェース</h2>
+    <table class="tbl-blue">
+      <tr><th>規格</th><th>特徴</th><th>用途</th></tr>
+      <tr><td><strong>HDMI</strong></td><td>映像＋音声を1本で。著作権保護（HDCP）対応</td><td>テレビ、ブルーレイ、ゲーム機</td></tr>
+      <tr><td><strong>DisplayPort</strong></td><td>高帯域、マルチモニタ対応</td><td>PC用モニタ</td></tr>
+      <tr><td><strong>Thunderbolt</strong></td><td>映像＋データ。40Gbps（TB3/4）</td><td>Mac、外付けGPU、eGPU</td></tr>
+      <tr><td><strong>VGA／DVI</strong></td><td>旧アナログ／デジタル</td><td>旧PC・プロジェクタ</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：Thunderbolt 3以降は<strong>USB Type-Cコネクタを共用</strong>。「形状が同じでも規格は別」→ケーブルの対応規格で速度が決まる。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4F6;</span> 無線インタフェース</h2>
+    <table class="tbl-blue">
+      <tr><th>規格</th><th>通信距離</th><th>用途</th></tr>
+      <tr><td><strong>Bluetooth</strong></td><td>〜10m（Class2）</td><td>マウス・イヤホン・スマホ連携</td></tr>
+      <tr><td><strong>Wi-Fi（IEEE802.11）</strong></td><td>〜100m</td><td>LAN、インターネット接続</td></tr>
+      <tr><td><strong>NFC</strong></td><td>〜10cm</td><td>電子マネー、ICカード、ペアリング</td></tr>
+      <tr><td><strong>Zigbee</strong></td><td>〜100m（低電力）</td><td>IoT、スマートホーム</td></tr>
+      <tr><td><strong>赤外線（IrDA）</strong></td><td>〜1m（直進）</td><td>旧リモコン、旧携帯</td></tr>
+    </table>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 基本チェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab2')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">基本のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・工程を重ねて並行処理＝<span class="fill-blank">パイプライン</span>／分岐命令で止まらないための先読み＝<span class="fill-blank">分岐予測</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・同時複数命令＝<span class="fill-blank">スーパースカラ</span>／コンパイラで命令束化＝<span class="fill-blank">VLIW</span>／順序入替＝<span class="fill-blank">アウトオブオーダ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB2.0＝<span class="fill-blank">480Mbps</span>／USB3.0＝<span class="fill-blank">5Gbps</span>／USB4＝<span class="fill-blank">40Gbps</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・映像＋音声＝<span class="fill-blank">HDMI</span>／超高速データ＋映像＝<span class="fill-blank">Thunderbolt</span>／近距離無線＝<span class="fill-blank">Bluetooth</span>／数cm無線＝<span class="fill-blank">NFC</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 詳細 ===== -->
+  <div class="tab-panel theme-blue" id="tab3">
+    <div class="point-box pb-blue"><h4>&#x1F50D; このタブで学ぶこと</h4>
+      <ul>
+        <li>CPU性能式（MIPS／CPI／クロック周波数）と計算問題</li>
+        <li>並列性の3分類（ILP／TLP／DLP）と技術対応</li>
+        <li>USB転送時間の<strong>計算ドリル</strong>（R03・R07対応）</li>
+        <li>ASIC vs FPGAの4列比較、Thunderbolt世代整理</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9EE;</span> CPU性能の計算式</h2>
+    <div class="card card-blue"><h4>MIPS（Million Instructions Per Second：100万命令毎秒）</h4>
+      <p><strong>MIPS ＝ クロック周波数(MHz) ÷ CPI（Cycles Per Instruction：1命令あたりサイクル数）</strong></p>
+      <p style="font-size:.85rem;color:var(--gray-mid);">例：クロック2GHz（=2000MHz）、CPI=2 → MIPS＝2000÷2＝1000MIPS</p>
+    </div>
+    <div class="card card-green"><h4>プログラム実行時間</h4>
+      <p><strong>実行時間 ＝ 命令数 × CPI ÷ クロック周波数</strong></p>
+      <p style="font-size:.85rem;color:var(--gray-mid);">例：1億命令、CPI=3、クロック3GHz → 100,000,000×3÷3,000,000,000＝0.1秒</p>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：H21問22で<strong>MIPS計算</strong>が出題。クロック周波数の単位（Hz／MHz／GHz）と、MIPS＝毎秒100万命令 の桁合わせがポイント。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9E0;</span> 並列性の3分類（ILP／TLP／DLP）</h2>
+    <table class="tbl-blue">
+      <tr><th>分類</th><th>正式名</th><th>技術</th><th>代表例</th></tr>
+      <tr><td><strong>ILP</strong></td><td>Instruction Level Parallelism<br>（命令レベル並列性）</td><td>パイプライン／スーパースカラ／VLIW</td><td>1コア内の並列</td></tr>
+      <tr><td><strong>TLP</strong></td><td>Thread Level Parallelism<br>（スレッドレベル並列性）</td><td>マルチコア／SMT／ハイパースレッディング</td><td>複数スレッドを並列実行</td></tr>
+      <tr><td><strong>DLP</strong></td><td>Data Level Parallelism<br>（データレベル並列性）</td><td>SIMD（Single Instruction Multiple Data）／GPU</td><td>同じ命令を複数データに</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「GPUの並列性はどれ？」→<strong>DLP（SIMD）</strong>。「ハイパースレッディングは？」→<strong>TLP（SMT）</strong>。分類軸で即答する問題が多い。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「マルチコアはILP」は誤り。マルチコアはコアを複数→<strong>スレッド並列（TLP）</strong>。ILPは1命令列内の並列。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4DA;</span> ASIC vs FPGA（4列比較）</h2>
+    <table class="tbl-blue">
+      <tr><th>比較軸</th><th>ASIC</th><th>FPGA</th><th>CPU（汎用）</th></tr>
+      <tr><td>書換</td><td>不可</td><td>可</td><td>ソフト変更可</td></tr>
+      <tr><td>単価（量産時）</td><td>◎ 安い</td><td>△ 高め</td><td>○</td></tr>
+      <tr><td>初期開発費</td><td>✕ 非常に高い</td><td>○ 低い</td><td>不要</td></tr>
+      <tr><td>処理速度</td><td>◎ 最速</td><td>○ 速い</td><td>△</td></tr>
+      <tr><td>用途</td><td>量産家電、通信機器</td><td>試作、少量、金融HFT</td><td>汎用コンピュータ</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：FPGAは「<strong>現場（Field）で書き換え可（Programmable）</strong>」が名の由来。選択肢で「FPGAは製造後に回路構成を書き換えられる」は正、「ASICは書き換え可能な汎用LSI」は誤り。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4BE;</span> キャッシュメモリの仕組み（CPU文脈のみ）</h2>
+    <div class="card card-blue"><h4>実効アクセス時間</h4>
+      <p><strong>実効アクセス時間 ＝ ヒット率×キャッシュ時間 ＋ (1−ヒット率)×主記憶時間</strong></p>
+      <p style="font-size:.85rem;">例：ヒット率95%、キャッシュ2ns、主記憶50ns → 0.95×2 + 0.05×50 ＝ 1.9 + 2.5 ＝ <strong>4.4ns</strong></p>
+    </div>
+    <div class="card card-green"><h4>階層（L1/L2/L3）</h4>
+      <ul>
+        <li><strong>L1キャッシュ</strong>：最速・最小（数十KB）、コアごとに専用</li>
+        <li><strong>L2キャッシュ</strong>：中速・中容量（数百KB）、コアごと or ペア共有</li>
+        <li><strong>L3キャッシュ</strong>：最遅（主記憶より速い）・最大（数MB〜数十MB）、全コア共有</li>
+      </ul>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：R01問21・R02問2・R05問1で<strong>キャッシュのヒット率・実効アクセス時間計算</strong>が出題。式の暗記と単位（ns）の一致が必須。※DRAM/SRAMそのものの詳細は02ノート参照。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9EE;</span> USB転送時間の計算ドリル</h2>
+    <div class="card card-orange"><h4>例題1（R03レベル）</h4>
+      <p><strong>Q</strong>：1GBのファイルをUSB3.0（5Gbps）で転送する理論上の最小時間は？（1B=8bit、1G=10^9）</p>
+      <p><strong>A</strong>：データ量 1GB＝1×10^9×8＝<strong>8×10^9 bit</strong>／速度 5Gbps＝5×10^9 bit/s／時間＝8×10^9 ÷ 5×10^9 ＝<strong>1.6秒</strong></p>
+    </div>
+    <div class="card card-orange"><h4>例題2（R07レベル）</h4>
+      <p><strong>Q</strong>：USB2.0（480Mbps）とUSB3.0（5Gbps）で2GBを転送した場合、時間差は？</p>
+      <p><strong>A</strong>：USB2.0：2GB＝16Gbit／0.48Gbps ≒ 33.3秒／USB3.0：16/5＝3.2秒／差＝<strong>約30秒</strong></p>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：計算の手順＝①GBをbitに（×8×10^9）／②bpsで割る。<strong>単位換算の単純ミスが失点の最大要因</strong>。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4FA;</span> Thunderbolt 世代整理</h2>
+    <table class="tbl-blue">
+      <tr><th>世代</th><th>速度</th><th>コネクタ</th></tr>
+      <tr><td>Thunderbolt 1</td><td>10Gbps</td><td>Mini DisplayPort</td></tr>
+      <tr><td>Thunderbolt 2</td><td>20Gbps</td><td>Mini DisplayPort</td></tr>
+      <tr><td><strong>Thunderbolt 3</strong></td><td><strong>40Gbps</strong></td><td>USB Type-C</td></tr>
+      <tr><td><strong>Thunderbolt 4</strong></td><td>40Gbps</td><td>USB Type-C（機能強化）</td></tr>
+      <tr><td>Thunderbolt 5</td><td>80Gbps（双方向120Gbpsモード）</td><td>USB Type-C</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：Thunderbolt 3以降はUSB4と<strong>コネクタ・速度が実質同等</strong>。形状（Type-C）とプロトコルを区別して問われる。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4A1;</span> 応用論点</h2>
+    <div class="card card-purple"><h4>【1次の横断】サーバー仮想化／クラウドとの関係</h4>
+      <p>マルチコア＋SMTにより1物理サーバーが多数の<strong>仮想マシン</strong>をホスト可能に。クラウド（IaaS）の基盤技術。</p>
+    </div>
+    <div class="card card-purple"><h4>【1次の横断】AI／ディープラーニングとGPU</h4>
+      <p>深層学習の行列演算はDLP型。<strong>GPU（NVIDIA CUDA）・TPU（Google）・専用ASIC</strong>が主戦場。</p>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 詳細チェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">詳細のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・MIPS＝<span class="fill-blank">クロック周波数(MHz)</span>÷<span class="fill-blank">CPI</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・並列3分類：命令＝<span class="fill-blank">ILP</span>／スレッド＝<span class="fill-blank">TLP</span>／データ＝<span class="fill-blank">DLP（SIMD）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・FPGA＝<span class="fill-blank">書換可・試作向き</span>／ASIC＝<span class="fill-blank">書換不可・量産向き</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・実効アクセス時間＝ヒット率×<span class="fill-blank">キャッシュ時間</span>＋(1−ヒット率)×<span class="fill-blank">主記憶時間</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB転送時間＝データ量(bit)÷<span class="fill-blank">速度(bps)</span>。1GB=<span class="fill-blank">8Gbit</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・Thunderbolt3/4のコネクタ＝<span class="fill-blank">USB Type-C</span>／速度＝<span class="fill-blank">40Gbps</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: 語呂 ===== -->
+  <div class="tab-panel theme-purple" id="tab4">
+    <div class="point-box pb-purple"><h4>&#x1F3B5; 語呂で覚える</h4><p>異常・違和感のあるイメージで強く残す！</p></div>
+
+    <div class="mnemonic"><div class="big">&#x1F3ED; パイスカ マルチで速くする</div><div class="desc">高速化3大：<strong>パイ</strong>プライン／<strong>スカ</strong>ラ（スーパースカラ）／<strong>マルチ</strong>コア</div></div>
+    <div class="mnemonic"><div class="big">&#x1F500; アウトで順序入れ替え、分岐は予測</div><div class="desc"><strong>アウト</strong>オブオーダ＝順序入替／<strong>分岐予測</strong>＝if文先読み</div></div>
+    <div class="mnemonic"><div class="big">&#x1F480; CISC は 複雑（Complex）／RISC は 縮小（Reduced）</div><div class="desc">頭文字そのまま。<strong>C＝Complex</strong>、<strong>R＝Reduced</strong></div></div>
+    <div class="mnemonic"><div class="big">&#x1F3AE; FPGA は 書換え可、ASIC は 書換不可</div><div class="desc">「FPGA＝<strong>フィールドで書換OK</strong>」「ASIC＝<strong>専用（Specific）で固定</strong>」</div></div>
+    <div class="mnemonic"><div class="big">&#x1F680; USB は 2.0→480、3.0→5G、4→40G</div><div class="desc"><strong>「にっぱち、ごー、よんじゅう」</strong>（480Mbps／5Gbps／40Gbps）</div></div>
+    <div class="mnemonic"><div class="big">&#x1F4F6; B（ぶるー）テン ナ（NFC）シ十（10cm）</div><div class="desc"><strong>Bluetooth＝約10m</strong>／<strong>NFC＝約10cm</strong>。「テンm」「十cm」で10繋がり！</div></div>
+    <div class="mnemonic"><div class="big">&#x1F3C1; I・T・D で 並列性トリオ</div><div class="desc"><strong>I</strong>LP（命令）／<strong>T</strong>LP（スレッド）／<strong>D</strong>LP（データ）</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4A1;</span> 語呂の使い方</h2>
+    <div class="alert-tip">語呂は<strong>第一想起</strong>のためのフック。試験中に「パイスカマルチ！」と口の中で唱えて3つ並ぶかチェック。</div>
+  </div>
+
+  <!-- ===== TAB 5: 語呂穴 ===== -->
+  <div class="tab-panel theme-purple" id="tab5">
+    <div class="point-box pb-purple"><h4>&#x1F3B5; 語呂穴埋め</h4><p>語呂の一部を隠して思い出す訓練</p></div>
+    <div class="fill-card">
+      <div class="fill-header bg-purple">語呂穴埋め</div>
+      <div class="fill-body">
+        <div class="fill-group">・高速化3大：パイ<span class="fill-blank">プライン</span>／ス<span class="fill-blank">カラ</span>／<span class="fill-blank">マルチコア</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・アウトで<span class="fill-blank">順序入れ替え</span>、分岐は<span class="fill-blank">予測</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・CISCは<span class="fill-blank">Complex（複雑）</span>／RISCは<span class="fill-blank">Reduced（縮小）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・<span class="fill-blank">FPGA</span>は書換え可、<span class="fill-blank">ASIC</span>は書換不可</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB2.0→<span class="fill-blank">480Mbps</span>、USB3.0→<span class="fill-blank">5Gbps</span>、USB4→<span class="fill-blank">40Gbps</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・Bluetooth＝約<span class="fill-blank">10m</span>／NFC＝約<span class="fill-blank">10cm</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・並列性トリオ：<span class="fill-blank">ILP</span>／<span class="fill-blank">TLP</span>／<span class="fill-blank">DLP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: 穴① ===== -->
+  <div class="tab-panel theme-teal" id="tab6">
+    <div class="point-box pb-teal"><h4>&#x270D;&#xFE0F; 穴埋め初級</h4><p>基礎用語の定着</p></div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">初級：CPU基礎</div>
+      <div class="fill-body">
+        <div class="fill-group">・CPUは日本語で<span class="fill-blank">中央処理装置</span>。コンピュータの<span class="fill-blank">頭脳</span>にあたる</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・CPU内部の実働ユニット＝<span class="fill-blank">コア</span>。複数搭載＝<span class="fill-blank">マルチコア</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・1秒間の動作数＝<span class="fill-blank">クロック周波数</span>（単位＝<span class="fill-blank">Hz</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">初級：インタフェース</div>
+      <div class="fill-body">
+        <div class="fill-group">・USBは日本語で<span class="fill-blank">汎用シリアルバス</span>／HDMIは<span class="fill-blank">映像＋音声</span>をデジタル伝送</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・無線でマウス等＝<span class="fill-blank">Bluetooth</span>／数cmの近接＝<span class="fill-blank">NFC</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB Type-Cは<span class="fill-blank">表裏どちらでも挿せる</span>コネクタ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 7: 穴② ===== -->
+  <div class="tab-panel theme-teal" id="tab7">
+    <div class="point-box pb-teal"><h4>&#x270D;&#xFE0F; 穴埋め中級</h4><p>高速化技術と分類</p></div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">中級：高速化技術</div>
+      <div class="fill-body">
+        <div class="fill-group">・1命令を工程に分けて並行処理＝<span class="fill-blank">パイプライン</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・同時に複数命令を実行＝<span class="fill-blank">スーパースカラ</span>／コンパイラが命令束化＝<span class="fill-blank">VLIW</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・依存のない命令から順序入替＝<span class="fill-blank">アウトオブオーダ実行</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・分岐先を予測＝<span class="fill-blank">分岐予測</span>／予測に基づき先行実行＝<span class="fill-blank">投機実行</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・1コアで複数スレッド＝<span class="fill-blank">SMT</span>（Intelでの名称＝<span class="fill-blank">ハイパースレッディング</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">中級：プロセッサ種類</div>
+      <div class="fill-body">
+        <div class="fill-group">・命令が複雑で多い＝<span class="fill-blank">CISC</span>／単純化しパイプライン向き＝<span class="fill-blank">RISC</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・画像処理・AI向き＝<span class="fill-blank">GPU</span>／信号処理専用＝<span class="fill-blank">DSP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・1チップ統合＝<span class="fill-blank">SoC</span>／量産専用＝<span class="fill-blank">ASIC</span>／書換可＝<span class="fill-blank">FPGA</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 8: 穴③ ===== -->
+  <div class="tab-panel theme-teal" id="tab8">
+    <div class="point-box pb-teal"><h4>&#x270D;&#xFE0F; 穴埋め上級</h4><p>計算・応用論点</p></div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">上級：性能計算</div>
+      <div class="fill-body">
+        <div class="fill-group">・クロック2GHz、CPI=2のMIPS＝<span class="fill-blank">1000MIPS</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・1億命令、CPI=3、クロック3GHzの実行時間＝<span class="fill-blank">0.1秒</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・ヒット率95%、キャッシュ2ns、主記憶50nsの実効アクセス時間＝<span class="fill-blank">4.4ns</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">上級：USB転送計算</div>
+      <div class="fill-body">
+        <div class="fill-group">・1GBをUSB3.0（5Gbps）で転送＝<span class="fill-blank">1.6秒</span>（理論値）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・480Mbps ÷ 8 ＝<span class="fill-blank">60MB/s</span>（バイト換算）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・2GBをUSB2.0（480Mbps）で転送＝約<span class="fill-blank">33.3秒</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">上級：並列性分類</div>
+      <div class="fill-body">
+        <div class="fill-group">・GPUの並列性＝<span class="fill-blank">DLP（SIMD）</span>／マルチコア＝<span class="fill-blank">TLP</span>／スーパースカラ＝<span class="fill-blank">ILP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 9: 事例 ===== -->
+  <div class="tab-panel theme-green" id="tab9">
+    <div class="point-box pb-green"><h4>&#x1F3E2; 中小企業の事例で学ぶ</h4></div>
+
+    <div class="sim-card"><span class="sim-label">事例1</span>
+      <h4>町工場A社：検査画像のAI解析を導入したい</h4>
+      <p><strong>悩み</strong>：既存PC（4コアCPU）で画像解析ソフトを動かすと1枚10秒かかる。処理が追いつかない。</p>
+      <p><strong>解決</strong>：画像認識は<strong>同じ演算を大量データに適用</strong>する処理（DLP）。→ <strong>GPU搭載PC</strong>に切替で1枚0.2秒に短縮。コア数が多いGPUの並列処理が効く。</p>
+      <p style="color:var(--green-dark);"><strong>学び</strong>：CPU＝逐次処理が得意、GPU＝並列処理が得意。用途で選ぶ。</p>
+    </div>
+
+    <div class="sim-card"><span class="sim-label">事例2</span>
+      <h4>流通業B社：店舗のPOS端末更新</h4>
+      <p><strong>悩み</strong>：古いPOS端末のCPU（シングルコア）が遅く、レジ処理が詰まる。</p>
+      <p><strong>解決</strong>：<strong>マルチコア＋SMT対応</strong>の新端末に更新。レジ処理・在庫問合せ・決済処理を<strong>並列スレッド</strong>で同時実行。</p>
+    </div>
+
+    <div class="sim-card"><span class="sim-label">事例3</span>
+      <h4>印刷会社C社：大判プリンタとPCの接続</h4>
+      <p><strong>悩み</strong>：USB2.0接続だと大判データ（数GB）の送信に数分かかる。</p>
+      <p><strong>解決</strong>：プリンタをUSB3.0対応品に更新＋<strong>USB3.0対応ケーブル</strong>に切替。転送速度が<strong>約10倍</strong>（480Mbps→5Gbps）に。ケーブルの対応規格を確認することが重要。</p>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x270D;&#xFE0F;</span> 事例から試験ポイント穴埋め</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-green">📝 【1次】事例から学ぶ試験ポイント</div>
+      <div class="fill-body">
+        <div class="fill-group">・画像解析・AI学習に強いのは<span class="fill-blank">GPU</span>（並列コア数が多いため）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・マルチタスクを並列化する技術＝<span class="fill-blank">マルチコア</span>／<span class="fill-blank">SMT</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB機器を高速化するにはケーブルも<span class="fill-blank">対応規格品</span>に更新が必要</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・試作回路・少量生産向きのLSIは<span class="fill-blank">FPGA</span>、量産・専用は<span class="fill-blank">ASIC</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 10: クイズ ===== -->
+  <div class="tab-panel theme-orange" id="tab10">
+    <div class="point-box pb-orange"><h4>&#x270F;&#xFE0F; 選択肢クイズ</h4><p>全8問。A/B/C/Dに分散。</p></div>
+
+    <div class="quiz-item" id="q1"><span class="quiz-num">1</span><span class="quiz-cat qc-blue">高速化</span>
+      <div class="quiz-question">パイプライン処理の説明として最も適切なものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q1',2)">A. CPU内にコアを複数搭載して並列処理する技術</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q1',2)">B. 分岐先を予測して先に実行する技術</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q1',2)">C. 1命令を複数のステージに分け、命令を重ねて並行処理する技術</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q1',2)">D. コンパイラが同時実行可能な命令を束ねて発行する技術</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">正解C。Aはマルチコア／Bは分岐予測・投機実行／DはVLIW。パイプライン＝1命令を工程分割し並行処理。</div>
+    </div>
+
+    <div class="quiz-item" id="q2"><span class="quiz-num">2</span><span class="quiz-cat qc-blue">プロセッサ</span>
+      <div class="quiz-question">RISCの特徴として最も適切なものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q2',1)">A. 命令長が可変で、複雑な命令を多数持つ</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q2',1)">B. 命令長が固定で、命令数を絞ってパイプライン向きにしている</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q2',1)">C. 画像処理専用で、大量の単純演算コアを持つ</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q2',1)">D. CPU・メモリ・GPUを1チップに統合している</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">正解B。AはCISC／CはGPU／DはSoC。RISC＝命令を単純・固定長にしてパイプライン効率を最大化。</div>
+    </div>
+
+    <div class="quiz-item" id="q3"><span class="quiz-num">3</span><span class="quiz-cat qc-green">IF</span>
+      <div class="quiz-question">USB3.0の最大転送速度はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q3',3)">A. 480Mbps</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q3',3)">B. 1Gbps</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q3',3)">C. 3Gbps</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q3',3)">D. 5Gbps</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">正解D。USB3.0（3.1 Gen1）＝5Gbps。AはUSB2.0、BとCは存在しないorSATA等の別規格。</div>
+    </div>
+
+    <div class="quiz-item" id="q4"><span class="quiz-num">4</span><span class="quiz-cat qc-red">特殊LSI</span>
+      <div class="quiz-question">FPGAの特徴として最も適切なものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q4',0)">A. 製造後に論理回路を書き換えることができる</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q4',0)">B. 特定用途に最適化された書き換え不可のLSIである</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q4',0)">C. 汎用的な命令セットを持つプロセッサである</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q4',0)">D. 信号処理に特化した専用プロセッサである</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">正解A。BはASIC／CはCPU／DはDSP。FPGA＝Field Programmable（現場書換可）。</div>
+    </div>
+
+    <div class="quiz-item" id="q5"><span class="quiz-num">5</span><span class="quiz-cat qc-purple">並列性</span>
+      <div class="quiz-question">GPUの並列性はどの分類に該当するか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q5',2)">A. ILP（命令レベル並列性）</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q5',2)">B. TLP（スレッドレベル並列性）</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q5',2)">C. DLP（データレベル並列性）</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q5',2)">D. どの分類にも属さない</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">正解C。GPU＝同じ命令を大量データに適用＝SIMD＝DLP。AはパイプラインやスーパースカラBはマルチコア・SMT。</div>
+    </div>
+
+    <div class="quiz-item" id="q6"><span class="quiz-num">6</span><span class="quiz-cat qc-green">IF</span>
+      <div class="quiz-question">HDMIの主な用途として最も適切なものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q6',1)">A. 近距離無線で周辺機器をつなぐ</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q6',1)">B. 映像と音声をデジタルで伝送する</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q6',1)">C. SSD等の高速ストレージと接続する</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q6',1)">D. CPUとメモリを接続する</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">正解B。HDMI＝映像＋音声1本。AはBluetooth／CはSATA/NVMe／DはメモリバスDDR等。</div>
+    </div>
+
+    <div class="quiz-item" id="q7"><span class="quiz-num">7</span><span class="quiz-cat qc-blue">高速化</span>
+      <div class="quiz-question">分岐命令でパイプラインが停滞するのを防ぐ技術はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q7',3)">A. ライトバック</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q7',3)">B. 仮想記憶</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q7',3)">C. キャッシュメモリ</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q7',3)">D. 分岐予測・投機実行</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">正解D。if文の行き先を先読みして先に実行しておく（外れたら破棄）ことで、分岐で止まらない。</div>
+    </div>
+
+    <div class="quiz-item" id="q8"><span class="quiz-num">8</span><span class="quiz-cat qc-red">計算</span>
+      <div class="quiz-question">クロック2GHz、CPI=2のCPUのMIPSは？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q8',0)">A. 1000</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q8',0)">B. 2000</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q8',0)">C. 4000</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q8',0)">D. 500</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">正解A。MIPS＝クロック(MHz)÷CPI＝2000÷2＝1000MIPS。</div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+  </div>
+
+  <!-- ===== TAB 11: 実例 ===== -->
+  <div class="tab-panel theme-red" id="tab11">
+    <div class="point-box pb-red"><h4>&#x1F4A1; 実在企業のストーリー</h4><p>「なぜその選択をしたか」で覚える</p></div>
+
+    <div class="card card-red"><h4>&#x1F34E; Apple：Intel→Apple Silicon（M1）への大転換（2020年）</h4>
+      <p>Appleは15年使ったIntel（CISC）のCPUを捨て、自社設計の<strong>Apple Silicon（ARMベースRISC）</strong>に移行。理由は<strong>電力効率</strong>。iPhone用ARMチップで積み上げた設計資産をMacにも使い、<strong>1チップにCPU＋GPU＋Neural Engine統合（SoC）</strong>。バッテリー駆動時間が約2倍に。</p>
+      <p><strong>学び</strong>：CISC→RISC、汎用CPU→SoCの流れは、電力制約とAI需要の両立が背景。</p>
+    </div>
+
+    <div class="card card-red"><h4>&#x26A1; NVIDIA：GPUをAI計算基盤に変身（2010年代〜）</h4>
+      <p>NVIDIAは元々3Dゲーム向けGPUメーカーだったが、GPUの<strong>並列演算能力</strong>がディープラーニングの行列演算に最適と判明。CUDA（並列計算API）を提供し、AI計算インフラの標準に。時価総額は数兆ドル級へ。</p>
+      <p><strong>学び</strong>：用途外の<strong>並列性</strong>に目を付けることで、GPUは画像表示専用から汎用並列計算基盤へ。</p>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F3E6; みずほ証券：FPGAで高頻度取引（HFT）を高速化</h4>
+      <p>ミリ秒単位の売買を競うHFT分野で、汎用CPUでは遅すぎる。<strong>FPGAに取引ロジックを回路化</strong>することで、ソフトウェア処理を経ずに数百ナノ秒で応答。戦略変更時は<strong>回路を書き換えて対応</strong>できる柔軟性もFPGAの強み。</p>
+      <p><strong>学び</strong>：FPGA＝書換可能＋ハード並みの速さ、の両立が生きる用途。</p>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F4F1; Qualcomm：スマホSoCの王者</h4>
+      <p>Snapdragonシリーズは<strong>ARM CPU＋GPU＋DSP（信号処理）＋モデム（5G）＋NPU（AI）</strong>をワンチップ集約。スマホの小型・低消費電力を実現するには<strong>SoC化が必須</strong>。</p>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x270D;&#xFE0F;</span> 実例から試験ポイント穴埋め</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">📝 【1次】実例からの試験ポイント</div>
+      <div class="fill-body">
+        <div class="fill-group">・Apple Silicon（M1/M2）は<span class="fill-blank">ARM</span>ベースの<span class="fill-blank">RISC</span>であり、CPU/GPU等を統合した<span class="fill-blank">SoC</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・GPUがAIに使われる理由は<span class="fill-blank">並列処理（大量の単純演算）</span>が得意だから</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・HFT高速化に使われる書換可能LSIは<span class="fill-blank">FPGA</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・スマホのSnapdragonは<span class="fill-blank">SoC</span>（System on a Chip）の典型例</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 12: 図解 ===== -->
+  <div class="tab-panel theme-orange" id="tab12">
+    <div class="point-box pb-orange"><h4>&#x1F5FA;&#xFE0F; ビジュアルで総整理</h4></div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解1：高速化技術マップ</h2>
+    <div class="diagram"><div class="diagram-title dt-orange">「軸」で分類すると即判別</div>
+      <table class="tbl-orange">
+        <tr><th>軸</th><th>技術</th><th>並列性分類</th></tr>
+        <tr><td>1命令を工程分割</td><td>パイプライン／スーパーパイプライン</td><td>ILP</td></tr>
+        <tr><td>同時に複数命令</td><td>スーパースカラ／VLIW／アウトオブオーダ</td><td>ILP</td></tr>
+        <tr><td>投機・予測</td><td>分岐予測／投機実行</td><td>ILP補助</td></tr>
+        <tr><td>コア複数</td><td>マルチコア</td><td>TLP</td></tr>
+        <tr><td>1コア多スレッド</td><td>SMT／ハイパースレッディング</td><td>TLP</td></tr>
+        <tr><td>データ並列</td><td>SIMD／GPU</td><td>DLP</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解2：プロセッサ系統樹</h2>
+    <div class="diagram"><div class="diagram-title dt-orange">汎用 ⇔ 専用 の軸</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">汎用CPU<small>CISC/RISC</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-purple">SoC<small>統合型</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-orange">GPU/DSP<small>特定演算</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-green">FPGA<small>書換可</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-red">ASIC<small>専用固定</small></div>
+      </div>
+      <p style="text-align:center;font-size:.82rem;color:var(--gray-mid);margin-top:.5rem;">← 汎用・柔軟　　　　　　　　　　　　専用・高速 →</p>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解3：インタフェース速度順</h2>
+    <div class="diagram"><div class="diagram-title dt-orange">速い順（有線）</div>
+      <div class="flow-row">
+        <div class="flow-box fb-red">Thunderbolt4／USB4<small>40Gbps</small></div><span class="flow-arrow">&gt;</span>
+        <div class="flow-box fb-orange">USB3.2 Gen2x2<small>20Gbps</small></div><span class="flow-arrow">&gt;</span>
+        <div class="flow-box fb-purple">USB3.1 Gen2<small>10Gbps</small></div><span class="flow-arrow">&gt;</span>
+        <div class="flow-box fb-blue">USB3.0<small>5Gbps</small></div><span class="flow-arrow">&gt;</span>
+        <div class="flow-box fb-green">USB2.0<small>480Mbps</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解4：無線規格の距離マップ</h2>
+    <div class="diagram"><div class="diagram-title dt-orange">通信距離の順序</div>
+      <div class="flow-row">
+        <div class="flow-box fb-teal">NFC<small>〜10cm</small></div><span class="flow-arrow">&lt;</span>
+        <div class="flow-box fb-green">赤外線<small>〜1m</small></div><span class="flow-arrow">&lt;</span>
+        <div class="flow-box fb-blue">Bluetooth<small>〜10m</small></div><span class="flow-arrow">&lt;</span>
+        <div class="flow-box fb-orange">Wi-Fi<small>〜100m</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270D;&#xFE0F;</span> 図解チェック（穴埋め）</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">📝 【1次】図解まとめの試験ポイント</div>
+      <div class="fill-body">
+        <div class="fill-group">・命令レベル並列＝<span class="fill-blank">ILP</span>／スレッド並列＝<span class="fill-blank">TLP</span>／データ並列＝<span class="fill-blank">DLP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB速度の順：USB2.0（<span class="fill-blank">480Mbps</span>）＜USB3.0（<span class="fill-blank">5Gbps</span>）＜USB4（<span class="fill-blank">40Gbps</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・無線距離：NFC＜<span class="fill-blank">赤外線</span>＜<span class="fill-blank">Bluetooth</span>＜<span class="fill-blank">Wi-Fi</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・FPGA＝<span class="fill-blank">書換可・試作向き</span>／ASIC＝<span class="fill-blank">書換不可・量産向き</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tab-nav" style="border-radius:0 0 var(--radius) var(--radius);margin-top:-1px;">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">&#x1F423; ゼロから</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(3)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">&#x1F3B5; 語呂</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F3B5; 語呂穴</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(6)">&#x270D;&#xFE0F; 穴&#x2460;</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴&#x2461;</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(8)">&#x270D;&#xFE0F; 穴&#x2462;</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(9)">&#x1F3E2; 事例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(10)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(11)">&#x1F4A1; 実例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(12)">&#x1F5FA;&#xFE0F; 図解</button>
+  </nav>
+</div>
+<div class="footer">中小企業診断士 経営情報システム | CPU・プロセッサ・入出力インタフェース 学習まとめ</div>
+
+<script>
+function switchTab(idx){const n=13;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+let answered=0,correct=0,total=8;
+function handleQuiz(e,qid,correctIdx){const li=e.target.closest('li');if(!li||document.querySelector('#'+qid+' li.correct, #'+qid+' li.wrong'))return;const idx=parseInt(li.dataset.idx);const expEl=document.getElementById(qid+'-exp');if(idx===correctIdx){li.classList.add('correct');expEl.className='quiz-explanation show correct-exp';correct++}else{li.classList.add('wrong');document.querySelectorAll('#'+qid+' .quiz-options li')[correctIdx].classList.add('correct');expEl.className='quiz-explanation show wrong-exp'}answered++;if(answered===total){const s=document.getElementById('quizScore');s.style.display='block';s.textContent=total+'問中 '+correct+'問正解！'+(correct===total?' パーフェクト！':correct>=5?' いい調子！':' もう一回復習しよう！')}}
+</script>
+</body>
+</html>
