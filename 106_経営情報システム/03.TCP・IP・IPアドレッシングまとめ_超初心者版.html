@@ -334,47 +334,74 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
     <div class="card card-blue"><h4>&#x1F535; クラスA：/8 になる理由</h4>
       <p>範囲は <strong>10.0.0.0 〜 10.255.255.255</strong>。よく見ると：</p>
       <ul>
-        <li><strong>1組目</strong>（最初の数字）は<strong>必ず「10」で固定</strong>（10から動かない）</li>
+        <li><strong>1組目</strong>（最初のドットまでの数字）は<strong>必ず「10」で固定</strong>（10から動かない）</li>
         <li><strong>2〜4組目</strong>は<strong>「0〜255」まで全部自由</strong>に使える</li>
       </ul>
-      <p style="margin-top:.5rem;">つまり「<strong>先頭の1組（= 8ビット）だけ固定</strong>」。これを「先頭8ビット固定＝<strong>/8</strong>」と書きます。</p>
+      <div class="alert-tip" style="background:#e3f2fd;border-color:#90caf9;color:#0d47a1;">
+        <strong>&#x1F4A1; つまりこういうこと</strong>：<br>
+        最初のドットまでの数字は<strong>8ビットで表される1つの数（0〜255）</strong>です。その8ビットが<strong>「10」という1つの値に決まっている</strong>＝<strong>8ビットが固定されている</strong>。これを「<strong>先頭から8ビットが固定」＝CIDRで /8 と書く</strong>、ということです。
+      </div>
       <p style="text-align:center;margin:.5rem 0;">
         <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">10</strong>.<span style="color:#90caf9;">0〜255</span>.<span style="color:#90caf9;">0〜255</span>.<span style="color:#90caf9;">0〜255</span></span>
       </p>
-      <p style="text-align:center;font-size:.85rem;color:var(--gray-mid);"><span style="color:#ffab40;">■固定の8ビット</span>／<span style="color:#1565c0;">■自由な24ビット</span></p>
+      <p style="text-align:center;font-size:.85rem;color:var(--gray-mid);"><span style="color:#ffab40;">■固定の8ビット（10で決まっている）</span>／<span style="color:#1565c0;">■自由な24ビット（端末の番号に使う）</span></p>
       <p style="font-size:.88rem;">自由な24ビットで端末を区別 → 2^24 ≒ <strong>約1,677万台</strong>分のIPが使える。大企業向け。</p>
     </div>
 
     <div class="card card-orange"><h4>&#x1F7E0; クラスB：/12 になる理由（ちょっと難しい）</h4>
-      <p>範囲は <strong>172.16.0.0 〜 172.31.255.255</strong>。最初の1組（172）は固定。さらに2組目が<strong>16〜31</strong>に限定されている（0〜255全てではない）。</p>
-      <p>2組目の数字を2進数で並べてみると…</p>
+      <p>範囲は <strong>172.16.0.0 〜 172.31.255.255</strong>。よく見ると：</p>
+      <ul>
+        <li><strong>1組目</strong>は<strong>必ず「172」で固定</strong>（= 8ビット固定）</li>
+        <li><strong>2組目</strong>は<strong>「16〜31」に限定</strong>（0〜255全てではない、一部だけ）</li>
+        <li><strong>3・4組目</strong>は0〜255まで自由</li>
+      </ul>
+      <p style="margin-top:.5rem;">ここで注目：2組目は<strong>完全に自由でも完全に固定でもなく「半分だけ固定」</strong>されている状態です。これを2進数で見ると意味がわかります：</p>
       <table class="tbl-orange" style="font-size:.82rem;">
-        <tr><th>2組目</th><th>2進数（8ビット）</th><th>上位4ビット</th></tr>
-        <tr><td>16</td><td><strong style="color:#ffab40;">0001</strong> 0000</td><td>0001</td></tr>
-        <tr><td>17</td><td><strong style="color:#ffab40;">0001</strong> 0001</td><td>0001</td></tr>
-        <tr><td>…</td><td>…</td><td>…</td></tr>
-        <tr><td>31</td><td><strong style="color:#ffab40;">0001</strong> 1111</td><td>0001</td></tr>
+        <tr><th>2組目の数値</th><th>2進数（8ビット）</th><th>上位4ビット</th><th>下位4ビット</th></tr>
+        <tr><td>16</td><td><strong style="color:#ffab40;">0001</strong> <span style="color:#1565c0;">0000</span></td><td>0001（固定）</td><td>0000（自由）</td></tr>
+        <tr><td>17</td><td><strong style="color:#ffab40;">0001</strong> <span style="color:#1565c0;">0001</span></td><td>0001（固定）</td><td>0001（自由）</td></tr>
+        <tr><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+        <tr><td>31</td><td><strong style="color:#ffab40;">0001</strong> <span style="color:#1565c0;">1111</span></td><td>0001（固定）</td><td>1111（自由）</td></tr>
       </table>
-      <p>16〜31では<strong>上位4ビットがすべて「0001」で固定</strong>、下位4ビットだけが0〜15で変化。</p>
+      <p>16〜31の2進数を並べると、<strong>上位4ビット「0001」は全部共通</strong>、下位4ビットだけが0〜15で変わります。</p>
+      <div class="alert-tip" style="background:#fff3e0;border-color:#ffcc80;color:#e65100;">
+        <strong>&#x1F4A1; つまりこういうこと</strong>：<br>
+        クラスBは <strong>1組目「172」で8ビット固定</strong>、さらに<strong>2組目の上位4ビット「0001」も固定</strong>。<br>
+        合わせて <strong>8 + 4 ＝ 12ビットが固定</strong>されている＝CIDRで<strong> /12</strong> と書く、ということです。
+      </div>
       <p style="text-align:center;margin:.5rem 0;">
-        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">172</strong>.<strong style="color:#ffab40;">0001</strong>xxxx.0.0</span>
-        <br>1組目8ビット ＋ 2組目の上位4ビット ＝ <strong>計12ビット固定</strong> → <strong>/12</strong>
+        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">172</strong>.<strong style="color:#ffab40;">0001</strong><span style="color:#1565c0;">xxxx</span>.<span style="color:#1565c0;">xxxxxxxx</span>.<span style="color:#1565c0;">xxxxxxxx</span></span>
       </p>
+      <p style="text-align:center;font-size:.85rem;color:var(--gray-mid);"><span style="color:#ffab40;">■固定の12ビット</span>／<span style="color:#1565c0;">■自由な20ビット</span></p>
+      <p style="font-size:.88rem;">自由な20ビットで端末を区別 → 2^20 ≒ <strong>約100万台</strong>。中規模組織向け。</p>
     </div>
 
     <div class="card card-green"><h4>&#x1F7E2; クラスC：/16 になる理由</h4>
-      <p>範囲は <strong>192.168.0.0 〜 192.168.255.255</strong>。最初の<strong>2組（192.168）が両方固定</strong>、残り2組が自由。</p>
+      <p>範囲は <strong>192.168.0.0 〜 192.168.255.255</strong>。よく見ると：</p>
+      <ul>
+        <li><strong>1組目</strong>は<strong>必ず「192」で固定</strong>（= 8ビット固定）</li>
+        <li><strong>2組目</strong>は<strong>必ず「168」で固定</strong>（= もう8ビット固定）</li>
+        <li><strong>3・4組目</strong>は0〜255まで自由</li>
+      </ul>
+      <div class="alert-tip" style="background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20;">
+        <strong>&#x1F4A1; つまりこういうこと</strong>：<br>
+        最初の2つのドットまでの数字（192 と 168）が<strong>両方とも1つの値に決まっている</strong>。それぞれ8ビットなので、<strong>8 + 8 ＝ 16ビットが固定</strong>されている＝CIDRで <strong>/16</strong> と書く、ということです。
+      </div>
       <p style="text-align:center;margin:.5rem 0;">
-        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">192.168</strong>.0.0</span>
-        ＝ <strong style="color:#ffab40;">2組（16ビット）</strong>が固定 → <strong>/16</strong>
+        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">192</strong>.<strong style="color:#ffab40;">168</strong>.<span style="color:#1565c0;">0〜255</span>.<span style="color:#1565c0;">0〜255</span></span>
       </p>
-      <p style="font-size:.85rem;color:var(--gray-mid);">2組 × 8ビット = 16ビット。だから /16。</p>
+      <p style="text-align:center;font-size:.85rem;color:var(--gray-mid);"><span style="color:#ffab40;">■固定の16ビット（192.168で決まっている）</span>／<span style="color:#1565c0;">■自由な16ビット</span></p>
+      <p style="font-size:.88rem;">自由な16ビットで端末を区別 → 2^16 ≒ <strong>約6万5千台</strong>。家庭・SOHO向け。</p>
     </div>
 
-    <div class="alert-tip">&#x1F4A1; <strong>まとめ</strong>：CIDR「/N」の N は<strong>「そのクラスを識別するために固定されているビット数」</strong>。A→B→C の順に「自由に使える範囲」が狭く（＝固定ビット数が多く）なっている：<br>
-      ・A：<strong>8ビット固定</strong>、1600万台ぐらい使える（大企業向け）<br>
-      ・B：<strong>12ビット固定</strong>、100万台ぐらい使える（中規模向け）<br>
-      ・C：<strong>16ビット固定</strong>、6万台ぐらい使える（家庭・SOHO向け）
+    <div class="alert-tip">&#x1F4A1; <strong>まとめ：CIDR「/N」の N は「先頭から何ビットが特定の値に決まっているか」</strong>。<br>
+      固定ビットが多いほどネットワークの範囲は<strong>狭く</strong>（＝使える端末数は少なく）なります：<br>
+      <br>
+      ・<strong>/8（クラスA）</strong>：最初のドット<strong>までの1組だけ</strong>が決まっている。残り24ビット自由 → 約1,677万台<br>
+      ・<strong>/12（クラスB）</strong>：最初の1組＋2組目の<strong>上半分のビット</strong>が決まっている。残り20ビット自由 → 約100万台<br>
+      ・<strong>/16（クラスC）</strong>：最初のドット<strong>2つまでの2組</strong>が決まっている。残り16ビット自由 → 約6.5万台<br>
+      <br>
+      ※使える数はさらに<strong>−2</strong>されます（後述：ネットワークアドレスとブロードキャストの予約分）。
     </div>
 
     <h2 class="section-title st-blue"><span class="st-icon">&#x1F504;</span> TCP vs UDP：確実か、速いか</h2>
