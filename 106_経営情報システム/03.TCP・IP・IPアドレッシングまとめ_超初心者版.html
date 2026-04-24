@@ -237,6 +237,12 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
       <tr><td><strong>DHCP</strong></td><td>Dynamic Host Configuration Protocol（動的ホスト構成プロトコル）</td><td>IPアドレス自動配布</td></tr>
     </table>
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「名前をIPに変換するのは？」→<strong>DNS</strong>、「IPを自動配布するのは？」→<strong>DHCP</strong>、「メール送信は？」→<strong>SMTP</strong>。役割と略語の対応を丸暗記レベルで。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜ頻出？</div>プロトコル名は全部アルファベット3〜4文字で、似ていて混乱しやすいです。試験では<strong>「役割と略語の組合せ」</strong>を入れ替えた選択肢で引っかけてきます（例：「DNSはIPを配布する」は誤り）。<strong>役割＝動詞（何をする人か）</strong>で紐付けると記憶が安定します：<br>
+      ・<strong>DNS</strong>＝名前を<strong>翻訳</strong>する人（電話帳）<br>
+      ・<strong>DHCP</strong>＝IPを<strong>配る</strong>人（引越し屋）<br>
+      ・<strong>SMTP</strong>＝メールを<strong>送る</strong>人（Send Mailの頭）<br>
+      ・<strong>POP/IMAP</strong>＝メールを<strong>受け取る</strong>人
+    </div></div>
 
     <h2 class="section-title st-purple"><span class="st-icon">&#x270D;&#xFE0F;</span> 入門チェック（穴埋め）</h2>
     <div style="text-align:center;margin:.8rem 0;">
@@ -298,18 +304,45 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
       <tr><td>C</td><td>192.168.0.0 〜 192.168.255.255</td><td>/16</td><td>家・SOHO（一番身近）</td></tr>
     </table>
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：この3つの範囲の丸暗記がR03問11・H22問9等で頻出。特に家庭で見る<strong>192.168.〜</strong>はクラスC。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜこの3つ？</div>プライベートIPの範囲は世界共通の<strong>取り決め（RFC 1918 という標準文書）</strong>で決められていて、この3つの範囲だけ「世界中で<strong>誰が使ってもOK</strong>」とされています。社内LAN同士で番号がぶつからないようにするためです。<strong>範囲外のIP（例：1.1.1.1）を勝手に社内で使うと、外のサービスと衝突</strong>してトラブルになります。だから試験でも「どれがプライベート？」と範囲判定が繰り返し問われます。</div></div>
     <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「172.32.0.0 はプライベートIP」は誤り。クラスBは<strong>172.16〜172.31</strong>まで。32は範囲外。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div><div class="bubble-body b-red"><div class="bubble-name">なぜ引っかかりやすい？</div>クラスAは「10.〜」、クラスCは「192.168.〜」とわかりやすいのに、クラスBだけ「172の<strong>16〜31</strong>」という中途半端な範囲。これは上で説明した通り「上位4ビットを固定（0001）」した結果。<strong>「172.0〜」や「172.32〜」はグローバル</strong>（=他社が使ってる可能性）なので、社内で使うと通信事故に。「172.16〜31だけがプライベート」と覚えましょう。</div></div>
 
     <h2 class="section-title st-blue"><span class="st-icon">&#x1F9D0;</span> 補足：なぜCIDRが /8・/12・/16 になるの？</h2>
-    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">考え方</div>CIDR「/N」の数字は、<strong>「先頭から何ビットが固定されているか」</strong>を表します。固定＝そのクラスの範囲を決める「住所の街名」部分。残りのビットは自由に使えるホスト部。</div></div>
+
+    <div class="card card-blue"><h4>&#x1F3AF; まず前提：IPアドレスの「1組」＝8ビット</h4>
+      <p>IPアドレスは <span style="background:#263238;color:#aed581;padding:.2rem .4rem;border-radius:3px;font-family:monospace;">192.168.1.10</span> のように<strong>ドット「.」で4つに区切られた数字</strong>です。この1つ1つを<strong>「1組」（オクテット／octet：ラテン語で「8つ」）</strong>と呼びます。</p>
+      <p>各組の数字は<strong>0〜255</strong>の範囲です。なぜ255まで？ それは各組が<strong>8ビットの2進数</strong>だからです：</p>
+      <table class="tbl-blue" style="font-size:.86rem;">
+        <tr><th>10進数</th><th>2進数（8ビット）</th><th>意味</th></tr>
+        <tr><td>0</td><td>0000 0000</td><td>全部オフ</td></tr>
+        <tr><td>1</td><td>0000 0001</td><td>…</td></tr>
+        <tr><td>128</td><td>1000 0000</td><td>…</td></tr>
+        <tr><td>255</td><td>1111 1111</td><td>全部オン</td></tr>
+      </table>
+      <p style="font-size:.88rem;">8ビットで表せる組合せは 2×2×2×2×2×2×2×2 ＝ <strong>256通り</strong>（0〜255）。だから<strong>「1組 ＝ 8ビット」</strong>なのです。</p>
+      <p style="text-align:center;margin:.5rem 0;font-size:.88rem;">
+        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;">192.168.1.10</span>
+        <br>↓ 全部を2進数で書くと…<br>
+        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;">11000000.10101000.00000001.00001010</span>
+        <br><small style="color:var(--gray-mid);">8ビット × 4組 ＝ <strong>計32ビット</strong>（これがIPv4は32ビットの理由）</small>
+      </p>
+    </div>
+
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">CIDRとは？</div>CIDR「/N」の数字は、<strong>「先頭から何ビットが固定されているか」</strong>を表します。「固定」とは、<strong>そのビットはそのネットワーク内では必ず同じ値</strong>、という意味。残りのビットは自由に変えられる（＝端末を区別するホスト部）。</div></div>
 
     <div class="card card-blue"><h4>&#x1F535; クラスA：/8 になる理由</h4>
-      <p>範囲は <strong>10.0.0.0 〜 10.255.255.255</strong>。つまり<strong>最初の1組（10）だけ固定</strong>、残り3組（.0.0.0〜.255.255.255）は自由。</p>
+      <p>範囲は <strong>10.0.0.0 〜 10.255.255.255</strong>。よく見ると：</p>
+      <ul>
+        <li><strong>1組目</strong>（最初の数字）は<strong>必ず「10」で固定</strong>（10から動かない）</li>
+        <li><strong>2〜4組目</strong>は<strong>「0〜255」まで全部自由</strong>に使える</li>
+      </ul>
+      <p style="margin-top:.5rem;">つまり「<strong>先頭の1組（= 8ビット）だけ固定</strong>」。これを「先頭8ビット固定＝<strong>/8</strong>」と書きます。</p>
       <p style="text-align:center;margin:.5rem 0;">
-        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">10</strong>.0.0.0</span>
-        ＝ <strong style="color:#ffab40;">1組（8ビット）</strong>が固定 → <strong>/8</strong>
+        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">10</strong>.<span style="color:#90caf9;">0〜255</span>.<span style="color:#90caf9;">0〜255</span>.<span style="color:#90caf9;">0〜255</span></span>
       </p>
-      <p style="font-size:.85rem;color:var(--gray-mid);">1組 = 8ビット。だから /8。</p>
+      <p style="text-align:center;font-size:.85rem;color:var(--gray-mid);"><span style="color:#ffab40;">■固定の8ビット</span>／<span style="color:#1565c0;">■自由な24ビット</span></p>
+      <p style="font-size:.88rem;">自由な24ビットで端末を区別 → 2^24 ≒ <strong>約1,677万台</strong>分のIPが使える。大企業向け。</p>
     </div>
 
     <div class="card card-orange"><h4>&#x1F7E0; クラスB：/12 になる理由（ちょっと難しい）</h4>
@@ -358,6 +391,12 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
       </div>
     </div>
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：R02問13等で頻出。「<strong>DNSがUDPを使う</strong>（速さ優先・再送不要）」も定番。TCPの特徴＝接続型・再送制御・順序制御。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜDNSはUDP？</div>DNSの通信は「<strong>この名前のIPを教えて</strong>」「<strong>IPは〜です</strong>」のたった<strong>1往復の短いやり取り</strong>です。これにTCPを使うと、本題の前に「接続しましょう／承諾します／接続確立」と<strong>3往復の事前通信（3ウェイハンドシェイク）</strong>が必要で、本題の3倍の時間がかかってしまいます。<br>
+      <br>
+      一方、DNSの問い合わせは<strong>もし失敗してもアプリ側ですぐ再問合せすればいい</strong>ので、TCPの再送制御は不要。だから「<strong>TCPの機能は過剰、UDPで十分・むしろ速い</strong>」という判断でUDPが選ばれています。<br>
+      <br>
+      逆にWebページは、画像・CSS・JSなど数十〜数百の部品が順番通りに届く必要があり、1つでも抜けると画面が崩れる → だからTCPで<strong>確実・順序通り</strong>。用途に合わせて使い分けているのです。
+    </div></div>
 
     <h2 class="section-title st-blue"><span class="st-icon">&#x1F6AA;</span> ポート番号＝部屋番号</h2>
     <div class="card card-blue"><h4>ポート番号とは</h4>
@@ -374,6 +413,15 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
       <tr><td>DNS</td><td>53</td><td>名前解決</td></tr>
     </table>
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：HTTP=80、HTTPS=443、SSH=22、SMTP=25は丸暗記必須。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜポート番号を暗記？</div>ポート番号は<strong>「通信の用途を識別する世界共通の番号」</strong>で、IANAという機関が管理しています。例えばWebサーバーは「80番に来たら応答する」と決めておけば、世界中のブラウザがどのサーバーとも通信できます。<br>
+      <br>
+      試験では「FWで80/443だけ許可する設定にした。このとき何が通信できる？」のような<strong>実務寄りの問い</strong>で問われます。丸暗記というより、<strong>「このサービス＝この番号」の組合せを体で覚える</strong>感覚です。<br>
+      <br>
+      覚え方のコツ：<strong>ペアで覚える</strong>のがラク。<br>
+      ・Webの<strong>通常(HTTP)=80</strong>／<strong>暗号化(HTTPS)=443</strong>（こっちが大きい数字＝「より守られてる」）<br>
+      ・メール<strong>送信(SMTP)=25</strong>／<strong>受信(POP3)=110</strong><br>
+      ・<strong>SSH=22</strong>（暗号化リモート）／Telnet=23（旧・非暗号）
+    </div></div>
 
     <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 基本チェック（穴埋め）</h2>
     <div style="text-align:center;margin:.8rem 0;">
@@ -424,6 +472,13 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
     </div>
     <div class="mnemonic"><div class="big">覚え方：「アプセトネデブ」</div><div class="desc"><strong>ア</strong>プリ・<strong>プ</strong>レゼン・<strong>セ</strong>ッション・<strong>ト</strong>ランスポート・<strong>ネ</strong>ットワーク・<strong>デ</strong>ータリンク・物<strong>ブ</strong>理</div></div>
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「<strong>TCP/UDPは第4層（トランスポート）、IPは第3層（ネットワーク）、HTTPは第7層（アプリ）</strong>」の3点を最優先で暗記。頻出パターン。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜ層の対応？</div>各プロトコルは<strong>「どの仕事を担当するか」</strong>で層が決まっています：<br>
+      ・<strong>HTTP（第7層）</strong>＝「Webページください」という<strong>アプリの要件</strong>を表現<br>
+      ・<strong>TCP/UDP（第4層）</strong>＝「確実に届けるか、速く届けるか」の<strong>届け方の方式</strong>を決める<br>
+      ・<strong>IP（第3層）</strong>＝「どこのIPに配達するか」の<strong>宛先決め・経路選択</strong><br>
+      <br>
+      試験では「TCPはネットワーク層」「IPはトランスポート層」のように<strong>層をズラした選択肢</strong>が頻出。上記3つだけ確実に押さえれば大半の層問題は解けます。
+    </div></div>
 
     <h2 class="section-title st-teal"><span class="st-icon">&#x1F504;</span> NAT／NAPT：内線を外線に翻訳</h2>
     <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>家の中の<strong>内線（プライベートIP）</strong>は外に出ると通じない。ルータが<strong>外線（グローバルIP）</strong>に翻訳してくれる。これが NAT／NAPT。</div></div>
@@ -436,6 +491,12 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
       </div>
     </div>
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「1つのグローバルIPで複数端末を同時接続可能にするのは？」→<strong>NAPT（IPマスカレード）</strong>。NATは1対1、NAPTは多対1。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜNAPTが必要？</div>家庭で契約するインターネット回線は、通常<strong>グローバルIPが1つだけ</strong>割り当てられます。でも家にはPC・スマホ・ゲーム機・スマート家電と複数端末があります。NAT（1対1変換）だと<strong>同時に1台しか外に出られない</strong>ので困る。<br>
+      <br>
+      そこでNAPTは「IPアドレス＋<strong>ポート番号</strong>」をセットで付け替えることで、<strong>「同じグローバルIPだけど、ポート番号で区別すれば複数端末を同居させられる」</strong>という工夫を実現。これで家中の機器が1契約で同時にネット可能。<br>
+      <br>
+      試験では「NATは複数端末を同時接続できる」と書かれたら誤り（それは<strong>NAPT</strong>）。「NAPTはIP＋ポート番号を変換」がキーフレーズです。
+    </div></div>
 
     <h2 class="section-title st-teal"><span class="st-icon">&#x1F41C;</span> ARP と ICMP：縁の下のプロトコル</h2>
     <div class="two-col">
@@ -510,6 +571,14 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
       </table>
     </div>
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：R02問9・R04問11でサブネット計算が出題。<strong>2^(32−CIDR)−2</strong>の公式を押さえる。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜ「−2」する？</div>公式の<strong>「2^(32−CIDR)」の部分</strong>は、ホスト部に使えるビット数で表現できる<strong>組合せの総数</strong>を計算しています（例：ホスト部8ビット→2×2×…×2＝256通り）。<br>
+      <br>
+      ただし256通りのうち<strong>2つは予約</strong>されていて、ホスト（PC等）には割り当てできません：<br>
+      ・<strong>ホスト部が全部0</strong>＝そのネットワーク自体を表す<strong>「ネットワークアドレス」</strong>（街の名前みたいなもの）<br>
+      ・<strong>ホスト部が全部1</strong>＝そのネットワーク内の全員に送る<strong>「ブロードキャストアドレス」</strong>（街内放送用）<br>
+      <br>
+      だから使えるホスト数は <strong>総数 − 2</strong>。/24なら 256 − 2 ＝ <strong>254台</strong>、/26なら 64 − 2 ＝ <strong>62台</strong>、と引き算する理由がここにあります。
+    </div></div>
 
     <h2 class="section-title st-blue"><span class="st-icon">&#x1F30D;</span> IPv4 vs IPv6</h2>
     <table class="tbl-blue">
@@ -520,7 +589,17 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
       <tr><td>NAT</td><td>ほぼ必須</td><td>不要</td></tr>
     </table>
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：H27問8・R01問12で出題。<strong>IPv6は128ビット</strong>の暗記が必須。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜ128ビット？</div>IPv4（32ビット）では2^32 ≒ <strong>43億個</strong>しかアドレスがなく、世界人口70億＋スマホ複数台・IoT機器の時代には<strong>圧倒的に不足</strong>しました（2011年に枯渇）。<br>
+      <br>
+      対策として次世代IPv6では<strong>4倍の128ビット</strong>に拡張。これで 2^128 ≒ <strong>340澗（340兆の1兆倍の1兆倍）</strong>という事実上無限の数になり、<strong>「地球の砂1粒1粒にIPを割り当てても余る」</strong>ほどの規模になりました。<br>
+      <br>
+      試験ではアドレス長のビット数（32 vs 128）と表記法（10進数4組 vs 16進数8組）が繰り返し問われます。
+    </div></div>
     <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「IPv6ではNATが必須」は誤り。正は<strong>NATは不要</strong>（IPがあり余るため）。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-warn">&#x26A0;&#xFE0F;</div><div class="bubble-body b-red"><div class="bubble-name">なぜNAT不要？</div>NAT/NAPTは元々<strong>「IPv4が足りないから1つのグローバルIPを多人数で共有する延命策」</strong>でした。IPv6はアドレスが事実上無限なので、<strong>全端末に直接グローバルIPを1つずつ</strong>渡せる。共有する必要がないのでNATは不要、という理屈です。<br>
+      <br>
+      試験ではこの「NAT＝IPv4の延命策」という背景を逆転させて「IPv6でもNAT必須」と書かれたら誤り。正しくは<strong>「IPv6ではNAT不要／1端末1グローバルIP」</strong>。
+    </div></div>
 
     <h2 class="section-title st-blue"><span class="st-icon">&#x1F6E4;&#xFE0F;</span> ルーティングプロトコル</h2>
     <table class="tbl-blue">
