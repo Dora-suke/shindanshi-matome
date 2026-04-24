@@ -300,6 +300,50 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
     <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：この3つの範囲の丸暗記がR03問11・H22問9等で頻出。特に家庭で見る<strong>192.168.〜</strong>はクラスC。</p>
     <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「172.32.0.0 はプライベートIP」は誤り。クラスBは<strong>172.16〜172.31</strong>まで。32は範囲外。</p>
 
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9D0;</span> 補足：なぜCIDRが /8・/12・/16 になるの？</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">考え方</div>CIDR「/N」の数字は、<strong>「先頭から何ビットが固定されているか」</strong>を表します。固定＝そのクラスの範囲を決める「住所の街名」部分。残りのビットは自由に使えるホスト部。</div></div>
+
+    <div class="card card-blue"><h4>&#x1F535; クラスA：/8 になる理由</h4>
+      <p>範囲は <strong>10.0.0.0 〜 10.255.255.255</strong>。つまり<strong>最初の1組（10）だけ固定</strong>、残り3組（.0.0.0〜.255.255.255）は自由。</p>
+      <p style="text-align:center;margin:.5rem 0;">
+        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">10</strong>.0.0.0</span>
+        ＝ <strong style="color:#ffab40;">1組（8ビット）</strong>が固定 → <strong>/8</strong>
+      </p>
+      <p style="font-size:.85rem;color:var(--gray-mid);">1組 = 8ビット。だから /8。</p>
+    </div>
+
+    <div class="card card-orange"><h4>&#x1F7E0; クラスB：/12 になる理由（ちょっと難しい）</h4>
+      <p>範囲は <strong>172.16.0.0 〜 172.31.255.255</strong>。最初の1組（172）は固定。さらに2組目が<strong>16〜31</strong>に限定されている（0〜255全てではない）。</p>
+      <p>2組目の数字を2進数で並べてみると…</p>
+      <table class="tbl-orange" style="font-size:.82rem;">
+        <tr><th>2組目</th><th>2進数（8ビット）</th><th>上位4ビット</th></tr>
+        <tr><td>16</td><td><strong style="color:#ffab40;">0001</strong> 0000</td><td>0001</td></tr>
+        <tr><td>17</td><td><strong style="color:#ffab40;">0001</strong> 0001</td><td>0001</td></tr>
+        <tr><td>…</td><td>…</td><td>…</td></tr>
+        <tr><td>31</td><td><strong style="color:#ffab40;">0001</strong> 1111</td><td>0001</td></tr>
+      </table>
+      <p>16〜31では<strong>上位4ビットがすべて「0001」で固定</strong>、下位4ビットだけが0〜15で変化。</p>
+      <p style="text-align:center;margin:.5rem 0;">
+        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">172</strong>.<strong style="color:#ffab40;">0001</strong>xxxx.0.0</span>
+        <br>1組目8ビット ＋ 2組目の上位4ビット ＝ <strong>計12ビット固定</strong> → <strong>/12</strong>
+      </p>
+    </div>
+
+    <div class="card card-green"><h4>&#x1F7E2; クラスC：/16 になる理由</h4>
+      <p>範囲は <strong>192.168.0.0 〜 192.168.255.255</strong>。最初の<strong>2組（192.168）が両方固定</strong>、残り2組が自由。</p>
+      <p style="text-align:center;margin:.5rem 0;">
+        <span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;"><strong style="color:#ffab40;">192.168</strong>.0.0</span>
+        ＝ <strong style="color:#ffab40;">2組（16ビット）</strong>が固定 → <strong>/16</strong>
+      </p>
+      <p style="font-size:.85rem;color:var(--gray-mid);">2組 × 8ビット = 16ビット。だから /16。</p>
+    </div>
+
+    <div class="alert-tip">&#x1F4A1; <strong>まとめ</strong>：CIDR「/N」の N は<strong>「そのクラスを識別するために固定されているビット数」</strong>。A→B→C の順に「自由に使える範囲」が狭く（＝固定ビット数が多く）なっている：<br>
+      ・A：<strong>8ビット固定</strong>、1600万台ぐらい使える（大企業向け）<br>
+      ・B：<strong>12ビット固定</strong>、100万台ぐらい使える（中規模向け）<br>
+      ・C：<strong>16ビット固定</strong>、6万台ぐらい使える（家庭・SOHO向け）
+    </div>
+
     <h2 class="section-title st-blue"><span class="st-icon">&#x1F504;</span> TCP vs UDP：確実か、速いか</h2>
     <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>荷物を送る時、<strong>書留（追跡あり・遅い）</strong>か<strong>普通郵便（追跡なし・速い）</strong>を選ぶようなもの。TCP＝書留、UDP＝普通郵便。</div></div>
     <div class="vs-box">
