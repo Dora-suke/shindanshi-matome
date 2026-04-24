@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCP/IP・IPアドレッシング（超初心者版） - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.8;min-height:100vh}
+.header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-main) 50%,#58d68d 100%);color:#fff;padding:2rem 1.5rem 1.2rem;text-align:center}.header h1{font-size:1.5rem;font-weight:800;letter-spacing:.05em;margin-bottom:.3rem}.header .subtitle{font-size:.9rem;opacity:.9}.header .badge{display:inline-block;background:rgba(255,255,255,.2);padding:.2rem .8rem;border-radius:20px;font-size:.8rem;margin-top:.5rem}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.6rem;margin:.9rem 0}.bubble-wrap.right{flex-direction:row-reverse}.bubble-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12)}.avatar-teacher{background:linear-gradient(135deg,#ff9800,#f57c00)}.avatar-student{background:linear-gradient(135deg,#42a5f5,#1e88e5)}.avatar-warn{background:linear-gradient(135deg,#ef5350,#c62828)}.avatar-hint{background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:.8rem 1rem;box-shadow:var(--shadow);position:relative;max-width:85%;font-size:.92rem;line-height:1.8}.bubble-body::before{content:'';position:absolute;top:14px;width:0;height:0;border:8px solid transparent}.bubble-wrap:not(.right) .bubble-body::before{left:-14px;border-right-color:var(--white)}.bubble-wrap.right .bubble-body::before{right:-14px;border-left-color:var(--white)}.bubble-body.b-orange{background:#fff8e1;border:1px solid #ffe082}.bubble-body.b-orange::before{border-right-color:#fff8e1}.bubble-body.b-blue{background:#e3f2fd;border:1px solid #90caf9}.bubble-body.b-blue::before{border-right-color:#e3f2fd}.bubble-body.b-red{background:#fce4ec;border:1px solid #ef9a9a}.bubble-body.b-red::before{border-right-color:#fce4ec}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-wrap.right .bubble-body.b-orange::before{border-right-color:transparent;border-left-color:#fff8e1}.bubble-wrap.right .bubble-body.b-green::before{border-right-color:transparent;border-left-color:#e8f5e9}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.72rem;font-weight:700;color:var(--gray-mid);margin-bottom:.2rem}
+.tab-container{max-width:920px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.75rem .3rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:1.5rem 1.2rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-purple{background:var(--purple-bg)}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}.tab-panel.theme-teal{background:var(--teal-light)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.1rem;font-weight:800;margin:1.5rem 0 .8rem;padding:.5rem .8rem;border-radius:8px;display:flex;align-items:center;gap:.5rem}.section-title:first-child{margin-top:0}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6);color:#fff}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db);color:#fff}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71);color:#fff}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light));color:#fff}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373);color:#fff}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a);color:#fff}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1rem 1.2rem;margin:.7rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-red{border-left-color:var(--red-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.alert-tip,.alert-exam,.alert-danger{border-radius:var(--radius);padding:.8rem 1rem .8rem 3rem;margin:.8rem 0;position:relative;font-size:.9rem;line-height:1.7}.alert-tip::before,.alert-exam::before,.alert-danger::before{position:absolute;left:.8rem;top:.7rem;font-size:1.2rem}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"\1F4A1"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"\1F4DD"}.alert-danger{background:#fce4ec;border:1px solid #ef9a9a;color:#b71c1c}.alert-danger::before{content:"\26A0\FE0F"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:1rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e0e0e0}.dt-purple{color:var(--purple-dark)}.dt-blue{color:var(--blue-dark)}.dt-green{color:var(--green-dark)}.dt-red{color:var(--red-dark)}.dt-orange{color:var(--orange-dark)}.dt-teal{color:var(--teal-main)}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:700;font-size:.85rem;text-align:center;min-width:70px;margin:.2rem}.flow-box small{display:block;font-weight:400;font-size:.72rem;opacity:.9}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.fb-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.fb-gray{background:linear-gradient(135deg,#7f8c8d,#95a5a6)}.flow-arrow{font-size:1.3rem;margin:0 .3rem;font-weight:700;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}th,td{padding:.5rem .6rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}tr:hover{background:rgba(0,0,0,.02)}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-green th{background:var(--green-main);color:#fff}.tbl-green tr:nth-child(even){background:var(--green-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}
+ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.3rem 0;font-size:.92rem}
+.point-box{border-radius:var(--radius);padding:1rem 1.2rem;margin:.8rem 0}.pb-purple{background:linear-gradient(135deg,var(--purple-light),#fff);border:2px solid #ce93d8}.pb-blue{background:linear-gradient(135deg,var(--blue-light),#fff);border:2px solid #90caf9}.pb-green{background:linear-gradient(135deg,var(--green-light),#fff);border:2px solid #a5d6a7}.pb-orange{background:linear-gradient(135deg,var(--orange-pale),#fff);border:2px solid #ffcc80}.pb-red{background:linear-gradient(135deg,var(--red-light),#fff);border:2px solid #ef9a9a}.pb-teal{background:linear-gradient(135deg,var(--teal-light),#fff);border:2px solid #80cbc4}.point-box h4{font-size:.95rem;font-weight:700;margin-bottom:.5rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.7rem 0}.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;margin:.7rem 0}
+.mnemonic{background:linear-gradient(135deg,var(--purple-light),#fff);border:3px dashed var(--purple-main);border-radius:var(--radius);padding:1.2rem;margin:.8rem 0;text-align:center}.mnemonic .big{font-size:1.25rem;font-weight:800;color:var(--purple-dark);margin-bottom:.3rem;letter-spacing:.08em}.mnemonic .desc{font-size:.88rem;color:var(--gray-mid)}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;align-items:center;margin:.8rem 0}.vs-side{background:var(--white);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:var(--shadow)}.vs-side h4{font-size:.9rem;font-weight:700;margin-bottom:.3rem}.vs-mid{font-size:1.5rem;font-weight:800;color:var(--gray-mid);text-align:center}
+.sim-card{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;box-shadow:var(--shadow);border-top:4px solid var(--green-main)}.sim-card h4{font-size:1rem;font-weight:800;color:var(--green-dark);margin-bottom:.5rem}.sim-label{display:inline-block;padding:.15rem .6rem;border-radius:4px;font-size:.72rem;font-weight:700;color:#fff;background:var(--green-main);margin-bottom:.5rem}
+.quiz-item{background:var(--white);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:28px;height:28px;border-radius:50%;text-align:center;line-height:28px;font-size:.85rem;font-weight:700;margin-bottom:.5rem}.quiz-cat{display:inline-block;padding:.15rem .6rem;border-radius:4px;font-size:.72rem;font-weight:700;color:#fff;margin-left:.5rem;vertical-align:middle}.qc-purple{background:var(--purple-main)}.qc-blue{background:var(--blue-main)}.qc-green{background:var(--green-main)}.qc-red{background:var(--red-main)}.quiz-question{font-weight:600;font-size:.95rem;margin-bottom:.8rem;line-height:1.7}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.55rem .8rem;margin:.3rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;transition:all .2s;font-size:.9rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.7rem;padding:.8rem;border-radius:var(--radius-sm);font-size:.88rem;line-height:1.7}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}.quiz-score{text-align:center;padding:1rem;background:var(--orange-pale);border-radius:var(--radius);margin-top:1rem;font-size:1.1rem;font-weight:700;color:var(--orange-dark);display:none}
+.footer{text-align:center;padding:1.5rem;color:var(--gray-light);font-size:.8rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.fill-card .fill-header{padding:12px 18px;font-weight:700;font-size:.95rem;color:#fff}
+.fill-card .fill-header.bg-purple{background:var(--purple-main)}.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}
+.fill-card .fill-body{padding:18px 20px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.92rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:4px;font-size:.92rem;line-height:2}
+.rough{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.key-word{font-weight:700;color:#1565c0;background:#e3f2fd;padding:0 .3rem;border-radius:3px}
+.bitbox{display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;background:#263238;color:#aed581;font-family:monospace;font-weight:bold;margin:2px;border-radius:4px}
+.exam-pt{font-size:.82rem;margin-top:.4rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px}
+.exam-warn{font-size:.82rem;margin-top:.3rem;color:#b71c1c;background:#fce4ec;padding:.35rem .6rem;border-radius:6px}
+@media(max-width:600px){.two-col,.three-col,.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg)}.tab-btn{font-size:.6rem;padding:.6rem .15rem}.header h1{font-size:1.1rem}.bubble-body{max-width:78%}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>TCP/IP・IPアドレッシング（超初心者版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム | 本当にゼロから</div>
+  <div class="badge">全14タブ | PCが苦手な方のための完全入門</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">&#x1F423; ゼロから</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(3)">&#x1FA9C; 応用</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(4)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F3B5; 語呂</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(6)">&#x1F3B5; 語呂穴</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴&#x2460;</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(8)">&#x270D;&#xFE0F; 穴&#x2461;</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(9)">&#x270D;&#xFE0F; 穴&#x2462;</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(10)">&#x1F3E2; 事例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(11)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(12)">&#x1F4A1; 実例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(13)">&#x1F5FA;&#xFE0F; 図解</button>
+  </nav>
+
+  <!-- ===== TAB 0: ゼロから ===== -->
+  <div class="tab-panel active theme-green" id="tab0">
+    <div class="point-box pb-green"><h4>&#x1F423; このタブで学ぶこと</h4>
+      <ul>
+        <li>そもそも<strong>コンピュータは0と1しか分からない</strong>話から始めます</li>
+        <li><strong>ビット／バイト</strong>って何？身近な単位で掴む</li>
+        <li><strong>ネットワーク</strong>とは何を指す言葉？</li>
+        <li>試験の<strong>TCP/IP</strong>に入る前の「お膳立て」を全部やります</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4A1;</span> まず「コンピュータは0と1しか分からない」</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">はじめに</div>コンピュータは内部で<strong>「電気が流れているか／流れていないか」</strong>しか判別できません。これを数字で表すと<strong>1（オン）と0（オフ）</strong>。この1桁分のオン/オフを<span class="key-word">ビット<span class="rough">ざっくり：0か1の1桁分の情報</span>（bit）</span>と呼びます。</div></div>
+
+    <div class="card card-blue"><h4>&#x1F50C; ビットを並べるとデータになる</h4>
+      <p>1ビットでは「0か1」の2通りしか表現できません。でも<strong>8ビット並べる</strong>と…</p>
+      <p style="text-align:center;margin:.5rem 0;">
+        <span class="bitbox">0</span><span class="bitbox">1</span><span class="bitbox">0</span><span class="bitbox">0</span><span class="bitbox">0</span><span class="bitbox">0</span><span class="bitbox">0</span><span class="bitbox">1</span>
+        <br><small>この並びで「A」という文字を表せる！</small>
+      </p>
+      <p>8ビット並べると<strong>2×2×2×2×2×2×2×2＝256通り</strong>の情報が表現可能。文字・色・音などあらゆるデータは、結局この「0と1の並び」で表現されています。</p>
+    </div>
+
+    <div class="card card-orange"><h4>&#x1F4E6; バイト（byte）はビットの「まとまり」</h4>
+      <p><strong>8ビット＝1バイト</strong>（byte）と呼びます。byteは<strong>B</strong>、bitは<strong>b</strong>と小文字/大文字で区別。</p>
+      <table class="tbl-orange">
+        <tr><th>単位</th><th>意味</th><th>感覚的な大きさ</th></tr>
+        <tr><td>1B（バイト）</td><td>8bit</td><td>半角英字1文字</td></tr>
+        <tr><td>1KB（キロバイト）</td><td>1,000B</td><td>短いメモ1枚</td></tr>
+        <tr><td>1MB（メガバイト）</td><td>100万B</td><td>写真1枚ぐらい</td></tr>
+        <tr><td>1GB（ギガバイト）</td><td>10億B</td><td>動画1本ぐらい</td></tr>
+        <tr><td>1TB（テラバイト）</td><td>1兆B</td><td>HDD丸ごと1台</td></tr>
+      </table>
+      <p style="font-size:.85rem;color:var(--gray-mid);">※厳密には2進数で1KB=1024B ですが、試験や日常では1000Bで計算します。</p>
+    </div>
+    <div class="alert-tip">&#x1F4DD; <strong>覚えておくこと</strong>：<strong>bit（ビット）</strong>＝最小単位（0か1）／<strong>byte（バイト）</strong>＝8ビット束ねた単位。<strong>B/sとbps</strong>の違い（大文字B＝バイト/秒、小文字b＝ビット/秒）は通信速度計算で超重要。</div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F522;</span> 10進数と2進数</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-student">&#x1F9D1;</div><div class="bubble-body b-blue"><div class="bubble-name">受験生</div>2進数ってよく聞くけど何ですか？</div></div>
+    <div class="bubble-wrap right"><div class="bubble-avatar avatar-teacher">&#x1F468;</div><div class="bubble-body b-orange"><div class="bubble-name">先生</div>普段使うのは<strong>10進数</strong>（0〜9の10種で桁上がり）。コンピュータは0/1しかないので<strong>2進数</strong>（0〜1の2種で桁上がり）で数を表します。</div></div>
+    <div class="card card-blue"><h4>&#x1F9EE; ちょっと数えてみる</h4>
+      <table class="tbl-blue">
+        <tr><th>10進数</th><th>2進数</th><th>10進数</th><th>2進数</th></tr>
+        <tr><td>0</td><td>0</td><td>5</td><td>101</td></tr>
+        <tr><td>1</td><td>1</td><td>6</td><td>110</td></tr>
+        <tr><td>2</td><td>10</td><td>7</td><td>111</td></tr>
+        <tr><td>3</td><td>11</td><td>8</td><td>1000</td></tr>
+        <tr><td>4</td><td>100</td><td>255</td><td>11111111（8ビット）</td></tr>
+      </table>
+      <p style="font-size:.85rem;">後で出てくる<strong>IPアドレス（例：192.168.1.10）</strong>は、実は<strong>2進数8ビットを10進数に変えて表記しているだけ</strong>です。ここで理解しておくと後でラクです。</p>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F310;</span> ネットワークって何？</h2>
+    <div class="card card-green"><h4>ひとことで：機器同士を<strong>繋いだもの</strong>全部</h4>
+      <p>PCとPC、PCとプリンタ、PCとWebサーバー…こういう機器同士が<strong>ケーブル or 電波で繋がっている</strong>状態＝ネットワーク。</p>
+    </div>
+    <div class="two-col">
+      <div class="card card-blue"><h4>&#x1F3E0; LAN（Local Area Network：構内ネットワーク）<span class="rough">ざっくり：家や会社の中だけの小さなネットワーク</span></h4>
+        <p>家の中・会社の中・お店の中など<strong>狭い範囲</strong>のネット。家のWi-Fiに繋がっているPC・スマホ・テレビは全てLAN内にいます。</p>
+      </div>
+      <div class="card card-orange"><h4>&#x1F30D; インターネット<span class="rough">ざっくり：世界中のLANを繋ぐ巨大な網</span></h4>
+        <p>世界中のLANを繋ぐ<strong>巨大な網</strong>。家からYouTubeを見るときは、家のLAN→プロバイダ→インターネット→YouTubeのサーバー、と順に辿っています。</p>
+      </div>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">比喩</div>LAN＝<strong>マンションの内線電話</strong>（隣の部屋同士ですぐつながる）／インターネット＝<strong>街の電話網</strong>（他の家、他県、他国ともつながる）</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4E6;</span> データは「小分けの手紙」で送る</h2>
+    <div class="card card-purple"><h4>パケット<span class="rough">ざっくり：データを小さく切った単位</span>通信とは</h4>
+      <p>大きなデータ（動画・画像など）をそのまま送るのではなく、<strong>小さな封筒（パケット）</strong>に分割して送ります。なぜ分割？</p>
+      <ul>
+        <li>&#x2705; 途中で一部が壊れても、<strong>その分だけ再送</strong>すれば済む</li>
+        <li>&#x2705; 複数の通信を<strong>同時に混ぜて</strong>送れる（道路を効率的に使う）</li>
+        <li>&#x2705; 途中の経路を<strong>自動で選択</strong>できる（渋滞を避ける）</li>
+      </ul>
+      <p>各パケットには<strong>「宛先の住所（IPアドレス）」「送り主」「荷物の中身」</strong>が書かれています。</p>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F91D;</span> プロトコル＝「通信の約束事」</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">比喩</div>電話で英語で話す人・日本語で話す人が混じると会話できないので、事前に「日本語で話しましょう」と決めます。この<strong>「事前に決めた通信のルール」</strong>がプロトコル。TCP/IPとか HTTP とか、全部プロトコル（ルール）の名前です。</div></div>
+    <div class="alert-tip">&#x1F4DD; <strong>覚えておくこと</strong>：「<strong>〜〜プロトコル</strong>」「<strong>○○Protocol</strong>」と名前がつくものは全部「通信のルール」の意味。IPアドレス・TCP・HTTP・DNS・DHCP…全部ルールの名前。</div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x270D;&#xFE0F;</span> ゼロからチェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-green">ゼロから・キホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・コンピュータは<span class="fill-blank">0と1</span>しか判別できない。1桁分＝<span class="fill-blank">ビット</span>。8ビット＝<span class="fill-blank">1バイト</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・通信速度は大文字B（バイト）か小文字b（<span class="fill-blank">ビット</span>）かで<span class="fill-blank">8倍</span>違うので注意</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・家や会社など狭い範囲の網＝<span class="fill-blank">LAN</span>／世界中を繋ぐ網＝<span class="fill-blank">インターネット</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・データを小分けにして送る単位＝<span class="fill-blank">パケット</span>／通信のルール＝<span class="fill-blank">プロトコル</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="alert-exam"><strong>ここまで理解できたら</strong>→「&#x1F331; 入門」タブへ！ 機器の役割（ルータ・モデム等）と、URL・サーバーといった身近な用語を整理します。</div>
+  </div>
+
+  <!-- ===== TAB 1: 入門 ===== -->
+  <div class="tab-panel theme-purple" id="tab1">
+    <div class="point-box pb-purple"><h4>&#x1F331; このタブで学ぶこと</h4>
+      <ul>
+        <li>ネットワークの登場人物：<strong>ルータ／モデム／ハブ／スイッチ</strong>の違い</li>
+        <li><strong>サーバー</strong>と<strong>クライアント</strong>の関係</li>
+        <li><strong>URL／ドメイン名</strong>の構造</li>
+        <li>主要プロトコルの役割を「ひとこと」で</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4E1;</span> ネットワーク機器の見分け</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>家のWi-Fi環境には色んな黒い箱があります。それぞれ役割が違います：</div></div>
+    <div class="two-col">
+      <div class="card card-blue"><h4>&#x1F4DE; モデム<span class="rough">ざっくり：外の回線とLANの間で信号を変換する機器</span></h4>
+        <p><strong>外の回線</strong>（光ファイバ／ケーブル／電話線）を<strong>家の中で使える信号</strong>に変換する装置。家とインターネットの「門番」。</p>
+      </div>
+      <div class="card card-orange"><h4>&#x1F4E1; ルータ<span class="rough">ざっくり：複数のネットワークを繋いで、荷物の経路を決める機器</span></h4>
+        <p>LAN内の機器（PC・スマホ）をまとめて、外（インターネット）との<strong>経路を決める</strong>装置。Wi-Fiを飛ばす機能も内蔵していることが多い。</p>
+      </div>
+      <div class="card card-green"><h4>&#x1F517; スイッチ／ハブ<span class="rough">ざっくり：LAN内で複数機器を繋ぐタコ足配線</span></h4>
+        <p>LAN内で<strong>複数の機器を繋ぐ</strong>中継器。<strong>ハブ</strong>は全員に同じ信号を送る「拡声器」、<strong>スイッチ</strong>は宛先を見て必要な相手だけに送る「賢いハブ」。</p>
+      </div>
+      <div class="card card-purple"><h4>&#x1F4DF; アクセスポイント（AP）</h4>
+        <p>有線LANを<strong>Wi-Fi（無線）に変換</strong>する装置。ルータに内蔵されていることが多い。</p>
+      </div>
+    </div>
+    <div class="alert-tip">&#x1F4A1; <strong>家庭用Wi-Fiルータ</strong>は「モデム＋ルータ＋スイッチ＋AP」を1台に統合した機器。中で4つの仕事を同時にこなしている。</div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3E2;</span> サーバーとクライアント</h2>
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--blue-main);"><h4 style="color:var(--blue-main);">クライアント<span class="rough">ざっくり：サービスをお願いする側のPC・スマホ</span></h4>
+        <p style="font-size:.85rem;">お客さん側のPC/スマホ<br>「このページください」と頼む<br>例：ブラウザ（Chrome, Safari）</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--green-main);"><h4 style="color:var(--green-main);">サーバー<span class="rough">ざっくり：頼まれてサービスを提供する側のコンピュータ</span></h4>
+        <p style="font-size:.85rem;">お店側のコンピュータ<br>「はいどうぞ」と応答<br>例：YouTubeのサーバー</p>
+      </div>
+    </div>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">比喩</div>レストランで<strong>お客（クライアント）</strong>が「カレーください」と注文、<strong>店員（サーバー）</strong>が「はいどうぞ」と運んでくる関係。サーバーは24時間営業のレストランみたいなもの。</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F517;</span> URL／ドメイン名の構造</h2>
+    <div class="diagram"><div class="diagram-title dt-purple">https://www.example.com/products/item.html の読み方</div>
+      <table class="tbl-purple">
+        <tr><th>部分</th><th>意味</th></tr>
+        <tr><td><strong>https</strong></td><td>プロトコル名（通信ルール）</td></tr>
+        <tr><td><strong>www</strong></td><td>ホスト名（サブドメイン）</td></tr>
+        <tr><td><strong>example.com</strong></td><td><strong>ドメイン名</strong>（ネットの住所の別名）</td></tr>
+        <tr><td><strong>/products/item.html</strong></td><td>パス（サーバー内のファイル場所）</td></tr>
+      </table>
+    </div>
+    <p style="font-size:.88rem;">ブラウザに <code>google.com</code> と打つと、裏で「<strong>google.comのIPアドレスって何？</strong>」と問合わせる仕組みが動きます（これが<span class="key-word">DNS</span>、次のタブで詳しく）。</p>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4E8;</span> 主要プロトコル（ひとこと）</h2>
+    <table class="tbl-purple">
+      <tr><th>略語</th><th>フル名／日本語</th><th>何する？</th></tr>
+      <tr><td><strong>HTTP</strong></td><td>HyperText Transfer Protocol（ハイパーテキスト転送プロトコル）</td><td>Webページを運ぶ</td></tr>
+      <tr><td><strong>HTTPS</strong></td><td>HTTP Secure（暗号化HTTP）</td><td>Webページを<strong>暗号化</strong>して運ぶ</td></tr>
+      <tr><td><strong>FTP</strong></td><td>File Transfer Protocol（ファイル転送プロトコル）</td><td>ファイル転送</td></tr>
+      <tr><td><strong>SMTP</strong></td><td>Simple Mail Transfer Protocol（メール転送プロトコル）</td><td>メール<strong>送信</strong></td></tr>
+      <tr><td><strong>POP</strong></td><td>Post Office Protocol（郵便局プロトコル）</td><td>メール<strong>受信</strong></td></tr>
+      <tr><td><strong>IMAP</strong></td><td>Internet Message Access Protocol</td><td>メール受信（サーバー残置型）</td></tr>
+      <tr><td><strong>SSH</strong></td><td>Secure Shell（セキュアシェル）</td><td>暗号化して遠隔操作</td></tr>
+      <tr><td><strong>DNS</strong></td><td>Domain Name System（ドメインネームシステム）</td><td>ドメイン名→IPアドレス変換</td></tr>
+      <tr><td><strong>DHCP</strong></td><td>Dynamic Host Configuration Protocol（動的ホスト構成プロトコル）</td><td>IPアドレス自動配布</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「名前をIPに変換するのは？」→<strong>DNS</strong>、「IPを自動配布するのは？」→<strong>DHCP</strong>、「メール送信は？」→<strong>SMTP</strong>。役割と略語の対応を丸暗記レベルで。</p>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x270D;&#xFE0F;</span> 入門チェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-purple">入門のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・外の回線を家の信号に変換＝<span class="fill-blank">モデム</span>／経路を決める＝<span class="fill-blank">ルータ</span>／LAN内中継＝<span class="fill-blank">スイッチ/ハブ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・サービスを頼む側＝<span class="fill-blank">クライアント</span>／提供する側＝<span class="fill-blank">サーバー</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・URLの先頭の「https」は<span class="fill-blank">プロトコル名</span>／「example.com」は<span class="fill-blank">ドメイン名</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・Webページ＝<span class="fill-blank">HTTP/HTTPS</span>／名前をIPに変換＝<span class="fill-blank">DNS</span>／IP自動配布＝<span class="fill-blank">DHCP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 基本 ===== -->
+  <div class="tab-panel theme-blue" id="tab2">
+    <div class="point-box pb-blue"><h4>&#x1F4D8; このタブで学ぶこと</h4>
+      <ul>
+        <li><strong>IPアドレス</strong>＝ネット上の住所（数字）</li>
+        <li>住所は「街の番号＋家の番号」に分かれている（ネットワーク部・ホスト部）</li>
+        <li><strong>プライベートIP</strong>＝家や会社の中だけの内線番号</li>
+        <li>TCPとUDPは<strong>「確実に届ける」vs「速さ優先」</strong>の2択</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3E0;</span> IPアドレスはネット上の「住所」</h2>
+    <div class="card card-blue"><h4>&#x1F4CD; IPv4（Internet Protocol version 4：IP第4版）</h4>
+      <p>現在の主流。<strong>4つの数字</strong>を「.」で区切って書く。各数字は<strong>0〜255</strong>の範囲。</p>
+      <p style="text-align:center;font-size:1.3rem;margin:.7rem 0;"><span style="background:#263238;color:#aed581;padding:.3rem .6rem;border-radius:4px;font-family:monospace;">192.168.1.10</span></p>
+      <p>4つの数字 × それぞれ8ビット ＝ 合計<strong>32ビット</strong>。だから約43億個のアドレスがある計算（2の32乗）。</p>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3EA;</span> 住所は「街＋家」に分かれている</h2>
+    <div class="diagram"><div class="diagram-title dt-blue">例：192.168.1.10 の場合</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">192.168.1<small>ネットワーク部<br>（どの街か）</small></div>
+        <div class="flow-box fb-orange">10<small>ホスト部<br>（街のどの家か）</small></div>
+      </div>
+      <p style="text-align:center;font-size:.85rem;color:var(--gray-mid);margin-top:.5rem;">どこからが「街」でどこから「家」かは、<strong>サブネットマスク</strong>が教えてくれる</p>
+    </div>
+    <div class="card card-green"><h4>サブネットマスク<span class="rough">ざっくり：IPアドレスの「どこまでが街か」を示す目印</span>とは</h4>
+      <p>「ネットワーク部がどこまでか」を表す数字。例：<span style="background:#263238;color:#aed581;padding:.2rem .4rem;border-radius:3px;font-family:monospace;font-size:.9rem;">255.255.255.0</span> なら先頭3つ（24ビット）がネットワーク部。</p>
+      <p>これを短く書いた記法が <span class="key-word">CIDR<span class="rough">ざっくり：サブネットマスクのビット数を /24 のように書く短縮記法</span>（Classless Inter-Domain Routing：クラスレスドメイン間経路制御）表記</span>。<span style="background:#263238;color:#aed581;padding:.2rem .4rem;border-radius:3px;font-family:monospace;font-size:.9rem;">192.168.1.0/24</span> ＝「先頭24ビットがネットワーク部」の意味。</p>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3E0;</span> プライベートIPは「内線番号」</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">比喩</div>会社の電話の<strong>内線番号</strong>は社内でしか通じない。外にかけるときは代表番号（外線）を経由。<strong>プライベートIP＝内線番号、グローバルIP＝代表の外線番号</strong>、ルータが翻訳してくれる。</div></div>
+    <table class="tbl-blue">
+      <tr><th>クラス</th><th>プライベートIP範囲</th><th>CIDR</th><th>使う場所</th></tr>
+      <tr><td>A</td><td>10.0.0.0 〜 10.255.255.255</td><td>/8</td><td>大企業</td></tr>
+      <tr><td>B</td><td>172.16.0.0 〜 172.31.255.255</td><td>/12</td><td>中規模組織</td></tr>
+      <tr><td>C</td><td>192.168.0.0 〜 192.168.255.255</td><td>/16</td><td>家・SOHO（一番身近）</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：この3つの範囲の丸暗記がR03問11・H22問9等で頻出。特に家庭で見る<strong>192.168.〜</strong>はクラスC。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「172.32.0.0 はプライベートIP」は誤り。クラスBは<strong>172.16〜172.31</strong>まで。32は範囲外。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F504;</span> TCP vs UDP：確実か、速いか</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>荷物を送る時、<strong>書留（追跡あり・遅い）</strong>か<strong>普通郵便（追跡なし・速い）</strong>を選ぶようなもの。TCP＝書留、UDP＝普通郵便。</div></div>
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--blue-main);"><h4 style="color:var(--blue-main);">TCP<span class="rough">ざっくり：確実に届ける通信方式（Transmission Control Protocol）</span></h4>
+        <p style="font-size:.85rem;"><strong>確実に届ける</strong><br>相手と接続を確立<br>抜けた分は再送<br>遅いが信頼できる</p>
+        <p style="font-size:.78rem;color:var(--gray-mid);">用途：Web・メール・ファイル転送・SSH</p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--orange-main);"><h4 style="color:var(--orange-main);">UDP<span class="rough">ざっくり：速さ優先で投げっぱなしの通信方式（User Datagram Protocol）</span></h4>
+        <p style="font-size:.85rem;"><strong>速さ優先</strong><br>接続確立なし<br>再送なし<br>速いが抜けがち</p>
+        <p style="font-size:.78rem;color:var(--gray-mid);">用途：動画配信・音声通話・ゲーム・DNS</p>
+      </div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：R02問13等で頻出。「<strong>DNSがUDPを使う</strong>（速さ優先・再送不要）」も定番。TCPの特徴＝接続型・再送制御・順序制御。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F6AA;</span> ポート番号＝部屋番号</h2>
+    <div class="card card-blue"><h4>ポート番号とは</h4>
+      <p>IPアドレス＝<strong>建物の住所</strong>、ポート番号＝<strong>建物の中のどの部屋（アプリ）宛か</strong>。Web用の部屋は80番、メール送信用は25番、と用途別に番号が決まっている。</p>
+    </div>
+    <table class="tbl-blue">
+      <tr><th>プロトコル</th><th>ポート番号</th><th>役割</th></tr>
+      <tr><td>HTTP</td><td><strong>80</strong></td><td>Webページ（暗号化なし）</td></tr>
+      <tr><td>HTTPS</td><td><strong>443</strong></td><td>Webページ（暗号化）</td></tr>
+      <tr><td>SSH</td><td>22</td><td>暗号化リモート接続</td></tr>
+      <tr><td>SMTP</td><td>25</td><td>メール送信</td></tr>
+      <tr><td>POP3</td><td>110</td><td>メール受信（POP）</td></tr>
+      <tr><td>IMAP</td><td>143</td><td>メール受信（IMAP）</td></tr>
+      <tr><td>DNS</td><td>53</td><td>名前解決</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：HTTP=80、HTTPS=443、SSH=22、SMTP=25は丸暗記必須。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 基本チェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab2')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">基本のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・IPv4は<span class="fill-blank">32</span>ビット、4組の数字（各0〜<span class="fill-blank">255</span>）で書く</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・IPアドレスは<span class="fill-blank">ネットワーク部</span>＋<span class="fill-blank">ホスト部</span>に分かれる。境目は<span class="fill-blank">サブネットマスク</span>で表す</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・プライベートIP：A＝<span class="fill-blank">10/8</span>／B＝<span class="fill-blank">172.16/12</span>／C＝<span class="fill-blank">192.168/16</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・確実重視＝<span class="fill-blank">TCP</span>／速さ重視＝<span class="fill-blank">UDP</span>／DNSが使うのは<span class="fill-blank">UDP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・HTTP＝<span class="fill-blank">80</span>／HTTPS＝<span class="fill-blank">443</span>／SSH＝<span class="fill-blank">22</span>／SMTP＝<span class="fill-blank">25</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 応用 ===== -->
+  <div class="tab-panel theme-teal" id="tab_applied">
+    <div class="point-box pb-teal"><h4>&#x1FA9C; このタブで学ぶこと</h4>
+      <ul>
+        <li><strong>OSI 7層モデル</strong>と<strong>TCP/IP 4層</strong>の対応（階層の考え方）</li>
+        <li><strong>NAT／NAPT</strong>：家の内線を外線に翻訳する仕組み</li>
+        <li><strong>ARP／ICMP</strong>：縁の下のプロトコル</li>
+        <li>HTTPSで「鍵マーク」がつく仕組み</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F3E2;</span> 通信の階層モデル（役割分担）</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>通信は<strong>会社の部署分担</strong>に似ています。アプリ部（内容決め）→企画部（確実に届けるか速さ優先か）→配送部（経路選択）→運搬部（物理搬送）。これを7層に整理したのが<strong>OSI参照モデル<span class="rough">ざっくり：通信を7つの段階に整理した国際標準モデル</span>（Open Systems Interconnection）</strong>、実用4層版が<strong>TCP/IPモデル</strong>。</div></div>
+    <div class="diagram">
+      <table class="tbl-orange">
+        <tr><th>OSI 7層</th><th>役割のひとこと</th><th>TCP/IP 4層</th></tr>
+        <tr><td>7 アプリケーション層</td><td>ユーザーが触るアプリ</td><td rowspan="3">アプリケーション</td></tr>
+        <tr><td>6 プレゼンテーション層</td><td>文字コード・暗号化</td></tr>
+        <tr><td>5 セッション層</td><td>通信の開始・終了管理</td></tr>
+        <tr><td>4 トランスポート層</td><td>確実 or 速さの方式選択</td><td>トランスポート</td></tr>
+        <tr><td>3 ネットワーク層</td><td>経路選択（ルーティング）</td><td>インターネット</td></tr>
+        <tr><td>2 データリンク層</td><td>隣接機器との通信</td><td rowspan="2">ネットワークIF</td></tr>
+        <tr><td>1 物理層</td><td>電気・電波・光</td></tr>
+      </table>
+    </div>
+    <div class="mnemonic"><div class="big">覚え方：「アプセトネデブ」</div><div class="desc"><strong>ア</strong>プリ・<strong>プ</strong>レゼン・<strong>セ</strong>ッション・<strong>ト</strong>ランスポート・<strong>ネ</strong>ットワーク・<strong>デ</strong>ータリンク・物<strong>ブ</strong>理</div></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「<strong>TCP/UDPは第4層（トランスポート）、IPは第3層（ネットワーク）、HTTPは第7層（アプリ）</strong>」の3点を最優先で暗記。頻出パターン。</p>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F504;</span> NAT／NAPT：内線を外線に翻訳</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>家の中の<strong>内線（プライベートIP）</strong>は外に出ると通じない。ルータが<strong>外線（グローバルIP）</strong>に翻訳してくれる。これが NAT／NAPT。</div></div>
+    <div class="two-col">
+      <div class="card card-blue"><h4>NAT（Network Address Translation）<span class="rough">ざっくり：プライベートIPとグローバルIPを1対1で変換</span></h4>
+        <p>プライベートIPを<strong>1対1</strong>でグローバルIPに変換。家のPCが複数あっても、外に同時に出られるのは1台だけ。</p>
+      </div>
+      <div class="card card-orange"><h4>NAPT（Network Address Port Translation）＝IPマスカレード<span class="rough">ざっくり：ポート番号も使って多数のプライベートIPを1つのグローバルIPに集約</span></h4>
+        <p>IP＋<strong>ポート番号</strong>も変換することで、1つのグローバルIPで<strong>複数端末を同時</strong>にネット接続可能。<strong>家庭のWi-Fiルータはほぼこれ</strong>。</p>
+      </div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「1つのグローバルIPで複数端末を同時接続可能にするのは？」→<strong>NAPT（IPマスカレード）</strong>。NATは1対1、NAPTは多対1。</p>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F41C;</span> ARP と ICMP：縁の下のプロトコル</h2>
+    <div class="two-col">
+      <div class="card card-teal"><h4>ARP（Address Resolution Protocol）<span class="rough">ざっくり：IPアドレスからMACアドレスを問い合わせるプロトコル</span></h4>
+        <p>IPアドレスが分かっても、同じLAN内で物理的に届けるには<strong>MACアドレス<span class="rough">ざっくり：機器固有の物理番号（工場出荷時に決まる）</span></strong>が必要。ARPは「このIPの人〜？」とLAN内に呼びかけてMACを教えてもらう。</p>
+      </div>
+      <div class="card card-red"><h4>ICMP（Internet Control Message Protocol）<span class="rough">ざっくり：通信状態のお知らせを送るプロトコル</span></h4>
+        <p>通信エラーや到達確認のメッセージ。<strong>pingコマンド</strong>（「届きますか？」→「届きました」の応答）はICMPを使う。</p>
+      </div>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F512;</span> HTTPSの鍵マーク</h2>
+    <div class="card card-teal"><h4>ブラウザのアドレスバーの鍵マーク🔒は何？</h4>
+      <p>「このサイトとの通信は<strong>暗号化</strong>されていますよ」の印。HTTPSは<strong>HTTP＋SSL/TLS<span class="rough">ざっくり：通信を暗号化する仕組み（Secure Sockets Layer／Transport Layer Security）</span></strong>で、以下の2つを実現：</p>
+      <ol>
+        <li><strong>盗聴防止</strong>（通信を暗号化）</li>
+        <li><strong>なりすまし防止</strong>（<strong>証明書</strong>でサイトの身元確認）</li>
+      </ol>
+    </div>
+    <div class="diagram"><div class="diagram-title dt-teal">https://〜を開く流れ</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">&#x2460; DNS<small>名前→IP</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-green">&#x2461; TCP<small>接続確立</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-orange">&#x2462; SSL/TLS<small>証明書検証<br>暗号化</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-red">&#x2463; HTTP<small>ページ取得</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x270D;&#xFE0F;</span> 応用チェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab_applied')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab_applied')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">応用のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・OSIは<span class="fill-blank">7</span>層／TCP/IPは<span class="fill-blank">4</span>層／覚え方＝アプセト<span class="fill-blank">ネデブ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・TCP/UDPは第<span class="fill-blank">4</span>層／IPは第<span class="fill-blank">3</span>層／HTTPは第<span class="fill-blank">7</span>層</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・1対1変換＝<span class="fill-blank">NAT</span>／ポートも変換して多対1＝<span class="fill-blank">NAPT（IPマスカレード）</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・IPからMACを問合せ＝<span class="fill-blank">ARP</span>／到達確認（ping）＝<span class="fill-blank">ICMP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・HTTPSの暗号化＝<span class="fill-blank">SSL/TLS</span>／鍵マークは<span class="fill-blank">暗号化</span>と<span class="fill-blank">身元確認</span>の証</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: 詳細 ===== -->
+  <div class="tab-panel theme-blue" id="tab3">
+    <div class="point-box pb-blue"><h4>&#x1F50D; このタブで学ぶこと</h4>
+      <ul>
+        <li>サブネット計算（CIDRとホスト数）</li>
+        <li>IPv4 vs IPv6 の対比</li>
+        <li>ルーティングプロトコル（RIP／OSPF／BGP）</li>
+        <li>ポート番号の完全版</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9EE;</span> サブネット計算（CIDR）</h2>
+    <div class="card card-blue"><h4>CIDR /X のホスト数の求め方</h4>
+      <p><strong>ホスト部のビット数 ＝ 32 − X</strong>／<strong>ホスト数 ＝ 2^(ホスト部ビット数) − 2</strong>（−2はネットワークアドレスとブロードキャストの予約分）</p>
+      <table class="tbl-blue">
+        <tr><th>CIDR</th><th>ホスト部</th><th>ホスト数</th><th>用途例</th></tr>
+        <tr><td>/24</td><td>8ビット</td><td>2^8−2＝<strong>254</strong></td><td>小オフィス</td></tr>
+        <tr><td>/25</td><td>7ビット</td><td>126</td><td>半フロア</td></tr>
+        <tr><td>/26</td><td>6ビット</td><td><strong>62</strong></td><td>1/4フロア</td></tr>
+        <tr><td>/27</td><td>5ビット</td><td>30</td><td>小部署</td></tr>
+        <tr><td>/28</td><td>4ビット</td><td>14</td><td>少人数</td></tr>
+      </table>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：R02問9・R04問11でサブネット計算が出題。<strong>2^(32−CIDR)−2</strong>の公式を押さえる。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F30D;</span> IPv4 vs IPv6</h2>
+    <table class="tbl-blue">
+      <tr><th>項目</th><th>IPv4</th><th>IPv6</th></tr>
+      <tr><td>アドレス長</td><td>32ビット</td><td><strong>128ビット</strong></td></tr>
+      <tr><td>表記</td><td>10進数4組（例：192.168.1.1）</td><td>16進数8組（例：2001:db8::1）</td></tr>
+      <tr><td>個数</td><td>約43億（枯渇）</td><td>事実上無限（340澗）</td></tr>
+      <tr><td>NAT</td><td>ほぼ必須</td><td>不要</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：H27問8・R01問12で出題。<strong>IPv6は128ビット</strong>の暗記が必須。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「IPv6ではNATが必須」は誤り。正は<strong>NATは不要</strong>（IPがあり余るため）。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F6E4;&#xFE0F;</span> ルーティングプロトコル</h2>
+    <table class="tbl-blue">
+      <tr><th>名前</th><th>意味（ざっくり）</th><th>使う範囲</th></tr>
+      <tr><td><strong>RIP</strong>（Routing Information Protocol）</td><td>ホップ数（中継回数）で経路選択<span class="rough">ざっくり：経由するルータ数の少ない道を選ぶ単純な方式</span></td><td>小規模LAN</td></tr>
+      <tr><td><strong>OSPF</strong>（Open Shortest Path First）</td><td>回線速度を考慮した最短経路計算<span class="rough">ざっくり：道の広さも考慮する賢い経路選択</span></td><td>中〜大規模組織</td></tr>
+      <tr><td><strong>BGP</strong>（Border Gateway Protocol）</td><td>組織間（ISP間）の経路制御</td><td>インターネット全体</td></tr>
+    </table>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F6AA;</span> ポート番号（完全版）</h2>
+    <table class="tbl-blue">
+      <tr><th>サービス</th><th>ポート</th><th>TCP/UDP</th></tr>
+      <tr><td>FTP-Data</td><td>20</td><td>TCP</td></tr>
+      <tr><td>FTP</td><td>21</td><td>TCP</td></tr>
+      <tr><td>SSH</td><td>22</td><td>TCP</td></tr>
+      <tr><td>Telnet</td><td>23</td><td>TCP</td></tr>
+      <tr><td>SMTP</td><td>25</td><td>TCP</td></tr>
+      <tr><td>DNS</td><td>53</td><td>UDP（主）/TCP</td></tr>
+      <tr><td>DHCP</td><td>67/68</td><td>UDP</td></tr>
+      <tr><td>HTTP</td><td>80</td><td>TCP</td></tr>
+      <tr><td>POP3</td><td>110</td><td>TCP</td></tr>
+      <tr><td>IMAP</td><td>143</td><td>TCP</td></tr>
+      <tr><td>HTTPS</td><td>443</td><td>TCP</td></tr>
+    </table>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4A1;</span> 応用論点</h2>
+    <div class="card card-purple"><h4>【1次の横断】ファイアウォール設定</h4>
+      <p>Webサーバーでは<strong>80/443だけを開放</strong>、他のポートは閉じるのが基本。ポート番号の知識はセキュリティ論点と直結。</p>
+    </div>
+    <div class="card card-purple"><h4>【1次の横断】クラウド（AWS VPC等）</h4>
+      <p>AWSのVPCでも<strong>CIDR・サブネット・ルーティングテーブル・NATゲートウェイ</strong>と同じ概念が出てくる。オンプレの知識がそのまま活きる。</p>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> 詳細チェック（穴埋め）</h2>
+    <div style="text-align:center;margin:.8rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">詳細のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・CIDR /X のホスト数＝<span class="fill-blank">2^(32−X)−2</span>／/24＝<span class="fill-blank">254</span>／/26＝<span class="fill-blank">62</span>／/28＝<span class="fill-blank">14</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・IPv6は<span class="fill-blank">128</span>ビット／<span class="fill-blank">16進数</span>8組表記／NATは<span class="fill-blank">不要</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・ホップ数で経路選択＝<span class="fill-blank">RIP</span>／最短経路計算＝<span class="fill-blank">OSPF</span>／ISP間＝<span class="fill-blank">BGP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・FTP＝<span class="fill-blank">21</span>／Telnet＝<span class="fill-blank">23</span>／POP3＝<span class="fill-blank">110</span>／IMAP＝<span class="fill-blank">143</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: 語呂 ===== -->
+  <div class="tab-panel theme-purple" id="tab4">
+    <div class="point-box pb-purple"><h4>&#x1F3B5; 語呂で覚える</h4></div>
+    <div class="mnemonic"><div class="big">&#x1F4DA; OSI 7層：アプセトネデブ</div><div class="desc">アプリ／プレゼン／セッション／トランス／ネット／データ／物理</div></div>
+    <div class="mnemonic"><div class="big">&#x1F3E0; プライベートIP：テン・イチナナ・イチキュウニ</div><div class="desc"><strong>10/8</strong>／<strong>172.16/12</strong>／<strong>192.168/16</strong>（家で見る最後！）</div></div>
+    <div class="mnemonic"><div class="big">&#x1F4E8; ハチマル＝Web、ヨンヨンサン＝セキュア</div><div class="desc">HTTP＝<strong>80</strong>／HTTPS＝<strong>443</strong>／SSH＝<strong>22</strong>／SMTP＝<strong>25</strong></div></div>
+    <div class="mnemonic"><div class="big">&#x1F4EE; TCP＝書留、UDP＝普通郵便</div><div class="desc">確実・遅い vs 速い・確認なし</div></div>
+    <div class="mnemonic"><div class="big">&#x1F310; DNS＝電話帳、DHCP＝引越し屋さん</div><div class="desc">名前→IPの電話帳／設定を配達する引越し屋</div></div>
+    <div class="mnemonic"><div class="big">&#x1F9EE; /24＝ニヒャクゴジュウヨン</div><div class="desc">/24＝254台、/26＝62台、/28＝14台</div></div>
+  </div>
+
+  <!-- ===== TAB 6: 語呂穴 ===== -->
+  <div class="tab-panel theme-purple" id="tab5">
+    <div class="point-box pb-purple"><h4>&#x1F3B5; 語呂穴埋め</h4></div>
+    <div class="fill-card">
+      <div class="fill-header bg-purple">語呂穴埋め</div>
+      <div class="fill-body">
+        <div class="fill-group">・OSI7層：アプセト<span class="fill-blank">ネデブ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・プライベートIP：<span class="fill-blank">10/8</span>・<span class="fill-blank">172.16/12</span>・<span class="fill-blank">192.168/16</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・HTTP＝<span class="fill-blank">80</span>／HTTPS＝<span class="fill-blank">443</span>／SSH＝<span class="fill-blank">22</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・TCP＝<span class="fill-blank">書留</span>／UDP＝<span class="fill-blank">普通郵便</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・DNS＝<span class="fill-blank">電話帳</span>／DHCP＝<span class="fill-blank">引越し屋</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・/24＝<span class="fill-blank">254</span>／/26＝<span class="fill-blank">62</span>／/28＝<span class="fill-blank">14</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 7: 穴① ===== -->
+  <div class="tab-panel theme-teal" id="tab6">
+    <div class="point-box pb-teal"><h4>&#x270D;&#xFE0F; 穴埋め初級</h4></div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">初級：基礎用語</div>
+      <div class="fill-body">
+        <div class="fill-group">・0か1の1桁分＝<span class="fill-blank">ビット</span>／8ビット＝<span class="fill-blank">1バイト</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・家や会社の網＝<span class="fill-blank">LAN</span>／世界中を繋ぐ網＝<span class="fill-blank">インターネット</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・サービスを頼む側＝<span class="fill-blank">クライアント</span>／提供側＝<span class="fill-blank">サーバー</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">初級：通信の基本</div>
+      <div class="fill-body">
+        <div class="fill-group">・通信のルール＝<span class="fill-blank">プロトコル</span>／データの小分け単位＝<span class="fill-blank">パケット</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・ネット上の住所＝<span class="fill-blank">IPアドレス</span>／アプリの部屋番号＝<span class="fill-blank">ポート番号</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 8: 穴② ===== -->
+  <div class="tab-panel theme-teal" id="tab7">
+    <div class="point-box pb-teal"><h4>&#x270D;&#xFE0F; 穴埋め中級</h4></div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">中級：IPアドレス</div>
+      <div class="fill-body">
+        <div class="fill-group">・IPv4は<span class="fill-blank">32</span>ビット／4組の数字（各0〜<span class="fill-blank">255</span>）で書く</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・IPアドレス＝<span class="fill-blank">ネットワーク部</span>＋<span class="fill-blank">ホスト部</span>／境目を示す＝<span class="fill-blank">サブネットマスク</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・クラスA＝<span class="fill-blank">10.0.0.0〜10.255.255.255</span>（/8）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・クラスB＝<span class="fill-blank">172.16.0.0〜172.31.255.255</span>（/12）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">中級：プロトコル</div>
+      <div class="fill-body">
+        <div class="fill-group">・TCP特徴：<span class="fill-blank">コネクション型</span>・<span class="fill-blank">順序制御・再送制御あり</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・UDP特徴：<span class="fill-blank">コネクションレス</span>／用途例＝<span class="fill-blank">動画・音声・DNS</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・NATは<span class="fill-blank">IPのみ</span>変換／NAPTは<span class="fill-blank">IP＋ポート番号</span>を変換</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・HTTP＝<span class="fill-blank">80</span>／HTTPS＝<span class="fill-blank">443</span>／FTP＝<span class="fill-blank">20/21</span>／SMTP＝<span class="fill-blank">25</span>／DNS＝<span class="fill-blank">53</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 9: 穴③ ===== -->
+  <div class="tab-panel theme-teal" id="tab8">
+    <div class="point-box pb-teal"><h4>&#x270D;&#xFE0F; 穴埋め上級</h4></div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">上級：階層と複合論点</div>
+      <div class="fill-body">
+        <div class="fill-group">・TCP/UDPは第<span class="fill-blank">4</span>層（トランスポート）／IPは第<span class="fill-blank">3</span>層（ネットワーク）／HTTPは第<span class="fill-blank">7</span>層（アプリケーション）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・IPからMACを問合せ＝<span class="fill-blank">ARP</span>／到達確認＝<span class="fill-blank">ICMP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・/24ホスト数＝<span class="fill-blank">254</span>／/26＝<span class="fill-blank">62</span>／/27＝<span class="fill-blank">30</span>／/28＝<span class="fill-blank">14</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">上級：IPv6とルーティング</div>
+      <div class="fill-body">
+        <div class="fill-group">・IPv6は<span class="fill-blank">128</span>ビット・<span class="fill-blank">16進数</span>8組／NATは<span class="fill-blank">不要</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・ホップ数ベースで小規模＝<span class="fill-blank">RIP</span>／最短経路計算＝<span class="fill-blank">OSPF</span>／AS間（ISP間）＝<span class="fill-blank">BGP</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・HTTPSは HTTP＋<span class="fill-blank">SSL/TLS</span>。証明書により<span class="fill-blank">サーバ認証</span>と<span class="fill-blank">暗号化</span>を実現</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 10: 事例 ===== -->
+  <div class="tab-panel theme-green" id="tab9">
+    <div class="point-box pb-green"><h4>&#x1F3E2; 中小企業の事例で学ぶ</h4></div>
+
+    <div class="sim-card"><span class="sim-label">事例1</span>
+      <h4>花屋A店：新店舗で Wi-Fi を導入したい</h4>
+      <p><strong>与件</strong>：レジ2台、事務用PC3台、従業員スマホ4台、お客様用フリーWi-Fi。合計10台＋α。</p>
+      <p><strong>解決</strong>：家庭用Wi-Fiルータ（モデム＋ルータ＋AP内蔵）1台で足りる。内部は<strong>プライベートIP（192.168.1.〜）</strong>、外向けは<strong>NAPT</strong>で1つのグローバルIPを共有。お客様向けは別SSIDに分離してセキュリティ確保。</p>
+      <p style="color:var(--green-dark);"><strong>学び</strong>：規模が小さければ市販ルータ1台で構築可能。NAPTでグローバルIPコスト削減。</p>
+    </div>
+
+    <div class="sim-card"><span class="sim-label">事例2</span>
+      <h4>製造業B社：本社と支店をつなぎたい</h4>
+      <p><strong>与件</strong>：本社（本州）と支店（北海道）で在庫・顧客情報を共有したい。</p>
+      <p><strong>解決</strong>：<strong>VPN（Virtual Private Network：仮想プライベート網）<span class="rough">ざっくり：インターネット経由で安全な専用線を作る技術</span></strong>で両拠点を暗号化トンネルで接続。お互いのプライベートIPで通信可能に。専用線より安く、インターネット経由より安全。</p>
+    </div>
+
+    <div class="sim-card"><span class="sim-label">事例3</span>
+      <h4>サービス業C社：Webサイトが頻繁に落ちる</h4>
+      <p><strong>与件</strong>：自前サーバーでWeb公開。アクセス集中で応答しなくなる。</p>
+      <p><strong>解決</strong>：<strong>クラウド（AWS等）</strong>に移行。サーバーがダウンしても自動で別サーバーに切り替わる設計（冗長化）。VPCで<strong>CIDR</strong>・<strong>サブネット</strong>を設計し、既存ネットワーク知識がそのまま使える。</p>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x270D;&#xFE0F;</span> 事例から試験ポイント穴埋め</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-green">📝 【1次】事例から学ぶ試験ポイント</div>
+      <div class="fill-body">
+        <div class="fill-group">・家庭用Wi-Fiルータは<span class="fill-blank">モデム＋ルータ＋AP</span>の統合機器</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・1つのグローバルIPで多数端末を接続＝<span class="fill-blank">NAPT</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・離れた拠点を安全に接続＝<span class="fill-blank">VPN</span>（暗号化トンネル）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・クラウドでも<span class="fill-blank">CIDR</span>・<span class="fill-blank">サブネット</span>・ルーティングの概念は同じ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 11: クイズ ===== -->
+  <div class="tab-panel theme-orange" id="tab10">
+    <div class="point-box pb-orange"><h4>&#x270F;&#xFE0F; 選択肢クイズ</h4><p>全8問。A/B/C/Dに分散。</p></div>
+
+    <div class="quiz-item" id="q1"><span class="quiz-num">1</span><span class="quiz-cat qc-green">基礎</span>
+      <div class="quiz-question">1バイトは何ビットか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q1',1)">A. 4ビット</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q1',1)">B. 8ビット</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q1',1)">C. 16ビット</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q1',1)">D. 32ビット</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">正解B。1バイト＝8ビット。半角英字1文字を表せる単位。</div>
+    </div>
+
+    <div class="quiz-item" id="q2"><span class="quiz-num">2</span><span class="quiz-cat qc-blue">機器</span>
+      <div class="quiz-question">LAN内で複数機器を繋ぐために使う機器はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q2',2)">A. モデム</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q2',2)">B. サーバー</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q2',2)">C. スイッチ</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q2',2)">D. アンテナ</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">正解C。スイッチ/ハブがLAN内中継器。モデムは外回線変換、サーバーは別役割。</div>
+    </div>
+
+    <div class="quiz-item" id="q3"><span class="quiz-num">3</span><span class="quiz-cat qc-purple">階層</span>
+      <div class="quiz-question">TCPはOSI参照モデルの何層か。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q3',3)">A. 第1層（物理）</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q3',3)">B. 第3層（ネットワーク）</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q3',3)">C. 第7層（アプリ）</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q3',3)">D. 第4層（トランスポート）</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">正解D。TCP/UDPは第4層（トランスポート）。IPは第3層。HTTPは第7層。</div>
+    </div>
+
+    <div class="quiz-item" id="q4"><span class="quiz-num">4</span><span class="quiz-cat qc-red">IP範囲</span>
+      <div class="quiz-question">プライベートIPとして正しくないものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q4',3)">A. 10.0.0.1</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q4',3)">B. 172.20.1.1</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q4',3)">C. 192.168.1.1</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q4',3)">D. 172.40.1.1</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">正解D。クラスBは172.16〜172.31まで。40は範囲外。</div>
+    </div>
+
+    <div class="quiz-item" id="q5"><span class="quiz-num">5</span><span class="quiz-cat qc-orange">ポート</span>
+      <div class="quiz-question">HTTPSが使うポート番号はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q5',2)">A. 22</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q5',2)">B. 80</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q5',2)">C. 443</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q5',2)">D. 25</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">正解C。HTTPS=443、HTTP=80、SSH=22、SMTP=25。</div>
+    </div>
+
+    <div class="quiz-item" id="q6"><span class="quiz-num">6</span><span class="quiz-cat qc-green">TCP/UDP</span>
+      <div class="quiz-question">UDPの特徴として正しいものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q6',1)">A. コネクションを確立して確実に届ける</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q6',1)">B. コネクションレスで再送しない</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q6',1)">C. Webブラウジングで主に使われる</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q6',1)">D. 順序制御で到着順を保証する</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp">正解B。A・C・DはTCP。UDPは投げっぱなし、動画・音声・DNSで使う。</div>
+    </div>
+
+    <div class="quiz-item" id="q7"><span class="quiz-num">7</span><span class="quiz-cat qc-blue">NAT/NAPT</span>
+      <div class="quiz-question">1つのグローバルIPで複数端末を同時接続可能にするのは？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q7',0)">A. NAPT（IPマスカレード）</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q7',0)">B. NAT</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q7',0)">C. DNS</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q7',0)">D. DHCP</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp">正解A。NAPTはIP＋ポート番号を変換。NATは1対1のみ。</div>
+    </div>
+
+    <div class="quiz-item" id="q8"><span class="quiz-num">8</span><span class="quiz-cat qc-red">IPv6</span>
+      <div class="quiz-question">IPv6の特徴はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q8',2)">A. 32ビットのアドレス空間</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q8',2)">B. 10進数4組で表記</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q8',2)">C. 128ビットでNAT不要</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q8',2)">D. 最大15ホップまで</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp">正解C。IPv6は128ビット・16進8組・NAT不要。A/BはIPv4、DはRIP。</div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+  </div>
+
+  <!-- ===== TAB 12: 実例 ===== -->
+  <div class="tab-panel theme-red" id="tab11">
+    <div class="point-box pb-red"><h4>&#x1F4A1; 実例で理解を深める</h4></div>
+
+    <div class="card card-red"><h4>&#x1F4F1; 家のWi-Fiルータの中で起きていること</h4>
+      <p>スマホで YouTube を見始めると…</p>
+      <ol>
+        <li>スマホが「youtube.com のIPアドレスは？」とルータに問合せ（DNS）</li>
+        <li>ルータがインターネットのDNSサーバーに問合せてIPを取得</li>
+        <li>スマホがそのIPにTCP接続（ポート443でHTTPS）</li>
+        <li>ルータが NAPT でスマホのプライベートIPを自分のグローバルIPに変換</li>
+        <li>動画データがパケットで小分けに送られて、ブラウザで再生</li>
+      </ol>
+      <p><strong>数秒の裏で、DNS・TCP・HTTPS・NAPT が全部動いている！</strong></p>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F30D; IPv4が足りなくなった話（2011年枯渇）</h4>
+      <p>世界のIPv4在庫は2011年に枯渇。43億個じゃ世界人口70億と機器多数に足りない。対策として：</p>
+      <ul>
+        <li><strong>NAPT</strong>で1つのIPを多数端末で共有（延命策）</li>
+        <li><strong>IPv6</strong>に移行（128ビット、事実上無限）</li>
+      </ul>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F510; Let's Encrypt が HTTPS を無料化</h4>
+      <p>以前は HTTPS の証明書が年数万円で高価だった。Let's Encrypt が<strong>無料で自動発行</strong>する仕組みを提供したことで、HTTPS が一気に普及。今はHTTPのサイトはブラウザに「安全ではない」と警告される時代。</p>
+    </div>
+
+    <h2 class="section-title st-red"><span class="st-icon">&#x270D;&#xFE0F;</span> 実例から試験ポイント穴埋め</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">📝 【1次】実例からの試験ポイント</div>
+      <div class="fill-body">
+        <div class="fill-group">・Webを見るとき最初に動くのが<span class="fill-blank">DNS</span>（名前→IP変換）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・家庭で複数端末が同時にネットに出れるのは<span class="fill-blank">NAPT</span>のおかげ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・IPv4枯渇への対策＝<span class="fill-blank">NAPT</span>＋<span class="fill-blank">IPv6</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・HTTPS普及の立役者＝<span class="fill-blank">Let's Encrypt</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 13: 図解 ===== -->
+  <div class="tab-panel theme-orange" id="tab12">
+    <div class="point-box pb-orange"><h4>&#x1F5FA;&#xFE0F; ビジュアルで総整理</h4></div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解1：データの大きさ感覚</h2>
+    <div class="diagram">
+      <div class="flow-row">
+        <div class="flow-box fb-gray">1bit<small>0 or 1</small></div><span class="flow-arrow">&lt;</span>
+        <div class="flow-box fb-green">1B<small>英字1文字</small></div><span class="flow-arrow">&lt;</span>
+        <div class="flow-box fb-blue">1KB<small>短文</small></div><span class="flow-arrow">&lt;</span>
+        <div class="flow-box fb-orange">1MB<small>写真</small></div><span class="flow-arrow">&lt;</span>
+        <div class="flow-box fb-purple">1GB<small>動画</small></div><span class="flow-arrow">&lt;</span>
+        <div class="flow-box fb-red">1TB<small>HDD</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解2：Webを開くまで</h2>
+    <div class="diagram">
+      <div class="flow-row">
+        <div class="flow-box fb-blue">&#x2460;<small>DNS<br>名前→IP</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-green">&#x2461;<small>ARP<br>IP→MAC</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-orange">&#x2462;<small>TCP<br>接続確立</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-red">&#x2463;<small>SSL/TLS<br>暗号化</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-purple">&#x2464;<small>HTTP<br>取得</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解3：OSI 7層と代表プロトコル</h2>
+    <div class="diagram">
+      <table class="tbl-orange">
+        <tr><th>層</th><th>名前</th><th>代表</th></tr>
+        <tr><td>7</td><td>アプリ</td><td>HTTP/HTTPS/FTP/SMTP/POP/DNS</td></tr>
+        <tr><td>6</td><td>プレゼン</td><td>SSL/TLS</td></tr>
+        <tr><td>5</td><td>セッション</td><td>—</td></tr>
+        <tr><td>4</td><td>トランスポート</td><td><strong>TCP/UDP</strong></td></tr>
+        <tr><td>3</td><td>ネットワーク</td><td><strong>IP/ICMP/ARP</strong></td></tr>
+        <tr><td>2</td><td>データリンク</td><td>イーサネット</td></tr>
+        <tr><td>1</td><td>物理</td><td>ケーブル/電波</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解4：プライベートIP早見</h2>
+    <div class="diagram">
+      <div class="flow-row">
+        <div class="flow-box fb-blue">A<small>10.0.0.0/8<br>大企業</small></div>
+        <div class="flow-box fb-green">B<small>172.16〜31/12<br>中規模</small></div>
+        <div class="flow-box fb-orange">C<small>192.168/16<br>家庭</small></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270D;&#xFE0F;</span> 図解チェック（穴埋め）</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">📝 【1次】図解まとめの試験ポイント</div>
+      <div class="fill-body">
+        <div class="fill-group">・1バイト＝<span class="fill-blank">8</span>ビット／1KB＝<span class="fill-blank">1000</span>B</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・Web通信の流れ：<span class="fill-blank">DNS</span>→TCP→<span class="fill-blank">SSL/TLS</span>→HTTP</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・OSI4層＝<span class="fill-blank">TCP/UDP</span>／3層＝<span class="fill-blank">IP</span>／7層＝<span class="fill-blank">HTTP等</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・家庭で見る＝クラス<span class="fill-blank">C</span>（<span class="fill-blank">192.168/16</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tab-nav" style="border-radius:0 0 var(--radius) var(--radius);margin-top:-1px;">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">&#x1F423; ゼロから</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(3)">&#x1FA9C; 応用</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(4)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(5)">&#x1F3B5; 語呂</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(6)">&#x1F3B5; 語呂穴</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴&#x2460;</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(8)">&#x270D;&#xFE0F; 穴&#x2461;</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(9)">&#x270D;&#xFE0F; 穴&#x2462;</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(10)">&#x1F3E2; 事例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(11)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(12)">&#x1F4A1; 実例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(13)">&#x1F5FA;&#xFE0F; 図解</button>
+  </nav>
+</div>
+<div class="footer">中小企業診断士 経営情報システム | TCP/IP・IPアドレッシング（超初心者版） | 前提ゼロから</div>
+
+<script>
+function switchTab(idx){const n=14;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+let answered=0,correct=0,total=8;
+function handleQuiz(e,qid,correctIdx){const li=e.target.closest('li');if(!li||document.querySelector('#'+qid+' li.correct, #'+qid+' li.wrong'))return;const idx=parseInt(li.dataset.idx);const expEl=document.getElementById(qid+'-exp');if(idx===correctIdx){li.classList.add('correct');expEl.className='quiz-explanation show correct-exp';correct++}else{li.classList.add('wrong');document.querySelectorAll('#'+qid+' .quiz-options li')[correctIdx].classList.add('correct');expEl.className='quiz-explanation show wrong-exp'}answered++;if(answered===total){const s=document.getElementById('quizScore');s.style.display='block';s.textContent=total+'問中 '+correct+'問正解！'+(correct===total?' パーフェクト！':correct>=5?' いい調子！':' もう一回復習しよう！')}}
+</script>
+</body>
+</html>
