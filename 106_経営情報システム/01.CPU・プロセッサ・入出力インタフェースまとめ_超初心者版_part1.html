@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPU・プロセッサ・入出力インタフェース（超初心者版・Part1：基礎理解編） - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.95;min-height:100vh;font-size:.95rem}
+.header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-main) 50%,#58d68d 100%);color:#fff;padding:.6rem 1rem;text-align:center}.header h1{font-size:1.05rem;font-weight:800;letter-spacing:.04em;margin-bottom:.1rem;display:inline-block;margin-right:.6rem}.header .subtitle{font-size:.72rem;opacity:.9;display:inline-block;margin-right:.5rem}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.1rem .55rem;border-radius:14px;font-size:.7rem}
+.partnav{background:#fff;padding:.6rem;text-align:center;font-size:.85rem;box-shadow:var(--shadow);margin-bottom:.5rem}.partnav a{display:inline-block;padding:.4rem 1rem;margin:0 .3rem;border-radius:6px;text-decoration:none;font-weight:700}.partnav .active{background:var(--green-main);color:#fff}.partnav .other{background:var(--gray-pale);color:var(--gray-dark)}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.7rem;margin:1.1rem 0}.bubble-wrap.right{flex-direction:row-reverse}.bubble-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12)}.avatar-teacher{background:linear-gradient(135deg,#ff9800,#f57c00)}.avatar-student{background:linear-gradient(135deg,#42a5f5,#1e88e5)}.avatar-hint{background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow);position:relative;max-width:88%;font-size:.95rem;line-height:1.95}.bubble-body::before{content:'';position:absolute;top:14px;width:0;height:0;border:8px solid transparent}.bubble-wrap:not(.right) .bubble-body::before{left:-14px;border-right-color:var(--white)}.bubble-wrap.right .bubble-body::before{right:-14px;border-left-color:var(--white)}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-body.b-orange{background:#fff8e1;border:1px solid #ffe082}.bubble-body.b-orange::before{border-right-color:#fff8e1}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.74rem;font-weight:700;color:var(--gray-mid);margin-bottom:.3rem}
+.tab-container{max-width:960px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.85rem .35rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:2rem 1.6rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-purple{background:var(--purple-bg)}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-teal{background:var(--teal-light)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.15rem;font-weight:800;margin:2rem 0 1rem;padding:.6rem .9rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1.2rem 1.5rem;margin:1rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card-red{border-left-color:var(--red-main)}.card h4{font-size:1rem;font-weight:700;margin-bottom:.5rem}.card p{margin-bottom:.5rem}
+.alert-tip,.alert-exam{border-radius:var(--radius);padding:.95rem 1rem .95rem 3rem;margin:1rem 0;position:relative;font-size:.92rem;line-height:1.85}.alert-tip::before,.alert-exam::before{position:absolute;left:.8rem;top:.85rem;font-size:1.2rem}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"\1F4A1"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"\1F4DD"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:1rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e0e0e0}.dt-blue{color:var(--blue-dark)}.dt-orange{color:var(--orange-dark)}.dt-green{color:var(--green-dark)}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.7rem 1.2rem;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center;min-width:80px;margin:.25rem}.flow-box small{display:block;font-weight:400;font-size:.74rem;opacity:.9;margin-top:.15rem}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.fb-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.fb-gray{background:linear-gradient(135deg,#7f8c8d,#95a5a6)}.flow-arrow{font-size:1.3rem;margin:0 .35rem;font-weight:700;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.9rem}th,td{padding:.65rem .7rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}tr:hover{background:rgba(0,0,0,.02)}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-green th{background:var(--green-main);color:#fff}.tbl-green tr:nth-child(even){background:var(--green-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}
+ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin:1rem 0}
+.mnemonic{background:linear-gradient(135deg,var(--purple-light),#fff);border:3px dashed var(--purple-main);border-radius:var(--radius);padding:1.4rem;margin:1rem 0;text-align:center}.mnemonic .big{font-size:1.3rem;font-weight:800;color:var(--purple-dark);margin-bottom:.4rem;letter-spacing:.08em}.mnemonic .desc{font-size:.92rem;color:var(--gray-mid)}
+.photo-card{background:#fff;border-radius:var(--radius-sm);padding:.8rem;margin:.6rem 0;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid #e0e0e0}
+.photo-card img{max-width:100%;height:auto;max-height:180px;border-radius:4px;background:#f5f5f5}
+.photo-card .cap{display:block;font-size:.78rem;color:var(--gray-mid);margin-top:.3rem;line-height:1.4}
+.photo-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.7rem;margin:.8rem 0}
+.footer{text-align:center;padding:1.8rem;color:var(--gray-light);font-size:.85rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.fill-card .fill-header{padding:14px 20px;font-weight:700;font-size:.98rem;color:#fff}
+.fill-card .fill-header.bg-purple{background:var(--purple-main)}.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}
+.fill-card .fill-body{padding:20px 22px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:6px;font-size:.95rem;line-height:2.1}
+.rough{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.key-word{font-weight:700;color:#1565c0;background:#e3f2fd;padding:0 .35rem;border-radius:3px}
+.exam-pt{font-size:.86rem;margin-top:.5rem;color:#1565c0;background:#e3f2fd;padding:.5rem .75rem;border-radius:6px}
+.exam-warn{font-size:.86rem;margin-top:.4rem;color:#b71c1c;background:#fce4ec;padding:.5rem .75rem;border-radius:6px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.5rem .9rem;border-radius:20px;font-size:.85rem;font-weight:700;margin:.4rem .3rem .4rem 0;box-shadow:0 2px 6px rgba(142,68,173,.3)}.goro-chip::before{content:"\1F3B5 ";margin-right:.3rem}.goro-chip small{font-weight:400;opacity:.95;margin-left:.4rem;font-size:.78rem}
+.goro-row{margin:.6rem 0;padding:.5rem .7rem;background:#faf5fc;border-left:3px solid var(--purple-main);border-radius:4px}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.92rem;line-height:1.85}
+.support-icon{font-size:1.7rem;flex-shrink:0;line-height:1}
+.support-body{flex:1}.support-body strong{color:#e65100}.support-name{font-size:.72rem;font-weight:700;color:#bf360c;margin-bottom:.2rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.1rem 1.3rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}
+.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.keepit ul{list-style:none;padding:0;margin:0}
+.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.9rem;line-height:1.7}
+.keepit li strong{color:#1565c0}
+.quiz-item{background:#fff;border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-size:.9rem;font-weight:700;margin-bottom:.5rem}.quiz-question{font-weight:600;font-size:1rem;margin-bottom:.9rem;line-height:1.8}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.65rem .9rem;margin:.4rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;transition:all .2s;font-size:.93rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.8rem;padding:.9rem;border-radius:var(--radius-sm);font-size:.92rem;line-height:1.8}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}
+@media(max-width:600px){.two-col,.three-col{grid-template-columns:1fr}.tab-btn{font-size:.62rem;padding:.7rem .15rem}.bubble-body{max-width:80%}.tab-panel{padding:1.4rem 1rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>CPU・プロセッサ・入出力インタフェース（超初心者版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム</div>
+  <div class="badge">📘 Part1：基礎理解編（教科書4-1準拠／全7タブ）</div>
+</div>
+<div class="partnav">
+  <a class="active">📘 Part1：基礎理解（このページ）</a>
+  <a class="other" href="01.CPU・プロセッサ・入出力インタフェースまとめ_超初心者版_part2.html">📗 Part2：演習・詳細編 →</a>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">&#x1F423; ゼロから</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(1)">&#x1F331; 5大装置</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; CPU</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(3)">&#x1FA9C; 入出力IF</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">&#x1F3B5; 語呂</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">&#x270D;&#xFE0F; 穴埋め</button>
+  </nav>
+
+  <!-- ===== TAB 0: ゼロから ===== -->
+  <div class="tab-panel active theme-green" id="tab0">
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4BB;</span> コンピュータの構成（ハードウェア＋ソフトウェア）</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">教科書 4-1 から（試験頻出）</div>コンピュータは <strong>ハードウェア</strong>（電子回路・周辺機器など、目に見える物体）と <strong>ソフトウェア</strong>（プログラム、目に見えないもの）の2つから構成されています。<br>
+      同じハードウェアの上で様々なソフトウェアを動かせる設計になっており、これが<strong>柔軟性・拡張性</strong>の源泉です。</div></div>
+
+    <div class="photo-row">
+      <div class="photo-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Intel_i9-14900KF_CPU.jpg/250px-Intel_i9-14900KF_CPU.jpg" alt="CPU"><span class="cap">📷 CPU（Intel Core i9）<br>コンピュータの頭脳</span></div>
+      <div class="photo-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Xbox_360E_Winchester_Top_View.png/250px-Xbox_360E_Winchester_Top_View.png" alt="マザーボード"><span class="cap">📷 マザーボード<br>装置を載せる基板</span></div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F3AF;</span> このノートで学ぶ範囲</h2>
+    <div class="card card-green"><h4>本ノートの主題：CPU と 入出力インタフェース</h4>
+      <p>教科書 4-1「コンピュータの基礎」の章のうち、<strong>CPU と 入出力装置（インタフェース）</strong>が本ノートの主題です（記憶装置とソフトウェアは別ノート）。</p>
+      <p>ただし最初の<strong>「5大装置」</strong>はコンピュータ全体の枠組みとしてここで押さえます。</p>
+    </div>
+    <div class="alert-tip">&#x1F4DD; <strong>試験対策の方針</strong>（教科書序章より）：「範囲は非常に幅広いので深入りしすぎず、<strong>重要なポイントに絞ってくり返し学習</strong>」が重要。本ノートも教科書順に必要最低限の論点を押さえる構成です。</div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x270D;&#xFE0F;</span> このタブの穴埋めチェック</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-green">ゼロから・キホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・コンピュータは<span class="fill-blank">ハードウェア</span>と<span class="fill-blank">ソフトウェア</span>から構成される</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・本ノートの主題は<span class="fill-blank">CPU</span>と<span class="fill-blank">入出力インタフェース</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+    <div class="alert-exam"><strong>次のタブ</strong>→「&#x1F331; 5大装置」へ。コンピュータの基本構成を整理します。</div>
+  </div>
+
+  <!-- ===== TAB 1: 5大装置 ===== -->
+  <div class="tab-panel theme-purple" id="tab1">
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3ED;</span> コンピュータの5大装置（教科書最重要の枠組み）</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">教科書より</div>コンピュータのハードウェアには <strong>5種類の装置</strong> があります。これを<strong>5大装置</strong>と呼びます。<br>
+      <strong>入力装置・出力装置・記憶装置・演算装置・制御装置</strong> の5つ。<br>
+      このうち<strong>演算装置と制御装置</strong>が、コンピュータの頭脳である<strong>CPU</strong>に相当します。</div></div>
+
+    <div class="diagram"><div class="diagram-title dt-purple">&#x1F4CA; コンピュータの5大装置（教科書 H24-2 出題）</div>
+      <table class="tbl-purple">
+        <tr><th style="width:18%;">5大装置</th><th>役割</th><th style="width:30%;">代表例</th></tr>
+        <tr><td><strong>入力装置</strong></td><td>データやプログラムを<strong>コンピュータに入れる</strong></td><td>キーボード、マウス、スキャナ</td></tr>
+        <tr><td><strong>出力装置</strong></td><td>処理結果を<strong>人間が分かる形で表示</strong>する</td><td>ディスプレイ、プリンタ</td></tr>
+        <tr><td><strong>記憶装置</strong></td><td>データを<strong>保存しておく</strong></td><td>主記憶（メモリ）／補助記憶（ハードディスク）</td></tr>
+        <tr style="background:#fff9e6;"><td><strong>演算装置</strong>&nbsp;★</td><td>四則演算・比較などの<strong>計算</strong>を行う</td><td rowspan="2"><strong>CPU</strong>（中央処理装置）</td></tr>
+        <tr style="background:#fff9e6;"><td><strong>制御装置</strong>&nbsp;★</td><td>プログラムに従って<strong>他の装置に命令</strong>を出す</td></tr>
+      </table>
+    </div>
+
+    <div class="diagram"><div class="diagram-title dt-purple">&#x1F4DA; データの流れ（教科書の図より）</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">入力装置<small>キーボード／マウス</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-orange">記憶装置<small>メモリ・HDD</small></div><span class="flow-arrow">&#x2194;</span>
+        <div class="flow-box fb-red">CPU<small>制御＋演算</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-green">出力装置<small>ディスプレイ</small></div>
+      </div>
+    </div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：H24問2 で5大装置が出題。<strong>演算装置と制御装置がCPUに相当</strong>することと、各装置の代表例を押さえる。</p>
+    <div class="goro-row"><span class="goro-chip">入・出・記・演・制<small>5大装置</small></span><span class="goro-chip">演＋制＝CPU<small>頭脳</small></span></div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「5つの装置」って言われても何のこと？って思うよね。<strong>「キーボードで打って（入力）→保存して（記憶）→計算して（演算）→指示出して（制御）→画面に出す（出力）」</strong>って自分のPC操作で考えると自然！<strong>演算と制御が一体化したのがCPU</strong>、これだけ覚えとけば試験OK。</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x270D;&#xFE0F;</span> このタブの穴埋めチェック</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-purple">5大装置のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・5大装置：<span class="fill-blank">入力</span>／<span class="fill-blank">出力</span>／<span class="fill-blank">記憶</span>／<span class="fill-blank">演算</span>／<span class="fill-blank">制御</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・<span class="fill-blank">演算装置</span>と<span class="fill-blank">制御装置</span>が CPU に相当</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・入力装置の例：<span class="fill-blank">キーボード・マウス・スキャナ</span>／出力装置の例：<span class="fill-blank">ディスプレイ・プリンタ</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（5大装置）</div>
+      <ul>
+        <li>&#x2776; 5大装置＝<strong>入力／出力／記憶／演算／制御</strong></li>
+        <li>&#x2777; <strong>演算＋制御＝CPU</strong>（中央処理装置）</li>
+        <li>&#x2778; H24問2 出題実績あり、<strong>各装置の代表例</strong>もセットで覚える</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: CPU ===== -->
+  <div class="tab-panel theme-blue" id="tab2">
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9E0;</span> CPU（Central Processing Unit：中央処理装置）</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">教科書より</div><strong>CPU</strong> はコンピュータの<strong>頭脳</strong>にあたる部分で、<strong>制御機能と演算機能</strong>から構成されます（中央演算処理装置とも呼ばれます）。<br>
+      CPUは記憶装置から命令（プログラム）を読み込み、その命令を実行します。命令には色々な種類がありますが、<strong>単純な命令を繰り返す</strong>ことで複雑な処理を実現します。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CB;</span> レジスタ（教科書頻出：H22-2／H18-1）</h2>
+    <div class="card card-blue"><h4>&#x1F4DD; レジスタ＝CPU内の超高速・超小容量メモリ</h4>
+      <p>CPUでデータの演算を行うときは、データを<strong>一時的に置いておく場所</strong>が必要です。これが<strong>レジスタ</strong>。CPUの中にある、<strong>非常に高速で小さいメモリ</strong>です。</p>
+      <p><strong>処理の流れ</strong>：</p>
+      <ol>
+        <li>主記憶装置（メモリ）からレジスタにデータを取ってくる</li>
+        <li>演算装置で計算する</li>
+        <li>結果をレジスタに書き込む</li>
+        <li>結果を主記憶装置に書き戻す</li>
+      </ol>
+    </div>
+    <div class="card card-orange"><h4>&#x1F522; レジスタのビット数</h4>
+      <p>現在のパソコンは<strong>32ビットや64ビットのレジスタ</strong>を持つCPUが多い。32ビットなら2進数で32桁を同時に演算できる、ということ。</p>
+      <p><strong>レジスタの容量が大きいほど、一度に計算できるデータ量が多くなる→高速</strong>。</p>
+      <p style="font-size:.85rem;color:var(--gray-mid);">補足：8ビットで英数字1文字、32ビットで英数字4文字分。レジスタは非常に小容量。</p>
+    </div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：H22-2、H18-1 でレジスタが出題。<strong>「CPU内の高速・小容量メモリ」「演算用にデータを一時的に置く場所」</strong>が答えられればOK。</p>
+    <div class="goro-row"><span class="goro-chip">レジスタ＝CPU内の作業机<small>超高速・超小容量</small></span></div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>レジスタって聞き慣れないよね。<strong>「CPUが計算するとき、目の前に一時的に置く小さなメモ用紙」</strong>みたいなもの。机（主記憶）から書類を取ってきて、メモ用紙（レジスタ）の上で計算して、また机に戻す、って繰り返してる！</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3B5;</span> クロック周波数（教科書頻出：H29-1／H24-3／H22-2）</h2>
+    <div class="card card-blue"><h4>&#x1F4CA; クロック周波数＝CPUの動作リズム</h4>
+      <p>CPUは<strong>一定のリズムで演算を処理</strong>しています。このリズムを<strong>クロック周波数</strong>と呼びます（メトロノームのように一定のリズムを刻む）。</p>
+      <p><strong>クロック周波数が大きいほど、CPUは高速に動作</strong>します。だからクロック周波数は <strong>CPUの性能の基準</strong> として使われます。</p>
+      <p>単位は<strong>ヘルツ（Hz）</strong>＝1秒間に実行される演算の数。<br>
+      例：<strong>1GHz</strong>＝1秒間に<strong>10億回</strong>の演算（1G = 10の9乗）。</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">クロック＝メトロノーム<small>動作リズム</small></span><span class="goro-chip">1GHz＝1秒に10億回<small>性能の基準</small></span></div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：クロック周波数は3年以上の頻度で出題（H29-1、H24-3、H22-2）。<strong>「CPUの動作リズム」「単位はヘルツ（Hz）」「大きいほど高速」</strong>が押さえどころ。</p>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「3.5GHzのCPU」って書いてあったら、<strong>「1秒間に35億回も演算できるんだ！」</strong>って思おう。それくらい速いから、私たちが「クリックしたらすぐ動く」体験ができるわけ！</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F5BC;&#xFE0F;</span> GPU・GPGPU（教科書補足）</h2>
+    <div class="photo-card" style="max-width:300px;margin:0 auto;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/DIAMONDSTEALTH3D2000-top.JPG/330px-DIAMONDSTEALTH3D2000-top.JPG" alt="GPU"><span class="cap">📷 GPU（グラフィックボード）</span></div>
+    <div class="card card-orange"><h4>GPU（Graphics Processing Unit：画像処理装置）</h4>
+      <p>ビデオカードにおいて画像処理を行う半導体チップ。最大の特徴は<strong>並列処理能力</strong>に優れ、複数のタスクを一度にこなせること。<strong>単純な計算を並列処理</strong>するのが得意。</p>
+      <p>CPUもGPUもどちらも処理装置ですが、<strong>CPUの目的は汎用的な処理</strong>、<strong>GPUの目的は高速な画像処理</strong>。</p>
+    </div>
+    <div class="card card-purple"><h4>GPGPU（General-Purpose computing on GPU）</h4>
+      <p>本来画像処理用のGPUを<strong>画像処理以外の汎用計算にも利用</strong>する技術。並列処理を活かした高速計算が特徴で、<strong>画像・動画編集、ゲーム、AI処理</strong>など大規模データ・計算量の多いタスクで効果を発揮。</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">CPU＝汎用<small>万能型</small></span><span class="goro-chip">GPU＝画像処理特化<small>並列処理</small></span><span class="goro-chip">GPGPU＝GPUの汎用計算利用<small>AI・動画</small></span></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> このタブの穴埋めチェック</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-blue">CPUのキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・CPU＝<span class="fill-blank">中央処理装置</span>。<span class="fill-blank">制御機能</span>と<span class="fill-blank">演算機能</span>から構成</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・CPU内の高速・小容量メモリ＝<span class="fill-blank">レジスタ</span>。32ビット／64ビットがある</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・CPUの動作リズム＝<span class="fill-blank">クロック周波数</span>。単位は<span class="fill-blank">ヘルツ（Hz）</span>。1GHz＝<span class="fill-blank">10億回</span>/秒</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・画像処理に特化した並列処理プロセッサ＝<span class="fill-blank">GPU</span>／GPUを汎用計算に使う＝<span class="fill-blank">GPGPU</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（CPU）</div>
+      <ul>
+        <li>&#x2776; CPU＝<strong>制御機能＋演算機能</strong>の頭脳</li>
+        <li>&#x2777; <strong>レジスタ</strong>＝CPU内の高速・小容量メモリ（32／64ビット）</li>
+        <li>&#x2778; <strong>クロック周波数</strong>＝動作リズム、単位ヘルツ（Hz）、大きいほど速い</li>
+        <li>&#x2779; <strong>GPU＝画像処理特化／GPGPU＝汎用計算に転用</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 入出力インタフェース ===== -->
+  <div class="tab-panel theme-teal" id="tab3">
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F50C;</span> 入出力装置とインタフェース</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">教科書より</div>入出力装置には、キーボード、マウス、ディスプレイ、プリンタなど様々なものがあります。こういった<strong>周辺機器とコンピュータをつなぐ仕組み</strong>を<strong>インタフェース</strong>と呼びます。<br>
+      インタフェースの種類によってコネクタのピン数などが決まっており、機器同士を接続するには<strong>双方が同じインタフェースに対応</strong>している必要があります。</div></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F4F1;</span> 入出力装置の種類（教科書頻出：R6-1／R1-1／H29-3 ほか）</h2>
+    <div class="card card-teal"><h4>&#x1F5BC;&#xFE0F; イメージスキャナ</h4>
+      <p>画像や文書をデジタル画像として<strong>データ化</strong>するための機器。一般には<strong>スキャナ</strong>と呼ばれる。</p>
+      <p>読み取った画像は点の集まりとして表現され、その細かさは<strong>dpi（dot per inch：1インチあたりの点の数）</strong>で表される。dpiが高いほど解像度が高い。</p>
+      <ul>
+        <li><strong>フラットベッドスキャナ</strong>：ガラス面に置いて、光を当てて読み取る</li>
+        <li><strong>ハンディスキャナ</strong>：機器を手で持ちながらスキャン</li>
+      </ul>
+    </div>
+
+    <div class="card card-teal"><h4>&#x1F4F1; タッチパネル（3方式・教科書最重要）</h4>
+      <p>ディスプレイを<strong>指やペンで直接触れて操作</strong>する入力装置。スマホ・タブレットの代表的な入力方法。<br>3方式があり、それぞれ特徴が異なる：</p>
+      <table class="tbl-orange">
+        <tr><th>方式</th><th>仕組み</th><th>特徴・用途</th></tr>
+        <tr style="background:#fff9e6;"><td><strong>静電容量方式</strong></td><td>指先の<strong>微弱な電流</strong>を感知</td><td>軽く触れるだけで操作可、<strong>マルチタッチ対応</strong>。<strong>スマホで主流</strong></td></tr>
+        <tr><td><strong>赤外線方式</strong></td><td><strong>赤外線</strong>で位置特定</td><td>画面に直接触れずに操作可、複数点同時入力可。<strong>耐久性高、ATM・券売機</strong></td></tr>
+        <tr><td><strong>抵抗膜方式</strong>（感圧式）</td><td>画面の<strong>圧力</strong>を検出</td><td>指・ペン・<strong>手袋でもOK</strong>。複数点認識は不可</td></tr>
+      </table>
+    </div>
+    <div class="goro-row"><span class="goro-chip">静電容量＝電流<small>スマホ</small></span><span class="goro-chip">赤外線＝光<small>ATM・券売機</small></span><span class="goro-chip">抵抗膜＝圧力<small>手袋でもOK</small></span></div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：タッチパネル3方式は頻出。<strong>「スマホは静電容量／券売機は赤外線／手袋OKは抵抗膜」</strong>のセット暗記。</p>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>3つの方式、混同しがち！ <strong>「スマホ＝静電容量」「冬手袋で操作したいなら抵抗膜」「銀行ATMやコンビニ券売機＝赤外線」</strong>って自分の体験で結びつけよう。覚えやすいよ！</div></div>
+
+    <div class="card card-teal"><h4>&#x1F5A8;&#xFE0F; プリンタ</h4>
+      <ul>
+        <li><strong>レーザープリンタ</strong>：レーザー光でドラム（感光体）にトナーを付着→紙に押し付けて印刷</li>
+        <li><strong>インクジェットプリンタ</strong>：インクの細かい粒子を紙に吹き付けて印刷</li>
+      </ul>
+      <p>プリンタの印字精度も<strong>dpi</strong>で表現される（dpi が高いほど解像度が高い）。</p>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F500;</span> インタフェースの分類：シリアル vs パラレル</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">教科書より</div>インタフェースは大きく <strong>シリアル伝送</strong> と <strong>パラレル伝送</strong> に分類されます。</div></div>
+    <div class="two-col">
+      <div class="card card-blue"><h4>&#x1F517; シリアル伝送</h4>
+        <p><strong>1本の信号線</strong>でつなぐ。データを<strong>順次転送</strong>する。</p>
+        <p style="font-size:.88rem;color:var(--gray-mid);">代表例：<strong>USB、Bluetooth</strong></p>
+      </div>
+      <div class="card card-orange"><h4>&#x1F517;&#x1F517; パラレル伝送</h4>
+        <p><strong>複数の信号線</strong>でつなぐ。データを<strong>並列に転送</strong>。一度に送れるデータ量が多い。</p>
+        <p style="font-size:.88rem;color:var(--gray-mid);">代表例：<strong>SCSI</strong>（旧式）</p>
+      </div>
+    </div>
+    <div class="goro-row"><span class="goro-chip">シリアル＝1本ずつ順次<small>USB・Bluetooth</small></span><span class="goro-chip">パラレル＝複数本同時<small>SCSI（旧式）</small></span></div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「複数本の方が速そう」って思うよね？ でも<strong>現代の主流はシリアル（USB）</strong>！ 理由は、複数本だと<strong>線同士で干渉</strong>して逆に速度が頭打ちになっちゃうから。シンプルに1本を高速化する方が今は速い、ってわけ。</div></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F50C;</span> USB（教科書頻出：R4-1／R3-1／R2-1 ほか）</h2>
+    <div class="photo-row">
+      <div class="photo-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/USB_A%2C_B%2C_C_%281.1-3.0%29_connectors.svg/500px-USB_A%2C_B%2C_C_%281.1-3.0%29_connectors.svg.png" alt="USB各形状"><span class="cap">📷 USB Type-A／B／C</span></div>
+    </div>
+
+    <div class="card card-blue"><h4>&#x1F4DD; USB（Universal Serial Bus：汎用シリアルバス）</h4>
+      <p>現在<strong>最も広く使われているインタフェース</strong>の1つ。マウスやキーボード、プリンタ、外付けHDD、USBメモリなど幅広い周辺機器の接続に利用。</p>
+      <p>主な特長：</p>
+      <ul>
+        <li><strong>ホットプラグ</strong>に対応：電源を入れたままでも機器を接続できる</li>
+        <li><strong>USBハブ</strong>を使えば、最大<strong>127台</strong>までの周辺機器を接続可能</li>
+        <li><strong>上位互換性</strong>：異なる世代の機器でも接続可（ただし通信速度は古い規格に合わせる）</li>
+      </ul>
+    </div>
+
+    <div class="card card-blue"><h4>&#x1F680; USBの規格と転送速度（教科書3区分）</h4>
+      <table class="tbl-blue">
+        <tr><th>規格名</th><th>最大転送速度</th><th>概要</th></tr>
+        <tr style="background:#fff9e6;"><td><strong>USB 2.0</strong></td><td><strong>約 480Mbps</strong></td><td>現在も多くの機器で利用</td></tr>
+        <tr style="background:#fff9e6;"><td><strong>USB 3.x</strong></td><td><strong>最大 20Gbps</strong></td><td>USB2.0の<strong>約10倍以上</strong>の速度</td></tr>
+        <tr style="background:#fff9e6;"><td><strong>USB4 Version 2.0</strong></td><td><strong>最大 80Gbps</strong></td><td>高速データ転送や映像出力にも対応</td></tr>
+      </table>
+    </div>
+    <div class="goro-row"><span class="goro-chip">USB2.0＝480Mbps<small>定番</small></span><span class="goro-chip">USB3.x＝最大20Gbps<small>10倍以上</small></span><span class="goro-chip">USB4 V2.0＝最大80Gbps<small>映像も</small></span></div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：教科書では3区分。<strong>USB2.0=480Mbps、USB3.x=最大20Gbps、USB4 V2.0=最大80Gbps</strong>を押さえる。</p>
+
+    <div class="card card-teal"><h4>&#x1F50C; USBコネクタの形状（Type-A／B／C）</h4>
+      <ul>
+        <li><strong>Type-A</strong>：従来のパソコンに多い長方形端子。<strong>上下の向きが決まっている</strong></li>
+        <li><strong>Type-B</strong>：プリンタやスキャナなど周辺機器でよく使う端子</li>
+        <li><strong>Type-C</strong>：近年主流の小型コネクタ。<strong>上下どちらの向きでも差し込めるリバーシブル</strong>構造。スマホ・ノートPCで広く採用</li>
+      </ul>
+    </div>
+
+    <div class="card card-purple"><h4>&#x26A1; USB Power Delivery（USB PD）</h4>
+      <p>USB Type-Cで採用されている<strong>電力供給規格</strong>。従来のUSBより高出力で、<strong>最大240ワット</strong>まで電力供給可能。</p>
+      <p>これにより、スマホだけでなく<strong>ノートパソコンの充電やモニタへの電源供給</strong>にも使える。</p>
+      <p style="font-size:.85rem;color:var(--gray-mid);">※ ただし、すべてのType-CポートがPD対応というわけではない。</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">Type-C＝上下OK<small>リバーシブル</small></span><span class="goro-chip">USB PD＝最大240W<small>ノートPCも充電</small></span></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F4F6;</span> Bluetooth（教科書頻出：R2-1／H25-1）</h2>
+    <div class="card card-teal"><h4>&#x1F4F6; Bluetooth（ブルートゥース）</h4>
+      <p>ケーブルを使わずにデータをやり取りできる<strong>近距離無線通信</strong>の規格。マウス、キーボード、イヤホン、スマホなどの機器同士を、<strong>10メートル程度の範囲</strong>で接続できる。</p>
+      <p><strong>2.4GHz帯</strong>の電波を利用。この周波数帯は電子レンジなどでも使われるため<strong>電波干渉が起きやすい</strong>。そこで <strong>周波数ホッピング</strong>（通信中に周波数を短い間隔で切り替える技術）で干渉を避け安定通信を実現。</p>
+      <p>通信速度はUSBより遅いが、<strong>低消費電力</strong>でモバイル機器・ワイヤレス周辺機器を中心に幅広く利用。</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">Bluetooth＝10m<small>近距離無線</small></span><span class="goro-chip">2.4GHz帯＋周波数ホッピング<small>干渉対策</small></span></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F4FA;</span> その他のインタフェース（教科書補足）</h2>
+    <div class="photo-card" style="max-width:300px;margin:0 auto;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/HDMI-Connector.jpg/250px-HDMI-Connector.jpg" alt="HDMI"><span class="cap">📷 HDMI（映像＋音声）</span></div>
+    <table class="tbl-blue">
+      <tr><th>規格</th><th>分類</th><th>用途</th></tr>
+      <tr><td><strong>SCSI</strong></td><td>有線（パラレル）</td><td>外付けHDD・スキャナ。現在は USB／SATA に置き換え</td></tr>
+      <tr><td><strong>SAS</strong>（Serial Attached SCSI）</td><td>有線（シリアル）</td><td>サーバ・業務用ストレージ。24時間稼働の高耐久性</td></tr>
+      <tr><td><strong>SATA</strong>（シリアルATA）</td><td>有線（シリアル）</td><td><strong>HDDやSSDなど内部ストレージの標準</strong>。現在も広く利用</td></tr>
+      <tr><td><strong>e-SATA</strong></td><td>有線（シリアル）</td><td>外付けHDD用SATA。USB3.x／USB4の普及で減少</td></tr>
+      <tr><td><strong>IrDA</strong></td><td>無線（赤外線）</td><td>旧ノートPC・携帯。Bluetooth登場前に利用</td></tr>
+      <tr><td><strong>DVI</strong></td><td>有線（映像）</td><td>HDMI普及前の主流。現在も一部モニタで利用</td></tr>
+      <tr><td><strong>HDMI</strong></td><td>有線（映像＋音声）</td><td><strong>映像と音声を1本のケーブルで伝送</strong>。テレビ・プロジェクタ・PCモニタで広く利用</td></tr>
+    </table>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：HDMI=「<strong>映像＋音声を1本</strong>」、SATA=「<strong>HDD/SSD内部接続の標準</strong>」、IrDA=「<strong>赤外線</strong>」をセット暗記。</p>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x270D;&#xFE0F;</span> このタブの穴埋めチェック</h2>
+    <div class="fill-card">
+      <div class="fill-header bg-orange">入出力IFのキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・タッチパネル3方式：スマホは<span class="fill-blank">静電容量</span>／ATM・券売機は<span class="fill-blank">赤外線</span>／手袋OKは<span class="fill-blank">抵抗膜</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・スキャナ・プリンタの解像度単位＝<span class="fill-blank">dpi</span>（dot per inch）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・1本で順次＝<span class="fill-blank">シリアル</span>／複数本で並列＝<span class="fill-blank">パラレル</span>。現代の主流は<span class="fill-blank">シリアル</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USBは<span class="fill-blank">ホットプラグ</span>対応／USBハブで最大<span class="fill-blank">127台</span>／世代間は<span class="fill-blank">上位互換</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB2.0＝<span class="fill-blank">480Mbps</span>／USB3.x＝最大<span class="fill-blank">20Gbps</span>／USB4 V2.0＝最大<span class="fill-blank">80Gbps</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・上下どちらでも差せるUSBコネクタ＝<span class="fill-blank">Type-C</span>／Type-Cで給電する規格＝<span class="fill-blank">USB PD</span>（最大<span class="fill-blank">240W</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・Bluetoothは<span class="fill-blank">10m</span>程度・<span class="fill-blank">2.4GHz</span>帯・<span class="fill-blank">周波数ホッピング</span>で干渉対策</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・映像＋音声を1本＝<span class="fill-blank">HDMI</span>／HDD/SSD内部接続＝<span class="fill-blank">SATA</span>／赤外線無線＝<span class="fill-blank">IrDA</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（入出力IF）</div>
+      <ul>
+        <li>&#x2776; <strong>タッチパネル3方式</strong>：静電容量（スマホ）／赤外線（券売機）／抵抗膜（手袋OK）</li>
+        <li>&#x2777; <strong>シリアル（USB）vs パラレル（SCSI旧式）</strong>。現代の主流はシリアル</li>
+        <li>&#x2778; USB＝<strong>ホットプラグ・最大127台・上位互換</strong>。Type-CはリバーシブルでPD対応</li>
+        <li>&#x2779; USB速度3区分：<strong>2.0=480M／3.x=20G／USB4 V2.0=80G</strong></li>
+        <li>&#x277A; Bluetooth＝<strong>10m・2.4GHz・周波数ホッピング</strong>。HDMI＝映像＋音声1本</li>
+      </ul>
+    </div>
+    <div class="alert-exam">&#x1F4DD; <strong>次のステップ</strong>：CPU・記憶階層・USB計算などの掘り下げは <strong>Part2「演習・詳細編」</strong>へ。</div>
+  </div>
+
+  <!-- ===== TAB 4: 語呂 ===== -->
+  <div class="tab-panel theme-purple" id="tab4">
+    <div class="mnemonic"><div class="big">&#x1F3ED; 入・出・記・演・制（5大装置）</div><div class="desc"><strong>入</strong>力／<strong>出</strong>力／<strong>記</strong>憶／<strong>演</strong>算／<strong>制</strong>御。<strong>演＋制＝CPU</strong></div></div>
+    <div class="mnemonic"><div class="big">&#x1F9E0; レジスタ＝CPU内の作業机</div><div class="desc">超高速・超小容量。32／64ビットが主流</div></div>
+    <div class="mnemonic"><div class="big">&#x1F3B5; クロック＝メトロノーム</div><div class="desc">CPUの動作リズム。Hz＝1秒間の演算回数。1GHz＝10億回</div></div>
+    <div class="mnemonic"><div class="big">&#x1F4F1; タッチパネル：電・赤・圧</div><div class="desc"><strong>電</strong>＝静電容量（スマホ）／<strong>赤</strong>＝赤外線（券売機）／<strong>圧</strong>＝抵抗膜（手袋OK）</div></div>
+    <div class="mnemonic"><div class="big">&#x1F500; シリアルは1本、パラレルは複数本</div><div class="desc">現代の主流は<strong>シリアル（USB）</strong>。複数本は干渉問題で頭打ち</div></div>
+    <div class="mnemonic"><div class="big">&#x1F680; USB：にっぱち、ニジュウギガ、ハチジュウギガ</div><div class="desc">USB2.0＝480Mbps／USB3.x＝20Gbps／USB4 V2.0＝80Gbps</div></div>
+    <div class="mnemonic"><div class="big">&#x1F50C; Type-C はリバーシブル＋PD（最大240W）</div><div class="desc">上下どちらでも挿せる＋ノートPC充電も可能</div></div>
+    <div class="mnemonic"><div class="big">&#x1F4F6; Bluetooth ＝ ブル・テン・ニーヨンギガ</div><div class="desc">距離10m・2.4GHz帯・周波数ホッピング</div></div>
+  </div>
+
+  <!-- ===== TAB 5: クイズ ===== -->
+  <div class="tab-panel theme-orange" id="tab5">
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> 基礎クイズ（全5問）</h2>
+    <p style="font-size:.9rem;color:var(--gray-mid);margin-bottom:.8rem;">教科書 4-1 準拠の基礎問題。Part2 にも応用クイズあり。</p>
+
+    <div class="quiz-item" id="q1"><span class="quiz-num">1</span>
+      <div class="quiz-question">コンピュータの5大装置のうち、CPUに相当するのはどれとどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q1',2)">A. 入力装置と出力装置</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q1',2)">B. 記憶装置と入力装置</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q1',2)">C. 演算装置と制御装置</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q1',2)">D. 出力装置と記憶装置</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">正解C。CPU＝演算装置＋制御装置。H24-2出題実績あり。</div>
+    </div>
+
+    <div class="quiz-item" id="q2"><span class="quiz-num">2</span>
+      <div class="quiz-question">CPU内にある、演算用のデータを一時的に置く高速・小容量メモリはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q2',1)">A. 主記憶装置（メモリ）</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q2',1)">B. レジスタ</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q2',1)">C. ハードディスク</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q2',1)">D. SSD</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">正解B。レジスタ＝CPU内の超高速・超小容量メモリ。32／64ビットが主流。</div>
+    </div>
+
+    <div class="quiz-item" id="q3"><span class="quiz-num">3</span>
+      <div class="quiz-question">スマートフォンで主流のタッチパネル方式はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q3',1)">A. 抵抗膜方式</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q3',1)">B. 静電容量方式</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q3',1)">C. 赤外線方式</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q3',1)">D. 超音波方式</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">正解B。静電容量方式＝指の電流を感知。マルチタッチ対応。赤外線はATM・券売機、抵抗膜は手袋でも操作可。</div>
+    </div>
+
+    <div class="quiz-item" id="q4"><span class="quiz-num">4</span>
+      <div class="quiz-question">USBの特徴として誤っているものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q4',2)">A. ホットプラグに対応している</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q4',2)">B. USBハブで複数機器を接続できる</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q4',2)">C. 異なる世代の機器は接続できない</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q4',2)">D. シリアル伝送方式である</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">正解C（誤り）。USBは上位互換性があり、異なる世代でも接続可（速度は古い規格に合わせる）。</div>
+    </div>
+
+    <div class="quiz-item" id="q5"><span class="quiz-num">5</span>
+      <div class="quiz-question">USB Type-Cで採用される、最大240Wまでの電力供給規格はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q5',1)">A. USB Hub</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q5',1)">B. USB Power Delivery（USB PD）</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q5',1)">C. USB Boost</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q5',1)">D. USB Charge</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">正解B。USB PD＝Type-Cの給電規格。最大240Wまで対応。ノートPCの充電も可能。</div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: 穴埋め総まとめ ===== -->
+  <div class="tab-panel theme-orange" id="tab6">
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270D;&#xFE0F;</span> 穴埋めチェック（Part1総まとめ）</h2>
+    <div style="text-align:center;margin:1rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab6')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab6')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-purple">① 5大装置</div>
+      <div class="fill-body">
+        <div class="fill-group">・5大装置：<span class="fill-blank">入力</span>／<span class="fill-blank">出力</span>／<span class="fill-blank">記憶</span>／<span class="fill-blank">演算</span>／<span class="fill-blank">制御</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・<span class="fill-blank">演算装置</span>＋<span class="fill-blank">制御装置</span> ＝ <span class="fill-blank">CPU</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">② CPU</div>
+      <div class="fill-body">
+        <div class="fill-group">・CPU内の高速メモリ＝<span class="fill-blank">レジスタ</span>（32／64ビット）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・CPU動作リズム＝<span class="fill-blank">クロック周波数</span>（単位<span class="fill-blank">Hz</span>）。1GHz＝<span class="fill-blank">10億回</span>/秒</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・画像処理特化＝<span class="fill-blank">GPU</span>／GPUを汎用計算に＝<span class="fill-blank">GPGPU</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-orange">③ 入出力装置</div>
+      <div class="fill-body">
+        <div class="fill-group">・スキャナ・プリンタの解像度単位＝<span class="fill-blank">dpi</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・タッチパネル3方式：<span class="fill-blank">静電容量</span>（スマホ）／<span class="fill-blank">赤外線</span>（ATM）／<span class="fill-blank">抵抗膜</span>（手袋OK）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・プリンタ2種：<span class="fill-blank">レーザー</span>（トナー）／<span class="fill-blank">インクジェット</span>（インク粒子）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-orange">④ インタフェース</div>
+      <div class="fill-body">
+        <div class="fill-group">・1本順次＝<span class="fill-blank">シリアル</span>／複数本並列＝<span class="fill-blank">パラレル</span>／現代主流＝<span class="fill-blank">シリアル</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USBは<span class="fill-blank">ホットプラグ</span>対応／USBハブで最大<span class="fill-blank">127台</span>／<span class="fill-blank">上位互換性</span>あり</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB2.0＝<span class="fill-blank">480Mbps</span>／USB3.x＝最大<span class="fill-blank">20Gbps</span>／USB4 V2.0＝最大<span class="fill-blank">80Gbps</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・リバーシブル＝<span class="fill-blank">Type-C</span>／給電規格＝<span class="fill-blank">USB PD</span>（最大<span class="fill-blank">240W</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・Bluetoothは<span class="fill-blank">10m</span>・<span class="fill-blank">2.4GHz</span>・<span class="fill-blank">周波数ホッピング</span>で干渉対策</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・映像＋音声1本＝<span class="fill-blank">HDMI</span>／HDD・SSD内部接続標準＝<span class="fill-blank">SATA</span>／赤外線＝<span class="fill-blank">IrDA</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="alert-exam">&#x1F4DD; <strong>Part1 修了！</strong> 続けて <a href="01.CPU・プロセッサ・入出力インタフェースまとめ_超初心者版_part2.html" style="color:#1565c0;font-weight:700;">📗 Part2：演習・詳細編</a> へ。</div>
+  </div>
+</div>
+
+<div class="footer">中小企業診断士 経営情報システム | CPU・プロセッサ・入出力インタフェース（超初心者版・Part1／教科書4-1準拠）</div>
+
+<script>
+function switchTab(idx){const n=7;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+function handleQuiz(ev,qid,correctIdx){var item=document.getElementById(qid);if(item.classList.contains('answered'))return;item.classList.add('answered');var li=ev.currentTarget;var idx=parseInt(li.dataset.idx);var opts=item.querySelectorAll('.quiz-options li');opts[correctIdx].classList.add('correct');if(idx!==correctIdx){li.classList.add('wrong');}var exp=document.getElementById(qid+'-exp');exp.classList.add('show');exp.classList.add(idx===correctIdx?'correct-exp':'wrong-exp');}
+</script>
+</body>
+</html>

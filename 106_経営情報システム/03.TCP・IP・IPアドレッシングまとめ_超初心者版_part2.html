@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCP/IP・IPアドレッシング（超初心者版・Part2：演習・詳細編） - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.95;min-height:100vh;font-size:.95rem}
+.header{background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue-main) 50%,#5dade2 100%);color:#fff;padding:.6rem 1rem;text-align:center}.header h1{font-size:1.05rem;font-weight:800;letter-spacing:.04em;margin-bottom:.1rem;display:inline-block;margin-right:.6rem}.header .subtitle{font-size:.72rem;opacity:.9;display:inline-block;margin-right:.5rem}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.1rem .55rem;border-radius:14px;font-size:.7rem}
+.partnav{background:#fff;padding:.6rem;text-align:center;font-size:.85rem;box-shadow:var(--shadow);margin-bottom:.5rem}.partnav a{display:inline-block;padding:.4rem 1rem;margin:0 .3rem;border-radius:6px;text-decoration:none;font-weight:700}.partnav .active{background:var(--blue-main);color:#fff}.partnav .other{background:var(--gray-pale);color:var(--gray-dark)}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.7rem;margin:1.1rem 0}.bubble-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12)}.avatar-hint{background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow);position:relative;max-width:88%;font-size:.95rem;line-height:1.95}.bubble-body::before{content:'';position:absolute;top:14px;left:-14px;width:0;height:0;border:8px solid transparent;border-right-color:var(--white)}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.74rem;font-weight:700;color:var(--gray-mid);margin-bottom:.3rem}
+.tab-container{max-width:960px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.85rem .4rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:2rem 1.6rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}.tab-panel.theme-teal{background:var(--teal-light)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.15rem;font-weight:800;margin:2rem 0 1rem;padding:.6rem .9rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1.2rem 1.5rem;margin:1rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-red{border-left-color:var(--red-main)}.card-orange{border-left-color:var(--orange-main)}.card h4{font-size:1rem;font-weight:700;margin-bottom:.5rem}.card p{margin-bottom:.5rem}
+.alert-tip,.alert-exam{border-radius:var(--radius);padding:.95rem 1rem .95rem 3rem;margin:1rem 0;position:relative;font-size:.92rem;line-height:1.85}.alert-tip::before,.alert-exam::before{position:absolute;left:.8rem;top:.85rem;font-size:1.2rem}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"\1F4A1"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"\1F4DD"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);overflow-x:auto}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.7rem 1.2rem;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center;min-width:80px;margin:.25rem}.flow-box small{display:block;font-weight:400;font-size:.74rem;opacity:.9;margin-top:.15rem}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}
+table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.9rem}th,td{padding:.65rem .7rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}tr:hover{background:rgba(0,0,0,.02)}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}
+ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
+.sim-card{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);border-top:4px solid var(--green-main)}.sim-card h4{font-size:1.05rem;font-weight:800;color:var(--green-dark);margin-bottom:.5rem}.sim-label{display:inline-block;padding:.2rem .7rem;border-radius:4px;font-size:.75rem;font-weight:700;color:#fff;background:var(--green-main);margin-bottom:.5rem}.sim-card p{margin-bottom:.6rem}
+.photo-card{background:#fff;border-radius:var(--radius-sm);padding:.8rem;margin:.6rem 0;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid #e0e0e0}
+.photo-card img{max-width:100%;height:auto;max-height:180px;border-radius:4px;background:#f5f5f5}
+.photo-card .cap{display:block;font-size:.78rem;color:var(--gray-mid);margin-top:.3rem;line-height:1.4}
+.photo-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.7rem;margin:.8rem 0}
+.quiz-item{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-size:.9rem;font-weight:700;margin-bottom:.5rem}.quiz-question{font-weight:600;font-size:1rem;margin-bottom:.9rem;line-height:1.8}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.65rem .9rem;margin:.4rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;transition:all .2s;font-size:.93rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.8rem;padding:.9rem;border-radius:var(--radius-sm);font-size:.92rem;line-height:1.8}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}
+.footer{text-align:center;padding:1.8rem;color:var(--gray-light);font-size:.85rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.fill-card .fill-header{padding:14px 20px;font-weight:700;font-size:.98rem;color:#fff}
+.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}
+.fill-card .fill-body{padding:20px 22px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:6px;font-size:.95rem;line-height:2.1}
+.rough{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.exam-pt{font-size:.86rem;margin-top:.5rem;color:#1565c0;background:#e3f2fd;padding:.5rem .75rem;border-radius:6px}
+.exam-warn{font-size:.86rem;margin-top:.4rem;color:#b71c1c;background:#fce4ec;padding:.5rem .75rem;border-radius:6px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.5rem .9rem;border-radius:20px;font-size:.85rem;font-weight:700;margin:.4rem .3rem .4rem 0;box-shadow:0 2px 6px rgba(142,68,173,.3)}.goro-chip::before{content:"\1F3B5 ";margin-right:.3rem}.goro-chip small{font-weight:400;opacity:.95;margin-left:.4rem;font-size:.78rem}
+.goro-row{margin:.6rem 0;padding:.5rem .7rem;background:#faf5fc;border-left:3px solid var(--purple-main);border-radius:4px}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.92rem;line-height:1.85}
+.support-icon{font-size:1.7rem;flex-shrink:0;line-height:1}
+.support-body{flex:1}.support-body strong{color:#e65100}.support-name{font-size:.72rem;font-weight:700;color:#bf360c;margin-bottom:.2rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.1rem 1.3rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}
+.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.keepit ul{list-style:none;padding:0;margin:0}
+.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.9rem;line-height:1.7}
+.keepit li strong{color:#1565c0}
+@media(max-width:600px){.tab-btn{font-size:.65rem;padding:.7rem .2rem}.tab-panel{padding:1.4rem 1rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>TCP/IP・IPアドレッシング（超初心者版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム</div>
+  <div class="badge">📗 Part2：演習・詳細編（全7タブ）</div>
+</div>
+<div class="partnav">
+  <a class="other" href="03.TCP・IP・IPアドレッシングまとめ_超初心者版_part1.html">← 📘 Part1：基礎理解</a>
+  <a class="active">📗 Part2：演習・詳細（このページ）</a>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="blue" onclick="switchTab(0)">&#x1F50D; 詳細&#x2460;CIDR</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F50D; 詳細&#x2461;IPv6/ポート</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(2)">&#x1F3E2; 事例</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(3)">&#x1F4A1; 実例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(4)">&#x1F5FA;&#xFE0F; 図解</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(6)">&#x270D;&#xFE0F; 穴埋め</button>
+  </nav>
+
+  <!-- ===== TAB 0: 詳細①CIDR ===== -->
+  <div class="tab-panel active theme-blue" id="tab0">
+    <div class="alert-tip" style="margin-bottom:1rem;">&#x1F50D; <strong>このタブのゴール</strong>：<strong>CIDR（/24 とか /16）の意味</strong>と、<strong>サブネット計算（254台、62台、14台…）</strong>が分かるようになること。順番に進めば必ず分かるようになっています。1ステップずつ行きましょう！</div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CD;</span> ステップ1：IPアドレスは「2進数32桁」で書ける</h2>
+    <div class="card card-blue"><h4>&#x1F3AF; 数字を1個ずつ「8桁の2進数」に変換しただけ</h4>
+      <p>IPアドレスは <strong>192.168.1.10</strong> のように<strong>4つの数字</strong>。実はこれ、<strong>0と1の並び（2進数）に変換できます</strong>。</p>
+      <p style="text-align:center;margin:.8rem 0;font-size:.92rem;">
+        <span style="background:#263238;color:#aed581;padding:.4rem .7rem;border-radius:4px;font-family:monospace;">192.168.1.10</span><br>↓ 各数字を「8桁の2進数」に直すと…<br>
+        <span style="background:#263238;color:#aed581;padding:.4rem .7rem;border-radius:4px;font-family:monospace;">11000000.10101000.00000001.00001010</span>
+      </p>
+      <p>1個の数字＝<strong>8桁の0と1</strong>。それが4個並ぶので、<strong>合計32桁＝32ビット</strong>。「IPv4は32ビット」って言われるのはこの意味です。</p>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「2進数なんて分からない！」って大丈夫、<strong>計算しなくていい</strong>です。覚えるのは<strong>「IPアドレスは内部的に0と1が32桁並んだもの」</strong>という事実だけ。これが分かれば次のCIDRがスッキリ理解できるよ。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9D0;</span> ステップ2：CIDR「/N」は「先頭何桁が固定か」</h2>
+    <div class="card card-blue"><h4>&#x1F4DD; CIDR（Classless Inter-Domain Routing：クラスレス・ドメイン間経路制御） とは</h4>
+      <p><strong>CIDR（シーアイディーアール）</strong>は <strong>192.168.1.0/24</strong> みたいに書く記法。スラッシュの後ろの数字が<strong>「先頭から何桁の0/1が固定されているか」</strong>を表します。</p>
+      <ul>
+        <li><strong>/24</strong> ＝ 先頭24桁が固定／残り8桁が自由</li>
+        <li><strong>/16</strong> ＝ 先頭16桁が固定／残り16桁が自由</li>
+        <li><strong>/8</strong> ＝ 先頭 8桁が固定／残り24桁が自由</li>
+      </ul>
+      <p>「自由な桁」が<strong>端末の番号</strong>になります。だから自由な桁が多いほど、収容できる端末が多い。</p>
+    </div>
+    <div class="alert-tip" style="background:#e3f2fd;border-color:#90caf9;color:#0d47a1;">
+      &#x1F4A1; <strong>覚えるのはこれだけ</strong>：<br>
+      <strong>「/Nの数字が大きい＝固定が多い＝範囲が狭い＝端末少ない」</strong><br>
+      <strong>「/Nの数字が小さい＝固定が少ない＝範囲が広い＝端末多い」</strong>
+    </div>
+    <div class="goro-row"><span class="goro-chip">大きい/N＝狭い<small>/28＝14台</small></span><span class="goro-chip">小さい/N＝広い<small>/8＝1,677万台</small></span></div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>ここ、<strong>数字と範囲の関係が逆</strong>だから引っかかりやすいの！「大きい数字＝小さい範囲」、これ口に出して3回唱えとこ。「<strong>/24より/28のほうが狭い</strong>」は「ニジュウヨンよりニジュウハチのほうが家が小さい」って覚えてもOK。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F3E2;</span> ステップ3：プライベートIPの クラスA/B/C と CIDR の対応</h2>
+    <p>Part1で出てきた <strong>クラスA／B／C</strong> がそれぞれ <strong>/8、/12、/16</strong> になる理由を見ていきます。「<strong>固定の桁数</strong>」を数えるだけ。</p>
+    <div class="card card-blue"><h4>&#x1F535; クラスA → /8</h4>
+      <p>範囲：<strong>10.0.0.0 〜 10.255.255.255</strong></p>
+      <ul>
+        <li>1組目「10」が<strong>固定</strong>（8桁分）</li>
+        <li>2〜4組目は0〜255まで<strong>自由</strong>（24桁分）</li>
+      </ul>
+      <p>つまり<strong>固定が8桁</strong> → <strong>/8</strong>。自由な24桁で <strong>2の24乗 ≒ 約1,677万台</strong>を収容できる（大企業向け）。</p>
+    </div>
+
+    <div class="card card-orange"><h4>&#x1F7E0; クラスB → /12（ここがちょっと難しい）</h4>
+      <p>範囲：<strong>172.16.0.0 〜 172.31.255.255</strong></p>
+      <ul>
+        <li>1組目「172」が<strong>固定</strong>（8桁分）</li>
+        <li>2組目は<strong>16〜31の範囲だけ</strong>＝<strong>上の4桁だけ固定</strong>、下の4桁は自由</li>
+        <li>3〜4組目は<strong>自由</strong></li>
+      </ul>
+      <p>合わせて<strong>固定が 8＋4 ＝ 12桁</strong> → <strong>/12</strong>。自由な20桁で<strong>約100万台</strong>を収容（中規模向け）。</p>
+      <div class="support" style="margin-top:.5rem;"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「16〜31の範囲ってなんで4桁固定？」と思った？ <strong>16〜31の数字を2進数で書くとぜんぶ「0001◯◯◯◯」で始まる</strong>から。前の4桁が共通＝固定なんだ。試験では細部不要、<strong>「クラスBは/12」</strong>だけ覚えればOK！</div></div>
+    </div>
+
+    <div class="card card-green"><h4>&#x1F7E2; クラスC → /16</h4>
+      <p>範囲：<strong>192.168.0.0 〜 192.168.255.255</strong></p>
+      <ul>
+        <li>1組目「192」と2組目「168」が<strong>両方固定</strong>（8＋8 ＝ 16桁）</li>
+        <li>3〜4組目は<strong>自由</strong>（16桁）</li>
+      </ul>
+      <p>固定が<strong>16桁</strong> → <strong>/16</strong>。自由な16桁で<strong>約6万5千台</strong>（家庭・SOHO向け）。</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">A=/8（10）<small>大企業</small></span><span class="goro-chip">B=/12（172.16〜31）<small>中規模</small></span><span class="goro-chip">C=/16（192.168）<small>家庭</small></span></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9EE;</span> ステップ4：「使える台数」の計算公式</h2>
+    <div class="card card-blue"><h4>&#x1F4CB; 公式：使える台数 ＝ 2 のホスト部ビット数 乗 − 2</h4>
+      <p>言い換えると：<strong>2^(32 − /Nの数字) − 2</strong></p>
+      <p style="margin-top:.5rem;">なんで「−2」するの？ → <strong>2つの番号は予約されているから</strong>です（次の例えで説明）。</p>
+    </div>
+
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">なぜ −2？（マンションで例え）</div>
+      自由な8桁なら、番号は <strong>2^8 ＝ 256通り</strong>作れます。でも住人に渡せる番号は<strong>254個</strong>。なぜ？<br>
+      <br>
+      ・<strong>番号00000000（全部0）</strong> → 「<strong>このマンション全体</strong>」を指す番号として予約（住人には使わせない）<br>
+      ・<strong>番号11111111（全部1）</strong> → 「<strong>マンション内の全員にお知らせ</strong>」用に予約<br>
+      <br>
+      この2つを引くから「−2」。<strong>256 − 2 ＝ 254台</strong>。
+    </div></div>
+
+    <div class="card card-blue"><h4>&#x1F4CA; よく出る計算結果（試験で出るのはこの3つだけ）</h4>
+      <table class="tbl-blue">
+        <tr><th>CIDR</th><th>計算式</th><th>使える台数</th><th>規模感</th></tr>
+        <tr style="background:#fff9e6;"><td><strong>★ /24</strong></td><td>2^(32−24) − 2 ＝ 2^8 − 2</td><td><strong>254 台</strong></td><td>小オフィス</td></tr>
+        <tr style="background:#fff9e6;"><td><strong>★ /26</strong></td><td>2^(32−26) − 2 ＝ 2^6 − 2</td><td><strong>62 台</strong></td><td>1/4フロア</td></tr>
+        <tr style="background:#fff9e6;"><td><strong>★ /28</strong></td><td>2^(32−28) − 2 ＝ 2^4 − 2</td><td><strong>14 台</strong></td><td>少人数</td></tr>
+        <tr><td>/25</td><td>2^7 − 2</td><td>126 台</td><td>半フロア</td></tr>
+        <tr><td>/27</td><td>2^5 − 2</td><td>30 台</td><td>小部署</td></tr>
+      </table>
+    </div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：R02問9・R04問11で出題。<strong>★の3つ（/24=254／/26=62／/28=14）</strong>のどれかが出ます。</p>
+    <div class="goro-row"><span class="goro-chip">/24＝ニーゴーヨン<small>254台</small></span><span class="goro-chip">/26＝ロクニ<small>62台</small></span><span class="goro-chip">/28＝イチヨン<small>14台</small></span></div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「2の何乗とか苦手…」って大丈夫！ <strong>★の3つの「答え」だけ丸暗記</strong>でOK。試験会場で公式を思い出せなくても、「<strong>/24は254、/26は62、/28は14</strong>」って言えれば正解にたどり着けます。</div></div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（詳細①CIDR）</div>
+      <ul>
+        <li>&#x2776; CIDR「/N」＝<strong>先頭から何桁が固定か</strong>。<strong>大きい数字＝狭い範囲</strong>（逆なので注意！）</li>
+        <li>&#x2777; <strong>クラスA=/8（10）／クラスB=/12（172.16〜31）／クラスC=/16（192.168）</strong></li>
+        <li>&#x2778; <strong>使える台数：/24=254／/26=62／/28=14</strong>（−2はマンションの「全体」と「全員宛」が予約だから）</li>
+      </ul>
+    </div>
+    <div class="alert-exam">&#x1F4DD; お疲れさまでした！ 続けて<strong>「&#x1F50D; 詳細&#x2461;IPv6/ポート」</strong>タブへ。</div>
+  </div>
+
+  <!-- ===== TAB 1: 詳細②IPv6/ポート ===== -->
+  <div class="tab-panel theme-blue" id="tab1">
+    <div class="alert-tip" style="margin-bottom:1rem;">&#x1F50D; <strong>このタブのゴール</strong>：<strong>IPv4とIPv6の違い</strong>、<strong>ポート番号11個</strong>の整理、<strong>ファイアウォールやクラウドへの応用</strong>が分かるようになること。</div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F30D;</span> IPv4（Internet Protocol version 4：IP第4版） vs IPv6（Internet Protocol version 6：IP第6版）</h2>
+    <div class="card card-blue"><h4>&#x1F4CD; ひとことで言うと「桁数の違い」</h4>
+      <p><strong>IPv4は32桁、IPv6は128桁</strong>の0と1で書きます。桁数が増えると<strong>使える住所の数</strong>がケタ違いに増えます。</p>
+    </div>
+    <table class="tbl-blue">
+      <tr><th>項目</th><th>IPv4</th><th>IPv6</th></tr>
+      <tr><td>アドレス長</td><td>32ビット</td><td><strong>128ビット</strong></td></tr>
+      <tr><td>表記</td><td>10進数4組（例：192.168.1.1）</td><td>16進数8組（例：2001:db8::1）</td></tr>
+      <tr><td>個数</td><td>約43億（枯渇）</td><td>事実上無限</td></tr>
+      <tr><td>NAT（Network Address Translation：アドレス変換）</td><td>ほぼ必須</td><td>不要</td></tr>
+    </table>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：H27問8・R01問12で出題。<strong>IPv6は128ビット</strong>の暗記が必須。</p>
+    <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「IPv6ではNATが必須」は誤り。正しくは<strong>NATは不要</strong>（IPがあり余るため）。</p>
+    <div class="goro-row"><span class="goro-chip">IPv4＝32ビット<small>10進4組</small></span><span class="goro-chip">IPv6＝128ビット<small>16進8組／NAT不要</small></span></div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>IPv4が32ビット、IPv6が128ビット。<strong>「6だから後ろに6つの数字」</strong>……は嘘だけど、<strong>「v4の4倍が128」</strong>って覚えると忘れない！ ポイントは<strong>「IPv6はアドレスが余りまくるからNATいらない」</strong>。試験で「IPv6でもNAT必須」って書いてあったら<strong>×</strong>、これだけ！</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F6AA;</span> ポート番号（完全版）</h2>
+    <div class="alert-tip" style="margin-bottom:.6rem;">&#x1F4A1; <strong>★6つだけ覚えればOK</strong>。<br>
+      <strong>ポート番号＝建物の「◯◯窓口」の番号</strong>。<strong>確実型＝TCP（Transmission Control Protocol：通信制御プロトコル／書留）</strong>／<strong>速い型＝UDP（User Datagram Protocol：ユーザデータグラムプロトコル／普通郵便）</strong>。<br>
+      表内略語の正式名：<strong>FTP</strong>=File Transfer Protocol／<strong>SMTP</strong>=Simple Mail Transfer Protocol／<strong>DNS</strong>=Domain Name System／<strong>DHCP</strong>=Dynamic Host Configuration Protocol／<strong>HTTP</strong>=HyperText Transfer Protocol／<strong>POP</strong>=Post Office Protocol／<strong>IMAP</strong>=Internet Message Access Protocol／<strong>HTTPS</strong>=HTTP Secure
+    </div>
+    <table class="tbl-blue">
+      <tr><th>サービス</th><th>ポート</th><th>型</th><th>ひとことで何？</th></tr>
+      <tr><td>FTP</td><td>20/21</td><td>確実型</td><td>ファイル転送</td></tr>
+      <tr style="background:#fff9e6;"><td><strong>★ SMTP</strong></td><td><strong>25</strong></td><td>確実型</td><td>メールを<strong>送る</strong></td></tr>
+      <tr style="background:#fff9e6;"><td><strong>★ DNS</strong></td><td><strong>53</strong></td><td>速い型</td><td>名前⇔IP変換（電話帳）</td></tr>
+      <tr><td>DHCP</td><td>67/68</td><td>速い型</td><td>IPアドレスを自動配布</td></tr>
+      <tr style="background:#fff9e6;"><td><strong>★ HTTP</strong></td><td><strong>80</strong></td><td>確実型</td><td><strong>Webページ</strong></td></tr>
+      <tr style="background:#fff9e6;"><td><strong>★ POP</strong></td><td><strong>110</strong></td><td>確実型</td><td>メール受信（DL型）</td></tr>
+      <tr style="background:#fff9e6;"><td><strong>★ IMAP</strong></td><td><strong>143</strong></td><td>確実型</td><td>メール受信（残置型）</td></tr>
+      <tr style="background:#fff9e6;"><td><strong>★ HTTPS</strong></td><td><strong>443</strong></td><td>確実型</td><td>Webページ（暗号化）</td></tr>
+    </table>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：頻出は★の6つ。<strong>HTTP=80／HTTPS=443／SMTP=25／POP=110／IMAP=143</strong> はセット暗記。</p>
+    <div class="goro-row"><span class="goro-chip">ハチマル＝Web<small>HTTP=80</small></span><span class="goro-chip">ヨンヨンサン＝セキュア<small>HTTPS=443</small></span><span class="goro-chip">ニーゴ＝送信<small>SMTP=25</small></span><span class="goro-chip">イイレイ＝POP<small>POP=110</small></span><span class="goro-chip">イーヨミ＝IMAP<small>IMAP=143（イ・ヨ・ミ）</small></span></div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#xFE0F;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>11個全部は厳しいよね。<strong>★の6つだけ</strong>に絞ろう！特に試験で出るのは<strong>HTTP=80・HTTPS=443・SMTP=25</strong>の3点セット。残りの POP=110、IMAP=143、DNS=53 は「なんとなく見たことある」レベルで合格できるよ。Telnet とか FTP-Data とかは<strong>無視してOK</strong>。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4A1;</span> 応用論点</h2>
+    <div class="card card-purple"><h4>【1次の横断】ファイアウォール設定</h4>
+      <p>Webサーバーでは<strong>80／443番の窓口だけ開けて</strong>、他は閉じるのが基本。「開いている窓口＝攻撃される入口」なので、使う窓口以外は全部閉めるのが鉄則。</p>
+    </div>
+    <div class="card card-purple"><h4>【1次の横断】クラウド（AWS等）でも同じ用語</h4>
+      <p>クラウド上に「自分専用のネットワーク区画」を借りる際にも、本書で学んだ <strong>CIDR</strong>・<strong>サブネット</strong>・<strong>NAT</strong> がそのまま使われます。<strong>オンプレで覚えた知識がクラウドでも通用する</strong>ということ。</p>
+    </div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（詳細②IPv6/ポート）</div>
+      <ul>
+        <li>&#x2776; <strong>IPv6=128ビット・NAT不要</strong>。「IPv6でNAT必須」は引っかけ（誤り）</li>
+        <li>&#x2777; <strong>頻出ポート★6つ</strong>：HTTP=80／HTTPS=443／SMTP=25／POP=110／IMAP=143／DNS=53</li>
+        <li>&#x2778; <strong>Webサーバーは 80/443 だけ開ける</strong>／<strong>クラウドでも CIDR・サブネット・NAT は同じ</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 事例 ===== -->
+  <div class="tab-panel theme-green" id="tab2">
+    <div class="sim-card"><span class="sim-label">事例1</span>
+      <h4>花屋A店：新店舗で Wi-Fi を導入したい</h4>
+      <p><strong>与件</strong>：レジ2台、事務用PC3台、従業員スマホ4台、お客様用フリーWi-Fi。合計10台＋α。</p>
+      <p><strong>解決</strong>：家庭用Wi-Fiルータ1台で足りる。内部は<strong>プライベートIP（192.168.1.〜）</strong>、外向けは<strong>NAPT（Network Address Port Translation：ポート付きアドレス変換）</strong>で1つのグローバルIPを共有。お客様向けは別SSIDに分離してセキュリティ確保。</p>
+      <p style="color:var(--green-dark);"><strong>学び</strong>：規模が小さければ市販ルータ1台で構築可能。NAPTでグローバルIPコスト削減。</p>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>診断士試験はこういう「中小企業の現場でどう使う？」が肝。<strong>「規模が小さい＝市販ルータ＋NAPTで十分」</strong>って結論は試験でも実務でも超頻出のパターン。難しく考えず、<strong>「家のWi-Fi構成と一緒」</strong>って思えばOK！</div></div>
+
+    <div class="sim-card"><span class="sim-label">事例2</span>
+      <h4>製造業B社：本社と支店をつなぎたい</h4>
+      <p><strong>与件</strong>：本社（本州）と支店（北海道）で在庫・顧客情報を共有したい。</p>
+      <p><strong>解決</strong>：<strong>VPN（Virtual Private Network：仮想プライベート網）<span class="rough">インターネット経由で安全な専用線を作る技術</span></strong>で両拠点を暗号化トンネルで接続。お互いのプライベートIPで通信可能に。専用線より安く、インターネット経由より安全。</p>
+    </div>
+
+    <div class="sim-card"><span class="sim-label">事例3</span>
+      <h4>サービス業C社：Webサイトが頻繁に落ちる</h4>
+      <p><strong>与件</strong>：自前サーバーでWeb公開。アクセス集中で応答しなくなる。</p>
+      <p><strong>解決</strong>：<strong>クラウド（AWS等）</strong>に移行。サーバーがダウンしても自動で別サーバーに切り替わる設計（冗長化）。<strong>CIDR</strong>・<strong>サブネット</strong>を設計し、既存ネットワーク知識がそのまま使える。</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">小規模＝市販ルータ＋NAPT</span><span class="goro-chip">拠点間＝VPN</span><span class="goro-chip">アクセス集中＝クラウド</span></div>
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（事例）</div>
+      <ul>
+        <li>&#x2776; <strong>小規模オフィス</strong> → 市販Wi-Fiルータ1台＋NAPTでOK</li>
+        <li>&#x2777; <strong>離れた拠点を繋ぐ</strong> → VPN（暗号化トンネル）</li>
+        <li>&#x2778; <strong>アクセス集中・サーバー落ち</strong> → クラウド移行＋冗長化</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 実例 ===== -->
+  <div class="tab-panel theme-red" id="tab3">
+    <div class="card card-red"><h4>&#x1F4F1; 家のWi-Fiルータの中で起きていること</h4>
+      <p>スマホで YouTube を見始めると…</p>
+      <ol>
+        <li>スマホが「youtube.com のIPアドレスは？」とルータに問合せ（DNS／<strong>UDP・ポート53</strong>）</li>
+        <li>ルータがインターネットのDNSサーバーに問合せてIPを取得（ここまで<strong>UDP</strong>）</li>
+        <li>スマホが取得したIPの<strong>YouTubeのWebサーバにTCP接続</strong>（ポート443でHTTPS）<br><small style="color:var(--gray-mid);">※ ②までのDNS（UDP）と、③のWeb通信（TCP）は<strong>別のプロトコル</strong>。プロトコルがここで切り替わる！</small></li>
+        <li>ルータが NAPT でスマホのプライベートIPを自分のグローバルIPに変換</li>
+        <li>動画データがパケットで小分けに送られて、ブラウザで再生</li>
+      </ol>
+      <p><strong>数秒の裏で、DNS・TCP・HTTPS・NAPT が全部動いている！</strong></p>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F30D; IPv4が足りなくなった話（2011年枯渇）</h4>
+      <p>世界のIPv4在庫は2011年に枯渇。43億個では世界人口70億と機器多数に足りない。対策：</p>
+      <ul>
+        <li><strong>NAPT</strong>で1つのIPを多数端末で共有（延命策）</li>
+        <li><strong>IPv6</strong>に移行（128ビット、事実上無限）</li>
+      </ul>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#xFE0F;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「2011年に枯渇」って覚えなくていいよ！ 大事なのは<strong>「足りなくなったから対策してる」</strong>ってこと。対策2つ：<strong>NAPTで延命／IPv6で根本解決</strong>。試験では「IPv4枯渇への対策は？」って聞かれたらこの2つを答えればOK！</div></div>
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（実例）</div>
+      <ul>
+        <li>&#x2776; YouTube視聴の裏で動くのは <strong>DNS（UDP）→TCP接続→HTTPS→NAPT</strong>。<strong>DNSはUDP、その後のWeb通信はTCP</strong>と切り替わる</li>
+        <li>&#x2777; <strong>IPv4枯渇への対策＝NAPT＋IPv6</strong>（この2つセット）</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: 図解 ===== -->
+  <div class="tab-panel theme-orange" id="tab4">
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解1：OSI（Open Systems Interconnection：開放型システム間相互接続） 7層と代表プロトコル</h2>
+    <div class="diagram">
+      <table class="tbl-orange">
+        <tr><th>層</th><th>名前</th><th>代表</th></tr>
+        <tr><td>7</td><td>アプリ</td><td>HTTP/HTTPS/SMTP/POP/IMAP/DNS</td></tr>
+        <tr><td>6</td><td>プレゼン</td><td>SSL/TLS（Secure Sockets Layer／Transport Layer Security）</td></tr>
+        <tr><td>5</td><td>セッション</td><td>—</td></tr>
+        <tr><td>4</td><td>トランスポート</td><td><strong>TCP/UDP</strong></td></tr>
+        <tr><td>3</td><td>ネットワーク</td><td><strong>IP</strong></td></tr>
+        <tr><td>2</td><td>データリンク</td><td>イーサネット</td></tr>
+        <tr><td>1</td><td>物理</td><td>ケーブル/電波</td></tr>
+      </table>
+    </div>
+    <p style="font-size:.9rem;color:var(--gray-mid);">通信プロトコルが<strong>どの層で動くか</strong>の早見表。試験で頻出の3点は<strong>HTTP=7層／TCP/UDP=4層／IP=3層</strong>。「Webページを取りに行く（HTTP）」「確実か速さか決める（TCP/UDP）」「住所と経路を決める（IP）」が、それぞれ別の層の仕事として整理されています。</p>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解2：プライベートIP早見</h2>
+    <div class="diagram">
+      <div class="flow-row">
+        <div class="flow-box fb-blue">A<small>10.0.0.0/8<br>大企業</small></div>
+        <div class="flow-box fb-green">B<small>172.16〜31/12<br>中規模</small></div>
+        <div class="flow-box fb-orange">C<small>192.168/16<br>家庭</small></div>
+      </div>
+    </div>
+    <p style="font-size:.9rem;color:var(--gray-mid);">「どの会社・家庭でも自由に内線として使ってよい」と世界で取り決められた3つの範囲。家庭で見るのはほぼ <strong>クラスC（192.168.〜）</strong>。試験の引っかけは<strong>クラスBの範囲</strong>＝「<strong>172は16〜31だけ</strong>」（172.32や172.40はプライベートIPではない）。</p>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F9ED;</span> 図解3：CIDRと使えるホスト数</h2>
+    <div class="diagram">
+      <table class="tbl-blue">
+        <tr><th>CIDR</th><th>ホスト数</th><th>規模感</th></tr>
+        <tr><td>/24</td><td><strong>254</strong></td><td>小オフィス</td></tr>
+        <tr><td>/26</td><td><strong>62</strong></td><td>1/4フロア</td></tr>
+        <tr><td>/28</td><td><strong>14</strong></td><td>少人数</td></tr>
+      </table>
+    </div>
+    <p style="font-size:.9rem;color:var(--gray-mid);">CIDR「/X」の数字が<strong>大きいほど範囲は狭く</strong>（使える端末が少なく）なります。公式は <strong>2^(32−X) − 2</strong>（−2はネットワークアドレスとブロードキャストの予約分）。<strong>/24=254、/26=62、/28=14</strong> はサブネット計算問題で頻出。</p>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#xFE0F;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>図解は<strong>試験前日の最終チェック</strong>に使うのがオススメ！ ここに載ってる3つの図さえ脳に焼き付ければ、TCP/IP分野の半分は取れる。<strong>OSI 3点（HTTP=7／TCP=4／IP=3）</strong>、<strong>プライベートIP 3つ（10／172.16〜31／192.168）</strong>、<strong>CIDR 3つ（254／62／14）</strong>。<strong>3×3＝9個</strong>覚えるだけ！</div></div>
+  </div>
+
+  <!-- ===== TAB 5: クイズ ===== -->
+  <div class="tab-panel theme-orange" id="tab5">
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> 応用クイズ（全4問）</h2>
+    <p style="font-size:.9rem;color:var(--gray-mid);margin-bottom:.8rem;">Part2の内容から。基礎クイズはPart1に。</p>
+
+    <div class="quiz-item" id="q1"><span class="quiz-num">1</span>
+      <div class="quiz-question">TCPはOSI参照モデルの何層か。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q1',3)">A. 第1層（物理）</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q1',3)">B. 第3層（ネットワーク）</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q1',3)">C. 第7層（アプリ）</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q1',3)">D. 第4層（トランスポート）</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">正解D。TCP/UDPは第4層。IPは第3層、HTTPは第7層。</div>
+    </div>
+
+    <div class="quiz-item" id="q2"><span class="quiz-num">2</span>
+      <div class="quiz-question">UDPの特徴として正しいものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q2',1)">A. コネクションを確立して確実に届ける</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q2',1)">B. コネクションレスで再送しない</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q2',1)">C. Webブラウジングで主に使われる</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q2',1)">D. 順序制御で到着順を保証する</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">正解B。A・C・DはTCP。UDPは投げっぱなし、動画・音声・DNSで使う。</div>
+    </div>
+
+    <div class="quiz-item" id="q3"><span class="quiz-num">3</span>
+      <div class="quiz-question">1つのグローバルIPで複数端末を同時接続可能にするのは？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q3',0)">A. NAPT（IPマスカレード）</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q3',0)">B. NAT</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q3',0)">C. DNS</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q3',0)">D. DHCP</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">正解A。NAPTはIP＋ポート番号を変換。NATは1対1のみ。</div>
+    </div>
+
+    <div class="quiz-item" id="q4"><span class="quiz-num">4</span>
+      <div class="quiz-question">IPv6の特徴はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q4',2)">A. 32ビットのアドレス空間</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q4',2)">B. 10進数4組で表記</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q4',2)">C. 128ビットでNAT不要</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q4',2)">D. アドレスは枯渇傾向</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">正解C。IPv6は128ビット・16進8組・NAT不要。A/BはIPv4の特徴。</div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: 穴埋め ===== -->
+  <div class="tab-panel theme-teal" id="tab6">
+    <h2 class="section-title st-teal"><span class="st-icon">&#x270D;&#xFE0F;</span> 穴埋めチェック（Part2総まとめ）</h2>
+    <div style="text-align:center;margin:1rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab6')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab6')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">① CIDR・サブネット計算</div>
+      <div class="fill-body">
+        <div class="fill-group">・CIDR /X のホスト数＝<span class="fill-blank">2^(32−X)−2</span>／/24＝<span class="fill-blank">254</span>／/26＝<span class="fill-blank">62</span>／/28＝<span class="fill-blank">14</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・−2する理由：<span class="fill-blank">ネットワークアドレス</span>と<span class="fill-blank">ブロードキャストアドレス</span>が予約</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・CIDR「/N」のNは<span class="fill-blank">先頭から何ビットが固定されているか</span>を表す</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">② IPv6・ポート完全版</div>
+      <div class="fill-body">
+        <div class="fill-group">・IPv6は<span class="fill-blank">128</span>ビット／<span class="fill-blank">16進数</span>8組表記／NATは<span class="fill-blank">不要</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・SMTP＝<span class="fill-blank">25</span>／DNS＝<span class="fill-blank">53</span>／HTTP＝<span class="fill-blank">80</span>／POP＝<span class="fill-blank">110</span>／IMAP＝<span class="fill-blank">143</span>／HTTPS＝<span class="fill-blank">443</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・TCPは「<span class="fill-blank">確実型</span>（書留）」、UDPは「<span class="fill-blank">速い型</span>（普通郵便）」</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-green">③ 事例・実例から</div>
+      <div class="fill-body">
+        <div class="fill-group">・1つのグローバルIPで多数端末を接続＝<span class="fill-blank">NAPT</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・離れた拠点を安全に接続＝<span class="fill-blank">VPN</span>（暗号化トンネル）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・クラウドでも<span class="fill-blank">CIDR</span>・<span class="fill-blank">サブネット</span>・<span class="fill-blank">NAT</span>の概念は同じ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・Webを見るとき最初に動くのが<span class="fill-blank">DNS</span>（名前→IP変換）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・IPv4枯渇への対策＝<span class="fill-blank">NAPT</span>＋<span class="fill-blank">IPv6</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="alert-tip">&#x1F389; <strong>お疲れさまでした！</strong> Part1・Part2を通して TCP/IP・IPアドレッシングの主要論点を一通り押さえました。試験対策としては、<strong>ポート番号の★6つ・プライベートIPの3範囲・OSI層の3点（HTTP=7層／TCP=4層／IP=3層）</strong>を最優先で暗記。</div>
+  </div>
+</div>
+
+<div class="footer">中小企業診断士 経営情報システム | TCP/IP・IPアドレッシング（超初心者版・Part2）</div>
+
+<script>
+function switchTab(idx){const n=7;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+function handleQuiz(ev,qid,correctIdx){var item=document.getElementById(qid);if(item.classList.contains('answered'))return;item.classList.add('answered');var li=ev.currentTarget;var idx=parseInt(li.dataset.idx);var opts=item.querySelectorAll('.quiz-options li');opts[correctIdx].classList.add('correct');if(idx!==correctIdx){li.classList.add('wrong');}var exp=document.getElementById(qid+'-exp');exp.classList.add('show');exp.classList.add(idx===correctIdx?'correct-exp':'wrong-exp');}
+</script>
+</body>
+</html>

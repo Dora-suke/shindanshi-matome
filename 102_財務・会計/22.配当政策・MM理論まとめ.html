@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配当政策・MM理論まとめ - 中小企業診断士 財務・会計</title>
+<style>
+:root {
+  --orange-dark: #d35400; --orange-main: #e67e22; --orange-light: #f39c12;
+  --orange-pale: #fdebd0; --orange-bg: #fef9f3;
+  --blue-dark: #1a5276; --blue-main: #2980b9; --blue-light: #d6eaf8; --blue-bg: #eaf2f8;
+  --red-dark: #922b21; --red-main: #e74c3c; --red-light: #fadbd8; --red-bg: #fdf2f0;
+  --green-dark: #1e8449; --green-main: #27ae60; --green-light: #d5f5e3; --green-bg: #eafaf1;
+  --purple-dark: #6c3483; --purple-main: #8e44ad; --purple-light: #e8daef; --purple-bg: #f5eef8;
+  --pink-main: #e91e63; --pink-light: #fce4ec;
+  --gray-dark: #2c3e50; --gray-mid: #5d6d7e; --gray-light: #aeb6bf; --gray-pale: #f4f6f7;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --radius: 10px; --radius-sm: 6px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background: var(--orange-bg); color: var(--gray-dark); line-height: 1.75; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--blue-main) 50%, var(--purple-main) 100%);
+  color: white; padding: 2rem 1.5rem 1.2rem; text-align: center;
+}
+.header h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: 0.04em; margin-bottom: 0.3rem; }
+.header .subtitle { font-size: 0.9rem; opacity: 0.95; }
+.header .badge {
+  display: inline-block; background: rgba(255,255,255,0.25);
+  padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.78rem; margin-top: 0.5rem;
+}
+
+/* Bubbles */
+.bubble-wrap { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.8rem 0; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 1.3rem; flex-shrink: 0; color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.avatar-teacher { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.avatar-student { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.avatar-hint { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.avatar-warn { background: linear-gradient(135deg, #ef5350, #c62828); }
+.bubble-body {
+  background: var(--white); border-radius: 14px; padding: 0.7rem 1rem;
+  box-shadow: var(--shadow); position: relative; max-width: 85%;
+  font-size: 0.9rem; line-height: 1.7;
+}
+.bubble-body::before {
+  content: ''; position: absolute; top: 14px; width: 0; height: 0;
+  border: 8px solid transparent;
+}
+.bubble-wrap:not(.right) .bubble-body::before { left: -14px; border-right-color: var(--white); }
+.bubble-wrap.right .bubble-body::before { right: -14px; border-left-color: var(--white); }
+.bubble-body.b-orange { background: #fff8e1; border: 1px solid #ffe082; }
+.bubble-body.b-blue { background: #e3f2fd; border: 1px solid #90caf9; }
+.bubble-body.b-green { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.bubble-body.b-red { background: #fce4ec; border: 1px solid #ef9a9a; }
+.bubble-body.b-purple { background: #f3e5f5; border: 1px solid #ce93d8; }
+.bubble-wrap:not(.right) .bubble-body.b-orange::before { border-right-color: #fff8e1; }
+.bubble-wrap:not(.right) .bubble-body.b-blue::before { border-right-color: #e3f2fd; }
+.bubble-wrap:not(.right) .bubble-body.b-green::before { border-right-color: #e8f5e9; }
+.bubble-wrap:not(.right) .bubble-body.b-red::before { border-right-color: #fce4ec; }
+.bubble-wrap:not(.right) .bubble-body.b-purple::before { border-right-color: #f3e5f5; }
+.bubble-wrap.right .bubble-body.b-orange::before { border-right-color: transparent; border-left-color: #fff8e1; }
+.bubble-wrap.right .bubble-body.b-blue::before { border-right-color: transparent; border-left-color: #e3f2fd; }
+.bubble-wrap.right .bubble-body.b-green::before { border-right-color: transparent; border-left-color: #e8f5e9; }
+.bubble-wrap.right .bubble-body.b-red::before { border-right-color: transparent; border-left-color: #fce4ec; }
+.bubble-wrap.right .bubble-body.b-purple::before { border-right-color: transparent; border-left-color: #f3e5f5; }
+.bubble-body strong { color: #c2185b; }
+.bubble-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-mid); margin-bottom: 0.2rem; }
+
+/* Tabs */
+.tab-container { max-width: 960px; margin: 0 auto 2rem; padding: 0 0.8rem; }
+.tab-nav {
+  display: flex; flex-wrap: wrap; gap: 2px; background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0; box-shadow: var(--shadow);
+  position: sticky; top: 0; z-index: 100; padding: 2px;
+}
+.tab-btn {
+  flex: 1 1 auto; min-width: 90px; padding: 0.7rem 0.5rem; border: none;
+  background: var(--white); color: var(--gray-mid); font-size: 0.72rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent;
+  white-space: nowrap; text-align: center; border-radius: 4px 4px 0 0;
+}
+.tab-btn:hover { opacity: 0.85; }
+.tab-btn[data-color="pink"] { color: var(--pink-main); }
+.tab-btn[data-color="blue"] { color: var(--blue-main); }
+.tab-btn[data-color="purple"] { color: var(--purple-main); }
+.tab-btn[data-color="red"] { color: var(--red-main); }
+.tab-btn[data-color="green"] { color: var(--green-main); }
+.tab-btn[data-color="orange"] { color: var(--orange-main); }
+.tab-btn.active[data-color="pink"] { border-bottom-color: var(--pink-main); background: var(--pink-light); }
+.tab-btn.active[data-color="blue"] { border-bottom-color: var(--blue-main); background: var(--blue-light); }
+.tab-btn.active[data-color="purple"] { border-bottom-color: var(--purple-main); background: var(--purple-light); }
+.tab-btn.active[data-color="red"] { border-bottom-color: var(--red-main); background: var(--red-light); }
+.tab-btn.active[data-color="green"] { border-bottom-color: var(--green-main); background: var(--green-light); }
+.tab-btn.active[data-color="orange"] { border-bottom-color: var(--orange-main); background: var(--orange-pale); }
+.tab-panel {
+  display: none; padding: 1.5rem 1.2rem; box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius); animation: fadeIn 0.3s ease;
+}
+.tab-panel.active { display: block; }
+.tab-panel.theme-pink { background: var(--pink-light); }
+.tab-panel.theme-blue { background: var(--blue-bg); }
+.tab-panel.theme-purple { background: var(--purple-bg); }
+.tab-panel.theme-red { background: var(--red-bg); }
+.tab-panel.theme-green { background: var(--green-bg); }
+.tab-panel.theme-orange { background: var(--orange-bg); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.section-title {
+  font-size: 1.15rem; font-weight: 800; margin: 1.3rem 0 0.8rem; padding: 0.5rem 0.8rem;
+  border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; color: white;
+}
+.section-title:first-child { margin-top: 0; }
+.st-pink { background: linear-gradient(135deg, var(--pink-main), #f06292); }
+.st-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); }
+.st-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); }
+.st-red { background: linear-gradient(135deg, var(--red-main), #e57373); }
+.st-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); }
+.st-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); }
+
+.card {
+  background: var(--white); border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem; margin: 0.7rem 0; border-left: 4px solid var(--gray-light);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-blue { border-left-color: var(--blue-main); }
+.card-green { border-left-color: var(--green-main); }
+.card-purple { border-left-color: var(--purple-main); }
+.card-red { border-left-color: var(--red-main); }
+.card-orange { border-left-color: var(--orange-main); }
+.card-pink { border-left-color: var(--pink-main); }
+.card h4 { font-size: 0.98rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+.alert-box {
+  border-radius: var(--radius); padding: 0.8rem 1rem 0.8rem 3rem;
+  margin: 0.8rem 0; position: relative; font-size: 0.9rem; line-height: 1.7;
+}
+.alert-box::before { position: absolute; left: 0.8rem; top: 0.7rem; font-size: 1.2rem; }
+.alert-danger { background: #fce4ec; border: 1px solid #ef9a9a; color: #b71c1c; }
+.alert-danger::before { content: "\26A0\FE0F"; }
+.alert-tip { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+.alert-tip::before { content: "\1F4A1"; }
+.alert-exam { background: #fff3e0; border: 1px solid #ffcc80; color: #e65100; }
+.alert-exam::before { content: "\1F4DD"; }
+
+table { width: 100%; border-collapse: collapse; margin: 0.7rem 0; font-size: 0.9rem; background: white; border-radius: var(--radius-sm); overflow: hidden; }
+th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+tr:hover { background: rgba(0,0,0,0.02); }
+.tbl-blue th { background: var(--blue-main); color: white; }
+.tbl-blue tr:nth-child(even) td { background: var(--blue-light); }
+.tbl-green th { background: var(--green-main); color: white; }
+.tbl-green tr:nth-child(even) td { background: var(--green-light); }
+.tbl-purple th { background: var(--purple-main); color: white; }
+.tbl-purple tr:nth-child(even) td { background: var(--purple-light); }
+.tbl-pink th { background: var(--pink-main); color: white; }
+.tbl-pink tr:nth-child(even) td { background: var(--pink-light); }
+
+ul, ol { padding-left: 1.3rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.92rem; }
+
+.formula-box {
+  background: linear-gradient(135deg, #263238, #37474f);
+  color: white; padding: 0.9rem 1.2rem; border-radius: var(--radius-sm);
+  margin: 0.7rem 0; font-size: 1rem; font-weight: 600; text-align: center;
+  letter-spacing: 0.02em;
+}
+.formula-box .big { font-size: 1.15rem; display: block; margin: 0.3rem 0; color: #ffeb3b; }
+.formula-box ruby rt, .goro-formula ruby rt {
+  color: #ffb74d; font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.02em; line-height: 1.1;
+}
+.goro-formula {
+  background: linear-gradient(135deg, #fff3e0, #fff8e1);
+  border: 3px solid var(--orange-main); border-radius: var(--radius);
+  padding: 1.4rem 1rem 1rem; margin: 0.8rem 0; text-align: center;
+  line-height: 3.2; font-size: 1.05rem; font-weight: 700; color: #263238;
+}
+.goro-formula ruby { margin: 0 2px; }
+.goro-formula ruby rt { color: #d84315; font-size: 0.7rem; }
+.goro-formula .eq { font-size: 1.2rem; margin: 0 4px; }
+
+/* いらすとや風ストーリーボード */
+.goro-story {
+  background: white; border: 3px solid var(--orange-main);
+  border-radius: var(--radius); padding: 1rem 0.6rem;
+  margin: 0.8rem 0; overflow-x: auto;
+}
+.goro-story-title {
+  font-size: 0.95rem; font-weight: 800; color: var(--orange-dark);
+  text-align: center; margin-bottom: 0.6rem;
+}
+.goro-story-row {
+  display: flex; justify-content: center; align-items: flex-start;
+  gap: 0.3rem; flex-wrap: wrap;
+}
+.goro-cell {
+  background: linear-gradient(135deg, #fff9e6, #fff);
+  border: 2px solid #ffb74d; border-radius: 10px;
+  padding: 0.4rem 0.3rem; min-width: 74px; text-align: center;
+  box-shadow: 0 2px 6px rgba(255,152,0,0.18);
+}
+.goro-emoji { font-size: 2.2rem; line-height: 1.1; display: block; }
+.goro-label {
+  font-size: 0.72rem; font-weight: 800; color: var(--orange-dark);
+  margin-top: 0.2rem; line-height: 1.3;
+}
+.goro-sub {
+  font-size: 0.65rem; color: var(--gray-mid); margin-top: 0.1rem;
+  line-height: 1.2;
+}
+.goro-arrow {
+  font-size: 1.2rem; color: var(--orange-main); align-self: center;
+  font-weight: 800;
+}
+.goro-story.purple { border-color: var(--purple-main); }
+.goro-story.purple .goro-cell { border-color: #ba68c8; background: linear-gradient(135deg, #f5e6ff, #fff); box-shadow: 0 2px 6px rgba(142,68,173,0.18); }
+.goro-story.purple .goro-story-title { color: var(--purple-dark); }
+.goro-story.purple .goro-label { color: var(--purple-dark); }
+.goro-story.purple .goro-arrow { color: var(--purple-main); }
+
+.point-box { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.pb-blue { background: linear-gradient(135deg, var(--blue-light), #fff); border: 2px solid #90caf9; }
+.pb-red { background: linear-gradient(135deg, var(--red-light), #fff); border: 2px solid #ef9a9a; }
+.pb-green { background: linear-gradient(135deg, var(--green-light), #fff); border: 2px solid #a5d6a7; }
+.pb-orange { background: linear-gradient(135deg, var(--orange-pale), #fff); border: 2px solid #ffcc80; }
+.pb-purple { background: linear-gradient(135deg, var(--purple-light), #fff); border: 2px solid #ce93d8; }
+.pb-pink { background: linear-gradient(135deg, var(--pink-light), #fff); border: 2px solid #f48fb1; }
+.point-box h4 { font-size: 0.98rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.7rem 0; }
+
+.mnemonic {
+  background: linear-gradient(135deg, var(--purple-light), #fff);
+  border: 3px dashed var(--purple-main); border-radius: var(--radius);
+  padding: 1.1rem; margin: 0.8rem 0; text-align: center;
+}
+.mnemonic .big { font-size: 1.35rem; font-weight: 800; color: var(--purple-dark); margin-bottom: 0.3rem; letter-spacing: 0.08em; }
+.mnemonic .desc { font-size: 0.88rem; color: var(--gray-mid); }
+
+/* 3つの仕掛け：goro-chip / support / keepit */
+.goro-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0 0.7rem; }
+.goro-chip {
+  display: inline-block; background: linear-gradient(135deg, var(--purple-main), #9b59b6);
+  color: white; padding: 0.25rem 0.7rem; border-radius: 14px;
+  font-size: 0.78rem; font-weight: 700; box-shadow: 0 2px 5px rgba(142,68,173,0.3);
+}
+.goro-chip::before { content: "🎵 "; }
+.support {
+  background: #fff8e1; border-left: 4px solid var(--orange-main);
+  border-radius: 8px; padding: 0.6rem 0.9rem 0.6rem 2.4rem;
+  margin: 0.5rem 0; font-size: 0.88rem; line-height: 1.7;
+  position: relative; color: #4e342e;
+}
+.support::before {
+  content: "👨‍🏫"; position: absolute; left: 0.6rem; top: 0.55rem; font-size: 1.2rem;
+}
+.support strong { color: var(--orange-dark); }
+.keepit {
+  background: linear-gradient(135deg, #fff9c4, #fff59d);
+  border: 3px solid #fbc02d; border-radius: var(--radius);
+  padding: 1rem 1.2rem; margin: 1.2rem 0 0.5rem;
+}
+.keepit h4 { color: #f57f17; font-size: 1rem; font-weight: 800; margin-bottom: 0.4rem; }
+.keepit h4::before { content: "⭐ "; }
+.keepit ol { padding-left: 1.4rem; }
+.keepit ol li { font-size: 0.92rem; margin: 0.2rem 0; }
+
+/* exam tag */
+.tag-exam {
+  display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px;
+  font-size: 0.7rem; font-weight: 700; color: white; margin-right: 0.3rem;
+  vertical-align: middle;
+}
+.tag-1ji { background: var(--blue-main); }
+.tag-2ji { background: var(--red-main); }
+.tag-both { background: var(--purple-main); }
+
+/* link memo */
+.link-memo {
+  background: #e1f5fe; border-left: 3px solid #0288d1;
+  padding: 0.4rem 0.8rem; margin: 0.5rem 0; font-size: 0.82rem; color: #01579b;
+  border-radius: 4px;
+}
+
+.scene { background: var(--white); border-radius: var(--radius); padding: 1.1rem; margin: 0.8rem 0; box-shadow: var(--shadow); }
+.scene-row { display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap; }
+.scene-item { text-align: center; }
+.scene-item .emoji { font-size: 2.2rem; }
+.scene-item .label { font-size: 0.78rem; font-weight: 700; color: var(--gray-dark); margin-top: 0.2rem; }
+.scene-caption { font-size: 0.85rem; color: var(--gray-mid); text-align: center; margin-top: 0.6rem; }
+
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
+.flow-box {
+  color: white; padding: 0.6rem 1.1rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.85rem; text-align: center; min-width: 70px;
+}
+.flow-box small { display: block; font-weight: 400; font-size: 0.72rem; opacity: 0.9; }
+.fb-blue { background: linear-gradient(135deg, var(--blue-main), #3498db); }
+.fb-red { background: linear-gradient(135deg, var(--red-main), #e57373); }
+.fb-green { background: linear-gradient(135deg, var(--green-main), #2ecc71); }
+.fb-orange { background: linear-gradient(135deg, var(--orange-main), var(--orange-light)); }
+.fb-purple { background: linear-gradient(135deg, var(--purple-main), #9b59b6); }
+.flow-arrow { font-size: 1.3rem; margin: 0 0.3rem; font-weight: 700; flex-shrink: 0; }
+
+/* Quiz */
+.quiz-item {
+  background: var(--white); border-radius: var(--radius);
+  padding: 1.2rem; margin: 1rem 0; border: 3px solid #e0e0e0;
+}
+.quiz-num {
+  display: inline-block; background: var(--orange-main); color: white;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.quiz-cat {
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; color: white; margin-left: 0.5rem; vertical-align: middle;
+}
+.qc-blue { background: var(--blue-main); }
+.qc-red { background: var(--red-main); }
+.qc-green { background: var(--green-main); }
+.qc-purple { background: var(--purple-main); }
+.quiz-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; line-height: 1.7; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li {
+  padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid #e0e0e0; background: white;
+  transition: all 0.2s; font-size: 0.9rem;
+}
+.quiz-options li:hover { border-color: var(--orange-main); background: var(--orange-pale); }
+.quiz-options li.correct { border-color: var(--green-main); background: var(--green-light); font-weight: 700; }
+.quiz-options li.wrong { border-color: var(--red-main); background: var(--red-light); }
+.quiz-explanation { display: none; margin-top: 0.7rem; padding: 0.8rem; border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.7; }
+.quiz-explanation.show { display: block; }
+.quiz-explanation.correct-exp { background: var(--green-light); border-left: 4px solid var(--green-main); }
+.quiz-explanation.wrong-exp { background: var(--red-light); border-left: 4px solid var(--red-main); }
+.quiz-score { text-align: center; padding: 1rem; background: var(--orange-pale); border-radius: var(--radius); margin-top: 1rem; font-size: 1.1rem; font-weight: 700; color: var(--orange-dark); display: none; }
+
+/* Fill-in-the-blank */
+.fill-card { background: var(--white); border-radius: 14px; margin-bottom: 18px; box-shadow: var(--shadow); overflow: hidden; }
+.fill-header { padding: 12px 18px; font-weight: 700; font-size: .95rem; color: #fff; }
+.fill-header.h-blue { background: var(--blue-main); }
+.fill-header.h-green { background: var(--green-main); }
+.fill-header.h-purple { background: var(--purple-main); }
+.fill-header.h-pink { background: var(--pink-main); }
+.fill-header.h-red { background: var(--red-main); }
+.fill-header.h-orange { background: var(--orange-main); }
+.fill-body { padding: 16px 20px; }
+.fill-group { margin-bottom: 6px; font-size: .95rem; line-height: 2.1; }
+.fill-blank {
+  display: inline-block; min-width: 90px; border-bottom: 2.5px solid #94a3b8;
+  text-align: center; padding: 2px 10px; margin: 0 3px; cursor: pointer;
+  font-weight: 700; color: transparent; background: #f1f5f9; border-radius: 4px;
+  transition: all .25s; user-select: none; font-size: .92rem;
+}
+.fill-blank.show { color: #dc2626; background: #fef2f2; border-color: #dc2626; }
+.fill-reveal-btn {
+  display: inline-block; background: #1a365d; color: #fff; border: none;
+  border-radius: 8px; padding: 7px 16px; font-size: .82rem; font-weight: 600;
+  cursor: pointer; margin-top: 8px; font-family: inherit;
+}
+.fill-control { text-align: center; margin: 0.8rem 0 1.2rem; }
+.fill-control button {
+  margin: 0 0.3rem; padding: 8px 18px; border-radius: 8px; border: none;
+  font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: inherit;
+}
+.fill-control .btn-all { background: var(--purple-main); color: white; }
+.fill-control .btn-reset { background: var(--gray-light); color: white; }
+
+.footer { text-align: center; padding: 1.5rem; color: var(--gray-light); font-size: 0.8rem; }
+
+@media (max-width: 600px) {
+  .two-col { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 0.66rem; padding: 0.7rem 0.25rem; min-width: 75px; }
+  .header h1 { font-size: 1.25rem; }
+  .bubble-body { max-width: 78%; font-size: 0.85rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>配当政策・MM理論</h1>
+  <div class="subtitle">中小企業診断士 財務・会計 | コーポレートファイナンス</div>
+  <div class="badge">🤖 3エージェント討議＋超入門タブ統合版（全14タブ）</div>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">🌟 超入門</button>
+    <button class="tab-btn" data-color="pink" onclick="switchTab(1)">🌱 ゼロから</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">📖 入門</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(3)">📘 基本</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(4)">📗 詳細</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">🎵 語呂まとめ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">🎤 語呂穴埋め</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(7)">✍️ 穴埋め初級</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(8)">✏️ 穴埋め中級</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(9)">📝 穴埋め上級</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(10)">🏢 事例</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(11)">🧪 クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(12)">📖 実例</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(13)">🗺 図解</button>
+  </nav>
+
+  <!-- ========== TAB 0: 超入門 ========== -->
+  <div class="tab-panel active theme-green" id="tab0">
+
+    <h2 class="section-title st-green">📘 1. 配当ってそもそも何？</h2>
+    <p>会社が稼いだ利益の一部を、株主にお礼として現金で配るのが<strong>配当</strong>。残りは会社に貯めて（内部留保）、新しい工場や開発に再投資する。</p>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item"><div class="emoji">🏢</div><div class="label">会社（利益100）</div></div>
+        <div class="scene-item"><div class="emoji">➡️</div><div class="label">分ける</div></div>
+        <div class="scene-item"><div class="emoji">💰</div><div class="label">配当40<br>（株主へ）</div></div>
+        <div class="scene-item"><div class="emoji">🏦</div><div class="label">内部留保60<br>（会社に貯金）</div></div>
+      </div>
+      <div class="scene-caption">利益を「株主に配る」か「会社に残す」か。この比率を決めるのが配当政策。</div>
+    </div>
+
+    <table class="tbl-green">
+      <tr><th style="width:35%;">用語</th><th>かみくだくと…</th></tr>
+      <tr><td><strong>配当</strong></td><td>会社が利益から株主に配る現金。「株を持っててくれてありがとう」のお礼。</td></tr>
+      <tr><td><strong>配当政策</strong></td><td>「いくら配るか／いつ配るか／どう配るか」を決めること。</td></tr>
+      <tr><td><strong>内部留保</strong></td><td>配当しないで会社に残しておくお金。次の投資の原資。</td></tr>
+      <tr><td><strong>MM理論</strong></td><td>Modigliani-Miller（モディリアーニ・ミラー）2人の経済学者の理論。「配当は会社の値段に関係ない」と言った。</td></tr>
+      <tr><td><strong>企業価値</strong></td><td>会社全体の値段。M&A・事業承継・株価の根拠になる。</td></tr>
+    </table>
+
+    <div class="support">
+      <strong>ざっくり：</strong>MM理論＝「配当を増やしても減らしても、会社の値段は変わらないよ」という理論。1958年・1961年に発表され、ファイナンスの<strong>出発点</strong>になった。試験では「現実とのギャップ（税金・情報）をどう埋めるか」が問われる。
+    </div>
+
+    <h2 class="section-title st-green">📘 2. なぜ「配当しても価値は変わらない」のか</h2>
+    <p>会社が100円の現金を持っていたとする。これを株主に配ると、会社の現金は0円・株主の財布に100円。<strong>株主＋会社</strong>で見れば合計はいつも100円で変わらない。</p>
+
+    <div class="two-col">
+      <div class="card card-green"><h4>配当する場合</h4>
+        <ul>
+          <li>会社：現金100→0</li>
+          <li>株主：現金0→100</li>
+          <li>合計：100（変わらず）</li>
+        </ul>
+      </div>
+      <div class="card card-blue"><h4>配当しない場合</h4>
+        <ul>
+          <li>会社：現金100のまま</li>
+          <li>株主：株価が現金分高い</li>
+          <li>合計：100（変わらず）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert-tip"><strong>💡 たとえ：</strong>右ポケット（会社）から左ポケット（株主）に100円玉を移すだけ。<strong>あなたの財布全体（企業価値）は1円も変わらない</strong>。これがMM理論の本質。</div>
+
+    <h2 class="section-title st-green">📘 3. 最小の計算：配当落ち</h2>
+    <p><strong>配当落ち</strong>（ざっくり：配当を出した直後、株価がその分下がること）を1問だけ。</p>
+
+    <div class="card card-purple">
+      <h4>例題</h4>
+      <p>株価1,000円の会社が、1株50円の配当を出した。理論上、配当落ち後の株価は？</p>
+      <p style="margin-top:0.5rem;"><strong>答え：1,000 − 50 ＝ 950円</strong></p>
+      <p style="margin-top:0.3rem; font-size:0.85rem; color:var(--gray-mid);">株主の手取り：株950＋現金50＝1,000。配当もらう前と同じ！</p>
+    </div>
+
+    <div class="support"><strong>これが</strong>「配当の有無は株主の富に影響しない」というMM命題の核心。難しい数式は要らない。<strong>右から左に移しただけ</strong>を覚えればOK。</div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>「配当落ち後の株価＝配当前株価−1株配当」は<strong>毎年問われる定型計算</strong>。1,000−50＝950 が解ければ得点源。</div>
+
+    <h2 class="section-title st-green">📘 4. でも現実は…</h2>
+    <p>MM理論は<strong>「税金もコストもゼロの理想世界」</strong>での話。現実には次の4つの「邪魔者」がいる：</p>
+
+    <table class="tbl-purple">
+      <tr><th>邪魔者</th><th>何が起きる</th></tr>
+      <tr><td>① 税金</td><td>配当もキャピタルゲイン（株売却益）も20%課税。手取りが減る</td></tr>
+      <tr><td>② 取引コスト</td><td>株を売って自分で配当代わりにしようとすると手数料がかかる</td></tr>
+      <tr><td>③ 情報の非対称</td><td>経営者しか会社の真実を知らない。配当はメッセージ（シグナル）になる</td></tr>
+      <tr><td>④ 経営者の暴走</td><td>余ったお金を経営者が無駄遣いするリスク（エージェンシー問題）</td></tr>
+    </table>
+
+    <div class="keepit">
+      <h4>今日のこれだけ覚えて（超入門）</h4>
+      <ol>
+        <li><strong>MM理論</strong>＝完全市場では配当政策は企業価値と<strong>無関係</strong>（命題I）</li>
+        <li>配当落ち：1,000円 − 配当50円 ＝ 950円。<strong>株主の富は不変</strong></li>
+        <li>現実は税・コスト・情報・エージェンシーで<strong>配当政策が意味を持つ</strong></li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 1: ゼロから ========== -->
+  <div class="tab-panel theme-pink" id="tab1">
+
+    <h2 class="section-title st-pink">🌱 1. 配当政策の3つの選択肢</h2>
+    <p>「いくら配るか」を決める方針には、大きく3パターンある。</p>
+
+    <table class="tbl-pink">
+      <tr><th>方針</th><th>中身</th><th>メリット／デメリット</th></tr>
+      <tr><td><strong>① 安定配当</strong></td><td>毎年ほぼ同額（例：年50円）を配当。利益が増減しても配当は変えない</td><td>○株主が安心／×利益少なくても出すと内部留保が枯れる</td></tr>
+      <tr><td><strong>② 配当性向一定</strong></td><td>利益の○%（例：30%）を毎年配当。利益連動で配当額が変動</td><td>○ルールが明確／×不況時は配当激減</td></tr>
+      <tr><td><strong>③ 残余配当政策</strong></td><td>必要な投資にお金を使った<strong>残り</strong>を配当に回す</td><td>○成長重視／×配当が読めない</td></tr>
+    </table>
+
+    <div class="goro-row"><span class="goro-chip">3類型「アハザ」＝Anteiha（安定配当）／Hayariha（性向一定）／Zanyo（残余）</span></div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span><strong>残余配当政策</strong>は「投資機会が多い成長企業ほど配当少ない」を説明する根拠。任天堂・Apple型ではなく、成長期のテック企業（Amazon・Google）の発想。</div>
+
+    <h2 class="section-title st-pink">🌱 2. MM理論の主役を覚える</h2>
+
+    <div class="scene">
+      <div class="scene-row">
+        <div class="scene-item"><div class="emoji">👨‍🔬</div><div class="label">Modigliani<br>モディリアーニ</div></div>
+        <div class="scene-item"><div class="emoji">➕</div><div class="label"></div></div>
+        <div class="scene-item"><div class="emoji">👨‍🏫</div><div class="label">Miller<br>ミラー</div></div>
+        <div class="scene-item"><div class="emoji">🏆</div><div class="label">2人とも<br>ノーベル賞</div></div>
+      </div>
+      <div class="scene-caption">略語<strong>MM</strong>＝Modigliani-Miller（2人とも後にノーベル経済学賞）</div>
+    </div>
+
+    <div class="support"><strong>ざっくり：</strong>MM理論には「<strong>資本構成</strong>に関する命題」（負債／株主の比率は企業価値に無関係）と「<strong>配当政策</strong>に関する命題」（配当の多寡は企業価値に無関係）の2系列がある。本ノートは後者がメイン。</div>
+
+    <h2 class="section-title st-pink">🌱 3. 「配当は意味なし」を絵で理解</h2>
+
+    <div class="card card-pink">
+      <h4>ケース：あなたが100株保有・株価1,000円</h4>
+      <p>① <strong>会社が配当ゼロ</strong>でずっと内部留保 → 5年後に株価1,500円<br>
+         ② <strong>会社が毎年配当</strong>を出す → 5年後の株価は1,200円だが、配当合計が300円</p>
+      <p style="margin-top:0.5rem;">どちらも<strong>株主の総リターンは同じ500円</strong>。配当でもらうか、株価上昇でもらうかの違いだけ。</p>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-student">🧑</div>
+      <div class="bubble-body b-blue"><div class="bubble-name">学生</div>でも配当ある方がうれしくないですか？</div>
+    </div>
+    <div class="bubble-wrap right">
+      <div class="bubble-avatar avatar-teacher">👨‍🏫</div>
+      <div class="bubble-body b-orange"><div class="bubble-name">先生</div>気持ちは分かる！でも理論上は<strong>株を1株売れば自分で配当を作れる</strong>。これを<strong>自家製配当（homemade dividend）</strong>と言うんだ。</div>
+    </div>
+
+    <h2 class="section-title st-pink">🌱 4. 自家製配当の仕組み</h2>
+
+    <div class="card card-purple">
+      <h4>自家製配当（homemade dividend）</h4>
+      <p>配当が物足りない投資家は<strong>自分で株を売って現金化</strong>すれば、配当をもらったのと同じ効果を作れる。逆に「配当いらない」投資家は<strong>もらった配当で株を買い増し</strong>すれば配当ゼロと同じ。</p>
+      <p style="margin-top:0.4rem; font-size:0.85rem;">→ つまり<strong>配当政策は投資家側で調整可能</strong>。会社が無理に配当政策を変える意味はない。</p>
+    </div>
+
+    <div class="goro-row"><span class="goro-chip">「自家製配当」＝株を売れば自分で配当が作れる</span></div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>「自家製配当」はMM配当無関連命題の<strong>論拠</strong>。<strong>完全市場（取引コスト・税ゼロ）</strong>の前提があるから成立する点に注意。</div>
+
+    <h2 class="section-title st-pink">🌱 5. なぜMM理論は「現実離れ」なのか</h2>
+
+    <table class="tbl-blue">
+      <tr><th>MMの前提</th><th>現実</th></tr>
+      <tr><td>税金なし</td><td>配当には所得税20%、株売却益にも譲渡益課税20%</td></tr>
+      <tr><td>取引コストなし</td><td>株を売れば証券会社に手数料</td></tr>
+      <tr><td>情報対称</td><td>経営者は内部情報を持つ。投資家との情報差がある</td></tr>
+      <tr><td>合理的投資家</td><td>「配当好き」「株主還元重視」など心理的選好がある</td></tr>
+    </table>
+
+    <div class="support"><strong>試験のキーワード：</strong>MM理論は<strong>「完全資本市場」</strong>を前提とする。完全＝<strong>税・コスト・情報の歪みがない</strong>世界という意味。現実とのギャップが、シグナリングやエージェンシーなどの<strong>修正理論</strong>を生む。</div>
+
+    <div class="link-memo">🔁 基本タブで「シグナリング」「エージェンシー」「クライエンテール効果」を深掘り</div>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab1')">この章の答えを一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab1')">リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header h-pink">🌱 ゼロから 確認穴埋め</div>
+      <div class="fill-body">
+        <div class="fill-group">① MM理論の主張：配当政策は企業価値に<span class="fill-blank">影響しない</span>（無関連命題）</div>
+        <div class="fill-group">② MMはModigliani-<span class="fill-blank">Miller</span>の頭文字</div>
+        <div class="fill-group">③ 投資家が自分で株を売って配当を作ることを<span class="fill-blank">自家製配当</span>という</div>
+        <div class="fill-group">④ MMの前提となる市場を<span class="fill-blank">完全資本市場</span>と呼ぶ</div>
+        <div class="fill-group">⑤ 配当政策の3類型：①安定配当 ②配当性向一定 ③<span class="fill-blank">残余配当</span></div>
+        <div class="fill-group">⑥ 株価1,000円・配当50円なら配当落ち後の株価は<span class="fill-blank">950</span>円</div>
+      </div>
+    </div>
+
+    <div class="keepit">
+      <h4>今日のこれだけ覚えて（ゼロから）</h4>
+      <ol>
+        <li>MM＝<strong>Modigliani-Miller</strong>。配当の多寡は企業価値に無関係（命題）</li>
+        <li>論拠は<strong>自家製配当</strong>。株売却で自分で配当を作れる</li>
+        <li>3類型：<strong>安定／性向一定／残余</strong>の3パターン</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 2: 入門 ========== -->
+  <div class="tab-panel theme-blue" id="tab2">
+
+    <h2 class="section-title st-blue">📖 1. MM配当無関連命題（命題I）</h2>
+
+    <div class="formula-box">
+      完全資本市場では<br>
+      <span class="big">企業価値 ＝ 配当政策とは無関係</span>
+      （配当を増やしても減らしても V<sub>L</sub> は変わらない）
+    </div>
+
+    <p>会社の価値（V）は<strong>「将来生むキャッシュフローの現在価値」</strong>で決まる。配当は<strong>その現金をどう分けるか</strong>の話なので、源泉のCFが変わらない限り総価値は変わらない。</p>
+
+    <div class="goro-row"><span class="goro-chip">「ぜいなし・とりひきなし・じょうほう同じ・りせいてき」＝完全市場4条件</span></div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span><strong>完全資本市場の4条件</strong>は頻出：①税なし ②取引コストなし ③情報対称 ④合理的投資家。さらに「<strong>投資政策は固定</strong>」（配当を増やしても投資は減らさない）も暗黙の前提。</div>
+
+    <h2 class="section-title st-blue">📖 2. 自己金融効果（自社株買いとの等価）</h2>
+
+    <div class="card card-blue">
+      <h4>自社株買い vs 配当</h4>
+      <p>会社が余剰現金を株主に返す方法は2つ：</p>
+      <ul>
+        <li><strong>配当</strong>：全株主に均等に現金分配</li>
+        <li><strong>自社株買い</strong>（buyback）：応じた株主からのみ自社の株を買い戻す</li>
+      </ul>
+      <p style="margin-top:0.4rem;">MM理論では<strong>両者は等価</strong>。株主の手取り合計は同じ。</p>
+    </div>
+
+    <table class="tbl-blue">
+      <tr><th>項目</th><th>配当</th><th>自社株買い</th></tr>
+      <tr><td>受取側</td><td>全株主</td><td>応じた株主のみ</td></tr>
+      <tr><td>1株利益(EPS)</td><td>変化なし</td><td>株数減で<strong>EPS上昇</strong></td></tr>
+      <tr><td>株価</td><td>配当分下がる</td><td>下がりにくい・上がる傾向</td></tr>
+      <tr><td>税</td><td>配当課税（20%）</td><td>応じた株主のみ譲渡益課税</td></tr>
+    </table>
+
+    <div class="support"><strong>ざっくり：</strong>EPS（Earnings Per Share）＝1株あたり純利益。自社株買いは分母（発行済株数）が減るので、EPSが機械的に上昇する。これが「自社株買い＝株主還元の手段」と呼ばれる理由。</div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>2次試験事例IVでも「自社株買いの効果」は問われる。<strong>EPS・ROE上昇</strong>、株価対策、敵対的買収防衛など多面的に整理。</div>
+
+    <h2 class="section-title st-blue">📖 3. 配当落ちの数値計算</h2>
+
+    <div class="card card-purple">
+      <h4>例題（典型パターン）</h4>
+      <p>株価2,000円・発行済株数100万株・現金100万株分の手元資金。1株200円配当を実施。</p>
+      <ul>
+        <li>配当前：時価総額 2,000×100万＝<strong>20億円</strong></li>
+        <li>配当総額：200×100万＝2億円</li>
+        <li>配当落ち後の株価：2,000−200＝<strong>1,800円</strong></li>
+        <li>配当落ち後時価総額：1,800×100万＝<strong>18億円</strong></li>
+        <li>株主の富：株 18億 ＋ 現金 2億＝<strong>20億（変わらず）</strong></li>
+      </ul>
+    </div>
+
+    <div class="alert-tip"><strong>💡 ポイント：</strong>配当落ちは「企業価値の<strong>切り分け</strong>」。総額は不変、配分が変わるだけ。</div>
+
+    <h2 class="section-title st-blue">📖 4. 一鳥手中の理論（反MM派）</h2>
+
+    <div class="card card-orange">
+      <h4>"A bird in the hand is worth two in the bush"</h4>
+      <p>「やぶの中の2羽より手の中の1羽」＝<strong>不確実な株価上昇より確実な配当が嬉しい</strong>という考え方。<strong>ゴードン</strong>・<strong>リントナー</strong>が代表的論者。</p>
+      <p style="margin-top:0.4rem;">→ 配当ある株 ＝ 価値が高い、と主張。MM理論と<strong>真逆</strong>。</p>
+    </div>
+
+    <div class="goro-row"><span class="goro-chip">「ゴード・リン・トリ手中」＝Gordon・Lintner・bird in the hand</span></div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red"><div class="bubble-name">引っかけ</div>「一鳥手中」＝MM理論ではなく<strong>MM批判</strong>の理論！両者を逆に書いてくる選択肢に注意。</div>
+    </div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>MM理論（無関連）vs 一鳥手中（配当多い方が良い）vs 税効果（配当少ない方が良い）の<strong>3つの立場</strong>を整理しておく。</div>
+
+    <h2 class="section-title st-blue">📖 5. 配当の支払い手続き</h2>
+
+    <table class="tbl-green">
+      <tr><th>日付</th><th>意味</th></tr>
+      <tr><td><strong>権利確定日</strong></td><td>この日に株主名簿にある人が配当を受け取れる</td></tr>
+      <tr><td><strong>権利落ち日</strong></td><td>権利確定日の翌営業日。この日から株を買っても今期配当はもらえない＝株価が配当分下がる</td></tr>
+      <tr><td><strong>支払日</strong></td><td>実際に配当が振り込まれる日（数か月後）</td></tr>
+    </table>
+
+    <div class="link-memo">🔁 詳細タブで「シグナリング」「クライエンテール」「自社株買いの実務」を深掘り</div>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab2')">この章の答えを一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab2')">リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header h-blue">📖 入門 確認穴埋め</div>
+      <div class="fill-body">
+        <div class="fill-group">① MM配当無関連命題：完全市場では配当政策は<span class="fill-blank">企業価値</span>に影響しない</div>
+        <div class="fill-group">② 完全資本市場の4条件：税なし・<span class="fill-blank">取引コスト</span>なし・情報対称・合理的投資家</div>
+        <div class="fill-group">③ 自社株買いをすると<span class="fill-blank">EPS</span>が上昇する（株数が減るため）</div>
+        <div class="fill-group">④ 株価2,000・1株配当200 → 配当落ち後株価<span class="fill-blank">1800</span>円</div>
+        <div class="fill-group">⑤ MMと真逆の立場「配当のある株は価値が高い」を<span class="fill-blank">一鳥手中</span>の理論という</div>
+        <div class="fill-group">⑥ 一鳥手中の代表論者は<span class="fill-blank">ゴードン</span>とリントナー</div>
+        <div class="fill-group">⑦ 株主名簿に載っているかどうかが決まる日を<span class="fill-blank">権利確定日</span>という</div>
+      </div>
+    </div>
+
+    <div class="keepit">
+      <h4>今日のこれだけ覚えて（入門）</h4>
+      <ol>
+        <li>MM命題I：完全市場で<strong>配当政策は企業価値に無関係</strong></li>
+        <li>自社株買いと配当はMM下で<strong>等価</strong>（ただし税・EPSで差が出る）</li>
+        <li>反MM＝<strong>一鳥手中</strong>（ゴードン・リントナー）</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 3: 基本 ========== -->
+  <div class="tab-panel theme-purple" id="tab3">
+
+    <h2 class="section-title st-purple">📘 1. 税効果による修正</h2>
+
+    <div class="link-memo">🔁 入門タブの「現実とのギャップ」を深掘り</div>
+
+    <p>現実の税制では、配当課税（所得税＋住民税で約20%）と株式譲渡益課税（同じく約20%）が課される。MM理論の「税ゼロ」前提が崩れる。</p>
+
+    <table class="tbl-purple">
+      <tr><th>受取方</th><th>税率</th><th>税の発生タイミング</th></tr>
+      <tr><td>配当</td><td>20.315%（総合課税選択も可）</td><td>受け取った瞬間</td></tr>
+      <tr><td>キャピタルゲイン<br>（株売却益）</td><td>20.315%</td><td>株を売って利益確定したとき</td></tr>
+    </table>
+
+    <div class="support"><strong>ざっくり：</strong>税率は同じでも<strong>「いつ払うか」が違う</strong>。配当は受け取り即課税、キャピタルゲインは売却まで先送り可能。<strong>税の繰延</strong>分だけキャピタルゲインの方が有利という議論がある。</div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>米国では歴史的に配当課税＞譲渡益課税だったため「<strong>低配当政策</strong>が望ましい」という議論が強かった。日本では税率がほぼ同じなので影響は限定的。</div>
+
+    <h2 class="section-title st-purple">📘 2. 情報の非対称性とシグナリング</h2>
+
+    <div class="card card-blue">
+      <h4>シグナリング理論（Signaling）</h4>
+      <p>経営者は会社の<strong>真の業績や見通し</strong>を内部情報で知っている。投資家はそれを知らない（情報の非対称）。<br>
+      → 経営者は<strong>配当の増減</strong>を「会社の見通しメッセージ」として使う。</p>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>📈 増配（配当を増やす）</h4>
+        <ul>
+          <li>「来期以降も<strong>利益が伸びる</strong>と経営者が確信」のサイン</li>
+          <li>株価は<strong>上昇</strong>することが多い（good news）</li>
+        </ul>
+      </div>
+      <div class="card card-red">
+        <h4>📉 減配（配当を減らす）</h4>
+        <ul>
+          <li>「<strong>業績悪化</strong>の予兆」と受け取られる</li>
+          <li>株価は<strong>急落</strong>することが多い（bad news）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="goro-row"><span class="goro-chip">「ます増・ぞうしんぐ」増配＝Good Signaling</span></div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-warn">⚠️</div>
+      <div class="bubble-body b-red"><div class="bubble-name">引っかけ</div>シグナリングはMM理論<strong>そのものではなく修正理論</strong>。「MM理論によれば配当はシグナルになる」は<strong>×</strong>。MMは情報対称が前提だからシグナルは生じない。</div>
+    </div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>シグナリング理論は<strong>スペンス（労働市場）→ロス（配当）</strong>と発展。「配当の粘着性」（経営者が減配を嫌がる）の説明にもなる。</div>
+
+    <h2 class="section-title st-purple">📘 3. エージェンシー理論とフリーCF仮説</h2>
+
+    <div class="card card-purple">
+      <h4>エージェンシー（agency）問題</h4>
+      <p><strong>株主（principal）と経営者（agent）の利害対立</strong>。経営者は余剰現金を社内に留めて、不要な投資・買収・豪華な役員室・高額役員報酬に使うインセンティブがある。</p>
+    </div>
+
+    <div class="card card-orange">
+      <h4>ジェンセンのフリーキャッシュフロー仮説（1986）</h4>
+      <p>余剰FCFを<strong>配当で吐き出させる</strong>と、経営者の浪費を防げる → 配当はエージェンシーコストを下げる。</p>
+      <p style="margin-top:0.4rem; font-size:0.85rem;">同様に、<strong>負債を増やすと利払いで強制的に現金が出ていく</strong>ので浪費を防ぐ（負債の規律効果）。</p>
+    </div>
+
+    <div class="goro-row"><span class="goro-chip">「経営者は遊びたい・配当で吐き出させ」＝エージェンシーコスト削減</span></div>
+
+    <div class="alert-exam"><span class="tag-exam tag-2ji">2次</span>事例IVで「成熟企業（投資機会少・FCF豊富）の最適配当政策」を聞かれたら、<strong>高配当または自社株買い</strong>が定番回答。フリーCF仮説が根拠。</div>
+
+    <h2 class="section-title st-purple">📘 4. クライエンテール効果（顧客効果）</h2>
+
+    <div class="card card-pink">
+      <h4>クライエンテール効果（clientele effect）</h4>
+      <p>投資家には<strong>属性別の好み</strong>がある：</p>
+      <ul>
+        <li>年金受給者・年配の個人投資家 → <strong>定期収入</strong>として高配当株を好む</li>
+        <li>若年・高所得層 → 税繰延のため<strong>低配当・キャピタルゲイン狙い</strong>を好む</li>
+        <li>非課税の年金基金・財団 → 税中立、配当も売却益もOK</li>
+      </ul>
+      <p style="margin-top:0.4rem;">→ 各社の配当政策は<strong>特定の投資家層を引き寄せる</strong>。会社が配当政策を急変させると、既存投資家との相性が崩れて株価が下がる可能性。</p>
+    </div>
+
+    <div class="goro-row"><span class="goro-chip">「クライ・年金・高配当」＝クライエンテール＝顧客効果</span></div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>「配当政策の急な変更が株価に影響する理由」として、シグナリング（情報伝達）と並んで<strong>クライエンテール効果</strong>を選ばせる問題が出る。</div>
+
+    <h2 class="section-title st-purple">📘 5. ペッキングオーダー理論との関係</h2>
+
+    <div class="card card-blue">
+      <h4>ペッキングオーダー（pecking order）理論</h4>
+      <p>マイヤーズ（Myers）の理論。情報の非対称があるとき、企業の資金調達には序列がある：</p>
+      <ol>
+        <li>① <strong>内部留保</strong>（最優先：情報コストゼロ）</li>
+        <li>② <strong>負債</strong>（次：低コスト）</li>
+        <li>③ <strong>新株発行</strong>（最後：「自社株が割高」と思われ嫌がる）</li>
+      </ol>
+      <p style="margin-top:0.4rem;">→ <strong>配当政策と裏表</strong>：高配当だと内部留保が減り、不足分を負債や新株で調達することになる。成長企業ほど配当を抑えがち。</p>
+    </div>
+
+    <div class="goro-row"><span class="goro-chip">「内・負・株」＝ペッキングオーダー（内部→負債→株式）</span></div>
+
+    <h2 class="section-title st-purple">📘 6. MM理論（資本構成）と最適資本構成</h2>
+
+    <div class="card card-red">
+      <h4>MM理論：資本構成命題</h4>
+      <p><strong>命題I（税なし）</strong>：V<sub>L</sub>＝V<sub>U</sub>。負債・株主の比率は企業価値に無関係。<br>
+      <strong>命題I（税あり）</strong>：V<sub>L</sub>＝V<sub>U</sub>＋負債×t（節税効果分だけ価値UP）</p>
+    </div>
+
+    <div class="formula-box">
+      <span class="big">節税効果（企業価値の増加分）＝ 負債額 × 法人税率</span>
+      <span class="big">節税効果（単年度CF増加分）＝ 支払利息 × 法人税率</span>
+      負債が多いほど節税効果は大、ただし倒産リスクも増える
+    </div>
+
+    <p>税効果と倒産コストのバランス＝<strong>最適資本構成（最適負債比率）</strong>。配当政策とは別系列のMM命題だが、試験では混在して問われる。</p>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>節税効果の<strong>2公式の使い分け</strong>が頻出（R1-22）。問題文が「単年度のCFの増加」を聞いていれば<strong>支払利息×t</strong>、「企業価値の増加（永久年金）」なら<strong>負債額×t</strong>。永続CFを割引率（＝負債利子率）で割ると、支払利息×t÷r＝負債×r×t÷r＝<strong>負債×t</strong> に一致。</div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>「MM理論」と一言で言われたら<strong>「配当政策」「資本構成」のどちらの命題か</strong>を文脈で判断。論文発表は資本構成（1958）→修正（1963）→配当政策（1961）の順。過去問：R5-15／R3-17／R2-24／R1-22。</div>
+
+    <div class="link-memo">🔁 詳細タブで自家製配当の数値例・税繰延の計算を深掘り</div>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab3')">この章の答えを一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab3')">リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header h-purple">📘 基本 確認穴埋め</div>
+      <div class="fill-body">
+        <div class="fill-group">① 増配は経営者からのgood newsを伝える＝<span class="fill-blank">シグナリング</span>理論</div>
+        <div class="fill-group">② 余剰CFを配当で吐き出させ経営者の浪費を防ぐ＝<span class="fill-blank">フリーキャッシュフロー</span>仮説（ジェンセン）</div>
+        <div class="fill-group">③ 投資家の税率選好で投資先が分かれる＝<span class="fill-blank">クライエンテール</span>効果</div>
+        <div class="fill-group">④ 資金調達の序列「内部→負債→新株」＝<span class="fill-blank">ペッキングオーダー</span>理論</div>
+        <div class="fill-group">⑤ MM資本構成命題（税あり）：節税効果（企業価値増加分）＝ <span class="fill-blank">負債</span> × 法人税率／単年度CF増加分＝<span class="fill-blank">支払利息</span>×法人税率</div>
+        <div class="fill-group">⑥ 配当に税がかかると<span class="fill-blank">低配当</span>政策が望ましいという議論になる</div>
+        <div class="fill-group">⑦ 株主と経営者の利害対立＝<span class="fill-blank">エージェンシー</span>問題</div>
+      </div>
+    </div>
+
+    <div class="keepit">
+      <h4>今日のこれだけ覚えて（基本）</h4>
+      <ol>
+        <li>修正4種：<strong>税・コスト・シグナリング・エージェンシー＋クライエンテール</strong></li>
+        <li>増配＝good signal、減配＝bad signal</li>
+        <li>成熟企業は<strong>高配当</strong>（FCF仮説）、成長企業は<strong>低配当</strong>（ペッキングオーダー）</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 4: 詳細 ========== -->
+  <div class="tab-panel theme-red" id="tab4">
+
+    <h2 class="section-title st-red">📗 1. 自家製配当の数値例（完全版）</h2>
+
+    <div class="link-memo">🔁 ゼロから／入門タブの「自家製配当」を計算で深掘り</div>
+
+    <div class="card card-red">
+      <h4>例題：投資家Aの自家製配当</h4>
+      <p>X社株100株保有、株価1,000円（時価総額10万円）。X社が1株50円配当を実施した場合と、<strong>無配だが株価が同水準で推移</strong>した場合を比較。</p>
+      <table class="tbl-blue" style="margin-top:0.5rem;">
+        <tr><th>シナリオ</th><th>受取配当</th><th>持株</th><th>合計富</th></tr>
+        <tr><td>① 配当50円受領</td><td>5,000円</td><td>100株×950＝95,000</td><td><strong>100,000円</strong></td></tr>
+        <tr><td>② 無配＋自分で5株売却</td><td>5株×1,000＝5,000円</td><td>95株×1,000＝95,000</td><td><strong>100,000円</strong></td></tr>
+      </table>
+      <p style="margin-top:0.4rem;">→ どちらも10万円で<strong>同じ</strong>。投資家は配当を「自分で作れる」。</p>
+    </div>
+
+    <div class="alert-tip"><strong>💡 逆方向：</strong>「配当はいらない」投資家は、もらった5,000円で5株（@1,000）を買い増せば100株保有・現金ゼロに戻り、無配と同じ結果になる。</div>
+
+    <h2 class="section-title st-red">📗 2. 税効果ありの自家製配当（崩れる前提）</h2>
+
+    <div class="card card-orange">
+      <h4>税ありシナリオ</h4>
+      <p>配当税率20%、譲渡益税率20%とする。X社株は1株500円で取得していた（含み益500円）。</p>
+      <ul>
+        <li>① <strong>配当受領</strong>：配当5,000円 − 税1,000円 ＝ 手取り<strong>4,000円</strong></li>
+        <li>② <strong>株5株売却</strong>：売却益 (1,000−500)×5 ＝ 2,500円。譲渡益税 500円。手取り 5,000−500 ＝ <strong>4,500円</strong></li>
+      </ul>
+      <p style="margin-top:0.4rem;">→ <strong>自家製配当の方が500円得</strong>（取得原価の存在で課税ベースが小さいため）。</p>
+    </div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>税のある世界では<strong>低配当・自社株買い・含み益放置</strong>が有利。これが「米国IT企業（Microsoft、Apple等）が長年無配を続けた」歴史的背景。</div>
+
+    <h2 class="section-title st-red">📗 3. 自社株買いの実務とROE効果</h2>
+
+    <div class="card card-purple">
+      <h4>自社株買いの株主還元効果</h4>
+      <p>純利益100億円、発行済株数1億株、純資産1,000億円の会社。</p>
+      <table class="tbl-pink">
+        <tr><th>状態</th><th>EPS</th><th>BPS</th><th>ROE</th></tr>
+        <tr><td>自社株買い前</td><td>100円</td><td>1,000円</td><td>10%</td></tr>
+        <tr><td>100億で1,000万株買い戻し（@1,000円）</td><td>100億÷9,000万株≒<strong>111円</strong></td><td>900億÷9,000万≒<strong>1,000円</strong></td><td>100億÷900億≒<strong>11.1%</strong></td></tr>
+      </table>
+      <p style="margin-top:0.4rem; font-size:0.85rem;">EPS・ROE が向上 → 株価評価指標も改善。</p>
+    </div>
+
+    <div class="goro-row"><span class="goro-chip">「自社株買い・E上がる・R上がる」＝EPS・ROE上昇</span></div>
+
+    <div class="alert-exam"><span class="tag-exam tag-2ji">2次</span>事例IVで「自社株買いが株主還元として優れる理由」を答える時は<strong>「EPS上昇」「ROE改善」「株価上昇シグナル」「税繰延」</strong>の4本柱で構成。</div>
+
+    <h2 class="section-title st-red">📗 4. 配当性向・配当利回り・配当割引モデル</h2>
+
+    <div class="formula-box">
+      配当性向 ＝ <span class="big">配当総額 ÷ 当期純利益</span>
+      （日本平均30%前後、米国30〜40%）
+    </div>
+    <div class="formula-box">
+      配当利回り ＝ <span class="big">1株配当 ÷ 株価</span>
+      （高配当株目安4%超、TOPIX平均2.5%程度）
+    </div>
+    <div class="formula-box">
+      配当割引モデル(DDM) 株価P ＝ <span class="big">D / (r − g)</span>
+      D：来期配当、r：株主資本コスト、g：成長率（ゴードンモデル）
+    </div>
+
+    <div class="support"><strong>ざっくり：</strong>DDM（Dividend Discount Model）＝配当割引モデル。株価は将来配当の現在価値の総和。<strong>配当政策は株価評価の入力</strong>でもある。MM理論と矛盾するように見えるが、DDMでは「<strong>配当を払えるだけの利益</strong>」を仮定しており、根本のCFは同じ。</div>
+
+    <div class="alert-exam"><span class="tag-exam tag-1ji">1次</span>「DDMによれば株価は配当で決まるから配当政策は重要」は<strong>誤り</strong>。DDMは利益と配当が連動する前提のモデルで、MM理論を否定するものではない。</div>
+
+    <h2 class="section-title st-red">📗 5. 増配シグナルの実証研究</h2>
+
+    <table class="tbl-blue">
+      <tr><th>イベント</th><th>株価への平均影響</th><th>典型的解釈</th></tr>
+      <tr><td>増配発表</td><td>+1〜+3%（米国研究）</td><td>good news シグナル</td></tr>
+      <tr><td>減配発表</td><td>−5〜−10%</td><td>bad news シグナル（影響大）</td></tr>
+      <tr><td>初配開始</td><td>+3〜+5%</td><td>成熟期入りのシグナル</td></tr>
+      <tr><td>自社株買い発表</td><td>+2〜+4%</td><td>「自社株は割安」と経営者が判断</td></tr>
+    </table>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-hint">💡</div>
+      <div class="bubble-body b-green"><div class="bubble-name">学びポイント</div>減配は増配の<strong>2〜3倍のインパクト</strong>。経営者が減配をためらう＝<strong>配当の粘着性（dividend smoothing）</strong>の実証根拠。リントナーの古典研究（1956）。</div>
+    </div>
+
+    <h2 class="section-title st-red">📗 6. 残余配当政策の数値例</h2>
+
+    <div class="card card-green">
+      <h4>例題：成長企業の最適配当</h4>
+      <p>当期純利益200億、来期投資計画150億、目標自己資本比率100%（負債ゼロ前提）。</p>
+      <ul>
+        <li>必要内部留保＝150億（投資原資）</li>
+        <li>残余＝200−150＝<strong>50億</strong></li>
+        <li>配当総額＝50億 → 配当性向＝50/200＝<strong>25%</strong></li>
+      </ul>
+      <p style="margin-top:0.4rem;">投資機会が増えれば配当は減り、減れば配当は増える。<strong>配当が変動する</strong>のがデメリット。</p>
+    </div>
+
+    <div class="alert-exam"><span class="tag-exam tag-2ji">2次</span>事例IVで「投資が必要な成長企業の配当政策」を問われたら<strong>残余配当＋低配当性向</strong>。逆に「投資機会少ない成熟企業」なら<strong>高配当＋自社株買い</strong>。</div>
+
+    <h2 class="section-title st-red">📗 7. MM配当無関連命題の前提・要約</h2>
+
+    <table class="tbl-purple">
+      <tr><th>前提</th><th>崩れた時の影響</th></tr>
+      <tr><td>税なし</td><td>配当課税で低配当が有利／逆に法人段階で配当控除があれば中立化</td></tr>
+      <tr><td>取引コストなし</td><td>自家製配当に手数料がかかる→配当ある株を選好</td></tr>
+      <tr><td>情報対称</td><td>配当がシグナルとして意味を持つ</td></tr>
+      <tr><td>合理的投資家</td><td>クライエンテール効果が生じる</td></tr>
+      <tr><td>投資政策固定</td><td>配当のために投資を削れば<strong>本当に企業価値が下がる</strong></td></tr>
+    </table>
+
+    <div class="link-memo">🔁 図解タブで「MM⇔現実」の対応マップを視覚化</div>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab4')">この章の答えを一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab4')">リセット</button>
+    </div>
+    <div class="fill-card">
+      <div class="fill-header h-red">📗 詳細 確認穴埋め</div>
+      <div class="fill-body">
+        <div class="fill-group">① 自家製配当：投資家は<span class="fill-blank">株を売却</span>して自分で配当を作れる</div>
+        <div class="fill-group">② 税ありの世界では<span class="fill-blank">低配当</span>政策が有利になる傾向</div>
+        <div class="fill-group">③ 自社株買いをすると<span class="fill-blank">EPS</span>と<span class="fill-blank">ROE</span>が同時に上昇</div>
+        <div class="fill-group">④ DDM：株価P ＝ D ÷ (<span class="fill-blank">r − g</span>)</div>
+        <div class="fill-group">⑤ 減配のマイナス影響は増配のプラスより<span class="fill-blank">大きい</span>（粘着性）</div>
+        <div class="fill-group">⑥ 残余配当政策：必要投資を引いた<span class="fill-blank">残り</span>を配当する</div>
+        <div class="fill-group">⑦ MM理論の暗黙前提に「<span class="fill-blank">投資政策</span>固定」がある</div>
+        <div class="fill-group">⑧ 純利益200・必要投資150 → 残余配当 ＝ <span class="fill-blank">50</span>億円</div>
+      </div>
+    </div>
+
+    <div class="keepit">
+      <h4>今日のこれだけ覚えて（詳細）</h4>
+      <ol>
+        <li>自家製配当は<strong>株売却で配当を自作</strong>。MM命題Iの論拠</li>
+        <li>自社株買い＝<strong>EPS・ROE改善＋税繰延</strong>で配当より有利な場面が多い</li>
+        <li>修正理論は <strong>税・取引・情報・投資家・投資政策</strong> の5前提崩れから派生</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 5: 語呂まとめ ========== -->
+  <div class="tab-panel theme-orange" id="tab5">
+
+    <h2 class="section-title st-orange">🎵 1. MM配当無関連命題の語呂</h2>
+
+    <div class="goro-formula">
+      「<ruby>無<rt>む</rt></ruby><ruby>関係<rt>かんけい</rt></ruby>　<ruby>完全<rt>かんぜん</rt></ruby><ruby>市場<rt>しじょう</rt></ruby>　<ruby>自家<rt>じか</rt></ruby><ruby>製<rt>せい</rt></ruby>」
+      <br><span class="eq">↓</span><br>
+      <strong>MM命題：完全市場では配当政策は企業価値と無関係（自家製配当が論拠）</strong>
+    </div>
+
+    <div class="goro-story">
+      <div class="goro-story-title">🎬 MM理論ストーリー</div>
+      <div class="goro-story-row">
+        <div class="goro-cell"><span class="goro-emoji">🚫</span><div class="goro-label">無関係</div><div class="goro-sub">配当≠価値</div></div>
+        <span class="goro-arrow">＋</span>
+        <div class="goro-cell"><span class="goro-emoji">🌐</span><div class="goro-label">完全市場</div><div class="goro-sub">税・コスト0</div></div>
+        <span class="goro-arrow">＋</span>
+        <div class="goro-cell"><span class="goro-emoji">🍳</span><div class="goro-label">自家製</div><div class="goro-sub">配当を自作</div></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange">🎵 2. 完全資本市場4条件「ぜいとり情リ」</h2>
+
+    <div class="goro-formula">
+      「<ruby>ぜい<rt>税なし</rt></ruby>・<ruby>とり<rt>取引コストなし</rt></ruby>・<ruby>情<rt>情報対称</rt></ruby>・<ruby>リ<rt>合理的</rt></ruby>」
+      <br>＝MM理論の4前提
+    </div>
+
+    <div class="goro-story purple">
+      <div class="goro-story-title">完全市場4条件</div>
+      <div class="goro-story-row">
+        <div class="goro-cell"><span class="goro-emoji">🚷</span><div class="goro-label">ぜい</div><div class="goro-sub">税なし</div></div>
+        <div class="goro-cell"><span class="goro-emoji">💸</span><div class="goro-label">とり</div><div class="goro-sub">取引コスト0</div></div>
+        <div class="goro-cell"><span class="goro-emoji">📡</span><div class="goro-label">情</div><div class="goro-sub">情報対称</div></div>
+        <div class="goro-cell"><span class="goro-emoji">🤖</span><div class="goro-label">リ</div><div class="goro-sub">合理的</div></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange">🎵 3. 修正理論4兄弟「税・シグ・エ・クラ」</h2>
+
+    <div class="goro-formula">
+      「<ruby>ぜい<rt>税効果</rt></ruby>・<ruby>シグ<rt>シグナリング</rt></ruby>・<ruby>エ<rt>エージェンシー</rt></ruby>・<ruby>クラ<rt>クライエンテール</rt></ruby>」
+      <br>＝現実世界の修正4種
+    </div>
+
+    <div class="goro-story">
+      <div class="goro-story-title">🌍 MMが現実とぶつかる4つの壁</div>
+      <div class="goro-story-row">
+        <div class="goro-cell"><span class="goro-emoji">💰</span><div class="goro-label">税</div><div class="goro-sub">配当課税</div></div>
+        <div class="goro-cell"><span class="goro-emoji">📡</span><div class="goro-label">シグ</div><div class="goro-sub">増配=GOOD</div></div>
+        <div class="goro-cell"><span class="goro-emoji">👮</span><div class="goro-label">エ</div><div class="goro-sub">経営者監視</div></div>
+        <div class="goro-cell"><span class="goro-emoji">👥</span><div class="goro-label">クラ</div><div class="goro-sub">客の好み</div></div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange">🎵 4. 配当政策3類型「アンセンザン」</h2>
+
+    <div class="goro-formula">
+      「<ruby>アン<rt>安定配当</rt></ruby>・<ruby>セン<rt>性向一定</rt></ruby>・<ruby>ザン<rt>残余配当</rt></ruby>」
+      <br>＝3つの配当政策パターン
+    </div>
+
+    <h2 class="section-title st-orange">🎵 5. 一鳥手中の語呂「ゴード・リン・トリ」</h2>
+
+    <div class="goro-formula">
+      <ruby>ゴード<rt>Gordon</rt></ruby>　<ruby>リン<rt>Lintner</rt></ruby>　<ruby>トリ<rt>bird</rt></ruby><ruby>手中<rt>in hand</rt></ruby>
+      <br>＝配当ある派の代表論者
+    </div>
+
+    <h2 class="section-title st-orange">🎵 6. ペッキングオーダー「ナイ・フ・カブ」</h2>
+
+    <div class="goro-formula">
+      「<ruby>ナイ<rt>内部留保</rt></ruby>　<ruby>フ<rt>負債</rt></ruby>　<ruby>カブ<rt>新株発行</rt></ruby>」
+      <br>＝資金調達序列（マイヤーズ）
+    </div>
+
+    <h2 class="section-title st-orange">🎵 7. MM資本構成命題「フゼイデアガル」</h2>
+
+    <div class="goro-formula">
+      「<ruby>フ<rt>負債</rt></ruby>×<ruby>ゼイ<rt>税率</rt></ruby>　<ruby>デ<rt>で</rt></ruby>　<ruby>アガル<rt>価値上がる</rt></ruby>」
+      <br>＝V<sub>L</sub>＝V<sub>U</sub>＋負債×t（節税効果）
+    </div>
+
+    <div class="alert-tip"><strong>💡 まとめ：</strong>MM配当（無関連）＝「税ゼロでは何もしない」、MM資本構成（税あり）＝「負債で価値が上がる」と<strong>逆方向</strong>に効く点に注意。</div>
+
+  </div>
+
+  <!-- ========== TAB 6: 語呂穴埋め ========== -->
+  <div class="tab-panel theme-orange" id="tab6">
+
+    <h2 class="section-title st-orange">🎤 語呂穴埋め</h2>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab6')">一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab6')">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-orange">🎵 MM配当命題の語呂</div>
+      <div class="fill-body">
+        <div class="fill-group">①「無関係」＝MM命題：配当政策は<span class="fill-blank">企業価値</span>に無関係</div>
+        <div class="fill-group">②「完全市場」＝<span class="fill-blank">完全資本市場</span>を前提とする</div>
+        <div class="fill-group">③「自家製」＝株を売って投資家が自分で作る<span class="fill-blank">自家製配当</span></div>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-orange">🎵 完全市場4条件「ぜいとり情リ」</div>
+      <div class="fill-body">
+        <div class="fill-group">①「ぜい」＝<span class="fill-blank">税</span>なし</div>
+        <div class="fill-group">②「とり」＝<span class="fill-blank">取引コスト</span>なし</div>
+        <div class="fill-group">③「情」＝<span class="fill-blank">情報対称</span></div>
+        <div class="fill-group">④「リ」＝<span class="fill-blank">合理的</span>投資家</div>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-orange">🎵 修正4兄弟「税・シグ・エ・クラ」</div>
+      <div class="fill-body">
+        <div class="fill-group">①「税」＝<span class="fill-blank">税効果</span>（配当課税・譲渡益課税）</div>
+        <div class="fill-group">②「シグ」＝<span class="fill-blank">シグナリング</span>理論（増配=good news）</div>
+        <div class="fill-group">③「エ」＝<span class="fill-blank">エージェンシー</span>理論（フリーCF仮説）</div>
+        <div class="fill-group">④「クラ」＝<span class="fill-blank">クライエンテール</span>効果（顧客効果）</div>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-orange">🎵 3類型「アンセンザン」</div>
+      <div class="fill-body">
+        <div class="fill-group">①「アン」＝<span class="fill-blank">安定配当</span>政策</div>
+        <div class="fill-group">②「セン」＝配当<span class="fill-blank">性向一定</span>政策</div>
+        <div class="fill-group">③「ザン」＝<span class="fill-blank">残余配当</span>政策</div>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-orange">🎵 一鳥手中＆ペッキングオーダー</div>
+      <div class="fill-body">
+        <div class="fill-group">①「ゴード・リン・トリ手中」＝<span class="fill-blank">ゴードン</span>とリントナー（配当ある派）</div>
+        <div class="fill-group">②「ナイ・フ・カブ」＝内部留保→<span class="fill-blank">負債</span>→新株（<span class="fill-blank">マイヤーズ</span>）</div>
+        <div class="fill-group">③「フ×ゼイ デ アガル」＝節税効果＝<span class="fill-blank">負債</span>×<span class="fill-blank">法人税率</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 7: 穴埋め初級 ========== -->
+  <div class="tab-panel theme-green" id="tab7">
+
+    <h2 class="section-title st-green">✍️ 穴埋め初級</h2>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab7')">一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab7')">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-green">基礎用語</div>
+      <div class="fill-body">
+        <div class="fill-group">① 会社の利益から株主に配るお金を<span class="fill-blank">配当</span>という</div>
+        <div class="fill-group">② 配当しないで会社に残すお金を<span class="fill-blank">内部留保</span>という</div>
+        <div class="fill-group">③ MM理論のMMはModigliani-<span class="fill-blank">Miller</span>の頭文字</div>
+        <div class="fill-group">④ 配当の代わりに自社の株を買い戻すことを<span class="fill-blank">自社株買い</span>という</div>
+        <div class="fill-group">⑤ 配当を出した直後に株価が下がることを<span class="fill-blank">配当落ち</span>という</div>
+        <div class="fill-group">⑥ 株価1,000円・1株配当40円 → 配当落ち後株価<span class="fill-blank">960</span>円</div>
+        <div class="fill-group">⑦ MM理論によれば配当政策は企業価値と<span class="fill-blank">無関係</span></div>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-green">配当政策の3類型</div>
+      <div class="fill-body">
+        <div class="fill-group">① 毎年同額を出す方針＝<span class="fill-blank">安定配当</span>政策</div>
+        <div class="fill-group">② 利益の○%を出す方針＝配当<span class="fill-blank">性向一定</span>政策</div>
+        <div class="fill-group">③ 必要投資を引いた残りを配当＝<span class="fill-blank">残余配当</span>政策</div>
+        <div class="fill-group">④ 投資機会が多い成長企業に向くのは<span class="fill-blank">残余配当</span>政策</div>
+        <div class="fill-group">⑤ 株主が配当の安定を望む大企業に多いのは<span class="fill-blank">安定配当</span>政策</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 8: 穴埋め中級 ========== -->
+  <div class="tab-panel theme-blue" id="tab8">
+
+    <h2 class="section-title st-blue">✏️ 穴埋め中級</h2>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab8')">一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab8')">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-blue">MM理論と修正理論</div>
+      <div class="fill-body">
+        <div class="fill-group">① MM配当命題の前提：①税なし ②<span class="fill-blank">取引コスト</span>なし ③情報対称 ④合理的投資家</div>
+        <div class="fill-group">② MM理論の論拠：投資家は株を売って<span class="fill-blank">自家製配当</span>を作れる</div>
+        <div class="fill-group">③ MMと真逆「配当ある株が高く評価」＝<span class="fill-blank">一鳥手中</span>の理論（ゴードン）</div>
+        <div class="fill-group">④ 経営者の業績見通しが配当に表れる＝<span class="fill-blank">シグナリング</span>理論</div>
+        <div class="fill-group">⑤ 余剰CFを配当で吐き出させ浪費を防ぐ＝<span class="fill-blank">フリーキャッシュフロー</span>仮説</div>
+        <div class="fill-group">⑥ 投資家の税率選好で投資先が分かれる＝<span class="fill-blank">クライエンテール</span>効果</div>
+        <div class="fill-group">⑦ 増配は<span class="fill-blank">good news</span>シグナル、減配は<span class="fill-blank">bad news</span>シグナル</div>
+        <div class="fill-group">⑧ 経営者は減配を嫌がる傾向＝配当の<span class="fill-blank">粘着性</span></div>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-blue">自社株買いと配当の比較</div>
+      <div class="fill-body">
+        <div class="fill-group">① 自社株買いをすると発行済株数が減るので<span class="fill-blank">EPS</span>が上昇</div>
+        <div class="fill-group">② 純資産も減るので<span class="fill-blank">ROE</span>も上昇</div>
+        <div class="fill-group">③ 配当課税は受領時、譲渡益課税は<span class="fill-blank">売却時</span>＝税繰延が可能</div>
+        <div class="fill-group">④ MM理論下では配当と自社株買いは<span class="fill-blank">等価</span></div>
+        <div class="fill-group">⑤ 自社株買いは「自社株は<span class="fill-blank">割安</span>」という経営者シグナルにもなる</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 9: 穴埋め上級 ========== -->
+  <div class="tab-panel theme-purple" id="tab9">
+
+    <h2 class="section-title st-purple">📝 穴埋め上級</h2>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab9')">一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab9')">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-purple">数値計算</div>
+      <div class="fill-body">
+        <div class="fill-group">① 株価2,500・1株配当100 → 配当落ち後株価<span class="fill-blank">2400</span>円</div>
+        <div class="fill-group">② 純利益500・配当総額150 → 配当性向<span class="fill-blank">30</span>%</div>
+        <div class="fill-group">③ 1株配当60・株価2,000 → 配当利回り<span class="fill-blank">3</span>%</div>
+        <div class="fill-group">④ 来期配当D=80・成長率g=2%・株主資本コストr=8% → 株価P＝80÷(0.08−0.02)＝<span class="fill-blank">1333.3</span>円</div>
+        <div class="fill-group">⑤ 純利益300・必要投資180・残余配当政策 → 配当総額<span class="fill-blank">120</span>億</div>
+        <div class="fill-group">⑥ 負債500・税率30% → MM節税効果＝500×0.3＝<span class="fill-blank">150</span></div>
+        <div class="fill-group">⑦ 純利益100・株数1億→1,000万株自社株買い後EPS＝100億÷9,000万≒<span class="fill-blank">111</span>円</div>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-purple">関連理論の整理</div>
+      <div class="fill-body">
+        <div class="fill-group">① MM配当命題は<span class="fill-blank">1961</span>年発表（資本構成は1958年）</div>
+        <div class="fill-group">② 資金調達序列（内部→負債→株式）＝<span class="fill-blank">ペッキングオーダー</span>（マイヤーズ）</div>
+        <div class="fill-group">③ MM資本構成命題（税あり）：V<sub>L</sub>＝V<sub>U</sub>＋<span class="fill-blank">負債×t</span></div>
+        <div class="fill-group">④ 節税効果と倒産コストのバランスから決まる最適点を<span class="fill-blank">最適資本構成</span>という</div>
+        <div class="fill-group">⑤ 株主と経営者の利害対立を扱う理論を<span class="fill-blank">エージェンシー</span>理論という</div>
+        <div class="fill-group">⑥ 株価評価モデルで配当を割り引くものを<span class="fill-blank">配当割引</span>モデル（DDM）という</div>
+        <div class="fill-group">⑦ ゴードンモデル（定率成長DDM）：P＝D÷(<span class="fill-blank">r−g</span>)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 10: 事例 ========== -->
+  <div class="tab-panel theme-green" id="tab10">
+
+    <h2 class="section-title st-green">🏢 事例1：ファミリー商事（成熟卸売業）</h2>
+
+    <div class="card card-green">
+      <h4>状況</h4>
+      <p>創業60年、安定した取引先を持つ卸売業。年間FCF 5億円、新規投資機会は限定的。手元現金が10億円を超え、株主から「お金を遊ばせるな」と圧力。</p>
+      <h4>診断士の助言</h4>
+      <ul>
+        <li><strong>増配または自社株買い</strong>：フリーCF仮説より、余剰CFは株主還元へ</li>
+        <li>配当性向を現行20%→40%へ引き上げ</li>
+        <li>同時に1〜2億円の自社株買いを発表→<strong>EPS・ROE改善</strong>のシグナル</li>
+      </ul>
+      <p style="margin-top:0.4rem; font-size:0.85rem;">→ 試験ロジック：<strong>成熟＋投資機会少＋FCF豊富 → 高配当・自社株買い</strong>。</p>
+    </div>
+
+    <h2 class="section-title st-green">🏢 事例2：テックリード（成長IT企業）</h2>
+
+    <div class="card card-blue">
+      <h4>状況</h4>
+      <p>創業10年、SaaS事業急成長。年間純利益10億円、来期投資計画15億円（人材・設備・開発）。資金不足分は新株発行・借入で。</p>
+      <h4>診断士の助言</h4>
+      <ul>
+        <li><strong>配当ゼロ or 残余配当政策</strong>：内部留保を最大化し成長投資へ</li>
+        <li>シグナリング上は<strong>「配当ゼロ＝成長期」</strong>が市場に伝わる</li>
+        <li>ペッキングオーダー：内部→負債→新株の順、新株発行は最小限</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green">🏢 事例3：田中製作所（事業承継期）</h2>
+
+    <div class="card card-orange">
+      <h4>状況</h4>
+      <p>三代目社長への承継5年前。安定配当だが業績は横ばい。社長の親族が大株主。後継者不安・株主構成変化への対応が課題。</p>
+      <h4>診断士の助言</h4>
+      <ul>
+        <li><strong>クライエンテール効果</strong>：既存大株主は配当依存→急な減配は反発</li>
+        <li>承継スキームと配当政策の整合性確認（株式分散か集中か）</li>
+        <li>自社株買いで親族外少数株主を整理することも選択肢</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green">🏢 事例4：キタモト食品（不況期）</h2>
+
+    <div class="card card-red">
+      <h4>状況</h4>
+      <p>地域の食品メーカー。コロナ・原材料高で利益半減。CFOは「配当維持」、CEOは「減配やむなし」と意見対立。</p>
+      <h4>診断士の助言</h4>
+      <ul>
+        <li>配当の<strong>粘着性</strong>：減配は強烈なbad newsシグナル → 安易な減配は株価急落リスク</li>
+        <li>ただし無理な配当維持は内部留保枯渇＝倒産リスク増</li>
+        <li><strong>記念配・特別配を切る</strong>形で実質減配＋普通配は維持の中間策が定石</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green">🏢 事例タブ末 試験ポイント穴埋め</h2>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab10')">一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab10')">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-green">事例で問われる定型回答</div>
+      <div class="fill-body">
+        <div class="fill-group">① 成熟・FCF豊富企業の配当政策→<span class="fill-blank">高配当</span>・自社株買い（フリーCF仮説）</div>
+        <div class="fill-group">② 成長・投資機会多い企業の配当政策→<span class="fill-blank">低配当</span>・残余配当（ペッキングオーダー）</div>
+        <div class="fill-group">③ 減配は増配より影響大＝配当の<span class="fill-blank">粘着性</span></div>
+        <div class="fill-group">④ 既存大株主が高配当を求める現象＝<span class="fill-blank">クライエンテール</span>効果</div>
+        <div class="fill-group">⑤ 自社株買いの株主還元効果はEPS・<span class="fill-blank">ROE</span>上昇＋税繰延</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 11: クイズ ========== -->
+  <div class="tab-panel theme-red" id="tab11">
+
+    <h2 class="section-title st-red">🧪 クイズ（A/B/C/D 分散）</h2>
+
+    <div class="quiz-item" id="q1">
+      <div><span class="quiz-num">1</span><span class="quiz-cat qc-blue">MM理論</span></div>
+      <div class="quiz-question">MM配当無関連命題の前提として<strong>正しくない</strong>ものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q1',2)">A. 税が存在しない</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q1',2)">B. 取引コストが存在しない</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q1',2)">C. 投資家ごとに配当への選好が異なる</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q1',2)">D. 経営者と投資家の情報が対称</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp"><strong>正解：C</strong>。MMの前提は<strong>合理的・選好同一</strong>。投資家ごとの選好差はクライエンテール効果＝MMが崩れる現実側の論点。</div>
+    </div>
+
+    <div class="quiz-item" id="q2">
+      <div><span class="quiz-num">2</span><span class="quiz-cat qc-purple">計算</span></div>
+      <div class="quiz-question">株価1,500円の銘柄が1株30円の配当を実施。配当落ち後の理論株価は？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q2',0)">A. 1,470円</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q2',0)">B. 1,500円</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q2',0)">C. 1,530円</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q2',0)">D. 1,450円</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp"><strong>正解：A</strong>。1,500−30＝1,470円。株主の富は株1,470＋現金30＝1,500で不変。</div>
+    </div>
+
+    <div class="quiz-item" id="q3">
+      <div><span class="quiz-num">3</span><span class="quiz-cat qc-green">修正理論</span></div>
+      <div class="quiz-question">余剰CFを配当で株主に吐き出させて経営者の浪費を防ぐ理論は？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q3',3)">A. 一鳥手中の理論</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q3',3)">B. クライエンテール効果</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q3',3)">C. シグナリング理論</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q3',3)">D. ジェンセンのフリーCF仮説</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp"><strong>正解：D</strong>。Jensen(1986)。エージェンシー問題の処方箋として、余剰CFを配当・自社株買い・負債で強制的に外に出す。</div>
+    </div>
+
+    <div class="quiz-item" id="q4">
+      <div><span class="quiz-num">4</span><span class="quiz-cat qc-red">自社株買い</span></div>
+      <div class="quiz-question">自社株買いの効果として<strong>誤っている</strong>ものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q4',1)">A. EPSが上昇する</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q4',1)">B. 発行済株式数が増えてROEが下がる</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q4',1)">C. 「自社株は割安」というシグナルになる</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q4',1)">D. 応じる株主のみが税負担を抱える</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp"><strong>正解：B</strong>。自社株買いは発行済株式数が<strong>減る</strong>。純資産も減るのでROEは<strong>上昇</strong>。</div>
+    </div>
+
+    <div class="quiz-item" id="q5">
+      <div><span class="quiz-num">5</span><span class="quiz-cat qc-blue">配当政策</span></div>
+      <div class="quiz-question">投資機会の多い成長企業に最も適合する配当政策は？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q5',2)">A. 配当性向一定政策</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q5',2)">B. 安定配当政策</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q5',2)">C. 残余配当政策</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q5',2)">D. 高配当性向政策</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp"><strong>正解：C</strong>。投資先行＋ペッキングオーダーから残余配当が定石。配当が変動するデメリットも併記して2次答案へ。</div>
+    </div>
+
+    <div class="quiz-item" id="q6">
+      <div><span class="quiz-num">6</span><span class="quiz-cat qc-purple">シグナリング</span></div>
+      <div class="quiz-question">配当のシグナリング効果について正しい記述は？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q6',3)">A. MM理論はシグナリング効果を説明する基本理論である</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q6',3)">B. 増配と減配の株価インパクトはほぼ同じである</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q6',3)">C. 配当の粘着性とは、配当が頻繁に変更されることをいう</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q6',3)">D. 増配は経営者からのgood newsシグナルとして株価上昇要因になる</li>
+      </ul>
+      <div class="quiz-explanation" id="q6-exp"><strong>正解：D</strong>。Aは情報非対称が前提のためMM理論ではない。Bは減配の方が大きい。Cは粘着性＝<strong>変えない</strong>こと。</div>
+    </div>
+
+    <div class="quiz-item" id="q7">
+      <div><span class="quiz-num">7</span><span class="quiz-cat qc-red">資本構成</span></div>
+      <div class="quiz-question">負債800万円・法人税率30%のとき、MM理論による節税効果（負債価値の上乗せ分）は？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q7',1)">A. 80万円</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q7',1)">B. 240万円</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q7',1)">C. 560万円</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q7',1)">D. 800万円</li>
+      </ul>
+      <div class="quiz-explanation" id="q7-exp"><strong>正解：B</strong>。節税効果＝負債×t＝800×0.3＝240万円。MM資本構成命題（税あり）。</div>
+    </div>
+
+    <div class="quiz-item" id="q8">
+      <div><span class="quiz-num">8</span><span class="quiz-cat qc-green">ペッキング</span></div>
+      <div class="quiz-question">マイヤーズのペッキングオーダー理論における資金調達の優先順位として正しいのは？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q8',0)">A. 内部留保 → 負債 → 新株発行</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q8',0)">B. 新株発行 → 負債 → 内部留保</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q8',0)">C. 負債 → 内部留保 → 新株発行</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q8',0)">D. 内部留保 → 新株発行 → 負債</li>
+      </ul>
+      <div class="quiz-explanation" id="q8-exp"><strong>正解：A</strong>。情報の非対称下では、情報コストの低い順＝内部→負債→新株。「ナイ・フ・カブ」。</div>
+    </div>
+
+    <div class="quiz-score" id="quizScore"></div>
+
+  </div>
+
+  <!-- ========== TAB 12: 実例 ========== -->
+  <div class="tab-panel theme-orange" id="tab12">
+
+    <h2 class="section-title st-orange">📖 実例1：トヨタ自動車 ─ 安定配当の象徴</h2>
+    <div class="card card-orange">
+      <p>トヨタは長年<strong>安定配当＋自社株買い</strong>のハイブリッド型。2023年度は1株配当75円、配当総額約1兆円超、加えて1兆円規模の自社株買い枠も設定。</p>
+      <p style="margin-top:0.4rem;">📝 <strong>学び：</strong>毎年の利益変動に対し、<strong>配当は粘着的に維持</strong>し、利益が大きい年は<strong>自社株買いで上乗せ</strong>。粘着性とフレキシビリティの両立。</p>
+    </div>
+
+    <h2 class="section-title st-orange">📖 実例2：ソフトバンクグループ ─ シグナリング失敗例</h2>
+    <div class="card card-purple">
+      <p>2020年、コロナショックで投資先評価損が膨らみ、SBGは配当維持を表明しつつ巨額自社株買い（4.5兆円）で株価防衛。市場には<strong>「自社株は割安」</strong>のシグナルとして好評価。</p>
+      <p style="margin-top:0.4rem;">📝 <strong>学び：</strong>大規模自社株買いは<strong>強力な経営者シグナル</strong>。一方で「やりすぎ＝他に投資先がない」と取られるリスクもある。</p>
+    </div>
+
+    <h2 class="section-title st-orange">📖 実例3：任天堂 ─ 残余配当に近い「業績連動配当」</h2>
+    <div class="card card-green">
+      <p>任天堂は<strong>配当性向50%以上を目処</strong>とする方針を明示（業績連動）。Switch大ヒット時には1株配当が3,000円超に達する一方、ヒット端境期には大きく減ることも。</p>
+      <p style="margin-top:0.4rem;">📝 <strong>学び：</strong>「配当性向一定」型に近いが、無借金・潤沢キャッシュゆえ投資需要が低く、結果として<strong>残余＝株主還元</strong>になりやすい。</p>
+    </div>
+
+    <h2 class="section-title st-orange">📖 実例4：Apple ─ 17年無配からの方針転換</h2>
+    <div class="card card-blue">
+      <p>1995年から2012年まで<strong>無配</strong>を続けたApple。スティーブ・ジョブズ復帰以降、内部留保を成長投資に集中（iPod・iPhone開発）。2012年に配当再開＋大規模自社株買いプログラム開始。</p>
+      <p style="margin-top:0.4rem;">📝 <strong>学び：</strong>成長期は<strong>無配＝ペッキングオーダー＋残余配当</strong>、成熟期は<strong>高配当＋自社株買い＝フリーCF仮説</strong>。<strong>企業ライフサイクルで配当政策は変わる</strong>。</p>
+    </div>
+
+    <h2 class="section-title st-orange">📖 実例5：Microsoft ─ 一括特別配当の伝説</h2>
+    <div class="card card-red">
+      <p>2004年、Microsoftは<strong>1株3ドル・総額320億ドル</strong>の特別配当を一発実施。当時史上最大規模。手元現金が約600億ドルに膨張し、エージェンシーコストが顕在化したことが背景。</p>
+      <p style="margin-top:0.4rem;">📝 <strong>学び：</strong>典型的な<strong>フリーCF仮説</strong>の発動例。「経営者が貯めすぎたら株主に強制的に返させる」現実版。</p>
+    </div>
+
+    <h2 class="section-title st-orange">📖 実例タブ末 試験ポイント穴埋め</h2>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab12')">一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab12')">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-orange">実在企業から学ぶ</div>
+      <div class="fill-body">
+        <div class="fill-group">① トヨタ型＝<span class="fill-blank">安定配当</span>＋自社株買いのハイブリッド</div>
+        <div class="fill-group">② Apple無配期は<span class="fill-blank">成長投資</span>を優先＝ペッキングオーダー的</div>
+        <div class="fill-group">③ Microsoft 2004年特別配当はフリー<span class="fill-blank">CF</span>仮説の典型例</div>
+        <div class="fill-group">④ SBGの巨額自社株買いは「自社株<span class="fill-blank">割安</span>」のシグナル</div>
+        <div class="fill-group">⑤ 企業<span class="fill-blank">ライフサイクル</span>に応じて配当政策は変わる</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== TAB 13: 図解 ========== -->
+  <div class="tab-panel theme-blue" id="tab13">
+
+    <h2 class="section-title st-blue">🗺 1. MM理論⇔現実の対応マップ</h2>
+
+    <div class="card card-blue">
+      <table class="tbl-blue">
+        <tr><th>MMの前提</th><th>崩れたら</th><th>派生理論</th></tr>
+        <tr><td>税なし</td><td>配当課税＞譲渡益課税</td><td>低配当政策有利</td></tr>
+        <tr><td>取引コストなし</td><td>株売却に手数料</td><td>配当ある株を選好</td></tr>
+        <tr><td>情報対称</td><td>経営者が内部情報保有</td><td><strong>シグナリング</strong>理論</td></tr>
+        <tr><td>合理的投資家</td><td>属性別の選好</td><td><strong>クライエンテール</strong>効果</td></tr>
+        <tr><td>投資政策固定</td><td>余剰CFの浪費可能性</td><td><strong>エージェンシー</strong>／FCF仮説</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-blue">🗺 2. 配当 vs 自社株買いの全体像</h2>
+
+    <div class="flow-row">
+      <div class="flow-box fb-blue">会社の余剰CF<small>株主に返す</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box fb-green">配当<small>全株主に均等</small></div>
+      <div class="flow-arrow">／</div>
+      <div class="flow-box fb-purple">自社株買い<small>応じた株主のみ</small></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card card-green">
+        <h4>配当の特徴</h4>
+        <ul>
+          <li>全株主に均等</li>
+          <li>受取時に課税</li>
+          <li>粘着性（減配しにくい）</li>
+          <li>クライエンテール効果あり</li>
+        </ul>
+      </div>
+      <div class="card card-purple">
+        <h4>自社株買いの特徴</h4>
+        <ul>
+          <li>応じた株主のみ</li>
+          <li>譲渡益課税（繰延可）</li>
+          <li>EPS・ROE上昇</li>
+          <li>「割安」シグナル</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="section-title st-blue">🗺 3. 企業ライフサイクル別 配当戦略</h2>
+
+    <div class="flow-row">
+      <div class="flow-box fb-orange">創業期<small>無配</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box fb-red">成長期<small>低配当・残余</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box fb-blue">成熟期<small>高配当・性向一定</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box fb-purple">衰退期<small>特別配当・縮小</small></div>
+    </div>
+
+    <div class="alert-tip"><strong>💡 試験定番：</strong>「ライフサイクルと配当政策」の対応は<strong>2次事例IVで頻出</strong>。創業＝無配、成長＝低配当、成熟＝高配当、衰退＝特別配当・自社株買いで自己解散的に株主還元。</div>
+
+    <h2 class="section-title st-blue">🗺 4. 3類型ベン図</h2>
+
+    <div class="card card-orange">
+      <table class="tbl-purple">
+        <tr><th>類型</th><th>配当額</th><th>向く企業</th><th>代表例</th></tr>
+        <tr><td>安定配当</td><td>毎年同額</td><td>大手成熟企業</td><td>トヨタ・電力・メガバンク</td></tr>
+        <tr><td>性向一定</td><td>利益×固定%</td><td>業績連動を明示する企業</td><td>任天堂・三井物産</td></tr>
+        <tr><td>残余配当</td><td>投資後の残り</td><td>成長期テック</td><td>初期Apple・Amazon・Google</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-blue">🗺 5. 修正理論 4象限マップ</h2>
+
+    <div class="card card-purple">
+      <table class="tbl-pink">
+        <tr><th></th><th>情報の問題</th><th>インセンティブの問題</th></tr>
+        <tr><td><strong>市場側</strong></td><td>シグナリング（ロス）</td><td>クライエンテール</td></tr>
+        <tr><td><strong>会社内部</strong></td><td>ペッキングオーダー（マイヤーズ）</td><td>エージェンシー／FCF仮説（ジェンセン）</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-blue">🗺 図解タブ末 試験ポイント穴埋め</h2>
+
+    <div class="fill-control">
+      <button class="btn-all" onclick="revealAllFillIn('tab13')">一括表示</button>
+      <button class="btn-reset" onclick="resetAllFillIn('tab13')">リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header h-blue">図解からの確認</div>
+      <div class="fill-body">
+        <div class="fill-group">① 情報対称の崩れから派生する理論＝<span class="fill-blank">シグナリング</span></div>
+        <div class="fill-group">② 投資政策固定の崩れから派生する理論＝<span class="fill-blank">エージェンシー</span>／フリーCF仮説</div>
+        <div class="fill-group">③ 成長期テックは<span class="fill-blank">残余配当</span>政策が定石</div>
+        <div class="fill-group">④ 自社株買いは譲渡益課税で税<span class="fill-blank">繰延</span>が可能</div>
+        <div class="fill-group">⑤ ライフサイクルで創業期は<span class="fill-blank">無配</span>、衰退期は特別配当が定型</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-avatar avatar-teacher">👨‍🏫</div>
+      <div class="bubble-body b-orange"><div class="bubble-name">3エージェントから</div>
+      MM理論は<strong>「現実とのギャップを測る物差し」</strong>。試験では <strong>無関連命題＋4つの修正＋3類型＋自社株買い</strong> の4セットで網羅できる。</div>
+    </div>
+
+  </div>
+
+  <nav class="tab-nav" style="border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">🌟 超入門</button>
+    <button class="tab-btn" data-color="pink" onclick="switchTab(1)">🌱 ゼロから</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">📖 入門</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(3)">📘 基本</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(4)">📗 詳細</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">🎵 語呂まとめ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">🎤 語呂穴埋め</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(7)">✍️ 穴埋め初級</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(8)">✏️ 穴埋め中級</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(9)">📝 穴埋め上級</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(10)">🏢 事例</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(11)">🧪 クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(12)">📖 実例</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(13)">🗺 図解</button>
+  </nav>
+</div>
+
+<div class="footer">財務・会計 コーポレートファイナンス｜配当政策・MM理論｜3エージェント討議＋超入門統合版</div>
+
+<script>
+function switchTab(idx) {
+  const numTabs = document.querySelectorAll('.tab-panel').length;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i % numTabs === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelector('.tab-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+let answered = 0, correct = 0, total = 8;
+function handleQuiz(e, qid, correctIdx) {
+  const li = e.target.closest('li');
+  if (!li || document.querySelector('#' + qid + ' li.correct, #' + qid + ' li.wrong')) return;
+  const idx = parseInt(li.dataset.idx);
+  const expEl = document.getElementById(qid + '-exp');
+  if (idx === correctIdx) {
+    li.classList.add('correct');
+    expEl.className = 'quiz-explanation show correct-exp';
+    correct++;
+  } else {
+    li.classList.add('wrong');
+    document.querySelectorAll('#' + qid + ' .quiz-options li')[correctIdx].classList.add('correct');
+    expEl.className = 'quiz-explanation show wrong-exp';
+  }
+  answered++;
+  if (answered === total) {
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    s.textContent = total + '問中 ' + correct + '問正解！' + (correct === total ? ' パーフェクト！' : correct >= 6 ? ' いい調子！' : ' もう一回復習しよう！');
+  }
+}
+
+// 個別の穴埋めクリックで表示/非表示
+document.addEventListener('click', function(e){
+  var el = e.target;
+  if(el.classList && el.classList.contains('fill-blank')){
+    el.classList.toggle('show');
+  }
+});
+
+// タブ単位の一括表示／リセット
+function revealAllFillIn(tabId){
+  document.querySelectorAll('#' + tabId + ' .fill-blank').forEach(function(el){ el.classList.add('show'); });
+}
+function resetAllFillIn(tabId){
+  document.querySelectorAll('#' + tabId + ' .fill-blank').forEach(function(el){ el.classList.remove('show'); });
+}
+</script>
+</body>
+</html>

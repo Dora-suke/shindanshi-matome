@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPU・プロセッサ・入出力インタフェース（超初心者版・Part2：演習・詳細編） - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.95;min-height:100vh;font-size:.95rem}
+.header{background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue-main) 50%,#5dade2 100%);color:#fff;padding:.6rem 1rem;text-align:center}.header h1{font-size:1.05rem;font-weight:800;letter-spacing:.04em;margin-bottom:.1rem;display:inline-block;margin-right:.6rem}.header .subtitle{font-size:.72rem;opacity:.9;display:inline-block;margin-right:.5rem}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.1rem .55rem;border-radius:14px;font-size:.7rem}
+.partnav{background:#fff;padding:.6rem;text-align:center;font-size:.85rem;box-shadow:var(--shadow);margin-bottom:.5rem}.partnav a{display:inline-block;padding:.4rem 1rem;margin:0 .3rem;border-radius:6px;text-decoration:none;font-weight:700}.partnav .active{background:var(--blue-main);color:#fff}.partnav .other{background:var(--gray-pale);color:var(--gray-dark)}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.7rem;margin:1.1rem 0}.bubble-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12)}.avatar-hint{background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow);position:relative;max-width:88%;font-size:.95rem;line-height:1.95}.bubble-body::before{content:'';position:absolute;top:14px;left:-14px;width:0;height:0;border:8px solid transparent;border-right-color:var(--white)}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.74rem;font-weight:700;color:var(--gray-mid);margin-bottom:.3rem}
+.tab-container{max-width:960px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.85rem .4rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:2rem 1.6rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}.tab-panel.theme-teal{background:var(--teal-light)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.15rem;font-weight:800;margin:2rem 0 1rem;padding:.6rem .9rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1.2rem 1.5rem;margin:1rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-red{border-left-color:var(--red-main)}.card-orange{border-left-color:var(--orange-main)}.card h4{font-size:1rem;font-weight:700;margin-bottom:.5rem}.card p{margin-bottom:.5rem}
+.alert-tip,.alert-exam{border-radius:var(--radius);padding:.95rem 1rem .95rem 3rem;margin:1rem 0;position:relative;font-size:.92rem;line-height:1.85}.alert-tip::before,.alert-exam::before{position:absolute;left:.8rem;top:.85rem;font-size:1.2rem}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"\1F4A1"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"\1F4DD"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);overflow-x:auto}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.7rem 1.2rem;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center;min-width:80px;margin:.25rem}.flow-box small{display:block;font-weight:400;font-size:.74rem;opacity:.9;margin-top:.15rem}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}
+table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.9rem}th,td{padding:.65rem .7rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}tr:hover{background:rgba(0,0,0,.02)}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}
+ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
+.sim-card{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);border-top:4px solid var(--green-main)}.sim-card h4{font-size:1.05rem;font-weight:800;color:var(--green-dark);margin-bottom:.5rem}.sim-label{display:inline-block;padding:.2rem .7rem;border-radius:4px;font-size:.75rem;font-weight:700;color:#fff;background:var(--green-main);margin-bottom:.5rem}.sim-card p{margin-bottom:.6rem}
+.quiz-item{background:#fff;border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-size:.9rem;font-weight:700;margin-bottom:.5rem}.quiz-question{font-weight:600;font-size:1rem;margin-bottom:.9rem;line-height:1.8}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.65rem .9rem;margin:.4rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;transition:all .2s;font-size:.93rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.8rem;padding:.9rem;border-radius:var(--radius-sm);font-size:.92rem;line-height:1.8}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}
+.footer{text-align:center;padding:1.8rem;color:var(--gray-light);font-size:.85rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.fill-card .fill-header{padding:14px 20px;font-weight:700;font-size:.98rem;color:#fff}
+.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}
+.fill-card .fill-body{padding:20px 22px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:6px;font-size:.95rem;line-height:2.1}
+.rough{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.exam-pt{font-size:.86rem;margin-top:.5rem;color:#1565c0;background:#e3f2fd;padding:.5rem .75rem;border-radius:6px}
+.exam-warn{font-size:.86rem;margin-top:.4rem;color:#b71c1c;background:#fce4ec;padding:.5rem .75rem;border-radius:6px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.5rem .9rem;border-radius:20px;font-size:.85rem;font-weight:700;margin:.4rem .3rem .4rem 0;box-shadow:0 2px 6px rgba(142,68,173,.3)}.goro-chip::before{content:"\1F3B5 ";margin-right:.3rem}.goro-chip small{font-weight:400;opacity:.95;margin-left:.4rem;font-size:.78rem}
+.goro-row{margin:.6rem 0;padding:.5rem .7rem;background:#faf5fc;border-left:3px solid var(--purple-main);border-radius:4px}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.92rem;line-height:1.85}
+.support-icon{font-size:1.7rem;flex-shrink:0;line-height:1}
+.support-body{flex:1}.support-body strong{color:#e65100}.support-name{font-size:.72rem;font-weight:700;color:#bf360c;margin-bottom:.2rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.1rem 1.3rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}
+.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.keepit ul{list-style:none;padding:0;margin:0}
+.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.9rem;line-height:1.7}
+.keepit li strong{color:#1565c0}
+@media(max-width:600px){.tab-btn{font-size:.65rem;padding:.7rem .2rem}.tab-panel{padding:1.4rem 1rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>CPU・プロセッサ・入出力インタフェース（超初心者版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム</div>
+  <div class="badge">📗 Part2：演習・詳細編（教科書4-1準拠／全6タブ）</div>
+</div>
+<div class="partnav">
+  <a class="other" href="01.CPU・プロセッサ・入出力インタフェースまとめ_超初心者版_part1.html">← 📘 Part1：基礎理解</a>
+  <a class="active">📗 Part2：演習・詳細（このページ）</a>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="blue" onclick="switchTab(0)">&#x1F50D; 詳細&#x2460;CPU性能</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">&#x1F50D; 詳細&#x2461;USB計算</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(2)">&#x1F3E2; 事例</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(3)">&#x1F4A1; 実例</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(4)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(5)">&#x270D;&#xFE0F; 穴埋め</button>
+  </nav>
+
+  <!-- ===== TAB 0: 詳細①CPU性能 ===== -->
+  <div class="tab-panel active theme-blue" id="tab0">
+    <div class="alert-tip" style="margin-bottom:1rem;">&#x1F50D; <strong>このタブのゴール</strong>：<strong>クロック周波数の単位換算</strong>と<strong>キャッシュメモリの平均アクセス時間計算</strong>（教科書 H20-9・H19-1・H18-1 出題）が解けるようになること。</div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4CA;</span> ステップ1：クロック周波数の単位換算</h2>
+    <div class="card card-blue"><h4>&#x1F3AF; 単位の桁を整理（教科書 H29-1・H24-3・H22-2 出題）</h4>
+      <p>クロック周波数の単位＝<strong>ヘルツ（Hz）</strong>は1秒間の演算数。桁が大きくなると次の単位を使う：</p>
+      <table class="tbl-blue">
+        <tr><th>単位</th><th>意味</th><th>1秒間の演算数</th></tr>
+        <tr><td>1 Hz</td><td>−</td><td>1回</td></tr>
+        <tr><td>1 KHz（キロ）</td><td>10^3</td><td>1,000回</td></tr>
+        <tr><td>1 MHz（メガ）</td><td>10^6</td><td>100万回</td></tr>
+        <tr style="background:#fff9e6;"><td><strong>1 GHz（ギガ）</strong></td><td><strong>10^9</strong></td><td><strong>10億回</strong></td></tr>
+      </table>
+      <p style="font-size:.88rem;color:var(--gray-mid);">例：3.5GHz CPU ＝ 1秒間に <strong>35億回</strong> 演算可能</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">1GHz＝10億回/秒<small>10の9乗</small></span></div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>単位換算が苦手って人は<strong>「キロ＝千、メガ＝百万、ギガ＝十億」</strong>の3つだけ覚えとけばOK！ 試験ではほぼ<strong>GHz と MHz</strong>しか出ないから、<strong>「GHz＝MHzの1000倍」</strong>って関係性さえ押さえとけば換算ミスしません。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9EE;</span> ステップ2：キャッシュメモリの平均アクセス時間（教科書最重要計算）</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar avatar-hint">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">教科書より</div>キャッシュメモリは <strong>処理を高速化するために使う高速メモリ</strong>（教科書記載・重要マーク）。CPUは必要なデータをまずキャッシュに探しに行き、無ければ主記憶（メインメモリ）に取りに行きます。<br>
+      キャッシュで見つかった確率を <strong>キャッシュのヒット率</strong> と呼びます。</div></div>
+
+    <div class="card card-blue"><h4>&#x1F4CB; 教科書の公式（重要マーク）</h4>
+      <p style="text-align:center;margin:.8rem 0;background:#eceff1;padding:.8rem;border-radius:6px;font-size:.95rem;">
+        <strong>平均アクセス時間</strong><br>
+        ＝ キャッシュのアクセス時間 × ヒット率<br>
+        ＋ 主記憶のアクセス時間 × （1 − ヒット率）
+      </p>
+    </div>
+
+    <div class="card card-orange"><h4>&#x1F4DD; 教科書の例題そのまま</h4>
+      <p><strong>Q</strong>：キャッシュへのアクセス時間が<strong>10ns</strong>、主記憶へのアクセス時間が<strong>50ns</strong>。キャッシュのヒット率が<strong>80%</strong>のとき、平均アクセス時間は？</p>
+      <p style="background:#fff;padding:.6rem;border-radius:4px;">
+        平均アクセス時間 ＝ 10ns × 0.8 ＋ 50ns × （1 − 0.8）<br>
+        　　　　　　　　＝ 8 ＋ 10<br>
+        　　　　　　　　＝ <strong>18ns</strong>
+      </p>
+      <p style="font-size:.85rem;color:var(--gray-mid);">※ ns（ナノ秒）＝1秒の10の−9乗（とても短い時間）</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">ヒット率×キャッシュ＋（1−ヒット率）×主記憶<small>教科書の式</small></span></div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：教科書 H20-9・H19-1・H18-1 で出題。<strong>「速い方×当たり確率＋遅い方×外れ確率」</strong>と理解すれば公式を忘れても出せる。</p>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>公式が長く見えるけど、要は<strong>「2つの平均」</strong>。<br>
+      ・80%は速いキャッシュ（10ns）でアクセス → <strong>10×0.8＝8</strong><br>
+      ・20%は遅い主記憶（50ns）に行く → <strong>50×0.2＝10</strong><br>
+      合計18ns。これだけ！ 試験会場で公式忘れても、この「重み付き平均」って思えば導けるよ！</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4DA;</span> ステップ3：記憶階層との関係（教科書補足）</h2>
+    <div class="diagram"><div class="diagram-title">&#x1F4DA; 教科書の記憶階層図（速い・小・高い 順）</div>
+      <table class="tbl-blue">
+        <tr><th>階層</th><th>速度</th><th>容量</th><th>備考</th></tr>
+        <tr><td>レジスタ（CPU内）</td><td>最速</td><td>最小</td><td>32／64ビット</td></tr>
+        <tr><td>キャッシュメモリ</td><td>速い</td><td>小</td><td>SRAM／CPUと主記憶の差を埋める</td></tr>
+        <tr><td>主記憶装置（メモリ）</td><td>中</td><td>中</td><td>DRAM</td></tr>
+        <tr><td>ディスクキャッシュ</td><td>遅い</td><td>中</td><td>主記憶と補助記憶の差を埋める</td></tr>
+        <tr><td>補助記憶装置（HDD等）</td><td>最遅</td><td>最大</td><td>不揮発性</td></tr>
+      </table>
+    </div>
+    <p style="font-size:.88rem;color:var(--gray-mid);">&#x1F4A1; <strong>キャッシュメモリの本質</strong>：CPU と主記憶の<strong>速度差を埋める緩衝材</strong>。詳しい記憶装置論点は別ノート「02. 記憶装置」を参照。</p>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（詳細①CPU性能）</div>
+      <ul>
+        <li>&#x2776; 単位：<strong>1GHz＝10億回/秒</strong>（10の9乗）</li>
+        <li>&#x2777; 平均アクセス時間 ＝ <strong>キャッシュ時間×ヒット率＋主記憶時間×(1−ヒット率)</strong></li>
+        <li>&#x2778; 例：10ns・50ns・80%なら <strong>10×0.8＋50×0.2＝18ns</strong></li>
+      </ul>
+    </div>
+    <div class="alert-exam">&#x1F4DD; お疲れさまでした！ 続けて<strong>「&#x1F50D; 詳細&#x2461;USB計算」</strong>タブへ。</div>
+  </div>
+
+  <!-- ===== TAB 1: 詳細②USB計算 ===== -->
+  <div class="tab-panel theme-blue" id="tab1">
+    <div class="alert-tip" style="margin-bottom:1rem;">&#x1F50D; <strong>このタブのゴール</strong>：<strong>USB転送時間の計算</strong>（教科書外論点だが過去問R03-1・R07-1 出題）と、教科書のUSB3区分の理解を深める。</div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9EE;</span> USB転送時間計算の3ステップ</h2>
+    <div class="card card-blue"><h4>&#x1F3AF; 計算手順（暗記）</h4>
+      <ol>
+        <li><strong>データ量を bit に変換</strong>（バイト × 8）</li>
+        <li><strong>速度（bps）で割る</strong> → 時間（秒）</li>
+        <li>単位の桁を揃える（GB と Gbps、MB と Mbps を合わせる）</li>
+      </ol>
+      <p style="text-align:center;margin:.5rem 0;background:#eceff1;padding:.5rem;border-radius:4px;"><strong>転送時間（秒） ＝ データ量(bit) ÷ 転送速度(bps)</strong></p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">バイト→ビットは×8<small>1B=8b</small></span><span class="goro-chip">時間=bit÷bps<small>これだけ</small></span></div>
+
+    <div class="card card-orange"><h4>&#x1F4DD; 例題1（R03 レベル）</h4>
+      <p><strong>Q</strong>：1GBのファイルを USB3.x（最大5Gbps の場合）で転送する理論上の最小時間は？</p>
+      <p><strong>解き方</strong>：</p>
+      <ol>
+        <li>データ量：1GB ＝ 1×10^9 byte ＝ 1×10^9 × 8 bit ＝ <strong>8×10^9 bit</strong>（=8Gbit）</li>
+        <li>速度：5Gbps ＝ 5×10^9 bit/s</li>
+        <li>時間：8×10^9 ÷ 5×10^9 ＝ <strong>1.6秒</strong></li>
+      </ol>
+    </div>
+
+    <div class="card card-orange"><h4>&#x1F4DD; 例題2（R07 レベル）</h4>
+      <p><strong>Q</strong>：USB2.0（480Mbps）で2GBを転送する時間は？</p>
+      <p><strong>解き方</strong>：</p>
+      <ul>
+        <li>データ量：2GB ＝ 16Gbit ＝ 16,000Mbit</li>
+        <li>時間：16,000 ÷ 480 ＝ 約<strong>33.3秒</strong></li>
+      </ul>
+    </div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：手順は<strong>①GBをbitに（×8）／②bpsで割る</strong>。<strong>単位換算の単純ミスが失点の最大要因</strong>。</p>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>計算問題のコツは<strong>「単位を揃えてから割るだけ」</strong>。GB と Gbps なら、まず GB を <strong>×8 して Gbit</strong> にして、それを Gbps で割れば秒が出ます。<strong>「×8、÷、おわり」</strong>のリズムで覚えよう！</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F50C;</span> USB規格の世代別整理（教科書3区分の中身）</h2>
+    <div class="card card-blue"><h4>教科書の3区分を細分化（参考）</h4>
+      <p>教科書では <strong>USB2.0 ／ USB3.x ／ USB4 V2.0</strong> の3区分。実際のUSB3.x には複数の世代があります：</p>
+      <table class="tbl-blue">
+        <tr><th>規格</th><th>速度</th><th>備考</th></tr>
+        <tr><td>USB 2.0</td><td><strong>480Mbps</strong></td><td>教科書区分①</td></tr>
+        <tr style="background:#fff9e6;"><td>USB 3.0（=3.1 Gen1=3.2 Gen1）</td><td><strong>5Gbps</strong></td><td rowspan="3">教科書区分② USB3.x（最大20Gbps）</td></tr>
+        <tr style="background:#fff9e6;"><td>USB 3.1 Gen2（=3.2 Gen2）</td><td>10Gbps</td></tr>
+        <tr style="background:#fff9e6;"><td>USB 3.2 Gen2x2</td><td>20Gbps</td></tr>
+        <tr><td>USB4</td><td>40Gbps</td><td>Thunderbolt 3取込</td></tr>
+        <tr style="background:#fff9e6;"><td><strong>USB4 Version 2.0</strong></td><td><strong>80Gbps</strong></td><td>教科書区分③</td></tr>
+      </table>
+    </div>
+    <div class="goro-row"><span class="goro-chip">USB2.0＝480M<small>定番</small></span><span class="goro-chip">USB3.0＝5G<small>3.0は3Gの引っかけ注意</small></span><span class="goro-chip">USB4 V2.0＝80G<small>最新</small></span></div>
+    <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「USB3.0は3Gbps」は誤り。正しくは<strong>5Gbps</strong>。世代名と速度は別物。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F4F6;</span> Bluetooth 補足（教科書 R2-1・H25-1 出題）</h2>
+    <div class="card card-blue"><h4>&#x1F4DD; 試験で問われる4点</h4>
+      <ul>
+        <li><strong>近距離無線通信</strong>規格</li>
+        <li>通信距離 <strong>10m 程度</strong></li>
+        <li><strong>2.4GHz帯</strong>の電波（電子レンジ等と同じ周波数帯）</li>
+        <li>電波干渉対策に <strong>周波数ホッピング</strong>（短い間隔で周波数を切り替え）</li>
+      </ul>
+    </div>
+    <div class="goro-row"><span class="goro-chip">10m・2.4GHz・周波数ホッピング<small>セット暗記</small></span></div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（詳細②USB計算）</div>
+      <ul>
+        <li>&#x2776; 転送時間 ＝ <strong>データ量(bit) ÷ 速度(bps)</strong>。GB→bit は <strong>×8</strong></li>
+        <li>&#x2777; 1GB÷5Gbps＝<strong>1.6秒</strong>／2GB÷480Mbps≒<strong>33秒</strong></li>
+        <li>&#x2778; Bluetooth＝<strong>10m・2.4GHz・周波数ホッピング</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 事例 ===== -->
+  <div class="tab-panel theme-green" id="tab2">
+    <div class="sim-card"><span class="sim-label">事例1</span>
+      <h4>店舗 A：POSレジ／券売機を新調したい</h4>
+      <p><strong>与件</strong>：店舗で利用する券売機を新調する。手袋をしたまま操作するスタッフもいる。</p>
+      <p><strong>解決</strong>：<strong>赤外線方式または抵抗膜方式のタッチパネル</strong>を採用。<br>
+      ・<strong>抵抗膜方式</strong>＝手袋・ペンでもOK（圧力式）<br>
+      ・<strong>赤外線方式</strong>＝耐久性が高く ATM・公共端末で実績<br>
+      <strong>学び</strong>：用途・操作環境からタッチパネル方式を選ぶ。</p>
+    </div>
+
+    <div class="sim-card"><span class="sim-label">事例2</span>
+      <h4>製造業 B：ノートPC選定で USB Type-C 給電を活かしたい</h4>
+      <p><strong>与件</strong>：外出先でノートPCを使う営業員が増え、AC電源を持ち歩く負担が大きい。</p>
+      <p><strong>解決</strong>：<strong>USB Power Delivery（USB PD）対応の Type-C ノートPC</strong>を導入。スマホと同じケーブル1本でPC充電も可能（最大240W対応）。<br>
+      <strong>学び</strong>：USB PD は単なる USB ではなく <strong>給電規格</strong>。Type-C コネクタ採用が前提。</p>
+    </div>
+
+    <div class="sim-card"><span class="sim-label">事例3</span>
+      <h4>サービス業 C：会議室でのプレゼン環境を整備したい</h4>
+      <p><strong>与件</strong>：会議室の大画面に PCの映像と音声を1本のケーブルで出力したい。</p>
+      <p><strong>解決</strong>：<strong>HDMI ケーブル</strong>を採用。1本で映像＋音声を伝送できるのが強み。<br>
+      <strong>学び</strong>：用途別にインタフェース選択：<br>
+      ・<strong>HDMI</strong>＝映像＋音声（テレビ・プロジェクタ）<br>
+      ・<strong>USB</strong>＝マウス・キーボード・データ転送<br>
+      ・<strong>Bluetooth</strong>＝ワイヤレスマウス・スピーカー</p>
+    </div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（事例）</div>
+      <ul>
+        <li>&#x2776; 手袋OKタッチパネル＝<strong>抵抗膜</strong>／公共端末＝<strong>赤外線</strong>／スマホ＝<strong>静電容量</strong></li>
+        <li>&#x2777; ノートPC給電＝<strong>USB PD（Type-C）</strong></li>
+        <li>&#x2778; 会議室の映像＋音声出力＝<strong>HDMI</strong> 1本でOK</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 実例 ===== -->
+  <div class="tab-panel theme-red" id="tab3">
+    <div class="card card-red"><h4>&#x1F4F1; スマホで主流の<strong>静電容量タッチパネル</strong></h4>
+      <p>iPhone・Android スマホはほぼ全機種が<strong>静電容量方式</strong>。指の電流を感知するため、<strong>マルチタッチ（2本指ピンチ操作）</strong>が可能。冬の<strong>導電糸入り手袋</strong>でないと操作できないのはこのため。</p>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F3E2; ATM・コンビニ券売機の<strong>赤外線タッチパネル</strong></h4>
+      <p>銀行ATM・JR券売機・ホテルのチェックイン端末などは<strong>赤外線方式</strong>。耐久性が高く、画面の汚れ・ヒビにも強いため<strong>不特定多数が触る公共端末</strong>に最適。</p>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F4BB; ノートPC1本充電を実現した<strong>USB PD</strong></h4>
+      <p>近年のノートPC（MacBook、ThinkPad、Surface など）は<strong>USB-C ポートでの充電</strong>が当たり前に。専用ACアダプタを持ち歩かなくても、スマホ用充電器で兼用できる時代へ。最大240Wまで対応するため、ゲーミングPCでもUSB-C 1本で動く製品が登場している。</p>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F50C; <strong>USB-C は「形」、中身は別物</strong></h4>
+      <p>USB-C コネクタの中を流れているのは USB2.0／3.x／4／Thunderbolt／DisplayPort などさまざま。<strong>形が同じでも中身は別物</strong>なので、「Type-Cなのに充電できない／映像が出ない」と感じる場合は<strong>ケーブルや機器の対応規格</strong>を確認する必要がある。</p>
+    </div>
+
+    <div class="card card-red"><h4>&#x1F3B5; AirPods・ワイヤレスイヤホンの普及＝<strong>Bluetooth</strong></h4>
+      <p>iPhone から有線イヤホン端子（3.5mmジャック）が消えたことで、<strong>Bluetooth ワイヤレスイヤホン</strong>が爆発的に普及。Bluetooth の通信距離 10m と低消費電力が、こうした近距離・モバイル用途と完全に一致した結果。</p>
+    </div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（実例）</div>
+      <ul>
+        <li>&#x2776; 身近な実例で各方式を結びつけ：<strong>スマホ＝静電容量／ATM＝赤外線／券売機＝赤外線</strong></li>
+        <li>&#x2777; ノートPC給電 1本化は <strong>USB PD（Type-C）</strong> がキー</li>
+        <li>&#x2778; ワイヤレスイヤホンの普及背景＝<strong>Bluetooth</strong> の特性（10m・低消費電力）</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: クイズ ===== -->
+  <div class="tab-panel theme-orange" id="tab4">
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> 応用クイズ（全5問）</h2>
+    <p style="font-size:.9rem;color:var(--gray-mid);margin-bottom:.8rem;">教科書 4-1 の重要論点と過去問対応の応用問題。</p>
+
+    <div class="quiz-item" id="q1"><span class="quiz-num">1</span>
+      <div class="quiz-question">クロック周波数 1GHz は1秒間に何回の演算を意味するか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q1',2)">A. 1万回</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q1',2)">B. 100万回</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q1',2)">C. 10億回</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q1',2)">D. 1兆回</li>
+      </ul>
+      <div class="quiz-explanation" id="q1-exp">正解C。1G＝10の9乗＝10億。教科書直接記載。</div>
+    </div>
+
+    <div class="quiz-item" id="q2"><span class="quiz-num">2</span>
+      <div class="quiz-question">キャッシュ時間20ns、主記憶100ns、ヒット率90%のとき、平均アクセス時間は？</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q2',1)">A. 20ns</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q2',1)">B. 28ns</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q2',1)">C. 60ns</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q2',1)">D. 100ns</li>
+      </ul>
+      <div class="quiz-explanation" id="q2-exp">正解B。20×0.9 + 100×0.1 = 18 + 10 = 28ns。</div>
+    </div>
+
+    <div class="quiz-item" id="q3"><span class="quiz-num">3</span>
+      <div class="quiz-question">USB の特長として誤っているものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q3',3)">A. ホットプラグに対応している</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q3',3)">B. USBハブで最大127台接続できる</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q3',3)">C. シリアル伝送方式である</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q3',3)">D. パラレル伝送方式の代表例である</li>
+      </ul>
+      <div class="quiz-explanation" id="q3-exp">正解D（誤り）。USBはシリアル伝送（Universal Serial Bus）。パラレル伝送はSCSI など。</div>
+    </div>
+
+    <div class="quiz-item" id="q4"><span class="quiz-num">4</span>
+      <div class="quiz-question">教科書の3区分で、USB4 Version 2.0 の最大転送速度はどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q4',3)">A. 480Mbps</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q4',3)">B. 5Gbps</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q4',3)">C. 20Gbps</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q4',3)">D. 80Gbps</li>
+      </ul>
+      <div class="quiz-explanation" id="q4-exp">正解D。教科書3区分：USB2.0=480Mbps／USB3.x=最大20Gbps／USB4 V2.0=最大80Gbps。</div>
+    </div>
+
+    <div class="quiz-item" id="q5"><span class="quiz-num">5</span>
+      <div class="quiz-question">Bluetooth の特徴として正しいものはどれか。</div>
+      <ul class="quiz-options">
+        <li data-idx="0" onclick="handleQuiz(event,'q5',2)">A. 通信距離は数km</li>
+        <li data-idx="1" onclick="handleQuiz(event,'q5',2)">B. 5GHz帯の電波を使う</li>
+        <li data-idx="2" onclick="handleQuiz(event,'q5',2)">C. 2.4GHz帯で周波数ホッピングを使う</li>
+        <li data-idx="3" onclick="handleQuiz(event,'q5',2)">D. 通信速度はUSBより速い</li>
+      </ul>
+      <div class="quiz-explanation" id="q5-exp">正解C。Bluetoothは2.4GHz帯＋周波数ホッピングで電波干渉対策。距離10m、速度はUSBより遅い。</div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: 穴埋め ===== -->
+  <div class="tab-panel theme-teal" id="tab5">
+    <h2 class="section-title st-teal"><span class="st-icon">&#x270D;&#xFE0F;</span> 穴埋めチェック（Part2総まとめ）</h2>
+    <div style="text-align:center;margin:1rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab5')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab5')" style="background:#64748b;">🔄 リセット</button>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">① CPU性能・キャッシュ計算</div>
+      <div class="fill-body">
+        <div class="fill-group">・1GHz＝<span class="fill-blank">10億</span>回/秒（10の<span class="fill-blank">9</span>乗）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・平均アクセス時間 ＝ <span class="fill-blank">キャッシュ時間×ヒット率</span> ＋ <span class="fill-blank">主記憶時間×(1−ヒット率)</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・10ns・50ns・80%なら平均＝<span class="fill-blank">18</span>ns（10×0.8＋50×0.2）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-blue">② USB転送計算</div>
+      <div class="fill-body">
+        <div class="fill-group">・転送時間 ＝ データ量(bit) ÷ <span class="fill-blank">速度(bps)</span>。1GB＝<span class="fill-blank">8Gbit</span>（×8）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・1GBをUSB3.0(5Gbps)で送ると約<span class="fill-blank">1.6</span>秒（8÷5）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・USB2.0＝<span class="fill-blank">480Mbps</span>／USB3.x＝最大<span class="fill-blank">20Gbps</span>／USB4 V2.0＝最大<span class="fill-blank">80Gbps</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-header bg-orange">③ 事例・実例</div>
+      <div class="fill-body">
+        <div class="fill-group">・手袋OKは<span class="fill-blank">抵抗膜</span>方式／公共端末は<span class="fill-blank">赤外線</span>方式／スマホは<span class="fill-blank">静電容量</span>方式</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・ノートPCをType-C 1本で充電＝<span class="fill-blank">USB PD</span>（最大<span class="fill-blank">240</span>W）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+        <div class="fill-group">・会議室で映像＋音声を1本＝<span class="fill-blank">HDMI</span>／ワイヤレスイヤホン＝<span class="fill-blank">Bluetooth</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+      </div>
+    </div>
+
+    <div class="alert-tip">&#x1F389; <strong>お疲れさまでした！</strong> 教科書 4-1 の CPU・入出力IF章を一通り押さえました。試験では<strong>5大装置／レジスタ／クロック周波数／キャッシュ計算／タッチパネル3方式／USB3区分／Bluetooth</strong> が頻出。</div>
+  </div>
+</div>
+
+<div class="footer">中小企業診断士 経営情報システム | CPU・プロセッサ・入出力インタフェース（超初心者版・Part2／教科書4-1準拠）</div>
+
+<script>
+function switchTab(idx){const n=6;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+function handleQuiz(ev,qid,correctIdx){var item=document.getElementById(qid);if(item.classList.contains('answered'))return;item.classList.add('answered');var li=ev.currentTarget;var idx=parseInt(li.dataset.idx);var opts=item.querySelectorAll('.quiz-options li');opts[correctIdx].classList.add('correct');if(idx!==correctIdx){li.classList.add('wrong');}var exp=document.getElementById(qid+'-exp');exp.classList.add('show');exp.classList.add(idx===correctIdx?'correct-exp':'wrong-exp');}
+</script>
+</body>
+</html>

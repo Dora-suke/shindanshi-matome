@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生産計画・生産統制② - 計算問題対策まとめ</title>
+<style>
+:root{--orange:#ea580c;--orange-light:#fed7aa;--orange-main:#f97316;--blue:#2563eb;--blue-light:#dbeafe;--green:#16a34a;--green-light:#dcfce7;--red:#dc2626;--red-light:#fee2e2;--purple:#7e22ce;--purple-light:#f3e8ff;--teal:#0d9488;--teal-light:#ccfbf1;--gray:#f8fafc;--gray-mid:#64748b;--dark:#1e293b;--radius:12px}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;line-height:1.7;color:var(--dark);background:#fafbfc;margin:0;padding:0}
+header{background:linear-gradient(135deg,var(--orange),var(--orange-main));color:#fff;padding:1.5rem 1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+header h1{margin:0;font-size:1.5rem}
+.subtitle{font-size:.85rem;opacity:.95;margin-top:.3rem}
+nav{position:sticky;top:0;background:#fff;border-bottom:2px solid #e5e7eb;padding:.4rem;z-index:100;overflow-x:auto;white-space:nowrap;display:flex;gap:.3rem}
+.tab-btn{padding:.5rem .8rem;border:1px solid #d1d5db;background:#fff;border-radius:6px;font-size:.82rem;cursor:pointer;font-weight:600;color:var(--gray-mid);flex-shrink:0}
+.tab-btn.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+.tab-btn:hover{background:var(--orange-light);color:var(--dark)}
+.tab-btn.active:hover{background:var(--orange);color:#fff}
+.tab-panel{display:none;padding:1.2rem 1rem 3rem;max-width:920px;margin:0 auto}
+.tab-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+h2.section-title{font-size:1.2rem;color:var(--dark);border-left:5px solid var(--orange);padding-left:.6rem;margin:1.4rem 0 .8rem}
+h3{font-size:1.05rem;color:var(--dark);margin:1rem 0 .5rem}
+.card{background:#fff;border-radius:var(--radius);padding:1rem 1.1rem;margin:.8rem 0;box-shadow:0 1px 3px rgba(0,0,0,.08);border-top:4px solid var(--orange)}
+.card-blue{border-top-color:var(--blue);background:linear-gradient(135deg,var(--blue-light),#fff)}
+.card-green{border-top-color:var(--green);background:linear-gradient(135deg,var(--green-light),#fff)}
+.card-red{border-top-color:var(--red);background:linear-gradient(135deg,var(--red-light),#fff)}
+.card-purple{border-top-color:var(--purple);background:linear-gradient(135deg,var(--purple-light),#fff)}
+.card-orange{border-top-color:var(--orange);background:linear-gradient(135deg,var(--orange-light),#fff)}
+.card-teal{border-top-color:var(--teal);background:linear-gradient(135deg,var(--teal-light),#fff)}
+.formula-box{background:#fef9e7;border:2px solid #facc15;border-radius:8px;padding:.6rem .8rem;font-family:"Courier New",monospace;font-weight:700;text-align:center;margin:.5rem 0}
+table{width:100%;border-collapse:collapse;margin:.5rem 0;font-size:.88rem}
+th,td{border:1px solid #cbd5e1;padding:.4rem .5rem;text-align:left;vertical-align:top}
+th{background:#f1f5f9;font-weight:700}
+.tutor-comment{background:#eff6ff;border-left:4px solid var(--blue);border-radius:6px;padding:.6rem .8rem;margin:.5rem 0;font-size:.9rem}
+.point-exam{background:#e3f2fd;color:#1565c0;border-radius:6px;padding:.4rem .65rem;font-size:.83rem;margin:.3rem 0}
+.point-trap{background:#fee2e2;color:#b71c1c;border-radius:6px;padding:.4rem .65rem;font-size:.83rem;margin:.3rem 0}
+.zakkuri{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.5rem .9rem;border-radius:20px;font-size:.85rem;font-weight:700;margin:.4rem .3rem .4rem 0;box-shadow:0 2px 6px rgba(142,68,173,.3)}
+.goro-chip::before{content:"🎵 ";margin-right:.3rem}
+.goro-chip small{font-weight:400;opacity:.95;margin-left:.4rem;font-size:.78rem}
+.goro-row{margin:.6rem 0;padding:.5rem .7rem;background:#faf5fc;border-left:3px solid #8e44ad;border-radius:4px}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.92rem;line-height:1.85}
+.support-icon{font-size:1.7rem;flex-shrink:0;line-height:1}
+.support-body{flex:1}.support-body strong{color:#e65100}
+.support-name{font-size:.72rem;font-weight:700;color:#bf360c;margin-bottom:.2rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.1rem 1.3rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}
+.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.keepit ul{list-style:none;padding:0;margin:0}
+.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.9rem;line-height:1.7}
+.keepit li strong{color:#1565c0}
+.fill-card{background:#fff;border-radius:8px;margin:.6rem 0;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.fill-header{padding:.5rem .8rem;color:#fff;font-weight:700;font-size:.9rem;background:#475569}
+.fill-body{padding:.7rem .9rem}
+.fill-group{margin:.5rem 0;font-size:.92rem;line-height:1.9}
+.fill-blank{display:inline-block;background:#fee2e2;color:transparent;padding:1px 8px;border-radius:4px;cursor:pointer;border:1px dashed #ef4444;font-weight:700;min-width:60px;text-align:center}
+.fill-blank.show{background:#fef9c3;color:#92400e;border-style:solid}
+.fill-reveal-btn{background:#3b82f6;color:#fff;border:none;border-radius:6px;padding:.35rem .7rem;font-size:.8rem;cursor:pointer;margin:.3rem .2rem 0 0;font-weight:600}
+.fill-reveal-btn:hover{opacity:.85}
+.cross-ref{font-size:.85rem;color:var(--gray-mid);margin:.3rem 0 .6rem;font-style:italic}
+.flow-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:center;margin:.6rem 0}
+.flow-box{background:#fff;border:2px solid var(--blue);border-radius:8px;padding:.5rem .7rem;text-align:center;min-width:90px;font-size:.85rem;font-weight:600}
+.flow-box.green{border-color:var(--green);background:var(--green-light)}
+.flow-box.orange{border-color:var(--orange);background:var(--orange-light)}
+.flow-arrow{font-size:1.2rem;color:var(--blue)}
+ruby rt{font-size:.55em}
+.quiz-card{background:#fff;border:2px solid #e5e7eb;border-radius:10px;padding:1rem;margin:.8rem 0}
+.quiz-q{font-weight:700;margin-bottom:.5rem;color:var(--dark)}
+.quiz-opt{display:block;background:#f9fafb;border:1px solid #d1d5db;border-radius:6px;padding:.5rem .8rem;margin:.3rem 0;cursor:pointer;font-size:.9rem}
+.quiz-opt:hover{background:#dbeafe}
+.quiz-opt.correct{background:#d1fae5;border-color:var(--green)}
+.quiz-opt.wrong{background:#fee2e2;border-color:var(--red)}
+.quiz-exp{display:none;margin-top:.5rem;background:#fef9e7;border-left:4px solid #facc15;padding:.5rem .7rem;font-size:.86rem;border-radius:4px}
+.quiz-exp.show{display:block}
+</style>
+</head>
+<body>
+
+<header>
+<h1>生産計画・生産統制② 計算問題対策まとめ</h1>
+<div class="subtitle">中小企業診断士 運営管理｜PERT 3点見積／追番管理／余力計算／生産形態×管理方式</div>
+</header>
+
+<nav>
+<button class="tab-btn active" onclick="sw(0)">🌱 ゼロから</button>
+<button class="tab-btn" onclick="sw(1)">📖 入門</button>
+<button class="tab-btn" onclick="sw(2)">📚 基本</button>
+<button class="tab-btn" onclick="sw(3)">🔍 詳細</button>
+<button class="tab-btn" onclick="sw(4)">🎵 語呂</button>
+<button class="tab-btn" onclick="sw(5)">🔤 語呂穴</button>
+<button class="tab-btn" onclick="sw(6)">✏️ 穴①</button>
+<button class="tab-btn" onclick="sw(7)">✏️ 穴②</button>
+<button class="tab-btn" onclick="sw(8)">✏️ 穴③</button>
+<button class="tab-btn" onclick="sw(9)">📋 事例</button>
+<button class="tab-btn" onclick="sw(10)">🎯 クイズ</button>
+<button class="tab-btn" onclick="sw(11)">🏭 実例</button>
+<button class="tab-btn" onclick="sw(12)">🗺 図解</button>
+</nav>
+
+<!-- ============ TAB 0: ゼロから ============ -->
+<div class="tab-panel active" id="tab0">
+
+<h2 class="section-title">🌱 計算で出る4つを身近な例で</h2>
+
+<div class="card card-orange">
+<h3>① PERTの3点見積 ＝ 旅行の所要時間予測</h3>
+<p>東京→大阪の運転時間を予想する場合：<br>
+・うまくいけば <strong>5時間</strong>（楽観値 a）<br>
+・たぶん <strong>6時間</strong>（最可能値 m）<br>
+・渋滞すれば <strong>10時間</strong>（悲観値 b）</p>
+<div class="formula-box">期待値 ＝ (5 + 4×6 + 10) ÷ 6 ＝ 6.5時間</div>
+<p style="font-size:.88rem;">「最可能値を4倍重視して、楽観・悲観で挟む」だけ。これがPERTの公式。</p>
+</div>
+
+<div class="card card-blue">
+<h3>② 追番管理 ＝ 累計回数で進捗を見る</h3>
+<p>夏休みのラジオ体操カードを思い出してください。<br>
+・8月10日までに <strong>10回</strong>来る予定（計画追番）<br>
+・実際は <strong>7回</strong>来た（実績追番）<br>
+→ <strong>3回サボった</strong>（差＝遅れ）</p>
+<p style="font-size:.88rem;">工場でも同じ。「累計で何個作るはずだったか」と「実際に何個作ったか」の差で遅れがわかる。</p>
+</div>
+
+<div class="card card-green">
+<h3>③ 余力 ＝ コップの余白</h3>
+<p>1日に水を <strong>500ml</strong>入れられるコップがある（能力）。<br>
+今日入れるべき水は <strong>400ml</strong>（負荷）。<br>
+→ 余白＝<strong>100ml</strong>（余力）。これが余力管理。</p>
+<p style="font-size:.88rem;">水が満タン超えそうなら、別のコップに分ける（山崩し）。</p>
+</div>
+
+<div class="card card-purple">
+<h3>④ 管理方式 ＝ 仕事の管理スタイル</h3>
+<p>家計簿の付け方が家庭ごとに違うように、工場の管理方法も<strong>作るモノに合わせて変える</strong>：</p>
+<ul style="font-size:.9rem;">
+<li>注文住宅 → 顧客ごとに番号をつけて管理（<strong>製番管理</strong>）</li>
+<li>1日100台コンスタントに作る車 → 累計番号で管理（<strong>追番管理</strong>）</li>
+<li>必要な時に必要なだけ → 工程間の伝票で管理（<strong>かんばん</strong>）</li>
+</ul>
+</div>
+
+<div class="goro-row">
+<span class="goro-chip">3点見積はイチ・ヨン・イチ<small>(a + 4m + b) / 6</small></span>
+<span class="goro-chip">追番＝累計<small>累計の差で進捗</small></span>
+</div>
+
+<div class="support">
+<span class="support-icon">👨‍🏫</span>
+<div class="support-body">
+<span class="support-name">先生からひとこと</span>
+「計算」って聞くとうっ…ってなるよね、わかる！ でもね、<strong>このページの計算は4つだけ</strong>。それぞれパターンが決まってるから、式さえ覚えれば点取り問題だよ。
+</div>
+</div>
+
+<div class="keepit">
+<div class="keepit-title">⭐ 今日のこれだけ覚えて（ゼロから）</div>
+<ul>
+<li>❶ <strong>PERT期待値＝(a+4m+b)÷6</strong>。最可能値だけ4倍が肝心</li>
+<li>❷ <strong>追番＝累計</strong>。計画と実績の差＝遅れ</li>
+<li>❸ <strong>余力＝能力−負荷</strong>。マイナスなら過負荷</li>
+</ul>
+</div>
+
+<h2 class="section-title">✏️ ゼロからの穴埋め</h2>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b;">🔄 リセット</button>
+</div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q1. PERTのイメージ</div>
+<div class="fill-body">
+<div class="fill-group">PERT期待値 ＝（楽観値 ＋ <span class="fill-blank">4</span>×最可能値 ＋ 悲観値）÷ <span class="fill-blank">6</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">Q2. 追番管理</div>
+<div class="fill-body">
+<div class="fill-group">追番＝<span class="fill-blank">累計</span>生産台数。計画追番と実績追番の<span class="fill-blank">差</span>＝遅れ</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">Q3. 余力</div>
+<div class="fill-body">
+<div class="fill-group">余力 ＝ <span class="fill-blank">能力</span> − <span class="fill-blank">負荷</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab0 -->
+
+<!-- ============ TAB 1: 入門 ============ -->
+<div class="tab-panel" id="tab1">
+
+<h2 class="section-title">📖 PERT 3点見積の式</h2>
+<p class="cross-ref">🔁 既存ノート06の「PERT・クリティカルパス」を計算面で深掘り。06では概念だけ扱った3点見積を、実際の計算問題が解けるレベルに。</p>
+
+<div class="card card-orange">
+<h3>3点見積（three-point estimation）とは</h3>
+<p>作業時間が不確実な新規プロジェクトで、<strong>1つの値で決め打ちせずに3つの値で見積もる</strong>手法。</p>
+<table>
+<tr><th>記号</th><th>名称</th><th>意味</th></tr>
+<tr><td><strong>a</strong></td><td>楽観値（optimistic）</td><td>すべて順調なら最短で何時間か</td></tr>
+<tr><td><strong>m</strong></td><td>最可能値（most likely／最頻値とも）</td><td>普通は何時間か（一番ありそうな値）</td></tr>
+<tr><td><strong>b</strong></td><td>悲観値（pessimistic）</td><td>トラブル続きなら最大何時間か</td></tr>
+</table>
+<div class="formula-box">期待値 t ＝ (a + 4m + b) ÷ 6</div>
+<p style="font-size:.88rem;">最可能値 m を <strong>4倍</strong>して足し、合計を <strong>6</strong>で割る（重み 1：4：1 の加重平均）。</p>
+<p class="point-exam">📝 <strong>【1次】試験ポイント</strong>：3つの値が表で与えられ、期待値を計算する出題が定番（H30-6, R2-11ほか）。</p>
+<p class="point-trap">⚠️ <strong>【1次】引っかけ</strong>：「(a+m+b)÷3」は誤り（単純平均ではなく重み付き）。「÷6」を「÷4」と間違える選択肢にも注意。</p>
+</div>
+
+<div class="goro-row">
+<span class="goro-chip">a＋4m＋b 全部6で<small>期待値の式</small></span>
+</div>
+
+<h2 class="section-title">📖 追番管理のしくみ</h2>
+<p class="cross-ref">🔁 既存ノート06では「追番＝累計生産台数」と概念で触れた論点を、計算と進捗判定まで深掘り。</p>
+
+<div class="card card-blue">
+<h3>追番（おいばん）とは</h3>
+<p>1番から順番につける<strong>累計番号</strong>。最後の番号＝累計生産台数になる。</p>
+<table>
+<tr><th>区分</th><th>定義</th><th>使い方</th></tr>
+<tr><td><strong>計画追番</strong></td><td>累計の<strong>計画</strong>生産台数</td><td>「ここまでに作るはず」</td></tr>
+<tr><td><strong>実績追番</strong></td><td>累計の<strong>実績</strong>生産台数</td><td>「実際にここまで作った」</td></tr>
+</table>
+<div class="formula-box">遅れ ＝ 計画追番 − 実績追番</div>
+<p style="font-size:.88rem;">プラスなら遅れ（実績が計画を下回る）／マイナスなら進み（先行している）。</p>
+<p class="point-exam">📝 <strong>【1次】試験ポイント</strong>：累計の差で進捗を判定する出題（H21-6など）。</p>
+</div>
+
+<h2 class="section-title">📖 負荷・能力・余力の式</h2>
+<p class="cross-ref">🔁 既存ノート06では「余力＝能力−負荷」までを扱ったが、能力と負荷の中身（工数の計算）は未掲載。ここで補完。</p>
+
+<div class="card card-green">
+<h3>3つの基本式</h3>
+<div class="formula-box">負荷工数 ＝ 標準時間 × 生産数量</div>
+<div class="formula-box">能力工数 ＝ 作業者数 × 1日稼働時間 × 稼働日数</div>
+<div class="formula-box">余力 ＝ 能力 − 負荷　／　負荷率 ＝ 負荷 ÷ 能力</div>
+<p style="font-size:.88rem;">単位はどちらも<strong>工数（人時・人日）</strong>でそろえる。負荷率が100%超なら過負荷。</p>
+<p class="point-exam">📝 <strong>【1次・2次】試験ポイント</strong>：1次は単純な計算問題、2次（事例III）は「負荷率が高い→外注／応援人員投入」と提案する論点。</p>
+</div>
+
+<h2 class="section-title">📖 生産形態×管理方式の対応</h2>
+<p class="cross-ref">🔁 既存ノート02では各管理方式（製番／追番／かんばん等）を個別解説。ここでは「どの生産形態でどれを使うか」の対応関係に絞って整理。</p>
+
+<div class="card card-purple">
+<table>
+<tr><th>生産形態</th><th>主な管理方式</th><th>キーワード</th></tr>
+<tr><td>個別受注生産</td><td><strong>製番管理</strong></td><td>製番＝製造番号、品目に紐付け</td></tr>
+<tr><td>繰返し量産（ロット生産含む）</td><td><strong>追番管理</strong></td><td>累計生産台数</td></tr>
+<tr><td>多品種少量・混流ライン</td><td><strong>かんばん方式（JIT）</strong></td><td>後工程引取・プル型</td></tr>
+<tr><td>多仕様量産（自動車等）</td><td><strong>オーダエントリー方式</strong></td><td>ライン上の標準品に注文を引当</td></tr>
+<tr><td>納期重視・大型品</td><td><strong>生産座席予約方式</strong></td><td>「製造工程の座席予約」</td></tr>
+</table>
+<p class="point-trap">⚠️ <strong>【1次】引っかけ</strong>：選択肢で生産形態と管理方式の対応を入れ替える出題が頻出。「個別受注＝追番」は誤り。</p>
+</div>
+
+<div class="support">
+<span class="support-icon">👩‍🏫</span>
+<div class="support-body">
+<span class="support-name">先生からひとこと</span>
+「製番」と「追番」が紛らわしいよね。<strong>製番＝製品ごと（受注ごと）の固有番号／追番＝累計の通し番号</strong>。製番は受注品の追跡、追番は量産の進捗管理、と用途も違うんだ。
+</div>
+</div>
+
+<div class="keepit">
+<div class="keepit-title">⭐ 今日のこれだけ覚えて（入門）</div>
+<ul>
+<li>❶ PERT期待値 t ＝ <strong>(a+4m+b)/6</strong>　mが4倍重視</li>
+<li>❷ 追番管理は <strong>計画追番−実績追番＝遅れ</strong></li>
+<li>❸ 負荷＝<strong>標準時間×数量</strong>／能力＝<strong>人数×時間×日数</strong>　単位は工数</li>
+</ul>
+</div>
+
+<h2 class="section-title">✏️ 入門の穴埋め</h2>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b;">🔄 リセット</button>
+</div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q1. PERT 3点見積</div>
+<div class="fill-body">
+<div class="fill-group">a＝<span class="fill-blank">楽観値</span>、m＝<span class="fill-blank">最可能値</span>、b＝<span class="fill-blank">悲観値</span>。期待値 t ＝（a + <span class="fill-blank">4</span>m + b）÷ <span class="fill-blank">6</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">Q2. 追番管理</div>
+<div class="fill-body">
+<div class="fill-group">遅れ＝<span class="fill-blank">計画追番</span>−<span class="fill-blank">実績追番</span>。プラスなら<span class="fill-blank">遅れ</span>、マイナスなら<span class="fill-blank">進み</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">Q3. 負荷・能力</div>
+<div class="fill-body">
+<div class="fill-group">負荷工数＝<span class="fill-blank">標準時間</span>×<span class="fill-blank">生産数量</span>／能力工数＝<span class="fill-blank">作業者数</span>×<span class="fill-blank">1日稼働時間</span>×<span class="fill-blank">稼働日数</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">Q4. 管理方式</div>
+<div class="fill-body">
+<div class="fill-group">個別受注生産＝<span class="fill-blank">製番管理</span>／繰返量産＝<span class="fill-blank">追番管理</span>／多品種少量＝<span class="fill-blank">かんばん</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab1 -->
+
+<!-- ============ TAB 2: 基本 ============ -->
+<div class="tab-panel" id="tab2">
+
+<h2 class="section-title">📚 PERT 3点見積の計算例</h2>
+<p class="cross-ref">🔁 入門タブの「期待値の式」を、分散・標準偏差・確率計算まで拡張。</p>
+
+<div class="card card-orange">
+<h3>計算例：1つの作業の期待値</h3>
+<p>作業Aの3点見積：a＝5日、m＝7日、b＝15日</p>
+<div class="formula-box">t ＝ (5 + 4×7 + 15) ÷ 6 ＝ 48 ÷ 6 ＝ <strong>8日</strong></div>
+<p style="font-size:.88rem;">単純平均なら (5+7+15)/3＝9日になるが、PERTは最可能値を4倍するため <strong>8日</strong>。</p>
+<p class="point-exam">📝 <strong>【1次】試験ポイント</strong>：選択肢に9日（単純平均）が混じる典型パターン。</p>
+</div>
+
+<div class="card card-orange">
+<h3>分散と標準偏差（作業時間のバラつき）</h3>
+<div class="formula-box">分散 σ² ＝ ((b − a) ÷ 6)²　／　標準偏差 σ ＝ (b − a) ÷ 6</div>
+<p style="font-size:.88rem;">作業A（a=5, b=15）の標準偏差 σ ＝ (15−5)/6 ≒ <strong>1.67日</strong>。<br>
+分散 σ² ≒ <strong>2.78</strong>。</p>
+<div class="goro-chip">バラつきはbマイナスaを6で<small>σ=(b-a)/6</small></div>
+<p class="point-exam">📝 <strong>【1次】試験ポイント</strong>：分散 σ² と標準偏差 σ の混同に注意。式は <strong>「(b−a)/6」が標準偏差</strong>、これを2乗したものが分散。</p>
+</div>
+
+<h2 class="section-title">📚 追番管理の計算例</h2>
+
+<div class="card card-blue">
+<h3>例：製品Aの進捗</h3>
+<p>製品A：4月1日〜4月5日まで毎日200個生産する計画</p>
+<table>
+<tr><th>日</th><th>計画追番</th><th>実績追番</th><th>遅れ</th></tr>
+<tr><td>4/1</td><td>200</td><td>200</td><td>0</td></tr>
+<tr><td>4/2</td><td>400</td><td>380</td><td>20</td></tr>
+<tr><td>4/3</td><td>600</td><td>540</td><td>60</td></tr>
+<tr><td>4/4</td><td>800</td><td>720</td><td>80</td></tr>
+<tr><td>4/5</td><td>1,000</td><td>880</td><td><strong>120</strong></td></tr>
+</table>
+<p style="font-size:.88rem;">5日目時点で<strong>120個の遅れ</strong>。挽回には残業や応援人員が必要。</p>
+</div>
+
+<div class="card card-blue">
+<h3>例：部品の追番（製品追番との関係）</h3>
+<p>製品A 1個に部品Z を <strong>2個</strong>使用する。<br>
+4/3時点の<strong>製品A実績追番＝540</strong> のとき、<strong>部品Zの累計使用個数</strong>は？</p>
+<div class="formula-box">部品Z使用個数 ＝ 製品追番 × 1個あたり使用数 ＝ 540 × 2 ＝ <strong>1,080個</strong></div>
+<p style="font-size:.88rem;">部品の追番管理は「製品追番 × BOM の使用数量」で連動して動く。</p>
+<p class="point-exam">📝 <strong>【1次】試験ポイント</strong>：追番が累計値であることを使った計算問題。各日の生産数（200個）と累計（1,000）を取り違えないこと。</p>
+<p class="point-trap">⚠️ <strong>【1次】引っかけ</strong>：「実績追番＝当日の実績」は誤り。<strong>追番＝累計</strong>。</p>
+</div>
+
+<h2 class="section-title">📚 負荷・能力・余力の計算例</h2>
+
+<div class="card card-green">
+<h3>例：1か月の能力と負荷</h3>
+<p>条件：作業者 5人／1日8時間／月20稼働日／製品Xの標準時間 2人時／製品Xを月400個生産</p>
+<div class="formula-box">能力 ＝ 5人 × 8時間 × 20日 ＝ <strong>800人時</strong></div>
+<div class="formula-box">負荷 ＝ 2人時 × 400個 ＝ <strong>800人時</strong></div>
+<div class="formula-box">余力 ＝ 800 − 800 ＝ <strong>0</strong>　／　負荷率 ＝ 800÷800 ＝ <strong>100%</strong></div>
+<p style="font-size:.88rem;">ピッタリ100%。これより負荷が増えると過負荷、減ると遊休が発生。</p>
+</div>
+
+<div class="card card-green">
+<h3>例：負荷率が超過したら？</h3>
+<p>同じ条件で生産数量を <strong>500個</strong>に増やすと…</p>
+<div class="formula-box">負荷 ＝ 2人時 × 500個 ＝ 1,000人時　／　負荷率 ＝ 1,000÷800 ＝ <strong>125%</strong></div>
+<p style="font-size:.88rem;">対策：①応援・残業（能力増）／②外注（負荷を減らす）／③納期再交渉／④山崩しで他期間にずらす。</p>
+<p class="point-exam">📝 <strong>【2次】事例IIIの定番</strong>：与件の数値から負荷率を試算し、「過負荷→外注／設備増強」と提案するパターンが頻出。</p>
+</div>
+
+<div class="goro-row">
+<span class="goro-chip">負荷は時間×数量<small>標準時間×生産数量</small></span>
+<span class="goro-chip">能力は人時日<small>人数×時間×日数</small></span>
+</div>
+
+<h2 class="section-title">📚 生産形態×管理方式（拡張版）</h2>
+
+<div class="card card-purple">
+<table>
+<tr><th>生産形態</th><th>管理方式</th><th>特徴</th><th>典型例</th></tr>
+<tr><td>個別受注生産</td><td><strong>製番管理</strong></td><td>製造番号で部品まで紐付け</td><td>注文住宅・特注機械</td></tr>
+<tr><td>繰返量産</td><td><strong>追番管理</strong></td><td>累計番号で進捗</td><td>家電・標準部品</td></tr>
+<tr><td>多品種少量</td><td><strong>かんばん（JIT：Just In Time）</strong></td><td>後工程引取・プル型</td><td>トヨタ生産方式</td></tr>
+<tr><td>多仕様量産</td><td><strong>オーダエントリー</strong></td><td>標準品に顧客仕様を引当</td><td>自動車（オプション選択）</td></tr>
+<tr><td>納期重視・大型</td><td><strong>生産座席予約</strong></td><td>製造工程を「座席」として予約</td><td>大型機械・船舶</td></tr>
+</table>
+<p class="point-exam">📝 <strong>【1次】試験ポイント</strong>：5つの管理方式の<strong>名称・対応する生産形態・代表例</strong>のセットで覚える。</p>
+<p class="point-trap">⚠️ <strong>【1次】引っかけ</strong>：「製番管理は量産向き」「追番管理は受注生産向き」は逆。<strong>製番＝個別受注／追番＝量産</strong>。</p>
+</div>
+
+<div class="support">
+<span class="support-icon">👨‍🏫</span>
+<div class="support-body">
+<span class="support-name">先生からひとこと</span>
+オーダエントリーと生産座席予約、どっちも「予約っぽい」から混同するよね。<br>
+<strong>オーダエントリー＝走ってるラインの標準品に客の注文を割り当てる</strong>（ライン優先）。<br>
+<strong>生産座席予約＝先に「いつ作るか」を予約してから生産</strong>（納期優先）。出発点が逆。
+</div>
+</div>
+
+<div class="keepit">
+<div class="keepit-title">⭐ 今日のこれだけ覚えて（基本）</div>
+<ul>
+<li>❶ PERT：期待値<strong>(a+4m+b)/6</strong>、標準偏差<strong>(b−a)/6</strong>、分散はその2乗</li>
+<li>❷ 追番＝累計。「計画追番−実績追番＝遅れ」、部品追番＝<strong>製品追番×使用数</strong></li>
+<li>❸ 負荷率100%超＝過負荷。対策は<strong>外注・残業・山崩し・納期再交渉</strong></li>
+</ul>
+</div>
+
+<h2 class="section-title">✏️ 基本の穴埋め</h2>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab2')" style="background:#64748b;">🔄 リセット</button>
+</div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q1. PERT 3点見積</div>
+<div class="fill-body">
+<div class="fill-group">a=5, m=7, b=15 のとき期待値 t＝<span class="fill-blank">8</span>日。標準偏差 σ＝<span class="fill-blank">5/3</span>（≒1.67）日</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">Q2. 追番計算</div>
+<div class="fill-body">
+<div class="fill-group">計画追番1,000・実績追番880 のとき遅れ＝<span class="fill-blank">120</span>個。製品追番540・部品Z使用数2のとき部品Z累計＝<span class="fill-blank">1,080</span>個</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">Q3. 負荷・能力</div>
+<div class="fill-body">
+<div class="fill-group">5人×8時間×20日＝能力<span class="fill-blank">800</span>人時。標準時間2人時×500個＝負荷<span class="fill-blank">1,000</span>人時。負荷率＝<span class="fill-blank">125</span>%（過負荷）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">Q4. 管理方式</div>
+<div class="fill-body">
+<div class="fill-group">注文住宅＝<span class="fill-blank">製番管理</span>／家電＝<span class="fill-blank">追番管理</span>／自動車＝<span class="fill-blank">オーダエントリー</span>／船舶＝<span class="fill-blank">生産座席予約</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab2 -->
+
+<!-- ============ TAB 3: 詳細 ============ -->
+<div class="tab-panel" id="tab3">
+
+<h2 class="section-title">🔍 PERT クリティカルパス全体の確率計算</h2>
+<p class="cross-ref">🔁 基本タブの「1作業の分散」を、CP全体の完了確率まで拡張する論点。</p>
+
+<div class="card card-orange">
+<h3>クリティカルパス（CP：Critical Path）全体の期待値・分散</h3>
+<p>CP上の各作業の期待値・分散を<strong>足し合わせる</strong>と、プロジェクト全体の期待値・分散になる。</p>
+<div class="formula-box">プロジェクト期待値 T ＝ Σ（CP上の各作業の t）</div>
+<div class="formula-box">プロジェクト分散 V ＝ Σ（CP上の各作業の σ²）</div>
+<div class="formula-box">プロジェクト標準偏差 = √V</div>
+<p style="font-size:.88rem;">CP上の作業のみ合計する点に注意。CP外の作業は遅れても全体に影響しない。</p>
+</div>
+
+<div class="card card-orange">
+<h3>例題：完了確率の計算</h3>
+<p>あるプロジェクトのCP上の作業が3つで、各期待値・分散が下表のとき、20日以内で完了する確率は？</p>
+<table>
+<tr><th>作業</th><th>期待値 t</th><th>分散 σ²</th></tr>
+<tr><td>A</td><td>6</td><td>1.0</td></tr>
+<tr><td>B</td><td>5</td><td>0.5</td></tr>
+<tr><td>C</td><td>7</td><td>1.0</td></tr>
+<tr><td><strong>合計</strong></td><td><strong>T=18</strong></td><td><strong>V=2.5</strong></td></tr>
+</table>
+<p style="font-size:.88rem;">標準偏差 σ ＝ √2.5 ≒ 1.58日</p>
+<div class="formula-box">z ＝ (締切 − T) ÷ σ ＝ (20 − 18) ÷ 1.58 ≒ <strong>1.27</strong></div>
+<p style="font-size:.88rem;">z=1.27 を標準正規分布表で引くと約 <strong>0.898</strong>。つまり<strong>約90%の確率で20日以内に完了</strong>。</p>
+<p class="point-exam">📝 <strong>【1次】試験ポイント</strong>：z値表が問題に添付されるパターンが多い。z = (締切−T)/σ の式と、表の引き方が分かれば解ける。</p>
+</div>
+
+<div class="support">
+<span class="support-icon">👩‍🏫</span>
+<div class="support-body">
+<span class="support-name">先生からひとこと</span>
+正規分布なんて聞くとビビるよね、わかる。でも本番では「z値表」が問題に付いてくることがほとんど。<strong>z = (締切−期待値)/σ</strong> を計算して表で確率を読むだけ。これは点取り問題！
+</div>
+</div>
+
+<h2 class="section-title">🔍 追番管理の応用：負の遅れ（先行）</h2>
+
+<div class="card card-blue">
+<h3>「先行している」場合の解釈</h3>
+<p>遅れがマイナス（実績追番＞計画追番）の場合は<strong>計画より進んでいる状態</strong>。</p>
+<table>
+<tr><th>状態</th><th>解釈</th><th>注意点</th></tr>
+<tr><td>遅れ＞0</td><td>計画より遅れている</td><td>挽回措置を検討</td></tr>
+<tr><td>遅れ＝0</td><td>計画通り</td><td>理想状態</td></tr>
+<tr><td>遅れ＜0</td><td>計画より進んでいる（先行）</td><td>必ずしも歓迎されない（在庫増・後工程の負荷）</td></tr>
+</table>
+<p class="point-trap">⚠️ <strong>【1次】引っかけ</strong>：「先行＝良いこと」と言い切る選択肢は誤り。<strong>過剰生産は仕掛在庫を増やしJITに反する</strong>。</p>
+</div>
+
+<h2 class="section-title">🔍 余力管理の応用：山積み・山崩しの数値化</h2>
+
+<div class="card card-green">
+<h3>山積み表の例</h3>
+<p>能力＝1日40人時のラインで、5日分の負荷を山積みすると：</p>
+<table>
+<tr><th>日</th><th>負荷（人時）</th><th>能力（人時）</th><th>負荷率</th><th>状態</th></tr>
+<tr><td>月</td><td>30</td><td>40</td><td>75%</td><td>余裕</td></tr>
+<tr><td>火</td><td>50</td><td>40</td><td><strong>125%</strong></td><td>過負荷</td></tr>
+<tr><td>水</td><td>45</td><td>40</td><td><strong>113%</strong></td><td>過負荷</td></tr>
+<tr><td>木</td><td>20</td><td>40</td><td>50%</td><td>余裕</td></tr>
+<tr><td>金</td><td>35</td><td>40</td><td>88%</td><td>余裕</td></tr>
+</table>
+<p style="font-size:.88rem;">山崩し：火・水の負荷を月・木に振り分けると…</p>
+<table>
+<tr><th>日</th><th>調整後負荷</th><th>負荷率</th></tr>
+<tr><td>月</td><td>40</td><td>100%</td></tr>
+<tr><td>火</td><td>40</td><td>100%</td></tr>
+<tr><td>水</td><td>40</td><td>100%</td></tr>
+<tr><td>木</td><td>40</td><td>100%</td></tr>
+<tr><td>金</td><td>40</td><td>100%</td></tr>
+</table>
+<p style="font-size:.88rem;">合計負荷180人時は変わらず、各日の負荷を平準化（5日×40＝200人時の能力に収まる）。</p>
+<p class="point-exam">📝 <strong>【2次】事例III</strong>：与件で「特定日に負荷集中」とあれば、答案に「<strong>山積み・山崩しによる負荷平準化</strong>」を記述するのが定番。</p>
+</div>
+
+<h2 class="section-title">🔍 管理方式の応用：プッシュ vs プル の理論</h2>
+
+<div class="card card-purple">
+<h3>プッシュ型 vs プル型</h3>
+<table>
+<tr><th>区分</th><th>プッシュ型</th><th>プル型</th></tr>
+<tr><td>起点</td><td>上流（生産計画）</td><td>下流（後工程の引取り）</td></tr>
+<tr><td>代表手法</td><td><strong>MRP</strong>（Material Requirement Planning：資材所要量計画）</td><td><strong>かんばん方式</strong>（JIT）</td></tr>
+<tr><td>適合する生産</td><td>計画変動が小さい安定生産</td><td>需要変動・多品種少量</td></tr>
+<tr><td>仕掛在庫</td><td>多くなりがち</td><td>少なく抑えやすい</td></tr>
+<tr><td>欠品リスク</td><td>計画ミスで欠品</td><td>下流停止で全停止</td></tr>
+</table>
+<p class="point-exam">📝 <strong>【1次】試験ポイント</strong>：「MRPはプル型」「かんばんはプッシュ型」と書かれた選択肢は誤り。覚え方は<strong>「M（MRP）はP（Push）」「かん（かんばん）→引っ張る（Pull）」</strong>。</p>
+<p class="point-trap">⚠️ <strong>【1次】引っかけ</strong>：「JITは在庫を増やす方式」は誤り。JITは<strong>仕掛在庫を最小化</strong>する方式。</p>
+</div>
+
+<div class="goro-row">
+<span class="goro-chip">MはP（プッシュ）<small>MRP=Push型</small></span>
+<span class="goro-chip">かんは引く<small>かんばん=Pull型</small></span>
+</div>
+
+<div class="support">
+<span class="support-icon">👨‍🏫</span>
+<div class="support-body">
+<span class="support-name">先生からひとこと</span>
+プッシュ／プルの違いは「最終工程が動くタイミング」で考えるのが一番楽。<br>
+プッシュ＝<strong>計画通り押し出す</strong>（多少売れ残ってもとにかく作る）。<br>
+プル＝<strong>下流が引っ張ってから作る</strong>（売れた分だけ補充）。スーパーの惣菜が「売れた分だけ追加調理」されるのもプル型。
+</div>
+</div>
+
+<div class="keepit">
+<div class="keepit-title">⭐ 今日のこれだけ覚えて（詳細）</div>
+<ul>
+<li>❶ プロジェクト全体の<strong>分散はCP上の作業のσ²を合計</strong>。標準偏差は√で戻す</li>
+<li>❷ 完了確率は <strong>z = (締切−T)/σ</strong> をz値表で引く</li>
+<li>❸ <strong>MRP＝プッシュ／かんばん＝プル</strong>。JITは仕掛在庫を最小化</li>
+</ul>
+</div>
+
+<h2 class="section-title">✏️ 詳細の穴埋め</h2>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#7b1fa2;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b;">🔄 リセット</button>
+</div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q1. CP全体</div>
+<div class="fill-body">
+<div class="fill-group">プロジェクト分散 V＝CP上の各作業の<span class="fill-blank">σ²</span>の<span class="fill-blank">合計</span>。z＝（<span class="fill-blank">締切</span>−T）÷<span class="fill-blank">σ</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">Q2. 追番の符号</div>
+<div class="fill-body">
+<div class="fill-group">遅れ＜0は<span class="fill-blank">先行</span>。先行は仕掛<span class="fill-blank">在庫</span>を増やすので必ずしも望ましくない</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">Q3. 山積み・山崩し</div>
+<div class="fill-body">
+<div class="fill-group">山積み＝期間別に負荷を<span class="fill-blank">積み上げる</span>（見える化）。山崩し＝過負荷期間の作業を<span class="fill-blank">余裕期間</span>に移す（平準化）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">Q4. プッシュ／プル</div>
+<div class="fill-body">
+<div class="fill-group">MRPは<span class="fill-blank">プッシュ</span>型／かんばんは<span class="fill-blank">プル</span>型。JITは<span class="fill-blank">仕掛在庫</span>を最小化</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab3 -->
+
+<!-- ============ TAB 4: 語呂まとめ ============ -->
+<div class="tab-panel" id="tab4">
+
+<h2 class="section-title">🎵 計算公式のゴロ集</h2>
+
+<div class="card card-orange">
+<h3>① PERT 3点見積</h3>
+<div class="goro-chip">a＋4m＋b 全部6で<small>期待値の式</small></div>
+<p>「<strong>aプラス4m足すb、ぜんぶ6で割る</strong>」</p>
+<p style="font-size:.85rem;">a（楽観）に最可能値mを4倍にして足し、悲観bを足したら、全体を6で割る。<strong>分母の6は項の重み合計（1+4+1）</strong>に由来。</p>
+</div>
+
+<div class="card card-orange">
+<h3>② PERT 標準偏差</h3>
+<div class="goro-chip">バラつきはbマイナスaを6で<small>σ=(b-a)/6</small></div>
+<p>「<strong>悲観マイナス楽観、6で割ったら標準偏差</strong>」</p>
+<p style="font-size:.85rem;">期待値の式と分母6が共通なので一緒に覚える。分散にしたいときは2乗。</p>
+</div>
+
+<div class="card card-blue">
+<h3>③ 追番管理</h3>
+<div class="goro-chip">追番＝累計、差は遅れ<small>計画−実績＝遅れ</small></div>
+<p>「<strong>追番は累計の通し番号、計画引く実績で遅れがわかる</strong>」</p>
+<p style="font-size:.85rem;">「追番＝当日分」と勘違いしがちなので、<strong>累計</strong>と必ずセットで覚える。</p>
+</div>
+
+<div class="card card-green">
+<h3>④ 負荷の式</h3>
+<div class="goro-chip">負荷は時間×数量<small>標準時間×生産数量</small></div>
+<p>「<strong>1個あたりの時間 × 何個作るか</strong>」</p>
+</div>
+
+<div class="card card-green">
+<h3>⑤ 能力の式</h3>
+<div class="goro-chip">能力は人時日<small>人数×時間×日数</small></div>
+<p>「<strong>人数 × 1日の時間 × 何日</strong>」</p>
+<p style="font-size:.85rem;">「人時日（じんじにち）」と3単位で覚える。負荷も能力も<strong>単位は工数</strong>でそろえる。</p>
+</div>
+
+<div class="card card-purple">
+<h3>⑥ プッシュ vs プル</h3>
+<div class="goro-chip">MはPプッシュ<small>MRP=Push</small></div>
+<div class="goro-chip">かんは引く<small>かんばん=Pull</small></div>
+<p>「<strong>MRPのMはPush。かんばんはひっぱる（Pull）</strong>」</p>
+</div>
+
+<div class="card card-purple">
+<h3>⑦ 5つの管理方式</h3>
+<div class="goro-chip">受注は製、量は追、混はかん、多はオ、大は座<small>5方式の対応</small></div>
+<p>「<strong>受注生産は製番、量産は追番、混流はかんばん、多仕様はオーダエントリー、大型は座席予約</strong>」</p>
+<p style="font-size:.85rem;">「製・追・かん・オ・座」の5音で覚える。</p>
+</div>
+
+</div><!-- /tab4 -->
+
+<!-- ============ TAB 5: 語呂穴埋め ============ -->
+<div class="tab-panel" id="tab5">
+
+<h2 class="section-title">🔤 ゴロの穴埋め</h2>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q1. PERT期待値</div>
+<div class="fill-body">
+<div class="fill-group">「<span class="fill-blank">a</span>プラス<span class="fill-blank">4m</span>足す<span class="fill-blank">b</span>、ぜんぶ<span class="fill-blank">6</span>で割る」</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q2. PERT 標準偏差</div>
+<div class="fill-body">
+<div class="fill-group">「<span class="fill-blank">悲観</span>マイナス<span class="fill-blank">楽観</span>、<span class="fill-blank">6</span>で割ったら<span class="fill-blank">標準偏差</span>」</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">Q3. 追番</div>
+<div class="fill-body">
+<div class="fill-group">追番は<span class="fill-blank">累計</span>の通し番号、<span class="fill-blank">計画</span>引く<span class="fill-blank">実績</span>で遅れがわかる</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">Q4. 工数の式</div>
+<div class="fill-body">
+<div class="fill-group">負荷は<span class="fill-blank">標準時間</span>×<span class="fill-blank">生産数量</span>／能力は<span class="fill-blank">人数</span>×<span class="fill-blank">時間</span>×<span class="fill-blank">日数</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">Q5. プッシュ vs プル</div>
+<div class="fill-body">
+<div class="fill-group">MRPの M は <span class="fill-blank">Push</span>。かんばんは<span class="fill-blank">Pull</span>（引く）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">Q6. 5管理方式</div>
+<div class="fill-body">
+<div class="fill-group">受注は<span class="fill-blank">製番</span>、量は<span class="fill-blank">追番</span>、混は<span class="fill-blank">かんばん</span>、多仕様は<span class="fill-blank">オーダエントリー</span>、大型は<span class="fill-blank">生産座席予約</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab5 -->
+
+<!-- ============ TAB 6: 穴埋め初級 ============ -->
+<div class="tab-panel" id="tab6">
+
+<h2 class="section-title">✏️ 初級：用語と式の確認</h2>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q1. 3点見積の用語</div>
+<div class="fill-body">
+<div class="fill-group">a＝<span class="fill-blank">楽観</span>値、m＝<span class="fill-blank">最頻</span>値、b＝<span class="fill-blank">悲観</span>値</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q2. 期待値の式</div>
+<div class="fill-body">
+<div class="fill-group">期待値 t ＝（a + <span class="fill-blank">4</span>m + b）÷ <span class="fill-blank">6</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q3. 標準偏差</div>
+<div class="fill-body">
+<div class="fill-group">σ ＝（<span class="fill-blank">b</span> − <span class="fill-blank">a</span>）÷ <span class="fill-blank">6</span>。分散 σ² はその<span class="fill-blank">2乗</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">Q4. 追番の定義</div>
+<div class="fill-body">
+<div class="fill-group">追番＝<span class="fill-blank">累計生産台数</span>。最後の番号が<span class="fill-blank">累計</span>と一致</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">Q5. 遅れの判定</div>
+<div class="fill-body">
+<div class="fill-group">遅れ ＝ <span class="fill-blank">計画追番</span> − <span class="fill-blank">実績追番</span>。プラスなら<span class="fill-blank">遅れ</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">Q6. 余力</div>
+<div class="fill-body">
+<div class="fill-group">余力＝<span class="fill-blank">能力</span>−<span class="fill-blank">負荷</span>。負荷率＝負荷÷<span class="fill-blank">能力</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">Q7. 管理方式</div>
+<div class="fill-body">
+<div class="fill-group">個別受注＝<span class="fill-blank">製番管理</span>／繰返量産＝<span class="fill-blank">追番管理</span>／混流＝<span class="fill-blank">かんばん</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab6 -->
+
+<!-- ============ TAB 7: 穴埋め中級 ============ -->
+<div class="tab-panel" id="tab7">
+
+<h2 class="section-title">✏️ 中級：計算と判定</h2>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q1. PERT計算</div>
+<div class="fill-body">
+<div class="fill-group">a=4, m=6, b=14 のとき期待値 t＝<span class="fill-blank">7</span>日（＝(4+24+14)/6）。標準偏差 σ＝<span class="fill-blank">5/3</span>（≒1.67）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q2. プロジェクト全体</div>
+<div class="fill-body">
+<div class="fill-group">CP上の作業3つの分散が 1.0／0.5／1.0 のとき、全体分散 V＝<span class="fill-blank">2.5</span>、標準偏差＝<span class="fill-blank">√2.5</span>（≒1.58）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">Q3. 追番の応用</div>
+<div class="fill-body">
+<div class="fill-group">製品Aの実績追番が720・1個あたり部品Z使用2個のとき、部品Z累計使用数＝<span class="fill-blank">1,440</span>個</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">Q4. 負荷率</div>
+<div class="fill-body">
+<div class="fill-group">作業者4人×8時間×20日＝能力<span class="fill-blank">640</span>人時。標準時間1.5人時×500個＝負荷<span class="fill-blank">750</span>人時。負荷率≒<span class="fill-blank">117</span>%（過負荷）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">Q5. プッシュ／プル</div>
+<div class="fill-body">
+<div class="fill-group">MRPは<span class="fill-blank">プッシュ</span>型（上流起点）／かんばんは<span class="fill-blank">プル</span>型（下流起点）。JITは仕掛<span class="fill-blank">在庫</span>を最小化</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab7 -->
+
+<!-- ============ TAB 8: 穴埋め上級 ============ -->
+<div class="tab-panel" id="tab8">
+
+<h2 class="section-title">✏️ 上級：応用とひっかけ</h2>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">Q1. 完了確率</div>
+<div class="fill-body">
+<div class="fill-group">プロジェクト期待値T=18・標準偏差σ=1.58 のとき、20日以内完了の z 値＝<span class="fill-blank">(20-18)/1.58</span>≒<span class="fill-blank">1.27</span>。z値表で約<span class="fill-blank">90</span>%</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:#c53030">Q2. 引っかけ集 ○か×か</div>
+<div class="fill-body">
+<div class="fill-group">①「PERT期待値＝(a+m+b)/3」→<span class="fill-blank">×</span>（重み付き／4）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">①の答えを見る</button>
+<div class="fill-group">②「追番管理は当日分の生産数を表す」→<span class="fill-blank">×</span>（追番＝<span class="fill-blank">累計</span>）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">②の答えを見る</button>
+<div class="fill-group">③「製番管理は量産向き」→<span class="fill-blank">×</span>（製番は<span class="fill-blank">個別受注</span>向き）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">③の答えを見る</button>
+<div class="fill-group">④「JITはプッシュ型」→<span class="fill-blank">×</span>（JITは<span class="fill-blank">プル</span>型）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">④の答えを見る</button>
+<div class="fill-group">⑤「負荷率は150%でも問題ない」→<span class="fill-blank">×</span>（100%超は<span class="fill-blank">過負荷</span>で対策必要）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">⑤の答えを見る</button>
+<div class="fill-group">⑥「先行（負の遅れ）は常に望ましい」→<span class="fill-blank">×</span>（<span class="fill-blank">仕掛在庫</span>増のリスク）</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">⑥の答えを見る</button>
+</div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">Q3. 5管理方式の対応</div>
+<div class="fill-body">
+<div class="fill-group">注文住宅→<span class="fill-blank">製番管理</span>／家電量産→<span class="fill-blank">追番管理</span>／混流ライン→<span class="fill-blank">かんばん</span>／自動車（オプション）→<span class="fill-blank">オーダエントリー</span>／大型船舶→<span class="fill-blank">生産座席予約</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab8 -->
+
+<!-- ============ TAB 9: 事例 ============ -->
+<div class="tab-panel" id="tab9">
+
+<h2 class="section-title">📋 中小製造業のお悩み相談</h2>
+
+<div class="card card-blue">
+<h3>事例1：A社「納期遅れが頻発…進捗管理どうすれば？」</h3>
+<p><strong>悩み</strong>：A社（金属加工・量産）は週に3回程度の納期遅れが発生。日報は上がってくるが「累計でいま何個遅れているか」が見えない。</p>
+<p><strong>提案</strong>：<strong>追番管理</strong>を導入。計画追番と実績追番を毎日記録し、差を可視化することで「遅れ何個」が即座に分かる。差が拡大したら山崩しや応援人員で挽回。</p>
+<p style="font-size:.88rem;color:var(--gray-mid);">→ A社のような繰返量産には追番管理が最適。製番管理は受注品向きで合わない。</p>
+</div>
+
+<div class="card card-green">
+<h3>事例2：B社「特定週に負荷集中、残業ばかり…」</h3>
+<p><strong>悩み</strong>：B社の生産現場は月末に注文が集中し、最終週は連日残業。前半週は残業ゼロでアンバランス。</p>
+<p><strong>提案</strong>：<strong>山積み・山崩し</strong>。負荷を期間別に積み上げ、過負荷期間（最終週）の作業を前半週に前倒し配分。負荷率を100%以下に平準化。</p>
+<p style="font-size:.88rem;color:var(--gray-mid);">→ 計算：合計負荷180人時／能力180人時（5日×36人時）なら、平均化すれば残業ゼロで完了する。</p>
+</div>
+
+<div class="card card-orange">
+<h3>事例3：C社「新商品の納期が読めない」</h3>
+<p><strong>悩み</strong>：C社は今までやったことのない新製品を受注。標準時間データがなく、何日で完成するか分からない。</p>
+<p><strong>提案</strong>：<strong>PERT 3点見積</strong>。各作業を「楽観・最頻・悲観」で見積もり、t=(a+4m+b)/6 で期待値を出す。さらに分散から標準偏差を計算し、納期に対する完了確率を z 値で算出。</p>
+<p style="font-size:.88rem;color:var(--gray-mid);">→ 不確実性が高い新規プロジェクトはPERTの想定ど真ん中。CPM（コスト最適化）はベテラン向け。</p>
+</div>
+
+<h2 class="section-title">✏️ 事例タブの試験ポイント穴埋め</h2>
+
+<div class="fill-card"><div class="fill-header" style="background:#1565c0">📝 【1次・2次】事例の論点</div>
+<div class="fill-body">
+<div class="fill-group">①納期遅れ管理＝<span class="fill-blank">追番管理</span>／②負荷集中＝<span class="fill-blank">山崩し</span>で平準化／③新規プロジェクト見積＝<span class="fill-blank">PERT 3点見積</span></div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+<div class="fill-group">④負荷率100%超＝<span class="fill-blank">過負荷</span>。対策は外注・残業・<span class="fill-blank">納期再交渉</span>・山崩し</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab9 -->
+
+<!-- ============ TAB 10: クイズ ============ -->
+<div class="tab-panel" id="tab10">
+
+<h2 class="section-title">🎯 選択クイズ（A〜D）</h2>
+
+<div class="quiz-card">
+<div class="quiz-q">Q1. 作業の3点見積が a=4日, m=8日, b=12日 のとき、PERTによる期待値はどれか？</div>
+<div class="quiz-opt" onclick="qa(this,0)">A. 6日</div>
+<div class="quiz-opt" onclick="qa(this,0)">B. 7日</div>
+<div class="quiz-opt" onclick="qa(this,1)">C. 8日</div>
+<div class="quiz-opt" onclick="qa(this,0)">D. 9日</div>
+<div class="quiz-exp">正解：C。t=(4+32+12)/6=48/6=8日。単純平均(4+8+12)/3=8と偶然同値だが、これはm=平均値のとき。一般には(a+4m+b)/6の重み付き平均。</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">Q2. 計画追番1,500、実績追番1,380 のとき、現在の状況として正しいのはどれか？</div>
+<div class="quiz-opt" onclick="qa(this,0)">A. 120個進んでいる</div>
+<div class="quiz-opt" onclick="qa(this,1)">B. 120個遅れている</div>
+<div class="quiz-opt" onclick="qa(this,0)">C. 1,380個分の負荷がある</div>
+<div class="quiz-opt" onclick="qa(this,0)">D. 当日120個生産した</div>
+<div class="quiz-exp">正解：B。遅れ＝計画追番−実績追番＝1,500−1,380＝120。プラスなので「120個遅れている」。</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">Q3. 作業者6人・1日8時間・月20日稼働、製品の標準時間1人時、月生産900個のとき、負荷率はどれか？</div>
+<div class="quiz-opt" onclick="qa(this,0)">A. 50%</div>
+<div class="quiz-opt" onclick="qa(this,0)">B. 75%</div>
+<div class="quiz-opt" onclick="qa(this,1)">C. 約94%</div>
+<div class="quiz-opt" onclick="qa(this,0)">D. 約120%</div>
+<div class="quiz-exp">正解：C。能力＝6×8×20＝960人時。負荷＝1×900＝900人時。負荷率＝900/960≒93.75%≒94%。</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">Q4. 個別受注生産（注文住宅・特注機械）に最も適した管理方式はどれか？</div>
+<div class="quiz-opt" onclick="qa(this,0)">A. 追番管理</div>
+<div class="quiz-opt" onclick="qa(this,0)">B. かんばん方式</div>
+<div class="quiz-opt" onclick="qa(this,0)">C. オーダエントリー方式</div>
+<div class="quiz-opt" onclick="qa(this,1)">D. 製番管理</div>
+<div class="quiz-exp">正解：D。製番（製造番号）を顧客の注文ごとに発行し部品まで紐付け管理する製番管理が個別受注生産に最適。追番は量産、かんばんは混流・JIT、オーダエントリーは多仕様量産向き。</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">Q5. PERTのクリティカルパス上の作業の分散がそれぞれ 0.5、1.0、1.5 のとき、プロジェクト全体の標準偏差として正しいのはどれか？</div>
+<div class="quiz-opt" onclick="qa(this,0)">A. 1日</div>
+<div class="quiz-opt" onclick="qa(this,0)">B. √3 / 6 日</div>
+<div class="quiz-opt" onclick="qa(this,1)">C. √3 日</div>
+<div class="quiz-opt" onclick="qa(this,0)">D. 3日</div>
+<div class="quiz-exp">正解：C。CP全体の分散V＝0.5+1.0+1.5＝3。標準偏差＝√3≒1.73日。「分散の合計→平方根を取って標準偏差」が手順。</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">Q6. プッシュ型／プル型の組合せとして正しいのはどれか？</div>
+<div class="quiz-opt" onclick="qa(this,0)">A. MRP＝プル型／かんばん＝プッシュ型</div>
+<div class="quiz-opt" onclick="qa(this,1)">B. MRP＝プッシュ型／かんばん＝プル型</div>
+<div class="quiz-opt" onclick="qa(this,0)">C. 両方ともプッシュ型</div>
+<div class="quiz-opt" onclick="qa(this,0)">D. 両方ともプル型</div>
+<div class="quiz-exp">正解：B。MRPは生産計画を起点に上流から下流へ指示する＝プッシュ型。かんばんは下流（後工程）の引取りで上流が動く＝プル型。</div>
+</div>
+
+</div><!-- /tab10 -->
+
+<!-- ============ TAB 11: 実例 ============ -->
+<div class="tab-panel" id="tab11">
+
+<h2 class="section-title">🏭 実在企業の事例</h2>
+
+<div class="card card-orange">
+<h3>NASA アポロ計画とPERT</h3>
+<p>PERT（Program Evaluation and Review Technique）は1950年代後半、米海軍のポラリス潜水艦ミサイル開発で生まれた手法。複雑で前例のない大規模プロジェクトでも、3点見積を使えば不確実な作業時間を統計的に扱える。後にアポロ計画でも全面採用され、月面着陸の達成に貢献した。</p>
+<p style="font-size:.88rem;color:var(--gray-mid);">→ 中小企業診断士の試験では「不確実性が高いプロジェクト＝PERT」「コスト調整も含むなら CPM（Critical Path Method）」と区別する。</p>
+</div>
+
+<div class="card card-blue">
+<h3>トヨタ自動車と追番管理</h3>
+<p>トヨタは「かんばん方式（プル型）」で有名だが、車種別の累計生産台数を追番として管理し、計画と実績の差で日々の進捗を把握する仕組みも併用している。月初からの累計が見えれば、月末に向けて挽回計画が立てやすい。</p>
+<p style="font-size:.88rem;color:var(--gray-mid);">→ 現実の工場は「複数の管理方式を組合せ」が多い。試験では「○○生産＝○○方式」の対応で問われるが、実務では併用が普通。</p>
+</div>
+
+<div class="card card-green">
+<h3>建設現場の山崩し</h3>
+<p>建設業界では、職人ごとの稼働日を山積みグラフで可視化し、特定の職人（例：型枠大工）に作業が集中していたら、別工区に応援を送る「山崩し」を日常的に行う。スマホアプリ化が進み、リアルタイムで負荷率が見える現場も増えている。</p>
+</div>
+
+<div class="card card-purple">
+<h3>BMW のオーダエントリー</h3>
+<p>BMWはライン上で標準ボディを流しつつ、顧客の選んだ内装色・オプションをライン投入直前に確定して個別仕様化する。これが「<strong>マスカスタマイゼーション</strong>」の代表例で、オーダエントリー方式の典型。</p>
+</div>
+
+<h2 class="section-title">✏️ 実例タブの試験ポイント穴埋め</h2>
+
+<div class="fill-card"><div class="fill-header" style="background:#1565c0">📝 【1次】実例から押さえる論点</div>
+<div class="fill-body">
+<div class="fill-group">PERTは1950年代の<span class="fill-blank">ポラリス</span>潜水艦開発が起源。アポロ計画でも採用</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+<div class="fill-group">トヨタは<span class="fill-blank">かんばん（プル型）</span>と追番を併用。実務では複数方式の組合せが普通</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+<div class="fill-group">BMWのライン投入直前カスタマイズは<span class="fill-blank">オーダエントリー</span>方式の典型</div>
+<button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+</div></div>
+
+</div><!-- /tab11 -->
+
+<!-- ============ TAB 12: 図解 ============ -->
+<div class="tab-panel" id="tab12">
+
+<h2 class="section-title">🗺 4論点の整理表</h2>
+
+<div class="card">
+<h3>このノートの4論点 全体像</h3>
+<table>
+<tr><th>論点</th><th>主な公式・キーワード</th><th>既存ノートとの関係</th></tr>
+<tr><td><strong>① PERT 3点見積</strong></td><td>t=(a+4m+b)/6、σ=(b−a)/6、z=(締切−T)/σ</td><td>06のPERT概念を計算面で深掘り</td></tr>
+<tr><td><strong>② 追番管理</strong></td><td>遅れ＝計画追番−実績追番、部品追番＝製品追番×使用数</td><td>06の追番概念に計算例を追加</td></tr>
+<tr><td><strong>③ 負荷・能力・余力</strong></td><td>負荷=標準時間×数量、能力=人×時間×日、負荷率=負荷/能力</td><td>06の余力管理に数値計算を追加</td></tr>
+<tr><td><strong>④ 生産形態×管理方式</strong></td><td>製番／追番／かんばん／オーダエントリー／生産座席予約</td><td>02の個別解説を統合表に整理</td></tr>
+</table>
+</div>
+
+<div class="card card-orange">
+<h3>📊 PERT計算の流れ</h3>
+<div class="flow-row">
+<div class="flow-box">3点見積<br><small>a, m, b</small></div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box">期待値t<br><small>(a+4m+b)/6</small></div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box green">分散σ²<br><small>((b-a)/6)²</small></div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box orange">CP合計<br><small>T, V</small></div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box">z値→確率<br><small>z=(締切-T)/σ</small></div>
+</div>
+</div>
+
+<div class="card card-blue">
+<h3>📊 追番計算の流れ</h3>
+<div class="flow-row">
+<div class="flow-box">日々の生産</div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box green">累計＝追番</div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box orange">計画 vs 実績</div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box">差＝遅れ</div>
+</div>
+<p style="font-size:.85rem;text-align:center;">部品の追番＝製品追番×1個あたり部品使用数（BOM展開）</p>
+</div>
+
+<div class="card card-green">
+<h3>📊 余力管理の流れ</h3>
+<div class="flow-row">
+<div class="flow-box">標準時間×数量</div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box orange">負荷</div>
+</div>
+<div class="flow-row">
+<div class="flow-box">人数×時間×日数</div>
+<span class="flow-arrow">▶</span>
+<div class="flow-box green">能力</div>
+</div>
+<div class="flow-row">
+<div class="flow-box orange">負荷</div>
+<span class="flow-arrow">−</span>
+<div class="flow-box green">能力</div>
+<span class="flow-arrow">＝</span>
+<div class="flow-box">余力（負ならNG）</div>
+</div>
+</div>
+
+<div class="card card-purple">
+<h3>📊 5つの管理方式（生産形態別）</h3>
+<table>
+<tr><th>生産形態</th><th>管理方式</th><th>覚え方</th></tr>
+<tr><td>個別受注</td><td>製番</td><td>受は<strong>製</strong></td></tr>
+<tr><td>繰返量産</td><td>追番</td><td>量は<strong>追</strong></td></tr>
+<tr><td>多品種少量・混流</td><td>かんばん</td><td>混は<strong>かん</strong></td></tr>
+<tr><td>多仕様量産</td><td>オーダエントリー</td><td>多仕様は<strong>オ</strong></td></tr>
+<tr><td>納期重視・大型</td><td>生産座席予約</td><td>大は<strong>座</strong></td></tr>
+</table>
+</div>
+
+<div class="support">
+<span class="support-icon">👨‍🏫</span>
+<div class="support-body">
+<span class="support-name">先生からひとこと（最終確認）</span>
+このページの4論点は、いずれも<strong>「式さえ覚えれば点が取れる」計算系</strong>。文章理解より「公式と単位」を優先して暗記しよう。<strong>負荷も能力も単位は工数（人時）でそろえる</strong>のが共通の罠。
+</div>
+</div>
+
+</div><!-- /tab12 -->
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,k)=>b.classList.toggle('active',k===i));
+  document.querySelectorAll('.tab-panel').forEach((p,k)=>p.classList.toggle('active',k===i));
+  window.scrollTo(0,0);
+}
+function revealBlanks(btn){
+  var card=btn.closest('.fill-body');
+  if(!card)return;
+  card.querySelectorAll('.fill-blank').forEach(el=>el.classList.add('show'));
+  btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';
+}
+function revealAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});
+  document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){
+    b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'
+  });
+}
+function resetAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});
+  document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){
+    b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'
+  });
+}
+// クリックで個別表示
+document.addEventListener('click',function(e){
+  if(e.target.classList.contains('fill-blank')){e.target.classList.toggle('show')}
+});
+// クイズ
+function qa(el,correct){
+  var card=el.closest('.quiz-card');
+  card.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  if(correct){el.classList.add('correct')}else{el.classList.add('wrong')}
+  var exp=card.querySelector('.quiz-exp');if(exp)exp.classList.add('show');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中小企業の業績（売上高・収益性）まとめ｜中小企業診断士</title>
+<style>
+:root{
+  --bg:#fdf6fa;--card:#fff;--ink:#1a202c;--muted:#64748b;--line:#ecdfe8;
+  --accent:#a78bfa;--accent-light:#f3eeff;
+  --orange:#fb923c;--orange-light:#fff7ed;
+  --blue:#818cf8;--blue-light:#eef0ff;
+  --red:#f472b6;--red-light:#fdf2f8;
+  --purple:#c084fc;--purple-light:#faf5ff;
+  --yellow:#fbbf24;--yellow-light:#fffbeb;
+  --green:#34d399;--green-light:#ecfdf5;
+  --teal:#fb7185;--teal-light:#fff1f2;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 4px 16px rgba(0,0,0,.08);
+  --radius:16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.9;font-size:16.5px}
+
+.page-header{background:linear-gradient(135deg,#a78bfa 0%,#f472b6 55%,#fbbf24 100%);color:#fff;text-align:center;padding:22px 20px 18px;position:relative;overflow:hidden}
+.page-header::after{content:'';position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);width:120%;height:40px;background:var(--bg);border-radius:50%}
+.page-header .header-icon{font-size:2rem;display:block;margin-bottom:4px}
+.page-header h1{font-size:clamp(1.2rem,3.4vw,1.6rem);margin-bottom:4px;letter-spacing:.04em;font-weight:800;position:relative;text-shadow:0 1px 2px rgba(0,0,0,.12)}
+.page-header .subtitle{font-size:.92rem;opacity:.95;position:relative}
+.version-badge{display:inline-block;background:#fde68a;color:#1a202c;font-weight:800;font-size:.85rem;padding:4px 14px;border-radius:999px;margin-left:8px;vertical-align:middle}
+.header-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;position:relative}
+.header-badges span{background:rgba(255,255,255,.22);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 14px;font-size:.86rem;font-weight:600}
+
+.tab-nav-wrapper{background:#a78bfa;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(167,139,250,.3);overflow-x:auto}
+.tab-nav{display:flex;max-width:1280px;margin:0 auto;justify-content:flex-start;min-width:max-content}
+.tab-btn{flex:0 0 auto;min-width:90px;background:transparent;color:rgba(255,255,255,.9);border:none;padding:14px 10px;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;border-bottom:3px solid transparent;font-family:inherit;text-align:center}
+.tab-btn:hover{color:#fff;background:rgba(255,255,255,.14)}
+.tab-btn.active{color:#6d28d9;background:#fff;border-bottom:3px solid #f59e0b;border-radius:6px 6px 0 0}
+.tab-content{display:none;max-width:960px;margin:0 auto;padding:24px 16px 60px}
+.tab-content.active{display:block;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:var(--card);border-radius:14px;margin-bottom:24px;box-shadow:var(--shadow);overflow:hidden}
+.card-header{padding:18px 24px;font-size:1.32rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:12px;letter-spacing:.02em}
+.card-header .card-num{background:rgba(255,255,255,.3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:800;flex-shrink:0}
+.card-body{padding:22px 24px}
+.card-body p{margin-bottom:12px}
+.card-body ul,.card-body ol{margin:8px 0 14px 22px}
+.card-body li{margin-bottom:6px}
+.card-body h3{color:#7c3aed;font-size:1.22rem;margin:24px 0 12px;padding-left:14px;border-left:5px solid #a78bfa;font-weight:800}
+.card-body h3:first-child{margin-top:0}
+.bg-navy{background:linear-gradient(135deg,#a78bfa,#c4b5fd)}
+.bg-teal{background:linear-gradient(135deg,#fb7185,#fda4af)}
+.bg-orange{background:linear-gradient(135deg,#fb923c,#fdba74)}
+.bg-red{background:linear-gradient(135deg,#f472b6,#f9a8d4)}
+.bg-purple{background:linear-gradient(135deg,#c084fc,#d8b4fe)}
+.bg-green{background:linear-gradient(135deg,#34d399,#6ee7b7)}
+.bg-blue{background:linear-gradient(135deg,#818cf8,#a5b4fc)}
+.bg-yellow{background:linear-gradient(135deg,#fbbf24,#fcd34d)}
+.bg-amber{background:linear-gradient(135deg,#fb923c,#fbbf24)}
+
+.table-wrap{overflow-x:auto;margin:16px 0}
+table{width:100%;border-collapse:collapse;font-size:1rem}
+th,td{border:1px solid #e7d5e3;padding:11px 14px;text-align:left;vertical-align:top}
+th{background:#a78bfa;color:#fff;font-weight:700;white-space:nowrap;letter-spacing:.02em}
+th.th-green{background:#34d399}th.th-orange{background:#fb923c}
+th.th-red{background:#f472b6}th.th-purple{background:#c084fc}
+th.th-teal{background:#fb7185}th.th-blue{background:#818cf8}
+tbody tr:nth-child(even){background:#fbf6fa}
+tbody tr:hover{background:#f5edf3}
+.num-big{display:inline-block;font-size:1.18em;font-weight:800;color:#be185d;background:linear-gradient(transparent 55%,#fde68a 55%);padding:0 4px;letter-spacing:.01em}
+strong{color:#1f2937;font-weight:800}
+
+.hl{background:linear-gradient(transparent 60%,#fef08a 60%);font-weight:700;padding:0 2px}
+.hl-box{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:.93rem;line-height:1.8}
+.hl-box.yellow{background:#fffbeb;border:2px solid #f59e0b}
+.hl-box.blue{background:#eef0ff;border:2px solid #6366f1}
+.hl-box.green{background:#ecfdf5;border:2px solid #10b981}
+.hl-box.red{background:#fdf2f8;border:2px solid #ec4899}
+.hl-box.purple{background:#faf5ff;border:2px solid #a78bfa}
+.hl-box.teal{background:#fff1f2;border:2px solid #fb7185}
+
+.tutor-comment{background:#fef9ee;border:1px solid #fde68a;border-radius:12px;padding:14px 18px;margin:14px 0;font-size:1rem;display:flex;gap:12px;align-items:flex-start;line-height:1.85}
+.tutor-comment .tc-icon{font-size:1.2rem;flex-shrink:0}
+.tutor-comment.warn{background:#fff5f5;border-color:#feb2b2}
+.tutor-comment.green{background:#ecfdf5;border-color:#a7f3d0}
+.tutor-comment.blue{background:#eef0ff;border-color:#a5b4fc}
+.tutor-comment.purple{background:#faf5ff;border-color:#d8b4fe}
+
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:16px 0}
+.flow-box{background:#fff;border:2px solid var(--accent);border-radius:10px;padding:10px 16px;text-align:center;font-size:.88rem;font-weight:600}
+.flow-arrow{font-size:1.3rem;color:var(--accent);font-weight:700}
+
+.compare-diagram{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap}
+.compare-diagram .cd-side{flex:1;min-width:220px;border-radius:12px;padding:16px;font-size:.9rem}
+.compare-diagram .cd-side.good{background:#faf5ff;border:2px solid #c4b5fd}
+.compare-diagram .cd-side.bad{background:#fdf2f8;border:2px solid #f9a8d4}
+.compare-diagram .cd-label{font-weight:800;font-size:.85rem;text-align:center;margin-bottom:8px;padding:3px 12px;border-radius:6px;display:inline-block}
+.compare-diagram .cd-side.good .cd-label{background:#7c3aed;color:#fff}
+.compare-diagram .cd-side.bad .cd-label{background:#db2777;color:#fff}
+
+.quiz-box{margin:18px 0}
+.quiz-q{background:#fdf2f8;border-radius:12px;padding:18px 20px;font-weight:700;margin-bottom:14px;line-height:1.85;font-size:1.08rem;border-left:5px solid #f472b6}
+.quiz-choices{list-style:none;padding:0;margin:0}
+.quiz-choices li{background:#fff;border:2px solid var(--line);border-radius:10px;padding:13px 18px;margin-bottom:9px;cursor:pointer;transition:all .2s;font-size:1rem;line-height:1.75}
+.quiz-choices li:hover{border-color:var(--accent);background:var(--accent-light)}
+.quiz-choices li.correct{border-color:#10b981;background:#ecfdf5;pointer-events:none}
+.quiz-choices li.wrong{border-color:#ef4444;background:#fef2f2;opacity:.7;pointer-events:none}
+.quiz-explanation{display:none;margin-top:12px;padding:16px 18px;background:#eef0ff;border-radius:12px;border-left:4px solid #6366f1;font-size:.92rem;line-height:1.8}
+.quiz-explanation.show{display:block;animation:fadeUp .3s ease}
+
+.fill-card{background:var(--card);border-radius:14px;margin-bottom:18px;box-shadow:var(--shadow-sm);overflow:hidden}
+.fill-card .fill-header{padding:14px 20px;font-weight:800;font-size:1.08rem;color:#fff;display:flex;align-items:center;gap:8px;letter-spacing:.02em}
+.fill-card .fill-body{padding:20px 22px}
+.fill-blank{display:inline-block;min-width:96px;border-bottom:2.5px solid #c4b5fd;text-align:center;padding:3px 12px;margin:0 3px;cursor:pointer;font-weight:800;color:transparent;background:#f3eeff;border-radius:5px;transition:all .25s;user-select:none;font-size:1rem}
+.fill-blank.show{color:#be185d;background:#fdf2f8;border-color:#f472b6}
+.fill-reveal-btn{display:inline-block;background:#a78bfa;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#8b5cf6}
+.fill-group{margin-bottom:6px;font-size:1.05rem;line-height:2.1}
+
+.goro-row{margin:14px 0;padding:14px 16px;background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-weight:800;border-radius:999px;padding:5px 14px;font-size:.88rem;margin-right:8px;box-shadow:0 2px 8px rgba(124,58,237,.3)}
+.goro-row .g-text{margin-top:6px;font-size:.92rem;line-height:1.8}
+.support{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px 16px;margin:12px 0;display:flex;gap:10px;align-items:flex-start;font-size:.92rem;line-height:1.75}
+.support::before{content:"\1F468\200D\1F3EB";font-size:1.2rem;flex-shrink:0}
+.keepit{background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%);border:3px solid #f59e0b;border-radius:14px;padding:18px 22px;margin:22px 0;position:relative}
+.keepit::before{content:"\2B50 \4ECA\65E5\306E\3053\308C\3060\3051\899A\3048\3066";display:block;font-weight:800;color:#92400e;font-size:.95rem;margin-bottom:8px;letter-spacing:.05em}
+.keepit ol{margin:4px 0 0 22px}
+.keepit li{margin-bottom:4px;font-weight:600;color:#78350f}
+
+.zakkuri{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px;}
+
+.source{font-size:.78rem;color:#546e7a;background:#f0f4f8;border-left:3px solid #64748b;padding:.5rem .8rem;margin:.6rem 0;border-radius:4px;line-height:1.7}
+
+/* ASCII chart for trends */
+.trend-chart{font-family:Menlo,Consolas,monospace;background:#1f2937;color:#fde68a;padding:14px 18px;border-radius:8px;font-size:.82rem;line-height:1.6;margin:12px 0;overflow-x:auto;white-space:pre}
+
+@media(max-width:640px){
+  body{font-size:15.5px}
+  .page-header h1{font-size:1.15rem}
+  .tab-btn{font-size:.78rem;padding:12px 6px;min-width:80px}
+  .card-header{font-size:1.15rem;padding:14px 16px}
+  .card-body{padding:16px 14px}
+  .card-body h3{font-size:1.08rem}
+  table{font-size:.88rem}
+  th,td{padding:8px 10px}
+  .fill-group{font-size:.98rem}
+  .quiz-q{font-size:1rem}
+  .flow-row{flex-direction:column}
+  .flow-arrow{transform:rotate(90deg)}
+  .compare-diagram{flex-direction:column}
+}
+strong{color:#1f2937;font-weight:800}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <span class="header-icon">&#x1F4CA;</span>
+  <h1>中小企業の業績（売上高・収益性） <span class="version-badge">ver.01</span></h1>
+  <p class="subtitle">中小企業診断士 中小企業経営｜2025年版中小企業白書 第1部第1章</p>
+  <div class="header-badges">
+    <span>&#x1F3AF; 出題頻度 A</span>
+    <span>&#x1F4C8; 業況判断DI</span>
+    <span>&#x1F4B0; 売上高・経常利益</span>
+    <span>&#x1F3ED; 労働生産性</span>
+  </div>
+</header>
+
+<nav class="tab-nav-wrapper">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">&#x1F423; ゼロから</button>
+    <button class="tab-btn" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" onclick="switchTab(2)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" onclick="switchTab(3)">&#x1F50D; 詳細</button>
+    <button class="tab-btn" onclick="switchTab(4)">&#x270D;&#xFE0F; 穴&#x2460;</button>
+    <button class="tab-btn" onclick="switchTab(5)">&#x270F;&#xFE0F; 穴&#x2461;</button>
+    <button class="tab-btn" onclick="switchTab(6)">&#x1F3AF; 穴&#x2462;</button>
+    <button class="tab-btn" onclick="switchTab(7)">&#x1F3B4; ゴロ</button>
+    <button class="tab-btn" onclick="switchTab(8)">&#x1F3B5; 語呂穴</button>
+    <button class="tab-btn" onclick="switchTab(9)">&#x1F4AC; 事例</button>
+    <button class="tab-btn" onclick="switchTab(10)">&#x1F9E9; クイズ</button>
+    <button class="tab-btn" onclick="switchTab(11)">&#x1F4D6; 実例</button>
+    <button class="tab-btn" onclick="switchTab(12)">&#x1F5FA; 図解</button>
+  </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- TAB 0: ゼロから -->
+<!-- ============================================================ -->
+<div class="tab-content active" id="tab0">
+
+  <div class="card">
+    <div class="card-header bg-amber"><span class="card-num">1</span>まず指標を3つだけ知ろう</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>指標</th><th>日常語で言うと</th><th>白書の図</th></tr></thead>
+        <tbody>
+          <tr><td><strong>業況判断DI</strong>（Diffusion Index：景況指数）<span class="zakkuri">ざっくり：好転と答えた%から悪化と答えた%を引いた数字。社長たちの「景気どう？」アンケート</span></td><td>社長の<strong>景気の感じ方</strong></td><td>第1-1-7図</td></tr>
+          <tr><td><strong>売上高・経常利益</strong></td><td>会社の<strong>売り上げと儲け</strong></td><td>第1-1-9〜11図</td></tr>
+          <tr><td><strong>労働生産性</strong></td><td>従業員1人が生み出す<strong>付加価値</strong></td><td>第1-1-31〜32図</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F468;&#x200D;&#x1F3EB;</span>
+        <div><strong>覚え方：</strong>「<strong>気分（DI）→売上→生産性</strong>」の3点セット。試験はこの3つから1問は必ず出る！</div>
+      </div>
+      <div class="goro-row"><span class="goro-chip">&#x1F3B5; ゴロ</span><span class="g-text"><strong>「キ・ウ・セ」</strong>＝<strong>気</strong>分（DI）・<strong>売</strong>上経常利益・<strong>生</strong>産性</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">2</span>3指標は今どうなってる？（傾向だけ）</div>
+    <div class="card-body">
+      <div class="hl-box yellow">
+        <strong>&#x1F4CC; 大きな絵（2025年版白書の総括）</strong>
+        <ol>
+          <li><strong>業況判断DI</strong>：コロナで2020年に大きく落ち込み → <strong>2023年第2四半期に1994年以降最高水準</strong> → 足下は<strong>足踏み</strong></li>
+          <li><strong>売上・経常利益</strong>：<strong>増加傾向</strong>。ただし<strong>大企業との差は拡大</strong></li>
+          <li><strong>労働生産性</strong>：大企業は伸びるが、<strong>中小はほぼ横ばい</strong>。約30年前比で<strong>緩やかに減少</strong></li>
+        </ol>
+      </div>
+      <div class="support">
+        <div>細かい数値は覚えなくてOK！「<strong>大企業は上がる、中小は横ばい・差が拡大</strong>」が試験で問われる<strong>ストーリー</strong>。これさえ分かれば選択肢は切れます。</div>
+      </div>
+      <div class="goro-row"><span class="goro-chip">&#x1F3B5; ゴロ</span><span class="g-text"><strong>「大伸び・中横ばい・差拡大」</strong>＝白書の3指標すべてに共通する基本トレンド</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">3</span>業種別の「明暗」</div>
+    <div class="card-body">
+      <p>白書では「業種別」も問われます。<strong>明暗が分かれる業種</strong>を覚えておくだけで1問取れる。</p>
+      <div class="compare-diagram">
+        <div class="cd-side good">
+          <div class="cd-label">&#x1F4C8; 上昇傾向</div>
+          <ul>
+            <li><strong>建設業</strong>（経常利益が伸びる）</li>
+            <li>製造業（堅調）</li>
+          </ul>
+        </div>
+        <div class="cd-side bad">
+          <div class="cd-label">&#x1F4C9; 伸び悩み</div>
+          <ul>
+            <li><strong>宿泊業、飲食サービス業</strong></li>
+            <li>サービス業全般（労働生産性も低迷）</li>
+          </ul>
+        </div>
+      </div>
+      <div class="goro-row"><span class="goro-chip">&#x1F3B5; ゴロ</span><span class="g-text"><strong>「建つ建設、伸びぬ宿泊飲食」</strong>＝業種別の明暗</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">4</span>データソースは2つだけ</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>白書の図</th><th>データ出典</th></tr></thead>
+        <tbody>
+          <tr><td>業況判断DI</td><td>中小企業庁・中小機構「<strong>中小企業景況調査</strong>」</td></tr>
+          <tr><td>売上高・経常利益<br>労働生産性</td><td>財務省「<strong>法人企業統計調査</strong>」（季報・年報）</td></tr>
+        </tbody>
+      </table></div>
+      <div class="support">
+        <div>データの出典まで聞いてくる年もあるんだ。「DI＝景況調査、売上・利益・生産性＝法人企業統計」だけ押さえればOK！</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="keepit">
+    <ol>
+      <li>3指標＝<strong>業況判断DI／売上高・経常利益／労働生産性</strong></li>
+      <li>共通トレンド＝<strong>大企業は伸びる、中小は横ばい、差は拡大</strong></li>
+      <li>業種別＝<strong>建設＋／宿泊・飲食▼</strong></li>
+    </ol>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-amber">&#x270D;&#xFE0F; ゼロから 穴埋めチェック</div>
+    <div class="fill-body">
+      <div style="text-align:center;margin:0.8rem 0;">
+        <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:0.5rem;">&#x1F50D; このタブの穴埋めを全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-group">①「好転」と答えた割合から「悪化」と答えた割合を引いた指標を <span class="fill-blank" onclick="this.classList.toggle('show')">業況判断DI</span> という。</div>
+      <div class="fill-group">②業況判断DIは <span class="fill-blank" onclick="this.classList.toggle('show')">2023年第2四半期</span> に1994年以降の最高水準を記録した。</div>
+      <div class="fill-group">③売上・経常利益は中小企業も増加傾向だが、大企業との差は <span class="fill-blank" onclick="this.classList.toggle('show')">拡大</span> している。</div>
+      <div class="fill-group">④中小企業の労働生産性は <span class="fill-blank" onclick="this.classList.toggle('show')">横ばい</span> で、約30年前比で緩やかに減少。</div>
+      <div class="fill-group">⑤上昇傾向の代表業種は <span class="fill-blank" onclick="this.classList.toggle('show')">建設業</span>、伸び悩みの代表業種は <span class="fill-blank" onclick="this.classList.toggle('show')">宿泊業、飲食サービス業</span>。</div>
+      <div class="fill-group">⑥業況判断DIの出典は <span class="fill-blank" onclick="this.classList.toggle('show')">中小企業景況調査</span>、売上・利益・生産性の出典は <span class="fill-blank" onclick="this.classList.toggle('show')">法人企業統計調査</span>。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 1: 入門 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab1">
+
+  <div class="card">
+    <div class="card-header bg-navy"><span class="card-num">1</span>業況判断DI（第1-1-7図）</div>
+    <div class="card-body">
+      <p><strong>業況判断DI</strong>＝「業況が好転」と答えた企業の割合（％）−「悪化」と答えた企業の割合（％）。前年同期比で見る。</p>
+
+      <div class="trend-chart">業況判断DI（中小企業）の推移イメージ
+2020年 ▼▼▼▼▼ コロナで急落
+2021年 ▲    回復開始
+2022年 ▲▲   緩やかに改善
+2023年 ▲▲▲★ Q2に1994年以降の最高水準
+2024年 →→  足下は足踏み</div>
+
+      <div class="hl-box blue">
+        <strong>&#x1F4CC; 押さえる3点</strong>
+        <ul>
+          <li>2020年（コロナ）に<strong>大幅悪化</strong></li>
+          <li><strong>2023年第2四半期</strong>＝1994年以降の<strong>最高水準</strong></li>
+          <li>足下（2024年〜）は<strong>回復に足踏み</strong></li>
+        </ul>
+      </div>
+
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書 第1部第1章 第1-1-7図／中小企業庁・中小機構「中小企業景況調査」
+      </div>
+      <div class="goro-row"><span class="goro-chip">&#x1F3B5; ゴロ</span><span class="g-text"><strong>「ニ・サン・キュー・ヨン」（23年Q2 → 1994以降最高）</strong></span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">2</span>売上高・経常利益（第1-1-9〜11図）</div>
+    <div class="card-body">
+      <p style="font-size:.88rem;color:var(--muted);margin:.3rem 0 .6rem;">
+        &#x1F501; <strong>ゼロからタブの「売上・利益」を白書の図番号で位置付け</strong>。
+      </p>
+
+      <h3>&#x1F4C8; 第1-1-9図：企業規模別（季報ベース）</h3>
+      <ul>
+        <li><strong>売上高（中小企業）</strong>：2021年第1四半期を底に増加傾向、足下は<strong>増加幅に縮小</strong></li>
+        <li><strong>経常利益（中小企業）</strong>：2020年第3四半期を底に増加傾向</li>
+        <li>ただし、<strong>大企業と比較して伸び悩み、差は拡大傾向</strong></li>
+      </ul>
+
+      <h3>&#x1F4CA; 第1-1-10図：業種別（中小企業の経常利益）</h3>
+      <ul>
+        <li><strong>建設業</strong>などは上昇傾向</li>
+        <li><strong>宿泊業、飲食サービス業</strong>などは伸び悩み</li>
+      </ul>
+
+      <h3>&#x1F4D1; 第1-1-11図：小規模企業を含む規模別（年報ベース）</h3>
+      <ul>
+        <li>大企業／<strong>中規模企業（資本金1千万円以上1億円未満）</strong>／<strong>小規模企業（資本金1千万円未満）</strong>の3区分で比較</li>
+        <li>小規模企業ほど伸び悩み</li>
+      </ul>
+
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書 第1-1-9〜11図／財務省「法人企業統計調査季報・年報」<br>
+        ※法人企業統計の規模区分は<strong>資本金</strong>ベース：大企業＝10億円以上／中規模＝1千万〜1億未満／小規模＝1千万未満
+      </div>
+
+      <div class="support">
+        <div>第1-1-9と第1-1-11の違いが分かりにくいよね！ <strong>「9＝季報・大中の2区分」「11＝年報・大中小の3区分」</strong>と覚えればOK。<strong>11図の方が小規模を見られる</strong>のがポイント！</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">3</span>労働生産性（第1-1-31〜32図）</div>
+    <div class="card-body">
+      <div class="hl-box orange">
+        <strong>&#x1F4D0; 労働生産性の定義（白書）</strong>
+        <p style="margin-top:6px;"><strong>労働生産性 ＝ 従業員一人当たり付加価値額</strong></p>
+        <p>付加価値額＝<strong>営業純益</strong>（営業利益−支払利息等）＋<strong>人件費</strong>＋支払利息等＋動産・不動産賃借料＋租税公課</p>
+      </div>
+
+      <h3>&#x1F4C8; 第1-1-31図：企業規模別</h3>
+      <ul>
+        <li><strong>大企業：増加傾向</strong></li>
+        <li><strong>中規模企業／小規模企業：おおむね横ばい</strong></li>
+        <li>約<strong>30年前と比較すると緩やかに減少</strong></li>
+      </ul>
+
+      <h3>&#x1F4CA; 第1-1-32図：中小企業の業種別</h3>
+      <ul>
+        <li>多くの業種で<strong>横ばい</strong></li>
+        <li>特に<strong>サービス業</strong>の伸びが小さい</li>
+      </ul>
+
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書 第1部第1章第4節 第1-1-31〜32図／財務省「法人企業統計調査年報」
+      </div>
+
+      <div class="goro-row"><span class="goro-chip">&#x1F3B5; ゴロ</span><span class="g-text"><strong>「ヒト・フカ」（一人当たり付加価値）</strong>＝労働生産性の中身</span></div>
+    </div>
+  </div>
+
+  <div class="keepit">
+    <ol>
+      <li>業況判断DI＝<strong>2023年Q2に1994年以降の最高水準、足下足踏み</strong></li>
+      <li>売上高・経常利益＝<strong>増加だが大企業との差拡大／業種は建設＋・宿泊飲食▼</strong></li>
+      <li>労働生産性＝<strong>大企業のみ増加・中小は横ばい・30年前比で緩やかに減少</strong></li>
+    </ol>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-orange">&#x270F;&#xFE0F; 入門 穴埋めチェック</div>
+    <div class="fill-body">
+      <div style="text-align:center;margin:0.8rem 0;">
+        <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:0.5rem;">&#x1F50D; このタブの穴埋めを全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-group">①業況判断DIは「好転」割合から「<span class="fill-blank" onclick="this.classList.toggle('show')">悪化</span>」割合を引いたもの。</div>
+      <div class="fill-group">②白書の業況判断DIは <span class="fill-blank" onclick="this.classList.toggle('show')">中小企業景況調査</span> がデータソース（第1-1-7図）。</div>
+      <div class="fill-group">③売上・経常利益のデータソースは財務省「<span class="fill-blank" onclick="this.classList.toggle('show')">法人企業統計調査</span>」。</div>
+      <div class="fill-group">④第1-1-11図では小規模企業を <span class="fill-blank" onclick="this.classList.toggle('show')">資本金1千万円未満</span> と定義。</div>
+      <div class="fill-group">⑤労働生産性 = 従業員一人当たり <span class="fill-blank" onclick="this.classList.toggle('show')">付加価値額</span>。</div>
+      <div class="fill-group">⑥労働生産性は <span class="fill-blank" onclick="this.classList.toggle('show')">大企業</span> のみ増加傾向、中小は横ばい。</div>
+      <div class="fill-group">⑦業種別では <span class="fill-blank" onclick="this.classList.toggle('show')">サービス業</span> の労働生産性の伸びが小さい。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 2: 基本 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab2">
+
+  <div class="card">
+    <div class="card-header bg-navy"><span class="card-num">1</span>業況判断DIの読み方</div>
+    <div class="card-body">
+      <p style="font-size:.88rem;color:var(--muted);margin:.3rem 0 .6rem;">
+        &#x1F501; <strong>入門タブの「DI＝好転％−悪化％」を試験論点で深掘り</strong>。
+      </p>
+
+      <div class="hl-box blue">
+        <strong>&#x1F4D0; DIの計算式</strong><br>
+        <strong>DI ＝ 「好転」と答えた企業の割合（％） − 「悪化」と答えた企業の割合（％）</strong><br>
+        ※「不変」は計算に含まない／「前年同期比」で判定
+      </div>
+
+      <ul>
+        <li>DI > 0 → 好転超過（景気が良い方向）</li>
+        <li>DI < 0 → 悪化超過（景気が悪い方向）</li>
+        <li>白書の業況判断DIは長期にわたり<strong>マイナス圏</strong>で推移</li>
+      </ul>
+
+      <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">
+        &#x1F4DD; <strong>【1次】試験ポイント</strong>：DIの計算式（好転−悪化）が頻出。「不変」を含めるか／「前年同期比 vs 前期比」の違いに注意。
+      </p>
+      <p style="font-size:.82rem;margin-top:.3rem;color:#b71c1c;">
+        &#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「DI＝好転％＋悪化％」「不変も計算に含む」は誤り。正は<strong>好転−悪化</strong>。
+      </p>
+
+      <div class="support">
+        <div>「DI＝好転−悪化」って単純なんだけど、選択肢で「足し算」にして引っかけてくる年がある。<strong>「マイナスにもなる指標＝引き算」</strong>と覚えれば一発で切れる！</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">2</span>売上高・経常利益のトレンド整理</div>
+    <div class="card-body">
+      <p style="font-size:.88rem;color:var(--muted);margin:.3rem 0 .6rem;">
+        &#x1F501; <strong>入門タブの「3図」を整理表で深掘り</strong>。
+      </p>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>図番</th><th>区分</th><th>頻度</th><th>主なメッセージ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>第1-1-9図</strong></td><td>大企業／中小企業</td><td>季報</td><td>中小は2021Q1底→増加。<strong>大企業との差は拡大</strong></td></tr>
+          <tr><td><strong>第1-1-10図</strong></td><td>中小×業種別</td><td>—</td><td><strong>建設＋／宿泊飲食▼</strong></td></tr>
+          <tr><td><strong>第1-1-11図</strong></td><td>大／中規模／<strong>小規模</strong></td><td>年報</td><td>小規模が最も伸び悩み</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="hl-box yellow">
+        <strong>&#x1F4D0; 規模区分の定義（法人企業統計）</strong>
+        <ul>
+          <li>大企業：資本金<strong>10億円以上</strong>（第1-1-9図では「億円以上」）</li>
+          <li>中規模企業：資本金<strong>1千万円以上〜1億円未満</strong></li>
+          <li>小規模企業：資本金<strong>1千万円未満</strong>（第1-1-11図のみ）</li>
+        </ul>
+        <p style="margin-top:6px;">※金融業、保険業は含まない</p>
+      </div>
+
+      <div class="goro-row"><span class="goro-chip">&#x1F3B5; ゴロ</span><span class="g-text"><strong>「ジュー・イチ・セン」（10億・1億・1千万）</strong>＝法人企業統計の3つの境界</span></div>
+
+      <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">
+        &#x1F4DD; <strong>【1次】試験ポイント</strong>：白書の規模区分は<strong>資本金ベース</strong>（中小企業基本法の「資本金 or 従業員」とは違う）。出題で使われる定義に要注意。
+      </p>
+      <p style="font-size:.82rem;margin-top:.3rem;color:#b71c1c;">
+        &#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「中小企業基本法の定義（業種別資本金・従業員）で集計」は誤り。法人企業統計は<strong>資本金1千万・1億・10億の3段階</strong>で機械的区分。
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">3</span>業種別の明暗（経常利益）</div>
+    <div class="card-body">
+      <div class="compare-diagram">
+        <div class="cd-side good">
+          <div class="cd-label">&#x1F4C8; 上昇傾向</div>
+          <ul>
+            <li><strong>建設業</strong>（白書で名指し）</li>
+            <li>製造業（堅調）</li>
+            <li>情報通信業（労働生産性も比較的高め）</li>
+          </ul>
+        </div>
+        <div class="cd-side bad">
+          <div class="cd-label">&#x1F4C9; 伸び悩み</div>
+          <ul>
+            <li><strong>宿泊業、飲食サービス業</strong>（白書で名指し）</li>
+            <li>生活関連サービス業、娯楽業</li>
+            <li>運輸業（コスト高の影響）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書 第1-1-10図（経常利益・業種別）／第1-1-32図（労働生産性・業種別）
+      </div>
+
+      <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">
+        &#x1F4DD; <strong>【1次】試験ポイント</strong>：「白書で<strong>名指し</strong>された業種」（建設業／宿泊業、飲食サービス業）の組み合わせが頻出。他業種を選ばせる引っかけに注意。
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">4</span>労働生産性の構造</div>
+    <div class="card-body">
+      <p style="font-size:.88rem;color:var(--muted);margin:.3rem 0 .6rem;">
+        &#x1F501; <strong>入門タブの「労働生産性＝1人当たり付加価値」を分解で深掘り</strong>。
+      </p>
+
+      <div class="hl-box purple">
+        <strong>&#x1F4D0; 付加価値額の構成（白書定義）</strong>
+        <ul>
+          <li><strong>営業純益</strong>（営業利益 − 支払利息等）</li>
+          <li>＋ <strong>人件費</strong></li>
+          <li>＋ <strong>支払利息等</strong></li>
+          <li>＋ <strong>動産・不動産賃借料</strong></li>
+          <li>＋ <strong>租税公課</strong></li>
+        </ul>
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-box">付加価値額</div>
+        <div class="flow-arrow">÷</div>
+        <div class="flow-box">従業員数</div>
+        <div class="flow-arrow">＝</div>
+        <div class="flow-box" style="background:#fef3c7;">労働生産性</div>
+      </div>
+
+      <div class="goro-row"><span class="goro-chip">&#x1F3B5; ゴロ</span><span class="g-text"><strong>「エイ・ジン・リ・チン・ソ」</strong>＝<strong>営</strong>業純益・<strong>人</strong>件費・支払<strong>利</strong>息・<strong>賃</strong>借料・<strong>租</strong>税公課</span></div>
+
+      <div class="support">
+        <div>付加価値の中身が長くて覚えられない、わかる…！ ザックリ「<strong>儲け＋給料＋利息＋家賃＋税金</strong>」だと思えばOK。<strong>「会社が外部に渡したお金＝みんなの取り分」</strong>のイメージ。</div>
+      </div>
+
+      <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">
+        &#x1F4DD; <strong>【1次】試験ポイント</strong>：付加価値額の<strong>計算式（控除法／加算法）</strong>と労働生産性の式が定番。財務会計の付加価値分配率と絡む年もある。
+      </p>
+      <p style="font-size:.82rem;margin-top:.3rem;color:#b71c1c;">
+        &#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「労働生産性 ＝ 売上高 ÷ 従業員数」は誤り。正は<strong>付加価値額 ÷ 従業員数</strong>（売上高ベースは「労働者一人当たり売上高」で別物）。
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-red"><span class="card-num">5</span>外部環境（金利・為替・物価）の影響</div>
+    <div class="card-body">
+      <p>2025年版白書は<strong>「金利のある世界」の到来</strong>を強調。中小企業の業績に与えうる影響：</p>
+      <ul>
+        <li><strong>政策金利上昇</strong> → 借入金の支払利息増加 → 経常利益の<strong>下押し</strong></li>
+        <li><strong>円安・物価高</strong> → 輸入比率の高い中小には<strong>コスト増</strong>のリスク</li>
+        <li><strong>労働分配率は8割近く</strong> → 賃上げ余力は厳しい</li>
+        <li>対策：<strong>価格転嫁</strong>＋設備投資・デジタル化で付加価値・労働生産性向上</li>
+      </ul>
+
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書 はじめに／第1部総論／第2節 金利・為替・物価
+      </div>
+
+      <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">
+        &#x1F4DD; <strong>【1次】試験ポイント</strong>：白書のメッセージは「<strong>コストカット戦略から付加価値向上戦略への転換</strong>」。文脈設定の選択肢で出やすい。
+      </p>
+    </div>
+  </div>
+
+  <div class="keepit">
+    <ol>
+      <li>DI＝<strong>好転％−悪化％</strong>。マイナスにもなる引き算の指標</li>
+      <li>規模区分は<strong>「10億／1億／1千万」</strong>の資本金ライン（基本法とは別物）</li>
+      <li>労働生産性＝<strong>付加価値額÷従業員数</strong>（売上÷従業員じゃない）</li>
+    </ol>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F3AF; 基本 穴埋めチェック</div>
+    <div class="fill-body">
+      <div style="text-align:center;margin:0.8rem 0;">
+        <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:#7b1fa2;margin-right:0.5rem;">&#x1F50D; このタブの穴埋めを全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAllFillIn('tab2')" style="background:#64748b;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-group">①DI = 好転% <span class="fill-blank" onclick="this.classList.toggle('show')">−</span> 悪化%。「不変」は <span class="fill-blank" onclick="this.classList.toggle('show')">含まない</span>。</div>
+      <div class="fill-group">②法人企業統計の大企業＝資本金 <span class="fill-blank" onclick="this.classList.toggle('show')">10億円</span> 以上。中規模＝1千万〜<span class="fill-blank" onclick="this.classList.toggle('show')">1億円</span> 未満。</div>
+      <div class="fill-group">③小規模企業（白書定義）＝資本金 <span class="fill-blank" onclick="this.classList.toggle('show')">1千万円</span> 未満。</div>
+      <div class="fill-group">④労働生産性 ＝ <span class="fill-blank" onclick="this.classList.toggle('show')">付加価値額</span> ÷ 従業員数。</div>
+      <div class="fill-group">⑤付加価値の構成は営業純益＋<span class="fill-blank" onclick="this.classList.toggle('show')">人件費</span>＋支払利息等＋賃借料＋<span class="fill-blank" onclick="this.classList.toggle('show')">租税公課</span>。</div>
+      <div class="fill-group">⑥業種で経常利益が上昇傾向の代表は <span class="fill-blank" onclick="this.classList.toggle('show')">建設業</span>、伸び悩みは宿泊業・<span class="fill-blank" onclick="this.classList.toggle('show')">飲食サービス業</span>。</div>
+      <div class="fill-group">⑦中小企業の労働分配率は約 <span class="fill-blank" onclick="this.classList.toggle('show')">8割</span> で、賃上げ余力は厳しい。</div>
+      <div class="fill-group">⑧白書のメッセージは「コストカット戦略から <span class="fill-blank" onclick="this.classList.toggle('show')">付加価値向上</span> 戦略への転換」。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 3: 詳細 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab3">
+
+  <div class="card">
+    <div class="card-header bg-navy"><span class="card-num">1</span>大企業との「差の拡大」を理解する</div>
+    <div class="card-body">
+      <p style="font-size:.88rem;color:var(--muted);margin:.3rem 0 .6rem;">
+        &#x1F501; <strong>基本タブの「差は拡大」の根因を分解</strong>。
+      </p>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>指標</th><th class="th-blue">大企業</th><th class="th-orange">中小企業（中規模＋小規模）</th><th>差</th></tr></thead>
+        <tbody>
+          <tr><td>業況判断DI</td><td>マイナス幅小</td><td>マイナス圏が定常</td><td>恒常的なギャップ</td></tr>
+          <tr><td>売上高</td><td>顕著な増加</td><td>増加だが緩やか</td><td><strong>拡大</strong></td></tr>
+          <tr><td>経常利益</td><td>顕著な増加</td><td>増加だが大企業に劣後</td><td><strong>拡大</strong></td></tr>
+          <tr><td>労働生産性</td><td>増加傾向</td><td>横ばい（30年前比で減）</td><td><strong>拡大</strong></td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="hl-box red">
+        <strong>&#x1F50D; 差が拡大する3大要因（白書の整理）</strong>
+        <ol>
+          <li><strong>価格転嫁力の差</strong>：大企業は原材料費・労務費を価格に転嫁しやすい</li>
+          <li><strong>設備投資・デジタル化の差</strong>：大企業の方が設備・DX投資が進む</li>
+          <li><strong>労働分配率の差</strong>：中小は約8割と高く、利益への振り向けが難しい</li>
+        </ol>
+      </div>
+
+      <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">
+        &#x1F4DD; <strong>【1次】試験ポイント</strong>：「中小は<strong>大企業を上回る</strong>労働生産性」と書かれた選択肢に注意。<strong>平均ではNG</strong>だが、<strong>個別企業では大企業を上回る中小が一定数存在</strong>する（白書の累積分布図）。
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">2</span>労働生産性の累積分布（白書の独自論点）</div>
+    <div class="card-body">
+      <div class="hl-box yellow">
+        <strong>&#x1F4CA; 第1-1-33図（累積分布）</strong><br>
+        労働生産性を100万円/人ごとに区切って累積分布を見ると、<strong>大企業の平均値を上回る中小企業も一定数存在</strong>する。
+      </div>
+
+      <ul>
+        <li>平均だけ見ると「大企業＞中小企業」だが、<strong>分布の上位帯</strong>では中小も大企業並みに高い</li>
+        <li>「中小だから生産性が低い」と単純化はできない</li>
+        <li>白書のメッセージ：<strong>「中小内の格差」</strong>にも目を向けるべき</li>
+      </ul>
+
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書 第1-1-33図／経済産業省「企業活動基本調査」
+      </div>
+
+      <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">
+        &#x1F4DD; <strong>【1次】試験ポイント</strong>：「<strong>大企業の平均値を上回る中小企業が存在する</strong>」（正）／「全ての中小は大企業に劣る」（誤）の引っかけが頻出。
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">3</span>2025年版白書の構造的視点</div>
+    <div class="card-body">
+      <h3>&#x1F31F; 白書の主題（2025年版）</h3>
+      <p>「<strong>新たな時代に挑む中小企業の経営力と成長戦略</strong>」</p>
+
+      <div class="hl-box teal">
+        <strong>&#x1F511; キーワード</strong>
+        <ul>
+          <li><strong>「金利のある世界」</strong>＝30年ぶりの政策金利上昇局面</li>
+          <li><strong>33年ぶりの高水準賃上げ</strong>＝春季労使交渉</li>
+          <li><strong>労働分配率8割</strong>＝賃上げ余力の制約</li>
+          <li><strong>付加価値向上戦略への転換</strong>＝コストカットから脱却</li>
+          <li><strong>価格転嫁の推進</strong>＝サプライチェーン全体の課題</li>
+        </ul>
+      </div>
+
+      <h3>&#x1F4C8; 「成長の壁」（売上高規模別）</h3>
+      <ul>
+        <li>成長加速段階：<strong>補完型人材確保</strong>・<strong>経営者の権限分散</strong></li>
+        <li>売上高<strong>100億円以上</strong>：<strong>経営人材・DX人材の確保</strong></li>
+        <li>規模拡大手段：<strong>M&A・イノベーション・海外展開</strong></li>
+      </ul>
+
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書「はじめに」／第2部総論
+      </div>
+
+      <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">
+        &#x1F4DD; <strong>【1次】試験ポイント</strong>：白書のキーフレーズはそのまま選択肢に使われやすい。「金利のある世界」「コストカット→付加価値向上」「成長の壁」を覚えておく。
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">4</span>白書の図番号 早見表</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>図番号</th><th>テーマ</th><th>区分／単位</th><th>出典</th></tr></thead>
+        <tbody>
+          <tr><td>第1-1-7図</td><td>業況判断DI</td><td>大／中規模／小規模</td><td>中小企業景況調査</td></tr>
+          <tr><td>第1-1-8図</td><td>業況判断DI（業種別）</td><td>業種別</td><td>中小企業景況調査</td></tr>
+          <tr><td><strong>第1-1-9図</strong></td><td>売上高・経常利益</td><td>大／中小（季報）</td><td>法人企業統計季報</td></tr>
+          <tr><td><strong>第1-1-10図</strong></td><td>経常利益（業種別）</td><td>中小×業種</td><td>法人企業統計</td></tr>
+          <tr><td><strong>第1-1-11図</strong></td><td>売上高・経常利益</td><td>大／中規模／<strong>小規模</strong>（年報）</td><td>法人企業統計年報</td></tr>
+          <tr><td><strong>第1-1-31図</strong></td><td>労働生産性</td><td>大／中規模／小規模</td><td>法人企業統計年報</td></tr>
+          <tr><td><strong>第1-1-32図</strong></td><td>労働生産性（業種別）</td><td>中小×業種</td><td>法人企業統計</td></tr>
+          <tr><td>第1-1-33図</td><td>労働生産性の累積分布</td><td>業種・規模別</td><td>企業活動基本調査</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="support">
+        <div>図番号は完璧に覚えなくてOK！「<strong>9・10・11が業績</strong>」「<strong>31・32・33が労働生産性</strong>」だけ頭に入れておけば、出題時に「あの図のテーマだ」と特定できる。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="keepit">
+    <ol>
+      <li>差の拡大要因＝<strong>価格転嫁力／設備投資・DX／労働分配率</strong>の3つ</li>
+      <li><strong>大企業平均を上回る中小も存在</strong>（累積分布）。「全部劣る」は誤り</li>
+      <li>白書の主題＝<strong>「金利のある世界」「付加価値向上戦略」「成長の壁」</strong></li>
+    </ol>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-blue">&#x270D;&#xFE0F; 詳細 穴埋めチェック</div>
+    <div class="fill-body">
+      <div style="text-align:center;margin:0.8rem 0;">
+        <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#7b1fa2;margin-right:0.5rem;">&#x1F50D; このタブの穴埋めを全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b;">&#x1F504; リセット</button>
+      </div>
+      <div class="fill-group">①差の拡大要因＝価格転嫁力／設備投資・<span class="fill-blank" onclick="this.classList.toggle('show')">DX</span>／労働分配率の3つ。</div>
+      <div class="fill-group">②大企業の <span class="fill-blank" onclick="this.classList.toggle('show')">平均値</span> を上回る中小企業も累積分布上は存在する。</div>
+      <div class="fill-group">③2025年版白書のキーフレーズは「<span class="fill-blank" onclick="this.classList.toggle('show')">金利のある世界</span>」の到来。</div>
+      <div class="fill-group">④白書のメッセージは「コストカット戦略から <span class="fill-blank" onclick="this.classList.toggle('show')">付加価値向上</span> 戦略への転換」。</div>
+      <div class="fill-group">⑤春季労使交渉で <span class="fill-blank" onclick="this.classList.toggle('show')">33年</span> ぶりの高水準賃上げ。</div>
+      <div class="fill-group">⑥売上高 <span class="fill-blank" onclick="this.classList.toggle('show')">100億円</span> 以上では経営人材・DX人材の確保が重要。</div>
+      <div class="fill-group">⑦規模拡大手段＝<span class="fill-blank" onclick="this.classList.toggle('show')">M&A</span>・イノベーション・<span class="fill-blank" onclick="this.classList.toggle('show')">海外展開</span>。</div>
+      <div class="fill-group">⑧労働生産性の累積分布の出典は経済産業省「<span class="fill-blank" onclick="this.classList.toggle('show')">企業活動基本調査</span>」（第1-1-33図）。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 4: 穴埋め初級 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab4">
+
+  <div class="fill-card">
+    <div class="fill-header bg-green">&#x1F331; 初級① 業況判断DI</div>
+    <div class="fill-body">
+      <div class="fill-group">Q1：DI = 「<span class="fill-blank" onclick="this.classList.toggle('show')">好転</span>」と答えた割合 − 「<span class="fill-blank" onclick="this.classList.toggle('show')">悪化</span>」と答えた割合。</div>
+      <div class="fill-group">Q2：業況判断DIの出典は <span class="fill-blank" onclick="this.classList.toggle('show')">中小企業景況調査</span>。</div>
+      <div class="fill-group">Q3：中小企業の業況判断DIは <span class="fill-blank" onclick="this.classList.toggle('show')">2023年第2四半期</span> に1994年以降最高水準。</div>
+      <div class="fill-group">Q4：足下（2024年〜）の業況は回復に <span class="fill-blank" onclick="this.classList.toggle('show')">足踏み</span>。</div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-orange">&#x1F4D8; 初級② 売上高・経常利益</div>
+    <div class="fill-body">
+      <div class="fill-group">Q5：売上高・経常利益の出典は財務省「<span class="fill-blank" onclick="this.classList.toggle('show')">法人企業統計調査</span>」。</div>
+      <div class="fill-group">Q6：中小企業の経常利益は2020年第3四半期を底に <span class="fill-blank" onclick="this.classList.toggle('show')">増加</span> 傾向。</div>
+      <div class="fill-group">Q7：大企業との差は <span class="fill-blank" onclick="this.classList.toggle('show')">拡大</span> 傾向にある。</div>
+      <div class="fill-group">Q8：業種別では <span class="fill-blank" onclick="this.classList.toggle('show')">建設業</span> が上昇傾向、<span class="fill-blank" onclick="this.classList.toggle('show')">宿泊業、飲食サービス業</span> が伸び悩み。</div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F4DD; 初級③ 労働生産性</div>
+    <div class="fill-body">
+      <div class="fill-group">Q9：労働生産性 ＝ <span class="fill-blank" onclick="this.classList.toggle('show')">付加価値額</span> ÷ 従業員数。</div>
+      <div class="fill-group">Q10：労働生産性は <span class="fill-blank" onclick="this.classList.toggle('show')">大企業</span> のみ増加傾向、中小は横ばい。</div>
+      <div class="fill-group">Q11：中小の労働生産性は約30年前比で <span class="fill-blank" onclick="this.classList.toggle('show')">緩やかに減少</span>。</div>
+      <div class="fill-group">Q12：業種別では <span class="fill-blank" onclick="this.classList.toggle('show')">サービス業</span> の伸びが小さい。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 5: 穴埋め中級 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab5">
+
+  <div class="fill-card">
+    <div class="fill-header bg-red">&#x1F4D0; 中級① 規模区分・定義</div>
+    <div class="fill-body">
+      <div class="fill-group">Q1：法人企業統計の大企業＝資本金 <span class="fill-blank" onclick="this.classList.toggle('show')">10億円</span> 以上。</div>
+      <div class="fill-group">Q2：中規模企業＝資本金 <span class="fill-blank" onclick="this.classList.toggle('show')">1千万円</span> 以上 <span class="fill-blank" onclick="this.classList.toggle('show')">1億円</span> 未満。</div>
+      <div class="fill-group">Q3：小規模企業＝資本金 <span class="fill-blank" onclick="this.classList.toggle('show')">1千万円</span> 未満。</div>
+      <div class="fill-group">Q4：法人企業統計から金融業・<span class="fill-blank" onclick="this.classList.toggle('show')">保険業</span> は除外される。</div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-blue">&#x1F4CA; 中級② 付加価値の構成</div>
+    <div class="fill-body">
+      <div class="fill-group">Q5：付加価値額＝営業純益＋人件費＋<span class="fill-blank" onclick="this.classList.toggle('show')">支払利息等</span>＋賃借料＋<span class="fill-blank" onclick="this.classList.toggle('show')">租税公課</span>。</div>
+      <div class="fill-group">Q6：営業純益＝営業利益 − <span class="fill-blank" onclick="this.classList.toggle('show')">支払利息等</span>。</div>
+      <div class="fill-group">Q7：労働生産性は「従業員一人当たり <span class="fill-blank" onclick="this.classList.toggle('show')">付加価値額</span>」。</div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-green">&#x1F4D1; 中級③ 図番号</div>
+    <div class="fill-body">
+      <div class="fill-group">Q8：業況判断DIは第1-1-<span class="fill-blank" onclick="this.classList.toggle('show')">7</span>図。</div>
+      <div class="fill-group">Q9：売上高・経常利益（規模別季報）は第1-1-<span class="fill-blank" onclick="this.classList.toggle('show')">9</span>図、（小規模含む年報）は第1-1-<span class="fill-blank" onclick="this.classList.toggle('show')">11</span>図。</div>
+      <div class="fill-group">Q10：労働生産性（規模別）は第1-1-<span class="fill-blank" onclick="this.classList.toggle('show')">31</span>図、業種別は第1-1-<span class="fill-blank" onclick="this.classList.toggle('show')">32</span>図。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 6: 穴埋め上級 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab6">
+
+  <div class="fill-card">
+    <div class="fill-header bg-navy">&#x1F3AF; 上級① 構造論点</div>
+    <div class="fill-body">
+      <div class="fill-group">Q1：労働生産性の累積分布では大企業 <span class="fill-blank" onclick="this.classList.toggle('show')">平均値</span> を上回る中小企業も存在する。</div>
+      <div class="fill-group">Q2：累積分布の出典は経済産業省「<span class="fill-blank" onclick="this.classList.toggle('show')">企業活動基本調査</span>」（第1-1-33図）。</div>
+      <div class="fill-group">Q3：差拡大の3要因＝価格転嫁力・<span class="fill-blank" onclick="this.classList.toggle('show')">設備投資・DX</span>・労働分配率。</div>
+      <div class="fill-group">Q4：中小企業の労働分配率は約 <span class="fill-blank" onclick="this.classList.toggle('show')">8割</span>。</div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F50D; 上級② 2025年版白書のキーフレーズ</div>
+    <div class="fill-body">
+      <div class="fill-group">Q5：30年ぶりの政策金利上昇局面を「<span class="fill-blank" onclick="this.classList.toggle('show')">金利のある世界</span>」と表現。</div>
+      <div class="fill-group">Q6：2024年春季労使交渉は <span class="fill-blank" onclick="this.classList.toggle('show')">33年</span> ぶりの高水準賃上げ。</div>
+      <div class="fill-group">Q7：白書の主題は「<span class="fill-blank" onclick="this.classList.toggle('show')">経営力</span>」と成長戦略。</div>
+      <div class="fill-group">Q8：成長段階で売上高 <span class="fill-blank" onclick="this.classList.toggle('show')">100億円</span> 以上では経営人材・DX人材の確保が課題。</div>
+      <div class="fill-group">Q9：規模拡大の3手段＝<span class="fill-blank" onclick="this.classList.toggle('show')">M&A</span>・イノベーション・海外展開。</div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-teal">&#x1F4DC; 上級③ 引っかけ系</div>
+    <div class="fill-body">
+      <div class="fill-group">Q10：「労働生産性 = 売上高 ÷ 従業員数」は <span class="fill-blank" onclick="this.classList.toggle('show')">誤り</span>。正は付加価値額÷従業員数。</div>
+      <div class="fill-group">Q11：「DIに不変も含めて計算」は <span class="fill-blank" onclick="this.classList.toggle('show')">誤り</span>。好転と悪化のみで計算。</div>
+      <div class="fill-group">Q12：「全ての中小企業は大企業より労働生産性が低い」は <span class="fill-blank" onclick="this.classList.toggle('show')">誤り</span>。累積分布上は上回る企業も存在。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 7: ゴロ -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab7">
+
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">1</span>3指標のゴロ「キ・ウ・セ」</div>
+    <div class="card-body">
+      <div class="goro-row">
+        <span class="goro-chip">キ</span><strong>気</strong>分（業況判断DI）<br>
+        <span class="goro-chip">ウ</span><strong>売</strong>上・経常利益<br>
+        <span class="goro-chip">セ</span><strong>生</strong>産性（労働生産性）
+      </div>
+      <p>「キウセ（気売生）」＝白書の業績3指標。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">2</span>共通トレンドのゴロ</div>
+    <div class="card-body">
+      <div class="hl-box blue">
+        <strong>「大伸び・中横・差拡大」</strong><br>
+        大企業は伸び、中小は横ばい、差は拡大 ← 3指標すべてに共通
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">3</span>業種の明暗ゴロ</div>
+    <div class="card-body">
+      <div class="goro-row">
+        <span class="goro-chip">建つ建設</span>＝建設業は経常利益・労働生産性とも比較的良好<br>
+        <span class="goro-chip">伸びぬ宿飲</span>＝宿泊業・飲食サービス業が伸び悩み
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-red"><span class="card-num">4</span>規模区分ゴロ「ジュー・イチ・セン」</div>
+    <div class="card-body">
+      <div class="hl-box red">
+        <strong>「ジュー・イチ・セン」</strong><br>
+        <strong>10億円</strong>（大企業）／<strong>1億円</strong>（中規模との境）／<strong>1千万円</strong>（小規模との境）
+      </div>
+      <p>法人企業統計の規模区分3ライン。中小企業基本法の業種別ラインとは別物！</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">5</span>付加価値構成ゴロ</div>
+    <div class="card-body">
+      <div class="goro-row">
+        <span class="goro-chip">エイ・ジン・リ・チン・ソ</span>
+      </div>
+      <ul>
+        <li><strong>エイ</strong>：営業純益（営業利益−支払利息等）</li>
+        <li><strong>ジン</strong>：人件費</li>
+        <li><strong>リ</strong>：支払利息等</li>
+        <li><strong>チン</strong>：動産・不動産賃借料</li>
+        <li><strong>ソ</strong>：租税公課</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-navy"><span class="card-num">6</span>白書キーフレーズ</div>
+    <div class="card-body">
+      <div class="goro-row">
+        <span class="goro-chip">キンセカイ</span>＝「<strong>金利のある世界</strong>」（2025白書）<br>
+        <span class="goro-chip">サンサン賃上げ</span>＝<strong>33年ぶり</strong>の高水準賃上げ<br>
+        <span class="goro-chip">フカ転換</span>＝コストカット→<strong>付加価値向上</strong>へ
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 8: 語呂穴埋め -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab8">
+
+  <div class="fill-card">
+    <div class="fill-header bg-purple">&#x1F3B5; 語呂で覚える穴埋め</div>
+    <div class="fill-body">
+      <div class="fill-group">Q1：3指標のゴロ「<span class="fill-blank" onclick="this.classList.toggle('show')">キ・ウ・セ</span>」＝気・売・生。</div>
+      <div class="fill-group">Q2：「大伸び・中横・<span class="fill-blank" onclick="this.classList.toggle('show')">差拡大</span>」が3指標共通のトレンド。</div>
+      <div class="fill-group">Q3：「建つ<span class="fill-blank" onclick="this.classList.toggle('show')">建設</span>、伸びぬ<span class="fill-blank" onclick="this.classList.toggle('show')">宿泊・飲食</span>」が業種別の明暗。</div>
+      <div class="fill-group">Q4：規模区分ゴロ「ジュー・イチ・セン」＝<span class="fill-blank" onclick="this.classList.toggle('show')">10億</span>・<span class="fill-blank" onclick="this.classList.toggle('show')">1億</span>・<span class="fill-blank" onclick="this.classList.toggle('show')">1千万</span>。</div>
+      <div class="fill-group">Q5：付加価値「エイ・ジン・<span class="fill-blank" onclick="this.classList.toggle('show')">リ</span>・チン・ソ」のリは <span class="fill-blank" onclick="this.classList.toggle('show')">支払利息等</span>。</div>
+      <div class="fill-group">Q6：「<span class="fill-blank" onclick="this.classList.toggle('show')">金利のある世界</span>」が2025年版白書のキーフレーズ。</div>
+      <div class="fill-group">Q7：「サンサン賃上げ」＝<span class="fill-blank" onclick="this.classList.toggle('show')">33</span> 年ぶり。</div>
+      <div class="fill-group">Q8：戦略転換は「コストカットから <span class="fill-blank" onclick="this.classList.toggle('show')">付加価値向上</span>」。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 9: 事例 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab9">
+
+  <div class="card">
+    <div class="card-header bg-teal"><span class="card-num">1</span>事例①：建設業 田中工務店</div>
+    <div class="card-body">
+      <p><strong>登場：</strong>地方の建設業 田中工務店（資本金3,000万円）の社長 田中さん。</p>
+      <div class="hl-box yellow">
+        <strong>&#x1F4AC; 田中さんの実感：</strong>「公共工事の発注が増え、足下の経常利益は伸びています。ただ人手不足と資材高で利益は思ったほど残らない…」
+      </div>
+      <h3>&#x1F468;&#x200D;&#x1F4BC; 診断士の解説</h3>
+      <ul>
+        <li>白書（第1-1-10図）でも<strong>建設業は経常利益が上昇傾向</strong>と整理されている</li>
+        <li>ただし<strong>労働生産性は横ばい</strong>（第1-1-32図）→ 売上拡大に対し人手不足で生産性が伸びない構造</li>
+        <li>対策の方向：<strong>設備投資・デジタル化</strong>で1人当たりの付加価値を高める</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">2</span>事例②：飲食店 鈴木食堂</div>
+    <div class="card-body">
+      <p><strong>登場：</strong>個人経営の飲食店 鈴木食堂（資本金なし／個人事業主）。</p>
+      <div class="hl-box yellow">
+        <strong>&#x1F4AC; 鈴木さんの実感：</strong>「コロナ後にお客さんが戻ったけど、原材料費とエネルギーコストで利益が出ません。値上げは怖い…」
+      </div>
+      <h3>&#x1F468;&#x200D;&#x1F4BC; 診断士の解説</h3>
+      <ul>
+        <li>白書（第1-1-10図）で<strong>宿泊業、飲食サービス業の経常利益は伸び悩み</strong>と名指し</li>
+        <li>労働生産性も<strong>サービス業の伸びが小さい</strong>（第1-1-32図）</li>
+        <li>白書のメッセージ：<strong>適切な価格転嫁</strong>＋付加価値向上で<strong>「コストカット→付加価値向上戦略」へ転換</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">3</span>事例③：製造業 佐藤精機</div>
+    <div class="card-body">
+      <p><strong>登場：</strong>佐藤精機（資本金8,000万円・従業員80人）。中規模企業。</p>
+      <div class="hl-box yellow">
+        <strong>&#x1F4AC; 佐藤社長の悩み：</strong>「業況DIはプラスに転じたが、大企業の取引先と比べると当社の利益率はあまり改善しない。なぜ？」
+      </div>
+      <h3>&#x1F468;&#x200D;&#x1F4BC; 診断士の解説</h3>
+      <ul>
+        <li>白書（第1-1-9図）でも<strong>大企業との利益差は拡大傾向</strong>と整理</li>
+        <li>差の3要因：<strong>価格転嫁力・設備投資DX・労働分配率</strong></li>
+        <li>佐藤精機の規模区分は<strong>中規模企業</strong>（資本金1千万〜1億未満）</li>
+        <li>累積分布（第1-1-33図）では<strong>大企業平均を上回る中小も存在</strong> → 個別の経営力で差はつく</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-amber">&#x1F4DD;【1次】事例からの試験ポイント穴埋め</div>
+    <div class="fill-body">
+      <div class="fill-group">Q1：白書で経常利益が上昇傾向と名指しされた業種は <span class="fill-blank" onclick="this.classList.toggle('show')">建設業</span>。</div>
+      <div class="fill-group">Q2：伸び悩みと名指しされた業種は <span class="fill-blank" onclick="this.classList.toggle('show')">宿泊業、飲食サービス業</span>。</div>
+      <div class="fill-group">Q3：佐藤精機（資本金8,000万円）は法人企業統計上 <span class="fill-blank" onclick="this.classList.toggle('show')">中規模企業</span> に分類。</div>
+      <div class="fill-group">Q4：白書の戦略転換メッセージは「コストカット→<span class="fill-blank" onclick="this.classList.toggle('show')">付加価値向上</span>」。</div>
+      <div class="fill-group">Q5：累積分布では大企業の <span class="fill-blank" onclick="this.classList.toggle('show')">平均値</span> を上回る中小も存在する。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 10: クイズ -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab10">
+
+  <div class="quiz-box">
+    <div class="quiz-q">Q1：2025年版中小企業白書における中小企業の業況判断DIに関する記述として正しいのはどれか。</div>
+    <ul class="quiz-choices">
+      <li onclick="answer(this,false,'#exp1')">A. 2020年第3四半期に1994年以降の最高水準を記録した</li>
+      <li onclick="answer(this,true,'#exp1')">B. 2023年第2四半期に1994年以降の最高水準を記録した</li>
+      <li onclick="answer(this,false,'#exp1')">C. 足下では大企業を上回るプラス圏で推移している</li>
+      <li onclick="answer(this,false,'#exp1')">D. 2021年以降一貫して悪化が続いている</li>
+    </ul>
+    <div class="quiz-explanation" id="exp1">正解：B。<strong>2023年Q2</strong>に1994年以降最高水準。足下は回復に足踏み。出典：第1-1-7図／中小企業景況調査。</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">Q2：白書（第1-1-9〜11図）における売上高・経常利益のトレンドとして正しいのはどれか。</div>
+    <ul class="quiz-choices">
+      <li onclick="answer(this,false,'#exp2')">A. 中小企業は2020年から一貫して減少が続いている</li>
+      <li onclick="answer(this,false,'#exp2')">B. 大企業との差は縮小傾向にある</li>
+      <li onclick="answer(this,true,'#exp2')">C. 中小企業の経常利益は2020年第3四半期を底に増加しているが、大企業との差は拡大</li>
+      <li onclick="answer(this,false,'#exp2')">D. 業種別では宿泊・飲食が最も増加傾向</li>
+    </ul>
+    <div class="quiz-explanation" id="exp2">正解：C。中小は増加傾向だが<strong>大企業との差は拡大</strong>。宿泊・飲食は伸び悩み（建設業が上昇傾向）。</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">Q3：労働生産性の定義として正しいのはどれか。</div>
+    <ul class="quiz-choices">
+      <li onclick="answer(this,false,'#exp3')">A. 売上高 ÷ 従業員数</li>
+      <li onclick="answer(this,true,'#exp3')">B. 付加価値額 ÷ 従業員数</li>
+      <li onclick="answer(this,false,'#exp3')">C. 営業利益 ÷ 総資産</li>
+      <li onclick="answer(this,false,'#exp3')">D. 経常利益 ÷ 売上高</li>
+    </ul>
+    <div class="quiz-explanation" id="exp3">正解：B。労働生産性 ＝ 従業員一人当たり<strong>付加価値額</strong>。売上ベースは別指標（労働者一人当たり売上高）。</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">Q4：白書の業績指標に関する記述として誤っているのはどれか。</div>
+    <ul class="quiz-choices">
+      <li onclick="answer(this,false,'#exp4')">A. 大企業の労働生産性は増加傾向にある</li>
+      <li onclick="answer(this,false,'#exp4')">B. 中小の労働生産性は約30年前比で緩やかに減少している</li>
+      <li onclick="answer(this,false,'#exp4')">C. 労働生産性の累積分布では大企業平均を上回る中小も存在する</li>
+      <li onclick="answer(this,true,'#exp4')">D. 全ての業種で中小の労働生産性は上昇している</li>
+    </ul>
+    <div class="quiz-explanation" id="exp4">正解：D。多くの業種で<strong>横ばい</strong>、特にサービス業の伸びが小さい。「全業種上昇」は誤り。</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">Q5：法人企業統計調査（白書の出典）の規模区分として正しいのはどれか。</div>
+    <ul class="quiz-choices">
+      <li onclick="answer(this,false,'#exp5')">A. 中小企業基本法と同じ業種別の資本金・従業員基準</li>
+      <li onclick="answer(this,false,'#exp5')">B. 大企業＝資本金1億円以上、中小企業＝1億円未満の2区分のみ</li>
+      <li onclick="answer(this,true,'#exp5')">C. 大企業＝10億円以上、中規模＝1千万〜1億円未満、小規模＝1千万円未満</li>
+      <li onclick="answer(this,false,'#exp5')">D. 売上高をベースに3区分</li>
+    </ul>
+    <div class="quiz-explanation" id="exp5">正解：C。<strong>資本金</strong>ベースで3区分。中小企業基本法の定義とは別物。金融・保険業は対象外。</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">Q6：2025年版白書のキーメッセージとして適切なのはどれか。</div>
+    <ul class="quiz-choices">
+      <li onclick="answer(this,false,'#exp6')">A. コストカット戦略の徹底による収益確保</li>
+      <li onclick="answer(this,false,'#exp6')">B. 円高・物価高への対応</li>
+      <li onclick="answer(this,true,'#exp6')">C. 「金利のある世界」の到来を踏まえ、付加価値向上戦略へ転換</li>
+      <li onclick="answer(this,false,'#exp6')">D. M&Aの抑制と内部留保の確保</li>
+    </ul>
+    <div class="quiz-explanation" id="exp6">正解：C。「<strong>金利のある世界</strong>」「<strong>コストカットから付加価値向上へ</strong>」が白書の大方針。</div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 11: 実例 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab11">
+
+  <div class="card">
+    <div class="card-header bg-navy"><span class="card-num">1</span>実例：33年ぶりの賃上げ（2024年春闘）</div>
+    <div class="card-body">
+      <p>2024年春季労使交渉では、<strong>約33年ぶりの高水準賃上げ</strong>が実現。連合集計の賃上げ率は5%超。</p>
+      <ul>
+        <li>大企業は積極的に賃上げ → 賃金水準を底上げ</li>
+        <li>中小は労働分配率がすでに約8割で<strong>賃上げ余力が厳しい</strong></li>
+        <li>白書は「業績改善を伴わない賃上げ」も増えたと指摘</li>
+        <li>結果：大企業との<strong>賃金格差は拡大</strong></li>
+      </ul>
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書「概要」／第1部第1章
+      </div>
+      <div class="support">
+        <div>「33年ぶり」って数字、絶対試験で出てくる！「30年ぶり」「35年ぶり」のニアミス選択肢に注意。<strong>「サンサン賃上げ」</strong>のゴロで一発！</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">2</span>実例：「金利のある世界」の到来</div>
+    <div class="card-body">
+      <p>2024年3月、日本銀行はマイナス金利政策を解除し、約30年ぶりに政策金利を引き上げました。</p>
+      <ul>
+        <li>長期借入金の支払利息増加 → <strong>経常利益の下押し</strong>リスク</li>
+        <li>白書の試算：政策金利上昇は中小企業の収益を圧迫しうる</li>
+        <li>輸入比率・借入金依存度が高い中小には特に影響</li>
+        <li>対策：<strong>価格転嫁の推進</strong>＋<strong>設備投資・DXで生産性向上</strong></li>
+      </ul>
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書 第1部第1章第2節（金利・為替・物価）
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">3</span>実例：パートナーシップ構築宣言と価格転嫁</div>
+    <div class="card-body">
+      <p>白書はサプライチェーン全体の価格転嫁を促進するため、<strong>パートナーシップ構築宣言</strong>の普及を施策の柱に位置付け。</p>
+      <ul>
+        <li>2024年時点で5万社超が宣言（大手・中小）</li>
+        <li>受託中小企業振興法（旧下請振興法）の振興基準にも明記</li>
+        <li>価格交渉促進月間（毎年3月・9月）と連動</li>
+        <li>結果：原材料費・労務費の<strong>価格転嫁率は上昇傾向</strong>だが、まだ十分でない</li>
+      </ul>
+      <div class="source">
+        &#x1F4DA; 出典：2025年版中小企業白書／中小企業庁「価格交渉促進月間フォローアップ調査」
+      </div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-amber">&#x1F4DD;【1次】実例からの試験ポイント穴埋め</div>
+    <div class="fill-body">
+      <div class="fill-group">Q1：2024年春闘は <span class="fill-blank" onclick="this.classList.toggle('show')">33年</span> ぶりの高水準賃上げ。</div>
+      <div class="fill-group">Q2：中小の労働分配率は約 <span class="fill-blank" onclick="this.classList.toggle('show')">8割</span> で賃上げ余力が厳しい。</div>
+      <div class="fill-group">Q3：日銀は2024年3月に <span class="fill-blank" onclick="this.classList.toggle('show')">マイナス金利</span> 政策を解除。</div>
+      <div class="fill-group">Q4：政策金利上昇は中小の <span class="fill-blank" onclick="this.classList.toggle('show')">支払利息</span> 増加を通じて経常利益を下押し。</div>
+      <div class="fill-group">Q5：価格転嫁の促進策として <span class="fill-blank" onclick="this.classList.toggle('show')">パートナーシップ構築宣言</span> が位置付けられている。</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 12: 図解 -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab12">
+
+  <div class="card">
+    <div class="card-header bg-navy"><span class="card-num">1</span>3指標の構造図</div>
+    <div class="card-body">
+      <div class="flow-row">
+        <div class="flow-box" style="background:#fef3c7;">①業況判断DI<br><small>気持ち</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#fdf2f8;">②売上高・経常利益<br><small>結果（業績）</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#dcfce7;">③労働生産性<br><small>効率（中身）</small></div>
+      </div>
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <div><strong>覚え方：</strong>「<strong>気持ち→業績→効率</strong>」の流れで頭に入れる。試験はどこからでも切り取れる。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-orange"><span class="card-num">2</span>白書の図番号マップ</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>テーマ</th><th>規模別</th><th>業種別</th><th>その他</th></tr></thead>
+        <tbody>
+          <tr><td>業況判断DI</td><td><strong>第1-1-7図</strong></td><td>第1-1-8図</td><td>—</td></tr>
+          <tr><td>売上高・経常利益</td><td><strong>第1-1-9図（季報）<br>第1-1-11図（年報・小規模含む）</strong></td><td><strong>第1-1-10図</strong></td><td>—</td></tr>
+          <tr><td>労働生産性</td><td><strong>第1-1-31図</strong></td><td><strong>第1-1-32図</strong></td><td>累積分布：第1-1-33図</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-purple"><span class="card-num">3</span>規模区分の比較（基本法 vs 法人企業統計）</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>区分</th><th class="th-blue">中小企業基本法</th><th class="th-orange">法人企業統計（白書）</th></tr></thead>
+        <tbody>
+          <tr><td>基準</td><td>業種別の資本金 or 従業員</td><td>資本金のみ（機械的）</td></tr>
+          <tr><td>大企業</td><td>業種別基準を超えるもの</td><td>資本金 <strong>10億円</strong> 以上</td></tr>
+          <tr><td>中規模</td><td>—</td><td>資本金 1千万〜1億円未満</td></tr>
+          <tr><td>小規模</td><td>業種別の従業員基準（製造20人以下／商業サービス5人以下）</td><td>資本金 <strong>1千万円</strong> 未満</td></tr>
+          <tr><td>金融・保険</td><td>含む</td><td><strong>含まない</strong></td></tr>
+        </tbody>
+      </table></div>
+      <div class="tutor-comment warn">
+        <span class="tc-icon">&#x26A0;&#xFE0F;</span>
+        <div><strong>注意：</strong>白書のグラフを見るときは「これは<strong>法人企業統計</strong>の区分か<strong>基本法</strong>の区分か」を必ず確認！</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-green"><span class="card-num">4</span>労働生産性の構造分解</div>
+    <div class="card-body">
+      <div class="flow-row">
+        <div class="flow-box" style="background:#fef3c7;">営業純益</div>
+        <div class="flow-box" style="background:#fef3c7;">人件費</div>
+        <div class="flow-box" style="background:#fef3c7;">支払利息等</div>
+        <div class="flow-box" style="background:#fef3c7;">賃借料</div>
+        <div class="flow-box" style="background:#fef3c7;">租税公課</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-arrow">↓ 合計</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box" style="background:#dcfce7;border-color:#10b981;">付加価値額</div>
+        <div class="flow-arrow">÷</div>
+        <div class="flow-box">従業員数</div>
+        <div class="flow-arrow">＝</div>
+        <div class="flow-box" style="background:#fdf2f8;border-color:#db2777;">労働生産性</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-blue"><span class="card-num">5</span>2025年版白書の総合体系</div>
+    <div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>レイヤー</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>環境</td><td>金利のある世界・円安物価高・人手不足</td></tr>
+          <tr><td>業績指標</td><td>業況判断DI／売上高・経常利益／労働生産性</td></tr>
+          <tr><td>構造課題</td><td>大企業との差拡大／労働分配率8割／サービス業の生産性低迷</td></tr>
+          <tr><td>戦略転換</td><td>コストカット → <strong>付加価値向上戦略</strong></td></tr>
+          <tr><td>手段</td><td>価格転嫁／設備投資・DX／M&A・海外展開／人材確保</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tutor-comment">
+        <span class="tc-icon">&#x1F4A1;</span>
+        <div><strong>最終確認：</strong>「<strong>環境→業績→構造課題→戦略転換→手段</strong>」の5レイヤー構造で白書を読む。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(i){
+  document.querySelectorAll('.tab-btn').forEach((b,idx)=>b.classList.toggle('active',idx===i));
+  document.querySelectorAll('.tab-content').forEach((c,idx)=>c.classList.toggle('active',idx===i));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function answer(el,correct,expSel){
+  const ul=el.parentElement;
+  ul.querySelectorAll('li').forEach(li=>li.style.pointerEvents='none');
+  if(correct){ el.classList.add('correct'); }
+  else{
+    el.classList.add('wrong');
+    ul.querySelectorAll('li').forEach(li=>{
+      if(li!==el && li.getAttribute('onclick').includes('true')) li.classList.add('correct');
+    });
+  }
+  document.querySelector(expSel).classList.add('show');
+}
+function revealAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});
+}
+function resetAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});
+}
+</script>
+
+</body>
+</html>
