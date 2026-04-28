@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ノート作成計画一覧 - 中小企業診断士1次試験</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --primary:#1565c0; --accent:#7b1fa2;
+    --gray:#546e7a; --line:#e0e0e0; --warn:#e65100; --ok:#2e7d32;
+    --tag-long:#1b5e20; --tag-mid:#e65100; --tag-short:#b71c1c;
+    --status-existing:#90a4ae; --status-update:#fb8c00; --status-new:#1565c0;
+    --status-extra:#7b1fa2;
+  }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,'Hiragino Sans','Yu Gothic',sans-serif;
+       background:var(--bg);color:#263238;margin:0;padding:0;line-height:1.7}
+  header{background:linear-gradient(135deg,#1565c0,#7b1fa2);color:#fff;padding:1.2rem 2rem}
+  header h1{margin:0;font-size:1.3rem}
+  header p{margin:.3rem 0 0;font-size:.85rem;opacity:.92}
+  .tabs{background:#fff;border-bottom:2px solid var(--line);padding:0 1rem;
+        position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;
+        box-shadow:0 2px 4px rgba(0,0,0,.04)}
+  .tab{padding:.7rem 1rem;cursor:pointer;border-bottom:3px solid transparent;
+       font-size:.9rem;font-weight:600;color:var(--gray);transition:.15s;white-space:nowrap}
+  .tab:hover{background:#f5f5f5;color:var(--primary)}
+  .tab.active{color:var(--primary);border-bottom-color:var(--primary);background:#e3f2fd}
+  .tab .num{display:inline-block;background:#eceff1;color:var(--gray);
+            font-size:.7rem;padding:1px 6px;border-radius:8px;margin-left:4px;font-weight:700}
+  .tab.active .num{background:var(--primary);color:#fff}
+  .container{max-width:1200px;margin:0 auto;padding:1.2rem}
+  .pane{display:none}
+  .pane.active{display:block}
+  .summary{background:#fff;border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.5rem;
+           box-shadow:0 2px 6px rgba(0,0,0,.06)}
+  .summary table{width:100%;border-collapse:collapse;font-size:.9rem}
+  .summary th,.summary td{padding:.5rem;border-bottom:1px solid var(--line);text-align:left}
+  .summary th{background:#eceff1;font-weight:700}
+  .summary td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .legend{margin:.6rem 0;font-size:.82rem;color:var(--gray)}
+  .subject{background:var(--card);border-radius:10px;margin-bottom:1.4rem;
+           box-shadow:0 2px 6px rgba(0,0,0,.06);overflow:hidden}
+  .subject h2{margin:0;padding:.8rem 1.2rem;background:#eceff1;
+              font-size:1.05rem;border-left:6px solid var(--primary)}
+  .subject h2 .target{float:right;font-size:.85rem;color:var(--gray);font-weight:400}
+  .subject .body{padding:1rem 1.2rem}
+  table.notes{width:100%;border-collapse:collapse;font-size:.86rem;margin-top:.3rem}
+  table.notes th,table.notes td{padding:.45rem .55rem;border-bottom:1px solid var(--line);
+                                vertical-align:top;text-align:left}
+  table.notes th{background:#fafafa;font-weight:700;color:var(--gray);font-size:.8rem}
+  table.notes td.rank{font-weight:700;color:var(--accent);width:2.5em;text-align:center}
+  table.notes td.id{font-weight:700;color:var(--primary);width:3.5em;white-space:nowrap;font-size:.8rem}
+  table.notes td.title{font-weight:600;width:25%}
+  table.notes td.scope{font-size:.8rem;color:var(--gray);width:28%}
+  table.notes td.years{width:13%;font-size:.8rem;font-weight:600;white-space:nowrap}
+  table.notes td.q{width:5em;text-align:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700}
+  table.notes td.status{width:6em;white-space:nowrap}
+  .status-pill{display:inline-block;padding:1px 7px;border-radius:8px;font-size:.7rem;color:#fff;font-weight:700}
+  .life-pill{display:inline-block;padding:1px 6px;border-radius:8px;font-size:.7rem;color:#fff;font-weight:700;margin-left:4px}
+  .tag-long{background:var(--tag-long)}
+  .tag-mid{background:var(--tag-mid)}
+  .tag-short{background:var(--tag-short)}
+  .tag-existing{background:var(--status-existing)}
+  .tag-update{background:var(--status-update)}
+  .tag-new{background:var(--status-new)}
+  .tag-extra{background:var(--status-extra)}
+  .extinct{margin-top:.5rem;padding:.45rem .7rem;background:#fafafa;
+           border-left:3px solid #b0bec5;border-radius:4px;font-size:.8rem;color:var(--gray)}
+  .row-existing{background:#fafafa}
+  .row-update{background:#fff8f3}
+  .row-new{background:#fff}
+  .row-extra{background:#faf5fc}
+  .usage{background:#e3f2fd;border-left:4px solid var(--primary);padding:.7rem 1rem;
+         border-radius:4px;margin-bottom:1rem;font-size:.85rem}
+  code{background:#eceff1;padding:1px 6px;border-radius:3px;font-size:.85rem}
+
+  .cat-a td.title{border-left:4px solid #1976d2;background:#e3f2fd}
+  .cat-b td.title{border-left:4px solid #388e3c;background:#e8f5e9}
+  .cat-c td.title{border-left:4px solid #f9a825;background:#fff8e1}
+  .cat-d td.title{border-left:4px solid #c2185b;background:#fce4ec}
+  .cat-e td.title{border-left:4px solid #7b1fa2;background:#f3e5f5}
+  .cat-f td.title{border-left:4px solid #e65100;background:#fff3e0}
+  .cat-legend{margin:.4rem 0 .6rem;font-size:.78rem;color:var(--gray)}
+  .cat-chip{display:inline-block;padding:2px 8px;border-radius:10px;margin-right:6px;font-weight:600;border:1px solid #ddd}
+  .cat-a-chip{background:#e3f2fd;border-color:#1976d2;color:#0d47a1}
+  .cat-b-chip{background:#e8f5e9;border-color:#388e3c;color:#1b5e20}
+  .cat-c-chip{background:#fff8e1;border-color:#f9a825;color:#e65100}
+  .cat-d-chip{background:#fce4ec;border-color:#c2185b;color:#880e4f}
+  .cat-e-chip{background:#f3e5f5;border-color:#7b1fa2;color:#4a148c}
+  .cat-f-chip{background:#fff3e0;border-color:#e65100;color:#bf360c}
+
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 ノート作成計画一覧（直近5年問数順・全7科目）</h1>
+  <p>2026年8月1次試験向け｜目標460点｜既存・更新・新規・追加候補を混ぜて優先順位順に並列表示</p>
+</header>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-pane="overview">📊 概要</div>
+  <div class="tab" data-pane="s107">中小<span class="num">15</span></div>
+  <div class="tab" data-pane="s104">運営<span class="num">16</span></div>
+  <div class="tab" data-pane="s101">経済<span class="num">11</span></div>
+  <div class="tab" data-pane="s102">財務<span class="num">27</span></div>
+  <div class="tab" data-pane="s103">経営<span class="num">23</span></div>
+  <div class="tab" data-pane="s106">情報<span class="num">15</span></div>
+  <div class="tab" data-pane="s105">法務<span class="num">22</span></div>
+</div>
+
+<div class="container">
+
+<!-- 概要 -->
+<div class="pane active" id="overview">
+  <div class="usage">
+    <strong>📖 使い方</strong> ／ <code>/note &lt;ID 領域名&gt;　参照：&lt;年数指定&gt;</code> 形式で指示
+  </div>
+
+  <div class="summary">
+    <h3 style="margin-top:0">全体サマリー</h3>
+    <table>
+      <tr><th>科目</th><th class="num">目標</th><th class="num">既存</th><th class="num">更新</th><th class="num">新規</th><th class="num">追加候補</th><th class="num">合計</th></tr>
+      <tr><td>中小</td><td class="num">80</td><td class="num">6</td><td class="num">2</td><td class="num">5</td><td class="num">2</td><td class="num">15</td></tr>
+      <tr><td>運営</td><td class="num">75</td><td class="num">10</td><td class="num">1</td><td class="num">4</td><td class="num">1</td><td class="num">16</td></tr>
+      <tr><td>経済</td><td class="num">70</td><td class="num">7</td><td class="num">0</td><td class="num">4</td><td class="num">0</td><td class="num">11</td></tr>
+      <tr><td>財務</td><td class="num">65</td><td class="num">22</td><td class="num">0</td><td class="num">3</td><td class="num">2</td><td class="num">27</td></tr>
+      <tr><td>経営</td><td class="num">60</td><td class="num">17</td><td class="num">0</td><td class="num">4</td><td class="num">2</td><td class="num">23</td></tr>
+      <tr><td>情報</td><td class="num">60</td><td class="num">3</td><td class="num">0</td><td class="num">9</td><td class="num">3</td><td class="num">15</td></tr>
+      <tr><td>法務</td><td class="num">50</td><td class="num">10</td><td class="num">3</td><td class="num">7</td><td class="num">2</td><td class="num">22</td></tr>
+      <tr style="background:#fff3e0;font-weight:700"><td>合計</td><td class="num">460</td><td class="num">75</td><td class="num">6</td><td class="num">36</td><td class="num">12</td><td class="num">129</td></tr>
+    </table>
+    <div class="legend">
+      <strong>状態（行の背景色も連動）：</strong>
+      <span class="status-pill tag-existing">既存</span> 既習・参考用／
+      <span class="status-pill tag-update">更新</span> 既存に補強版を別ファイルで追加／
+      <span class="status-pill tag-new">新規</span> 新規作成／
+      <span class="status-pill tag-extra">追加候補</span> 余力次第<br>
+      <strong>半減期：</strong>
+      <span class="life-pill tag-long">長</span>10年+ <span class="life-pill tag-mid">中</span>5-7年 <span class="life-pill tag-short">短</span>3-5年<br>
+      <strong>並び順：</strong>各科目とも全状態混合で「直近5年出題問数」が多い順に通し番号
+    </div>
+  </div>
+</div>
+
+<!-- 107 中小 -->
+<div class="pane" id="s107">
+  <div class="subject">
+    <h2>107 中小企業経営・政策 <span class="target">目標80／学習カバー80</span></h2>
+    <div class="body">
+      <div class="cat-legend">分野: <span class="cat-chip cat-a-chip">政策・支援</span> <span class="cat-chip cat-b-chip">統計・白書</span> <span class="cat-chip cat-c-chip">中小企業論</span></div>
+<table class="notes">
+        <tr><th>順</th><th>ID</th><th>領域名</th><th>カバー内容</th><th>参照年数</th><th>直5年</th><th>状態</th></tr>
+        <tr class="cat-a row-existing"><td class="rank">1</td><td class="id">01</td><td class="title">中小企業基本法</td><td class="scope">理念・定義・基本方針</td><td class="years">直近7年</td><td class="q">35</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">2</td><td class="id">07</td><td class="title">信用保証・日本公庫・マル経融資</td><td class="scope">金融支援の中核</td><td class="years">直近5年</td><td class="q">28</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-update"><td class="rank">3</td><td class="id">06</td><td class="title">開廃業率・規模別売上高・付加価値額</td><td class="scope">白書統計（2025年版で数値更新）</td><td class="years">2025年版白書</td><td class="q">28</td><td class="status"><span class="status-pill tag-update">更新</span></td></tr>
+        <tr class="cat-b row-new"><td class="rank">4</td><td class="id">A5</td><td class="title">業種別・規模別データ（白書）<span class="life-pill tag-short">短</span></td><td class="scope">業種別構成・動向／規模別企業数・従業者数</td><td class="years">2025年版白書</td><td class="q">22</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-update"><td class="rank">5</td><td class="id">10</td><td class="title">中小企業の業績・売上高・収益性</td><td class="scope">白書業績データ（2025年版更新）</td><td class="years">2025年版白書</td><td class="q">14</td><td class="status"><span class="status-pill tag-update">更新</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">6</td><td class="id">A1</td><td class="title">補助金・助成金・創業支援<span class="life-pill tag-short">短</span></td><td class="scope">ものづくり／持続化／IT導入／事業再構築／創業補助</td><td class="years">直近3年</td><td class="q">11</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-c row-extra"><td class="rank">7</td><td class="id">B1</td><td class="title">中小企業の役割・経済的地位<span class="life-pill tag-long">長</span></td><td class="scope">経済全体での比重・基本法理念連動</td><td class="years">直近7年</td><td class="q">9</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">8</td><td class="id">08</td><td class="title">商工会・商工会議所・よろず支援拠点</td><td class="scope">支援機関全般</td><td class="years">直近5年</td><td class="q">9</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">9</td><td class="id">02</td><td class="title">小規模企業振興基本法</td><td class="scope">小規模事業者の定義・支援体系</td><td class="years">直近5年</td><td class="q">9</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">10</td><td class="id">A2</td><td class="title">経営革新計画・新事業活動<span class="life-pill tag-mid">中</span></td><td class="scope">経営革新計画／新事業活動促進／地域資源活用</td><td class="years">直近5年</td><td class="q">8</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">11</td><td class="id">A4</td><td class="title">IT・DX推進策<span class="life-pill tag-short">短・新興</span></td><td class="scope">DX推進／サイバーセキュリティ／IT導入支援</td><td class="years">直近3年</td><td class="q">8</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-extra"><td class="rank">12</td><td class="id">B2</td><td class="title">中小企業の資金調達実態<span class="life-pill tag-mid">中</span></td><td class="scope">借入依存・リレーションシップバンキング</td><td class="years">直近5年</td><td class="q">8</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">13</td><td class="id">A3</td><td class="title">中小企業税制<span class="life-pill tag-short">短</span></td><td class="scope">投資促進／所得拡大／事業承継税制</td><td class="years">直近5年</td><td class="q">7</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">14</td><td class="id">09</td><td class="title">下請法・下請振興</td><td class="scope">取引適正化・パートナーシップ宣言</td><td class="years">直近5年</td><td class="q">6+</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-c row-existing"><td class="rank">15</td><td class="id">05</td><td class="title">中小企業の特徴・強み弱み・企業数</td><td class="scope">企業数推移・小規模事業者比率</td><td class="years">直近5年</td><td class="q">6+</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div><!-- 104 運営 -->
+<div class="pane" id="s104">
+  <div class="subject">
+    <h2>104 運営管理 <span class="target">目標75／学習カバー85</span></h2>
+    <div class="body">
+      <div class="cat-legend">分野: <span class="cat-chip cat-a-chip">生産管理</span> <span class="cat-chip cat-b-chip">店舗・販売</span> <span class="cat-chip cat-c-chip">環境・物流</span></div>
+<table class="notes">
+        <tr><th>順</th><th>ID</th><th>領域名</th><th>カバー内容</th><th>参照年数</th><th>直5年</th><th>状態</th></tr>
+        <tr class="cat-a row-existing"><td class="rank">1</td><td class="id">07</td><td class="title">IE・時間研究</td><td class="scope">サーブリッグ・連合作業・PTS</td><td class="years">直近10年</td><td class="q">15</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">2</td><td class="id">06</td><td class="title">生産統制・PERT・MRP・ジョンソン法</td><td class="scope">スケジューリング全般</td><td class="years">直近10年</td><td class="q">11</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-update"><td class="rank">3</td><td class="id">04</td><td class="title">需要予測・線形計画法（在庫EOQ補強）</td><td class="scope">直近5年9問のEOQ・在庫管理を補強</td><td class="years">直近5年</td><td class="q">9</td><td class="status"><span class="status-pill tag-update">更新</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">4</td><td class="id">10/12</td><td class="title">商品予算計画</td><td class="scope">人時生産性・GMROI・相乗積</td><td class="years">直近10年</td><td class="q">8</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">5</td><td class="id">03</td><td class="title">ライン生産・セル生産</td><td class="scope">ライン編成／セル方式</td><td class="years">直近10年</td><td class="q">8</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">6</td><td class="id">11</td><td class="title">SLP・DI分析</td><td class="scope">レイアウト計画</td><td class="years">直近10年</td><td class="q">7</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">7</td><td class="id">A1</td><td class="title">生産合理化（JIT・TPS）<span class="life-pill tag-long">長</span></td><td class="scope">5S・かんばん・平準化（2次III直結）</td><td class="years">直近10年</td><td class="q">6</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">8</td><td class="id">02</td><td class="title">生産計画・管理方式・開発設計</td><td class="scope">プッシュ／プル・MTS-ATO-MTO</td><td class="years">直近7年</td><td class="q">6</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-c row-existing"><td class="rank">9</td><td class="id">09</td><td class="title">廃棄物管理・都市計画法</td><td class="scope">3R・大店立地法</td><td class="years">直近5年</td><td class="q">5+</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">10</td><td class="id">14</td><td class="title">生産計画・生産統制②</td><td class="scope">06の補完</td><td class="years">直近7年</td><td class="q">5</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-new"><td class="rank">11</td><td class="id">A3</td><td class="title">商圏分析・新興論点<span class="life-pill tag-mid">中</span></td><td class="scope">ライリー・ハフ／VE・VA／EC市場</td><td class="years">直近5年</td><td class="q">4+</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-c row-new"><td class="rank">12</td><td class="id">A4</td><td class="title">環境・SDGs<span class="life-pill tag-mid">中</span></td><td class="scope">3R・LCA・省エネ（既存09の隣接補強）</td><td class="years">直近5年</td><td class="q">4</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">13</td><td class="id">08</td><td class="title">設備管理・外注管理</td><td class="scope">TPM・設備保全</td><td class="years">直近7年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-extra"><td class="rank">14</td><td class="id">B1</td><td class="title">統計（商業動態・SC白書）<span class="life-pill tag-short">短</span></td><td class="scope">商業動態統計・商店街実態</td><td class="years">直近3年</td><td class="q">3+</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">15</td><td class="id">01</td><td class="title">生産管理概論</td><td class="scope">生産管理の基礎・QCD</td><td class="years">直近7年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-new"><td class="rank">16</td><td class="id">A2</td><td class="title">店舗陳列・売場づくり<span class="life-pill tag-mid">中</span></td><td class="scope">ディスプレイ・什器・照明・色彩・棚割</td><td class="years">直近5年</td><td class="q">—</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+      </table>
+      <div class="extinct"><strong>⚠️ 絶滅論点：</strong>物流センター（R02最終）／EDI（R02）／POS（H23）／SCM（H24）— 学習対象外</div>
+    </div>
+  </div>
+</div><!-- 101 経済 -->
+<div class="pane" id="s101">
+  <div class="subject">
+    <h2>101 経済学・経済政策 <span class="target">目標70／学習カバー80</span></h2>
+    <div class="body">
+      <div class="cat-legend">分野: <span class="cat-chip cat-a-chip">マクロ経済</span> <span class="cat-chip cat-b-chip">ミクロ経済</span></div>
+<table class="notes">
+        <tr><th>順</th><th>ID</th><th>領域名</th><th>カバー内容</th><th>参照年数</th><th>直5年</th><th>状態</th></tr>
+        <tr class="cat-a row-new"><td class="rank">1</td><td class="id">A1</td><td class="title">乗数効果・45度線分析<span class="life-pill tag-long">長</span></td><td class="scope">投資乗数／租税乗数／均衡国民所得／限界消費性向</td><td class="years">直近10年</td><td class="q">11</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">2</td><td class="id">A2</td><td class="title">マンデル＝フレミング・為替レート<span class="life-pill tag-long">長</span></td><td class="scope">固定／変動相場制・財政／金融政策効果</td><td class="years">直近10年</td><td class="q">9</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">3</td><td class="id">007</td><td class="title">需要の価格弾力性・所得効果と代替効果・労働供給</td><td class="scope">ミクロ消費者理論</td><td class="years">直近10年</td><td class="q">9</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">4</td><td class="id">004</td><td class="title">国民経済計算</td><td class="scope">GDP・GNI・三面等価</td><td class="years">直近10年</td><td class="q">5</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">5</td><td class="id">006</td><td class="title">GDPの範囲・名目実質・物価指数</td><td class="scope">004/005と隣接</td><td class="years">直近10年</td><td class="q">5</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">6</td><td class="id">002</td><td class="title">完全競争vs独占</td><td class="scope">プライステイカー／市場構造</td><td class="years">直近10年</td><td class="q">5</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-new"><td class="rank">7</td><td class="id">A3</td><td class="title">余剰分析・パレート最適<span class="life-pill tag-long">長</span></td><td class="scope">消費者／生産者余剰・死荷重</td><td class="years">直近10年</td><td class="q">4</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">8</td><td class="id">005</td><td class="title">物価と景気動向指数</td><td class="scope">CPI・GDPデフレーター</td><td class="years">直近10年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">9</td><td class="id">001</td><td class="title">費用関数・利潤最大化・供給曲線・課税</td><td class="scope">生産者理論の核</td><td class="years">直近10年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">10</td><td class="id">003</td><td class="title">独占市場</td><td class="scope">独占の効率性損失・差別価格</td><td class="years">直近10年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">11</td><td class="id">A4</td><td class="title">IS-LM分析<span class="life-pill tag-long">長</span></td><td class="scope">IS／LM曲線の傾きとシフト・財政金融政策</td><td class="years">直近10年</td><td class="q">2+</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div><!-- 102 財務 -->
+<div class="pane" id="s102">
+  <div class="subject">
+    <h2>102 財務・会計 <span class="target">目標65／学習カバー75</span></h2>
+    <div class="body">
+      <div class="cat-legend">分野: <span class="cat-chip cat-a-chip">会計</span> <span class="cat-chip cat-b-chip">ファイナンス</span> <span class="cat-chip cat-c-chip">経営分析</span></div>
+<table class="notes">
+        <tr><th>順</th><th>ID</th><th>領域名</th><th>参照年数</th><th>直5年</th><th>状態</th></tr>
+        <tr class="cat-c row-existing"><td class="rank">1</td><td class="id">21</td><td class="title">経営分析（2次対策含）</td><td class="years">直近10年</td><td class="q">15+</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">2</td><td class="id">A1</td><td class="title">棚卸資産・固定資産<span class="life-pill tag-mid">中</span></td><td class="years">直近7年</td><td class="q">15</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">3</td><td class="id">12</td><td class="title">意思決定会計・設備投資の経済性</td><td class="years">直近10年</td><td class="q">14</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">4</td><td class="id">19</td><td class="title">FCF・WACC・企業価値</td><td class="years">直近10年</td><td class="q">13</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">5</td><td class="id">22</td><td class="title">配当政策・MM理論</td><td class="years">直近10年</td><td class="q">9</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">6</td><td class="id">13</td><td class="title">ポートフォリオ理論</td><td class="years">直近10年</td><td class="q">9</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">7</td><td class="id">09</td><td class="title">損益分岐点（CVP）</td><td class="years">直近10年</td><td class="q">6</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-new"><td class="rank">8</td><td class="id">A3</td><td class="title">資金調達形態<span class="life-pill tag-mid">中</span></td><td class="years">直近7年</td><td class="q">5+</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-new"><td class="rank">9</td><td class="id">A2</td><td class="title">オプション・デリバティブ<span class="life-pill tag-long">長</span></td><td class="years">直近10年</td><td class="q">5</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">10</td><td class="id">17</td><td class="title">CAPM</td><td class="years">直近10年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">11</td><td class="id">18</td><td class="title">株式の理論価格・株価指標</td><td class="years">直近10年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">12</td><td class="id">03</td><td class="title">CF計算書</td><td class="years">直近10年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">13</td><td class="id">07</td><td class="title">連結・資産除去債務</td><td class="years">直近7年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">14</td><td class="id">08</td><td class="title">原価計算（差異・総合）</td><td class="years">直近10年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-extra"><td class="rank">15</td><td class="id">B2</td><td class="title">連結会計の応用（07深掘り）<span class="life-pill tag-mid">中</span></td><td class="years">直近5年</td><td class="q">4</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">16</td><td class="id">06</td><td class="title">リース・税効果会計</td><td class="years">直近7年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">17</td><td class="id">10</td><td class="title">利益分析・利益差異分析</td><td class="years">直近10年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">18</td><td class="id">11</td><td class="title">セールスミックス・セグメント別損益</td><td class="years">直近7年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">19</td><td class="id">05</td><td class="title">企業会計原則・減損・株主資本変動</td><td class="years">直近7年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-extra"><td class="rank">20</td><td class="id">B1</td><td class="title">法人税・消費税<span class="life-pill tag-short">短・新出</span></td><td class="years">直近3年</td><td class="q">3</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">21</td><td class="id">01</td><td class="title">財務会計の基礎</td><td class="years">直近7年</td><td class="q">2</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">22</td><td class="id">02</td><td class="title">簿記の基礎</td><td class="years">直近7年</td><td class="q">2</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">23</td><td class="id">04</td><td class="title">勘定科目</td><td class="years">直近7年</td><td class="q">2</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">24</td><td class="id">20</td><td class="title">簿記一巡・勘定科目</td><td class="years">直近7年</td><td class="q">2</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div><!-- 103 経営 -->
+<div class="pane" id="s103">
+  <div class="subject">
+    <h2>103 企業経営理論 <span class="target">目標60／学習カバー70</span></h2>
+    <div class="body">
+      <div class="cat-legend">分野: <span class="cat-chip cat-a-chip">戦略</span> <span class="cat-chip cat-b-chip">組織・人材</span> <span class="cat-chip cat-c-chip">労務法規</span> <span class="cat-chip cat-d-chip">マーケティング</span></div>
+<table class="notes">
+        <tr><th>順</th><th>ID</th><th>領域名</th><th>参照年数</th><th>直5年</th><th>状態</th></tr>
+        <tr class="cat-a row-existing"><td class="rank">1</td><td class="id">13</td><td class="title">イノベーション・技術経営</td><td class="years">直近10年</td><td class="q">29</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-c row-existing"><td class="rank">2</td><td class="id">14</td><td class="title">労働関連法規</td><td class="years">直近5年</td><td class="q">21</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">3</td><td class="id">A1</td><td class="title">経営資源・VRIO<span class="life-pill tag-long">長</span></td><td class="years">直近10年</td><td class="q">17</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">4</td><td class="id">A2</td><td class="title">競争戦略（5F・差別化）<span class="life-pill tag-long">長</span></td><td class="years">直近10年</td><td class="q">17</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-new"><td class="rank">5</td><td class="id">A3</td><td class="title">組織行動・意思決定<span class="life-pill tag-long">長</span></td><td class="years">直近10年</td><td class="q">17</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">6</td><td class="id">A4</td><td class="title">PPM・M&amp;A・国際経営・CSR<span class="life-pill tag-mid">中</span></td><td class="years">直近5-7年</td><td class="q">17</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">7</td><td class="id">15</td><td class="title">成長戦略・多角化（アンゾフ）</td><td class="years">直近10年</td><td class="q">16</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-extra"><td class="rank">8</td><td class="id">B2</td><td class="title">ベンチャー・中小企業戦略<span class="life-pill tag-mid">中</span></td><td class="years">直近5年</td><td class="q">9</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">9</td><td class="id">16</td><td class="title">組織と人材（モチベーション含）</td><td class="years">直近10年</td><td class="q">9</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">10</td><td class="id">17</td><td class="title">組織構造</td><td class="years">直近10年</td><td class="q">8</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-extra"><td class="rank">11</td><td class="id">B1</td><td class="title">経営計画・BSC<span class="life-pill tag-mid">中</span></td><td class="years">直近7年</td><td class="q">5+</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-d row-existing"><td class="rank">12</td><td class="id">01-12</td><td class="title">マーケティング系（基礎・市場細分化・リサーチ・購買・製品・PLC・サービス・価格・流通・関係性・プロモ・ブランド）</td><td class="years">直近10年</td><td class="q">合計多数</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div><!-- 106 情報 -->
+<div class="pane" id="s106">
+  <div class="subject">
+    <h2>106 経営情報システム <span class="target">目標60／学習カバー70</span></h2>
+    <div class="body">
+      <div class="cat-legend">分野: <span class="cat-chip cat-a-chip">ハード・OS</span> <span class="cat-chip cat-b-chip">ネットワーク</span> <span class="cat-chip cat-c-chip">セキュリティ</span> <span class="cat-chip cat-d-chip">データベース</span> <span class="cat-chip cat-e-chip">開発・PM・統計</span> <span class="cat-chip cat-f-chip">新興技術</span></div>
+<table class="notes">
+        <tr><th>順</th><th>ID</th><th>領域名</th><th>カバー内容</th><th>参照年数</th><th>直5年</th><th>状態</th></tr>
+        <tr class="cat-d row-new"><td class="rank">1</td><td class="id">A1</td><td class="title">トランザクション管理<span class="life-pill tag-long">長</span></td><td class="scope">ACID／排他制御／ロック／2相コミット</td><td class="years">直近10年</td><td class="q">11</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-f row-new"><td class="rank">2</td><td class="id">A2</td><td class="title">機械学習・AI<span class="life-pill tag-short">短・新興</span></td><td class="scope">教師あり／なし／ニューラルネット</td><td class="years">直近3年</td><td class="q">11</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-c row-new"><td class="rank">3</td><td class="id">A3</td><td class="title">セキュリティ脅威・対策<span class="life-pill tag-mid">中</span></td><td class="scope">マルウェア／標的型／多層防御</td><td class="years">直近5年</td><td class="q">11</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">4</td><td class="id">03</td><td class="title">TCP/IP・IPアドレッシング</td><td class="scope">ネットワーク基礎</td><td class="years">直近10年</td><td class="q">11</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-e row-new"><td class="rank">5</td><td class="id">A8</td><td class="title">統計基礎・データ分析基盤<span class="life-pill tag-mid">中</span></td><td class="scope">検定／回帰／DWH／BI／ETL</td><td class="years">直近7年</td><td class="q">10</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-f row-new"><td class="rank">6</td><td class="id">A5</td><td class="title">クラウド・仮想化<span class="life-pill tag-short">短</span></td><td class="scope">IaaS／PaaS／SaaS／コンテナ／K8s</td><td class="years">直近3年</td><td class="q">8</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-d row-new"><td class="rank">7</td><td class="id">A6</td><td class="title">SQL・データベース設計<span class="life-pill tag-long">長</span></td><td class="scope">SELECT／JOIN／集計／正規化／ER図</td><td class="years">直近10年</td><td class="q">8</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-f row-new"><td class="rank">8</td><td class="id">A7</td><td class="title">IoT・先端技術<span class="life-pill tag-short">短</span></td><td class="scope">センサ／エッジ／5G／ブロックチェーン</td><td class="years">直近5年</td><td class="q">8</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-e row-extra"><td class="rank">9</td><td class="id">B1</td><td class="title">Web技術・API<span class="life-pill tag-mid">中</span></td><td class="scope">HTML/CSS/JS／REST API／SPA</td><td class="years">直近5年</td><td class="q">8</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-e row-new"><td class="rank">10</td><td class="id">A9</td><td class="title">プロジェクト管理<span class="life-pill tag-mid">中</span></td><td class="scope">PMBOK／WBS／EVM／アジャイル</td><td class="years">直近7年</td><td class="q">7</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-c row-new"><td class="rank">11</td><td class="id">A4</td><td class="title">暗号・認証<span class="life-pill tag-mid">中</span></td><td class="scope">公開鍵／共通鍵／SSL/TLS／PKI／MFA</td><td class="years">直近7年</td><td class="q">6</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-extra"><td class="rank">12</td><td class="id">B3</td><td class="title">OS機能（プロセス・スレッド）<span class="life-pill tag-long">長</span></td><td class="scope">プロセス管理・仮想記憶</td><td class="years">直近7年</td><td class="q">6</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-e row-extra"><td class="rank">13</td><td class="id">B2</td><td class="title">信頼性・稼働率計算<span class="life-pill tag-mid">中</span></td><td class="scope">MTBF・MTTR／直列並列の稼働率</td><td class="years">直近5年</td><td class="q">5</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">14</td><td class="id">02</td><td class="title">記憶装置・入出力装置</td><td class="scope">基礎理論</td><td class="years">直近7年</td><td class="q">3+</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-a row-existing"><td class="rank">15</td><td class="id">01</td><td class="title">CPU・プロセッサ・入出力IF</td><td class="scope">⚠️R01以降出題減・直近沈黙</td><td class="years">直近10年</td><td class="q">0</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+      </table>
+      <div class="extinct"><strong>絶滅論点：</strong>LAN/WAN（R01）／開発工程（R02）／DBMS一般（R02）— ノート不要</div>
+    </div>
+  </div>
+</div><!-- 105 法務 -->
+<div class="pane" id="s105">
+  <div class="subject">
+    <h2>105 経営法務 <span class="target">目標50／学習カバー60</span></h2>
+    <div class="body">
+      <div class="cat-legend">分野: <span class="cat-chip cat-a-chip">知的財産</span> <span class="cat-chip cat-b-chip">会社法</span> <span class="cat-chip cat-c-chip">民法</span> <span class="cat-chip cat-d-chip">その他法令</span></div>
+<table class="notes">
+        <tr><th>順</th><th>ID</th><th>領域名</th><th>カバー内容</th><th>参照年数</th><th>直5年</th><th>状態</th></tr>
+        <tr class="cat-c row-new"><td class="rank">1</td><td class="id">A5</td><td class="title">民法（契約・債権）<span class="life-pill tag-short">短</span></td><td class="scope">契約類型／債権／2020改正（時効・保証・契約不適合）</td><td class="years">R02以降</td><td class="q">17</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">2</td><td class="id">A1</td><td class="title">特許法<span class="life-pill tag-long">長</span></td><td class="scope">特許要件／出願／実施権／存続20年／侵害／職務発明</td><td class="years">直近10年</td><td class="q">14</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">3</td><td class="id">A2</td><td class="title">商標法<span class="life-pill tag-long">長</span></td><td class="scope">登録要件／不登録事由／効力／存続10年／地域団体商標</td><td class="years">直近10年</td><td class="q">11</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">4</td><td class="id">11</td><td class="title">社債・配当手続</td><td class="scope">資本調達</td><td class="years">直近7年</td><td class="q">8</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-update"><td class="rank">5</td><td class="id">03</td><td class="title">株主総会（補強）</td><td class="scope">⚠️R07で議決権・特別利害関係の新出論点追加</td><td class="years">直近5年</td><td class="q">6</td><td class="status"><span class="status-pill tag-update">更新</span></td></tr>
+        <tr class="cat-c row-new"><td class="rank">6</td><td class="id">A6</td><td class="title">民法（相続・遺留分）<span class="life-pill tag-short">短</span></td><td class="scope">法定相続／遺言／遺留分（2019改正）／配偶者居住権</td><td class="years">R02以降</td><td class="q">6+</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">7</td><td class="id">A4</td><td class="title">不正競争防止法<span class="life-pill tag-long">長</span></td><td class="scope">不正競争10類型／営業秘密3要件／差止</td><td class="years">直近10年</td><td class="q">6</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-update"><td class="rank">8</td><td class="id">06</td><td class="title">機関設計（補強）</td><td class="scope">⚠️取締役会の職務執行報告（R07新出）追加</td><td class="years">直近5年</td><td class="q">5+</td><td class="status"><span class="status-pill tag-update">更新</span></td></tr>
+        <tr class="cat-a row-new"><td class="rank">9</td><td class="id">A3</td><td class="title">著作権法<span class="life-pill tag-long">長</span></td><td class="scope">著作物／支分権／著作者人格権／保護期間70年</td><td class="years">直近10年</td><td class="q">5</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-d row-new"><td class="rank">10</td><td class="id">A7</td><td class="title">国際契約条項<span class="life-pill tag-mid">中</span></td><td class="scope">準拠法／紛争解決／秘密保持／不可抗力／PL責任</td><td class="years">直近7年</td><td class="q">5</td><td class="status"><span class="status-pill tag-new">新規</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">11</td><td class="id">10</td><td class="title">株式（自己株式・併合分割）</td><td class="scope">株式変動</td><td class="years">直近7年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">12</td><td class="id">09</td><td class="title">募集株式・譲渡制限・種類株式</td><td class="scope">株式発行</td><td class="years">直近7年</td><td class="q">4</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-update"><td class="rank">13</td><td class="id">05</td><td class="title">監査役等（補強）</td><td class="scope">⚠️監査等委員会設置会社・監査範囲（直近3年で3問）</td><td class="years">直近5年</td><td class="q">3</td><td class="status"><span class="status-pill tag-update">更新</span></td></tr>
+        <tr class="cat-d row-extra"><td class="rank">14</td><td class="id">B1</td><td class="title">独禁法・課徴金減免<span class="life-pill tag-short">短・新出</span></td><td class="scope">課徴金減免制度・算定率（直近3年新登場）</td><td class="years">直近3年</td><td class="q">3</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-d row-extra"><td class="rank">15</td><td class="id">B2</td><td class="title">景品表示法<span class="life-pill tag-mid">中</span></td><td class="scope">景品規制・優良誤認・有利誤認</td><td class="years">直近5年</td><td class="q">3</td><td class="status"><span class="status-pill tag-extra">追加候補</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">16</td><td class="id">08</td><td class="title">定款と設立</td><td class="scope">設立手続</td><td class="years">直近7年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">17</td><td class="id">12</td><td class="title">資本金・計算書類</td><td class="scope">計算規則</td><td class="years">直近7年</td><td class="q">3</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">18</td><td class="id">07</td><td class="title">委員会設置会社</td><td class="scope">委員会型</td><td class="years">直近7年</td><td class="q">2</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">19</td><td class="id">04</td><td class="title">株主提案権</td><td class="scope">提案要件</td><td class="years">直近7年</td><td class="q">1+</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">20</td><td class="id">02</td><td class="title">商号</td><td class="scope">商号・商業登記</td><td class="years">直近7年</td><td class="q">1+</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">21</td><td class="id">01</td><td class="title">会社法・事業開始届出</td><td class="scope">会社法総論</td><td class="years">直近7年</td><td class="q">1+</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+        <tr class="cat-b row-existing"><td class="rank">22</td><td class="id">13</td><td class="title">新株予約権</td><td class="scope">新株予約権・SO</td><td class="years">直近7年</td><td class="q">1</td><td class="status"><span class="status-pill tag-existing">既存</span></td></tr>
+      </table>
+      <div class="extinct"><strong>⚠️ 絶滅論点：</strong>金商法（累計17問・R01最終・6年連続出題なし）— 学習対象外</div>
+    </div>
+  </div>
+</div><div style="text-align:center;color:var(--gray);font-size:.85rem;padding:1rem 0">
+  ※半減期と過去問データ分析（H19〜R07）に基づく。2026-04-27時点。<br>
+  各科目とも「既存・更新・新規・追加候補」を混合し、直近5年問数の多い順に通し番号で並列表示。
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.pane).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+</script>
+</body>
+</html>
