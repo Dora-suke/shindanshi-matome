@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>需要予測・線形計画法【補強】EOQ・在庫管理</title>
+<style>
+:root{--pink:#ec407a;--blue:#2196f3;--purple:#9c27b0;--green:#4caf50;--orange:#ff9800;--red:#f44336;--yellow:#fbc02d;--dark:#263238;--gray:#607d8b;--gray-mid:#78909c;--light:#eceff1}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Hiragino Sans',Meiryo,sans-serif;background:#f5f5f5;color:var(--dark);line-height:1.75}
+.header{background:linear-gradient(135deg,#1976d2,#7b1fa2,#c62828);color:#fff;padding:1.6rem 1rem 1.2rem;text-align:center}
+.header h1{font-size:1.5rem;font-weight:900;letter-spacing:.04em}
+.header .sub{font-size:.92rem;margin-top:.4rem;opacity:.95}
+.header .badge{display:inline-block;background:rgba(255,255,255,.28);padding:.25rem .9rem;border-radius:30px;font-size:.8rem;font-weight:700;margin-top:.5rem}
+.reinforce-banner{background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-left:6px solid #1976d2;padding:.85rem 1rem;margin:1rem;border-radius:8px;font-size:.9rem;line-height:1.7}
+.reinforce-banner strong{color:#0d47a1}
+.reinforce-banner a{color:#0d47a1;font-weight:700;text-decoration:none;border-bottom:1px solid #0d47a1}
+.tab-nav{display:flex;flex-wrap:wrap;gap:3px;background:#fff;padding:4px;box-shadow:0 2px 10px rgba(0,0,0,.08);position:sticky;top:0;z-index:100}
+.tab-btn{flex:1 1 auto;min-width:88px;padding:.55rem .35rem;border:none;background:#fafafa;color:var(--gray);font-size:.74rem;font-weight:700;cursor:pointer;border-radius:8px 8px 0 0;font-family:inherit;white-space:nowrap;border-bottom:3px solid transparent}
+.tab-btn:hover{background:#eee}
+.tab-btn.active{background:#fff;border-bottom-color:#1976d2;color:var(--dark)}
+.tab-panel{display:none;padding:1.1rem 1rem 3rem;max-width:920px;margin:0 auto}
+.tab-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.tab-header{text-align:center;padding:1.1rem 1rem;border-radius:14px;color:#fff;margin-bottom:1.1rem;box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.tab-header .emoji{font-size:2.4rem;line-height:1;margin-bottom:.2rem}
+.tab-header h2{font-size:1.3rem;font-weight:900}
+.tab-header .tagline{font-size:.9rem;margin-top:.25rem;opacity:.95}
+.h-pink{background:linear-gradient(135deg,#ec407a,#ad1457)}
+.h-orange{background:linear-gradient(135deg,#ff9800,#e65100)}
+.h-blue{background:linear-gradient(135deg,#2196f3,#0d47a1)}
+.h-purple{background:linear-gradient(135deg,#9c27b0,#4a148c)}
+.h-green{background:linear-gradient(135deg,#4caf50,#1b5e20)}
+.h-red{background:linear-gradient(135deg,#f44336,#b71c1c)}
+.h-teal{background:linear-gradient(135deg,#009688,#004d40)}
+.h-indigo{background:linear-gradient(135deg,#3f51b5,#1a237e)}
+.h-brown{background:linear-gradient(135deg,#795548,#3e2723)}
+h3{font-size:1.1rem;color:var(--dark);margin:1.4rem 0 .5rem;border-left:5px solid #1976d2;padding-left:.6rem}
+h4{font-size:1rem;margin:1rem 0 .4rem;color:#37474f}
+p{margin:.4rem 0;font-size:.95rem}
+.crossref{font-size:.85rem;color:var(--gray-mid);margin:.2rem 0 .6rem;padding:.3rem .55rem;background:#f5f5f5;border-radius:6px;border-left:3px solid #b0bec5}
+.year-tag{display:inline-block;background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:.15rem .55rem;border-radius:12px;font-size:.72rem;font-weight:800;margin:0 .25rem;letter-spacing:.04em}
+.year-tag.r{background:linear-gradient(135deg,#c62828,#b71c1c)}
+.year-tag.h{background:linear-gradient(135deg,#2e7d32,#1b5e20)}
+.exam-pt{font-size:.85rem;margin:.35rem 0;color:#0d47a1;background:#e3f2fd;padding:.4rem .65rem;border-radius:6px;border-left:4px solid #1565c0}
+.trap{font-size:.85rem;margin:.35rem 0;color:#b71c1c;background:#ffebee;padding:.4rem .65rem;border-radius:6px;border-left:4px solid #c62828}
+.judge{font-size:.85rem;margin:.35rem 0;color:#1b5e20;background:#e8f5e9;padding:.4rem .65rem;border-radius:6px;border-left:4px solid #2e7d32}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06);font-size:.86rem}
+th,td{border:1px solid #cfd8dc;padding:.45rem .55rem;text-align:left;vertical-align:top}
+th{background:#37474f;color:#fff;font-weight:700;text-align:center}
+tr:nth-child(even) td{background:#f9fbfc}
+.hl-y{background:linear-gradient(transparent 55%,#fff59d 55%);font-weight:800;padding:0 2px}
+.hl-r{background:linear-gradient(transparent 55%,#ffcdd2 55%);font-weight:800;color:#b71c1c;padding:0 2px}
+.hl-b{background:linear-gradient(transparent 55%,#bbdefb 55%);font-weight:800;color:#0d47a1;padding:0 2px}
+.hl-g{background:linear-gradient(transparent 55%,#c8e6c9 55%);font-weight:800;color:#1b5e20;padding:0 2px}
+.formula{background:linear-gradient(135deg,#263238,#37474f);color:#fff;padding:.85rem 1rem;border-radius:10px;margin:.7rem 0;text-align:center;font-size:1rem;font-weight:700}
+.formula .big{display:block;font-size:1.2rem;color:#ffeb3b;margin:.2rem 0}
+.formula small{display:block;font-size:.78rem;color:#b0bec5;margin-top:.4rem}
+.example{background:linear-gradient(135deg,#fffde7,#fff);border:2px solid #fbc02d;border-radius:10px;padding:.8rem .9rem;margin:.7rem 0}
+.example-title{font-weight:800;color:#f57f17;margin-bottom:.4rem;font-size:.95rem}
+.example-step{background:#fff;padding:.4rem .65rem;border-radius:5px;margin:.25rem 0;font-size:.88rem;border-left:3px solid #fbc02d}
+.example .ans{background:#c8e6c9;border:2px solid #2e7d32;color:#1b5e20;font-weight:900;padding:.5rem;border-radius:8px;text-align:center;margin-top:.4rem}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.45rem .85rem;border-radius:20px;font-size:.82rem;font-weight:700;margin:.35rem .25rem;box-shadow:0 2px 6px rgba(142,68,173,.3)}
+.goro-chip::before{content:"\1F3B5 ";margin-right:.25rem}
+.goro-chip small{font-weight:400;opacity:.95;margin-left:.35rem;font-size:.74rem}
+.goro-row{margin:.55rem 0;padding:.45rem .65rem;background:#faf5fc;border-left:3px solid #8e44ad;border-radius:4px}
+.support{display:flex;gap:.5rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.8rem .95rem;margin:.9rem 0;font-size:.9rem;line-height:1.8}
+.support-icon{font-size:1.5rem;flex-shrink:0;line-height:1}
+.support-body{flex:1}
+.support-body strong{color:#e65100}
+.support-name{font-size:.7rem;font-weight:700;color:#bf360c;margin-bottom:.15rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1rem 1.1rem;margin:1.3rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}
+.keepit-title{font-size:.93rem;font-weight:800;color:#f57f17;margin-bottom:.5rem;display:flex;align-items:center;gap:.35rem}
+.keepit ul{list-style:none;padding:0;margin:0}
+.keepit li{padding:.35rem .55rem;margin:.25rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.88rem;line-height:1.7}
+.keepit li strong{color:#1565c0}
+.fill-area{background:linear-gradient(135deg,#f3e5f5,#fff);border:2px solid #9c27b0;border-radius:12px;padding:.95rem 1rem;margin:1.2rem 0}
+.fill-title{font-size:1rem;font-weight:800;color:#6a1b9a;margin-bottom:.55rem}
+.fill-q{background:#fff;padding:.45rem .65rem;border-radius:6px;margin:.3rem 0;font-size:.9rem;line-height:1.95}
+.fill-blank{display:inline-block;min-width:70px;padding:1px 10px;background:#f5f5f5;border-bottom:2px solid var(--gray);border-radius:4px;margin:0 2px;color:transparent;font-weight:800;user-select:none}
+.fill-blank.show{color:#c62828;background:#ffebee;border-bottom-color:#c62828}
+.fill-reveal-btn{background:#9c27b0;color:#fff;border:none;padding:.4rem 1rem;border-radius:8px;font-weight:700;cursor:pointer;margin-top:.4rem;font-family:inherit;font-size:.85rem}
+.fill-reveal-btn:hover{opacity:.9}
+.quiz-card{background:#fff;border:2px solid #2196f3;border-radius:12px;padding:.9rem 1rem;margin:.9rem 0;box-shadow:0 2px 8px rgba(33,150,243,.1)}
+.quiz-q{font-weight:800;color:#0d47a1;margin-bottom:.5rem;font-size:.95rem}
+.quiz-opt{background:#f5f7fa;padding:.45rem .7rem;margin:.3rem 0;border-radius:6px;font-size:.88rem;cursor:pointer;border:2px solid transparent}
+.quiz-opt:hover{background:#e3f2fd}
+.quiz-opt.correct{background:#c8e6c9;border-color:#2e7d32;color:#1b5e20;font-weight:700}
+.quiz-opt.wrong{background:#ffcdd2;border-color:#c62828;color:#b71c1c}
+.quiz-ans{display:none;margin-top:.5rem;padding:.5rem .65rem;background:#e8f5e9;border-radius:6px;font-size:.85rem;border-left:4px solid #2e7d32}
+.quiz-ans.show{display:block}
+.case-box{background:#fff;border:2px solid #009688;border-radius:12px;padding:.9rem 1rem;margin:.9rem 0}
+.case-title{font-weight:800;color:#00695c;font-size:1rem;margin-bottom:.5rem}
+.diagram{background:#f5f7fa;border:2px solid #b0bec5;border-radius:10px;padding:.85rem;margin:.8rem 0;font-family:monospace;font-size:.82rem;white-space:pre-wrap;line-height:1.6}
+.back-link{text-align:center;padding:1.5rem 1rem;margin-top:2rem;background:linear-gradient(135deg,#37474f,#263238);border-radius:12px;color:#fff}
+.back-link a{color:#ffeb3b;font-weight:700;text-decoration:none;display:inline-block;margin:.3rem .5rem;padding:.45rem 1rem;background:rgba(255,255,255,.1);border-radius:8px}
+.back-link a:hover{background:rgba(255,255,255,.2)}
+small.zakkuri{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>需要予測・線形計画法【補強版】</h1>
+  <div class="sub">EOQ・発注方式・安全在庫・ABC分析・在庫評価に焦点</div>
+  <div class="badge">📚 直近5年（R03〜R07）EOQ・在庫管理 9問対応</div>
+</div>
+
+<div class="reinforce-banner">
+  📌 <strong>このノートは『04.需要予測と線形計画法まとめ』の補強版です。</strong>元ノートは需要予測・線形計画法（LP）が中心のため、本補強で<strong>EOQ・在庫管理</strong>を専門に深掘りします。<br>
+  ↩ 元ノート：<a href="04.%E9%9C%80%E8%A6%81%E4%BA%88%E6%B8%AC%E3%81%A8%E7%B7%9A%E5%BD%A2%E8%A8%88%E7%94%BB%E6%B3%95%E3%81%BE%E3%81%A8%E3%82%81.html">04.需要予測と線形計画法まとめ.html</a>　／　🏠 <a href="index.html">index.html</a>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab(0)">ゼロから</button>
+  <button class="tab-btn" onclick="showTab(1)">入門</button>
+  <button class="tab-btn" onclick="showTab(2)">基本</button>
+  <button class="tab-btn" onclick="showTab(3)">詳細</button>
+  <button class="tab-btn" onclick="showTab(4)">語呂</button>
+  <button class="tab-btn" onclick="showTab(5)">語呂穴埋</button>
+  <button class="tab-btn" onclick="showTab(6)">穴埋初級</button>
+  <button class="tab-btn" onclick="showTab(7)">穴埋中級</button>
+  <button class="tab-btn" onclick="showTab(8)">穴埋上級</button>
+  <button class="tab-btn" onclick="showTab(9)">事例</button>
+  <button class="tab-btn" onclick="showTab(10)">クイズ</button>
+  <button class="tab-btn" onclick="showTab(11)">実例</button>
+  <button class="tab-btn" onclick="showTab(12)">図解</button>
+</div>
+
+<!-- ========== Tab 0: ゼロから ========== -->
+<div class="tab-panel active" id="tab0">
+  <div class="tab-header h-pink">
+    <div class="emoji">🌱</div>
+    <h2>ゼロから：在庫の悩みは「いつ・いくつ」だけ</h2>
+    <div class="tagline">EOQ＝いくつ／発注方式＝いつ／安全在庫＝余分にいくつ</div>
+  </div>
+
+  <h3>在庫管理の3つの問い</h3>
+  <p>在庫管理は突き詰めると<span class="hl-y">「いつ・いくつ・どれだけ余裕を持つか」</span>の3問だけ。</p>
+  <table>
+    <tr><th>問い</th><th>答えるツール</th><th>1行イメージ</th></tr>
+    <tr><td><strong>いくつ発注？</strong></td><td><span class="hl-y">EOQ（経済的発注量）</span></td><td>発注費と保管費がバランスする量</td></tr>
+    <tr><td><strong>いつ発注？</strong></td><td><span class="hl-y">発注方式</span>（定量／定期／ダブルビン）</td><td>「在庫が減ったら」or「決まった日に」</td></tr>
+    <tr><td><strong>切らさない余裕は？</strong></td><td><span class="hl-y">安全在庫</span></td><td>需要のブレに備える保険在庫</td></tr>
+  </table>
+
+  <div class="goro-row">
+    <span class="goro-chip">EOQ＝バランス点<small>発注費↓×保管費↑が交差</small></span>
+    <span class="goro-chip">発注方式＝3兄弟<small>定量・定期・ダブルビン</small></span>
+    <span class="goro-chip">安全在庫＝保険<small>需要のブレ吸収</small></span>
+  </div>
+
+  <div class="support">
+    <span class="support-icon">👨‍🏫</span>
+    <div class="support-body"><span class="support-name">先生からひとこと</span>
+    在庫って「<strong>持ちすぎたら倉庫代がかかる</strong>」「<strong>少なすぎたら欠品で売り逃す</strong>」のジレンマ、わかるよね。だから「ちょうどいい量＝EOQ」「ちょうどいいタイミング＝発注方式」「ちょっとの余裕＝安全在庫」の3点で対処する、これだけ覚えとけばOK！</div>
+  </div>
+
+  <h3>なぜこの補強が必要か（直近5年で9問）</h3>
+  <p>直近5年で在庫管理は<span class="hl-r">9問</span>出題。元ノート「04.需要予測と線形計画法」は需要予測とLPが主軸で在庫管理は薄いため、本補強で重点カバー。</p>
+  <p><span class="year-tag r">R07-32</span><span class="year-tag r">R06-15</span><span class="year-tag r">R05-11</span><span class="year-tag r">R05追-7</span><span class="year-tag r">R05追-8</span><span class="year-tag r">R05追-15</span><span class="year-tag r">R04-10</span><span class="year-tag r">R04-12</span><span class="year-tag r">R03-12</span></p>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：毎年1〜2問は必ず出る安定論点。EOQの公式・発注方式の使い分け・在庫評価3法だけでも8割確保できる。</p>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ 今日のこれだけ覚えて（ゼロから）</div>
+    <ul>
+      <li>❶ <strong>EOQ＝発注費と保管費の合計が最小</strong>になる発注量。グラフはU字</li>
+      <li>❷ 発注方式3兄弟＝<strong>定量（在庫が点まで減ったら）／定期（毎月など）／ダブルビン（箱2つ）</strong></li>
+      <li>❸ 安全在庫は<strong>需要のばらつきが大きいほど多く必要</strong>。サービス率を高めるほど多く必要</li>
+    </ul>
+  </div>
+
+  <div class="fill-area" id="fill_zero">
+    <div class="fill-title">📝 ゼロから穴埋め</div>
+    <div style="text-align:center;margin:.6rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:.4rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-q">Q1. EOQ は <span class="fill-blank">経済的発注量</span> の略で、<span class="fill-blank">発注費</span> と保管費の合計が最小となる発注量。</div>
+    <div class="fill-q">Q2. 発注方式の3兄弟は <span class="fill-blank">定量</span>・定期・<span class="fill-blank">ダブルビン</span>。</div>
+    <div class="fill-q">Q3. <span class="fill-blank">安全在庫</span> は需要のブレに備える保険在庫。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_zero')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 1: 入門 ========== -->
+<div class="tab-panel" id="tab1">
+  <div class="tab-header h-orange">
+    <div class="emoji">📘</div>
+    <h2>入門：EOQ公式と発注方式の輪郭</h2>
+    <div class="tagline">公式は1つ、発注方式は3つ、在庫評価は3つ</div>
+  </div>
+
+  <h3>EOQ（Economic Order Quantity：経済的発注量）の正体</h3>
+  <p class="crossref">🔁 <strong>元ノートでは未深掘り</strong>。本補強で公式・グラフ・出題パターンを整理。</p>
+  <p>EOQ（Economic Order Quantity：経済的発注量）<span class="zakkuri">ざっくり：1回の発注で何個頼むのが一番安いか</span>は、<span class="hl-y">発注費（1回いくら）と保管費（1個いくら）の合計が最小</span>になる発注量。</p>
+
+  <div class="formula">
+    EOQ ＝ <span class="big">√(2DS / H)</span>
+    <small>D：年間需要量　S：1回あたり発注費　H：1個1年あたり保管費</small>
+  </div>
+
+  <div class="goro-chip">「<strong>2倍のDS割るH</strong>」<small>2DSをHで割って√</small></div>
+
+  <div class="support">
+    <span class="support-icon">💡</span>
+    <div class="support-body"><span class="support-name">公式のイメージ</span>
+    1回大量に頼めば<strong>発注費は減る</strong>けど<strong>倉庫代が増える</strong>。少しずつ頼めばその逆。この2つの線が交わる「U字の谷底」が EOQ。R05-11 で「EOQでは<strong>発注費＝保管費</strong>になる」が正肢で問われた。</div>
+  </div>
+
+  <h3>3つの発注方式（直近5年の主役）</h3>
+  <p class="crossref">🔁 <strong>R03-12 / R04-10 / R07-32 で連続出題</strong>。違いを表で押さえる。</p>
+  <table>
+    <tr><th>方式</th><th>タイミング</th><th>発注量</th><th>向く品目</th></tr>
+    <tr><td><span class="hl-y">定量発注方式</span></td><td>在庫が<strong>発注点</strong>まで減ったら</td><td><strong>毎回同じ量（EOQ）</strong></td><td>需要が安定／単価安／中位品（B群）</td></tr>
+    <tr><td><span class="hl-y">定期発注方式</span></td><td><strong>決まった周期</strong>（毎週・毎月）</td><td>毎回違う量（需要予測ベース）</td><td>需要変動大／高額品（A群）</td></tr>
+    <tr><td><span class="hl-y">ダブルビン方式</span></td><td>1つ目の箱が空になった時</td><td>箱1個ぶん（固定）</td><td>低額・大量・C群（ボルト等）</td></tr>
+  </table>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R03-12</span> ダブルビン＝定量発注方式の<strong>簡易版</strong>。<span class="year-tag r">R04-10</span> 安全在庫が必要なのは<strong>定量・定期どちらも</strong>。</p>
+
+  <h3>在庫評価3法（R05追-7）</h3>
+  <table>
+    <tr><th>方法</th><th>払出単価</th><th>インフレ時の利益</th></tr>
+    <tr><td>先入先出法（FIFO）</td><td>古い受入から払出</td><td><span class="hl-r">高く出る</span></td></tr>
+    <tr><td>後入先出法（LIFO）※税法廃止</td><td>新しい受入から払出</td><td><span class="hl-g">低く出る</span></td></tr>
+    <tr><td>移動平均法</td><td>受入の都度、平均単価更新</td><td>中間</td></tr>
+  </table>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ 今日のこれだけ覚えて（入門）</div>
+    <ul>
+      <li>❶ EOQ ＝ <strong>√(2DS/H)</strong>。EOQ点では<strong>発注費＝保管費</strong></li>
+      <li>❷ 定量＝在庫が点まで減ったら同量を発注／定期＝決まった日に都度量を発注／ダブルビン＝箱2つで簡易管理</li>
+      <li>❸ 在庫評価：FIFO＝古いから／LIFO＝新しいから／移動平均＝都度平均</li>
+    </ul>
+  </div>
+
+  <div class="fill-area" id="fill_one">
+    <div class="fill-title">📝 入門穴埋め</div>
+    <div style="text-align:center;margin:.6rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:.4rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-q">Q1. EOQ ＝ √(2 × <span class="fill-blank">D</span> × <span class="fill-blank">S</span> ÷ H)。Dは年間需要、Sは <span class="fill-blank">発注費</span>、Hは保管費単価。</div>
+    <div class="fill-q">Q2. EOQ点では <span class="fill-blank">発注費</span> ＝ <span class="fill-blank">保管費</span>。</div>
+    <div class="fill-q">Q3. 在庫が <span class="fill-blank">発注点</span> まで減ったら一定量発注するのが定量発注方式。</div>
+    <div class="fill-q">Q4. 定期発注方式は <span class="fill-blank">高額品</span>・需要変動の大きい品に向く。</div>
+    <div class="fill-q">Q5. ダブルビン方式は <span class="fill-blank">定量発注</span> 方式の簡易版。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_one')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 2: 基本 ========== -->
+<div class="tab-panel" id="tab2">
+  <div class="tab-header h-blue">
+    <div class="emoji">📗</div>
+    <h2>基本：試験で使う7論点</h2>
+    <div class="tagline">EOQ感応度／発注点／安全在庫／在庫指標／ABC／動的計画</div>
+  </div>
+
+  <h3>① EOQの感応度（R05-11、R05追-8）</h3>
+  <p class="crossref">🔁 <strong>R05-11 ではEOQの性質、R05追-8 では総費用式が直球</strong>で問われた。</p>
+  <div class="formula">年間総費用 TC ＝ <span class="big">(D/Q)·S ＋ (Q/2)·H</span><small>(D/Q)·S：年間発注費　(Q/2)·H：年間保管費（平均在庫×単価）</small></div>
+  <p>QをEOQ=√(2DS/H)で代入すると、最小総費用 = √(2DSH) になる。</p>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R05-11</span> ①需要量Dが2倍になるとEOQは<strong>√2倍</strong>（4倍ではない）。②発注費Sが2倍でEOQは√2倍。③保管費Hが2倍でEOQは<strong>1/√2倍</strong>。</p>
+  <p class="trap">⚠️ <strong>【1次】引っかけ</strong>：「需要が2倍になればEOQも2倍」は<span class="hl-r">誤り</span>（√2倍が正）。「保管費が増えればEOQも増える」は<span class="hl-r">誤り</span>（保管費増は逆にEOQを減らす）。</p>
+  <p class="judge">🎯 <strong>判定基準</strong>：分母（H）が大きいほどEOQは<span class="hl-y">減る</span>、分子（D・S）が大きいほど<span class="hl-y">増える</span>。√で効くのが要点。</p>
+
+  <h4>EOQの前提条件（盲点）</h4>
+  <table>
+    <tr><th>前提</th><th>内容</th><th>崩れたら？</th></tr>
+    <tr><td>需要は一定</td><td>年間需要が確定で平準</td><td>動的計画法など別手法</td></tr>
+    <tr><td>調達期間は一定</td><td>リードタイム不変</td><td>安全在庫で吸収</td></tr>
+    <tr><td>欠品は許さない</td><td>常に在庫あり前提</td><td>欠品コスト導入</td></tr>
+    <tr><td>数量割引なし</td><td>単価一定</td><td>割引点比較が必要</td></tr>
+  </table>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R05-11</span>「EOQは需要・リードタイム一定が前提」が頻出正肢。</p>
+
+  <h3>② 発注点・安全在庫（R04-10、R07-32）</h3>
+  <p class="crossref">🔁 <strong>定量発注方式の中核</strong>。安全在庫は両方の方式で必要。</p>
+  <div class="formula">発注点 ＝ <span class="big">調達期間中の平均需要 ＋ 安全在庫</span><br>安全在庫 ＝ <span class="big">安全係数 × √調達期間 × 需要の標準偏差</span><small>＝ k × σ × √L（k：安全係数=サービス率対応の正規分布Z値）</small></div>
+  <p>サービス率（在庫切れさせない確率）と安全係数 k の対応：</p>
+  <table>
+    <tr><th>サービス率</th><th>安全係数 k</th></tr>
+    <tr><td>90%</td><td>約1.28</td></tr>
+    <tr><td>95%</td><td>約1.65</td></tr>
+    <tr><td>99%</td><td>約2.33</td></tr>
+  </table>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R07-32</span> 安全在庫は<strong>需要のばらつきσが大きいほど</strong>多く必要、<strong>調達期間Lが長いほど</strong>多く必要、<strong>サービス率を高めるほど</strong>多く必要（kが大きい）。<span class="year-tag r">R04-10</span> 累積入荷量グラフの読解。</p>
+  <p class="trap">⚠️ <strong>【1次】引っかけ</strong>：「サービス率を上げると安全在庫は減る」は<span class="hl-r">誤り</span>（正：増える）。「安全在庫は調達期間に比例して増える」は<span class="hl-r">誤り</span>（√Lに比例）。</p>
+
+  <h3>③ 定期発注方式の発注量（R07-32）</h3>
+  <div class="formula">発注量 = <span class="big">(発注間隔＋調達期間)中の予測需要 ＋ 安全在庫 − 現在庫 − 発注残</span></div>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R07-32</span>「現在庫」と「発注残（既発注未着）」を引くのを忘れる引っかけ。</p>
+
+  <h3>④ 在庫管理用語（R04-12）</h3>
+  <table>
+    <tr><th>用語</th><th>定義</th><th>意味</th></tr>
+    <tr><td>顧客サービス率</td><td>欠品なく出荷できた割合 = <span class="hl-y">満たせた注文 ÷ 注文総数</span></td><td>高いほど顧客満足／在庫負担増</td></tr>
+    <tr><td>在庫回転率</td><td><span class="hl-y">年間出庫量 ÷ 平均在庫</span>（回/年）</td><td>高いほど在庫効率良い</td></tr>
+    <tr><td>在庫日数</td><td>365 ÷ 在庫回転率</td><td>低いほど良い</td></tr>
+    <tr><td>在庫引当</td><td>受注ぶんを在庫から確保する処理</td><td>欠品防止のため事前に引当</td></tr>
+  </table>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R04-12</span>「在庫回転率」と「サービス率」の定義入れ替えの引っかけ。<strong>回転率は出庫÷在庫</strong>、<strong>サービス率は出荷÷注文</strong>。</p>
+
+  <h3>⑤ ABC分析（R06-15）</h3>
+  <p class="crossref">🔁 <strong>パレート分析の在庫版</strong>。原材料の管理レベル設計に直結。</p>
+  <table>
+    <tr><th>区分</th><th>金額シェア</th><th>品目数シェア</th><th>管理方式</th></tr>
+    <tr><td>A群</td><td>約70〜80%</td><td>約10〜20%</td><td><span class="hl-y">定期発注（厳密管理）</span></td></tr>
+    <tr><td>B群</td><td>約15〜20%</td><td>約20〜30%</td><td>定量発注</td></tr>
+    <tr><td>C群</td><td>約5〜10%</td><td>約50〜70%</td><td><span class="hl-y">ダブルビン（簡易）</span></td></tr>
+  </table>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R06-15</span> 原材料の<strong>突発故障対応に重要なA群</strong>は<strong>定期発注</strong>で需要変動を都度反映。C群はダブルビン等の簡易管理でコスト削減。</p>
+  <p class="trap">⚠️ <strong>【1次】引っかけ</strong>：「A群は品目数が多い」は<span class="hl-r">誤り</span>（少ない）。「C群は厳密管理」は<span class="hl-r">誤り</span>（簡易）。</p>
+
+  <h3>⑥ 動的発注計画（R05追-15）</h3>
+  <p class="crossref">🔁 <strong>需要が期ごとに異なる場合</strong>のロットサイジング。EOQ前提（一定需要）が崩れた時の手法。</p>
+  <table>
+    <tr><th>手法</th><th>方針</th></tr>
+    <tr><td>L4L（Lot for Lot）</td><td>需要量＝発注量。在庫ゼロ運用</td></tr>
+    <tr><td>POQ（Period Order Quantity）</td><td>EOQ相当の周期にまとめて発注</td></tr>
+    <tr><td>Wagner-Whitin法</td><td>動的計画法で<span class="hl-y">最適解</span>を求める（試験では概念のみ）</td></tr>
+    <tr><td>Silver-Meal法</td><td>期当たり費用を最小化するヒューリスティック</td></tr>
+  </table>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R05追-15</span> 動的計画は「期首在庫＋発注量−需要量＝期末在庫」の漸化式で総費用最小化。表埋め問題が出た。</p>
+
+  <h3>⑦ 在庫評価（R05追-7）詳細</h3>
+  <div class="example">
+    <div class="example-title">💡 計算例（インフレ局面）</div>
+    <div class="example-step">期首在庫：100個@100円　受入①50個@120円　受入②50個@140円　払出80個</div>
+    <div class="example-step">FIFO（先入先出）：80個=100円× 80個 → 払出原価 8,000円</div>
+    <div class="example-step">LIFO（後入先出）：80個=140円×50＋120円×30 → 払出原価 10,600円</div>
+    <div class="example-step">移動平均：(100×100+50×120+50×140)÷200=115円 → 払出 80×115=9,200円</div>
+    <div class="ans">インフレ時の払出原価：<strong>FIFO &lt; 移動平均 &lt; LIFO</strong>　→　利益はその逆順</div>
+  </div>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<span class="year-tag r">R05追-7</span> 計算式と払出原価の比較が頻出。<strong>「先入先出は古い単価で払出＝期末在庫は新しい単価」</strong>。</p>
+
+  <div class="support">
+    <span class="support-icon">👨‍🏫</span>
+    <div class="support-body"><span class="support-name">先生からひとこと</span>
+    在庫管理は数式が多く見えるけど、覚える式は<strong>EOQ・総費用・発注点・安全在庫・回転率の5本</strong>だけ。あとは<strong>使い分け表</strong>と<strong>引っかけパターン</strong>。電卓使えば点になる分野だから、<strong>絶対落とせない</strong>よ！</div>
+  </div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ 今日のこれだけ覚えて（基本）</div>
+    <ul>
+      <li>❶ EOQ感応度：D・S増→EOQ <strong>√倍</strong>増／H増→EOQ <strong>1/√倍</strong>減</li>
+      <li>❷ 安全在庫＝<strong>k×σ×√L</strong>。サービス率↑・σ↑・L↑ で安全在庫↑</li>
+      <li>❸ ABC分析：A＝定期（厳密）／B＝定量／C＝<strong>ダブルビン（簡易）</strong></li>
+    </ul>
+  </div>
+
+  <div class="fill-area" id="fill_basic">
+    <div class="fill-title">📝 基本タブ穴埋め</div>
+    <div style="text-align:center;margin:.6rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:#7b1fa2;margin-right:.4rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab2')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-q">Q1. 年間総費用 TC = (D/Q)·S ＋ (<span class="fill-blank">Q/2</span>)·H。第2項は平均在庫×保管費単価。</div>
+    <div class="fill-q">Q2. 需要量Dが4倍になると EOQ は <span class="fill-blank">2</span> 倍。</div>
+    <div class="fill-q">Q3. 安全在庫 = 安全係数 × <span class="fill-blank">σ</span> × √<span class="fill-blank">L</span>。</div>
+    <div class="fill-q">Q4. サービス率 95% に対応する安全係数 k は約 <span class="fill-blank">1.65</span>。</div>
+    <div class="fill-q">Q5. 在庫回転率 = <span class="fill-blank">年間出庫量</span> ÷ 平均在庫。</div>
+    <div class="fill-q">Q6. ABC分析でA群の管理方式は <span class="fill-blank">定期発注</span>、C群は <span class="fill-blank">ダブルビン</span>。</div>
+    <div class="fill-q">Q7. 定期発注の発注量 = (発注間隔＋調達期間)中の予測需要 ＋ 安全在庫 − <span class="fill-blank">現在庫</span> − <span class="fill-blank">発注残</span>。</div>
+    <div class="fill-q">Q8. インフレ時、払出原価が最大になるのは <span class="fill-blank">後入先出（LIFO）</span> 法。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_basic')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 3: 詳細 ========== -->
+<div class="tab-panel" id="tab3">
+  <div class="tab-header h-purple">
+    <div class="emoji">📕</div>
+    <h2>詳細：得点を上積みする周辺論点</h2>
+    <div class="tagline">EOQ拡張・複合出題・2次想起</div>
+  </div>
+
+  <h3>EOQ公式の導出</h3>
+  <p class="crossref">🔁 <strong>R05追-8 で総費用最小化条件が直球</strong>で問われた。</p>
+  <div class="formula">TC(Q) = DS/Q + QH/2<br>dTC/dQ = −DS/Q² + H/2 = 0<br>Q² = 2DS/H　→　<span class="big">Q* = √(2DS/H)</span></div>
+  <p>「微分＝0」を経由せず、<span class="hl-y">発注費年額＝保管費年額</span>の式から直接導く方法もある：DS/Q = QH/2 → Q² = 2DS/H。</p>
+
+  <h3>数量割引（拡張EOQ）</h3>
+  <table>
+    <tr><th>条件</th><th>判定</th></tr>
+    <tr><td>EOQが割引下限以上</td><td>EOQで発注</td></tr>
+    <tr><td>EOQが割引下限未満</td><td>割引下限ロットと EOQ を<strong>総費用比較</strong>して安い方</td></tr>
+  </table>
+  <p>総費用 = 購入費(D×単価) + 発注費(D/Q×S) + 保管費(Q/2×H)。<strong>購入費の差</strong>を含めて比較するのがミソ。</p>
+
+  <h3>EOQ vs 定期発注方式の総合比較表</h3>
+  <table>
+    <tr><th>観点</th><th>定量発注（EOQ）</th><th>定期発注</th><th>ダブルビン</th></tr>
+    <tr><td>発注時期</td><td>発注点到達時</td><td>固定周期</td><td>箱が空になった時</td></tr>
+    <tr><td>発注量</td><td>固定（=EOQ）</td><td>変動（毎回計算）</td><td>固定（箱1個分）</td></tr>
+    <tr><td>在庫量チェック</td><td><span class="hl-r">常時必要</span></td><td>周期ごと</td><td>不要（目視）</td></tr>
+    <tr><td>需要変動への適応</td><td>低</td><td><span class="hl-g">高</span></td><td>低</td></tr>
+    <tr><td>管理コスト</td><td>中</td><td>高</td><td><span class="hl-g">低</span></td></tr>
+    <tr><td>適合品目</td><td>B群</td><td>A群（高額・変動）</td><td>C群（低額）</td></tr>
+  </table>
+  <p class="exam-pt">📝 <strong>【1次・2次】試験ポイント</strong>：【1次】<span class="year-tag r">R03-12</span>3方式の使い分け。【2次】事例IIIでは<strong>「需要変動が大きい主要部品はA群＝定期発注で需要予測を反映」「汎用ボルトはダブルビンで管理工数削減」</strong>がド定番の改善提案。</p>
+
+  <h3>安全在庫の応用（公式拡張）</h3>
+  <table>
+    <tr><th>条件</th><th>安全在庫の式</th></tr>
+    <tr><td>需要のみ変動</td><td>k × σ_d × √L</td></tr>
+    <tr><td>調達期間も変動</td><td>k × √(L·σ_d² ＋ d²·σ_L²)</td></tr>
+    <tr><td>定期発注方式（発注間隔T）</td><td>k × σ_d × √(T+L)</td></tr>
+  </table>
+  <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：定期発注では<strong>「発注間隔T」も加わる</strong>ため安全在庫は定量よりも<strong>多め</strong>になる傾向。これは正肢頻出。</p>
+
+  <h3>在庫評価の影響（R05追-7深掘り）</h3>
+  <table>
+    <tr><th>局面</th><th>FIFO</th><th>LIFO</th><th>移動平均</th></tr>
+    <tr><td>インフレ時の利益</td><td><span class="hl-r">高</span></td><td><span class="hl-g">低</span></td><td>中</td></tr>
+    <tr><td>インフレ時の期末在庫</td><td>高（新しい単価）</td><td>低（古い単価）</td><td>中</td></tr>
+    <tr><td>キャッシュフロー（税考慮）</td><td>不利（税多い）</td><td>有利（税少ない）</td><td>中</td></tr>
+    <tr><td>日本での税法</td><td>OK</td><td><span class="hl-r">廃止（H21年度〜）</span></td><td>OK</td></tr>
+  </table>
+  <p class="trap">⚠️ <strong>【1次】引っかけ</strong>：日本ではLIFOが<strong>税法上は廃止</strong>。ただし<strong>1次試験では計算問題として登場することがある</strong>ので計算手順は覚えておく。</p>
+
+  <h3>動的計画法の解き方（R05追-15）</h3>
+  <p class="crossref">🔁 <strong>各期の需要が異なる時のロットサイジング</strong>。表を埋めて総費用最小を求める。</p>
+  <div class="example">
+    <div class="example-title">💡 解法手順（Wagner-Whitin的考え方）</div>
+    <div class="example-step">① 各期の需要量・発注費・保管費単価を確認</div>
+    <div class="example-step">② 「期iで発注 → 期jまで賄う」パターンの総費用を全組合せで計算</div>
+    <div class="example-step">③ 動的計画の漸化式 f(j) = min{f(i−1) + C(i,j)} で最小総費用を更新</div>
+    <div class="example-step">④ 最適発注期と発注量を逆引き</div>
+    <div class="ans">試験では4〜6期程度で表が与えられ、空欄を埋める形式が多い</div>
+  </div>
+
+  <h3>2次試験への接続（事例III想起）</h3>
+  <p class="exam-pt">📝 <strong>【2次】採点キーワード</strong>：<strong>適正在庫水準／発注点見直し／安全在庫の再設定／ABC分析による管理レベル区分／需要予測精度の向上／在庫回転率の改善／死蔵在庫の特定</strong>。事例IIIで<strong>「資材担当の経験頼み発注」「欠品と過剰在庫の併発」</strong>が与件に書かれた瞬間、本論点へ。</p>
+
+  <div class="support">
+    <span class="support-icon">💡</span>
+    <div class="support-body"><span class="support-name">2次の典型ストーリー</span>
+    事例III典型：「経験頼みで発注している→需要のばらつきσを定量化→<strong>ABC分析で品目区分</strong>→A群は<strong>定期発注で需要予測連動</strong>、B群は<strong>定量発注（EOQ）</strong>、C群は<strong>ダブルビン</strong>→欠品と過剰在庫を同時に削減」というシナリオが王道。</div>
+  </div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ 今日のこれだけ覚えて（詳細）</div>
+    <ul>
+      <li>❶ EOQ導出は<strong>「発注費年額=保管費年額」</strong>から Q² = 2DS/H</li>
+      <li>❷ 定期発注の安全在庫は <strong>k×σ×√(T+L)</strong>。発注間隔Tぶん多くなる</li>
+      <li>❸ 数量割引判定は<strong>購入費を含めた総費用比較</strong>で決める</li>
+    </ul>
+  </div>
+
+  <div class="fill-area" id="fill_detail">
+    <div class="fill-title">📝 詳細タブ穴埋め</div>
+    <div style="text-align:center;margin:.6rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#7b1fa2;margin-right:.4rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-q">Q1. EOQ導出の定常条件は <span class="fill-blank">発注費年額</span> ＝ 保管費年額。</div>
+    <div class="fill-q">Q2. 数量割引の判定では総費用に <span class="fill-blank">購入費</span> を含めて比較する。</div>
+    <div class="fill-q">Q3. 定期発注方式の安全在庫式は k × σ × √(<span class="fill-blank">T + L</span>)。</div>
+    <div class="fill-q">Q4. 動的発注計画では <span class="fill-blank">期首在庫</span> ＋ 発注量 − 需要量 ＝ 期末在庫の漸化式を使う。</div>
+    <div class="fill-q">Q5. インフレ局面で利益が最大になる在庫評価法は <span class="fill-blank">先入先出（FIFO）</span>。</div>
+    <div class="fill-q">Q6. 2次事例IIIで「経験頼み発注」を改善する王道は ABC分析→A群は <span class="fill-blank">定期</span> 発注、C群は <span class="fill-blank">ダブルビン</span>。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_detail')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 4: 語呂まとめ ========== -->
+<div class="tab-panel" id="tab4">
+  <div class="tab-header h-green">
+    <div class="emoji">🎵</div>
+    <h2>語呂まとめ</h2>
+  </div>
+
+  <h3>① EOQ公式</h3>
+  <div class="goro-row"><span class="goro-chip">「<strong>2DSのHで割って√</strong>」<small>√(2DS/H)</small></span></div>
+  <div class="goro-row"><span class="goro-chip">「<strong>発保バランス</strong>」<small>EOQ点で発注費年額＝保管費年額</small></span></div>
+
+  <h3>② 感応度</h3>
+  <div class="goro-row"><span class="goro-chip">「<strong>D・S増は√増、H増は√減</strong>」<small>分子分母どちらも√で効く</small></span></div>
+
+  <h3>③ 発注方式3兄弟</h3>
+  <div class="goro-row"><span class="goro-chip">「<strong>テイテイダブ</strong>」<small>定量・定期・ダブルビン</small></span></div>
+  <div class="goro-row"><span class="goro-chip">「<strong>A定期・B定量・Cダブル</strong>」<small>ABC×発注方式</small></span></div>
+
+  <h3>④ 安全在庫</h3>
+  <div class="goro-row"><span class="goro-chip">「<strong>kシグマルートL</strong>」<small>k × σ × √L</small></span></div>
+  <div class="goro-row"><span class="goro-chip">サービス率「<strong>9割イチニッパ・95イチロクゴ・99ニッサンサン</strong>」<small>k=1.28/1.65/2.33</small></span></div>
+
+  <h3>⑤ 在庫評価</h3>
+  <div class="goro-row"><span class="goro-chip">「<strong>古い順FIFO・新しい順LIFO・都度移動</strong>」</span></div>
+  <div class="goro-row"><span class="goro-chip">インフレ「<strong>FIFO儲け、LIFO節税</strong>」<small>FIFO=利益高／LIFO=利益低</small></span></div>
+
+  <h3>⑥ 在庫指標</h3>
+  <div class="goro-row"><span class="goro-chip">「<strong>回転は出÷在</strong>」<small>在庫回転率＝年間出庫÷平均在庫</small></span></div>
+</div>
+
+<!-- ========== Tab 5: 語呂穴埋め ========== -->
+<div class="tab-panel" id="tab5">
+  <div class="tab-header h-teal">
+    <div class="emoji">🔤</div>
+    <h2>語呂穴埋め</h2>
+  </div>
+  <div class="fill-area" id="fill_goro">
+    <div class="fill-q">Q1. EOQ ＝ √(<span class="fill-blank">2DS/H</span>)</div>
+    <div class="fill-q">Q2. 「テイテイダブ」＝<span class="fill-blank">定量</span>・<span class="fill-blank">定期</span>・ダブルビン</div>
+    <div class="fill-q">Q3. ABC分析の対応：A＝定期、B＝定量、C＝<span class="fill-blank">ダブルビン</span></div>
+    <div class="fill-q">Q4. 安全在庫式「kシグマルート<span class="fill-blank">L</span>」</div>
+    <div class="fill-q">Q5. サービス率95%の安全係数 k ≒ <span class="fill-blank">1.65</span></div>
+    <div class="fill-q">Q6. インフレ「<span class="fill-blank">FIFO</span>儲け、<span class="fill-blank">LIFO</span>節税」</div>
+    <div class="fill-q">Q7. 在庫回転率 ＝ <span class="fill-blank">出庫</span> ÷ 在庫</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_goro')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 6: 穴埋め初級 ========== -->
+<div class="tab-panel" id="tab6">
+  <div class="tab-header h-blue">
+    <div class="emoji">🟢</div>
+    <h2>穴埋め初級</h2>
+  </div>
+  <div class="fill-area" id="fill_lv1">
+    <div class="fill-q">Q1. EOQは <span class="fill-blank">経済的発注量</span> の略で、年間総費用が最小となる発注量。</div>
+    <div class="fill-q">Q2. EOQ ＝ √(2DS ÷ <span class="fill-blank">H</span>)。</div>
+    <div class="fill-q">Q3. 発注方式は定量・<span class="fill-blank">定期</span>・ダブルビンの3つ。</div>
+    <div class="fill-q">Q4. 在庫が <span class="fill-blank">発注点</span> まで減ったら一定量を発注するのが定量発注方式。</div>
+    <div class="fill-q">Q5. ダブルビン方式は箱を <span class="fill-blank">2</span> つ用意する簡易方式。</div>
+    <div class="fill-q">Q6. 安全在庫は需要の <span class="fill-blank">ばらつき</span> に備える保険在庫。</div>
+    <div class="fill-q">Q7. ABC分析でA群は <span class="fill-blank">金額シェア</span> が大きい。</div>
+    <div class="fill-q">Q8. 在庫回転率 ＝ 年間出庫量 ÷ <span class="fill-blank">平均在庫</span>。</div>
+    <div class="fill-q">Q9. 顧客サービス率 ＝ <span class="fill-blank">満たせた注文</span> ÷ 注文総数。</div>
+    <div class="fill-q">Q10. 先入先出法は <span class="fill-blank">古い</span> 単価から払出する方法。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_lv1')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 7: 穴埋め中級 ========== -->
+<div class="tab-panel" id="tab7">
+  <div class="tab-header h-purple">
+    <div class="emoji">🟡</div>
+    <h2>穴埋め中級</h2>
+  </div>
+  <div class="fill-area" id="fill_lv2">
+    <div class="fill-q">Q1. EOQの前提：①需要 <span class="fill-blank">一定</span>、②調達期間一定、③欠品 <span class="fill-blank">なし</span>、④数量割引なし。</div>
+    <div class="fill-q">Q2. 需要量Dが2倍になるとEOQは <span class="fill-blank">√2</span> 倍になる。</div>
+    <div class="fill-q">Q3. 発注点 ＝ 調達期間中の平均需要 ＋ <span class="fill-blank">安全在庫</span>。</div>
+    <div class="fill-q">Q4. 安全在庫 ＝ 安全係数 × σ × √<span class="fill-blank">L</span>（Lは調達期間）。</div>
+    <div class="fill-q">Q5. サービス率99%の安全係数は約 <span class="fill-blank">2.33</span>。</div>
+    <div class="fill-q">Q6. 定期発注方式の発注量 = (T+L)中需要 ＋ 安全在庫 − <span class="fill-blank">現在庫</span> − 発注残。</div>
+    <div class="fill-q">Q7. 在庫日数 ＝ <span class="fill-blank">365</span> ÷ 在庫回転率。</div>
+    <div class="fill-q">Q8. ABC分析でA群の管理は <span class="fill-blank">定期発注</span>、B群は定量発注、C群は <span class="fill-blank">ダブルビン</span> が一般的。</div>
+    <div class="fill-q">Q9. 移動平均法は受入の <span class="fill-blank">都度</span> 平均単価を更新する。</div>
+    <div class="fill-q">Q10. 動的発注計画は需要が <span class="fill-blank">期ごと</span> に異なる場合に用いる。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_lv2')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 8: 穴埋め上級 ========== -->
+<div class="tab-panel" id="tab8">
+  <div class="tab-header h-red">
+    <div class="emoji">🔴</div>
+    <h2>穴埋め上級</h2>
+  </div>
+  <div class="fill-area" id="fill_lv3">
+    <div class="fill-q">Q1. 年間総費用 TC = (D/Q)·S + (Q/2)·H を最小化する Q ＝ <span class="fill-blank">√(2DS/H)</span>。</div>
+    <div class="fill-q">Q2. 最小総費用は <span class="fill-blank">√(2DSH)</span>。</div>
+    <div class="fill-q">Q3. 調達期間も変動する場合の安全在庫 ＝ k × √(L·σ_d² ＋ <span class="fill-blank">d²·σ_L²</span>)。</div>
+    <div class="fill-q">Q4. 定期発注方式の安全在庫は k × σ × √(<span class="fill-blank">T+L</span>) で、定量発注より一般に <span class="fill-blank">大きい</span>。</div>
+    <div class="fill-q">Q5. 数量割引判定では総費用に <span class="fill-blank">購入費</span>（D × 単価）を含めて比較する。</div>
+    <div class="fill-q">Q6. インフレ時、利益が最大になる在庫評価法は <span class="fill-blank">FIFO（先入先出）</span> 法。</div>
+    <div class="fill-q">Q7. 期首在庫100個@100円、受入50個@120円、払出80個（FIFO）の払出原価 ＝ <span class="fill-blank">8,000</span> 円。</div>
+    <div class="fill-q">Q8. 動的発注計画の Wagner-Whitin 法は <span class="fill-blank">動的計画法</span> で最適解を求める。</div>
+    <div class="fill-q">Q9. 2次事例IIIの定番改善は <span class="fill-blank">ABC分析</span> による品目区分→管理方式の使い分け。</div>
+    <div class="fill-q">Q10. R07-32 で「安全在庫を増やすには <span class="fill-blank">サービス率</span> を高める／需要のばらつきが大きい／調達期間が長い」が正肢。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_lv3')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 9: 事例 ========== -->
+<div class="tab-panel" id="tab9">
+  <div class="tab-header h-indigo">
+    <div class="emoji">📋</div>
+    <h2>事例：1次計算題＆2次事例III想起</h2>
+  </div>
+
+  <div class="case-box">
+    <div class="case-title">事例1：EOQ計算（R05-11/R05追-8類題）</div>
+    <p>年間需要 D=10,000個／1回発注費 S=2,000円／1個年間保管費 H=100円。EOQと最小総費用を求めよ。</p>
+    <p><strong>解</strong>：EOQ = √(2×10,000×2,000÷100) = √400,000 = <strong>632個</strong>（≒）。最小総費用 = √(2DSH) = √(2×10,000×2,000×100) = √4×10⁹ ≒ <strong>63,246円</strong>。</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-title">事例2：感応度（R05-11類題）</div>
+    <p>D が4倍に、S が4倍に、H が変わらない時、EOQ は何倍？</p>
+    <p><strong>解</strong>：EOQ ∝ √(DS)。D・Sともに4倍 → DS は16倍 → √16 = <strong>4倍</strong>。</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-title">事例3：定期発注の発注量（R07-32類題）</div>
+    <p>発注間隔 T=2週・調達期間 L=1週・週次平均需要 100個・需要σ=20個・サービス率95%（k=1.65）・現在庫 150個・発注残 50個。発注量は？</p>
+    <p><strong>解</strong>：(T+L)中需要 = 100×3 = 300。安全在庫 = 1.65×20×√3 ≒ 57。発注量 = 300+57 − 150 − 50 = <strong>157個</strong>。</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-title">事例4：2次事例III想定（C社の在庫過多）</div>
+    <p>C社では資材担当の経験で発注しており、一部部品で欠品、別部品で過剰在庫が発生している。改善提案を述べよ。</p>
+    <p><strong>解答骨子</strong>：①<strong>ABC分析</strong>で部品を金額・出庫頻度で区分／②A群は<strong>定期発注</strong>で需要予測を毎期反映／③B群は<strong>EOQ＋発注点（定量発注）</strong>／④C群は<strong>ダブルビン</strong>で管理工数削減／⑤過去の出庫データから安全在庫を <strong>k×σ×√L</strong> で再設定 → 欠品率改善・在庫回転率向上。</p>
+    <p class="exam-pt">📝 採点キーワード【2次】：<strong>ABC分析／定期発注／定量発注／ダブルビン／安全在庫の再設定／在庫回転率／欠品率</strong></p>
+  </div>
+
+  <div class="fill-area" id="fill_case">
+    <div class="fill-title">📝【1次・2次】事例からの試験ポイント穴埋め</div>
+    <div class="fill-q">Q1. D=10,000・S=2,000・H=100 のEOQは <span class="fill-blank">632</span> 個（√400,000）。</div>
+    <div class="fill-q">Q2. D・S が同時に4倍になるとEOQは <span class="fill-blank">4</span> 倍。</div>
+    <div class="fill-q">Q3. 定期発注で現在庫・発注残を引き忘れると <span class="fill-blank">過剰</span> 発注になる。</div>
+    <div class="fill-q">Q4. 2次事例IIIの王道改善は <span class="fill-blank">ABC分析</span> ＋ 方式使い分け。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_case')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 10: クイズ ========== -->
+<div class="tab-panel" id="tab10">
+  <div class="tab-header h-orange">
+    <div class="emoji">❓</div>
+    <h2>クイズ（直近5年9問ベース）</h2>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q1【R05-11類題】EOQの性質として誤っているのは？</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">A. 需要量Dが4倍になるとEOQは2倍</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">B. 発注費Sが2倍になるとEOQは√2倍</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,true,'q1')">C. 保管費単価Hが2倍になるとEOQも2倍</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">D. EOQ点では年間発注費＝年間保管費</div>
+    <div class="quiz-ans" id="q1">正解：C（誤り）。Hが2倍だとEOQは1/√2倍（減る）。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q2【R03-12類題】ダブルビン方式の説明として正しいのは？</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">A. 高額品に向く厳密な定期発注の派生形</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,true,'q2')">B. 定量発注の簡易版で、低額・大量の品目（C群）に向く</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">C. 動的計画法で最適発注量を都度決める</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">D. 在庫を毎日カウントする</div>
+    <div class="quiz-ans" id="q2">正解：B。箱を2つ用意し、1つ目が空になったら箱1個分を発注する簡易管理方式。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q3【R07-32類題】安全在庫が増える条件として誤っているのは？</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">A. 需要のばらつき σ が大きい</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">B. 調達期間 L が長い</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">C. サービス率を高めに設定する</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,true,'q3')">D. 安全係数 k を小さくする</div>
+    <div class="quiz-ans" id="q3">正解：D（誤り）。k を小さくすると安全在庫は減る。サービス率↑＝k↑＝安全在庫↑。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q4【R06-15類題】ABC分析でA群の典型的な管理方式は？</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,true,'q4')">A. 定期発注（厳密に需要予測を反映）</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">B. ダブルビン方式（簡易管理）</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">C. 在庫管理せず欠品時に発注</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">D. 移動平均で評価のみ</div>
+    <div class="quiz-ans" id="q4">正解：A。A群は金額シェアが大きく、突発故障時の影響も大きいため厳密管理が必要。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q5【R05追-7類題】インフレ局面で払出原価が最大になる在庫評価法は？</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">A. 先入先出法</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,true,'q5')">B. 後入先出法</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">C. 移動平均法</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">D. 個別法</div>
+    <div class="quiz-ans" id="q5">正解：B。新しい（高い）単価から払出すため、払出原価が最大、利益が最小になる。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q6【R04-12類題】在庫回転率の式として正しいのは？</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">A. 平均在庫 ÷ 年間出庫量</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,true,'q6')">B. 年間出庫量 ÷ 平均在庫</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">C. 期末在庫 ÷ 売上</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">D. 売上 ÷ 期首在庫</div>
+    <div class="quiz-ans" id="q6">正解：B。分子分母を逆にする引っかけが頻出。在庫が早く回るほど効率良い＝回転率高い。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q7【R04-10類題】定量発注方式と定期発注方式に共通して必要なものは？</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">A. 需要のばらつきの定量化のみ定量で必要</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,true,'q7')">B. 安全在庫の設定（両方とも必要）</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">C. 動的計画法による最適化</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,false)">D. 数量割引の活用</div>
+    <div class="quiz-ans" id="q7">正解：B。安全在庫は両方式で必要。式は異なる（定量はk·σ·√L、定期はk·σ·√(T+L)）。</div>
+  </div>
+</div>
+
+<!-- ========== Tab 11: 実例 ========== -->
+<div class="tab-panel" id="tab11">
+  <div class="tab-header h-teal">
+    <div class="emoji">🏭</div>
+    <h2>実例：直近5年9問の出題現物</h2>
+  </div>
+
+  <table>
+    <tr><th>年度</th><th>テーマ</th><th>論点キーワード</th></tr>
+    <tr><td><span class="year-tag r">R07-32</span></td><td>在庫管理・発注方式</td><td>安全在庫／安全係数／ダブルビン／定期発注／発注点</td></tr>
+    <tr><td><span class="year-tag r">R06-15</span></td><td>在庫管理（ABC分析）</td><td>ABC分析／定期発注／原材料在庫／突発故障</td></tr>
+    <tr><td><span class="year-tag r">R05-11</span></td><td>EOQの性質</td><td>EOQ／在庫保管費／発注費／最適発注量</td></tr>
+    <tr><td><span class="year-tag r">R05追-7</span></td><td>在庫評価</td><td>後入先出法／移動平均法／先入先出法／在庫価値</td></tr>
+    <tr><td><span class="year-tag r">R05追-8</span></td><td>EOQ総費用式</td><td>EOQ／総費用／発注費／保管費</td></tr>
+    <tr><td><span class="year-tag r">R05追-15</span></td><td>動的発注計画</td><td>最適発注計画／発注費／保管費／予測需要量</td></tr>
+    <tr><td><span class="year-tag r">R04-10</span></td><td>発注方式（安全在庫・EOQ）</td><td>発注点／発注量／安全在庫／累積入荷数量</td></tr>
+    <tr><td><span class="year-tag r">R04-12</span></td><td>在庫管理用語</td><td>サービス率／在庫回転率／在庫引当／返品率</td></tr>
+    <tr><td><span class="year-tag r">R03-12</span></td><td>発注方式</td><td>ダブルビン／定量発注／定期発注／発注点／調達期間</td></tr>
+  </table>
+
+  <h3>R05-11／R05追-8 EOQ性質と総費用</h3>
+  <p class="judge">🎯 <strong>解法</strong>：「需要4倍→EOQ2倍（√4倍）」「EOQ点で年間発注費＝年間保管費」「総費用最小値=√(2DSH)」を覚える。</p>
+
+  <h3>R07-32 安全在庫</h3>
+  <p class="judge">🎯 <strong>解法</strong>：安全在庫は <strong>k·σ·√L</strong>。k（サービス率）↑、σ↑、L↑ で増える。</p>
+
+  <h3>R03-12 発注方式の使い分け</h3>
+  <p class="judge">🎯 <strong>解法</strong>：定量＝発注点でEOQ／定期＝周期で都度量／ダブルビン＝定量の簡易版。</p>
+
+  <h3>R06-15 ABC分析</h3>
+  <p class="judge">🎯 <strong>解法</strong>：A群は定期発注で重点管理／B群は定量／C群はダブルビン。</p>
+
+  <h3>R05追-7 在庫評価</h3>
+  <p class="judge">🎯 <strong>解法</strong>：FIFO=古い単価で払出（インフレで利益高）／LIFO=新単価（利益低）／移動平均=都度更新。</p>
+
+  <div class="fill-area" id="fill_real">
+    <div class="fill-title">📝【1次】実例からの試験ポイント穴埋め</div>
+    <div class="fill-q">Q1. R05-11 EOQ点では年間発注費 ＝ 年間 <span class="fill-blank">保管費</span>。</div>
+    <div class="fill-q">Q2. R05追-8 最小総費用 ＝ √(<span class="fill-blank">2DSH</span>)。</div>
+    <div class="fill-q">Q3. R07-32 安全在庫を増やす要因：σ↑・L↑・<span class="fill-blank">サービス率</span>↑。</div>
+    <div class="fill-q">Q4. R06-15 A群の管理方式は <span class="fill-blank">定期発注</span>。</div>
+    <div class="fill-q">Q5. R03-12 ダブルビン方式は <span class="fill-blank">定量発注</span> 方式の簡易版。</div>
+    <button class="fill-reveal-btn" onclick="revealBlanks('fill_real')">👁 答えを見る</button>
+  </div>
+</div>
+
+<!-- ========== Tab 12: 図解 ========== -->
+<div class="tab-panel" id="tab12">
+  <div class="tab-header h-brown">
+    <div class="emoji">📊</div>
+    <h2>図解：在庫管理の全体像</h2>
+  </div>
+
+  <h3>① EOQのU字グラフ</h3>
+  <div class="diagram">年間費用
+  ↑
+  │  ＼              ／  ← 総費用 (U字)
+  │   ＼            ／
+  │    ＼      ／              ← 保管費 (Q/2·H)
+  │     ╲   ／
+  │      ╳←━━━ EOQ点（発注費＝保管費）
+  │     ／  ╲
+  │   ／      ＼━━━━━━━━━━━━ 発注費 (D/Q·S)
+  │ ／
+  └──────────────────→ 発注量 Q
+       Q* = √(2DS/H)</div>
+
+  <h3>② 定量発注（ノコギリ波）</h3>
+  <div class="diagram">在庫
+ ↑
+ │ ＼      ＼      ＼
+ │   ＼      ＼      ＼   ←傾き=平均需要
+ │     ＼      ＼      ＼
+ │ ─ ─＼─ ─ ─＼─ ─ ─＼─ ─ 発注点
+ │       ＼      ＼      ＼
+ │ ─ ─ ─ ─＼─ ─ ─＼─ ─ ─＼ 安全在庫
+ │           ＼     ＼     ＼
+ └─────────────────→ 時間
+       ↑    ↑    ↑   発注タイミング
+   発注点で発注、量はEOQで一定</div>
+
+  <h3>③ 定期発注（凸凹波）</h3>
+  <div class="diagram">在庫
+ ↑     T     T     T   ← 一定周期
+ │ ＼     ＼     ＼
+ │   ＼     ＼     ＼
+ │ ─ ─＼─ ─ ─＼─ ─ ─＼─ 安全在庫
+ │      ＼      ＼      ＼
+ └─────────────────→ 時間
+   ↑     ↑     ↑   発注タイミング（T間隔）
+   量は毎回計算（需要予測ベース）</div>
+
+  <h3>④ ABC分析（パレート図）</h3>
+  <div class="diagram">累積金額%
+100│            ━━━━━━━━━━ ← C群
+   │       ━━━━━
+ 95│   ━━━ ←B群境界
+   │ ━━ ←A群境界
+ 80│━
+   │
+   └──────────────────→ 累積品目数%
+     20    50   100
+   A群   B群    C群
+   定期  定量  ダブルビン</div>
+
+  <h3>⑤ 主要公式整理</h3>
+  <table>
+    <tr><th>項目</th><th>式</th></tr>
+    <tr><td>EOQ</td><td>√(2DS/H)</td></tr>
+    <tr><td>年間総費用</td><td>(D/Q)·S + (Q/2)·H</td></tr>
+    <tr><td>最小総費用</td><td>√(2DSH)</td></tr>
+    <tr><td>発注点</td><td>調達期間中需要 ＋ 安全在庫</td></tr>
+    <tr><td>安全在庫（定量）</td><td>k × σ × √L</td></tr>
+    <tr><td>安全在庫（定期）</td><td>k × σ × √(T+L)</td></tr>
+    <tr><td>定期発注量</td><td>(T+L)中需要 ＋ 安全在庫 − 現在庫 − 発注残</td></tr>
+    <tr><td>在庫回転率</td><td>年間出庫量 ÷ 平均在庫</td></tr>
+    <tr><td>顧客サービス率</td><td>満たせた注文 ÷ 注文総数</td></tr>
+  </table>
+</div>
+
+<div class="back-link">
+  <p style="margin-bottom:.6rem">📚 関連リンク</p>
+  <a href="04.%E9%9C%80%E8%A6%81%E4%BA%88%E6%B8%AC%E3%81%A8%E7%B7%9A%E5%BD%A2%E8%A8%88%E7%94%BB%E6%B3%95%E3%81%BE%E3%81%A8%E3%82%81.html">↩ 元ノート（需要予測と線形計画法まとめ）</a>
+  <a href="index.html">🏠 運営管理 index</a>
+  <a href="../index.html">📖 全科目index</a>
+</div>
+
+<script>
+function showTab(i){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel')[i].classList.add('active');
+  document.querySelectorAll('.tab-btn')[i].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function revealBlanks(id){
+  document.querySelectorAll('#'+id+' .fill-blank').forEach(el=>el.classList.add('show'));
+}
+document.addEventListener('click',function(e){
+  const t=e.target;
+  if(t&&t.classList&&t.classList.contains('fill-blank')){t.classList.toggle('show');}
+});
+function revealAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(el=>el.classList.add('show'));
+  document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(b=>{b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});
+}
+function resetAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(el=>el.classList.remove('show'));
+  document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(b=>{b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});
+}
+function checkQuiz(el,correct,ansId){
+  const card = el.closest('.quiz-card');
+  card.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.style.pointerEvents='none'});
+  if(correct){el.classList.add('correct'); if(ansId) document.getElementById(ansId).classList.add('show');}
+  else{el.classList.add('wrong'); card.querySelectorAll('.quiz-opt').forEach(o=>{const ans=o.getAttribute('onclick'); if(ans&&ans.includes('true'))o.classList.add('correct')}); const ansEl=card.querySelector('.quiz-ans'); if(ansEl) ansEl.classList.add('show');}
+}
+</script>
+</body>
+</html>

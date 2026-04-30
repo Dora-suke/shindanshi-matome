@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>トランザクション管理（超初心者版・Part1：基礎理解編） - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.95;min-height:100vh;font-size:.95rem}
+.header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-main) 50%,#58d68d 100%);color:#fff;padding:.6rem 1rem;text-align:center}.header h1{font-size:1.05rem;font-weight:800;letter-spacing:.04em;margin-bottom:.1rem;display:inline-block;margin-right:.6rem}.header .subtitle{font-size:.72rem;opacity:.9;display:inline-block;margin-right:.5rem}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.1rem .55rem;border-radius:14px;font-size:.7rem}
+.partnav{background:#fff;padding:.6rem;text-align:center;font-size:.85rem;box-shadow:var(--shadow);margin-bottom:.5rem}.partnav a{display:inline-block;padding:.4rem 1rem;margin:0 .3rem;border-radius:6px;text-decoration:none;font-weight:700}.partnav .active{background:var(--green-main);color:#fff}.partnav .other{background:var(--gray-pale);color:var(--gray-dark)}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.7rem;margin:1.1rem 0}.bubble-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12);background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow);position:relative;max-width:88%;font-size:.95rem;line-height:1.95}.bubble-body::before{content:'';position:absolute;top:14px;left:-14px;width:0;height:0;border:8px solid transparent;border-right-color:var(--white)}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.74rem;font-weight:700;color:var(--gray-mid);margin-bottom:.3rem}
+.tab-container{max-width:960px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.85rem .35rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:2rem 1.6rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-purple{background:var(--purple-bg)}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}.tab-panel.theme-teal{background:var(--teal-light)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.15rem;font-weight:800;margin:2rem 0 1rem;padding:.6rem .9rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1.2rem 1.5rem;margin:1rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card-red{border-left-color:var(--red-main)}.card h4{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.card p{margin-bottom:.5rem}
+.alert-tip,.alert-exam,.alert-danger{border-radius:var(--radius);padding:.95rem 1rem .95rem 3rem;margin:1rem 0;position:relative;font-size:.92rem;line-height:1.85}.alert-tip::before,.alert-exam::before,.alert-danger::before{position:absolute;left:.8rem;top:.85rem;font-size:1.2rem}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"\1F4A1"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"\1F4DD"}.alert-danger{background:#fce4ec;border:1px solid #ef9a9a;color:#b71c1c}.alert-danger::before{content:"\26A0\FE0F"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:1rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e0e0e0}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.7rem 1.2rem;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center;min-width:80px;margin:.25rem}.flow-box small{display:block;font-weight:400;font-size:.74rem;opacity:.9;margin-top:.15rem}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.fb-gray{background:linear-gradient(135deg,#7f8c8d,#95a5a6)}.flow-arrow{font-size:1.3rem;margin:0 .35rem;font-weight:700;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.9rem}th,td{padding:.65rem .7rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}.tbl-green th{background:var(--green-main);color:#fff}.tbl-green tr:nth-child(even){background:var(--green-light)}.tbl-red th{background:var(--red-main);color:#fff}.tbl-red tr:nth-child(even){background:var(--red-light)}
+ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.mnemonic{background:linear-gradient(135deg,var(--purple-light),#fff);border:3px dashed var(--purple-main);border-radius:var(--radius);padding:1.4rem;margin:1rem 0;text-align:center}.mnemonic .big{font-size:1.3rem;font-weight:800;color:var(--purple-dark);margin-bottom:.4rem;letter-spacing:.08em}.mnemonic .desc{font-size:.92rem;color:var(--gray-mid)}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.7rem;align-items:center;margin:1rem 0}.vs-side{background:var(--white);border-radius:var(--radius);padding:1.2rem;text-align:center;box-shadow:var(--shadow)}.vs-side h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}.vs-mid{font-size:1.6rem;font-weight:800;color:var(--gray-mid);text-align:center}
+.footer{text-align:center;padding:1.8rem;color:var(--gray-light);font-size:.85rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}.fill-card .fill-header{padding:14px 20px;font-weight:700;font-size:.98rem;color:#fff}.fill-card .fill-header.bg-purple{background:var(--purple-main)}.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}.fill-card .fill-header.bg-red{background:var(--red-main)}.fill-card .fill-header.bg-teal{background:var(--teal-main)}
+.fill-card .fill-body{padding:20px 22px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:6px;font-size:.95rem;line-height:2.1}
+.rough{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.key-word{font-weight:700;color:#1565c0;background:#e3f2fd;padding:0 .35rem;border-radius:3px}
+.exam-pt{font-size:.86rem;margin-top:.5rem;color:#1565c0;background:#e3f2fd;padding:.5rem .75rem;border-radius:6px}
+.exam-warn{font-size:.86rem;margin-top:.4rem;color:#b71c1c;background:#fce4ec;padding:.5rem .75rem;border-radius:6px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.5rem .9rem;border-radius:20px;font-size:.85rem;font-weight:700;margin:.4rem .3rem .4rem 0;box-shadow:0 2px 6px rgba(142,68,173,.3)}.goro-chip::before{content:"\1F3B5 ";margin-right:.3rem}.goro-chip small{font-weight:400;opacity:.95;margin-left:.4rem;font-size:.78rem}
+.goro-row{margin:.6rem 0;padding:.5rem .7rem;background:#faf5fc;border-left:3px solid var(--purple-main);border-radius:4px}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.92rem;line-height:1.85}
+.support-icon{font-size:1.7rem;flex-shrink:0;line-height:1}
+.support-body{flex:1}.support-body strong{color:#e65100}.support-name{font-size:.72rem;font-weight:700;color:#bf360c;margin-bottom:.2rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.1rem 1.3rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}
+.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.keepit ul{list-style:none;padding:0;margin:0}
+.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.9rem;line-height:1.7}
+.keepit li strong{color:#1565c0}
+.quiz-item{background:#fff;border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-size:.9rem;font-weight:700;margin-bottom:.5rem}.quiz-question{font-weight:600;font-size:1rem;margin-bottom:.9rem;line-height:1.8}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.65rem .9rem;margin:.4rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;transition:all .2s;font-size:.93rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.8rem;padding:.9rem;border-radius:var(--radius-sm);font-size:.92rem;line-height:1.8}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}
+@media(max-width:600px){.two-col,.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg)}.tab-btn{font-size:.62rem;padding:.7rem .15rem}.bubble-body{max-width:80%}.tab-panel{padding:1.4rem 1rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>トランザクション管理（超初心者版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム</div>
+  <div class="badge">📘 Part1：基礎理解編（全8タブ）</div>
+</div>
+<div class="partnav">
+  <a class="active">📘 Part1：基礎理解（このページ）</a>
+  <a class="other" href="11.トランザクション管理まとめ_超初心者版_part2.html">📗 Part2：演習・詳細編 →</a>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">&#x1F423; ゼロから</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(1)">&#x1F331; 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">&#x1F4D8; 基本</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(3)">&#x1FA9C; 応用</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">&#x1F3B5; 語呂</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">&#x1F5FA;&#xFE0F; 図解</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">&#x270F;&#xFE0F; クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(7)">&#x270D;&#xFE0F; 穴埋め</button>
+  </nav>
+
+  <!-- ===== TAB 0: ゼロから ===== -->
+  <div class="tab-panel active theme-green" id="tab0">
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F4B0;</span> まず「銀行振込」を思い出して</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">はじめに</div>あなたが<strong>Aさんの口座から1万円</strong>を引いて、<strong>Bさんの口座へ1万円</strong>を入れる振込をしたとします。途中で停電が起きて「Aから引いた」だけ完了して「Bへ入れる」が消えたら…<strong>1万円が世の中から消えてしまう</strong>。</div></div>
+
+    <div class="card card-green"><h4>&#x1F4DD; だから「2つでセットの処理」と決めておく</h4>
+      <p>銀行は<strong>「両方成功するか、両方なかったことにするか」</strong>のどちらかしか許しません。これが<span class="key-word">トランザクション<span class="rough">ざっくり：DB（データベース）に対する一塊の処理単位</span></span>。</p>
+      <ul>
+        <li>&#x2705; 両方成功 → <strong>確定（コミット）</strong>して帳簿に記録</li>
+        <li>&#x274C; 途中で失敗 → <strong>取消（ロールバック）</strong>して全部なかったことに</li>
+      </ul>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「トランザクション」って横文字でうっ…ってなるよね、わかる！ でもね、要は<strong>「やるなら最後までやる、ダメなら無かったことにする」</strong>っていう、<strong>銀行振込の当たり前ルール</strong>を技術用語にしただけだよ。難しくないんだ〜。</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F34B;</span> 大事な4文字「ACID（アシッド）」</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>トランザクションが守るべき<strong>4つの性質</strong>。頭文字が<strong>ACID</strong>。覚え方は<strong>「アジトから ゲイツ 独立 したい」</strong>――👓ビル・ゲイツが暗いアジトから✊を掲げて脱出する妙な絵。「アジト」の字面がそのまま<strong>A・C・I・D</strong>になってるよ。</div></div>
+    <table class="tbl-green">
+      <tr><th>文字</th><th>正式名</th><th>家計簿で例えると</th></tr>
+      <tr><td><strong>A</strong></td><td>原子性<br>(Atomicity)</td><td><strong>「全部やるか0か」</strong>。引出と入金が片方だけ記帳されない</td></tr>
+      <tr><td><strong>C</strong></td><td>一貫性<br>(Consistency)</td><td><strong>「ルール違反を作らない」</strong>。残高がマイナスにならない等</td></tr>
+      <tr><td><strong>I</strong></td><td>独立性<br>(Isolation)</td><td><strong>「他人の処理に邪魔されない」</strong>。家族が同時に記帳しても1人ずつやったように見える</td></tr>
+      <tr><td><strong>D</strong></td><td>耐久性<br>(Durability)</td><td><strong>「記帳したら停電しても消えない」</strong>。台帳に残る</td></tr>
+    </table>
+    <div class="goro-row">
+      <span class="goro-chip">アジトから ゲイツ 独立 したい<small>👓ビル・ゲイツが脱出する絵</small></span>
+      <span class="goro-chip">ゲ＝原／イ＝一／独＝独／タ＝耐<small>4性質の頭文字</small></span>
+    </div>
+    <div style="background:#1a1a2e;border-radius:10px;padding:.6rem;margin:.6rem 0;text-align:center">
+      <svg viewBox="0 0 280 90" style="max-width:280px;width:100%">
+        <rect x="5" y="20" width="60" height="65" fill="#3d2817" stroke="#000"/>
+        <polygon points="5,20 35,5 65,20" fill="#5d3a1f" stroke="#000"/>
+        <text x="35" y="55" text-anchor="middle" fill="#ff6b6b" font-size="9" font-weight="bold">アジト</text>
+        <path d="M 65 50 Q 100 40 135 55" stroke="#ffd700" stroke-width="2.5" stroke-dasharray="4,3" fill="none" marker-end="url(#a2p1)"/>
+        <defs><marker id="a2p1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffd700"/></marker></defs>
+        <circle cx="160" cy="45" r="16" fill="#fdd9b5" stroke="#000"/>
+        <circle cx="155" cy="45" r="4.5" fill="rgba(200,230,255,.5)" stroke="#000" stroke-width="1.2"/>
+        <circle cx="166" cy="45" r="4.5" fill="rgba(200,230,255,.5)" stroke="#000" stroke-width="1.2"/>
+        <path d="M 156 53 Q 160 56 164 53" stroke="#000" stroke-width="1.2" fill="none"/>
+        <path d="M 148 65 L 172 65 L 175 88 L 145 88 Z" fill="#2c3e50" stroke="#000"/>
+        <text x="195" y="48" font-size="14">&#x270A;</text>
+        <text x="220" y="40" fill="#ffd700" font-size="11" font-weight="bold">独立！</text>
+        <text x="220" y="58" fill="#fff" font-size="9">＝独立性(I)</text>
+      </svg>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>ACIDの<strong>I（独立性）</strong>と<strong>D（耐久性）</strong>はちょっと混乱しやすいの。<strong>I＝同時にやってもケンカしない</strong>、<strong>D＝書いた後は消えない</strong>。「Iは横の人を気にしない／Dは時間に強い」って覚えるとスッキリ！</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F510;</span> なぜ「ロック（鍵）」が必要？</h2>
+    <div class="card card-green"><h4>&#x1F6D2; ECサイトの在庫1個の話</h4>
+      <p>あなたとお友達が<strong>同じ瞬間</strong>に、ネットショップの<strong>在庫1個の商品</strong>をカートに入れて購入ボタンを押した。両方とも「在庫1個ある」と読んでから「マイナス1」した結果…<strong>在庫が-1になって両方に売れてしまった</strong>。</p>
+      <p>この「上書き合戦」を防ぐため、誰かが処理中は<strong>鍵をかける</strong>。これが<span class="key-word">ロック<span class="rough">ざっくり：他の人が触れないように一時的に鍵をかける仕組み</span></span>＝<strong>排他制御</strong>。</p>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F6BB;</span><div class="support-body"><span class="support-name">救命メモ</span>ロックって難しそうだけど、要は<strong>トイレの鍵</strong>と同じ！ 誰か入ってる間はノックして待つ、出たら次の人。これだけ覚えとけばOK。</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x1F48D;</span> 「2相コミット」って何？</h2>
+    <div class="card card-green"><h4>&#x1F492; 結婚式の「誓いますか？」を思い出して</h4>
+      <p>結婚式では新郎・新婦の<strong>両方</strong>に「誓いますか？」と聞いて、<strong>両方が「誓います」</strong>と答えて初めて成立。片方でも「ちょっと待って…」なら式は中止。</p>
+      <p>これと同じで、<strong>複数のDB（データベース）にまたがる処理</strong>では「みんな準備OK？」「OK！」と<strong>2回確認</strong>してから一斉に確定する。これが<span class="key-word">2相コミット<span class="rough">ざっくり：分散したDBで「全員一致じゃないと実行しない」決め事</span></span>。</p>
+    </div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（ゼロから）</div>
+      <ul>
+        <li>&#x2776; トランザクション＝<strong>「全部やるか0か」</strong>の処理単位（銀行振込が典型）</li>
+        <li>&#x2777; 守る4性質の頭文字が<strong>ACID</strong>＝原子性・一貫性・独立性・耐久性</li>
+        <li>&#x2778; 同時実行で壊さないため<strong>ロック（鍵）</strong>、複数DBで揃えるため<strong>2相コミット</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">&#x270D;&#xFE0F;</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:.5rem">&#x1F50D; このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b">&#x1F504; リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-green">ゼロから・キホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・銀行振込のように「全部やるか0か」の処理単位＝<span class="fill-blank">トランザクション</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・守るべき4性質の頭文字＝<span class="fill-blank">ACID</span>。A＝<span class="fill-blank">原子性</span>／C＝<span class="fill-blank">一貫性</span>／I＝<span class="fill-blank">独立性</span>／D＝<span class="fill-blank">耐久性</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・同時実行を防ぐため鍵をかける＝<span class="fill-blank">ロック</span>（別名＝<span class="fill-blank">排他制御</span>）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・複数DBの整合を保つ「準備→確定の2段階確認」＝<span class="fill-blank">2相コミット</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+    <div class="alert-exam"><strong>ここまで理解できたら</strong>→「&#x1F331; 入門」タブへ！</div>
+  </div>
+
+  <!-- ===== TAB 1: 入門 ===== -->
+  <div class="tab-panel theme-purple" id="tab1">
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F4DC;</span> トランザクションの基本動作（始める→確定 or 取消）</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>家計簿に振込を記帳するときの流れと同じ。<strong>「これから書きます」→中身を書く→「書き終わり、確定！」</strong>の3段階で、もし途中で失敗したら全部消しゴムで消す。</div></div>
+    <div class="card card-purple"><h4>&#x1F4DD; 1トランザクション＝BEGIN〜COMMITで囲む</h4>
+      <p>SQL（Structured Query Language：DB操作言語）<span class="rough">ざっくり：DBにお願いごとを書く言葉</span>では、<strong>BEGIN（開始）</strong>から<strong>COMMIT（確定）</strong>または<strong>ROLLBACK（取消）</strong>までが1つのトランザクション。</p>
+      <ul>
+        <li><strong>COMMIT</strong>：処理結果を<strong>確定</strong>してDBに反映。以降は取消不能</li>
+        <li><strong>ROLLBACK</strong>：処理結果を<strong>無かったこと</strong>にする（BEGIN時点に戻す）</li>
+      </ul>
+    </div>
+    <div class="diagram"><div class="diagram-title">トランザクションの流れ（銀行振込の例）</div>
+      <div class="flow-row">
+        <div class="flow-box fb-gray">BEGIN<small>開始</small></div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-blue">A口座<br>−1万円</div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-blue">B口座<br>+1万円</div><span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-green">COMMIT<small>確定</small></div>
+      </div>
+      <p style="text-align:center;margin-top:.6rem;font-size:.85rem;color:var(--gray-mid)">途中エラーなら<strong>ROLLBACK</strong>で両方なかったことに（＝原子性）</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">&#x1F4E5; BEGIN→中身→COMMIT<small>確定の流れ</small></span><span class="goro-chip">&#x274C; ダメなら→ROLLBACK<small>取消で全部消す</small></span></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F510;</span> ロックの2種類：「読み」と「書き」で違う</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>図書館で<strong>本を読む</strong>のは何人で同時にやってもOK（覗き込んで一緒に読める）。でも<strong>本に書き込む</strong>のは1人ずつ順番にやらないとぐちゃぐちゃになる。これがロックの2種類。</div></div>
+    <div class="vs-box">
+      <div class="vs-side" style="border:2px solid var(--blue-main);"><h4 style="color:var(--blue-main);">&#x1F4D6; 共有ロック<span class="rough">読取用・複数OK</span></h4>
+        <p style="font-size:.88rem;"><strong>読むだけ</strong>のロック<br>別名：S（Shared）／読取ロック<br>複数人で同時取得OK<br>他人も<strong>読取はOK／書込はNG</strong></p>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side" style="border:2px solid var(--red-main);"><h4 style="color:var(--red-main);">&#x1F58A; 専有ロック<span class="rough">書込用・1人占有</span></h4>
+        <p style="font-size:.88rem;"><strong>書く前</strong>にかけるロック<br>別名：X（eXclusive）／排他ロック<br>1人占有<br>他人は<strong>読取も書込もNG</strong></p>
+      </div>
+    </div>
+    <div class="goro-row">
+      <span class="goro-chip">読みは仲良し<small>共有ロック=複数OK</small></span>
+      <span class="goro-chip">書きは独り占め<small>専有ロック=1人だけ</small></span>
+    </div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：「共有ロック同士は<strong>両立する</strong>／専有ロックは他のロックと両立しない」のロック両立表（H29-6, R02-8等で頻出）。</p>
+    <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「共有ロックは他人の書込を許す」は誤り。共有同士は読み合えるだけで、<strong>書込は阻止</strong>する。</p>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>「共有」と「専有」って漢字で見ると堅いけど、<strong>共有＝みんなで使う／専有＝1人で独占</strong>って単純な対義語！ ATMの順番待ちと一緒で、<strong>書き込み中は他の人を入れない</strong>のが鉄則だよ。</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F480;</span> デッドロック（互いにロック待ち）</h2>
+    <div class="card card-red"><h4>狭い廊下のすれ違いで動けなくなる現象</h4>
+      <p>Aさんが資源1をロックして資源2を待ち、Bさんが資源2をロックして資源1を待つ。お互い「先にどうぞ」と譲り合って<strong>永遠に進まない</strong>。これが<span class="key-word">デッドロック<span class="rough">ざっくり：互いにロック解放を待ち合って永遠に進まない状態</span></span>。</p>
+      <p><strong>対策</strong>：DBMS（Data Base Management System：DB管理ソフト）<span class="rough">ざっくり：データベースを動かす本体</span>が検知して片方を<strong>強制ロールバック</strong>させる。</p>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F6AA;</span><div class="support-body"><span class="support-name">先生からひとこと</span>狭い廊下ですれ違いで「お先にどうぞ」「いえ、お先に」が永遠に終わらない、あれだよ！ DBは「じゃあ君が下がって」と片方を巻き戻して解決する。<strong>強引に1人退場させる</strong>のがコツ。</div></div>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（入門）</div>
+      <ul>
+        <li>&#x2776; <strong>BEGIN→COMMIT/ROLLBACK</strong>でトランザクションを囲む</li>
+        <li>&#x2777; ロックは<strong>共有（読取・複数OK）／専有（書込・1人占有）</strong>の2種類</li>
+        <li>&#x2778; 互いに待ち合うのが<strong>デッドロック</strong>。DBMSが片方を強制ROLLBACK</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">&#x270D;&#xFE0F;</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:.5rem">&#x1F50D; このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b">&#x1F504; リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-purple">入門のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・トランザクションは<span class="fill-blank">BEGIN</span>で開始し、確定は<span class="fill-blank">COMMIT</span>、取消は<span class="fill-blank">ROLLBACK</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・読取用は<span class="fill-blank">共有</span>ロック（複数取得可）、書込用は<span class="fill-blank">専有</span>ロック（1人占有）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・互いがロック解放を待ち合って動けない状態を<span class="fill-blank">デッドロック</span>と呼ぶ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 基本 ===== -->
+  <div class="tab-panel theme-blue" id="tab2">
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F9EA;</span> ACID 4性質を1つずつ深掘り</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">&#x1F501; <strong>ゼロから・入門タブの「ACID」を深掘り</strong>。各性質がどう実現されているかを見る。</p>
+
+    <div class="card card-blue"><h4>A：原子性（Atomicity）＝「全部やるか0か」</h4>
+      <p><strong>定義</strong>：トランザクション内の処理は<strong>全て成功する</strong>か<strong>全て無かったことになる</strong>かのどちら。中途半端は許さない（All or Nothing）。</p>
+      <p><strong>実現方法</strong>：障害時に<strong>ログ（更新前情報）</strong>を使って<strong>UNDO（アンドゥ：取消処理）</strong>でROLLBACKする。</p>
+      <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：原子性＝「全部か0か」の言い換えを問う。<strong>「不可分性」</strong>とも訳される（H30-18, R03-18）。</p>
+      <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「原子性は同時実行を制御する性質」は誤り。同時実行制御は<strong>独立性（I）</strong>の役割。</p>
+    </div>
+
+    <div class="card card-blue"><h4>C：一貫性（Consistency）＝「ルール違反を作らない」</h4>
+      <p><strong>定義</strong>：実行<strong>前と後</strong>でDBの<strong>整合性ルール（残高&ge;0、外部キー、ユニーク等）</strong>が保たれる。</p>
+      <p><strong>実現方法</strong>：制約違反時は自動ROLLBACK。アプリ側のチェック＋DBMS側の制約。</p>
+      <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：「整合性」と「一貫性」を同義として扱う設問が頻出。</p>
+    </div>
+
+    <div class="card card-blue"><h4>I：独立性（Isolation）＝「他人に邪魔されない」</h4>
+      <p><strong>定義</strong>：複数のトランザクションが同時に動いても、<strong>1つずつ順番にやったのと同じ結果</strong>になる（直列化可能性＝Serializability）。</p>
+      <p><strong>実現方法</strong>：<strong>ロックによる排他制御</strong>。最近はMVCC（Multi-Version Concurrency Control：多版同時実行制御）<span class="rough">ざっくり：データを版で管理して読書をブロックしない方式</span>を使うDBMSも多い。</p>
+      <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：「独立性＝同時実行制御の性質」が問われる（R02-8, R05-14）。</p>
+      <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「独立性は障害時の復旧」は誤り。それは耐久性（D）の領域。</p>
+    </div>
+
+    <div class="card card-blue"><h4>D：耐久性（Durability）＝「COMMITしたら停電しても残る」</h4>
+      <p><strong>定義</strong>：COMMITしたトランザクションの結果は、<strong>その後の停電・ハードウェア故障があっても失われない</strong>。</p>
+      <p><strong>実現方法</strong>：COMMIT時点で<strong>ログをディスクに強制書込（WAL：Write-Ahead Logging：先行書込みログ）</strong>。障害時はログから<strong>REDO（リドゥ：再実行）</strong>で再現。</p>
+      <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：「COMMIT後は失われない」「ログにより回復可能」が問われる（H29-6）。</p>
+    </div>
+
+    <div class="goro-row">
+      <span class="goro-chip">原子は爆発、ALL OR ZERO<small>A=原子性</small></span>
+      <span class="goro-chip">一貫してルール守る<small>C=一貫性</small></span>
+      <span class="goro-chip">独立は邪魔されない<small>I=独立性</small></span>
+      <span class="goro-chip">耐久は壊れず残す<small>D=耐久性</small></span>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>ACIDの4文字、こうやって<strong>1つずつ「実現方法」とセット</strong>で見ると見え方が変わるよね。<strong>A＝UNDO／D＝REDO+WAL／I＝ロックorMVCC</strong>。<strong>C</strong>だけは「制約チェック」って独立した実装。Cは他とちょっと毛色が違う、って覚えとくと整理しやすい！</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F501;</span> 同時実行で起きる3つの異常</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">&#x1F501; <strong>入門タブの「ロックがなぜ必要か」を深掘り</strong>。何を防ぐためにロックがあるか。</p>
+    <div class="bubble-wrap"><div class="bubble-avatar">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>家計簿を家族3人で同時にいじったときに起きる「あれ？数字違う？」という怪奇現象3パターン。</div></div>
+    <table class="tbl-red">
+      <tr><th>異常名</th><th>家計簿で例えると</th><th>防ぎ方</th></tr>
+      <tr><td><strong>ダーティリード</strong><br>(Dirty Read)</td><td>未確定（鉛筆書き中）の数字を他人が読んでしまう。後でその人が消したら困る</td><td>READ COMMITTED 以上で防止</td></tr>
+      <tr><td><strong>ノンリピータブルリード</strong><br>(Non-Repeatable Read)</td><td>同じ行を2回読んだら、間に他人が<strong>更新</strong>して値が変わっていた</td><td>REPEATABLE READ 以上で防止</td></tr>
+      <tr><td><strong>ファントムリード</strong><br>(Phantom Read)</td><td>同じ条件で2回検索したら、間に<strong>挿入</strong>があり<strong>幽霊行</strong>が現れた</td><td>SERIALIZABLE で防止</td></tr>
+    </table>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：3つの異常名と発生メカニズム（H29-5, R04-10）。<strong>ファントム＝挿入が原因／ノンリピータブル＝更新が原因</strong>の区別が頻出。</p>
+    <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「ファントムリードは更新によって起きる」は誤り。<strong>挿入</strong>（または削除）によって起きる。</p>
+    <div class="goro-row"><span class="goro-chip">3つの異常「ダ・ノ・フ」<small>ダーティ・ノンリピ・ファントム</small></span><span class="goro-chip">ノンリピは更新／ファントムは挿入<small>原因が違う</small></span></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F39A;&#xFE0F;</span> 分離レベル4段階：厳しさを選べる</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">&#x1F501; <strong>入門タブのロック</strong>を、SQL標準の4段階で整理。下にいくほど「厳しい＝安全だが遅い」。</p>
+    <table class="tbl-purple">
+      <tr><th>分離レベル</th><th>ダーティ</th><th>ノンリピ</th><th>ファントム</th><th>性能</th></tr>
+      <tr><td>READ UNCOMMITTED</td><td>&#x274C;発生</td><td>&#x274C;</td><td>&#x274C;</td><td>最速</td></tr>
+      <tr><td>READ COMMITTED</td><td>&#x2B55;防止</td><td>&#x274C;</td><td>&#x274C;</td><td>速い</td></tr>
+      <tr><td>REPEATABLE READ</td><td>&#x2B55;</td><td>&#x2B55;防止</td><td>&#x274C;</td><td>中</td></tr>
+      <tr><td><strong>SERIALIZABLE</strong></td><td>&#x2B55;</td><td>&#x2B55;</td><td>&#x2B55;防止</td><td>最遅<br>（最も安全）</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">アンコミ→コミ→リピ→セリア<small>4段階の昇順</small></span></div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：分離レベル名と防げる異常の対応表が頻出。<strong>SERIALIZABLEが最も厳しい</strong>。</p>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>4段階全部覚える必要はないよ！ <strong>「下にいくほど厳しくなる、最厳はSERIALIZABLE」</strong>これだけ押さえれば試験は乗り切れる。<strong>「アンコミ→コミ→リピ→セリア」</strong>って呪文、口に出すと意外と覚えるから5回唱えてみて〜。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x1F91D;</span> 2相コミット（2PC）：分散DB版「結婚式の誓い」</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">&#x1F501; <strong>ゼロからの「結婚式の誓い」を深掘り</strong>。複数DBにまたがる処理の整合保証プロトコル。</p>
+    <div class="card card-purple">
+      <h4>分散トランザクション＝複数のDBにまたがる処理</h4>
+      <p>例：本社DBの在庫を減らし、支社DBの売上を増やす――別々のサーバ上のDB両方を整合的に更新したい。</p>
+      <h4>2フェーズの確認手順</h4>
+      <table class="tbl-orange">
+        <tr><th>フェーズ</th><th>呼び方</th><th>動作（結婚式で例えると）</th></tr>
+        <tr><td>第1相</td><td><strong>準備フェーズ</strong><br>(Prepare)</td><td>司会（コーディネータ）が新郎・新婦（参加者DB）に「<strong>誓えますか？</strong>」と問合せ。各DBは「<strong>Yes</strong>」or「<strong>No</strong>」を返す</td></tr>
+        <tr><td>第2相</td><td><strong>確定フェーズ</strong><br>(Commit)</td><td>全員Yesなら<strong>全員COMMIT</strong>を指示／1人でもNoなら<strong>全員ROLLBACK</strong>＝式中止</td></tr>
+      </table>
+    </div>
+    <div class="diagram"><div class="diagram-title">2相コミット フロー</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">調整役<small>Coordinator</small></div><span class="flow-arrow">&#x21C4;</span>
+        <div class="flow-box fb-purple">DB-A<br>"準備OK?"<small>Phase1</small></div><span class="flow-arrow">&#x21C4;</span>
+        <div class="flow-box fb-purple">DB-B<br>"準備OK?"<small>Phase1</small></div>
+      </div>
+      <p style="text-align:center;font-size:.82rem;color:var(--gray-mid);margin:.4rem 0">&#x2193; 全員Yes</p>
+      <div class="flow-row">
+        <div class="flow-box fb-green">DB-A<br>COMMIT<small>Phase2</small></div><span class="flow-arrow">&#x2B;</span>
+        <div class="flow-box fb-green">DB-B<br>COMMIT<small>Phase2</small></div>
+      </div>
+    </div>
+    <div class="goro-row">
+      <span class="goro-chip">準備→確定の2段階<small>Prepare→Commit</small></span>
+      <span class="goro-chip">1人でもNoなら全員ROLLBACK<small>原子性を分散保証</small></span>
+    </div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：「2相コミット＝分散トランザクションの整合性確保」「準備フェーズと確定フェーズの2段階」（H30-12, R04-13系）。</p>
+    <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「2相コミット＝2相ロック」は別物。2相ロック（Part2で詳述）はロック取得・解放の順序ルール。<strong>2PCと2PLは絶対混同するな</strong>。</p>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（基本）</div>
+      <ul>
+        <li>&#x2776; <strong>ACID</strong>＝原子性／一貫性／独立性／耐久性。「I＝同時実行制御」が引っかけ頻出</li>
+        <li>&#x2777; 同時実行異常3種：<strong>ダーティ＜ノンリピータブル＜ファントム</strong>。SERIALIZABLEで全部防止</li>
+        <li>&#x2778; <strong>2相コミット</strong>＝準備＋確定の2フェーズで分散DBの原子性を保つ</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">&#x270D;&#xFE0F;</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:#7b1fa2;margin-right:.5rem">&#x1F50D; このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab2')" style="background:#64748b">&#x1F504; リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-blue">G1：ACIDの実現方法</div>
+      <div class="fill-body">
+        <div class="fill-group">原子性は<span class="fill-blank">UNDO</span>処理（ロールバック）で、耐久性は<span class="fill-blank">REDO</span>処理＋<span class="fill-blank">WAL</span>で実現する</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">独立性は<span class="fill-blank">ロック</span>等の同時実行制御で、結果が<span class="fill-blank">直列化可能</span>になることを保証する</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-red">G2：3つの異常</div>
+      <div class="fill-body">
+        <div class="fill-group">未COMMITデータを読むのは<span class="fill-blank">ダーティリード</span>、同じ行の値が変わるのは<span class="fill-blank">ノンリピータブルリード</span>、件数が変わるのは<span class="fill-blank">ファントムリード</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">全異常を防ぐ最も厳しい分離レベルは<span class="fill-blank">SERIALIZABLE</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-orange">G3：2相コミット</div>
+      <div class="fill-body">
+        <div class="fill-group">2相コミットの第1相は<span class="fill-blank">準備</span>フェーズ、第2相は<span class="fill-blank">確定</span>フェーズ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">1つでもNo回答があれば全員<span class="fill-blank">ROLLBACK</span>される</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 応用 ===== -->
+  <div class="tab-panel theme-teal" id="tab3">
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1FAB5;</span> ログによる回復：WALの仕組み</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">&#x1F4A1;</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>家計簿に「これから書きますよ」とまずメモ用紙（ログ）に書いてから本帳簿（DB）に書く。停電してもメモが残ってれば復元できる。これが<strong>WAL（先行書込みログ）</strong>の発想。</div></div>
+
+    <div class="card card-teal"><h4>&#x1F4DD; WAL（Write-Ahead Logging：先行書込みログ）</h4>
+      <p>更新内容を<strong>データ本体に書く前に、ログに先に書く</strong>原則。停電時はログを見れば復元できるので、データ本体の書込はゆっくりでよい（性能上有利）。</p>
+    </div>
+    <div class="card card-teal"><h4>&#x1F501; UNDO（アンドゥ）／REDO（リドゥ）</h4>
+      <ul>
+        <li><strong>UNDO（取消）</strong>：更新前情報を使って<strong>巻き戻し</strong>。<strong>未COMMITトランザクションを取消</strong>するのに使う</li>
+        <li><strong>REDO（再実行）</strong>：更新後情報を使って<strong>再実行</strong>。<strong>COMMIT済だがデータ未反映</strong>分を再現するのに使う</li>
+      </ul>
+      <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：UNDOとREDOの使い分け（H29-17, R06-19）。<strong>「未COMMIT＝UNDO／COMMIT済未反映＝REDO」</strong>セット暗記。</p>
+    </div>
+    <div class="card card-teal"><h4>&#x1F4CC; チェックポイント</h4>
+      <p>定期的にバッファ内容をディスクに書き出す<strong>節目</strong>。障害時は<strong>直近チェックポイント以降</strong>のログだけ処理すればよく、回復が速い。</p>
+    </div>
+    <div class="goro-row">
+      <span class="goro-chip">未COMはアン、済はリ<small>未COMMIT=UNDO／COMMIT済=REDO</small></span>
+      <span class="goro-chip">先にログ、後でデータ<small>WALの原則</small></span>
+    </div>
+    <div class="support"><span class="support-icon">&#x1F468;&#x200D;&#x1F3EB;</span><div class="support-body"><span class="support-name">先生からひとこと</span>UNDOとREDO、似た音で混乱しやすいよね！ <strong>UN＝アン＝「無かったこと」</strong>、<strong>RE＝リ＝「もう1回」</strong>って英語の感覚で覚えるとスッキリ。<strong>「未COMITはアンドゥ／COMMIT済はリドゥ」</strong>を呪文にして！</div></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x267B;&#xFE0F;</span> 障害回復の3パターン</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">&#x1F501; <strong>応用タブの「WAL・UNDO/REDO」を実際の障害に当てはめる</strong>。</p>
+    <table class="tbl-red">
+      <tr><th>障害種別</th><th>主な原因</th><th>回復方法</th></tr>
+      <tr><td><strong>トランザクション障害</strong></td><td>制約違反・デッドロック</td><td><strong>UNDO</strong>で巻戻し（ROLLBACK）</td></tr>
+      <tr><td><strong>システム障害</strong></td><td>停電・OSダウン（メモリ消失）</td><td>再起動時に<strong>ログでUNDO+REDO</strong>。直近チェックポイントから処理</td></tr>
+      <tr><td><strong>媒体障害</strong></td><td>ディスク故障</td><td><strong>バックアップからリストア＋ログでロールフォワード</strong>（REDO適用）</td></tr>
+    </table>
+    <div class="goro-row">
+      <span class="goro-chip">トランザ障害→UNDO<small>取消だけ</small></span>
+      <span class="goro-chip">システム障害→UNDO+REDO<small>両方</small></span>
+      <span class="goro-chip">媒体障害→バックアップ+REDO<small>ロールフォワード</small></span>
+    </div>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：3障害の回復方法対応（R02-3, R06-3）。<strong>媒体障害は「バックアップ＋ロールフォワード」</strong>がセット暗記。</p>
+    <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「ロールバック」と「ロールフォワード」を逆にする選択肢が頻出。<strong>ロールバック＝戻す（UNDO）／ロールフォワード＝進める（REDO）</strong>。</p>
+    <div class="support"><span class="support-icon">&#x1F4FC;</span><div class="support-body"><span class="support-name">救命メモ</span>「ロールバック」「ロールフォワード」、似てて毎回混乱するよね…。<strong>バック＝戻る／フォワード＝進む</strong>。テープの巻戻し（rewind＝バック）と早送り（forward）の感覚で覚えよう。これだけで試験で1問落とさずに済む！</div></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x1F511;</span> WAL／COMMITで実際に起きること（4ステップ）</h2>
+    <table class="tbl-green">
+      <tr><th>手順</th><th>動作</th></tr>
+      <tr><td>1. 更新前ログ書込</td><td>変更前の値（Before Image）をログバッファへ</td></tr>
+      <tr><td>2. 更新後ログ書込</td><td>変更後の値（After Image）をログバッファへ</td></tr>
+      <tr><td>3. <strong>ログ強制書出</strong></td><td>COMMIT時、ログを<strong>ディスクに必ず書出</strong>（fsync）→ 耐久性確保</td></tr>
+      <tr><td>4. データ書込</td><td>データ本体は<strong>遅延書出</strong>でOK（バッファに残ってもよい）</td></tr>
+    </table>
+    <p class="exam-pt">&#x1F4DD; <strong>【1次】試験ポイント</strong>：「COMMIT＝<strong>ログ</strong>のディスク書込が完了した時点」が頻出。データ本体の書込は遅延でOK。</p>
+    <p class="exam-warn">&#x26A0;&#xFE0F; <strong>【1次】引っかけ</strong>：「COMMIT時にデータ本体もディスクに書く」は誤り。性能上不要で、<strong>ログだけ書けば耐久性は保証</strong>される。</p>
+
+    <div class="keepit">
+      <div class="keepit-title">&#x2B50; 今日のこれだけ覚えて（応用）</div>
+      <ul>
+        <li>&#x2776; <strong>WAL＝先にログ、後でデータ</strong>。COMMITはログをディスクに書いた時点で完了</li>
+        <li>&#x2777; <strong>未COMMIT→UNDO／COMMIT済未反映→REDO</strong>。アン＝消す／リ＝もう1回</li>
+        <li>&#x2778; 障害3種：<strong>トランザ→UNDO／システム→UNDO+REDO／媒体→バックアップ+ロールフォワード</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">&#x270D;&#xFE0F;</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#7b1fa2;margin-right:.5rem">&#x1F50D; このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b">&#x1F504; リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-teal">応用のキホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・データ本体より<span class="fill-blank">先に</span>ログを書く原則を<span class="fill-blank">WAL</span>（Write-Ahead Logging）と呼ぶ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・未COMMITの巻戻しは<span class="fill-blank">UNDO</span>、COMMIT済未反映の再実行は<span class="fill-blank">REDO</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・障害種別と回復：トランザ障害→<span class="fill-blank">UNDO</span>／システム障害→<span class="fill-blank">UNDO+REDO</span>／媒体障害→<span class="fill-blank">バックアップ</span>＋<span class="fill-blank">ロールフォワード</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・定期的にバッファ内容を書き出して回復処理量を減らす節目を<span class="fill-blank">チェックポイント</span>と呼ぶ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・ロールバック＝<span class="fill-blank">戻す</span>（UNDO）／ロールフォワード＝<span class="fill-blank">進める</span>（REDO適用）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+    <div class="alert-exam">&#x1F4DD; <strong>次のステップ</strong>：2相ロック・MVCC・デッドロック詳細・CAP定理は <strong>Part2「演習・詳細編」</strong>へ。</div>
+  </div>
+
+  <!-- ===== TAB 4: 語呂 ===== -->
+  <div class="tab-panel theme-purple" id="tab4">
+    <h2 class="section-title st-purple"><span class="st-icon">&#x1F3B5;</span> 語呂まとめ（Part1の要点）</h2>
+    <!-- ビル・ゲイツ脱出シーン -->
+    <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border-radius:14px;padding:1.4rem 1rem;margin:1rem 0;text-align:center;color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.25)">
+      <div style="font-size:.8rem;color:#ffd700;font-weight:700;letter-spacing:.1em;margin-bottom:.4rem">★ 妙なイメージで定着 ★</div>
+      <div style="font-size:1.35rem;font-weight:900;color:#ffd700;margin-bottom:1rem;text-shadow:2px 2px 0 #000">アジトから ゲイツ 独立 したい</div>
+      <svg viewBox="0 0 360 200" style="max-width:340px;width:100%;margin:0 auto;display:block;background:rgba(0,0,0,.2);border-radius:10px">
+        <rect x="10" y="60" width="120" height="130" fill="#3d2817" stroke="#1a0f08" stroke-width="2"/>
+        <polygon points="10,60 70,20 130,60" fill="#5d3a1f" stroke="#1a0f08" stroke-width="2"/>
+        <rect x="55" y="110" width="30" height="50" fill="#0a0a0a"/>
+        <rect x="20" y="80" width="20" height="20" fill="#222" stroke="#000"/>
+        <rect x="100" y="80" width="20" height="20" fill="#222" stroke="#000"/>
+        <text x="70" y="50" text-anchor="middle" fill="#ff6b6b" font-size="11" font-weight="bold">&#x1F3DA;&#xFE0F; アジト</text>
+        <path d="M 130 130 Q 175 100 220 130" fill="none" stroke="#ffd700" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrowP1)"/>
+        <defs><marker id="arrowP1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffd700"/></marker></defs>
+        <circle cx="260" cy="100" r="28" fill="#fdd9b5" stroke="#000" stroke-width="1.5"/>
+        <path d="M 235 90 Q 240 75 260 72 Q 280 75 285 90 Q 282 82 270 80 Q 260 80 250 82 Q 238 84 235 90 Z" fill="#8b6f47"/>
+        <circle cx="251" cy="100" r="7" fill="rgba(200,230,255,.5)" stroke="#000" stroke-width="1.8"/>
+        <circle cx="269" cy="100" r="7" fill="rgba(200,230,255,.5)" stroke="#000" stroke-width="1.8"/>
+        <line x1="258" y1="100" x2="262" y2="100" stroke="#000" stroke-width="1.8"/>
+        <path d="M 252 115 Q 260 119 268 115" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M 240 130 L 280 130 L 290 185 L 230 185 Z" fill="#2c3e50" stroke="#000" stroke-width="1.5"/>
+        <polygon points="258,130 262,130 264,160 260,170 256,160" fill="#c0392b"/>
+        <ellipse cx="295" cy="150" rx="8" ry="18" fill="#fdd9b5" stroke="#000" stroke-width="1.2" transform="rotate(30 295 150)"/>
+        <text x="320" y="100" font-size="20">&#x270A;</text>
+        <path d="M 200 50 Q 200 35 215 35 L 320 35 Q 335 35 335 50 L 335 65 Q 335 75 325 75 L 235 75 L 220 90 L 225 75 L 215 75 Q 200 75 200 65 Z" fill="#fff" stroke="#000" stroke-width="1.5"/>
+        <text x="267" y="58" text-anchor="middle" fill="#000" font-size="12" font-weight="bold">独立したいんだ！</text>
+        <line x1="0" y1="190" x2="360" y2="190" stroke="#666" stroke-width="2"/>
+        <circle cx="335" cy="20" r="10" fill="#ffeb3b" opacity=".8"/>
+      </svg>
+      <div style="margin-top:1rem;font-size:.95rem;line-height:1.9">
+        暗い<strong style="color:#ff6b6b">&#x1F3DA;&#xFE0F; アジト</strong>(=ACID) から、メガネのビル・<strong style="color:#ffd700">ゲイツ</strong>が「独立したい！」と脱出。<br>
+        &#x270A; 自由のこぶしを掲げて闇夜を駆け抜ける――この<strong>シュールな絵</strong>で4性質が刷り込まれる。
+      </div>
+    </div>
+    <div class="mnemonic"><div class="big">「アジトから ゲ・イ・独・タ ！」</div>
+      <div class="desc" style="font-size:.95rem;line-height:1.9">
+        <strong style="color:#c0392b;font-size:1.05rem">ゲ</strong>イツ ＝ <strong>ゲ</strong>ンシ性 (原子性=A)<br>
+        ゲ<strong style="color:#c0392b;font-size:1.05rem">イ</strong>ツ ＝ <strong>イ</strong>ッカン性 (一貫性=C)<br>
+        <strong style="color:#c0392b;font-size:1.05rem">独</strong>立 ＝ <strong>ドク</strong>リツ性 (独立性=I)<br>
+        し<strong style="color:#c0392b;font-size:1.05rem">タ</strong>い ＝ <strong>タ</strong>イキュウ性 (耐久性=D)
+      </div>
+    </div>
+    <div class="mnemonic"><div class="big">「アジト」＝ACID(A・C・I・D)</div><div class="desc">英字頭文字の並び順そのもの。「アジトから〜」と唱えればA→Dの順番もズレない</div></div>
+    <div class="mnemonic"><div class="big">読みは仲良し、書きは独り占め</div><div class="desc">共有ロック＝複数で読み合いOK／専有ロック＝1人占有</div></div>
+    <div class="mnemonic"><div class="big">「アンコミ→コミ→リピ→セリア」</div><div class="desc">READ UNCOMMITTED→READ COMMITTED→REPEATABLE READ→SERIALIZABLE</div></div>
+    <div class="mnemonic"><div class="big">3つの異常「ダ・ノ・フ」</div><div class="desc">ダーティ・ノンリピ・ファントム。<strong>ノンリピは更新／ファントムは挿入</strong></div></div>
+    <div class="mnemonic"><div class="big">2PL ≠ 2PC</div><div class="desc">取って離す（2相<strong>ロック</strong>）≠ 準備して確定（2相<strong>コミット</strong>）</div></div>
+    <div class="mnemonic"><div class="big">バックは戻る、フォワードは進む</div><div class="desc">ロールバック＝UNDO（戻す）／ロールフォワード＝REDO（進める）</div></div>
+    <div class="mnemonic"><div class="big">「未COMはアン、済はリ」</div><div class="desc">未COMMITはUNDO（アン）／COMMIT済はREDO（リ）</div></div>
+  </div>
+
+  <!-- ===== TAB 5: 図解 ===== -->
+  <div class="tab-panel theme-orange" id="tab5">
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F5FA;&#xFE0F;</span> 図解1：ACID 一覧</h2>
+    <div class="diagram"><div class="diagram-title">ACID = 4つの性質</div>
+      <table class="tbl-blue">
+        <tr><th>性質</th><th>意味</th><th>実現手段</th><th>頻出キーワード</th></tr>
+        <tr><td>A 原子性</td><td>全部 or 0</td><td>UNDO（ROLLBACK）</td><td>不可分・All or Nothing</td></tr>
+        <tr><td>C 一貫性</td><td>整合性制約維持</td><td>制約チェック+ROLLBACK</td><td>整合性・ルール</td></tr>
+        <tr><td>I 独立性</td><td>同時実行≒順次実行</td><td>ロック・MVCC</td><td>直列化可能性</td></tr>
+        <tr><td>D 耐久性</td><td>COMMIT後不滅</td><td>WAL+REDO</td><td>ログ・永続化</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F501;</span> 図解2：分離レベル × 異常マトリクス</h2>
+    <div class="diagram"><div class="diagram-title">4分離レベル × 3異常</div>
+      <table class="tbl-purple">
+        <tr><th>レベル＼異常</th><th>ダーティ</th><th>ノンリピ</th><th>ファントム</th></tr>
+        <tr><td>READ UNCOMMITTED</td><td>&#x274C;</td><td>&#x274C;</td><td>&#x274C;</td></tr>
+        <tr><td>READ COMMITTED</td><td>&#x2B55;</td><td>&#x274C;</td><td>&#x274C;</td></tr>
+        <tr><td>REPEATABLE READ</td><td>&#x2B55;</td><td>&#x2B55;</td><td>&#x274C;</td></tr>
+        <tr><td>SERIALIZABLE</td><td>&#x2B55;</td><td>&#x2B55;</td><td>&#x2B55;</td></tr>
+      </table>
+      <p style="text-align:center;font-size:.82rem;color:var(--gray-mid);margin-top:.5rem">&#x2B55;＝防止／&#x274C;＝発生する可能性あり</p>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1F91D;</span> 図解3：2相コミット フロー</h2>
+    <div class="diagram"><div class="diagram-title">Phase1 準備 → Phase2 確定</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">調整役</div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-box fb-purple">DB-A<br>準備?</div>
+        <div class="flow-box fb-purple">DB-B<br>準備?</div>
+      </div>
+      <p style="text-align:center;margin:.4rem 0;font-size:.85rem">&#x2193; 全員Yes</p>
+      <div class="flow-row">
+        <div class="flow-box fb-green">DB-A<br>COMMIT</div>
+        <div class="flow-box fb-green">DB-B<br>COMMIT</div>
+      </div>
+      <p style="text-align:center;margin:.4rem 0;font-size:.85rem;color:#c62828">1人でもNo &#x2192; 全員ROLLBACK</p>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x1FAB5;</span> 図解4：障害回復 早見</h2>
+    <div class="diagram"><div class="diagram-title">3種の障害と回復方法</div>
+      <table class="tbl-red">
+        <tr><th>障害</th><th>原因</th><th>回復</th></tr>
+        <tr><td>トランザクション障害</td><td>制約違反・デッドロック</td><td>UNDO（巻戻し）</td></tr>
+        <tr><td>システム障害</td><td>停電・OSダウン</td><td>UNDO+REDO（チェックポイント以降）</td></tr>
+        <tr><td>媒体障害</td><td>ディスク故障</td><td>バックアップ→ロールフォワード（REDO）</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270D;&#xFE0F;</span> 図解タブ穴埋め</h2>
+    <div class="fill-card"><div class="fill-header bg-orange">図解整理穴埋め</div>
+      <div class="fill-body">
+        <div class="fill-group">・ACIDのうち実現手段が「ロック・MVCC」なのは<span class="fill-blank">独立性</span>、「WAL+REDO」なのは<span class="fill-blank">耐久性</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・READ COMMITTEDが防げるのは<span class="fill-blank">ダーティリード</span>のみ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・媒体障害の復旧はバックアップ＋<span class="fill-blank">ロールフォワード</span>（REDO適用）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: クイズ ===== -->
+  <div class="tab-panel theme-orange" id="tab6">
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270F;&#xFE0F;</span> 基礎クイズ（全5問）</h2>
+    <p style="font-size:.9rem;color:var(--gray-mid);margin-bottom:.8rem;">Part1の内容から。応用クイズはPart2に。</p>
+
+    <div class="quiz-item" id="q1"><span class="quiz-num">1</span>
+      <div class="quiz-question">トランザクションのACID特性のうち、「同時実行されても1つずつ実行したのと同じ結果になる」性質はどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'原子性は『全か0か』。同時実行制御の話ではない。')">A. 原子性（Atomicity）</li>
+        <li onclick="ans(this,false,'一貫性は整合性制約の話。直列化可能性ではない。')">B. 一貫性（Consistency）</li>
+        <li onclick="ans(this,true,'独立性（Isolation）＝直列化可能性。同時実行を制御する性質。')">C. 独立性（Isolation）</li>
+        <li onclick="ans(this,false,'耐久性はCOMMIT後の永続化の話。')">D. 耐久性（Durability）</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item" id="q2"><span class="quiz-num">2</span>
+      <div class="quiz-question">SQL標準のトランザクション分離レベルのうち、ファントムリードを防止する最も厳しいレベルはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'READ UNCOMMITTEDは最弱で、ダーティリードすら防がない。')">A. READ UNCOMMITTED</li>
+        <li onclick="ans(this,false,'READ COMMITTEDはダーティリードのみ防ぐ。')">B. READ COMMITTED</li>
+        <li onclick="ans(this,false,'REPEATABLE READはノンリピータブルまで。ファントムは防げない。')">C. REPEATABLE READ</li>
+        <li onclick="ans(this,true,'SERIALIZABLEが最も厳しく、ファントムリードまで防止。')">D. SERIALIZABLE</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item" id="q3"><span class="quiz-num">3</span>
+      <div class="quiz-question">ロックの説明として最も適切なものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'共有ロック同士は両立する。')">A. 共有ロックは1度に1つしか取得できない</li>
+        <li onclick="ans(this,false,'専有ロックは他のいかなるロックとも両立しない。')">B. 専有ロックは共有ロックと共存できる</li>
+        <li onclick="ans(this,true,'共有ロックは「読取・複数OK」／専有ロックは「書込・1人占有」が正しい。')">C. 共有ロックは読取用で複数取得可、専有ロックは書込用で単独占有</li>
+        <li onclick="ans(this,false,'これは独立性（I）の説明であり、ロック自体の説明ではない。')">D. ロックは障害発生時の復旧専用機能である</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item" id="q4"><span class="quiz-num">4</span>
+      <div class="quiz-question">障害回復に関する記述で正しいものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'未COMMITはUNDOで取消。REDOはCOMMIT済の再現。')">A. 未COMMITトランザクションはREDO処理で取消される</li>
+        <li onclick="ans(this,true,'媒体障害はバックアップからリストア後、ログでロールフォワード（REDO適用）。')">B. ディスク故障時はバックアップから復元しログでロールフォワードする</li>
+        <li onclick="ans(this,false,'ロールバックは戻すこと（UNDO）。進めるのはロールフォワード（REDO）。')">C. ロールバックとはログを使って前進的に再実行することである</li>
+        <li onclick="ans(this,false,'COMMIT時にディスクへ書くのは「ログ」。データ本体は遅延書出でよい。')">D. COMMIT時にはデータ本体をディスクに書き終える必要がある</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item" id="q5"><span class="quiz-num">5</span>
+      <div class="quiz-question">2相コミット（2PC）と2相ロック（2PL）の関係として正しいものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'別物。2PC=分散整合プロトコル／2PL=並行制御プロトコル。')">A. どちらも同じ仕組みの別名である</li>
+        <li onclick="ans(this,true,'2PCは分散DBの整合保証、2PLはロック取得・解放の順序ルール。役割が全く違う。')">B. 2PCは分散整合プロトコル／2PLはロック順序プロトコル</li>
+        <li onclick="ans(this,false,'2PCは整合保証なので分散環境でこそ価値がある。')">C. 2PCは分散環境では使えない</li>
+        <li onclick="ans(this,false,'準備フェーズと確定フェーズは2PCの話。')">D. 2PLは「準備」と「確定」の2フェーズで動作する</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 7: 穴埋め総まとめ ===== -->
+  <div class="tab-panel theme-orange" id="tab7">
+    <h2 class="section-title st-orange"><span class="st-icon">&#x270D;&#xFE0F;</span> 穴埋めチェック（Part1総まとめ）</h2>
+    <div style="text-align:center;margin:1rem 0;">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab7')" style="background:#7b1fa2;margin-right:.5rem;">&#x1F50D; このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab7')" style="background:#64748b;">&#x1F504; リセット</button>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-green">&#x2460; ゼロから・キホン</div>
+      <div class="fill-body">
+        <div class="fill-group">・銀行振込のような「全部やるか0か」の処理単位＝<span class="fill-blank">トランザクション</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・ACIDの4文字＝A<span class="fill-blank">原子</span>性／C<span class="fill-blank">一貫</span>性／I<span class="fill-blank">独立</span>性／D<span class="fill-blank">耐久</span>性</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・複数DBの整合保証＝<span class="fill-blank">2相コミット</span>／同時実行制御の鍵＝<span class="fill-blank">ロック</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-purple">&#x2461; 入門：BEGIN・COMMIT・ロック</div>
+      <div class="fill-body">
+        <div class="fill-group">・トランザクションは<span class="fill-blank">BEGIN</span>で開始、確定は<span class="fill-blank">COMMIT</span>、取消は<span class="fill-blank">ROLLBACK</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・読取用は<span class="fill-blank">共有</span>ロック（複数OK）／書込用は<span class="fill-blank">専有</span>ロック（1人占有）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・互いにロック解放を待ち合う状態を<span class="fill-blank">デッドロック</span>と呼ぶ</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-blue">&#x2462; 基本：ACID実現・3異常・分離レベル・2相コミット</div>
+      <div class="fill-body">
+        <div class="fill-group">・原子性は<span class="fill-blank">UNDO</span>で実現、耐久性は<span class="fill-blank">REDO</span>＋<span class="fill-blank">WAL</span>で実現</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・3つの異常：<span class="fill-blank">ダーティリード</span>（未COMMIT読み）／<span class="fill-blank">ノンリピータブルリード</span>（更新）／<span class="fill-blank">ファントムリード</span>（挿入）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・分離レベル4段階の最厳は<span class="fill-blank">SERIALIZABLE</span>。語呂＝アンコミ→コミ→<span class="fill-blank">リピ</span>→<span class="fill-blank">セリア</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・2相コミットの第1相＝<span class="fill-blank">準備</span>／第2相＝<span class="fill-blank">確定</span>。1人でもNoなら全員<span class="fill-blank">ROLLBACK</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-teal">&#x2463; 応用：WAL・UNDO/REDO・障害回復</div>
+      <div class="fill-body">
+        <div class="fill-group">・データ本体より<span class="fill-blank">先に</span>ログを書く原則＝<span class="fill-blank">WAL</span>。COMMITは<span class="fill-blank">ログ</span>のディスク書込完了時点</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・未COMMIT＝<span class="fill-blank">UNDO</span>（取消）／COMMIT済未反映＝<span class="fill-blank">REDO</span>（再実行）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・障害3種：トランザ→<span class="fill-blank">UNDO</span>／システム→<span class="fill-blank">UNDO+REDO</span>／媒体→<span class="fill-blank">バックアップ</span>＋<span class="fill-blank">ロールフォワード</span></div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+        <div class="fill-group">・ロールバック＝<span class="fill-blank">戻す</span>（UNDO）／ロールフォワード＝<span class="fill-blank">進める</span>（REDO適用）</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x1F441; 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="alert-exam">&#x1F4DD; <strong>Part1 修了！</strong> 続けて <a href="11.トランザクション管理まとめ_超初心者版_part2.html" style="color:#1565c0;font-weight:700;">&#x1F4D7; Part2：演習・詳細編</a> へ。</div>
+  </div>
+</div>
+
+<div class="footer">中小企業診断士 経営情報システム | トランザクション管理（超初心者版・Part1）</div>
+
+<script>
+function switchTab(idx){const n=8;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+function ans(li,correct,exp){const ul=li.parentElement;if(ul.dataset.answered)return;ul.dataset.answered='1';ul.querySelectorAll('li').forEach(x=>x.style.cursor='default');li.classList.add(correct?'correct':'wrong');if(!correct){ul.querySelectorAll('li').forEach(x=>{if(x.getAttribute('onclick')&&x.getAttribute('onclick').includes('true'))x.classList.add('correct');});}const d=document.createElement('div');d.className='quiz-explanation show '+(correct?'correct-exp':'wrong-exp');d.innerHTML=(correct?'⭕ 正解！ ':'❌ 不正解。 ')+exp;ul.parentElement.appendChild(d);}
+</script>
+</body>
+</html>
