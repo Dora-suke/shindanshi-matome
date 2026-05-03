@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>株主提案権まとめ v2｜中小企業診断士 経営法務</title>
+  <style>
+    :root {
+      --bg: #faf9f6; --card: #ffffff; --ink: #2d2d2d; --muted: #8a8a8a;
+      --line: #eae8e4; --accent: #3b82f6; --accent-light: #dbeafe;
+      --teal: #14b8a6; --teal-light: #ccfbf1; --orange: #f59e0b; --orange-light: #fef3c7;
+      --red: #ef4444; --red-light: #fee2e2; --purple: #8b5cf6; --purple-light: #ede9fe;
+      --green: #22c55e; --green-light: #dcfce7; --pink: #ec4899; --pink-light: #fce7f3;
+      --r: 18px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: "Hiragino Sans","Yu Gothic","Meiryo",system-ui,sans-serif; color: var(--ink); background: var(--bg); line-height: 1.8; font-size: 15px; }
+    .hero { background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #a78bfa 100%); color: #fff; padding: 48px 20px 36px; text-align: center; position: relative; overflow: hidden; }
+    .hero::after { content:''; position:absolute; bottom:-40px; left:50%; transform:translateX(-50%); width:120%; height:80px; background:var(--bg); border-radius:50%; }
+    .hero-emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
+    .hero h1 { font-size: clamp(1.5rem,4.5vw,2.2rem); font-weight: 800; letter-spacing:.03em; }
+    .hero .sub { opacity:.9; margin-top:6px; font-size:.9rem; }
+    .pills { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+    .pill { background:rgba(255,255,255,.18); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:4px 14px; font-size:.78rem; display:inline-flex; align-items:center; gap:4px; }
+
+    /* ===== Tab Navigation ===== */
+    .tab-nav-wrap { background:#4c1d95; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+    .tab-nav { display:flex; max-width:900px; margin:0 auto; justify-content:center; }
+    .tab-btn { flex:1; max-width:250px; background:transparent; color:rgba(255,255,255,.7); border:none; padding:14px 12px; font-size:.88rem; font-weight:600; cursor:pointer; white-space:nowrap; transition:all .2s; border-bottom:3px solid transparent; font-family:inherit; text-align:center; }
+    .tab-btn:hover { color:#fff; background:rgba(255,255,255,.08); }
+    .tab-btn.active { color:#4c1d95; background:#fff; border-bottom:3px solid var(--orange); border-radius:6px 6px 0 0; }
+    /* 学習システムが tab-nav を白背景の ls-sticky-wrap に移動した際のフォールバック：白文字→白背景で消えるのを防ぐ */
+    .ls-sticky-wrap .tab-btn { color:#475569; }
+    .ls-sticky-wrap .tab-btn:hover { color:#4c1d95; background:rgba(76,29,149,.08); }
+    .ls-sticky-wrap .tab-btn.active { color:#4c1d95; background:#ede9fe; border-bottom-color:#4c1d95; }
+
+    /* ===== Tab Content ===== */
+    .tab-content { display:none; max-width:720px; margin:0 auto; padding:28px 16px 60px; }
+    .tab-content.active { display:block; }
+
+    .card { background:var(--card); border-radius:var(--r); margin-bottom:18px; box-shadow:0 2px 12px rgba(0,0,0,.06); border:1px solid var(--line); overflow:hidden; }
+    .card-head { display:flex; align-items:center; gap:10px; padding:13px 18px; font-weight:700; font-size:1rem; color:#fff; }
+    .card-head .ci { font-size:1.3rem; }
+    .card-head.blue { background:linear-gradient(135deg,#2563eb,#3b82f6); }
+    .card-head.teal { background:linear-gradient(135deg,#0d9488,#14b8a6); }
+    .card-head.orange { background:linear-gradient(135deg,#d97706,#f59e0b); }
+    .card-head.red { background:linear-gradient(135deg,#dc2626,#ef4444); }
+    .card-head.purple { background:linear-gradient(135deg,#7c3aed,#8b5cf6); }
+    .card-head.green { background:linear-gradient(135deg,#16a34a,#22c55e); }
+    .card-head.pink { background:linear-gradient(135deg,#db2777,#ec4899); }
+    .card-body { padding:18px 20px; }
+    .g { display:grid; gap:12px; margin:12px 0; }
+    .g2 { grid-template-columns:1fr 1fr; }
+    .g3 { grid-template-columns:1fr 1fr 1fr; }
+    @media(max-width:640px){ .g2,.g3{grid-template-columns:1fr;} }
+    .mc { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; text-align:center; }
+    .mc .mi { font-size:2.2rem; display:block; margin-bottom:4px; }
+    .mc h4 { font-size:.9rem; margin-bottom:4px; color:var(--ink); }
+    .mc p { font-size:.82rem; color:var(--muted); text-align:left; line-height:1.6; }
+    .mc.bl { border-left:4px solid var(--accent); }
+    .mc.ol { border-left:4px solid var(--orange); }
+    .mc.pl { border-left:4px solid var(--purple); }
+    .mc.rl { border-left:4px solid var(--red); }
+    .mc.gl { border-left:4px solid var(--green); }
+    .al { border-radius:12px; padding:12px 14px; margin:12px 0; font-size:.88rem; display:flex; gap:10px; align-items:flex-start; line-height:1.7; }
+    .al .ai { font-size:1.2rem; flex-shrink:0; }
+    .al.tip { background:#f0fdfa; border:1px solid #99f6e4; }
+    .al.warn { background:#fef3c7; border:1px solid #fde68a; }
+    .al.err { background:#fee2e2; border:1px solid #fecaca; }
+    .al.info { background:#dbeafe; border:1px solid #93c5fd; }
+    .al.memo { background:#ede9fe; border:1px solid #c4b5fd; }
+    .vs { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+    @media(max-width:500px){ .vs{grid-template-columns:1fr;} }
+    .vc { border-radius:14px; padding:14px; border:2px solid; font-size:.88rem; }
+    .vc.a { background:#eff6ff; border-color:#93c5fd; }
+    .vc.b { background:#fef2f2; border-color:#fca5a5; }
+    .vc.a h4 { color:#2563eb; text-align:center; margin-bottom:6px; font-size:.92rem; }
+    .vc.b h4 { color:#ef4444; text-align:center; margin-bottom:6px; font-size:.92rem; }
+    .tbl { width:100%; border-collapse:collapse; margin:12px 0; font-size:.84rem; border-radius:12px; overflow:hidden; }
+    .tbl th { background:#1e293b; color:#fff; padding:9px 10px; text-align:left; font-weight:600; }
+    .tbl td { padding:9px 10px; border-bottom:1px solid var(--line); }
+    .tbl tr:nth-child(even) { background:#f8fafc; }
+    .tbl tr:hover { background:#f0fdfa; }
+    .dia { background:#f8fafc; border:2px dashed var(--line); border-radius:14px; padding:18px; margin:14px 0; text-align:center; }
+    .dia-t { font-weight:700; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px; }
+    .dia-row { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; margin:6px 0; }
+    .db { background:#fff; border:2px solid var(--teal); border-radius:12px; padding:8px 16px; font-weight:600; font-size:.85rem; }
+    .db.r { border-color:var(--red); background:var(--red-light); }
+    .db.g { border-color:var(--green); background:var(--green-light); }
+    .db.b { border-color:var(--accent); background:var(--accent-light); }
+    .quiz { background:linear-gradient(135deg,#fef9ee,#fef3c7); border:1px solid #fde68a; border-radius:var(--r); padding:18px; margin-bottom:18px; }
+    .quiz h3 { color:#92400e; margin-bottom:6px; font-size:.95rem; display:flex; align-items:center; gap:6px; }
+    .quiz .q-story { background:#fff; border-radius:10px; padding:14px; margin:8px 0; font-size:.88rem; line-height:1.8; border:1px solid #fde68a; }
+    .quiz .q-story .char { font-weight:700; }
+    .quiz .opts { list-style:none; margin:8px 0; }
+    .quiz .opts li { background:#fff; border:2px solid #e5e7eb; border-radius:10px; padding:10px 14px; margin-bottom:6px; cursor:pointer; font-size:.88rem; transition:all .15s; display:flex; align-items:center; gap:6px; }
+    .quiz .opts li:hover { border-color:var(--teal); background:#f0fdfa; }
+    .quiz .opts li.ok { border-color:#10b981; background:#d1fae5; }
+    .quiz .opts li.ng { border-color:#ef4444; background:#fee2e2; }
+    .quiz .ans-box { display:none; background:#fff; border:1px solid #a7f3d0; border-radius:10px; padding:14px; margin-top:10px; font-size:.88rem; line-height:1.7; }
+    .quiz .ans-box.show { display:block; }
+    .quiz .ans-box h4 { color:var(--teal); margin-bottom:4px; }
+    .card-body h3 { color:#1e293b; font-size:.95rem; margin:16px 0 8px; display:flex; align-items:center; gap:6px; }
+    .card-body h3:first-child { margin-top:0; }
+    .card-body ul { padding-left:1.2em; margin-bottom:8px; }
+    .card-body li { margin-bottom:4px; font-size:.88rem; }
+    .card-body p { margin-bottom:10px; font-size:.9rem; }
+    .one-point { background:linear-gradient(135deg,#fffff0,#fef3c7); border:2px solid #d97706; border-radius:10px; padding:14px 18px; margin:14px 0 6px; text-align:center; font-weight:700; font-size:1rem; color:#744210; }
+    .one-point::before { content:"&#x2B50; ひとことで言うと..."; display:block; font-size:.78rem; font-weight:600; color:#b7791f; margin-bottom:4px; }
+    .foot { text-align:center; padding:20px; color:var(--muted); font-size:.75rem; border-top:1px solid var(--line); margin-top:20px; }
+    @media(max-width:500px){ .card-body{padding:14px;} .hero{padding:36px 14px 28px;} .tab-btn{font-size:.78rem; padding:11px 6px;} }
+    @media print { .tab-nav-wrap{position:static;} .tab-content{display:block!important;} }
+.fill-card{background:var(--card);border-radius:14px;margin-bottom:18px;box-shadow:0 4px 16px rgba(0,0,0,.08);overflow:hidden}
+.fill-card .fill-header{padding:12px 18px;font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px}
+.fill-card .fill-body{padding:18px 20px}
+.fill-group{margin-bottom:4px;font-size:.95rem;line-height:2}
+.fill-blank{display:inline-block;min-width:100px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.fill-reveal-btn:hover{background:#2a4a7f}
+  </style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="hero-emoji">&#x270B;</span>
+  <h1>株主提案権まとめ v2</h1>
+  <p class="sub">中小企業診断士 経営法務</p>
+  <div class="pills">
+    <span class="pill">&#x2B50;&#x2B50; 重要</span>
+    <span class="pill">&#x1F4CC; 3つの権利を区別</span>
+    <span class="pill">&#x1F522; 数字の暗記がカギ</span>
+  </div>
+</header>
+
+<!-- ===== Tab Navigation ===== -->
+<nav class="tab-nav-wrap">
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="tab0">&#x1F530; 入門</button>
+    <button class="tab-btn" data-tab="tab1">&#x1F4CB; 基本エッセンス</button>
+    <button class="tab-btn" data-tab="tab-fill">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" data-tab="tab2">&#x1F3AF; 物語クイズ</button>
+    <button class="tab-btn" data-tab="tab3">&#x1F4DA; 詳細まとめ</button>
+  </div>
+</nav>
+
+<!-- ================================================================ -->
+<!-- TAB 0: 入門 -->
+<!-- ================================================================ -->
+<div class="tab-content active" id="tab0">
+
+  <div class="al info" style="margin-bottom:18px;">
+    <span class="ai">&#x1F4CB;</span>
+    <div><strong>このタブで学ぶこと：</strong>&#x2460; 株主提案権とは何か &#x2461; 3つの権利のざっくり違い &#x2462; 覚えるべき数字</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head purple"><span class="ci">&#x1F4A1;</span> そもそも株主提案権って何？</div>
+    <div class="card-body">
+      <p style="font-size:1rem; font-weight:600; margin-bottom:14px;">
+        株主が「こういうことを決めてほしい！」と株主総会に議題や議案を出せる権利のこと。
+      </p>
+      <div class="al tip"><span class="ai">&#x1F4AC;</span><div>
+        普通、株主総会の議題は<strong>取締役（会社側）</strong>が決める。<br>
+        でも株主提案権を使えば、<strong>株主の側から</strong>「この話し合いもしてください！」と言える。
+      </div></div>
+      <div class="one-point">
+        株主提案権 = 株主が「会社に物申す」ための武器！
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head blue"><span class="ci">&#x2728;</span> 3つの権利 ― まずこれだけ！</div>
+    <div class="card-body">
+      <p>株主提案権は <strong>3つ</strong> に分かれる。違いは「何を・いつ・どうやって」。</p>
+      <div class="g g3">
+        <div class="mc bl">
+          <span class="mi">&#x1F4CC;</span>
+          <h4>議題提案権</h4>
+          <p>「このテーマを話し合って！」とタイトルを追加する権利</p>
+        </div>
+        <div class="mc ol">
+          <span class="mi">&#x1F4DD;</span>
+          <h4>議案提案権</h4>
+          <p>「具体的にこうしてほしい！」と案を出す権利</p>
+        </div>
+        <div class="mc pl">
+          <span class="mi">&#x1F4E7;</span>
+          <h4>議案要領通知請求権</h4>
+          <p>「私の案を招集通知に載せて！」と要求する権利</p>
+        </div>
+      </div>
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div><strong>イメージ：</strong>議題 = 会議の「タイトル」、議案 = 会議の「答案（具体案）」</div></div>
+      <div class="al warn"><span class="ai">&#x26A0;&#xFE0F;</span><div><strong>超重要！</strong>この中で <strong>議案提案権だけ</strong> が特別。要件なし・総会の場で直接OK！<br>残り2つは「事前に取締役に請求 + 要件あり」のセット。</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head orange"><span class="ci">&#x1F522;</span> 数字だけパッと確認</div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>何の数字？</th><th>数字</th></tr></thead>
+        <tbody>
+          <tr><td>保有割合の要件</td><td><strong>1/100以上</strong> or <strong>300個以上</strong></td></tr>
+          <tr><td>継続保有期間</td><td><strong>6ヶ月</strong>前から</td></tr>
+          <tr><td>請求期限</td><td>総会の<strong>8週間</strong>前まで</td></tr>
+          <tr><td>1人が出せる議案の上限</td><td><strong>10個</strong>まで</td></tr>
+        </tbody>
+      </table>
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div><strong>語呂合わせ：</strong>「<strong>100</strong>分の1、<strong>300</strong>個、<strong>6</strong>ヶ月、<strong>8</strong>週間」→ 「<strong>い(1)っさん(300)、む(6)やっ(8)つ</strong>」</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head red"><span class="ci">&#x1F525;</span> よくある間違いTOP3</div>
+    <div class="card-body">
+      <div class="al err"><span class="ai">&#x2718;</span><div>「議<strong>案</strong>提案権にも1/100以上の保有が必要」→ <strong>ウソ！要件なし！</strong></div></div>
+      <div class="al err"><span class="ai">&#x2718;</span><div>「議<strong>案</strong>提案権も8週間前までに請求が必要」→ <strong>ウソ！総会の場で直接OK！</strong></div></div>
+      <div class="al err"><span class="ai">&#x2718;</span><div>「取締役会<strong>非</strong>設置会社でも1/100以上が必要」→ <strong>ウソ！非設置は制限なし！</strong></div></div>
+    </div>
+  </div>
+
+  <div class="al info"><span class="ai">&#x1F449;</span><div>ここまで分かればOK！ もっと詳しく知りたいときは「&#x1F4CB; 基本エッセンス」タブへ進もう。</div></div>
+
+</div><!-- /tab0 -->
+
+<!-- ================================================================ -->
+<!-- TAB 1: 基本エッセンス -->
+<!-- ================================================================ -->
+<div class="tab-content" id="tab1">
+
+  <div class="al info" style="margin-bottom:18px;">
+    <span class="ai">&#x1F4CB;</span>
+    <div><strong>このタブで学ぶこと：</strong>&#x2460; 3つの権利の完全比較 &#x2461; 設置 vs 非設置の要件差 &#x2462; 暗記すべき数字7つ &#x2463; 拒絶ルール &amp; 令和元年改正</div>
+  </div>
+
+  <!-- 3つの権利 完全比較表 -->
+  <div class="card">
+    <div class="card-head purple"><span class="ci">&#x1F4CB;</span> 3つの権利 完全比較表</div>
+    <div class="card-body">
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div><strong>議題</strong>=タイトル（テーマ）、<strong>議案</strong>=答案（具体案）</div></div>
+      <table class="tbl">
+        <thead><tr><th></th><th>&#x1F4CC; 議題提案権</th><th>&#x1F4DD; 議案提案権</th><th>&#x1F4E7; 議案要領通知請求権</th></tr></thead>
+        <tbody>
+          <tr><td><strong>何をする？</strong></td><td>議題（テーマ）を追加</td><td>具体案を提出</td><td>自分の議案を招集通知に掲載</td></tr>
+          <tr><td><strong>条文</strong></td><td>303条</td><td>304条</td><td>305条</td></tr>
+          <tr><td><strong>取締役会設置<br>の要件</strong></td><td>1/100以上 or 300個+<br>6ヶ月継続保有</td><td><strong>制限なし</strong></td><td>1/100以上 or 300個+<br>6ヶ月継続保有</td></tr>
+          <tr><td><strong>取締役会非設置<br>の要件</strong></td><td><strong>制限なし</strong></td><td><strong>制限なし</strong></td><td><strong>制限なし</strong></td></tr>
+          <tr><td><strong>期限</strong></td><td>8週間前まで</td><td>総会の場で</td><td>8週間前まで</td></tr>
+          <tr><td><strong>行使方法</strong></td><td>取締役に請求</td><td>総会の場で直接</td><td>取締役に請求</td></tr>
+        </tbody>
+      </table>
+      <div class="al warn"><span class="ai">&#x26A0;&#xFE0F;</span><div><strong>最重要：</strong>議案提案権だけが「要件なし + 総会の場で直接」。残り2つは「要件あり + 8週間前 + 取締役に請求」でセット！</div></div>
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div><strong>条文番号：</strong>303・304・305 →「<strong>さん・し・ご</strong>」で連番。議題→議案→通知の順。</div></div>
+    </div>
+  </div>
+
+  <!-- 行使要件 -->
+  <div class="card">
+    <div class="card-head red"><span class="ci">&#x1F522;</span> 行使要件 - 取締役会設置 vs 非設置</div>
+    <div class="card-body">
+      <div class="vs">
+        <div class="vc a">
+          <h4>&#x1F3E2; 取締役会設置会社</h4>
+          <p>
+            <strong>議題提案権 &amp; 議案要領通知請求権</strong><br>
+            &#x2460; 総議決権の<strong>1/100以上</strong> or <strong>300個以上</strong><br>
+            &#x2461; <strong>6ヶ月前</strong>から継続保有<br>
+            &#x2462; <strong>8週間前</strong>までに請求<br><br>
+            <strong>議案提案権</strong> → 要件なし
+          </p>
+        </div>
+        <div class="vc b">
+          <h4>&#x1F512; 取締役会非設置会社</h4>
+          <p>
+            <strong>3つとも全て</strong><br>
+            → 保有議決権数の制限<strong>なし</strong><br>
+            → 株式保有期間の制限<strong>なし</strong>
+          </p>
+        </div>
+      </div>
+      <div class="al err"><span class="ai">&#x26A0;&#xFE0F;</span><div><strong>ひっかけ：</strong>「取締役会非設置会社でも1/100以上が必要」→ <strong>&#x2718; ウソ！</strong></div></div>
+    </div>
+  </div>
+
+  <!-- 暗記数字 -->
+  <div class="card">
+    <div class="card-head orange"><span class="ci">&#x1F522;</span> 暗記すべき数字7つ</div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>数字</th><th>何の数字？</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1/100</strong></td><td>議題提案権・議案要領通知請求権の保有割合要件</td></tr>
+          <tr><td><strong>300個</strong></td><td>上記の代替要件（議決権の個数）</td></tr>
+          <tr><td><strong>6ヶ月</strong></td><td>継続保有期間（取締役会設置会社のみ）</td></tr>
+          <tr><td><strong>8週間</strong></td><td>議題提案権・議案要領通知請求権の請求期限</td></tr>
+          <tr><td><strong>10個</strong></td><td>1人の株主が提案できる議案の上限（令和元年改正）</td></tr>
+          <tr><td><strong>1/10</strong></td><td>同一議案の再提案拒絶基準（総議決権ベース）</td></tr>
+          <tr><td><strong>3年</strong></td><td>1/10未満だった場合の拒絶可能期間</td></tr>
+        </tbody>
+      </table>
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div><strong>語呂合わせ：</strong>「<strong>100</strong>分の1、<strong>300</strong>個、<strong>6</strong>ヶ月、<strong>8</strong>週間」→「<strong>い(1)っさん(300)、む(6)やっ(8)つ</strong>」</div></div>
+    </div>
+  </div>
+
+  <!-- 拒絶・改正 -->
+  <div class="card">
+    <div class="card-head green"><span class="ci">&#x1F6D1;</span> 拒絶できるケース &amp; 令和元年改正</div>
+    <div class="card-body">
+      <div class="g g3">
+        <div class="mc rl">
+          <span class="mi">&#x26D4;</span>
+          <h4>法令違反</h4>
+        </div>
+        <div class="mc ol">
+          <span class="mi">&#x1F4DC;</span>
+          <h4>定款違反</h4>
+        </div>
+        <div class="mc pl">
+          <span class="mi">&#x1F504;</span>
+          <h4>実質同一議案</h4>
+          <p><strong>1/10未満</strong>の賛成 → <strong>3年間</strong>拒否OK</p>
+        </div>
+      </div>
+      <h3>&#x1F195; 令和元年改正</h3>
+      <ul>
+        <li>議案数の上限 = <strong>10個</strong>（濫用的提案防止）</li>
+        <li>不当な目的（名誉侵害・侮辱・困惑）での提案は拒絶OK</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 少数株主権との比較 -->
+  <div class="card">
+    <div class="card-head teal"><span class="ci">&#x1F517;</span> 少数株主権との比較</div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>権利</th><th>保有要件</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>株主提案権</strong>（議題提案）</td><td>1/100以上 or 300個</td><td>6ヶ月保有、8週間前</td></tr>
+          <tr><td><strong>株主総会の招集請求</strong></td><td>3/100以上</td><td>6ヶ月保有</td></tr>
+          <tr><td><strong>帳簿閲覧請求権</strong></td><td>3/100以上</td><td></td></tr>
+          <tr><td><strong>役員の解任の訴え</strong></td><td>3/100以上</td><td>6ヶ月保有</td></tr>
+        </tbody>
+      </table>
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div>株主提案権の「1/100」は少数株主権の中で<strong>最もハードルが低い</strong>。他は大体「3/100」。</div></div>
+    </div>
+  </div>
+
+  <!-- 試験対策チェックリスト -->
+  <div class="card">
+    <div class="card-head pink"><span class="ci">&#x1F3AF;</span> 試験対策チェックリスト</div>
+    <div class="card-body">
+      <div class="al warn"><span class="ai">&#x1F3AF;</span><div>
+        &#x2460; 議題提案権 vs 議案提案権の<strong>要件の違い</strong><br>
+        &#x2461; 取締役会設置 vs 非設置の<strong>要件の違い</strong><br>
+        &#x2462; <strong>数字</strong>（1/100、300個、6ヶ月、8週間）<br>
+        &#x2463; 令和元年改正の<strong>議案数10個制限</strong><br>
+        &#x2464; 実質同一議案の<strong>1/10・3年ルール</strong>
+      </div></div>
+      <div class="al err"><span class="ai">&#x26A0;&#xFE0F;</span><div><strong>頻出ひっかけ：</strong><br>
+        &#x2718;「議案提案権にも1/100以上の保有が必要」→ 要件なし！<br>
+        &#x2718;「議案提案権も8週間前までに請求が必要」→ 総会の場で直接！<br>
+        &#x2718;「非設置会社でも1/100以上が必要」→ 制限なし！
+      </div></div>
+    </div>
+  </div>
+
+</div><!-- /tab1 -->
+
+<!-- ================================================================ -->
+<!-- TAB FILL: 穴埋めチェック -->
+<!-- ================================================================ -->
+<div id="tab-fill" class="tab-content">
+  <div class="box tip" style="margin-bottom:18px;">
+    <span class="box-icon">&#x1F4CB;</span>
+    <div><strong>このタブで学ぶこと</strong><br>
+    ・入門・基本エッセンスの重要ポイントを穴埋めで確認<br>
+    ・各カードの「答えを見る」で1問ずつチェックできるよ</div>
+  </div>
+  <div style="text-align:right;margin-bottom:16px;">
+    <button class="fill-reveal-btn" onclick="revealAll()" style="background:#059669;">&#x1F50D; 全て表示</button>
+    <button class="fill-reveal-btn" onclick="resetAll()" style="background:#64748b;">&#x1F504; リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#0d9488,#0f766e);">Q1. 3つの権利</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x2460; <span class="fill-blank">議題提案権</span>（303条）＝ 議論のテーマを追加<br>&#x2461; <span class="fill-blank">議案提案権</span>（304条）＝ 具体的な提案を提出</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2460;&#x2461; の答えを見る</button>
+      <div class="fill-group">&#x2462; <span class="fill-blank">議案要領通知請求権</span>（305条）＝ 提案内容を招集通知に載せてもらう</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">&#x2462; の答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#0d9488,#0f766e);">Q2. 議案提案権の特徴</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x30FB; 議案提案権（304条）は株主要件が<span class="fill-blank">不要</span>（誰でも使える）<br>&#x30FB; 行使のタイミング ＝ 株主総会の<span class="fill-blank">当日</span>に直接提出できる</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">Q3. 取締役会設置会社の要件</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x30FB; 議題提案権・議案要領通知請求権の持株要件 ＝ 総議決権の<span class="fill-blank">1/100以上</span> or <span class="fill-blank">300個以上</span><br>&#x30FB; 継続保有期間 ＝ <span class="fill-blank">6ヶ月</span>以上</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">上2行の答えを見る</button>
+      <div class="fill-group">&#x30FB; 請求期限 ＝ 株主総会の<span class="fill-blank">8週間</span>前<br>&#x30FB; 1人の株主が提案できる上限 ＝ <span class="fill-blank">10個</span>まで（令和元年改正）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">上2行の答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">Q4. 取締役会非設置会社</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x30FB; 取締役会非設置会社では、3つの権利すべてに持株要件は<span class="fill-blank">不要</span><br>&#x30FB; 継続保有期間の制限も<span class="fill-blank">なし</span>（どの株主でも行使可能）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">Q5. 実質同一議案の拒絶ルール</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x30FB; 前回の賛成が総議決権の<span class="fill-blank">1/10</span>未満 → <span class="fill-blank">3年</span>間は同じ提案を拒絶できる</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">Q6. 条文番号と権利の対応</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x30FB; 303条 ＝ <span class="fill-blank">議題提案権</span><br>&#x30FB; 304条 ＝ <span class="fill-blank">議案提案権</span>（要件なし！）<br>&#x30FB; 305条 ＝ <span class="fill-blank">議案要領通知請求権</span></div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">答えを見る</button>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">Q7. 少数株主権の持株比較</div>
+    <div class="fill-body">
+      <div class="fill-group">&#x30FB; 株主提案権（議題）＝ <span class="fill-blank">1/100</span>以上（最も少ない）<br>&#x30FB; 株主総会の招集請求 ＝ <span class="fill-blank">3/100</span>以上</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">上2行の答えを見る</button>
+      <div class="fill-group">&#x30FB; 帳簿閲覧請求権 ＝ <span class="fill-blank">3/100</span>以上<br>&#x30FB; 解散の訴え ＝ <span class="fill-blank">1/10</span>以上（最も厳しい）</div>
+      <button class="fill-reveal-btn" onclick="revealBlanks(this)">上2行の答えを見る</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- TAB 2: 物語クイズ -->
+<!-- ================================================================ -->
+<div class="tab-content" id="tab2">
+
+  <div class="al info" style="margin-bottom:18px;">
+    <span class="ai">&#x1F3AF;</span>
+    <div><strong>このタブで学ぶこと：</strong>&#x2460; ストーリーで株主提案権のルールを体感 &#x2461; ひっかけポイントの確認 &#x2462; 数字・要件の実践的な暗記</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head orange"><span class="ci">&#x1F4D6;</span> ストーリー設定</div>
+    <div class="card-body">
+      <p>鈴木さんはIT企業「テックノヴァ株式会社」（取締役会設置・公開会社）の株主。議決権の<strong>2%</strong>を<strong>1年前</strong>から保有している。会社の方針に不満があり、株主提案権を行使しようとしている。</p>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="quiz">
+    <h3>&#x2753; Q1. 議題提案権の行使要件</h3>
+    <div class="q-story">鈴木さん（議決権2%・1年保有）は、次回の定時株主総会に<span class="char">「役員報酬の開示方針」</span>という新しい議題を追加したい。鈴木さんはこの議題提案権を行使できるか？</div>
+    <ul class="opts">
+      <li onclick="a('q1',this,0)">A. できない。議題提案権には10%以上の保有が必要</li>
+      <li onclick="a('q1',this,1)">B. できる。1/100以上を6ヶ月前から保有しているので要件を満たす</li>
+      <li onclick="a('q1',this,0)">C. できない。議題提案権は取締役会非設置会社でしか使えない</li>
+    </ul>
+    <div id="q1" class="ans-box"><h4>&#x2705; B が正解！</h4><p>議題提案権の要件は「1/100以上 or 300個以上、6ヶ月前から保有」。鈴木さんは2%（＞1/100）を1年前から保有しており、両方クリア。ただし<strong>8週間前まで</strong>に取締役に請求する必要がある点も忘れずに。</p></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz">
+    <h3>&#x2753; Q2. 議案提案権の要件</h3>
+    <div class="q-story">株主総会の当日。鈴木さんは「取締役の選任」議題に対して、<span class="char">その場で突然「山田太郎氏を取締役に選任すべき」という議案</span>を提出した。会社側は「事前に通知がなかった」と拒否しようとしている。鈴木さんの議案提案は有効か？</div>
+    <ul class="opts">
+      <li onclick="a('q2',this,0)">A. 無効。議案も8週間前に通知しなければならない</li>
+      <li onclick="a('q2',this,0)">B. 無効。議案提案権にも1/100以上の保有が必要</li>
+      <li onclick="a('q2',this,1)">C. 有効。議案提案権は要件なし、総会の場で直接提出できる</li>
+    </ul>
+    <div id="q2" class="ans-box"><h4>&#x2705; C が正解！</h4><p>議案提案権（304条）は<strong>保有要件なし</strong>、<strong>事前通知も不要</strong>。株主なら誰でも総会の場で直接提出できる。要件があるのは議題提案権と議案要領通知請求権だけ！</p></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz">
+    <h3>&#x2753; Q3. 取締役会非設置の場合</h3>
+    <div class="q-story">鈴木さんの友人・田中さんは、家族経営の小さな会社（<span class="char">取締役会非設置会社</span>）の株主。議決権の0.5%しか持っていないが、議題提案権を行使したいと考えている。行使できるか？</div>
+    <ul class="opts">
+      <li onclick="a('q3',this,0)">A. できない。0.5%は1/100未満だから</li>
+      <li onclick="a('q3',this,1)">B. できる。取締役会非設置会社は保有要件なし</li>
+      <li onclick="a('q3',this,0)">C. できない。6ヶ月の継続保有期間を満たす必要がある</li>
+    </ul>
+    <div id="q3" class="ans-box"><h4>&#x2705; B が正解！</h4><p>取締役会<strong>非</strong>設置会社では、3つの権利すべてに<strong>保有要件なし・継続保有期間なし</strong>。0.5%でも1株でもOK。これは超頻出のひっかけポイント！</p></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz">
+    <h3>&#x2753; Q4. 議案数の上限</h3>
+    <div class="q-story">鈴木さんは会社に不満が溜まっており、次の株主総会で<span class="char">15個もの議案</span>を一度に提出しようとしている。会社はこれを全部受け付ける必要があるか？</div>
+    <ul class="opts">
+      <li onclick="a('q4',this,0)">A. 全部受け付ける必要がある。株主の権利だから制限はない</li>
+      <li onclick="a('q4',this,1)">B. 10個まで。超過分は取締役が拒否できる</li>
+      <li onclick="a('q4',this,0)">C. 3個まで。それ以上は濫用とみなされる</li>
+    </ul>
+    <div id="q4" class="ans-box"><h4>&#x2705; B が正解！</h4><p>令和元年改正で議案数の上限は<strong>10個</strong>に制限された。濫用的な株主提案（大量に議案を出して総会を妨害）を防ぐため。超過分は取締役が拒否可能。</p></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz">
+    <h3>&#x2753; Q5. 同一議案の再提案拒絶</h3>
+    <div class="q-story">鈴木さんは昨年の株主総会で「社外取締役を3名に増やす」という議案を出したが、<span class="char">賛成は総議決権の8%</span>にとどまり否決された。今年また同じ議案を出そうとしている。会社はこれを拒絶できるか？</div>
+    <ul class="opts">
+      <li onclick="a('q5',this,1)">A. 拒絶できる。1/10未満の賛成だったので3年間は再提案を拒否可能</li>
+      <li onclick="a('q5',this,0)">B. 拒絶できない。否決されても翌年すぐ再提案OK</li>
+      <li onclick="a('q5',this,0)">C. 拒絶できる。一度否決された議案は永久に再提案不可</li>
+    </ul>
+    <div id="q5" class="ans-box"><h4>&#x2705; A が正解！</h4><p>実質同一議案で総議決権の<strong>1/10未満</strong>の賛成（8%＜10%）→ その日から<strong>3年間</strong>は拒絶可能。逆に1/10以上の賛成があれば、翌年また出せる。</p></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz">
+    <h3>&#x2753; Q6. 議案要領通知請求権</h3>
+    <div class="q-story">鈴木さんは自分の議案を<span class="char">招集通知に載せて全株主に知ってほしい</span>と考え、議案要領通知請求権を行使しようとしている。この権利の行使期限と方法は？</div>
+    <ul class="opts">
+      <li onclick="a('q6',this,0)">A. 総会の場で直接請求すればよい</li>
+      <li onclick="a('q6',this,0)">B. 総会の2週間前までに取締役に請求</li>
+      <li onclick="a('q6',this,1)">C. 総会の8週間前までに取締役に請求</li>
+    </ul>
+    <div id="q6" class="ans-box"><h4>&#x2705; C が正解！</h4><p>議案要領通知請求権（305条）は<strong>8週間前まで</strong>に取締役に請求。「総会の場で直接」は議案提案権（304条）だけ。議題提案権も同じく8週間前まで。</p></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz">
+    <h3>&#x2753; Q7. 条文番号</h3>
+    <div class="q-story">試験問題で「<span class="char">会社法304条</span>」に基づく権利について問われた。304条はどの権利か？</div>
+    <ul class="opts">
+      <li onclick="a('q7',this,0)">A. 議題提案権（303条）</li>
+      <li onclick="a('q7',this,1)">B. 議案提案権（304条）</li>
+      <li onclick="a('q7',this,0)">C. 議案要領通知請求権（305条）</li>
+    </ul>
+    <div id="q7" class="ans-box"><h4>&#x2705; B が正解！</h4><p>303（さん）・304（し）・305（ご）の連番。議題→議案→通知の順。304条の議案提案権だけが「要件なし・総会で直接」の特別な権利。</p></div>
+  </div>
+
+</div><!-- /tab2 -->
+
+<!-- ================================================================ -->
+<!-- TAB 3: 詳細まとめ -->
+<!-- ================================================================ -->
+<div class="tab-content" id="tab3">
+
+  <div class="al info" style="margin-bottom:18px;">
+    <span class="ai">&#x1F4DA;</span>
+    <div><strong>このタブで学ぶこと：</strong>&#x2460; 3つの権利の網羅的整理 &#x2461; 拒絶事由の全パターン &#x2462; 少数株主権との横断比較 &#x2463; 試験対策の最終チェック</div>
+  </div>
+
+  <!-- 3つの権利 詳細解説 -->
+  <div class="card">
+    <div class="card-head purple"><span class="ci">&#x1F4CC;</span> 議題提案権（303条）</div>
+    <div class="card-body">
+      <p><strong>株主総会で話し合うテーマ（議題）を追加する権利。</strong></p>
+      <h3>&#x1F3E2; 取締役会設置会社の場合</h3>
+      <ul>
+        <li>総議決権の<strong>1/100以上</strong> or <strong>300個以上</strong>の議決権</li>
+        <li><strong>6ヶ月前</strong>から継続して保有</li>
+        <li>総会日の<strong>8週間前</strong>までに<strong>取締役に請求</strong></li>
+      </ul>
+      <h3>&#x1F512; 取締役会非設置会社の場合</h3>
+      <ul>
+        <li>保有要件・保有期間の<strong>制限なし</strong></li>
+        <li>株主なら誰でも行使可能</li>
+      </ul>
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div>非設置会社では株主総会が万能（一切の事項を決議可能）なので、議題追加のハードルも低い。</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head blue"><span class="ci">&#x1F4DD;</span> 議案提案権（304条）</div>
+    <div class="card-body">
+      <p><strong>株主総会の場で、具体的な議案（案）を提出する権利。</strong></p>
+      <ul>
+        <li>保有要件：<strong>なし</strong>（株主なら誰でも）</li>
+        <li>行使時期：<strong>総会の場で直接</strong></li>
+        <li>行使方法：取締役への事前請求は<strong>不要</strong></li>
+      </ul>
+      <div class="al warn"><span class="ai">&#x26A0;&#xFE0F;</span><div>3つの中で<strong>唯一</strong>要件がない。ここが最大の出題ポイント！「議案提案権にも保有要件がある」は典型的なひっかけ。</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head teal"><span class="ci">&#x1F4E7;</span> 議案要領通知請求権（305条）</div>
+    <div class="card-body">
+      <p><strong>自分の議案の要領（概要）を招集通知に載せるよう請求する権利。</strong></p>
+      <h3>&#x1F3E2; 取締役会設置会社の場合</h3>
+      <ul>
+        <li>要件は議題提案権と<strong>同じ</strong>（1/100以上 or 300個、6ヶ月保有）</li>
+        <li>総会日の<strong>8週間前</strong>までに取締役に請求</li>
+      </ul>
+      <h3>&#x1F512; 取締役会非設置会社の場合</h3>
+      <ul>
+        <li>保有要件・保有期間の<strong>制限なし</strong></li>
+      </ul>
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div>議題提案権と議案要領通知請求権は「要件・期限・方法」がすべて同じ。セットで覚える。</div></div>
+    </div>
+  </div>
+
+  <!-- 拒絶事由 詳細 -->
+  <div class="card">
+    <div class="card-head red"><span class="ci">&#x1F6D1;</span> 拒絶事由の全パターン</div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>拒絶事由</th><th>内容</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>法令・定款違反</strong></td><td>法律や定款に反する議案</td><td>当然に拒否</td></tr>
+          <tr><td><strong>実質同一議案</strong></td><td>過去に1/10未満の賛成で否決された同一議案</td><td>否決日から<strong>3年間</strong>拒否可能</td></tr>
+          <tr><td><strong>議案数超過</strong></td><td>10個を超える議案</td><td>令和元年改正で追加</td></tr>
+          <tr><td><strong>不当な目的</strong></td><td>名誉侵害・侮辱・困惑を目的とする提案</td><td>令和元年改正で追加</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 少数株主権 横断比較 -->
+  <div class="card">
+    <div class="card-head green"><span class="ci">&#x1F517;</span> 少数株主権 横断比較</div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>権利</th><th>保有要件</th><th>継続保有</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>株主提案権</strong>（議題）</td><td>1/100 or 300個</td><td>6ヶ月</td><td>8週間前まで</td></tr>
+          <tr><td><strong>株主総会の招集請求</strong></td><td>3/100</td><td>6ヶ月</td><td></td></tr>
+          <tr><td><strong>帳簿閲覧請求権</strong></td><td>3/100</td><td>なし</td><td></td></tr>
+          <tr><td><strong>役員の解任の訴え</strong></td><td>3/100</td><td>6ヶ月</td><td></td></tr>
+          <tr><td><strong>解散の訴え</strong></td><td>1/10</td><td>なし</td><td>最もハードルが高い</td></tr>
+        </tbody>
+      </table>
+      <div class="al memo"><span class="ai">&#x1F9E0;</span><div>株主提案権（1/100）は<strong>最もハードルが低い</strong>少数株主権。他は3/100が多い。「1/100で提案、3/100で招集・閲覧・解任」と覚える。</div></div>
+    </div>
+  </div>
+
+  <!-- 最終チェック -->
+  <div class="card">
+    <div class="card-head pink"><span class="ci">&#x1F3AF;</span> 最終チェックリスト</div>
+    <div class="card-body">
+      <div class="al warn"><span class="ai">&#x2705;</span><div>
+        &#x2460; 議題提案権 vs 議案提案権の<strong>要件の違い</strong>を言えるか？<br>
+        &#x2461; 取締役会設置 vs 非設置の<strong>要件の違い</strong>を言えるか？<br>
+        &#x2462; <strong>1/100・300個・6ヶ月・8週間</strong>を即答できるか？<br>
+        &#x2463; 令和元年改正の<strong>10個制限・不当目的</strong>を覚えているか？<br>
+        &#x2464; 実質同一議案の<strong>1/10・3年ルール</strong>を言えるか？<br>
+        &#x2465; 条文番号<strong>303・304・305</strong>の対応を言えるか？
+      </div></div>
+    </div>
+  </div>
+
+</div><!-- /tab3 -->
+
+<!-- ===== Bottom Tab Navigation ===== -->
+<nav class="tab-nav-wrap" style="position:static; margin-top:0;">
+  <div class="tab-nav">
+    <button class="tab-btn" data-tab="tab0">&#x1F530; 入門</button>
+    <button class="tab-btn" data-tab="tab1">&#x1F4CB; 基本エッセンス</button>
+    <button class="tab-btn" data-tab="tab-fill">&#x270D;&#xFE0F; 穴埋めチェック</button>
+    <button class="tab-btn" data-tab="tab2">&#x1F3AF; 物語クイズ</button>
+    <button class="tab-btn" data-tab="tab3">&#x1F4DA; 詳細まとめ</button>
+  </div>
+</nav>
+
+<footer class="foot">中小企業診断士 経営法務｜株主提案権まとめ v2｜テキスト6-4 準拠</footer>
+
+<script>
+// Tab switching
+(function(){
+  var btns = document.querySelectorAll('.tab-btn');
+  var tabs = document.querySelectorAll('.tab-content');
+  function activate(id){
+    btns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')===id); });
+    tabs.forEach(function(t){ t.classList.toggle('active', t.id===id); });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=this.getAttribute('data-tab');
+      activate(id);
+      history.replaceState(null,null,'#'+id);
+    });
+  });
+  function checkHash(){
+    var h=location.hash.replace('#','');
+    if(h&&document.getElementById(h)) activate(h);
+  }
+  checkHash();
+  window.addEventListener('hashchange',checkHash);
+})();
+
+// Quiz answer
+function a(qid,el,ok){
+  var q=el.closest('.quiz');
+  if(q.dataset.done)return;
+  q.dataset.done='1';
+  el.classList.add(ok?'ok':'ng');
+  if(!ok){
+    q.querySelectorAll('.opts li').forEach(function(li){
+      var h=li.getAttribute('onclick');
+      if(h&&h.indexOf(',1)')!==-1) li.classList.add('ok');
+    });
+  }
+  document.getElementById(qid).classList.add('show');
+}
+function revealBlanks(btn){
+  var grp=btn.previousElementSibling;
+  if(grp&&grp.classList.contains('fill-group')){
+    grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show');});
+  }
+  btn.textContent='\u2705 表示済み';btn.disabled=true;btn.style.opacity='.5';
+}
+function revealAll(){
+  document.querySelectorAll('#tab-fill .fill-blank').forEach(function(el){el.classList.add('show');});
+  document.querySelectorAll('#tab-fill .fill-reveal-btn').forEach(function(b){b.textContent='\u2705 表示済み';b.disabled=true;b.style.opacity='.5';});
+}
+function resetAll(){
+  document.querySelectorAll('#tab-fill .fill-blank').forEach(function(el){el.classList.remove('show');});
+  document.querySelectorAll('#tab-fill .fill-reveal-btn').forEach(function(b){b.innerHTML='\uD83D\uDC41 答えを見る';b.disabled=false;b.style.opacity='1';});
+}
+document.addEventListener('click',function(e){
+  var el=e.target;
+  if(el.classList&&el.classList.contains('fill-blank')){el.classList.toggle('show');}
+});
+</script>
+
+<script>
+window.LS_CONFIG = {
+  KEY: 'ls_105_qz_teian',
+  TOPICS: [
+    {id:'qz_intro',  name:'入門',         tab:0},
+    {id:'qz_basic',  name:'基本エッセンス', tab:1},
+    {id:'qz_quiz',   name:'物語クイズ',     tab:2},
+    {id:'qz_detail', name:'詳細まとめ',     tab:3}
+  ],
+  CURIOSITY: {
+    hook: '1株しか持っていない株主でも提案できる権利が1つだけある。どれ？',
+    hint: '「議案提案権」は要件なし。残り2つは1/100・300個・6か月・8週間が必要。'
+  },
+  PRETEST: [
+    {q:'Q1. 議題提案権の保有要件は？', a:'1/100以上 or 300個以上、6か月継続保有'},
+    {q:'Q2. 要件不要で行使できるのはどの権利？', a:'議案提案権（304条）'},
+    {q:'Q3. 令和元年改正で導入された議案数の上限は？', a:'10個（議案要領通知請求権のみ）'}
+  ]
+};
+</script>
+<script src="../learning-system.js"></script>
+</body>
+</html>
