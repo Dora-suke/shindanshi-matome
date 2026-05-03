@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習ダッシュボード（モック・科目別配置版）</title>
+<style>
+:root{
+  --ink:#0f172a;--paper:#faf7f1;--paper-dim:#f3ede1;
+  --indigo:#1e2a55;--indigo-deep:#121a3a;
+  --gold:#b08a3e;--gold-soft:#d4b872;
+  --line:#d8cfbb;--muted:#6b6558;
+  --due-red:#dc2626;--due-yellow:#f39c12;--due-green:#27ae60;
+  --threshold:#b08a3e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  background:var(--paper);color:var(--ink);line-height:1.85;font-size:15px;
+  background-image:
+    radial-gradient(1200px 600px at 50% -200px,rgba(30,42,85,.08),transparent 60%);
+}
+.mock-banner{background:#fef3c7;border-bottom:2px solid #f59e0b;padding:.7rem 1rem;text-align:center;font-size:.85rem;color:#92400e}
+header.site-header{background:var(--indigo-deep);color:#f5eedb;text-align:center;padding:14px 20px}
+.site-header h1{font-size:1rem;letter-spacing:.28em;font-weight:600}
+main{max-width:1080px;margin:12px auto;padding:0 16px 40px}
+
+/* ===== 全体サマリー（簡素版・トップに小さく） ===== */
+.global-summary{background:#fffdf8;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:4px;padding:.45rem .9rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;font-size:.85rem}
+.global-summary .gs-label{color:var(--muted);letter-spacing:.05em;font-size:.78rem}
+.global-summary .gs-stat{color:var(--indigo);font-weight:700}
+.global-summary .gs-stat strong{font-size:1.15rem;color:var(--gold)}
+.global-summary .gs-actions{margin-left:auto;display:flex;gap:.4rem}
+.global-summary .gs-actions button{font-size:.75rem;padding:.3rem .7rem;border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;font-family:inherit}
+
+/* ===== 科目セクション ===== */
+.subject-section{margin-bottom:1.1rem;background:#fffdf8;border:1px solid var(--line);border-radius:4px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(18,26,58,.04)}
+.sec-title-bar{background:linear-gradient(135deg,var(--c-deep),var(--c-deep));color:#fff;padding:.45rem .9rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.4rem;line-height:1.3}
+.sec-title-bar .sec-title-block{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+.sec-title-bar .sec-num{font-family:"Inter",sans-serif;font-size:.7rem;letter-spacing:.1em;opacity:.8}
+.sec-title-bar h2{font-size:.95rem;font-weight:600;letter-spacing:.04em}
+.sec-title-bar .sec-stats{font-size:.72rem;display:flex;gap:.35rem;flex-wrap:wrap;align-items:center}
+.sec-title-bar .sec-stats span{display:flex;align-items:center;gap:.22rem;cursor:help;background:rgba(255,255,255,.18);padding:.12rem .5rem;border-radius:10px}
+.sec-title-bar .sec-stats .lbl{font-size:.68rem;letter-spacing:.02em;opacity:.92}
+.sec-title-bar .sec-stats .num{background:#fff;color:var(--c-deep,var(--indigo));padding:0 6px;border-radius:7px;font-weight:800;font-size:.78rem}
+
+/* ===== 科目内ミニダッシュボード ===== */
+.subject-dash{background:var(--c-soft,#fffaf2);padding:.55rem .9rem;border-bottom:1px solid var(--line)}
+.subject-dash .dash-row-group{margin-bottom:.4rem}
+.subject-dash .dash-row-group:last-child{margin-bottom:0}
+.dash-label{font-size:.74rem;font-weight:700;color:var(--c-text,var(--indigo));margin-bottom:.2rem;display:flex;align-items:center;gap:.35rem}
+.dash-label .ct{background:#fff;color:var(--c-text,var(--indigo));border:1px solid currentColor;padding:0 6px;border-radius:7px;font-size:.68rem;font-weight:800}
+.dash-label.due-today{color:var(--due-red)}
+.dash-label.due-soon{color:#bf8200}
+.dash-label.threshold{color:var(--threshold)}
+.dash-label.errors{color:#7a3b3b}
+
+.topic-row{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:4px;padding:.32rem .65rem;margin:.18rem 0;font-size:.82rem;cursor:pointer;text-decoration:none;color:var(--ink);transition:.15s;flex-wrap:wrap;gap:.35rem;line-height:1.5}
+.topic-row:hover{transform:translateX(2px);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.topic-row.due-today{border-left:3px solid var(--due-red)}
+.topic-row.due-soon{border-left:3px solid var(--due-yellow)}
+.topic-row.threshold{border-left:3px solid #cbd5e1;background:#f8fafc;opacity:.65}
+.topic-row.threshold .topic-name{color:#64748b;font-weight:500}
+.topic-row.threshold .stage,.topic-row.threshold .streak{color:#64748b}
+.topic-row.threshold:hover{opacity:1}
+.dash-label.threshold{color:#64748b}
+.dash-label.threshold .ct{color:#64748b;border-color:#cbd5e1}
+.topic-row.errors{border-left:3px solid #7a3b3b}
+.topic-meta{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.file-name{font-size:.78rem;color:var(--muted);font-family:"Inter",sans-serif}
+.topic-name{font-weight:600;color:var(--indigo)}
+.topic-status{font-size:.72rem;color:var(--muted);font-family:"Inter",monospace;white-space:nowrap}
+.topic-status .stage{color:var(--indigo);font-weight:700}
+.topic-status .streak{color:var(--due-green)}
+
+.dash-empty{padding:.4rem;text-align:center;color:var(--muted);font-size:.78rem;font-style:italic}
+
+/* ===== 既存のノート一覧 ===== */
+.note-list{padding:.55rem .9rem .7rem}
+.note-list h3{font-size:.78rem;color:var(--muted);margin-bottom:.3rem;letter-spacing:.05em}
+.note-list ul{list-style:none}
+.note-list li{padding:.28rem .55rem;margin:.12rem 0;background:#fafafa;border-radius:3px;font-size:.82rem;border-left:2px solid var(--line)}
+.note-list li a{color:var(--indigo);text-decoration:none}
+.note-list li a:hover{color:var(--gold)}
+
+/* ===== 科目セクションの色変数 ===== */
+#s101{--c-deep:#0e7490;--c-soft:#ecfeff;--c-text:#164e63}
+#s102{--c-deep:#b45309;--c-soft:#fef3c7;--c-text:#78350f}
+#s103{--c-deep:#7c3aed;--c-soft:#f5f3ff;--c-text:#4c1d95}
+#s104{--c-deep:#059669;--c-soft:#ecfdf5;--c-text:#064e3b}
+#s105{--c-deep:#dc2626;--c-soft:#fef2f2;--c-text:#7f1d1d}
+#s106{--c-deep:#2563eb;--c-soft:#eff6ff;--c-text:#1e3a8a}
+#s107{--c-deep:#be185d;--c-soft:#fdf2f8;--c-text:#831843}
+
+/* ===== ヘッダーバッジ（各ノート） ===== */
+.note-mock{background:#fff;border:2px dashed #94a3b8;border-radius:6px;padding:0;margin-top:2rem;overflow:hidden}
+.note-mock-label{background:#94a3b8;color:#fff;padding:.4rem .8rem;font-size:.75rem;letter-spacing:.05em}
+.note-header-mock{background:linear-gradient(135deg,#1a5276 0%,#2980b9 50%,#5dade2 100%);color:#fff;padding:1.1rem 1.4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.7rem}
+.note-header-mock h3{font-size:1.05rem;font-weight:800}
+.header-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);padding:.4rem .85rem;border-radius:20px;cursor:pointer;font-size:.85rem;font-weight:700;color:#fff;transition:.15s}
+.header-badge:hover{background:rgba(255,255,255,.4)}
+.header-badge .badge-num{background:#fef2f2;color:#dc2626;padding:1px 8px;border-radius:10px;font-size:.78rem;font-weight:800}
+.header-modal{display:none;background:#fff;color:var(--ink);padding:1rem 1.4rem}
+.header-modal.open{display:block}
+.header-modal h4{font-size:.92rem;color:var(--indigo);margin-bottom:.6rem;border-bottom:1px dashed var(--line);padding-bottom:.3rem}
+.header-modal .modal-row{padding:.4rem .6rem;background:var(--paper-dim);border-radius:4px;display:flex;justify-content:space-between;align-items:center;margin:.25rem 0;font-size:.84rem;flex-wrap:wrap;gap:.4rem}
+.header-modal .modal-row.due-today{background:#fef2f2;border-left:3px solid var(--due-red)}
+.header-modal .modal-row.threshold{background:linear-gradient(90deg,#fff9c4,#fff)}
+
+/* ===== 説明 ===== */
+.explain{background:#eaf2f8;border-left:4px solid #2980b9;padding:.8rem 1.1rem;margin:1.5rem 0;border-radius:4px}
+.explain h3{font-size:.95rem;color:#1a5276;margin-bottom:.4rem}
+.explain ul{margin:.4rem 0 0 1.2rem;font-size:.86rem;line-height:1.8}
+.explain li{margin:.15rem 0}
+.config-q{background:#fff8e1;border:2px dashed #f59e0b;border-radius:6px;padding:1rem 1.2rem;margin:1.2rem 0}
+.config-q h3{color:#92400e;font-size:.95rem;margin-bottom:.5rem}
+.config-q .q{font-weight:700;color:#78350f;margin:.5rem 0 .25rem}
+.config-q .opts{font-size:.85rem;line-height:1.85}
+</style>
+</head>
+<body>
+
+<div class="mock-banner">
+  ⚠️ <strong>科目別配置版モック</strong>。各科目セクション内に「今日の学習プラン」を埋め込む構成。データはサンプル。
+</div>
+
+<header class="site-header"><h1>中小企業診断士 學習詞藻集</h1></header>
+
+<main>
+
+<!-- ====== 全体サマリー（小さく上に） ====== -->
+<div class="global-summary">
+  <div>
+    <span class="gs-label">📅 2026-05-03（土）</span>
+    <span class="gs-stat" style="margin-left:.7rem">🔴 今日復習 <strong>5</strong>件／🟡 3日以内 <strong>3</strong>件／✅ OK <strong>8</strong>／❌ 誤答 <strong>12</strong>件</span>
+  </div>
+  <div class="gs-actions">
+    <button>📥 一括エクスポート</button>
+    <button>📤 一括インポート</button>
+  </div>
+</div>
+
+<!-- ====== 科目101 経済学（例：今日の復習なし） ====== -->
+<section class="subject-section" id="s101">
+  <div class="sec-title-bar">
+    <div class="sec-title-block">
+      <span class="sec-num">SUBJECT 101</span>
+      <h2>経済学・経済政策</h2>
+    </div>
+    <div class="sec-stats">
+      <span title="今日復習する論点の数">🔴<span class="lbl">今日</span><span class="num">0</span></span>
+      <span title="3日以内に復習する論点の数">🟡<span class="lbl">近日</span><span class="num">1</span></span>
+      <span title="OK（連続◯3回達成）の論点の数">✅<span class="lbl">OK</span><span class="num">2</span></span>
+    </div>
+  </div>
+  <div class="subject-dash">
+    <div class="dash-row-group">
+      <div class="dash-label due-soon">🟡 3日以内 <span class="ct">1</span></div>
+      <a href="#" class="topic-row due-soon">
+        <div class="topic-meta"><span class="file-name">07.需要弾力</span><span class="topic-name">価格弾力性</span></div>
+        <span class="topic-status"><span class="stage">S2</span>／<span class="streak">◯1</span>／05-04</span>
+      </a>
+    </div>
+  </div>
+  <div class="note-list">
+    <h3>このフォルダのノート（既存表示）</h3>
+    <ul>
+      <li><a href="#">001.費用関数まとめ</a></li>
+      <li><a href="#">007.需要弾力性まとめ</a></li>
+      <li><a href="#">…</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ====== 科目102 財務・会計 ====== -->
+<section class="subject-section" id="s102">
+  <div class="sec-title-bar">
+    <div class="sec-title-block">
+      <span class="sec-num">SUBJECT 102</span>
+      <h2>財務・会計</h2>
+    </div>
+    <div class="sec-stats">
+      <span title="今日復習する論点の数">🔴<span class="lbl">今日</span><span class="num">1</span></span>
+      <span title="3日以内に復習する論点の数">🟡<span class="lbl">近日</span><span class="num">0</span></span>
+      <span title="OK（連続◯3回達成）の論点の数">✅<span class="lbl">OK</span><span class="num">3</span></span>
+      <span title="クイズで誤答した件数（直近3日）">❌<span class="lbl">誤答</span><span class="num">4</span></span>
+    </div>
+  </div>
+  <div class="subject-dash">
+    <div class="dash-row-group">
+      <div class="dash-label due-today">🔴 今日復習 <span class="ct">1</span></div>
+      <a href="#" class="topic-row due-today">
+        <div class="topic-meta"><span class="file-name">19.FCF</span><span class="topic-name">WACC計算</span></div>
+        <span class="topic-status"><span class="stage">S3</span>／<span class="streak">◯2</span>／05-03</span>
+      </a>
+    </div>
+    <div class="dash-row-group">
+      <div class="dash-label errors">❌ 誤答キュー <span class="ct">4</span></div>
+      <a href="#" class="topic-row errors">
+        <div class="topic-meta"><span class="file-name">19.FCF</span><span class="topic-name">クイズタブ</span></div>
+        <span class="topic-status">4件</span>
+      </a>
+    </div>
+  </div>
+  <div class="note-list">
+    <h3>このフォルダのノート</h3>
+    <ul>
+      <li><a href="#">12.意思決定会計</a></li>
+      <li><a href="#">19.FCF・WACC</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ====== 科目106 経営情報（メインで使ってる科目・例） ====== -->
+<section class="subject-section" id="s106">
+  <div class="sec-title-bar">
+    <div class="sec-title-block">
+      <span class="sec-num">SUBJECT 106</span>
+      <h2>経営情報システム</h2>
+    </div>
+    <div class="sec-stats">
+      <span title="今日復習する論点の数">🔴<span class="lbl">今日</span><span class="num">2</span></span>
+      <span title="3日以内に復習する論点の数">🟡<span class="lbl">近日</span><span class="num">1</span></span>
+      <span title="OK（連続◯3回達成）の論点の数">✅<span class="lbl">OK</span><span class="num">2</span></span>
+      <span title="クイズで誤答した件数（直近3日）">❌<span class="lbl">誤答</span><span class="num">5</span></span>
+    </div>
+  </div>
+  <div class="subject-dash">
+    <div class="dash-row-group">
+      <div class="dash-label due-today">🔴 今日復習 <span class="ct">2</span></div>
+      <a href="#" class="topic-row due-today">
+        <div class="topic-meta"><span class="file-name">11.tx</span><span class="topic-name">基本（ACID深掘り）</span></div>
+        <span class="topic-status"><span class="stage">S2</span>／<span class="streak">◯1</span>／05-03</span>
+      </a>
+      <a href="#" class="topic-row due-today">
+        <div class="topic-meta"><span class="file-name">11.tx_super1</span><span class="topic-name">入門</span></div>
+        <span class="topic-status"><span class="stage">S1</span>／<span class="streak">◯0</span>／05-03</span>
+      </a>
+    </div>
+    <div class="dash-row-group">
+      <div class="dash-label due-soon">🟡 3日以内 <span class="ct">1</span></div>
+      <a href="#" class="topic-row due-soon">
+        <div class="topic-meta"><span class="file-name">11.tx_super2</span><span class="topic-name">詳細①ロック</span></div>
+        <span class="topic-status"><span class="stage">S3</span>／<span class="streak">◯2</span>／05-04</span>
+      </a>
+    </div>
+    <div class="dash-row-group">
+      <div class="dash-label threshold">✅ OK <span class="ct">2</span></div>
+      <a href="#" class="topic-row threshold">
+        <div class="topic-meta"><span class="file-name">11.tx</span><span class="topic-name">ゼロから ✅</span></div>
+        <span class="topic-status"><span class="stage">S5</span>／<span class="streak">◯4</span>／06-02</span>
+      </a>
+      <a href="#" class="topic-row threshold">
+        <div class="topic-meta"><span class="file-name">11.tx</span><span class="topic-name">入門 ✅</span></div>
+        <span class="topic-status"><span class="stage">S4</span>／<span class="streak">◯3</span>／05-17</span>
+      </a>
+    </div>
+    <div class="dash-row-group">
+      <div class="dash-label errors">❌ 誤答キュー <span class="ct">5</span></div>
+      <a href="#" class="topic-row errors">
+        <div class="topic-meta"><span class="file-name">11.tx</span><span class="topic-name">クイズタブ</span></div>
+        <span class="topic-status">5件</span>
+      </a>
+    </div>
+  </div>
+  <div class="note-list">
+    <h3>このフォルダのノート</h3>
+    <ul>
+      <li><a href="#">06.OSI参照モデル</a></li>
+      <li><a href="#">11.トランザクション管理</a> <small>(学習システム導入済)</small></li>
+      <li><a href="#">11.tx 超初心者版 part1</a> <small>(導入済)</small></li>
+      <li><a href="#">11.tx 超初心者版 part2</a> <small>(導入済)</small></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ====== 科目107（学習データ未投入の例） ====== -->
+<section class="subject-section" id="s107">
+  <div class="sec-title-bar">
+    <div class="sec-title-block">
+      <span class="sec-num">SUBJECT 107</span>
+      <h2>中小企業経営・政策</h2>
+    </div>
+    <div class="sec-stats">
+      <span style="opacity:.5">学習システム未導入</span>
+    </div>
+  </div>
+  <div class="subject-dash">
+    <div class="dash-empty">学習システムが導入されたノートはまだありません</div>
+  </div>
+  <div class="note-list">
+    <h3>このフォルダのノート</h3>
+    <ul>
+      <li><a href="#">02.小規模企業振興基本法</a></li>
+      <li><a href="#">…</a></li>
+    </ul>
+  </div>
+</section>
+
+<div class="explain">
+  <h3>👆 構成のポイント</h3>
+  <ul>
+    <li>各科目セクションの「タイトル帯」と「ノート一覧」の<strong>間</strong>に、その科目だけのミニダッシュボードが入る</li>
+    <li>タイトル帯にも数値バッジ（📚3 🔴0 🟡1 ✅2 ❌4）でひと目で状況把握</li>
+    <li>学習システム未導入の科目は「未導入」と薄く表示（圧迫感なし）</li>
+    <li>ページトップに小さい「全体サマリー」（合計値だけ）＋一括操作ボタン</li>
+  </ul>
+</div>
+
+<!-- ====== 各ノートの管理ヘッダー（上部タブの上に追加するイメージ） ====== -->
+<style>
+.note-mock-frame{background:#fff;border:2px dashed #94a3b8;border-radius:6px;margin-top:2rem;overflow:hidden}
+.ls-sticky-wrap{position:sticky;top:0;z-index:50;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.note-mock-label-top{background:#94a3b8;color:#fff;padding:.4rem .8rem;font-size:.75rem}
+/* 既存のタイトルヘッダー（青グラデ：そのまま残す） */
+.exist-title-header{background:linear-gradient(135deg,#1a5276 0%,#2980b9 50%,#5dade2 100%);color:#fff;padding:1rem 1.4rem;text-align:center}
+.exist-title-header h3{font-size:1.1rem;font-weight:800}
+.exist-title-header .sub{font-size:.78rem;opacity:.9;margin-top:.2rem}
+/* ★ 新規：学習管理ヘッダー（既存タイトルヘッダーと既存タブ navigation の間に挿入） */
+.ls-mgmt-header{background:#fffbf2;border-top:1px solid #d8cfbb;border-bottom:2px solid #b08a3e;padding:.7rem 1rem;display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;font-size:.85rem}
+.ls-mgmt-info{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem}
+.ls-mgmt-label{font-size:.72rem;color:#6b6558;letter-spacing:.05em;font-weight:700;background:#fff;padding:.15rem .6rem;border-radius:10px;border:1px solid #d8cfbb}
+.ls-mgmt-chips{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+.ls-chip{display:inline-flex;align-items:center;gap:.3rem;background:#fff;border:1px solid #d8cfbb;padding:.2rem .55rem;border-radius:14px;font-size:.78rem;color:#1e2a55;cursor:pointer;text-decoration:none;transition:.15s}
+.ls-chip:hover{border-color:#b08a3e;background:#fff8e1}
+.ls-chip.due-today{background:#fef2f2;border-color:#dc2626;color:#922b21;font-weight:700}
+.ls-chip.due-soon{background:#fef9e7;border-color:#f39c12;color:#bf6900;font-weight:700}
+.ls-chip.threshold{background:#f1f5f9;border-color:#cbd5e1;color:#64748b;opacity:.7}
+.ls-chip-num{font-weight:800}
+.ls-mgmt-actions{display:flex;gap:.3rem}
+.ls-mgmt-actions button{font-size:.72rem;padding:.25rem .55rem;border:1px solid #d8cfbb;background:#fff;border-radius:4px;cursor:pointer;font-family:inherit;color:#5d6d7e}
+.ls-mgmt-actions button:hover{background:#fff8e1;color:#1e2a55}
+.ls-mgmt-actions button.home{background:#1a5276;color:#fff;border-color:#1a5276}
+.ls-mgmt-actions button.home:hover{background:#2980b9;color:#fff}
+/* 既存のタブ navigation （以下は元のまま） */
+.exist-tab-nav{background:#fff;border-bottom:1px solid #d8cfbb;display:flex;overflow-x:auto}
+.exist-tab-btn{padding:.7rem 1rem;border:none;background:transparent;font-size:.8rem;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.exist-tab-btn.active{color:#27ae60;border-bottom-color:#27ae60}
+.exist-tab-btn:not(.active){color:#5d6d7e}
+</style>
+
+<div class="note-mock-frame">
+  <div class="note-mock-label-top">↓ ノートのページ上部（タイトル → 学習管理ヘッダー → 既存タブ）</div>
+  <div class="exist-title-header">
+    <h3>トランザクション管理まとめ</h3>
+    <div class="sub">中小企業診断士 経営情報システム ｜ ACID／排他制御 <small style="opacity:.7">（↓スクロールするとここは消える）</small></div>
+  </div>
+
+  <div class="ls-sticky-wrap">
+    <div class="ls-mgmt-header">
+      <div class="ls-mgmt-info">
+        <span class="ls-mgmt-label">📅 今日</span>
+        <div class="ls-mgmt-chips">
+          <a href="#" class="ls-chip due-today">🔴 基本 <span class="ls-chip-num">S2</span></a>
+          <a href="#" class="ls-chip due-today">🔴 詳細 <span class="ls-chip-num">S1</span></a>
+          <a href="#" class="ls-chip due-soon">🟡 入門 <span class="ls-chip-num">S3</span></a>
+          <a href="#" class="ls-chip threshold">✅ ゼロから</a>
+        </div>
+      </div>
+      <div class="ls-mgmt-actions">
+        <button>📥</button>
+        <button>📤</button>
+        <button class="home">🏠 indexへ</button>
+      </div>
+    </div>
+
+    <nav class="exist-tab-nav">
+      <button class="exist-tab-btn active">🌱 ゼロから</button>
+      <button class="exist-tab-btn">📗 入門</button>
+      <button class="exist-tab-btn">📘 基本</button>
+      <button class="exist-tab-btn">📚 詳細</button>
+      <button class="exist-tab-btn">🎵 語呂</button>
+      <button class="exist-tab-btn">🎯 クイズ</button>
+      <button class="exist-tab-btn">…</button>
+    </nav>
+  </div>
+
+  <div style="padding:.7rem 1rem;background:#fafafa;font-size:.82rem;color:#5d6d7e;line-height:1.7;min-height:300px">
+    <strong style="color:#dc2626">↑ ここから上の「管理ヘッダー＋タブ」は<u>スクロールしても固定表示</u>されます</strong><br>
+    タイトル（青グラデ）はスクロールで隠れて、管理ヘッダーとタブだけが画面上端に張り付く動作です。<br><br>
+    （以下、ノートの本文がここに続く想定 …<br>
+    トランザクションとは何か、ACIDの解説、ロックの仕組み、…）<br><br>
+    実際にスクロールしてみてください ↓
+    <div style="height:200px;background:linear-gradient(180deg,#fafafa,#fff)"></div>
+    本文がさらに続く…
+    <div style="height:200px;background:linear-gradient(180deg,#fff,#fafafa)"></div>
+  </div>
+</div>
+
+<div class="config-q">
+  <h3>👀 確認したいこと</h3>
+  <div class="q">Q1. 科目タイトル帯の数値バッジ</div>
+  <div class="opts">
+    A. このモック通り（📚10 🔴2 🟡1 ✅2 ❌5）<br>
+    B. もっと簡素：📚10 と「🔴2件」だけ<br>
+    C. 不要
+  </div>
+  <div class="q">Q2. 科目内ダッシュボードのセクション構成</div>
+  <div class="opts">
+    A. このモック通り：今日復習／3日以内／閾値到達／誤答 の4種<br>
+    B. 必要なもののみ：今日復習／誤答 の2種<br>
+    C. 全表示で長くなりがちなのでトグル開閉式
+  </div>
+  <div class="q">Q3. 学習システム未導入の科目セクションは？</div>
+  <div class="opts">
+    A. 「未導入」と薄く表示（このモック通り）<br>
+    B. ダッシュボード自体非表示にして既存表示そのまま
+  </div>
+  <div class="q">Q4. ヘッダーバッジ：折りたたみ式 vs 常時表示</div>
+  <div class="opts">
+    A. このモック通り（バッジクリックでモーダル展開）<br>
+    B. 常時1行で「今日: 基本／入門 ／✅ゼロから」を表示
+  </div>
+  <div class="q">Q5. 原本（11.tx）と 学習システム版 の重複</div>
+  <div class="opts">
+    A. 学習システム版を削除（原本に統合済み）<br>
+    B. 両方残す
+  </div>
+</div>
+
+<div class="explain" style="background:#fef2f2;border-color:#dc2626">
+  <h3>📝 OKなら次の作業</h3>
+  <ul>
+    <li>Q1〜Q5 確定</li>
+    <li>learning-system.js に「自己登録」「ヘッダーバッジ」「URL params対応」を追加</li>
+    <li>各ファイルの LS_CONFIG に subject／title／file メタ情報を追記</li>
+    <li>まとめ/index.html の各科目セクションにダッシュボード描画ロジックを差し込み</li>
+  </ul>
+</div>
+
+</main>
+</body>
+</html>

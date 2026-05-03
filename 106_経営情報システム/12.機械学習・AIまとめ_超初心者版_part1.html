@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>機械学習・AI（超初心者版・Part1：基礎理解編） - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.95;min-height:100vh;font-size:.95rem}
+.header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-main) 50%,#58d68d 100%);color:#fff;padding:.6rem 1rem;text-align:center}.header h1{font-size:1.05rem;font-weight:800;letter-spacing:.04em;margin-bottom:.1rem;display:inline-block;margin-right:.6rem}.header .subtitle{font-size:.72rem;opacity:.9;display:inline-block;margin-right:.5rem}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.1rem .55rem;border-radius:14px;font-size:.7rem}
+.partnav{background:#fff;padding:.6rem;text-align:center;font-size:.85rem;box-shadow:var(--shadow);margin-bottom:.5rem}.partnav a{display:inline-block;padding:.4rem 1rem;margin:0 .3rem;border-radius:6px;text-decoration:none;font-weight:700}.partnav .active{background:var(--green-main);color:#fff}.partnav .other{background:var(--gray-pale);color:var(--gray-dark)}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.7rem;margin:1.1rem 0}.bubble-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12);background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow);position:relative;max-width:88%;font-size:.95rem;line-height:1.95}.bubble-body::before{content:'';position:absolute;top:14px;left:-14px;width:0;height:0;border:8px solid transparent;border-right-color:var(--white)}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.74rem;font-weight:700;color:var(--gray-mid);margin-bottom:.3rem}
+.tab-container{max-width:960px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.85rem .35rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:2rem 1.6rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-purple{background:var(--purple-bg)}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}.tab-panel.theme-teal{background:var(--teal-light)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.15rem;font-weight:800;margin:2rem 0 1rem;padding:.6rem .9rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1.2rem 1.5rem;margin:1rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card-red{border-left-color:var(--red-main)}.card h4{font-size:1rem;font-weight:700;margin-bottom:.5rem}.card p{margin-bottom:.5rem}
+.alert-tip,.alert-exam,.alert-danger{border-radius:var(--radius);padding:.95rem 1rem .95rem 3rem;margin:1rem 0;position:relative;font-size:.92rem;line-height:1.85}.alert-tip::before,.alert-exam::before,.alert-danger::before{position:absolute;left:.8rem;top:.85rem;font-size:1.2rem}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"💡"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"📝"}.alert-danger{background:#fce4ec;border:1px solid #ef9a9a;color:#b71c1c}.alert-danger::before{content:"⚠️"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:1rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e0e0e0}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.7rem 1.2rem;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center;min-width:80px;margin:.25rem}.flow-box small{display:block;font-weight:400;font-size:.74rem;opacity:.9;margin-top:.15rem}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.flow-arrow{font-size:1.3rem;margin:0 .35rem;font-weight:700;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.9rem}th,td{padding:.65rem .7rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}.tbl-green th{background:var(--green-main);color:#fff}.tbl-green tr:nth-child(even){background:var(--green-light)}.tbl-red th{background:var(--red-main);color:#fff}.tbl-red tr:nth-child(even){background:var(--red-light)}
+ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.mnemonic{background:linear-gradient(135deg,var(--purple-light),#fff);border:3px dashed var(--purple-main);border-radius:var(--radius);padding:1.4rem;margin:1rem 0;text-align:center}.mnemonic .big{font-size:1.3rem;font-weight:800;color:var(--purple-dark);margin-bottom:.4rem;letter-spacing:.08em}.mnemonic .desc{font-size:.92rem;color:var(--gray-mid)}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.7rem;align-items:center;margin:1rem 0}.vs-side{background:var(--white);border-radius:var(--radius);padding:1.2rem;text-align:center;box-shadow:var(--shadow)}.vs-side h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}.vs-mid{font-size:1.6rem;font-weight:800;color:var(--gray-mid);text-align:center}
+.footer{text-align:center;padding:1.8rem;color:var(--gray-light);font-size:.85rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}.fill-card .fill-header{padding:14px 20px;font-weight:700;font-size:.98rem;color:#fff}.fill-card .fill-header.bg-purple{background:var(--purple-main)}.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}.fill-card .fill-header.bg-red{background:var(--red-main)}.fill-card .fill-header.bg-teal{background:var(--teal-main)}.fill-card .fill-body{padding:20px 22px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:6px;font-size:.95rem;line-height:2.1}
+.rough{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.key-word{font-weight:700;color:#1565c0;background:#e3f2fd;padding:0 .35rem;border-radius:3px}
+.exam-pt{font-size:.86rem;margin-top:.5rem;color:#1565c0;background:#e3f2fd;padding:.5rem .75rem;border-radius:6px}
+.exam-warn{font-size:.86rem;margin-top:.4rem;color:#b71c1c;background:#fce4ec;padding:.5rem .75rem;border-radius:6px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.5rem .9rem;border-radius:20px;font-size:.85rem;font-weight:700;margin:.4rem .3rem .4rem 0;box-shadow:0 2px 6px rgba(142,68,173,.3)}.goro-chip::before{content:"🎵 ";margin-right:.3rem}.goro-chip small{font-weight:400;opacity:.95;margin-left:.4rem;font-size:.78rem}
+.goro-row{margin:.6rem 0;padding:.5rem .7rem;background:#faf5fc;border-left:3px solid var(--purple-main);border-radius:4px}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.92rem;line-height:1.85}.support-icon{font-size:1.7rem;flex-shrink:0;line-height:1}.support-body{flex:1}.support-body strong{color:#e65100}.support-name{font-size:.72rem;font-weight:700;color:#bf360c;margin-bottom:.2rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.1rem 1.3rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.6rem}.keepit ul{list-style:none;padding:0;margin:0}.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.9rem;line-height:1.7}.keepit li strong{color:#1565c0}
+.year-badge{display:inline-block;background:#c0392b;color:#fff;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:10px;margin:0 .2rem}
+.quiz-item{background:#fff;border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-size:.9rem;font-weight:700;margin-bottom:.5rem}.quiz-question{font-weight:600;font-size:1rem;margin-bottom:.9rem;line-height:1.8}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.65rem .9rem;margin:.4rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;font-size:.93rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.8rem;padding:.9rem;border-radius:var(--radius-sm);font-size:.92rem;line-height:1.8}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}
+@media(max-width:600px){.two-col,.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg)}.tab-btn{font-size:.62rem;padding:.7rem .15rem}.bubble-body{max-width:80%}.tab-panel{padding:1.4rem 1rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>機械学習・AI（超初心者版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム</div>
+  <div class="badge">📘 Part1：基礎理解編（全8タブ）</div>
+</div>
+<div class="partnav">
+  <a class="active">📘 Part1：基礎理解（このページ）</a>
+  <a class="other" href="12.機械学習・AIまとめ_超初心者版_part2.html">📗 Part2：演習・詳細編 →</a>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">🐣 ゼロから</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(1)">🌱 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">📘 基本</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(3)">🪜 応用</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">🎵 語呂</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">🗺️ 図解</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">✏️ クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(7)">✍️ 穴埋め</button>
+  </nav>
+
+  <!-- ===== TAB 0: ゼロから ===== -->
+  <div class="tab-panel active theme-green" id="tab0">
+    <h2 class="section-title st-green"><span class="st-icon">🍱</span> AIって、結局なに？</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">💡</div><div class="bubble-body b-green"><div class="bubble-name">はじめに</div>「AI」って言葉だけがひとり歩きしてるよね。でも実は<strong>AI＞機械学習＞ディープラーニング</strong>という<strong>入れ子構造</strong>になってるよ。大きい袋から小さい袋へ。これだけ覚えれば9割スッキリ。</div></div>
+
+    <div class="card card-green"><h4>📦 入れ子構造で覚える</h4>
+      <ul>
+        <li>🌐 <span class="key-word">AI（Artificial Intelligence：人工知能）<span class="rough">ざっくり：人間の知的作業をマネする技術全般。一番大きな袋</span></span>＝大きな袋</li>
+        <li>📚 <strong>機械学習（ML：Machine Learning）</strong>＝AIの一手法。<strong>データから自分でルールを学ぶ</strong></li>
+        <li>🧠 <strong>ディープラーニング（深層学習）</strong>＝機械学習の一手法。脳マネのニューラルネットを<strong>多層</strong>にしたもの</li>
+      </ul>
+    </div>
+    <div class="diagram"><div class="diagram-title">入れ子（広→狭）</div>
+      <div style="text-align:center">
+        <div style="display:inline-block;border:3px solid #8e44ad;border-radius:14px;padding:1.2rem 1.6rem;background:#f5eef8">
+          <strong style="color:#6c3483">AI（人工知能）</strong>
+          <div style="display:inline-block;border:3px solid #2980b9;border-radius:12px;padding:.9rem 1.2rem;margin-top:.6rem;background:#eaf2f8">
+            <strong style="color:#1a5276">機械学習(ML)</strong>
+            <div style="display:inline-block;border:3px solid #27ae60;border-radius:10px;padding:.7rem 1rem;margin-top:.5rem;background:#eafaf1">
+              <strong style="color:#1e8449">ディープラーニング</strong><br><small>(深層学習)</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="goro-row"><span class="goro-chip">エーアイ＞エムエル＞ディーエル<small>広→狭の入れ子</small></span></div>
+    <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>「AIって機械学習のこと？」って混乱しやすいけど、<strong>AIはもっと広い概念</strong>。機械学習はAIの一手法、ディープラーニングは機械学習のさらに一手法だよ。</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">🏷️</span> 機械学習の3兄弟</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">💡</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>機械学習には3種類ある。<strong>「正解付きの問題集で勉強する」「自由研究」「ゲームで得点を狙う」</strong>。たったこれだけのイメージでOK！</div></div>
+    <table class="tbl-green">
+      <tr><th>種類</th><th>正解データ</th><th>やること</th><th>例</th></tr>
+      <tr><td><strong>教師あり学習</strong></td><td>あり（ラベル付き）</td><td>入力→正解を当てる</td><td>迷惑メール判別／売上予測</td></tr>
+      <tr><td><strong>教師なし学習</strong></td><td>なし</td><td>データの<strong>かたまり</strong>発見</td><td>顧客のグルーピング</td></tr>
+      <tr><td><strong>強化学習</strong></td><td>報酬（点数）</td><td>試行錯誤で<strong>得点最大化</strong></td><td>囲碁AI／自動運転</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">あり・なし・きょう<small>教師あり/なし/強化</small></span></div>
+    <div class="support"><span class="support-icon">🎓</span><div class="support-body"><span class="support-name">先生からひとこと</span>「教師あり」＝<strong>答え付きの問題集</strong>で勉強。「教師なし」＝<strong>答えのない自由研究</strong>。「強化」＝<strong>ゲームで得点を狙う</strong>。これだけのイメージで十分！</div></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">🧠</span> ニューラルネットって？</h2>
+    <div class="card card-green">
+      <p>人間の<strong>脳の神経細胞（ニューロン）</strong>のつながりをマネした計算モデル。<strong>入力層→中間層→出力層</strong>と信号が流れて答えを出す。</p>
+      <p><strong>中間層がたくさん（深い）＝<span class="key-word">ディープラーニング</span></strong>。画像認識・音声認識・ChatGPTの土台。</p>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">✨</span> 生成AI（最新トピック）<span class="year-badge">R06新出</span></h2>
+    <div class="card card-green">
+      <p>文章・画像・音楽などを<strong>新しく作り出す</strong>AI。例：ChatGPT（文章）／DALL-E・Midjourney（画像）。中身はディープラーニング、特に<span class="key-word">大規模言語モデル（LLM：Large Language Model）<span class="rough">ざっくり：膨大なテキストで学習した文章生成AIの中核技術</span></span>。</p>
+      <p><span class="key-word">ハルシネーション<span class="rough">ざっくり：AIが事実に基づかない「もっともらしい嘘」を自信満々に出力する現象</span></span>＝生成AIの最大の弱点。</p>
+    </div>
+    <div class="goro-row"><span class="goro-chip">作るAI＝生成／嘘の答えはハルシ<small>生成AI最頻出</small></span></div>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（ゼロから）</div>
+      <ul>
+        <li>❶ 入れ子：<strong>AI⊃機械学習⊃ディープラーニング</strong>（広→狭）</li>
+        <li>❷ 機械学習3種：<strong>教師あり（正解付き）／教師なし（かたまり発見）／強化（得点最大化）</strong></li>
+        <li>❸ 生成AI＝文章や画像を作るAI。<strong>ハルシネーション＝もっともらしい嘘</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-green">ゼロからの基本</div>
+      <div class="fill-body">
+        <div class="fill-group">広い順に<span class="fill-blank">AI</span>⊃<span class="fill-blank">機械学習</span>⊃<span class="fill-blank">ディープラーニング</span>の入れ子。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">機械学習3種：正解付きの<span class="fill-blank">教師あり</span>、正解なしの<span class="fill-blank">教師なし</span>、報酬最大化の<span class="fill-blank">強化</span>学習。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">脳の神経細胞をマネた計算モデルが<span class="fill-blank">ニューラルネット</span>。中間層が深いものが<span class="fill-blank">ディープラーニング</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">文章や画像を作るAIは<span class="fill-blank">生成AI</span>、事実に基づかない出力は<span class="fill-blank">ハルシネーション</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 1: 入門 ===== -->
+  <div class="tab-panel theme-purple" id="tab1">
+    <h2 class="section-title st-purple"><span class="st-icon">📗</span> 教師あり学習：分類と回帰</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">🌱</div><div class="bubble-body b-green"><div class="bubble-name">入門</div>教師あり学習には2大タスク：<strong>分類</strong>と<strong>回帰</strong>。違いは「答えがカテゴリか数値か」だけ！</div></div>
+    <table class="tbl-blue">
+      <tr><th>タスク</th><th>出力</th><th>例</th></tr>
+      <tr><td><strong>分類</strong>(Classification)</td><td>カテゴリ（離散値）</td><td>迷惑メール／正常メール、病気の有無</td></tr>
+      <tr><td><strong>回帰</strong>(Regression)</td><td>数値（連続値）</td><td>家賃予測、売上予測</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">分類は仲間分け、回帰は数当て<small>分類=離散／回帰=連続</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「分類＝離散・回帰＝連続」の出力タイプ違いが頻出<span class="year-badge">R05-24</span><span class="year-badge">R07-25</span>。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「回帰は分類の一種で離散値を予測する」は誤り。回帰は<strong>連続値</strong>。</p>
+    <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>判別ルール超シンプル：<strong>「点数」「金額」みたいな数値→回帰／「合格・不合格」「Yes/No」みたいなカテゴリ→分類</strong>。</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">🧩</span> 教師なし学習：かたまり発見と圧縮</h2>
+    <table class="tbl-purple">
+      <tr><th>タスク</th><th>狙い</th><th>代表手法</th></tr>
+      <tr><td><strong>クラスタリング</strong></td><td>似たもの同士で<strong>かたまり</strong>を作る</td><td><span class="key-word">k平均法（k-means）<span class="rough">ざっくり：データをk個のグループに分ける代表的手法</span></span>／階層クラスタリング</td></tr>
+      <tr><td><strong>次元削減</strong></td><td>変数を圧縮して可視化・効率化</td><td><span class="key-word">主成分分析（PCA：Principal Component Analysis）<span class="rough">ざっくり：たくさんの変数を少数の合成変数にまとめる手法</span></span></td></tr>
+      <tr><td><strong>アソシエーション分析</strong></td><td>「Aを買う人はBも買う」発見</td><td>ECサイトの「おすすめ」</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">かたまり・圧縮・買い合わせ<small>教師なし3用途</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：k-meansは「教師なし＆クラスタリング」とセット<span class="year-badge">R06-23</span>。</p>
+
+    <h2 class="section-title st-purple"><span class="st-icon">🎮</span> 強化学習</h2>
+    <div class="card card-purple">
+      <p><strong>エージェント</strong>（学習する主体）が<strong>環境</strong>で行動して<strong>報酬</strong>を得る。試行錯誤を繰り返し<strong>累積報酬を最大化</strong>する方策を学ぶ。</p>
+      <p>例：<strong>AlphaGo（囲碁）／自動運転／ロボット制御</strong>。</p>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：強化学習は「報酬最大化」「試行錯誤」がキーワード。教師あり/なしと並べて選ばせる問題。</p>
+
+    <h2 class="section-title st-purple"><span class="st-icon">🧠</span> ニューラルネットの基本構造</h2>
+    <div class="diagram"><div class="diagram-title">入力層→中間層→出力層</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">入力層<small>x1, x2, ...</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-purple">中間層<small>(隠れ層)</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-purple">中間層<small>(深い)</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-green">出力層<small>y</small></div>
+      </div>
+      <p style="text-align:center;font-size:.82rem;margin-top:.4rem;color:#5d6d7e">中間層が<strong>2層以上</strong>＝ディープラーニング</p>
+    </div>
+    <div class="support"><span class="support-icon">🧮</span><div class="support-body"><span class="support-name">救命メモ</span>各層の○（ニューロン）は<strong>数字を計算して次に渡すだけ</strong>。詳細は試験では出ない、<strong>「層が深いほど複雑なパターンを学べる」</strong>とだけ覚えてOK。</div></div>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（入門）</div>
+      <ul>
+        <li>❶ 教師あり2タスク：<strong>分類（離散）／回帰（連続）</strong></li>
+        <li>❷ 教師なしの代表：<strong>k-means（クラスタリング）／PCA（次元削減）</strong></li>
+        <li>❸ ニューラルネット＝<strong>入力層→中間層→出力層</strong>。中間層が深いと深層学習</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-purple">入門</div>
+      <div class="fill-body">
+        <div class="fill-group">教師あり2タスク：カテゴリ予測の<span class="fill-blank">分類</span>（離散値）と数値予測の<span class="fill-blank">回帰</span>（連続値）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">教師なしの代表：かたまり発見の<span class="fill-blank">クラスタリング</span>（代表手法<span class="fill-blank">k-means</span>）／次元圧縮の<span class="fill-blank">PCA</span>（主成分分析）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">強化学習は<span class="fill-blank">報酬</span>を最大化する方策を試行錯誤で学ぶ手法。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">ニューラルネット構造：<span class="fill-blank">入力層</span>→中間層（隠れ層）→<span class="fill-blank">出力層</span>。中間層2層以上で<span class="fill-blank">ディープラーニング</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 基本 ===== -->
+  <div class="tab-panel theme-blue" id="tab2">
+    <h2 class="section-title st-blue"><span class="st-icon">🎯</span> 教師あり学習：代表アルゴリズム</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>入門タブの「分類・回帰」を深掘り</strong>。具体的にどんな手法（道具）があるかを押さえる。</p>
+
+    <table class="tbl-blue">
+      <tr><th>手法</th><th>用途</th><th>イメージ</th></tr>
+      <tr><td><strong>線形回帰</strong></td><td>回帰（数値予測）</td><td>データに直線を引いて予測（一次関数）</td></tr>
+      <tr><td><strong>ロジスティック回帰</strong></td><td>分類（2値）</td><td>「名前は回帰」だが<strong>分類</strong>。確率で判定</td></tr>
+      <tr><td><strong>決定木</strong></td><td>分類・回帰</td><td>Yes/Noで枝分かれ。<strong>解釈性が高い</strong></td></tr>
+      <tr><td><strong>ランダムフォレスト</strong></td><td>分類・回帰</td><td>決定木の<strong>多数決</strong>（アンサンブル）</td></tr>
+      <tr><td><span class="key-word">SVM<span class="rough">ざっくり：Support Vector Machine／データの境界線を一番太いマージンで引く</span></span></td><td>分類</td><td>境界線の余裕（マージン）最大化</td></tr>
+      <tr><td><strong>ナイーブベイズ</strong></td><td>分類</td><td>確率（ベイズ定理）でカテゴリ判定</td></tr>
+      <tr><td><strong>k近傍法（kNN）</strong></td><td>分類</td><td>近くにいるk個の多数決</td></tr>
+    </table>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：<strong>ロジスティック「回帰」は分類</strong>。名前に騙されない。</p>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：手法と「教師あり/なし」の対応・「分類/回帰」の対応が頻出。</p>
+    <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>細かい数学はいらない。<strong>「名前と用途のひも付け」</strong>だけ覚えればOK。決定木＝枝分かれ／RF＝森（多数決）／SVM＝境界線。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">🧩</span> k-means の動き（クラスタリング）</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>入門タブの「k-means」を深掘り</strong>。具体的にどう動くか。</p>
+    <ol>
+      <li><strong>k個</strong>の重心をランダムに置く</li>
+      <li>各点を一番近い重心に振り分け</li>
+      <li>重心を所属点の平均位置に移動</li>
+      <li>動かなくなるまで②③を繰り返す</li>
+    </ol>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「k」は<strong>事前に分析者が決める</strong>。「データから自動で決まる」は誤り。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">🌀</span> ディープラーニング：3つの代表モデル</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>入門タブのニューラルネットを深掘り</strong>。実際の用途別に3つのモデルがある。</p>
+    <table class="tbl-orange">
+      <tr><th>モデル</th><th>得意分野</th><th>正式名</th></tr>
+      <tr><td><strong>CNN</strong></td><td>画像認識</td><td>Convolutional Neural Network（畳み込みNN）</td></tr>
+      <tr><td><strong>RNN</strong></td><td>時系列・音声</td><td>Recurrent Neural Network（再帰型NN）</td></tr>
+      <tr><td><strong>Transformer</strong></td><td>自然言語（翻訳・ChatGPT）</td><td>—（Attention機構が中核）</td></tr>
+    </table>
+    <div class="goro-row">
+      <span class="goro-chip">画像CNN／時系列RNN／言語Transformer<small>3対応</small></span>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「分野とモデルの対応」が頻出<span class="year-badge">R07-7</span>。GPT・BERT・ChatGPTは全て<strong>Transformer</strong>系。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">📊</span> 過学習（オーバーフィッティング）</h2>
+    <div class="card card-red">
+      <p><span class="key-word">過学習<span class="rough">ざっくり：訓練データを暗記しすぎて、新しいデータに対応できない状態</span></span>＝AIの「丸暗記の弊害」。模試の問題は完璧だけど本番が解けない受験生と同じ。</p>
+      <h4>対策</h4>
+      <ul>
+        <li>📚 <strong>データを増やす</strong>（一番確実）</li>
+        <li>✂️ <strong>正則化</strong>（モデルに罰則をかけて単純化）</li>
+        <li>🎲 <strong>ドロップアウト</strong>（学習時にランダムでニューロンを休ませる）</li>
+        <li>📊 <strong>交差検証（クロスバリデーション）</strong>でチェック</li>
+      </ul>
+    </div>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「過学習はデータが少なすぎて起きる」だけは部分的にしか正しくない。<strong>モデルが複雑すぎる</strong>のも主因。</p>
+    <div class="support"><span class="support-icon">📖</span><div class="support-body"><span class="support-name">先生からひとこと</span>過学習って横文字でうっ…ってなるよね。<strong>「テスト前に過去問を丸暗記して、本番の新問題で死ぬ受験生」</strong>って覚えれば一発。AIも同じ失敗をするのよ。</div></div>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（基本）</div>
+      <ul>
+        <li>❶ ロジスティック<strong>「回帰」は分類</strong>。名前で騙されない</li>
+        <li>❷ DL3対応：<strong>画像→CNN／時系列→RNN／言語→Transformer</strong></li>
+        <li>❸ 過学習対策：<strong>データ増・正則化・ドロップアウト・交差検証</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab2')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-blue">基本</div>
+      <div class="fill-body">
+        <div class="fill-group">名前は回帰だが分類で使うのは<span class="fill-blank">ロジスティック回帰</span>、決定木の多数決は<span class="fill-blank">ランダムフォレスト</span>、境界線のマージン最大化は<span class="fill-blank">SVM</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">DL3対応：画像→<span class="fill-blank">CNN</span>、時系列→<span class="fill-blank">RNN</span>、言語→<span class="fill-blank">Transformer</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">訓練データに過剰適合する現象を<span class="fill-blank">過学習</span>といい、対策は正則化・<span class="fill-blank">ドロップアウト</span>・交差検証。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">k-meansの k は<span class="fill-blank">分析者</span>が事前に決める（自動ではない）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 応用 ===== -->
+  <div class="tab-panel theme-teal" id="tab3">
+    <h2 class="section-title st-teal"><span class="st-icon">📐</span> モデル評価指標（分類）</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">🪜</div><div class="bubble-body b-green"><div class="bubble-name">応用</div>分類モデルの「成績表」が評価指標。<strong>正解率・適合率・再現率・F値</strong>の4つを覚える。</div></div>
+
+    <table class="tbl-orange">
+      <tr><th>指標</th><th>計算式</th><th>意味</th></tr>
+      <tr><td><strong>正解率（Accuracy）</strong></td><td>正解 ÷ 全体</td><td>全体的な正答率</td></tr>
+      <tr><td><strong>適合率（Precision）</strong></td><td>真陽性 ÷ <strong>予測陽性</strong></td><td>「陽性と予測した中で本当に陽性」</td></tr>
+      <tr><td><strong>再現率（Recall）</strong></td><td>真陽性 ÷ <strong>実際の陽性</strong></td><td>「実際の陽性をどれだけ拾えた」</td></tr>
+      <tr><td><strong>F値</strong></td><td>適合率と再現率の<strong>調和平均</strong></td><td>両者のバランス</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">適合は予測陽性が分母／再現は実陽性が分母<small>分母の違い</small></span></div>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：適合率と再現率の<strong>分母を入れ替えた選択肢</strong>が頻出。「予測陽性」と「実陽性」を逆にしないこと。</p>
+    <div class="support"><span class="support-icon">🏥</span><div class="support-body"><span class="support-name">先生からひとこと</span>イメージは<strong>病気診断</strong>：<strong>適合率＝「病気と診断した人が本当に病気か」（誤診率の裏）</strong>／<strong>再現率＝「実際の患者をどれだけ見つけられたか」（取りこぼし率の裏）</strong>。混同行列を覚えるより、この例えで覚えた方が早い！</div></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">⚖️</span> バイアス vs バリアンス</h2>
+    <div class="vs-box">
+      <div class="vs-side"><h4>高バイアス</h4>モデル単純すぎ<br>→<strong>未学習</strong><br>（的を外す）</div>
+      <div class="vs-side"><h4>高バリアンス</h4>モデル複雑すぎ<br>→<strong>過学習</strong><br>（バラつく）</div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：両者は<strong>トレードオフ</strong>。バランスを取る点が最適。</p>
+
+    <h2 class="section-title st-teal"><span class="st-icon">✨</span> 生成AI／LLM／ハルシネーション対策</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>ゼロからタブの「生成AI」を深掘り</strong>。最新の試験頻出ポイント。</p>
+
+    <table class="tbl-purple">
+      <tr><th>用語</th><th>意味</th></tr>
+      <tr><td><strong>LLM</strong></td><td>大規模言語モデル。GPT・BERTなど。膨大なテキストで学習</td></tr>
+      <tr><td><strong>プロンプト</strong></td><td>生成AIへの指示文</td></tr>
+      <tr><td><strong>プロンプトエンジニアリング</strong></td><td>狙った出力を得るための指示文の工夫</td></tr>
+      <tr><td><strong>ファインチューニング</strong></td><td>既存モデルを<strong>追加学習</strong>で特化させる</td></tr>
+      <tr><td><strong>転移学習</strong></td><td>ある分野で学習した知識を別分野に応用</td></tr>
+      <tr><td><span class="key-word">RAG（Retrieval-Augmented Generation）<span class="rough">ざっくり：外部DB検索→AIに渡して回答させる仕組み。社内文書AIで人気</span></span></td><td>外部知識を参照させてハルシネーション抑制</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">RAGはハルシ対策の王道<small>外部DB活用</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<strong>RAG＝ハルシネーション対策</strong>の組合せが新出論点<span class="year-badge">R06-24</span>。</p>
+
+    <h2 class="section-title st-teal"><span class="st-icon">⚖️</span> AI倫理・説明可能性</h2>
+    <div class="card card-teal">
+      <ul>
+        <li><strong>バイアス</strong>（偏り）：学習データの偏りで差別的判断が出る問題</li>
+        <li><span class="key-word">XAI（eXplainable AI：説明可能なAI）<span class="rough">ざっくり：AIの判断根拠を人間が理解できるようにする取組</span></span>：「ブラックボックス問題」への対応</li>
+        <li><strong>プライバシー</strong>：個人情報を学習に使う際の同意・匿名化</li>
+        <li><strong>著作権</strong>：生成AIが学習・出力するコンテンツの権利関係</li>
+      </ul>
+    </div>
+    <div class="support"><span class="support-icon">🤖</span><div class="support-body"><span class="support-name">先生からひとこと</span>診断士試験では<strong>AI倫理は「概念名と意味の対応」だけ</strong>覚えればOK。バイアス＝偏り、XAI＝説明可能性、ブラックボックス＝中身が分からない、これだけ。</div></div>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（応用）</div>
+      <ul>
+        <li>❶ <strong>適合率＝予測陽性が分母／再現率＝実陽性が分母</strong>。逆転の引っかけ頻出</li>
+        <li>❷ <strong>RAG＝外部DBでハルシネーション抑制</strong>（最新頻出）</li>
+        <li>❸ AI倫理：<strong>バイアス・XAI・プライバシー・著作権</strong>の4キーワード</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-teal">応用</div>
+      <div class="fill-body">
+        <div class="fill-group">適合率の分母は<span class="fill-blank">予測陽性</span>、再現率の分母は<span class="fill-blank">実陽性</span>。両者の調和平均が<span class="fill-blank">F値</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">単純すぎ→<span class="fill-blank">未学習</span>（高バイアス）／複雑すぎ→<span class="fill-blank">過学習</span>（高バリアンス）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">大規模言語モデルは<span class="fill-blank">LLM</span>、外部DB参照でハルシ抑制する仕組みは<span class="fill-blank">RAG</span>、既存モデルを追加学習で特化させるのは<span class="fill-blank">ファインチューニング</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">AI判断根拠を人が理解できるようにする取組は<span class="fill-blank">XAI</span>（説明可能AI）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: 語呂 ===== -->
+  <div class="tab-panel theme-purple" id="tab4">
+    <h2 class="section-title st-purple"><span class="st-icon">🎵</span> 語呂まとめ（Part1の要点）</h2>
+
+    <div class="mnemonic"><div class="big">「エーアイ＞エムエル＞ディーエル」</div><div class="desc">広→狭の入れ子。AI⊃機械学習⊃ディープラーニング</div></div>
+    <div class="mnemonic"><div class="big">「あり・なし・きょう」</div><div class="desc">機械学習3種：教師<strong>あり</strong>／教師<strong>なし</strong>／<strong>強</strong>化学習</div></div>
+    <div class="mnemonic"><div class="big">「分類は仲間分け、回帰は数当て」</div><div class="desc">分類＝離散値（カテゴリ）／回帰＝連続値（数値）</div></div>
+    <div class="mnemonic"><div class="big">「画像CNN・時系列RNN・言語Transformer」</div><div class="desc">DL3対応。GPT/BERT/ChatGPTは全部Transformer</div></div>
+    <div class="mnemonic"><div class="big">「適合は予測、再現は実」</div><div class="desc">適合率の分母＝予測陽性／再現率の分母＝実陽性</div></div>
+    <div class="mnemonic"><div class="big">「丸暗記の弊害＝過学習」</div><div class="desc">訓練データに過剰適合して新データで失敗。対策は正則化・ドロップアウト・交差検証</div></div>
+    <div class="mnemonic"><div class="big">「RAGで嘘減る」</div><div class="desc">外部DB参照でハルシネーション抑制。R06新出</div></div>
+    <div class="mnemonic"><div class="big">「ロジ回帰は分類」</div><div class="desc">名前は回帰だけど分類で使う。引っかけ頻出</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">🎼</span> 語呂の穴埋め</h2>
+    <div class="fill-card"><div class="fill-header bg-purple">語呂を埋めて定着</div>
+      <div class="fill-body">
+        <div class="fill-group">入れ子：<span class="fill-blank">AI</span>＞<span class="fill-blank">ML</span>（機械学習）＞<span class="fill-blank">DL</span>（ディープラーニング）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">3種：あり・<span class="fill-blank">なし</span>・<span class="fill-blank">きょう</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">画像<span class="fill-blank">CNN</span>／時系列<span class="fill-blank">RNN</span>／言語<span class="fill-blank">Transformer</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">適合は<span class="fill-blank">予測</span>、再現は<span class="fill-blank">実</span>（分母の違い）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group"><span class="fill-blank">RAG</span>で嘘（<span class="fill-blank">ハルシネーション</span>）を減らす。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: 図解 ===== -->
+  <div class="tab-panel theme-orange" id="tab5">
+    <h2 class="section-title st-orange"><span class="st-icon">🗺️</span> 図解1：AI/ML/DLの入れ子</h2>
+    <div class="diagram"><div class="diagram-title">広→狭の3層</div>
+      <div style="text-align:center">
+        <div style="display:inline-block;border:3px solid #8e44ad;border-radius:14px;padding:1.2rem 1.6rem;background:#f5eef8">
+          <strong style="color:#6c3483">AI（人工知能）</strong>
+          <div style="display:inline-block;border:3px solid #2980b9;border-radius:12px;padding:.9rem 1.2rem;margin-top:.6rem;background:#eaf2f8">
+            <strong style="color:#1a5276">機械学習</strong>
+            <div style="display:inline-block;border:3px solid #27ae60;border-radius:10px;padding:.7rem 1rem;margin-top:.5rem;background:#eafaf1">
+              <strong style="color:#1e8449">ディープラーニング</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">🏷️</span> 図解2：機械学習の系統図</h2>
+    <div class="diagram">
+      <table class="tbl-green">
+        <tr><th>大分類</th><th>細分</th><th>代表手法</th></tr>
+        <tr><td rowspan="2"><strong>教師あり</strong></td><td>分類</td><td>ロジスティック回帰／決定木／RF／SVM／kNN</td></tr>
+        <tr><td>回帰</td><td>線形回帰／決定木回帰</td></tr>
+        <tr><td rowspan="2"><strong>教師なし</strong></td><td>クラスタリング</td><td>k-means／階層型</td></tr>
+        <tr><td>次元削減</td><td>PCA</td></tr>
+        <tr><td><strong>強化学習</strong></td><td>—</td><td>Q学習／AlphaGo</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">🌀</span> 図解3：DL3モデル対応</h2>
+    <div class="diagram">
+      <table class="tbl-orange">
+        <tr><th>モデル</th><th>得意分野</th><th>有名な応用</th></tr>
+        <tr><td>CNN</td><td>画像</td><td>顔認識／医療画像／自動運転（カメラ）</td></tr>
+        <tr><td>RNN／LSTM</td><td>時系列・音声</td><td>需要予測／音声認識</td></tr>
+        <tr><td>Transformer</td><td>言語</td><td>ChatGPT／BERT／翻訳</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">📐</span> 図解4：評価指標の混同行列</h2>
+    <div class="diagram"><div class="diagram-title">病気診断で覚える</div>
+      <table class="tbl-blue">
+        <tr><th></th><th>実際:陽性（病気）</th><th>実際:陰性（健康）</th></tr>
+        <tr><td><strong>予測:陽性</strong></td><td>真陽性 TP</td><td>偽陽性 FP（誤診）</td></tr>
+        <tr><td><strong>予測:陰性</strong></td><td>偽陰性 FN（見逃し）</td><td>真陰性 TN</td></tr>
+      </table>
+      <ul style="font-size:.9rem">
+        <li><strong>適合率＝TP ÷ (TP+FP)</strong>＝予測陽性が分母</li>
+        <li><strong>再現率＝TP ÷ (TP+FN)</strong>＝実陽性が分母</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">📝</span> 図解からの試験ポイント穴埋め</h2>
+    <div class="fill-card"><div class="fill-header bg-orange">図解整理</div>
+      <div class="fill-body">
+        <div class="fill-group">機械学習3大分類は教師<span class="fill-blank">あり</span>／教師<span class="fill-blank">なし</span>／<span class="fill-blank">強化</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">適合率の分母は<span class="fill-blank">予測陽性</span>(TP+FP)、再現率の分母は<span class="fill-blank">実陽性</span>(TP+FN)。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">DL3モデル：画像<span class="fill-blank">CNN</span>／時系列<span class="fill-blank">RNN</span>／言語<span class="fill-blank">Transformer</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: クイズ ===== -->
+  <div class="tab-panel theme-orange" id="tab6">
+    <h2 class="section-title st-orange"><span class="st-icon">🎯</span> 基礎クイズ（全6問）</h2>
+
+    <div class="quiz-item">
+      <span class="quiz-num">1</span>
+      <div class="quiz-question">AI・機械学習・ディープラーニングの関係として正しいのはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'機械学習が最広ではない。')">A. 機械学習⊃AI⊃ディープラーニング</li>
+        <li onclick="ans(this,true,'正解。AI（最広）⊃機械学習⊃DL（最狭）。')">B. AI⊃機械学習⊃ディープラーニング</li>
+        <li onclick="ans(this,false,'DLは機械学習の一手法。')">C. ディープラーニング⊃機械学習⊃AI</li>
+        <li onclick="ans(this,false,'独立ではなく入れ子関係。')">D. 3者は独立した別技術</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">2</span>
+      <div class="quiz-question">教師なし学習の代表手法として正しいのはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'ロジスティック回帰は教師あり（分類）。')">A. ロジスティック回帰</li>
+        <li onclick="ans(this,false,'SVMは教師あり（分類）。')">B. SVM</li>
+        <li onclick="ans(this,true,'正解。k-meansは教師なし・クラスタリング。')">C. k-means（k平均法）</li>
+        <li onclick="ans(this,false,'ランダムフォレストは教師あり。')">D. ランダムフォレスト</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">3</span>
+      <div class="quiz-question">分類問題ではなく回帰問題はどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'迷惑/通常の2値はカテゴリ＝分類。')">A. メールが迷惑か通常か判定</li>
+        <li onclick="ans(this,false,'有/無はカテゴリ＝分類。')">B. 病気の有無を判定</li>
+        <li onclick="ans(this,true,'正解。明日の売上は連続値＝回帰。')">C. 明日の売上金額を予測</li>
+        <li onclick="ans(this,false,'クラス分けはカテゴリ＝分類。')">D. 顧客を3クラスに分類</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">4</span>
+      <div class="quiz-question">主にどの分野で使われるニューラルネットワークか、正しい組合せはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'画像はCNN。')">A. 画像→RNN</li>
+        <li onclick="ans(this,false,'言語はTransformer。')">B. 言語→CNN</li>
+        <li onclick="ans(this,true,'正解。画像→CNN／時系列→RNN／言語→Transformer。')">C. 時系列→RNN／言語→Transformer</li>
+        <li onclick="ans(this,false,'時系列はRNN（LSTM等）。')">D. 時系列→Transformer</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">5</span>
+      <div class="quiz-question">過学習（オーバーフィッティング）の対策として<strong>不適切</strong>なものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,true,'正解（不適切）。モデルをさらに複雑化すると過学習が悪化する。')">A. モデルをさらに複雑化する</li>
+        <li onclick="ans(this,false,'適切。データを増やすのは王道。')">B. 学習データを増やす</li>
+        <li onclick="ans(this,false,'適切。正則化は罰則項でモデル単純化。')">C. 正則化を行う</li>
+        <li onclick="ans(this,false,'適切。ドロップアウトはニューロンをランダム停止。')">D. ドロップアウトを導入する</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">6</span>
+      <div class="quiz-question">生成AIの「ハルシネーション」を抑制する仕組みとして適切なものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'モデル巨大化はハルシネーション抑制と直接関係しない。')">A. モデルを巨大化する</li>
+        <li onclick="ans(this,true,'正解。RAGは外部DB検索結果を参照させて根拠ある回答を生成。')">B. RAG（外部DB検索＋生成）</li>
+        <li onclick="ans(this,false,'温度を上げると逆に不確実な出力が増える。')">C. サンプリング温度を最大化</li>
+        <li onclick="ans(this,false,'プロンプト隠蔽はむしろ品質に影響しうる。')">D. プロンプトを暗号化</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 7: 穴埋め（Part1総まとめ） ===== -->
+  <div class="tab-panel theme-orange" id="tab7">
+    <h2 class="section-title st-orange"><span class="st-icon">✍️</span> 穴埋めチェック（Part1総まとめ）</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab7')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab7')" style="background:#64748b">🔄 リセット</button>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-green">① ゼロから：入れ子と3兄弟</div>
+      <div class="fill-body">
+        <div class="fill-group">広→狭：<span class="fill-blank">AI</span>⊃<span class="fill-blank">機械学習</span>⊃<span class="fill-blank">ディープラーニング</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">機械学習3種：<span class="fill-blank">教師あり</span>／<span class="fill-blank">教師なし</span>／<span class="fill-blank">強化</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">作るAIは<span class="fill-blank">生成AI</span>、嘘の出力は<span class="fill-blank">ハルシネーション</span>、文章生成の中核技術は<span class="fill-blank">LLM</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-purple">② 入門：タスクと手法</div>
+      <div class="fill-body">
+        <div class="fill-group">教師あり2タスク：カテゴリ予測の<span class="fill-blank">分類</span>／数値予測の<span class="fill-blank">回帰</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">教師なしの代表：<span class="fill-blank">k-means</span>（クラスタリング）／<span class="fill-blank">PCA</span>（次元削減）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-blue">③ 基本：アルゴリズムと過学習</div>
+      <div class="fill-body">
+        <div class="fill-group">名前は回帰だが分類は<span class="fill-blank">ロジスティック回帰</span>、決定木の多数決は<span class="fill-blank">ランダムフォレスト</span>、マージン最大化は<span class="fill-blank">SVM</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">DL3対応：画像<span class="fill-blank">CNN</span>／時系列<span class="fill-blank">RNN</span>／言語<span class="fill-blank">Transformer</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">訓練データへ過剰適合は<span class="fill-blank">過学習</span>、対策は<span class="fill-blank">正則化</span>・<span class="fill-blank">ドロップアウト</span>・交差検証。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-teal">④ 応用：評価指標・生成AI</div>
+      <div class="fill-body">
+        <div class="fill-group">適合率の分母は<span class="fill-blank">予測陽性</span>、再現率の分母は<span class="fill-blank">実陽性</span>、調和平均は<span class="fill-blank">F値</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">外部DB参照でハルシ抑制は<span class="fill-blank">RAG</span>、追加学習で特化は<span class="fill-blank">ファインチューニング</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">AI判断根拠の説明可能性は<span class="fill-blank">XAI</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="alert-exam">📝 <strong>Part1 修了！</strong> 続けて <a href="12.機械学習・AIまとめ_超初心者版_part2.html" style="color:#1565c0;font-weight:700;">📗 Part2：演習・詳細編</a> へ。</div>
+  </div>
+</div>
+
+<div class="footer">中小企業診断士 経営情報システム | 機械学習・AI（超初心者版・Part1）</div>
+
+<script>
+function switchTab(idx){const n=8;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+function ans(li,correct,exp){const ul=li.parentElement;if(ul.dataset.answered)return;ul.dataset.answered='1';ul.querySelectorAll('li').forEach(x=>x.style.cursor='default');li.classList.add(correct?'correct':'wrong');if(!correct){ul.querySelectorAll('li').forEach(x=>{if(x.getAttribute('onclick')&&x.getAttribute('onclick').includes('true'))x.classList.add('correct');});}const d=document.createElement('div');d.className='quiz-explanation show '+(correct?'correct-exp':'wrong-exp');d.innerHTML=(correct?'⭕ 正解！ ':'❌ 不正解。 ')+exp;ul.parentElement.appendChild(d);}
+</script>
+</body>
+</html>

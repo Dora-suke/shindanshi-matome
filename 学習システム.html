@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>エビデンスベース学習システム ─ 中小企業診断士</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f172a;
+  --paper:#faf7f1;
+  --paper-dim:#f3ede1;
+  --indigo:#1e2a55;
+  --indigo-deep:#121a3a;
+  --gold:#b08a3e;
+  --gold-soft:#d4b872;
+  --line:#d8cfbb;
+  --muted:#6b6558;
+  --ev-high:#2d6a4f;
+  --ev-mid:#9c6f1f;
+  --ev-low:#7a3b3b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  background:var(--paper);color:var(--ink);line-height:1.85;font-size:15px;
+  background-image:
+    radial-gradient(1200px 600px at 50% -200px,rgba(30,42,85,.08),transparent 60%),
+    radial-gradient(800px 400px at 100% 100%,rgba(176,138,62,.06),transparent 60%);
+}
+header{
+  background:var(--indigo-deep);color:#f5eedb;
+  padding:20px;text-align:center;border-bottom:2px solid var(--gold-soft);
+}
+header h1{font-size:1.15rem;letter-spacing:.2em;font-weight:600}
+header .sub{font-size:.78rem;color:var(--gold-soft);letter-spacing:.15em;margin-top:6px;opacity:.85}
+main{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+
+/* Tabs */
+.tabs{display:flex;gap:0;margin:20px 0 12px;border-bottom:2px solid var(--line)}
+.tab-btn{
+  flex:1;padding:14px 20px;background:transparent;border:none;cursor:pointer;
+  font-family:inherit;font-size:1rem;color:var(--muted);
+  letter-spacing:.1em;font-weight:600;
+  border-bottom:3px solid transparent;transition:.2s;
+}
+.tab-btn.active{color:var(--indigo);border-bottom-color:var(--gold)}
+.tab-btn:hover{color:var(--indigo)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* Intro */
+.intro{
+  background:#fffdf8;border:1px solid var(--line);
+  padding:16px 20px;margin-bottom:20px;font-size:.9rem;
+  border-left:3px solid var(--gold);
+}
+.intro h2{font-size:1rem;margin-bottom:8px;color:var(--indigo)}
+.intro .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:.82rem}
+.intro .legend span{display:inline-block;padding:2px 8px;border-radius:3px;color:#fff;font-weight:600}
+
+/* Categories */
+.category{margin-bottom:30px}
+.category h2{
+  font-size:1.05rem;color:var(--indigo);
+  border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:14px;
+  letter-spacing:.08em;
+}
+.category h2 .count{font-size:.75rem;color:var(--muted);font-weight:400;margin-left:8px}
+
+/* Cards */
+.card{
+  background:#fffdf8;border:1px solid var(--line);
+  padding:14px 16px;margin-bottom:10px;
+  border-left:4px solid var(--line);position:relative;
+  transition:.2s;
+}
+.card:hover{box-shadow:0 2px 8px rgba(18,26,58,.06)}
+.card[data-ev="1"]{border-left-color:var(--ev-high)}
+.card[data-ev="2"]{border-left-color:var(--ev-high)}
+.card[data-ev="3"]{border-left-color:var(--ev-mid)}
+.card[data-ev="4"]{border-left-color:var(--ev-mid)}
+.card[data-ev="5"]{border-left-color:var(--ev-low)}
+
+.card .head{display:flex;justify-content:space-between;align-items:start;gap:10px;flex-wrap:wrap}
+.card .id{
+  font-family:"Inter",sans-serif;font-size:.72rem;font-weight:600;
+  color:var(--gold);letter-spacing:.1em;
+}
+.card .title{font-size:1rem;font-weight:600;color:var(--indigo);flex:1}
+.card .badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{
+  font-family:"Inter",sans-serif;font-size:.7rem;font-weight:600;
+  padding:2px 7px;border-radius:3px;color:#fff;letter-spacing:.05em;
+  white-space:nowrap;
+}
+.badge.ev1,.badge.ev2{background:var(--ev-high)}
+.badge.ev3,.badge.ev4{background:var(--ev-mid)}
+.badge.ev5{background:var(--ev-low)}
+.badge.if{background:var(--indigo)}
+.badge.size{background:var(--gold);color:var(--ink)}
+
+.card .body{margin-top:8px;font-size:.88rem;color:#3a3a3a}
+.card .body p{margin-bottom:4px}
+.card .body .label{color:var(--muted);font-size:.78rem;font-weight:600;margin-right:6px;letter-spacing:.05em}
+.card .cite{
+  font-size:.78rem;color:var(--muted);margin-top:6px;
+  padding-top:6px;border-top:1px dashed var(--line);
+  font-style:italic;
+}
+.card .impl{
+  font-size:.82rem;background:rgba(176,138,62,.08);
+  padding:6px 10px;margin-top:8px;border-radius:3px;
+}
+.card .impl::before{content:"▸ 実装：";color:var(--gold);font-weight:600;font-style:normal}
+
+/* Summary table */
+.summary{
+  background:#fffdf8;border:1px solid var(--line);
+  padding:16px;margin:20px 0;
+}
+.summary h3{color:var(--indigo);margin-bottom:10px;font-size:.95rem}
+.summary table{width:100%;font-size:.85rem;border-collapse:collapse}
+.summary td{padding:5px 8px;border-bottom:1px dotted var(--line)}
+.summary td:first-child{font-weight:600;color:var(--indigo);width:40%}
+
+/* Phase Plan */
+.phases{margin-top:24px}
+.phase{
+  background:#fffdf8;border:1px solid var(--line);
+  padding:14px 18px;margin-bottom:10px;
+  border-left:3px solid var(--indigo);
+}
+.phase h3{color:var(--indigo);font-size:.95rem;margin-bottom:6px}
+.phase ul{margin-left:20px;font-size:.85rem}
+
+/* Daily routine */
+.routine{
+  background:var(--paper-dim);border:1px solid var(--line);
+  padding:16px;margin:20px 0;font-family:"Inter","Noto Sans JP",monospace;
+  font-size:.82rem;line-height:1.8;white-space:pre-wrap;
+}
+
+@media(max-width:600px){
+  .tab-btn{padding:10px 8px;font-size:.85rem}
+  .card .badges{margin-top:4px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>エビデンスベース学習システム</h1>
+  <div class="sub">中小企業診断士 1次試験対策 ─ 53手法 + 7原則</div>
+</header>
+
+<main>
+
+<div class="intro">
+  <h2>このドキュメントについて</h2>
+  <p>学習科学・認知心理学・神経科学の論文(IF≥2)に基づく学習手法を、HTML制約・書字ゼロ原則・認知中断最小化原則に整合させて整理。各手法に <strong>主要文献・インパクトファクター(IF)・エビデンスレベル・効果サイズ</strong> を付記。</p>
+  <div class="legend">
+    <span style="background:var(--ev-high)">Lv1-2 メタ分析/RCT</span>
+    <span style="background:var(--ev-mid)">Lv3-4 単一実験/準実験</span>
+    <span style="background:var(--ev-low)">Lv5 理論/専門家意見</span>
+    <span style="background:var(--indigo)">IF=Impact Factor</span>
+    <span style="background:var(--gold);color:#000">d/g=効果サイズ</span>
+  </div>
+  <p style="margin-top:10px;font-size:.8rem;color:var(--muted)">エビデンスレベル分類はOxford CEBMを学習科学向けに簡略化：Lv1=メタ分析/SR、Lv2=大規模RCT、Lv3=単一実験、Lv4=準実験/観察、Lv5=理論</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('note')">ノート作り（HTML実装）</button>
+  <button class="tab-btn" onclick="showTab('env')">環境作り（生活・行動）</button>
+</div>
+
+<!-- ============ TAB 1: ノート作り ============ -->
+<div id="tab-note" class="tab-content active">
+
+<div class="summary">
+  <h3>HTMLで実装する28項目の構造</h3>
+  <table>
+    <tr><td>コア機能</td><td>穴埋め・覆面想起・スケジューラ・誤答キュー・信頼度評定・閾値判定</td></tr>
+    <tr><td>学習構造</td><td>プレ質問・自己説明・比較ビュー・関連リンク・プロテジェ・作問・漸減・サマリー</td></tr>
+    <tr><td>AI連動</td><td>試験官AI・合成過去問・スケジューラ連動</td></tr>
+    <tr><td>反復・分散</td><td>インターリービング・変動練習・累積復習</td></tr>
+    <tr><td>UI支援</td><td>ダッシュボード・試験シミュ・実行意図入力</td></tr>
+    <tr><td>強化</td><td>Successive Relearning・Pretesting・好奇心・von Restorff・メモリーパレス・自己効力感ログ・TTS</td></tr>
+  </table>
+</div>
+
+<!-- C. アウトプット強化 -->
+<section class="category">
+  <h2>C. アウトプット強化 <span class="count">5項目</span></h2>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">C1</span> 穴埋め(段階ボリューム)</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈3-7</span><span class="badge size">d≈0.5</span></div>
+    </div>
+    <div class="body">
+      <p>重要点を空欄化、20%→50%→80%と日毎にボリューム拡大。cued recall(手がかり想起)で graduated retrieval 形成。</p>
+      <p class="cite">Glover (1989) <em>JEP</em> / Smith &amp; Karpicke (2013) <em>Memory &amp; Cognition</em> (IF≈3)</p>
+      <div class="impl">空欄要素 &lt;span class="cloze"&gt; をJSで切替表示、難易度レベル属性</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">C3</span> 覆面想起モード（主軸）</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈3</span><span class="badge size">≈overt</span></div>
+    </div>
+    <div class="body">
+      <p>本文を非表示にして頭の中で再生→自己採点。書字なしで testing effect を10倍速で回せる。</p>
+      <p class="cite">Smith, Roediger &amp; Karpicke (2013) <em>Memory &amp; Cognition</em> (IF≈3) — 覆面≈顕在の同等効果</p>
+      <div class="impl">本文display:none切替＋論点単位で◯/△/✗キー入力（タイマーなし）</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">C4</span> プロテジェ効果（教えるつもり）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈6</span><span class="badge size">d≈0.4</span></div>
+    </div>
+    <div class="body">
+      <p>「後輩に教える前提」で説明欄を作成。教えなくても「教えるつもり」だけで保持率30-50%向上。</p>
+      <p class="cite">Fiorella &amp; Mayer (2013) <em>Contemporary Educational Psychology</em> (IF≈6)</p>
+      <div class="impl">仮想の生徒の質問textareaを論点末尾に配置</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">C5</span> 作問モード</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈10</span><span class="badge size">d≈0.7</span></div>
+    </div>
+    <div class="body">
+      <p>自分で問題を作る。出題者視点が深い処理を強制、出題ポイント発見能力が育つ。</p>
+      <p class="cite">Rosenshine, Meister &amp; Chapman (1996) <em>Review of Educational Research</em> (IF≈10) メタ分析</p>
+      <div class="impl">論点末尾に作問textarea→自作問題集に集約</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">C6</span> 漸減提示(Worked Example Fading)</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈7</span><span class="badge size">d≈0.5</span></div>
+    </div>
+    <div class="body">
+      <p>計算問題を完全例→部分空欄→全空欄で段階提示。Cognitive Load Theory準拠。</p>
+      <p class="cite">Renkl &amp; Atkinson (2003) <em>Educational Psychology Review</em> (IF≈7)</p>
+      <div class="impl">data-fade-level属性で4段階切替UI（NPV/CF計算用）</div>
+    </div>
+  </div>
+</section>
+
+<!-- D. 反復系 -->
+<section class="category">
+  <h2>D. 反復系 <span class="count">6項目</span></h2>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">D1</span> 間隔反復スケジューラ</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈7-22</span><span class="badge size">d≈0.4-0.9</span></div>
+    </div>
+    <div class="body">
+      <p>Stage1=1日→Stage4=2週→Stage5=1ヶ月。Cepeda 10-20%ルール準拠。</p>
+      <p class="cite">Cepeda, Vul, Rohrer, Wixted &amp; Pashler (2008) <em>Psychological Science</em> (IF≈7) / Cepeda et al. (2006) <em>Psychological Bulletin</em> (IF≈22)</p>
+      <div class="impl">localStorageでitemId別dueDate管理、SM-2変形</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">D2</span> 誤答ハイブリッド再出題</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈10-45</span><span class="badge size">d=0.5-0.8</span></div>
+    </div>
+    <div class="body">
+      <p>誤答は3日連続(穴埋め20%→50%→80%＋手法変動)で叩いてから通常スケジュールに合流。複雑素材は連続日が必要(Donovan)。</p>
+      <p class="cite">Karpicke &amp; Roediger (2008) <em>Science</em> (IF≈45) / Donovan &amp; Radosevich (1999) <em>J. Applied Psychology</em> (IF≈10)</p>
+      <div class="impl">lapseキューを通常キューと別管理、優先表示</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">D3</span> セッション末累積クイズ（必須・優先）</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">IF≈2-3</span><span class="badge size">d≈0.4</span></div>
+    </div>
+    <div class="body">
+      <p>3-10問可変。今日2/最近1/過去1/全範囲1の構成で過去ノートが眠らない。</p>
+      <p class="cite">Lawrence (2013) <em>Applied Cognitive Psychology</em> (IF≈2)</p>
+      <div class="impl">セッション終了ボタン→ランダム抽出ロジック</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">D4</span> 朝のインターリービング（閾値到達後のみ）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈22</span><span class="badge size">g=0.42</span></div>
+    </div>
+    <div class="body">
+      <p>科目混在の朝5問。識別力と転移を強化。閾値未達の論点には適用しない。</p>
+      <p class="cite">Brunmair &amp; Richter (2019) <em>Psychological Bulletin</em> (IF≈22) / Rohrer (2007) <em>Instructional Science</em></p>
+      <div class="impl">複数ノート横断シャッフル、フェーズフラグでON/OFF</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">D5</span> 変動練習</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈10</span><span class="badge size">d≈0.4</span></div>
+    </div>
+    <div class="body">
+      <p>同論点を異なる文脈・数値・問い方で。本番未見問題への転移に効く。</p>
+      <p class="cite">Schmidt (1975) <em>Psychological Review</em> (IF≈10)</p>
+      <div class="impl">1論点に4バリエーション(標準/数値変/文脈変/逆算)、JSランダム提示</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">D6</span> 累積復習（閾値到達前のみ・重要度×記憶弱順）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈7</span><span class="badge size">d>0.5</span></div>
+    </div>
+    <div class="body">
+      <p>チャンキング期は前日までを累積復習。E1信頼度履歴で「重要×弱」を最優先出題。</p>
+      <p class="cite">Sweller Cognitive Load Theory系列 <em>Educational Psychology Review</em> (IF≈7)</p>
+      <div class="impl">priority = importance × (1 - lastConfidence) でソート</div>
+    </div>
+  </div>
+</section>
+
+<!-- B. インプット支援 -->
+<section class="category">
+  <h2>B. インプット支援 <span class="count">4項目</span></h2>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">B1</span> プレ質問（補助）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈3-10</span><span class="badge size">d=0.3-0.5</span></div>
+    </div>
+    <div class="body">
+      <p>学習前に答えられない質問→注意の照準化。L6 Pretestingに統合。</p>
+      <p class="cite">Richland, Kornell &amp; Kao (2009) <em>JEP:Applied</em> (IF≈3) / Carpenter et al. (2018) <em>Educational Psychology Review</em> (IF≈10)</p>
+      <div class="impl">&lt;details&gt;でノート冒頭に折りたたみ配置</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">B2</span> 自己説明プロンプト</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈14</span><span class="badge size">d=0.55</span></div>
+    </div>
+    <div class="body">
+      <p>段落ごと「なぜ？」を頭で説明。深い処理を強制。</p>
+      <p class="cite">Chi et al. (1994) <em>Cognitive Science</em> / Dunlosky et al. (2013) <em>Psych Science in Public Interest</em> (IF≈14)</p>
+      <div class="impl">段落末ボタン「なぜ？を説明」(覆面・テキスト入力なし)</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">B4</span> 比較対照ビュー（学習初期のみ）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈4</span><span class="badge size">d≈0.4</span></div>
+    </div>
+    <div class="body">
+      <p>紛らわしい論点(VRIO×ファイブフォース等)を2列並列表示。閾値到達後はD4インターリービングに移行。</p>
+      <p class="cite">Goldstone (1994) <em>Cognition</em> (IF≈4) / Alfieri et al. (2013)</p>
+      <div class="impl">&lt;table class="contrast"&gt;の2列レイアウト</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">B5</span> 関連論点リンク</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈50</span><span class="badge size">large</span></div>
+    </div>
+    <div class="body">
+      <p>「前提となる論点」「次につながる論点」を明示。スキーマ構築でmPFCバイパス記憶経路を活性化。</p>
+      <p class="cite">Tse et al. (2007) <em>Science</em> (IF≈50) / van Kesteren (2014)</p>
+      <div class="impl">ノート冒頭に prerequisite/successor リンクセクション</div>
+    </div>
+  </div>
+</section>
+
+<!-- A. AI活用 -->
+<section class="category">
+  <h2>A. AI活用 <span class="count">3項目</span></h2>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">A1</span> 試験官AI（週2-3回）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈7</span><span class="badge size">d=0.5-0.8</span></div>
+    </div>
+    <div class="body">
+      <p>解答後にAIが追加質問で詰める。閾値到達後の論点のみ。</p>
+      <p class="cite">Roediger &amp; Karpicke (2006) <em>Psychological Science</em> (IF≈7) / Kasneci et al. (2023)</p>
+      <div class="impl">プロンプトテンプレート埋め込み、コピーボタン</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">A3</span> 合成過去問生成</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">IF≈3-5</span><span class="badge size">複合</span></div>
+    </div>
+    <div class="body">
+      <p>弱点×論点でAIに新作問題を作らせる。法務・情報の改正対応にも有効。</p>
+      <p class="cite">retrieval practice + variability の派生応用</p>
+      <div class="impl">弱点リストから自動プロンプト生成</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">A5</span> AI×間隔反復（出題スケジュール）</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">IF≈7</span><span class="badge size">d≈0.5</span></div>
+    </div>
+    <div class="body">
+      <p>D1スケジューラ + AI出題で全自動化。</p>
+      <p class="cite">Cepeda 2008系列をAI実装に拡張</p>
+      <div class="impl">due一覧をプロンプトに渡してAIに出題依頼</div>
+    </div>
+  </div>
+</section>
+
+<!-- E. メタ認知 -->
+<section class="category">
+  <h2>E. メタ認知 <span class="count">4項目</span></h2>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">E1</span> 信頼度評定（論点単位で1キー）</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈14</span><span class="badge size">d≈0.4</span></div>
+    </div>
+    <div class="body">
+      <p>論点1巡後に◯/△/✗の3キーで一括評定。タイマーなし、認知中断ゼロ。</p>
+      <p class="cite">Dunlosky et al. (2013) <em>Psych Science in Public Interest</em> (IF≈14)</p>
+      <div class="impl">論点末尾に3キー受付UI、localStorage履歴蓄積</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">E2</span> 過信問題キュー</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">IF≈14</span><span class="badge size">中</span></div>
+    </div>
+    <div class="body">
+      <p>「◯と評定したのに次回誤答」を別管理。最も危険な弱点。</p>
+      <p class="cite">Dunlosky &amp; Rawson (2012) キャリブレーション研究</p>
+      <div class="impl">confidence vs result の不一致を自動検出してフラグ</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">E4</span> 進捗ダッシュボード</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">book</span><span class="badge size">d=0.7</span></div>
+    </div>
+    <div class="body">
+      <p>Stage別論点数・弱点・復習負荷の可視化。Hattie教育介入d=0.7。</p>
+      <p class="cite">Hattie (2012) <em>Visible Learning</em> メタ分析書籍</p>
+      <div class="impl">index.htmlに統計表＋弱点TOP5＋今日の復習件数</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">E5</span> 閾値到達判定（覆面想起7割）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈10</span><span class="badge size">構造</span></div>
+    </div>
+    <div class="body">
+      <p>覆面想起で7割再生できたら次フェーズ。複雑素材の最低閾値概念。</p>
+      <p class="cite">Donovan &amp; Radosevich (1999) <em>JAP</em> (IF≈10) minimum threshold</p>
+      <div class="impl">論点ごとmastery_stageを自動更新、判定UI</div>
+    </div>
+  </div>
+</section>
+
+<!-- F. 本番対応 -->
+<section class="category">
+  <h2>F. 本番対応 <span class="count">2項目</span></h2>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">F1</span> 試験シミュレーション</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈3</span><span class="badge size">d≈0.4</span></div>
+    </div>
+    <div class="body">
+      <p>週ミニ模試25問・月フル模試。本番形式・時間制限・ランダム順。L5と統合。</p>
+      <p class="cite">Smith, Glenberg &amp; Bjork (1978) <em>Memory &amp; Cognition</em> (IF≈3) — transfer-appropriate</p>
+      <div class="impl">exam-modeフラグでUI簡略化、時間制限タイマー</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">F2</span> 漸進的サマリー</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">理論</span><span class="badge size">中</span></div>
+    </div>
+    <div class="body">
+      <p>1500→300→50→10字の4段階圧縮。試験直前に10字版で全範囲を1時間で覆える。</p>
+      <p class="cite">elaboration / Cognitive Load Theory 派生</p>
+      <div class="impl">ノート末尾に4タブUI、各レベルの要約</div>
+    </div>
+  </div>
+</section>
+
+<!-- L. 22エージェント追加(HTML実装分) -->
+<section class="category">
+  <h2>L. 強化テクニック <span class="count">8項目（HTML実装分）</span></h2>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">L2</span> Successive Relearning</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈10</span><span class="badge size">d=0.9</span></div>
+    </div>
+    <div class="body">
+      <p>「3回連続正答→3日後再テスト→7日後」基準で運用。半年保持で最大効果。</p>
+      <p class="cite">Rawson &amp; Dunlosky (2022) <em>Educational Psychology Review</em> (IF≈10)</p>
+      <div class="impl">D1スケジューラに「連続正答到達」基準を追加</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">L6</span> Pretesting Effect強化版</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈5-22</span><span class="badge size">g=0.4-0.55</span></div>
+    </div>
+    <div class="body">
+      <p>本文読む前に未習問題に挑戦→誤答前提。誤答経験が後続学習を強化。</p>
+      <p class="cite">Pan &amp; Sana (2021) <em>JEP:General</em> (IF≈5) / Pan et al. (2023) メタ分析</p>
+      <div class="impl">論点冒頭に未習クイズ3-5問、答え非表示</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L7</span> 高好奇心プライミング</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈15</span><span class="badge size">+30%</span></div>
+    </div>
+    <div class="body">
+      <p>冒頭に「答えを知りたくなる謎かけ」→ドーパミン放出で記憶強化。付随情報も10-30%向上。</p>
+      <p class="cite">Gruber, Gelman &amp; Ranganath (2014) <em>Neuron</em> (IF≈15)</p>
+      <div class="impl">ノート冒頭に curiosity-prompt セクション</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L9</span> von Restorff強調</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈5</span><span class="badge size">d=0.5-1.0</span></div>
+    </div>
+    <div class="body">
+      <p>1セクションに1点だけ視覚的に孤立させる(色・フォント・枠)。多用すると効果消滅。</p>
+      <p class="cite">Hunt (1995) <em>Psychonomic Bulletin &amp; Review</em> (IF≈5)</p>
+      <div class="impl">CSS class .restorff (1論点に1個まで自動制限)</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L14</span> メモリーパレス（条文・数値専用）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈15-21</span><span class="badge size">d>1.5</span></div>
+    </div>
+    <div class="body">
+      <p>自宅の部屋順に中小企業基本法の数値を配置。海馬-mPFC結合変化が4ヶ月持続。</p>
+      <p class="cite">Dresler et al. (2017) <em>Neuron</em> (IF≈15) / Maguire et al. (2003) <em>Nature Neuroscience</em> (IF≈21)</p>
+      <div class="impl">インタラクティブ間取り図、各「部屋」クリックで対応数値表示</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">L15</span> 自己効力感ログ</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈10</span><span class="badge size">r=0.33</span></div>
+    </div>
+    <div class="body">
+      <p>「今日解けた論点」を3行ログ。Mastery Experience蓄積。</p>
+      <p class="cite">Honicke &amp; Broadbent (2016) <em>Educational Research Review</em> (IF≈10) メタ分析</p>
+      <div class="impl">index.htmlの「成功体験」セクション、自動カウント</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">K1</span> 実行意図（if-then）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈13</span><span class="badge size">d=0.65</span></div>
+    </div>
+    <div class="body">
+      <p>「もしXならY」形式で行動を事前固定。行動科学で最強級の介入。</p>
+      <p class="cite">Gollwitzer (1999) <em>American Psychologist</em> (IF≈13) / Gollwitzer &amp; Sheeran (2006) メタ分析</p>
+      <div class="impl">index.htmlに「今日の発火条件」入力欄、固定表示</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">I1</span> TTS音声化</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">IF≈7</span><span class="badge size">中</span></div>
+    </div>
+    <div class="body">
+      <p>HTMLのSpeechSynthesis APIでノート読み上げ。通勤・家事中の聞き流し用。</p>
+      <p class="cite">Mayer's Modality Principle, <em>Educational Psychologist</em> (IF≈7)</p>
+      <div class="impl">window.speechSynthesis.speak(utterance) を再生ボタンで呼ぶ</div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<!-- ============ TAB 2: 環境作り ============ -->
+<div id="tab-env" class="tab-content">
+
+<div class="summary">
+  <h3>HTML外で実施する25項目の構造</h3>
+  <table>
+    <tr><td>環境（即日変更可）</td><td>室温・照明・BGM・ノイズ・場所変動</td></tr>
+    <tr><td>食事・摂取</td><td>カフェイン(タイミング)・グルコース・水分</td></tr>
+    <tr><td>睡眠・身体</td><td>仮眠・就寝直前/起床直後・運動連動</td></tr>
+    <tr><td>本番対応</td><td>呼吸法・認知再評価・ストレス下練習</td></tr>
+    <tr><td>時間管理</td><td>マイクロ休憩・ポモドーロ</td></tr>
+    <tr><td>原則</td><td>G1〜G7 中核7原則</td></tr>
+  </table>
+</div>
+
+<!-- 環境 -->
+<section class="category">
+  <h2>環境（部屋・音・光・場所）<span class="count">5項目</span></h2>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">L3</span> 室温24℃以下</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈7-15</span><span class="badge size">+10%</span></div>
+    </div>
+    <div class="body">
+      <p>26℃→24℃で認知パフォーマンス約10%向上。28℃で6%低下。エアコン設定のみで実装。</p>
+      <p class="cite">Wargocki et al. (2021) <em>Building &amp; Environment</em> (IF≈7) メタ分析35研究 / Cedeño-Laurent (2018) <em>PLOS Medicine</em> (IF≈15)</p>
+      <div class="impl">エアコン24℃固定、湿度40-60%</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L8</span> 朝のブルーライト5分曝露</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈5.6</span><span class="badge size">d=0.3-0.5</span></div>
+    </div>
+    <div class="body">
+      <p>470-480nm光を朝5分。注意ネットワーク活性化、反応時間とWM短期改善。</p>
+      <p class="cite">Alkozei et al. (2016) <em>Sleep</em> (IF≈5.6) / Tonetti &amp; Natale (2019) <em>Chronobiol Int</em></p>
+      <div class="impl">朝起きたら窓際で5分 or 6500K以上の昼光色LED</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L16</span> 自然音BGM</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈4.6</span><span class="badge size">g=0.2-0.3</span></div>
+    </div>
+    <div class="body">
+      <p>雨・川・森の自然音。注意回復理論(ART)、ストレス低減で長時間学習を支える。</p>
+      <p class="cite">Stobbe et al. (2022) <em>Scientific Reports</em> (IF≈4.6) メタ分析</p>
+      <div class="impl">過去問演習の長時間セッションに使用</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L18</span> ブラウン/ピンクノイズ</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈7</span><span class="badge size">d=0.3-0.5</span></div>
+    </div>
+    <div class="body">
+      <p>定常的環境音で雑音マスキング。低覚醒者・ADHD傾向で特に有効。</p>
+      <p class="cite">Söderlund et al. (2010) <em>J Child Psychol Psychiatry</em> (IF≈7) / Awada et al. (2022) <em>Building &amp; Environment</em> (IF≈7.4)</p>
+      <div class="impl">YouTube/アプリで無料、カフェ学習・家族の生活音対策</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">H4</span> 文脈変動学習</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">IF≈3</span><span class="badge size">d≈0.3</span></div>
+    </div>
+    <div class="body">
+      <p>同じ論点を異なる場所(自宅・カフェ・通勤先)で学習→保持率向上。</p>
+      <p class="cite">Smith, Glenberg &amp; Bjork (1978) <em>Memory &amp; Cognition</em> (IF≈3)</p>
+      <div class="impl">場所2-3箇所をローテ</div>
+    </div>
+  </div>
+</section>
+
+<!-- 食事・摂取 -->
+<section class="category">
+  <h2>食事・摂取 <span class="count">3項目</span></h2>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L1</span> 学習直後カフェイン200mg</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈15</span><span class="badge size">+10pp</span></div>
+    </div>
+    <div class="body">
+      <p>新ノート読了/過去問演習の直後にコーヒー1杯。24時間後の記憶弁別精度向上。U字型用量反応(300mg超で精度低下)。</p>
+      <p class="cite">Borota et al. (2014) <em>Nature Neuroscience</em> (IF≈15)</p>
+      <div class="impl">朝の難論点読了後に1杯、上限200-300mg</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">L12</span> グルコース摂取（学習15分前）</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈9</span><span class="badge size">d=0.3-0.5</span></div>
+    </div>
+    <div class="body">
+      <p>25g前後のグルコース(バナナ1本/ラムネ)を15-20分前に。空腹時に最大効果。</p>
+      <p class="cite">Sünram-Lea &amp; Owen (2017) <em>Neurosci Biobehav Rev</em> (IF≈9) メタ分析104効果量</p>
+      <div class="impl">過去問演習・暗記前にラムネ。食後高血糖の谷を避ける</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L17</span> 就寝6h前カフェインカット</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈4-5</span><span class="badge size">睡眠保護</span></div>
+    </div>
+    <div class="body">
+      <p>400mgは12h前まで、200mgは6h前まで、100mgは4h前まで。睡眠は記憶固定に必須。</p>
+      <p class="cite">Drake et al. (2013) <em>J Clinical Sleep Medicine</em> (IF≈4) / Gardiner et al. (2025) <em>SLEEP</em> (IF≈5)</p>
+      <div class="impl">23時就寝なら17時以降カフェインなし</div>
+    </div>
+  </div>
+</section>
+
+<!-- 睡眠・身体 -->
+<section class="category">
+  <h2>睡眠・身体 <span class="count">4項目</span></h2>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">L4</span> 学習直後の仮眠20-90分</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈11-25</span><span class="badge size">g=0.35</span></div>
+    </div>
+    <div class="body">
+      <p>NREM2＋SWS確保で宣言的記憶を固定化。コーヒーナップ(L1+L4)も有効。</p>
+      <p class="cite">Mednick et al. (2003) <em>Nature Neuroscience</em> (IF≈25) / Leong et al. (2023) <em>Sleep Med Rev</em> (IF≈11) メタ分析27研究</p>
+      <div class="impl">学習1章終了→90分タイマー仮眠</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">H1</span> 就寝直前レビュー（30分前）</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈30</span><span class="badge size">d=0.35-0.6</span></div>
+    </div>
+    <div class="body">
+      <p>SWS優位の前半夜が宣言的記憶を固定化。HTMLノート目次のスクロールだけでも効く。</p>
+      <p class="cite">Diekelmann &amp; Born (2010) <em>Nature Reviews Neuroscience</em> (IF≈30)</p>
+      <div class="impl">就寝60分前にHTMLノート再確認ハイライトを閲覧</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">H2</span> 起床直後の覆面想起（5分以内）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈25</span><span class="badge size">中</span></div>
+    </div>
+    <div class="body">
+      <p>朝の海馬は前夜の記憶検索精度がピーク。起床5分以内に「昨日の論点を頭で再生」。</p>
+      <p class="cite">Walker (2008) <em>Annual Review of Psychology</em> (IF≈25)</p>
+      <div class="impl">起床即、HTMLノート目次を頭で再生(コスト ゼロ)</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">H3</span> 運動後20-90分に学習</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈9</span><span class="badge size">d=0.4-0.6</span></div>
+    </div>
+    <div class="body">
+      <p>中強度運動後にBDNFが上昇、記憶形成効率20-30%向上。</p>
+      <p class="cite">Roig et al. (2013) <em>Neuroscience &amp; Biobehavioral Reviews</em> (IF≈9)</p>
+      <div class="impl">朝散歩・軽筋トレ→学習、難論点をここに置く</div>
+    </div>
+  </div>
+</section>
+
+<!-- 本番・ストレス対応 -->
+<section class="category">
+  <h2>本番・ストレス対応 <span class="count">3項目</span></h2>
+
+  <div class="card" data-ev="1">
+    <div class="head">
+      <span class="title"><span class="id">L5</span> ストレス下模試環境（本番再現）</span>
+      <div class="badges"><span class="badge ev1">Lv1</span><span class="badge if">IF≈45</span><span class="badge size">d=0.5</span></div>
+    </div>
+    <div class="body">
+      <p>事前にストレス下で検索練習→本番ストレス下のretrieval failureが減る。state-dependent + 文脈強化。</p>
+      <p class="cite">Smith, Floerke &amp; Thomas (2016) <em>Science</em> (IF≈45)</p>
+      <div class="impl">月1模試を本番と同時間帯+制限時間+カフェ等異環境</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L10</span> 6回/分の遅い呼吸（試験前）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈9</span><span class="badge size">d=0.4-0.55</span></div>
+    </div>
+    <div class="body">
+      <p>吸4秒・呼6秒×5分。副交感神経賦活、HRV増加、コルチゾール抑制。</p>
+      <p class="cite">Laborde et al. (2022) <em>Neuroscience &amp; Biobehavioral Reviews</em> (IF≈9)</p>
+      <div class="impl">試験開始2-5分前のルーティン化</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L13</span> 認知再評価（脅威→有利な合図）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈3.5-5</span><span class="badge size">GRE+65点</span></div>
+    </div>
+    <div class="body">
+      <p>「心拍上昇＝集中力向上の合図」と再解釈。書字不要(口頭・内的言語化で完結)。</p>
+      <p class="cite">Jamieson, Mendes, Blackstock &amp; Schmader (2010) <em>JESP</em> (IF≈3.5) / Jamieson et al. (2016) <em>JEP:General</em> (IF≈5)</p>
+      <div class="impl">試験直前30秒の自己教示</div>
+    </div>
+  </div>
+</section>
+
+<!-- 時間管理 -->
+<section class="category">
+  <h2>時間管理 <span class="count">2項目</span></h2>
+
+  <div class="card" data-ev="2">
+    <div class="head">
+      <span class="title"><span class="id">L11</span> マイクロ休憩（40-50分ごと2分）</span>
+      <div class="badges"><span class="badge ev2">Lv2</span><span class="badge if">IF≈4</span><span class="badge size">d≈0.6</span></div>
+    </div>
+    <div class="body">
+      <p>長時間タスク中の短い別タスク休憩で注意の維持(vigilance)が回復。</p>
+      <p class="cite">Ariga &amp; Lleras (2011) <em>Cognition</em> (IF≈4)</p>
+      <div class="impl">40-50分作業ごとに1-2分の別タスク休憩</div>
+    </div>
+  </div>
+
+  <div class="card" data-ev="3">
+    <div class="head">
+      <span class="title"><span class="id">L11b</span> ポモドーロ（25/5×4）</span>
+      <div class="badges"><span class="badge ev3">Lv3</span><span class="badge if">IF≈3.6</span><span class="badge size">d=0.3-0.5</span></div>
+    </div>
+    <div class="body">
+      <p>25分作業＋5分休憩×4→長休憩。初学・退屈タスクで自己調整より優位。</p>
+      <p class="cite">Biwer et al. (2023) <em>British J. of Educational Psychology</em> (IF≈3.6) / Almutairi et al. (2025) scoping review</p>
+      <div class="impl">暗記系(法務・中小・情報)に適用</div>
+    </div>
+  </div>
+</section>
+
+<!-- 原則 -->
+<section class="category">
+  <h2>G. 中核原則（常時意識）<span class="count">7項目</span></h2>
+
+  <div class="card" data-ev="5"><div class="head"><span class="title"><span class="id">G1</span> 3フェーズ構造</span><div class="badges"><span class="badge ev5">原則</span></div></div><div class="body"><p>スキーマ構築(連続日)→想起強化(間隔反復)→直前定着(模試+漸進サマリー)。</p></div></div>
+  <div class="card" data-ev="5"><div class="head"><span class="title"><span class="id">G2</span> 閾値到達優先</span><div class="badges"><span class="badge ev5">原則</span></div></div><div class="body"><p>複雑論点は連続学習で「覚える棚」を作ってから間隔反復に移行。</p><p class="cite">Donovan &amp; Radosevich (1999) <em>JAP</em> (IF≈10)</p></div></div>
+  <div class="card" data-ev="5"><div class="head"><span class="title"><span class="id">G3</span> Cepeda 10-20%ルール</span><div class="badges"><span class="badge ev5">原則</span></div></div><div class="body"><p>復習間隔=試験までの期間の10-20%(閾値到達後のみ)。</p><p class="cite">Cepeda et al. (2008) <em>Psychological Science</em> (IF≈7)</p></div></div>
+  <div class="card" data-ev="5"><div class="head"><span class="title"><span class="id">G4</span> 睡眠を必ず挟む</span><div class="badges"><span class="badge ev5">原則</span></div></div><div class="body"><p>24時間ジャンプ。徹夜連続学習は固定化されない。</p><p class="cite">Murre &amp; Dros (2015) <em>PLOS ONE</em> / Diekelmann &amp; Born (2010) <em>Nature Rev Neuro</em> (IF≈30)</p></div></div>
+  <div class="card" data-ev="5"><div class="head"><span class="title"><span class="id">G5</span> 想起 &gt; 再読</span><div class="badges"><span class="badge ev5">原則</span></div></div><div class="body"><p>読み返すより思い出す。effect size d=0.5-0.8。</p><p class="cite">Roediger &amp; Karpicke (2006) <em>Psychological Science</em> (IF≈7)</p></div></div>
+  <div class="card" data-ev="5"><div class="head"><span class="title"><span class="id">G6</span> 精緻化原則</span><div class="badges"><span class="badge ev5">原則</span></div></div><div class="body"><p>新情報は既存知識と接続。スキーマ活性化でmPFCバイパス記憶経路。</p><p class="cite">Tse et al. (2007) <em>Science</em> (IF≈50)</p></div></div>
+  <div class="card" data-ev="5"><div class="head"><span class="title"><span class="id">G7</span> 覆面想起主軸・書字ゼロ</span><div class="badges"><span class="badge ev5">原則</span></div></div><div class="body"><p>書字運動は記憶の本質ではない、認知行為が効果の源。HTML完結。</p><p class="cite">Smith, Roediger &amp; Karpicke (2013) <em>Memory &amp; Cognition</em></p></div></div>
+</section>
+
+<!-- 1日のルーティン -->
+<section class="category">
+  <h2>1日のルーティン例</h2>
+<div class="routine">起床直後 5分    H2  昨日の論点を頭で再生
+朝食            L12 グルコース摂取
+                L8  朝のブルーライト5分
+朝学習(90分)    新論点・チャンキング期はD6累積優先
+                K1  if-then「コーヒー入れたらノート開く」
+                L11 40-50分ごと2分休憩
+                L18 必要ならブラウンノイズ
+朝学習終了直後  L1  カフェイン200mg
+昼食後          L4  仮眠20-90分(コーヒーナップ可)
+午後学習(60分)  L6  Pretesting→C3覆面想起
+                D4  閾値到達済み論点のインターリービング
+運動            L3  室温24℃確認、運動→H3 30分後に再開
+夜学習(45分)    復習中心、誤答キュー処理(D2)
+                D3  セッション末クイズ(必須)
+                E1  論点単位で◯/△/✗
+就寝前          L17 17時以降カフェインなし
+就寝30分前      H1  HTMLノート目次スクロール
+
+全期間          G7  書字ゼロ・覆面想起主軸
+                A2  月1回 誤答パターンAI分析
+                F1  週ミニ模試・月フル模試(L5本番環境再現)</div>
+</section>
+
+</div>
+
+<!-- ============ 共通: 実装ロードマップ ============ -->
+<div class="phases" style="margin-top:30px;border-top:2px solid var(--gold-soft);padding-top:20px">
+  <h2 style="color:var(--indigo);font-size:1.05rem;letter-spacing:.08em;margin-bottom:14px">実装ロードマップ</h2>
+
+  <div class="phase">
+    <h3>Phase 0：今日から（HTML外、即日）</h3>
+    <ul>
+      <li>L3 室温24℃ / L1 学習直後カフェイン / L17 就寝6h前カット</li>
+      <li>L4 学習後仮眠 / H1 就寝直前レビュー / H2 起床直後想起</li>
+      <li>L11 40分ごと休憩 / L8 朝のブルーライト</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 1：HTMLコア最小実装（1週間）</h3>
+    <ul>
+      <li>C1 穴埋め / C3 覆面想起 / D1 スケジューラ / D2 誤答キュー</li>
+      <li>D3 セッション末クイズ / E1 信頼度評定 / E5 閾値判定 / B5 関連リンク</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 2：HTML拡張（2週間目以降）</h3>
+    <ul>
+      <li>B1/B2/L6 プレ質問+Pretesting / L7 好奇心プライミング / L9 von Restorff</li>
+      <li>F2 漸進サマリー / E4 ダッシュボード / K1 実行意図</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 3：高度機能（1ヶ月以降）</h3>
+    <ul>
+      <li>A1 試験官AI / D4 インターリービング / I1 TTS音声化</li>
+      <li>L14 メモリーパレス / L5 模試の環境変動 / L2 Successive Relearning</li>
+    </ul>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>

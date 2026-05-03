@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>統計基礎・データ分析基盤（超初心者版・Part1：基礎理解編） - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.95;min-height:100vh;font-size:.95rem}
+.header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-main) 50%,#58d68d 100%);color:#fff;padding:.6rem 1rem;text-align:center}.header h1{font-size:1.05rem;font-weight:800;letter-spacing:.04em;margin-bottom:.1rem;display:inline-block;margin-right:.6rem}.header .subtitle{font-size:.72rem;opacity:.9;display:inline-block;margin-right:.5rem}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.1rem .55rem;border-radius:14px;font-size:.7rem}
+.partnav{background:#fff;padding:.6rem;text-align:center;font-size:.85rem;box-shadow:var(--shadow);margin-bottom:.5rem}.partnav a{display:inline-block;padding:.4rem 1rem;margin:0 .3rem;border-radius:6px;text-decoration:none;font-weight:700}.partnav .active{background:var(--green-main);color:#fff}.partnav .other{background:var(--gray-pale);color:var(--gray-dark)}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.7rem;margin:1.1rem 0}.bubble-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12);background:linear-gradient(135deg,#66bb6a,#43a047)}
+.bubble-body{background:var(--white);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow);position:relative;max-width:88%;font-size:.95rem;line-height:1.95}.bubble-body::before{content:'';position:absolute;top:14px;left:-14px;width:0;height:0;border:8px solid transparent;border-right-color:var(--white)}.bubble-body.b-green{background:#e8f5e9;border:1px solid #a5d6a7}.bubble-body.b-green::before{border-right-color:#e8f5e9}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.74rem;font-weight:700;color:var(--gray-mid);margin-bottom:.3rem}
+.tab-container{max-width:960px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.85rem .35rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:2rem 1.6rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-purple{background:var(--purple-bg)}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}.tab-panel.theme-teal{background:var(--teal-light)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.15rem;font-weight:800;margin:2rem 0 1rem;padding:.6rem .9rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1.2rem 1.5rem;margin:1rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card-red{border-left-color:var(--red-main)}.card h4{font-size:1rem;font-weight:700;margin-bottom:.5rem}.card p{margin-bottom:.5rem}
+.alert-tip,.alert-exam,.alert-danger{border-radius:var(--radius);padding:.95rem 1rem .95rem 3rem;margin:1rem 0;position:relative;font-size:.92rem;line-height:1.85}.alert-tip::before,.alert-exam::before,.alert-danger::before{position:absolute;left:.8rem;top:.85rem;font-size:1.2rem}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"💡"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"📝"}.alert-danger{background:#fce4ec;border:1px solid #ef9a9a;color:#b71c1c}.alert-danger::before{content:"⚠️"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:1rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e0e0e0}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.7rem 1.2rem;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center;min-width:80px;margin:.25rem}.flow-box small{display:block;font-weight:400;font-size:.74rem;opacity:.9;margin-top:.15rem}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.flow-arrow{font-size:1.3rem;margin:0 .35rem;font-weight:700;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.9rem}th,td{padding:.65rem .7rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}.tbl-green th{background:var(--green-main);color:#fff}.tbl-green tr:nth-child(even){background:var(--green-light)}.tbl-red th{background:var(--red-main);color:#fff}.tbl-red tr:nth-child(even){background:var(--red-light)}
+ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.mnemonic{background:linear-gradient(135deg,var(--purple-light),#fff);border:3px dashed var(--purple-main);border-radius:var(--radius);padding:1.4rem;margin:1rem 0;text-align:center}.mnemonic .big{font-size:1.3rem;font-weight:800;color:var(--purple-dark);margin-bottom:.4rem;letter-spacing:.08em}.mnemonic .desc{font-size:.92rem;color:var(--gray-mid)}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.7rem;align-items:center;margin:1rem 0}.vs-side{background:var(--white);border-radius:var(--radius);padding:1.2rem;text-align:center;box-shadow:var(--shadow)}.vs-side h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}.vs-mid{font-size:1.6rem;font-weight:800;color:var(--gray-mid);text-align:center}
+.footer{text-align:center;padding:1.8rem;color:var(--gray-light);font-size:.85rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}.fill-card .fill-header{padding:14px 20px;font-weight:700;font-size:.98rem;color:#fff}.fill-card .fill-header.bg-purple{background:var(--purple-main)}.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}.fill-card .fill-header.bg-red{background:var(--red-main)}.fill-card .fill-header.bg-teal{background:var(--teal-main)}.fill-card .fill-body{padding:20px 22px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:6px;font-size:.95rem;line-height:2.1}
+.rough{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.key-word{font-weight:700;color:#1565c0;background:#e3f2fd;padding:0 .35rem;border-radius:3px}
+.exam-pt{font-size:.86rem;margin-top:.5rem;color:#1565c0;background:#e3f2fd;padding:.5rem .75rem;border-radius:6px}
+.exam-warn{font-size:.86rem;margin-top:.4rem;color:#b71c1c;background:#fce4ec;padding:.5rem .75rem;border-radius:6px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.5rem .9rem;border-radius:20px;font-size:.85rem;font-weight:700;margin:.4rem .3rem .4rem 0;box-shadow:0 2px 6px rgba(142,68,173,.3)}.goro-chip::before{content:"🎵 ";margin-right:.3rem}.goro-chip small{font-weight:400;opacity:.95;margin-left:.4rem;font-size:.78rem}
+.goro-row{margin:.6rem 0;padding:.5rem .7rem;background:#faf5fc;border-left:3px solid var(--purple-main);border-radius:4px}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.92rem;line-height:1.85}.support-icon{font-size:1.7rem;flex-shrink:0;line-height:1}.support-body{flex:1}.support-body strong{color:#e65100}.support-name{font-size:.72rem;font-weight:700;color:#bf360c;margin-bottom:.2rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.1rem 1.3rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.6rem}.keepit ul{list-style:none;padding:0;margin:0}.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.9rem;line-height:1.7}.keepit li strong{color:#1565c0}
+.year-badge{display:inline-block;background:#c0392b;color:#fff;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:10px;margin:0 .2rem}
+.quiz-item{background:#fff;border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-size:.9rem;font-weight:700;margin-bottom:.5rem}.quiz-question{font-weight:600;font-size:1rem;margin-bottom:.9rem;line-height:1.8}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.65rem .9rem;margin:.4rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;font-size:.93rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.8rem;padding:.9rem;border-radius:var(--radius-sm);font-size:.92rem;line-height:1.8}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}
+@media(max-width:600px){.two-col,.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg)}.tab-btn{font-size:.62rem;padding:.7rem .15rem}.bubble-body{max-width:80%}.tab-panel{padding:1.4rem 1rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>統計基礎・データ分析基盤（超初心者版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム</div>
+  <div class="badge">📘 Part1：基礎理解編（全8タブ）</div>
+</div>
+<div class="partnav">
+  <a class="active">📘 Part1：基礎理解（このページ）</a>
+  <a class="other" href="14.統計基礎・データ分析基盤まとめ_超初心者版_part2.html">📗 Part2：演習・詳細編 →</a>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">🐣 ゼロから</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(1)">🌱 入門</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(2)">📘 基本</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(3)">🪜 応用</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">🎵 語呂</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(5)">🗺️ 図解</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">✏️ クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(7)">✍️ 穴埋め</button>
+  </nav>
+
+  <!-- ===== TAB 0: ゼロから ===== -->
+  <div class="tab-panel active theme-green" id="tab0">
+    <h2 class="section-title st-green"><span class="st-icon">📊</span> 統計って結局なに？</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">💡</div><div class="bubble-body b-green"><div class="bubble-name">はじめに</div>統計の出発点はたった2つ。「<strong>真ん中はどこ？</strong>」「<strong>どれくらい散らばってる？</strong>」。これだけ。難しい数式は後回しでOK。</div></div>
+
+    <div class="card card-green"><h4>📍 真ん中を見る3兄弟（中心指標）</h4>
+      <ul>
+        <li><strong>平均</strong>＝合計÷個数（一番なじみ深い）</li>
+        <li><strong>中央値</strong>＝順番に並べて<strong>真ん中の値</strong></li>
+        <li><strong>最頻値</strong>＝一番<strong>多く出る値</strong></li>
+      </ul>
+    </div>
+    <div class="goro-row"><span class="goro-chip">平均・中央値・最頻値<small>3つの中心指標</small></span></div>
+    <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>「平均だけ見る」って危険なんだよね、わかる！ <strong>年収「平均500万・中央値300万」</strong>の組織は、上に大金持ちが数人いて全体は意外と低い。<strong>平均と中央値は両方見る</strong>のが鉄則。</div></div>
+
+    <div class="card card-green"><h4>📏 散らばりを見る2兄弟</h4>
+      <ul>
+        <li><span class="key-word">分散<span class="rough">ざっくり：データのばらつき具合。差の2乗の平均で計算</span></span>＝ばらつきの指標（単位は2乗）</li>
+        <li><strong>標準偏差</strong>＝<strong>分散の平方根</strong>。<strong>元の単位</strong>に戻る（実用的）</li>
+      </ul>
+    </div>
+    <div class="goro-row"><span class="goro-chip">分散の√＝標準偏差<small>SDは元の単位</small></span></div>
+
+    <h2 class="section-title st-green"><span class="st-icon">🔗</span> 相関 ≠ 因果</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">🍦</div><div class="bubble-body b-green"><div class="bubble-name">統計あるある</div>「アイスが売れる日は溺死が増える」→ アイスが原因？ いやいや、<strong>気温</strong>って共通要因があるだけ。これを<strong>「相関≠因果」</strong>と言うよ。</div></div>
+    <div class="card card-green">
+      <ul>
+        <li><strong>相関係数 r</strong>＝<strong>-1〜+1</strong>。1に近いほど強い正の相関</li>
+        <li><strong>因果関係</strong>＝原因→結果の方向。実験で確認が必要</li>
+      </ul>
+    </div>
+    <div class="alert-tip">この区別を意識するだけで「データ分析できる人」っぽくなる。試験でも超頻出。</div>
+
+    <h2 class="section-title st-green"><span class="st-icon">🏗️</span> データ分析基盤の3兄弟</h2>
+    <div class="bubble-wrap"><div class="bubble-avatar">📦</div><div class="bubble-body b-green"><div class="bubble-name">まずイメージ</div>会社のデータを分析する仕組みは <strong>「倉庫・道具・運送」</strong>の3点セット。これだけ。</div></div>
+    <table class="tbl-green">
+      <tr><th>名前</th><th>役割</th><th>例え</th></tr>
+      <tr><td><span class="key-word">DWH<span class="rough">ざっくり：Data WareHouse／分析用にデータを集めた大きな倉庫</span></span></td><td>分析用データを集約した倉庫</td><td>📦 倉庫</td></tr>
+      <tr><td><span class="key-word">BI<span class="rough">ざっくり：Business Intelligence／データを見える化するツール</span></span></td><td>データを<strong>見える化</strong>するツール</td><td>📊 ダッシュボード</td></tr>
+      <tr><td><span class="key-word">ETL<span class="rough">ざっくり：Extract/Transform/Load／抽出・変換・格納する運送</span></span></td><td>抽出→変換→格納する運送</td><td>🚚 トラック</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">倉庫=DWH／道具=BI／運送=ETL<small>3兄弟</small></span></div>
+    <div class="support"><span class="support-icon">📦</span><div class="support-body"><span class="support-name">先生からひとこと</span>「DWH？ETL？BI？横文字でうっ…」って、わかる！ 全部<strong>倉庫業のたとえ</strong>で覚えれば大丈夫。<strong>運送（ETL）でデータを倉庫（DWH）に運び、店員（BI）が並べて見せる</strong>。これだけ！</div></div>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（ゼロから）</div>
+      <ul>
+        <li>❶ 中心指標：<strong>平均・中央値・最頻値</strong>。散らばり指標：<strong>分散・標準偏差</strong></li>
+        <li>❷ <strong>相関 ≠ 因果</strong>。アイスと溺死は<strong>気温</strong>が共通要因</li>
+        <li>❸ 分析基盤3兄弟：<strong>DWH＝倉庫／BI＝見える化／ETL＝運送</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-green">ゼロからの基本</div>
+      <div class="fill-body">
+        <div class="fill-group">中心指標は<span class="fill-blank">平均</span>・<span class="fill-blank">中央値</span>・<span class="fill-blank">最頻値</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">ばらつき指標は<span class="fill-blank">分散</span>と、その平方根の<span class="fill-blank">標準偏差</span>（元の単位に戻る）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">2変数の関連性は<span class="fill-blank">相関係数</span>（-1〜+1）。相関は<span class="fill-blank">因果</span>とは別物。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">データ分析基盤3兄弟：倉庫=<span class="fill-blank">DWH</span>／道具=<span class="fill-blank">BI</span>／運送=<span class="fill-blank">ETL</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 1: 入門 ===== -->
+  <div class="tab-panel theme-purple" id="tab1">
+    <h2 class="section-title st-purple"><span class="st-icon">📊</span> 記述統計：代表値とばらつき</h2>
+    <table class="tbl-blue">
+      <tr><th>用途</th><th>指標</th><th>定義・特徴</th></tr>
+      <tr><td rowspan="3">中心</td><td>平均</td><td>合計÷個数（外れ値に弱い）</td></tr>
+      <tr><td>中央値</td><td>順位の真ん中（外れ値に強い）</td></tr>
+      <tr><td>最頻値</td><td>最も多く出る値</td></tr>
+      <tr><td rowspan="4">ばらつき</td><td>分散</td><td>偏差²の平均（単位2乗）</td></tr>
+      <tr><td>標準偏差（SD）</td><td>√分散（元の単位）</td></tr>
+      <tr><td>範囲（レンジ）</td><td>最大−最小</td></tr>
+      <tr><td>四分位範囲（IQR）</td><td>Q3−Q1（箱ひげ図の箱）</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「平均は外れ値に弱い／中央値は強い」「標準偏差＝√分散」が頻出<span class="year-badge">R02-14</span><span class="year-badge">R04-23</span>。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「分散は元データと同じ単位」は誤り。元単位は<strong>標準偏差</strong>。</p>
+
+    <h2 class="section-title st-purple"><span class="st-icon">🔗</span> 相関の見方</h2>
+    <div class="card card-purple">
+      <ul>
+        <li><strong>r = +1</strong>：完全な正の相関（散布図が右肩上がり一直線）</li>
+        <li><strong>r = 0</strong>：無相関</li>
+        <li><strong>r = −1</strong>：完全な負の相関</li>
+        <li>視覚化は<strong>散布図</strong>が定番</li>
+      </ul>
+    </div>
+    <div class="goro-row"><span class="goro-chip">マイナス1からプラス1<small>相関係数の値域</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「相関係数の値域は0〜1」は誤り。正は<strong>-1〜+1</strong><span class="year-badge">R03-23</span>。</p>
+
+    <h2 class="section-title st-purple"><span class="st-icon">📈</span> 回帰分析：単回帰と重回帰</h2>
+    <div class="vs-box">
+      <div class="vs-side"><h4>単回帰</h4>説明変数<strong>1つ</strong><br>y = a + bx<br>例：広告費→売上</div>
+      <div class="vs-side"><h4>重回帰</h4>説明変数<strong>複数</strong><br>y = a + b₁x₁ + b₂x₂…<br>例：広告費＋気温＋曜日→売上</div>
+    </div>
+    <div class="card card-purple">
+      <h4>キーワード4つ</h4>
+      <ul>
+        <li><strong>目的変数（被説明変数）</strong>＝予測したい変数（例：売上）</li>
+        <li><strong>説明変数（独立変数）</strong>＝予測に使う変数</li>
+        <li><span class="key-word">決定係数 R²<span class="rough">ざっくり：0〜1の値で、1に近いほどモデルがデータをよく説明できている</span></span>＝0〜1。1に近いほど良い</li>
+        <li><strong>最小二乗法</strong>＝残差（実測−予測）を最小化する手法</li>
+      </ul>
+    </div>
+    <div class="goro-row"><span class="goro-chip">単=1本／重=複数本<small>説明変数の数</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：R²の値域は<strong>0〜1</strong>、相関係数 r とは違う<span class="year-badge">R02-23</span>。</p>
+    <div class="support"><span class="support-icon">📈</span><div class="support-body"><span class="support-name">先生からひとこと</span>R² と r の混同が一番多いミス、わかる！ <strong>r は -1〜+1（マイナスもある）／R²は 0〜1（マイナスなし）</strong>。R² は「相関係数の2乗」って覚えれば一発（だから絶対0以上）。</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">🧪</span> 仮説検定の超基本</h2>
+    <div class="card card-purple">
+      <p><strong>仮説検定</strong>＝「2つのグループに本当に差があるか？」を統計的に判定する手続き。</p>
+      <ol>
+        <li><strong>帰無仮説 H0</strong>を立てる（「差がない」）</li>
+        <li>データから検定統計量を計算</li>
+        <li><span class="key-word">p値<span class="rough">ざっくり：H0が正しいときにこの結果が偶然起こる確率</span></span>を求める</li>
+        <li><strong>p値 &lt; 有意水準（通常5%）</strong>なら H0 を<strong>棄却</strong>＝「差あり」と判断</li>
+      </ol>
+    </div>
+    <div class="goro-row"><span class="goro-chip">p値小さい→棄却<small>差あり判定</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「p値&lt;有意水準なら帰無仮説を棄却」が定番論点。</p>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（入門）</div>
+      <ul>
+        <li>❶ <strong>分散の√＝標準偏差</strong>（同じ単位に戻る）</li>
+        <li>❷ 相関係数 r は<strong>-1〜+1</strong>、決定係数 R² は<strong>0〜1</strong></li>
+        <li>❸ p値 &lt; 有意水準なら<strong>帰無仮説を棄却＝差あり</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-purple">入門</div>
+      <div class="fill-body">
+        <div class="fill-group">外れ値に弱いのが<span class="fill-blank">平均</span>、強いのが<span class="fill-blank">中央値</span>。元の単位でばらつきを表すのは<span class="fill-blank">標準偏差</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">相関係数の値域は<span class="fill-blank">-1</span>〜<span class="fill-blank">+1</span>、決定係数R²は<span class="fill-blank">0</span>〜<span class="fill-blank">1</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">説明変数1つの回帰は<span class="fill-blank">単回帰</span>、複数なら<span class="fill-blank">重回帰</span>。残差を最小化する手法は<span class="fill-blank">最小二乗法</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">仮説検定で<span class="fill-blank">p値</span>が<span class="fill-blank">有意水準</span>より小さければ<span class="fill-blank">帰無仮説</span>を棄却し「差あり」と判定。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 基本 ===== -->
+  <div class="tab-panel theme-blue" id="tab2">
+    <h2 class="section-title st-blue"><span class="st-icon">🧪</span> 検定3手法の使い分け</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>入門タブの「仮説検定」を深掘り</strong>。実務で使う3つの主要検定。</p>
+    <table class="tbl-orange">
+      <tr><th>検定</th><th>用途</th><th>例</th></tr>
+      <tr><td><strong>t検定</strong></td><td>2グループの<strong>平均値の差</strong></td><td>新薬と従来薬の効果差</td></tr>
+      <tr><td><strong>カイ二乗検定（χ²）</strong></td><td>カテゴリデータの<strong>独立性</strong></td><td>性別と購買傾向の関連</td></tr>
+      <tr><td><strong>分散分析（ANOVA）</strong></td><td><strong>3グループ以上</strong>の平均差</td><td>3店舗の売上比較</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">tは2平均／χは独立／ANOVAは3群以上<small>使い分け</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「3群以上はt検定でなくANOVA」が頻出<span class="year-badge">R02-23</span>。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「3群比較でt検定を繰り返してOK」は誤り（多重比較で第一種の過誤が増える）。3群以上は<strong>ANOVA</strong>。</p>
+    <div class="support"><span class="support-icon">🎯</span><div class="support-body"><span class="support-name">先生からひとこと</span>3つの検定、用途が一発で言えればOK。<strong>「t＝2つの平均比べ」「χ＝表で独立か」「ANOVA＝3つ以上の平均比べ」</strong>。これだけ言えれば択一は通る。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">📈</span> 回帰の評価指標</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>入門タブの「回帰」を補強</strong>。モデルの良し悪しを測る指標。</p>
+    <table class="tbl-purple">
+      <tr><th>指標</th><th>意味</th><th>判定</th></tr>
+      <tr><td>決定係数 R²</td><td>0〜1。説明力</td><td>1に近いほど良い</td></tr>
+      <tr><td><strong>調整済みR²</strong></td><td>変数増加のペナルティ付き</td><td><strong>重回帰で使う</strong></td></tr>
+      <tr><td>標準誤差</td><td>予測のばらつき</td><td>小さいほど良い</td></tr>
+      <tr><td>p値（係数）</td><td>各変数の有意性</td><td>0.05未満で有意</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：重回帰では <strong>調整済みR²</strong> を使う理由（変数を増やすとR²が見かけ上上がるから）。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">🆚</span> OLTP vs OLAP（最重要対比）</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>ゼロからタブの「DWH=倉庫」を深掘り</strong>。倉庫がなぜ必要なのかの理由。</p>
+    <div class="vs-box">
+      <div class="vs-side"><h4>OLTP</h4><span class="rough">Online Transaction Processing</span><br><strong>業務処理用</strong><br>更新頻度高・短時間<br>例：レジ会計・受発注</div>
+      <div class="vs-side"><h4>OLAP</h4><span class="rough">Online Analytical Processing</span><br><strong>分析用</strong><br>集計・多次元分析<br>例：売上分析・経営ダッシュボード</div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：<strong>OLTP=業務／OLAP=分析</strong>の対比は超頻出<span class="year-badge">R03-4</span><span class="year-badge">R07-16</span>。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「DWHはOLTPに使う」は誤り。DWHは<strong>OLAP（分析）</strong>用。OLTPは<strong>業務系DB</strong>。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">🏗️</span> DWH の4特徴（インモン定義）</h2>
+    <table class="tbl-green">
+      <tr><th>特徴</th><th>意味</th></tr>
+      <tr><td><strong>サブジェクト指向</strong></td><td>業務（顧客・製品等）単位で整理</td></tr>
+      <tr><td><strong>統合</strong></td><td>複数システムのデータを統一形式で集約</td></tr>
+      <tr><td><strong>時系列性</strong></td><td>時点情報を持ち履歴を保持</td></tr>
+      <tr><td><strong>不揮発性</strong></td><td>基本的に上書きせず追加蓄積</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">サ・統・時・不<small>DWH4特徴</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「DWHは不揮発（更新しない）／OLTPは更新する」の対比が頻出<span class="year-badge">R01-16</span><span class="year-badge">R03-8</span>。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">🔄</span> ETL の3工程</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>ゼロからタブの「ETL=運送」を深掘り</strong>。3工程の中身を順番含めて。</p>
+    <div class="diagram"><div class="diagram-title">ETLフロー（順序を間違えない！）</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">E：抽出<small>Extract<br>業務系DBから</small></div><span class="flow-arrow">→</span>
+        <div class="flow-box fb-orange">T：変換<small>Transform<br>クレンジング・形式統一</small></div><span class="flow-arrow">→</span>
+        <div class="flow-box fb-green">L：格納<small>Load<br>DWHへ</small></div>
+      </div>
+    </div>
+    <div class="goro-row"><span class="goro-chip">Extract→Transform→Load<small>抽出→変換→格納</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：ETLは <strong>Extract→Transform→Load</strong> の順。順番入れ替え引っかけに注意<span class="year-badge">R04-4</span>。</p>
+    <div class="support"><span class="support-icon">🔄</span><div class="support-body"><span class="support-name">先生からひとこと</span>最近は <strong>ELT</strong>（順番がET<strong>L</strong>→E<strong>L</strong>T）も登場。クラウドDWHが強力なので<strong>先にロードしてから変換する</strong>方式。「ETL→ELT」と順番が変わってきてる程度の知識でOK。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">📊</span> BIツール／OLAP4操作</h2>
+    <table class="tbl-blue">
+      <tr><th>操作</th><th>動き</th><th>例</th></tr>
+      <tr><td><strong>ドリルダウン</strong></td><td>集計→<strong>詳細</strong>へ掘る</td><td>年→月→日</td></tr>
+      <tr><td><strong>ドリルアップ</strong></td><td>詳細→<strong>集計</strong>へ戻る</td><td>日→月→年</td></tr>
+      <tr><td><strong>スライス</strong></td><td>1軸を固定して<strong>切る</strong></td><td>2024年だけ抽出</td></tr>
+      <tr><td><strong>ダイス</strong></td><td>軸の組合せで<strong>回す</strong></td><td>地域×製品の表に切替</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">ダウン・アップ・スライス・ダイス<small>OLAP4操作</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：OLAP操作（ドリルダウン／スライス／ダイス）が頻出<span class="year-badge">R05-16</span>。</p>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（基本）</div>
+      <ul>
+        <li>❶ 検定使い分け：<strong>t=2平均／χ²=独立性／ANOVA=3群以上</strong></li>
+        <li>❷ <strong>OLTP=業務／OLAP=分析</strong>。DWH（4特徴：サ・統・時・不）はOLAP用</li>
+        <li>❸ ETL＝<strong>Extract→Transform→Load</strong>の順</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab2')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-blue">基本</div>
+      <div class="fill-body">
+        <div class="fill-group">2グループの平均差は<span class="fill-blank">t検定</span>、独立性は<span class="fill-blank">カイ二乗検定</span>、3群以上は<span class="fill-blank">ANOVA</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">業務処理は<span class="fill-blank">OLTP</span>、分析は<span class="fill-blank">OLAP</span>。DWHは<span class="fill-blank">OLAP</span>用。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">DWHの4特徴：<span class="fill-blank">サブジェクト指向</span>・統合・<span class="fill-blank">時系列</span>・<span class="fill-blank">不揮発</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">ETLは<span class="fill-blank">Extract</span>→<span class="fill-blank">Transform</span>→<span class="fill-blank">Load</span>の順。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">OLAP4操作：ドリルダウン／<span class="fill-blank">ドリルアップ</span>／<span class="fill-blank">スライス</span>／<span class="fill-blank">ダイス</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 応用 ===== -->
+  <div class="tab-panel theme-teal" id="tab3">
+    <h2 class="section-title st-teal"><span class="st-icon">📐</span> 確率分布（試験頻出）</h2>
+    <table class="tbl-orange">
+      <tr><th>分布</th><th>用途</th><th>覚えどころ</th></tr>
+      <tr><td><strong>正規分布</strong></td><td>連続値の代表</td><td>±1σで約<strong>68%</strong>、±2σで約<strong>95%</strong></td></tr>
+      <tr><td>二項分布</td><td>○×をn回試行</td><td>コイン投げの表回数</td></tr>
+      <tr><td>ポアソン分布</td><td>稀な事象の発生回数</td><td>1日の事故件数</td></tr>
+      <tr><td>t分布</td><td>小標本での平均推定</td><td>t検定で使用</td></tr>
+      <tr><td>カイ二乗分布</td><td>カテゴリ独立性</td><td>カイ二乗検定で使用</td></tr>
+    </table>
+    <div class="goro-row"><span class="goro-chip">68・95・99.7<small>正規分布の±1σ・±2σ・±3σ</small></span></div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「正規分布の±1σで約68%」は固定論点<span class="year-badge">R03-23</span>。</p>
+
+    <h2 class="section-title st-teal"><span class="st-icon">⚠️</span> 第一種の過誤・第二種の過誤</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>入門タブの仮説検定を補強</strong>。検定で起こりうる2種類の間違い。</p>
+    <div class="vs-box">
+      <div class="vs-side"><h4>第一種（α）</h4>本当は差なしなのに<br><strong>「差あり」と誤判定</strong><br>＝<strong>「冤罪」</strong></div>
+      <div class="vs-side"><h4>第二種（β）</h4>本当は差ありなのに<br><strong>「差なし」と誤判定</strong><br>＝<strong>「見逃し」</strong></div>
+    </div>
+    <ul>
+      <li><strong>有意水準α</strong>＝第一種の過誤を許容する確率（通常5%）</li>
+      <li><strong>検出力（1-β）</strong>＝差を正しく検出する確率</li>
+      <li>α と β は<strong>トレードオフ</strong>（αを下げるとβが上がる）</li>
+    </ul>
+    <div class="goro-row"><span class="goro-chip">冤罪α／見逃しβ<small>検定の2種類の間違い</small></span></div>
+    <div class="support"><span class="support-icon">⚖️</span><div class="support-body"><span class="support-name">救命メモ</span>「第一種・第二種」って番号で覚えると混乱するよね。<strong>「冤罪＝無実なのに有罪＝差ないのに差あり判定＝α」「見逃し＝犯人なのに無罪＝差あるのに差なし判定＝β」</strong>。裁判の例えで一発。</div></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">⚠️</span> 多重共線性（マルチコ）</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>基本タブの「重回帰」を補強</strong>。説明変数を増やす時の落とし穴。</p>
+    <div class="card card-red">
+      <p><span class="key-word">多重共線性<span class="rough">ざっくり：説明変数同士が強く相関し、係数が不安定になる現象</span></span>＝重回帰で説明変数同士が強く相関する状態。係数の解釈が難しくなる。</p>
+      <h4>対策</h4>
+      <ol>
+        <li>相関の高い変数を除く</li>
+        <li>主成分分析で次元削減</li>
+        <li><span class="key-word">VIF<span class="rough">ざっくり：分散拡大係数。多重共線性の指標</span></span>でチェック（10超は要注意）</li>
+      </ol>
+    </div>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「説明変数を増やせば常に予測精度が上がる」は誤り。多重共線性で不安定化。</p>
+
+    <h2 class="section-title st-teal"><span class="st-icon">🌊</span> データ基盤の進化形</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>基本タブのDWHを補強</strong>。最新のデータ基盤アーキテクチャ。</p>
+    <table class="tbl-purple">
+      <tr><th>名称</th><th>特徴</th><th>用途</th></tr>
+      <tr><td><strong>データマート</strong></td><td>DWHの一部を切り出した<strong>小型倉庫</strong></td><td>営業部用・財務部用</td></tr>
+      <tr><td><span class="key-word">データレイク<span class="rough">ざっくり：構造化前のデータも丸ごと保存する大型湖</span></span></td><td>構造化／非構造化問わず<strong>生データ</strong>保管</td><td>ビッグデータ分析・機械学習</td></tr>
+      <tr><td><strong>データレイクハウス</strong></td><td>レイク＋DWHのハイブリッド（最新動向）</td><td>Databricks／Snowflake</td></tr>
+    </table>
+    <div class="vs-box">
+      <div class="vs-side"><h4>DWH</h4>整理済みのデータ<br>構造化データのみ</div>
+      <div class="vs-side"><h4>データレイク</h4>生データ丸ごと<br>構造化＋非構造化（画像・動画含む）</div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「DWH=構造化済」「データレイク=生データ含む」の対比<span class="year-badge">R05-16</span><span class="year-badge">R07-16</span>。</p>
+
+    <h2 class="section-title st-teal"><span class="st-icon">🌐</span> ビッグデータの3V</h2>
+    <div class="card card-teal">
+      <ul>
+        <li><strong>Volume（量）</strong>：膨大なデータ量（TB～PB）</li>
+        <li><strong>Variety（多様性）</strong>：構造化＋非構造化（テキスト・画像・動画）</li>
+        <li><strong>Velocity（速度）</strong>：リアルタイム発生</li>
+        <li>4Vの追加は <strong>Veracity（真実性）</strong></li>
+      </ul>
+    </div>
+    <div class="goro-row"><span class="goro-chip">量・多様・速度＝3V<small>Volume/Variety/Velocity</small></span></div>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（応用）</div>
+      <ul>
+        <li>❶ 正規分布：<strong>±1σで約68%／±2σで約95%</strong></li>
+        <li>❷ 第一種の過誤＝<strong>冤罪</strong>／第二種の過誤＝<strong>見逃し</strong></li>
+        <li>❸ <strong>DWH＝構造化／データレイク＝生データ含む</strong>。3V＝量・多様・速度</li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab3')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-teal">応用</div>
+      <div class="fill-body">
+        <div class="fill-group">正規分布の±1σは約<span class="fill-blank">68</span>%、±2σで約<span class="fill-blank">95</span>%。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">差なしを差ありと誤るのは第<span class="fill-blank">一</span>種の過誤＝<span class="fill-blank">冤罪</span>、差ありを差なしと誤るのは第<span class="fill-blank">二</span>種＝<span class="fill-blank">見逃し</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">説明変数同士が強く相関し係数が不安定になるのは<span class="fill-blank">多重共線性</span>、その指標は<span class="fill-blank">VIF</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">部署別の小型DWHは<span class="fill-blank">データマート</span>、生データを丸ごと保管するのは<span class="fill-blank">データレイク</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">ビッグデータ3V：<span class="fill-blank">Volume</span>・<span class="fill-blank">Variety</span>・<span class="fill-blank">Velocity</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: 語呂 ===== -->
+  <div class="tab-panel theme-purple" id="tab4">
+    <h2 class="section-title st-purple"><span class="st-icon">🎵</span> 語呂まとめ（Part1の要点）</h2>
+
+    <div class="mnemonic"><div class="big">「平均・中央・最頻＝3兄弟」</div><div class="desc">中心指標3つ。平均は外れ値に弱い、中央値は強い</div></div>
+    <div class="mnemonic"><div class="big">「分散の√＝標準偏差」</div><div class="desc">分散は単位2乗、SDは元の単位</div></div>
+    <div class="mnemonic"><div class="big">「相関は-1〜+1、決定は0〜1」</div><div class="desc">相関係数 r とR²の値域。R²は r の2乗だから0以上</div></div>
+    <div class="mnemonic"><div class="big">「68・95・99.7」</div><div class="desc">正規分布の±1σ・±2σ・±3σ</div></div>
+    <div class="mnemonic"><div class="big">「tは2、χは独立、ANOVAは3以上」</div><div class="desc">検定の使い分け</div></div>
+    <div class="mnemonic"><div class="big">「冤罪α、見逃しβ」</div><div class="desc">第一種＝差ないのに差あり／第二種＝差あるのに差なし</div></div>
+    <div class="mnemonic"><div class="big">「倉庫=DWH／道具=BI／運送=ETL」</div><div class="desc">データ分析基盤3兄弟</div></div>
+    <div class="mnemonic"><div class="big">「OLTP=業務／OLAP=分析」</div><div class="desc">処理 vs 分析。DWHはOLAP用</div></div>
+    <div class="mnemonic"><div class="big">「Extract→Transform→Load」</div><div class="desc">ETLは抽出→変換→格納の順</div></div>
+    <div class="mnemonic"><div class="big">「サ・統・時・不」</div><div class="desc">DWH4特徴：サブジェクト／統合／時系列／不揮発</div></div>
+    <div class="mnemonic"><div class="big">「ダウン・アップ・スライス・ダイス」</div><div class="desc">OLAP4操作：掘る・戻る・切る・回す</div></div>
+    <div class="mnemonic"><div class="big">「量・多様・速度＝3V」</div><div class="desc">ビッグデータ：Volume・Variety・Velocity</div></div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">🎼</span> 語呂の穴埋め</h2>
+    <div class="fill-card"><div class="fill-header bg-purple">語呂を埋めて定着</div>
+      <div class="fill-body">
+        <div class="fill-group">中心3兄弟：<span class="fill-blank">平均</span>・<span class="fill-blank">中央値</span>・<span class="fill-blank">最頻値</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">相関は<span class="fill-blank">-1</span>〜<span class="fill-blank">+1</span>、決定係数は<span class="fill-blank">0</span>〜<span class="fill-blank">1</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">正規分布：±1σ＝<span class="fill-blank">68</span>%、±2σ＝<span class="fill-blank">95</span>%。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">検定：tは<span class="fill-blank">2</span>群、χは<span class="fill-blank">独立性</span>、<span class="fill-blank">ANOVA</span>は3群以上。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">データ基盤3兄弟：倉庫=<span class="fill-blank">DWH</span>／道具=<span class="fill-blank">BI</span>／運送=<span class="fill-blank">ETL</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">DWH4特徴：サ・<span class="fill-blank">統</span>・<span class="fill-blank">時</span>・<span class="fill-blank">不</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: 図解 ===== -->
+  <div class="tab-panel theme-orange" id="tab5">
+    <h2 class="section-title st-orange"><span class="st-icon">🗺️</span> 図解1：統計手法の使い分けマップ</h2>
+    <div class="diagram">
+      <table class="tbl-orange">
+        <tr><th>やりたいこと</th><th>手法</th><th>代表例</th></tr>
+        <tr><td>中心を知る</td><td>平均／中央値／最頻値</td><td>年収の代表値</td></tr>
+        <tr><td>ばらつきを知る</td><td>分散／標準偏差</td><td>偏差値</td></tr>
+        <tr><td>2変数の関連</td><td>相関係数</td><td>身長と体重</td></tr>
+        <tr><td>予測式を作る</td><td>回帰分析（単／重）</td><td>売上予測</td></tr>
+        <tr><td>2群の平均差</td><td>t検定</td><td>新薬効果</td></tr>
+        <tr><td>3群以上の平均差</td><td>ANOVA</td><td>3店舗比較</td></tr>
+        <tr><td>カテゴリ独立性</td><td>カイ二乗検定</td><td>性別×購買</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">🏗️</span> 図解2：データ分析基盤の流れ</h2>
+    <div class="diagram"><div class="diagram-title">業務系→ETL→DWH→BI</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">業務系DB<small>OLTP<br>レジ・在庫</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-orange">ETL<small>抽出<br>変換<br>格納</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-purple">DWH<small>OLAP<br>分析用倉庫</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-green">BI<small>ダッシュボード<br>可視化</small></div>
+      </div>
+      <p style="text-align:center;margin-top:.5rem;font-size:.85rem;color:#5d6d7e">傍流：データレイク（生データ）／データマート（部署別）</p>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">🆚</span> 図解3：紛らわしい用語5組</h2>
+    <table class="tbl-purple">
+      <tr><th>組</th><th>左</th><th>右</th><th>違いの本質</th></tr>
+      <tr><td>1</td><td>分散</td><td>標準偏差</td><td>2乗単位／元単位</td></tr>
+      <tr><td>2</td><td>相関係数 r</td><td>決定係数 R²</td><td>-1〜+1／0〜1</td></tr>
+      <tr><td>3</td><td>t検定</td><td>ANOVA</td><td>2群／3群以上</td></tr>
+      <tr><td>4</td><td>OLTP</td><td>OLAP</td><td>業務／分析</td></tr>
+      <tr><td>5</td><td>DWH</td><td>データレイク</td><td>構造化／生データ含む</td></tr>
+    </table>
+
+    <h2 class="section-title st-orange"><span class="st-icon">📊</span> 図解4：正規分布の68-95-99.7ルール</h2>
+    <div class="diagram"><div class="diagram-title">σ（標準偏差）と確率の関係</div>
+      <table class="tbl-blue">
+        <tr><th>範囲</th><th>確率</th><th>覚え方</th></tr>
+        <tr><td>±1σ（平均±1標準偏差）</td><td>約 <strong>68%</strong></td><td>「ほぼ7割」</td></tr>
+        <tr><td>±2σ</td><td>約 <strong>95%</strong></td><td>「ほぼ全部」</td></tr>
+        <tr><td>±3σ</td><td>約 <strong>99.7%</strong></td><td>「ほぼ100%」</td></tr>
+      </table>
+      <p style="margin-top:.4rem;font-size:.88rem;color:#5d6d7e">製造業の品質管理 ±3σ＝「シックスシグマ」（不良率100万分の3.4）の元ネタ。</p>
+    </div>
+
+    <h2 class="section-title st-orange"><span class="st-icon">📝</span> 図解からの試験ポイント穴埋め</h2>
+    <div class="fill-card"><div class="fill-header bg-orange">図解整理</div>
+      <div class="fill-body">
+        <div class="fill-group">データの流れ：業務系（<span class="fill-blank">OLTP</span>）→<span class="fill-blank">ETL</span>→<span class="fill-blank">DWH</span>（OLAP）→<span class="fill-blank">BI</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">2群の平均差は<span class="fill-blank">t検定</span>、3群以上は<span class="fill-blank">ANOVA</span>、独立性は<span class="fill-blank">カイ二乗</span>検定。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">構造化済データは<span class="fill-blank">DWH</span>、生データ（非構造化含む）は<span class="fill-blank">データレイク</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: クイズ ===== -->
+  <div class="tab-panel theme-orange" id="tab6">
+    <h2 class="section-title st-orange"><span class="st-icon">🎯</span> 基礎クイズ（全6問）</h2>
+
+    <div class="quiz-item">
+      <span class="quiz-num">1</span>
+      <div class="quiz-question">標準偏差の説明として正しいものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'平均は中心指標。標準偏差はばらつき。')">A. データの平均を表す指標</li>
+        <li onclick="ans(this,true,'正解。分散の平方根で、元データと同じ単位。')">B. 分散の平方根で、ばらつきを元の単位で表す指標</li>
+        <li onclick="ans(this,false,'これは中央値の説明。')">C. データを並べた真ん中の値</li>
+        <li onclick="ans(this,false,'これは範囲（レンジ）。')">D. 最大値と最小値の差</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">2</span>
+      <div class="quiz-question">相関係数 r の値域として正しいものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,true,'正解。-1〜+1の範囲。')">A. -1以上+1以下</li>
+        <li onclick="ans(this,false,'これは決定係数R²の値域。')">B. 0以上1以下</li>
+        <li onclick="ans(this,false,'値域は明確に存在する。')">C. 制限なし</li>
+        <li onclick="ans(this,false,'マイナスもとり得る。')">D. 0以上で上限なし</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">3</span>
+      <div class="quiz-question">3グループ以上の平均値に差があるかを検定する手法はどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'カイ二乗はカテゴリ独立性で平均値ではない。')">A. カイ二乗検定</li>
+        <li onclick="ans(this,false,'回帰分析は予測式の作成。')">B. 単回帰分析</li>
+        <li onclick="ans(this,true,'正解。分散分析（ANOVA）が3群以上の平均比較。')">C. 分散分析（ANOVA）</li>
+        <li onclick="ans(this,false,'t検定は2群限定。3群繰り返しは過誤増。')">D. t検定を3回繰り返す</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">4</span>
+      <div class="quiz-question">DWH（データウェアハウス）の特徴として<strong>不適切</strong>なものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'適切。サブジェクト指向。')">A. 業務（顧客・製品等）単位で整理されている</li>
+        <li onclick="ans(this,true,'正解（不適切）。DWHは不揮発（更新せず追加蓄積）。これはOLTPの特徴。')">B. データは頻繁に更新・上書きされる</li>
+        <li onclick="ans(this,false,'適切。複数システムを統合。')">C. 複数システムのデータを統一形式で集約している</li>
+        <li onclick="ans(this,false,'適切。時系列データを保持。')">D. 時点情報を持ち履歴を保持している</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">5</span>
+      <div class="quiz-question">ETLの3工程の正しい順序はどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'順番が違う。')">A. Transform → Extract → Load</li>
+        <li onclick="ans(this,false,'順番が違う。')">B. Load → Extract → Transform</li>
+        <li onclick="ans(this,false,'順番が違う（これはELT）。')">C. Extract → Load → Transform</li>
+        <li onclick="ans(this,true,'正解。Extract（抽出）→ Transform（変換）→ Load（格納）。')">D. Extract → Transform → Load</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">6</span>
+      <div class="quiz-question">OLTP と OLAP の違いとして最も適切なものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'逆。OLTP=業務、OLAP=分析。')">A. OLTPは分析処理用、OLAPは業務処理用</li>
+        <li onclick="ans(this,true,'正解。OLTP=業務処理（レジ等）／OLAP=分析（売上分析等）。')">B. OLTPは業務処理用、OLAPは分析処理用</li>
+        <li onclick="ans(this,false,'別の役割。')">C. 両者は同じ概念の別名</li>
+        <li onclick="ans(this,false,'セキュリティでもネットワークでもない。')">D. OLTPはセキュリティ、OLAPはネットワーク</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 7: 穴埋め（Part1総まとめ） ===== -->
+  <div class="tab-panel theme-orange" id="tab7">
+    <h2 class="section-title st-orange"><span class="st-icon">✍️</span> 穴埋めチェック（Part1総まとめ）</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab7')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab7')" style="background:#64748b">🔄 リセット</button>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-green">① ゼロから：基本指標と3兄弟</div>
+      <div class="fill-body">
+        <div class="fill-group">中心指標：<span class="fill-blank">平均</span>・<span class="fill-blank">中央値</span>・<span class="fill-blank">最頻値</span>。ばらつき：<span class="fill-blank">分散</span>とその√の<span class="fill-blank">標準偏差</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">基盤3兄弟：倉庫=<span class="fill-blank">DWH</span>／道具=<span class="fill-blank">BI</span>／運送=<span class="fill-blank">ETL</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-purple">② 入門：相関・回帰・検定</div>
+      <div class="fill-body">
+        <div class="fill-group">相関係数 r は<span class="fill-blank">-1</span>〜<span class="fill-blank">+1</span>、決定係数 R² は<span class="fill-blank">0</span>〜<span class="fill-blank">1</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">説明変数1つは<span class="fill-blank">単回帰</span>、複数は<span class="fill-blank">重回帰</span>。残差最小化は<span class="fill-blank">最小二乗法</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group"><span class="fill-blank">p値</span>が<span class="fill-blank">有意水準</span>より小なら<span class="fill-blank">帰無仮説</span>を棄却＝差あり。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-blue">③ 基本：検定使い分け・OLTP/OLAP・ETL</div>
+      <div class="fill-body">
+        <div class="fill-group">検定：2群=<span class="fill-blank">t</span>／独立性=<span class="fill-blank">カイ二乗</span>／3群以上=<span class="fill-blank">ANOVA</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">業務処理=<span class="fill-blank">OLTP</span>／分析=<span class="fill-blank">OLAP</span>。DWH4特徴：サ・<span class="fill-blank">統</span>・<span class="fill-blank">時</span>・<span class="fill-blank">不</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">ETLは<span class="fill-blank">Extract</span>→<span class="fill-blank">Transform</span>→<span class="fill-blank">Load</span>の順。OLAP4操作はドリルダウン／<span class="fill-blank">ドリルアップ</span>／<span class="fill-blank">スライス</span>／<span class="fill-blank">ダイス</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-teal">④ 応用：分布・過誤・進化形</div>
+      <div class="fill-body">
+        <div class="fill-group">正規分布：±1σ＝<span class="fill-blank">68</span>%、±2σ＝<span class="fill-blank">95</span>%、±3σ＝<span class="fill-blank">99.7</span>%。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">第一種＝<span class="fill-blank">冤罪</span>（差なしを差ありと判定）／第二種＝<span class="fill-blank">見逃し</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">部署別小型DWHは<span class="fill-blank">データマート</span>、生データ保管は<span class="fill-blank">データレイク</span>。3V：<span class="fill-blank">Volume</span>・<span class="fill-blank">Variety</span>・<span class="fill-blank">Velocity</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="alert-exam">📝 <strong>Part1 修了！</strong> 続けて <a href="14.統計基礎・データ分析基盤まとめ_超初心者版_part2.html" style="color:#1565c0;font-weight:700;">📗 Part2：演習・詳細編</a> へ。</div>
+  </div>
+</div>
+
+<div class="footer">中小企業診断士 経営情報システム | 統計基礎・データ分析基盤（超初心者版・Part1）</div>
+
+<script>
+function switchTab(idx){const n=8;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+function ans(li,correct,exp){const ul=li.parentElement;if(ul.dataset.answered)return;ul.dataset.answered='1';ul.querySelectorAll('li').forEach(x=>x.style.cursor='default');li.classList.add(correct?'correct':'wrong');if(!correct){ul.querySelectorAll('li').forEach(x=>{if(x.getAttribute('onclick')&&x.getAttribute('onclick').includes('true'))x.classList.add('correct');});}const d=document.createElement('div');d.className='quiz-explanation show '+(correct?'correct-exp':'wrong-exp');d.innerHTML=(correct?'⭕ 正解！ ':'❌ 不正解。 ')+exp;ul.parentElement.appendChild(d);}
+</script>
+</body>
+</html>

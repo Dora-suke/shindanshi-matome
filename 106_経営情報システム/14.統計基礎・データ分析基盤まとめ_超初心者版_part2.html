@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>統計基礎・データ分析基盤（超初心者版・Part2：演習・詳細編） - 中小企業診断士まとめ</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.95;min-height:100vh;font-size:.95rem}
+.header{background:linear-gradient(135deg,#0d47a1 0%,#1565c0 50%,#1976d2 100%);color:#fff;padding:.6rem 1rem;text-align:center}.header h1{font-size:1.05rem;font-weight:800;letter-spacing:.04em;margin-bottom:.1rem;display:inline-block;margin-right:.6rem}.header .subtitle{font-size:.72rem;opacity:.9;display:inline-block;margin-right:.5rem}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.1rem .55rem;border-radius:14px;font-size:.7rem}
+.partnav{background:#fff;padding:.6rem;text-align:center;font-size:.85rem;box-shadow:var(--shadow);margin-bottom:.5rem}.partnav a{display:inline-block;padding:.4rem 1rem;margin:0 .3rem;border-radius:6px;text-decoration:none;font-weight:700}.partnav .active{background:#1565c0;color:#fff}.partnav .other{background:var(--gray-pale);color:var(--gray-dark)}
+.bubble-wrap{display:flex;align-items:flex-start;gap:.7rem;margin:1.1rem 0}.bubble-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12);background:linear-gradient(135deg,#42a5f5,#1565c0)}
+.bubble-body{background:var(--white);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow);position:relative;max-width:88%;font-size:.95rem;line-height:1.95}.bubble-body::before{content:'';position:absolute;top:14px;left:-14px;width:0;height:0;border:8px solid transparent;border-right-color:var(--white)}.bubble-body.b-blue{background:#e3f2fd;border:1px solid #90caf9}.bubble-body.b-blue::before{border-right-color:#e3f2fd}.bubble-body strong{color:#1565c0}.bubble-name{font-size:.74rem;font-weight:700;color:var(--gray-mid);margin-bottom:.3rem}
+.tab-container{max-width:960px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.85rem .35rem;border:none;background:var(--white);color:var(--gray-mid);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:2rem 1.6rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-red{background:var(--red-bg)}.tab-panel.theme-teal{background:var(--teal-light)}.tab-panel.theme-purple{background:var(--purple-bg)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.15rem;font-weight:800;margin:2rem 0 1rem;padding:.6rem .9rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.st-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.st-icon{font-size:1.1rem}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:1.2rem 1.5rem;margin:1rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card-red{border-left-color:var(--red-main)}.card h4{font-size:1rem;font-weight:700;margin-bottom:.5rem}.card p{margin-bottom:.5rem}
+.alert-tip,.alert-exam,.alert-danger{border-radius:var(--radius);padding:.95rem 1rem .95rem 3rem;margin:1rem 0;position:relative;font-size:.92rem;line-height:1.85}.alert-tip::before,.alert-exam::before,.alert-danger::before{position:absolute;left:.8rem;top:.85rem;font-size:1.2rem}.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}.alert-tip::before{content:"💡"}.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}.alert-exam::before{content:"📝"}.alert-danger{background:#fce4ec;border:1px solid #ef9a9a;color:#b71c1c}.alert-danger::before{content:"⚠️"}
+.diagram{background:var(--white);border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:1rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e0e0e0}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.7rem 1.2rem;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center;min-width:80px;margin:.25rem}.flow-box small{display:block;font-weight:400;font-size:.74rem;opacity:.9;margin-top:.15rem}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.flow-arrow{font-size:1.3rem;margin:0 .35rem;font-weight:700;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:.9rem 0;font-size:.9rem}th,td{padding:.65rem .7rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}.tbl-green th{background:var(--green-main);color:#fff}.tbl-green tr:nth-child(even){background:var(--green-light)}.tbl-red th{background:var(--red-main);color:#fff}.tbl-red tr:nth-child(even){background:var(--red-light)}
+ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.7rem;align-items:center;margin:1rem 0}.vs-side{background:var(--white);border-radius:var(--radius);padding:1.2rem;text-align:center;box-shadow:var(--shadow)}.vs-side h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}.vs-mid{font-size:1.6rem;font-weight:800;color:var(--gray-mid);text-align:center}
+.footer{text-align:center;padding:1.8rem;color:var(--gray-light);font-size:.85rem}
+.fill-card{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}.fill-card .fill-header{padding:14px 20px;font-weight:700;font-size:.98rem;color:#fff}.fill-card .fill-header.bg-purple{background:var(--purple-main)}.fill-card .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange{background:var(--orange-main)}.fill-card .fill-header.bg-red{background:var(--red-main)}.fill-card .fill-header.bg-teal{background:var(--teal-main)}.fill-card .fill-body{padding:20px 22px}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.95rem}.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}.fill-reveal-btn:hover{background:#2a4a7f}
+.fill-group{margin-bottom:6px;font-size:.95rem;line-height:2.1}
+.rough{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.key-word{font-weight:700;color:#1565c0;background:#e3f2fd;padding:0 .35rem;border-radius:3px}
+.exam-pt{font-size:.86rem;margin-top:.5rem;color:#1565c0;background:#e3f2fd;padding:.5rem .75rem;border-radius:6px}
+.exam-warn{font-size:.86rem;margin-top:.4rem;color:#b71c1c;background:#fce4ec;padding:.5rem .75rem;border-radius:6px}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.92rem;line-height:1.85}.support-icon{font-size:1.7rem;flex-shrink:0;line-height:1}.support-body{flex:1}.support-body strong{color:#e65100}.support-name{font-size:.72rem;font-weight:700;color:#bf360c;margin-bottom:.2rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.1rem 1.3rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.6rem}.keepit ul{list-style:none;padding:0;margin:0}.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.9rem;line-height:1.7}.keepit li strong{color:#1565c0}
+.year-badge{display:inline-block;background:#c0392b;color:#fff;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:10px;margin:0 .2rem}
+.case{background:#fff;border-radius:10px;padding:1.1rem 1.3rem;margin:1rem 0;border:2px solid #b0bec5}.case-q{color:#01579b;font-weight:700;margin-bottom:.5rem}.case-a{background:#e1f5fe;padding:.8rem 1rem;border-radius:8px;margin-top:.5rem;font-size:.92rem;line-height:1.9}
+.quiz-item{background:#fff;border-radius:var(--radius);padding:1.4rem;margin:1.2rem 0;border:3px solid #e0e0e0}.quiz-num{display:inline-block;background:var(--orange-main);color:#fff;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-size:.9rem;font-weight:700;margin-bottom:.5rem}.quiz-question{font-weight:600;font-size:1rem;margin-bottom:.9rem;line-height:1.8}.quiz-options{list-style:none;padding:0}.quiz-options li{padding:.65rem .9rem;margin:.4rem 0;border-radius:var(--radius-sm);cursor:pointer;border:2px solid #e0e0e0;background:#fff;font-size:.93rem}.quiz-options li:hover{border-color:var(--orange-main);background:var(--orange-pale)}.quiz-options li.correct{border-color:var(--green-main);background:var(--green-light);font-weight:700}.quiz-options li.wrong{border-color:var(--red-main);background:var(--red-light)}.quiz-explanation{display:none;margin-top:.8rem;padding:.9rem;border-radius:var(--radius-sm);font-size:.92rem;line-height:1.8}.quiz-explanation.show{display:block}.quiz-explanation.correct-exp{background:var(--green-light);border-left:4px solid var(--green-main)}.quiz-explanation.wrong-exp{background:var(--red-light);border-left:4px solid var(--red-main)}
+@media(max-width:600px){.two-col,.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg)}.tab-btn{font-size:.65rem;padding:.7rem .2rem}.tab-panel{padding:1.4rem 1rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>統計基礎・データ分析基盤（超初心者版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム</div>
+  <div class="badge">📗 Part2：演習・詳細編（全7タブ）</div>
+</div>
+<div class="partnav">
+  <a class="other" href="14.統計基礎・データ分析基盤まとめ_超初心者版_part1.html">← 📘 Part1：基礎理解</a>
+  <a class="active">📗 Part2：演習・詳細（このページ）</a>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="blue" onclick="switchTab(0)">🔍 詳細①統計の深掘り</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">🔍 詳細②データ基盤の深掘り</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(2)">💼 事例</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(3)">🏢 実例</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">🗺️ 図解</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(5)">🎯 クイズ</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">✍️ 穴埋め</button>
+  </nav>
+
+  <!-- ===== TAB 0: 詳細①統計の深掘り ===== -->
+  <div class="tab-panel active theme-blue" id="tab0">
+    <div class="bubble-wrap"><div class="bubble-avatar">🔍</div><div class="bubble-body b-blue"><div class="bubble-name">Part2 詳細①</div>Part1で覚えた統計を「実務で使える」レベルに深掘り。<strong>過誤の使い分け／重回帰の細部／確率分布</strong>の3点。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">⚠️</span> ステップ1：第一種・第二種の過誤を再確認</h2>
+    <div class="diagram"><div class="diagram-title">真実 × 判定の4象限</div>
+      <table class="tbl-orange">
+        <tr><th>　</th><th>真実：差なし</th><th>真実：差あり</th></tr>
+        <tr><td><strong>判定：差あり</strong></td><td>❌ <strong>第一種の過誤（α）</strong><br>＝冤罪</td><td>⭕ 正しい検出<br>（検出力 1-β）</td></tr>
+        <tr><td><strong>判定：差なし</strong></td><td>⭕ 正しい棄却</td><td>❌ <strong>第二種の過誤（β）</strong><br>＝見逃し</td></tr>
+      </table>
+    </div>
+    <ul>
+      <li><strong>有意水準α</strong>＝第一種の過誤を許容する確率（通常5%）</li>
+      <li><strong>検出力（1-β）</strong>＝差を正しく検出する確率</li>
+      <li>α と β は<strong>トレードオフ</strong>。αを下げる（厳しくする）と β が上がる（見逃しが増える）</li>
+    </ul>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「αとβのトレードオフ」「有意水準を下げると検出力が下がる」が頻出。</p>
+    <div class="support"><span class="support-icon">⚖️</span><div class="support-body"><span class="support-name">救命メモ</span>裁判で例えると：<strong>α＝無実の人を有罪にする（冤罪）</strong>、<strong>β＝犯人を無罪にする（見逃し）</strong>。両方ゼロにはできない、これがトレードオフの本質。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">📈</span> ステップ2：重回帰の細部</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>Part1基本タブの「重回帰」を補強</strong>。実務で必ず必要になる細部。</p>
+    <table class="tbl-purple">
+      <tr><th>項目</th><th>意味</th><th>用途</th></tr>
+      <tr><td><strong>偏回帰係数</strong></td><td>各説明変数の係数</td><td>「他を一定として」xを1単位変えるとyが何単位動くか</td></tr>
+      <tr><td><strong>標準偏回帰係数</strong></td><td>標準化後の係数</td><td><strong>異なる単位の変数の影響度を比較</strong></td></tr>
+      <tr><td><span class="key-word">VIF<span class="rough">ざっくり：分散拡大係数。多重共線性の指標</span></span></td><td>1÷(1-R²)</td><td>多重共線性チェック（10超で警戒）</td></tr>
+      <tr><td><strong>ダミー変数</strong></td><td>0/1で表す</td><td>カテゴリ変数を回帰に組み込む</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「単位の違う変数の影響度比較は<strong>標準偏回帰係数</strong>」が頻出<span class="year-badge">R04-23</span>。</p>
+    <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「説明変数を増やせばR²が上がるから良い」は誤り。多重共線性で不安定化＋過学習。<strong>調整済みR²</strong>で評価。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">📐</span> ステップ3：確率分布5種</h2>
+    <table class="tbl-green">
+      <tr><th>分布</th><th>用途</th><th>覚えどころ</th></tr>
+      <tr><td><strong>正規分布</strong></td><td>連続値の代表（身長・テスト点）</td><td>±1σ＝<strong>68%</strong>、±2σ＝<strong>95%</strong>、±3σ＝<strong>99.7%</strong></td></tr>
+      <tr><td><strong>二項分布</strong></td><td>○×をn回試行</td><td>コイン投げで表が出る回数</td></tr>
+      <tr><td><strong>ポアソン分布</strong></td><td>稀な事象の回数</td><td>1日の事故件数・店の来客数</td></tr>
+      <tr><td><strong>t分布</strong></td><td>小標本での平均推定</td><td>t検定で使用</td></tr>
+      <tr><td><strong>カイ二乗分布</strong></td><td>カテゴリ独立性</td><td>カイ二乗検定で使用</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「正規分布の±1σで約68%」が固定論点<span class="year-badge">R03-23</span>。製造業の<strong>シックスシグマ</strong>（±6σで不良率100万分の3.4）の元ネタ。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">🎲</span> ステップ4：標本調査の基本</h2>
+    <div class="card card-blue">
+      <ul>
+        <li><strong>母集団</strong>＝調べたい全体（例：全国の有権者）</li>
+        <li><strong>標本（サンプル）</strong>＝母集団から抜き出した一部</li>
+        <li><strong>無作為抽出</strong>＝偏りなくランダムに選ぶ（出口調査の基本）</li>
+        <li><strong>大数の法則</strong>＝標本が大きいほど標本平均は母平均に近づく</li>
+        <li><strong>中心極限定理</strong>＝母集団の分布によらず、標本平均の分布は正規分布に近づく</li>
+      </ul>
+    </div>
+    <div class="alert-tip">「アンケート結果に誤差±3%」みたいな表現はこの理論に基づく。標本サイズと信頼区間の関係。</div>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（詳細①）</div>
+      <ul>
+        <li>❶ 過誤：<strong>α＝冤罪／β＝見逃し</strong>。トレードオフ関係</li>
+        <li>❷ 単位の違う変数比較は<strong>標準偏回帰係数</strong>。多重共線性は<strong>VIF</strong>でチェック</li>
+        <li>❸ 正規分布：<strong>±1σ=68%／±2σ=95%／±3σ=99.7%</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab0')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-blue">詳細①</div>
+      <div class="fill-body">
+        <div class="fill-group">第一種の過誤＝<span class="fill-blank">α</span>＝冤罪、第二種の過誤＝<span class="fill-blank">β</span>＝見逃し。両者は<span class="fill-blank">トレードオフ</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">単位の異なる説明変数の影響度比較には<span class="fill-blank">標準偏回帰係数</span>を使う。多重共線性の指標は<span class="fill-blank">VIF</span>で目安は<span class="fill-blank">10</span>超で警戒。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">正規分布の±1σは約<span class="fill-blank">68</span>%、±2σで約<span class="fill-blank">95</span>%、±3σで約<span class="fill-blank">99.7</span>%。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">標本平均の分布が正規分布に近づくのは<span class="fill-blank">中心極限定理</span>、標本が大きいほど母平均に近づくのは<span class="fill-blank">大数の法則</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 1: 詳細②データ基盤の深掘り ===== -->
+  <div class="tab-panel theme-blue" id="tab1">
+    <div class="bubble-wrap"><div class="bubble-avatar">🔍</div><div class="bubble-body b-blue"><div class="bubble-name">Part2 詳細②</div>Part1で覚えたデータ基盤を「実装レベル」まで深掘り。<strong>スキーマ設計／レイクハウス／マイニング技法／3V</strong>の4点。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">⭐</span> ステップ1：DWHのスキーマ設計</h2>
+    <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem">🔁 <strong>Part1基本タブのDWHを補強</strong>。実際にDWHをどう設計するか。</p>
+    <div class="vs-box">
+      <div class="vs-side"><h4>スタースキーマ</h4>中心に<strong>ファクト表</strong><br>（売上等の数値）<br>＋周りに<strong>ディメンジョン表</strong><br>（顧客・製品・期間等）<br><strong>シンプル・高速</strong></div>
+      <div class="vs-side"><h4>スノーフレーク</h4>ディメンジョン表を<br><strong>さらに正規化</strong><br>（製品→カテゴリ→大分類）<br>整合性高・少し複雑</div>
+    </div>
+    <div class="card card-blue">
+      <h4>用語</h4>
+      <ul>
+        <li><strong>ファクト表</strong>＝分析対象の数値（売上額・受注数など）</li>
+        <li><strong>ディメンジョン表</strong>＝切り口（顧客・製品・期間・地域）</li>
+      </ul>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「中心がファクト表で周辺がディメンジョン＝スター」は固定論点。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">🌊</span> ステップ2：データ基盤の進化形</h2>
+    <table class="tbl-purple">
+      <tr><th>名称</th><th>特徴</th><th>用途</th></tr>
+      <tr><td><strong>データマート</strong></td><td>DWHの一部を切り出した小型倉庫</td><td>営業部用・財務部用</td></tr>
+      <tr><td><span class="key-word">データレイク<span class="rough">ざっくり：構造化前のデータも丸ごと保存する大型湖</span></span></td><td>構造化／非構造化問わず<strong>生データ</strong>保管</td><td>ビッグデータ分析・機械学習</td></tr>
+      <tr><td><strong>データレイクハウス</strong></td><td>レイク＋DWHのハイブリッド（最新動向）</td><td>Databricks／Snowflake</td></tr>
+      <tr><td><span class="key-word">MDM<span class="rough">ざっくり：Master Data Management／顧客・製品マスタを統合管理</span></span></td><td>マスタの整合性維持</td><td>名寄せ・重複排除</td></tr>
+    </table>
+    <div class="vs-box">
+      <div class="vs-side"><h4>DWH</h4>整理済み（構造化のみ）<br>「前もって整える」</div>
+      <div class="vs-side"><h4>データレイク</h4>生データ丸ごと<br>（構造化＋非構造化）<br>「とりあえず貯める」</div>
+    </div>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「DWH=構造化済」「データレイク=生データ含む」の対比<span class="year-badge">R05-16</span><span class="year-badge">R07-16</span>。</p>
+    <div class="support"><span class="support-icon">🌊</span><div class="support-body"><span class="support-name">先生からひとこと</span>「DWHとデータレイクって何が違うの？」って迷うよね。<strong>「DWH＝整理整頓された倉庫／データレイク＝なんでも貯められる湖」</strong>。最近は両方を兼ねた<strong>レイクハウス</strong>が主流になりつつある。</div></div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">⛏️</span> ステップ3：データマイニング5技法</h2>
+    <table class="tbl-orange">
+      <tr><th>技法</th><th>用途</th><th>例</th></tr>
+      <tr><td><strong>アソシエーション分析</strong></td><td>「Aを買う人はBも買う」発見</td><td>バスケット分析（おむつとビール）</td></tr>
+      <tr><td><strong>クラスタリング</strong></td><td>似たもの同士でグループ化</td><td>顧客セグメンテーション</td></tr>
+      <tr><td><strong>分類</strong></td><td>正解付きでカテゴリ予測</td><td>離反予測・与信判断</td></tr>
+      <tr><td><strong>回帰</strong></td><td>数値予測</td><td>需要予測</td></tr>
+      <tr><td><strong>テキストマイニング</strong></td><td>テキストの解析</td><td>SNS・口コミ分析</td></tr>
+    </table>
+    <p class="exam-pt">📝 <strong>【1次】試験ポイント</strong>：「バスケット分析＝アソシエーション」の組合せが頻出<span class="year-badge">R03-8</span>。</p>
+
+    <h2 class="section-title st-blue"><span class="st-icon">🌐</span> ステップ4：ビッグデータの3V＋α</h2>
+    <div class="card card-blue">
+      <h4>3V＝ビッグデータの定義</h4>
+      <ul>
+        <li><strong>Volume（量）</strong>：膨大なデータ量（TB～PB）</li>
+        <li><strong>Variety（多様性）</strong>：構造化＋非構造化（テキスト・画像・動画）</li>
+        <li><strong>Velocity（速度）</strong>：リアルタイム発生</li>
+      </ul>
+      <h4>追加で言われる V</h4>
+      <ul>
+        <li><strong>Veracity（真実性）</strong>＝データの信頼性</li>
+        <li><strong>Value（価値）</strong>＝そこから得られる価値</li>
+      </ul>
+    </div>
+    <div class="alert-tip">3Vを5Vにしたのが最近の傾向。試験では<strong>3V（Volume／Variety／Velocity）</strong>が中核。</div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">📊</span> ステップ5：BIツールの主要機能</h2>
+    <ul>
+      <li><strong>ダッシュボード</strong>：複数のグラフを一画面に集約</li>
+      <li><strong>セルフサービスBI</strong>：現場担当が自分で分析（IT部門に頼らない）</li>
+      <li><strong>埋め込みBI</strong>：自社サービスにBI機能を組み込む</li>
+      <li>代表ツール：Tableau／Power BI／Looker／QlikSense</li>
+    </ul>
+
+    <div class="keepit">
+      <div class="keepit-title">⭐ 今日のこれだけ覚えて（詳細②）</div>
+      <ul>
+        <li>❶ DWHスキーマ：<strong>スター（中心ファクト）／スノーフレーク（さらに正規化）</strong></li>
+        <li>❷ <strong>DWH＝整理済／データレイク＝生データ／レイクハウス＝両方</strong></li>
+        <li>❸ ビッグデータ3V：<strong>Volume・Variety・Velocity</strong></li>
+      </ul>
+    </div>
+
+    <h2 class="section-title st-blue"><span class="st-icon">✍️</span> このタブの穴埋めチェック</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab1')" style="background:#64748b">🔄 リセット</button>
+    </div>
+    <div class="fill-card"><div class="fill-header bg-blue">詳細②</div>
+      <div class="fill-body">
+        <div class="fill-group">DWHのスキーマで中心にファクト表を置くのは<span class="fill-blank">スター</span>スキーマ、それを正規化したのは<span class="fill-blank">スノーフレーク</span>スキーマ。分析対象数値は<span class="fill-blank">ファクト表</span>、切り口は<span class="fill-blank">ディメンジョン表</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">部署別の小型DWHは<span class="fill-blank">データマート</span>、生データ保管は<span class="fill-blank">データレイク</span>、両方の良いとこ取りは<span class="fill-blank">レイクハウス</span>。マスタ統合管理は<span class="fill-blank">MDM</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">バスケット分析は<span class="fill-blank">アソシエーション</span>分析、SNS分析は<span class="fill-blank">テキストマイニング</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">ビッグデータ3V：<span class="fill-blank">Volume</span>・<span class="fill-blank">Variety</span>・<span class="fill-blank">Velocity</span>。追加項目の真実性は<span class="fill-blank">Veracity</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 事例 ===== -->
+  <div class="tab-panel theme-green" id="tab2">
+    <h2 class="section-title st-green"><span class="st-icon">💼</span> 中小企業の悩み×データ分析</h2>
+
+    <div class="case">
+      <div class="case-q">Q1：従業員50名の食品メーカー。「広告費と売上の関係を分析したい」と社長から依頼。どの手法？</div>
+      <div class="case-a">
+        <strong>A：</strong>広告費（説明変数）と売上（目的変数）の関係なので<strong>単回帰分析</strong>。「広告費を1万円増やすと売上が○万円増える」式が見える。<strong>決定係数R²</strong>でモデルの当てはまりを確認（1に近いほど良い）。<br>要因が複数（広告費＋気温＋曜日…）なら<strong>重回帰</strong>へ。ただし<strong>多重共線性</strong>に注意し、VIFで確認。
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-q">Q2：「3店舗の月次売上に有意な差があるか調べたい。t検定を3回繰り返せばいい？」</div>
+      <div class="case-a">
+        <strong>A：</strong>NG。3群以上の平均比較は<strong>分散分析（ANOVA）</strong>を使う。<strong>t検定の繰り返しは第一種の過誤（α）が増える</strong>のが理由（5%×3回＝約15%にブレる）。ANOVAで全体の差を検定→有意なら<strong>多重比較</strong>で個別の差を確認、が正しい流れ。
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-q">Q3：「販売管理・会計・在庫の各システムにバラバラのデータがある。横断分析がしたい」</div>
+      <div class="case-a">
+        <strong>A：</strong>典型的な <strong>DWH＋ETL</strong> の出番。<br>
+        ① 各システムから<strong>ETL（Extract→Transform→Load）</strong>でデータを抽出・変換・統合<br>
+        ② <strong>DWH</strong>に集約<br>
+        ③ <strong>BIツール（Power BI／Tableau等）</strong>で可視化<br>
+        中小企業は<strong>クラウドDWH（BigQuery／Snowflake）＋セルフサービスBI</strong>が現実解（月数万円から）。
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-q">Q4：「ECサイトで『この商品を買った人はこれも買う』レコメンドを実現したい」</div>
+      <div class="case-a">
+        <strong>A：</strong><strong>アソシエーション分析</strong>（バスケット分析）。<strong>支持度・確信度・リフト値</strong>の3指標で「Aを買う人がBも買う傾向」を発見。データマイニング技法の代表例。中小企業でもクラウドサービス（AWS Personalize等）で実装可能。
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-q">Q5：「SNSの口コミから自社の評価を分析したい」</div>
+      <div class="case-a">
+        <strong>A：</strong><strong>テキストマイニング</strong>。<strong>形態素解析→単語出現頻度／共起ネットワーク／感情分析</strong>で評価を可視化。Twitter（X）・口コミサイトのテキストデータは<strong>非構造化データ</strong>なので、<strong>データレイク</strong>に保管してから分析。BIツールの一部にも組込み機能あり。
+      </div>
+    </div>
+
+    <h2 class="section-title st-green"><span class="st-icon">✍️</span> 事例タブ穴埋め</h2>
+    <div class="fill-card"><div class="fill-header bg-green">事例エッセンス</div>
+      <div class="fill-body">
+        <div class="fill-group">2変数の関係予測式は<span class="fill-blank">単回帰</span>、複数説明変数なら<span class="fill-blank">重回帰</span>（多重共線性に注意）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">3群以上の平均差検定は<span class="fill-blank">ANOVA</span>。t検定繰返しは<span class="fill-blank">第一種の過誤</span>が増えるためNG。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">複数システム横断分析は<span class="fill-blank">ETL</span>でDWHに集約し<span class="fill-blank">BI</span>で可視化。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">「○○を買う人は△△も買う」は<span class="fill-blank">アソシエーション</span>分析。SNS口コミ分析は<span class="fill-blank">テキストマイニング</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 実例 ===== -->
+  <div class="tab-panel theme-teal" id="tab3">
+    <h2 class="section-title st-teal"><span class="st-icon">🏢</span> 実在企業・サービスで覚える</h2>
+
+    <div class="card card-teal">
+      <h4>① Snowflake／Google BigQuery／Amazon Redshift（クラウドDWH）</h4>
+      <p>従来の自社サーバ型DWHに代わって主流となった<strong>クラウド型データウェアハウス</strong>。SQLで分析でき、容量無制限・従量課金。中小企業でも<strong>月数万円から</strong>導入可能になった。<strong>BigQuery</strong>は Google の検索インフラ技術が源流。</p>
+    </div>
+
+    <div class="card card-teal">
+      <h4>② Tableau／Power BI／Looker（BIツール）</h4>
+      <p>Tableau（Salesforce傘下）／Power BI（Microsoft）が二強。<strong>セルフサービスBI</strong>の普及で、IT部門に頼らず現場担当が分析できるように。中小企業では<strong>Power BI</strong>が Office365 と統合できて人気。</p>
+    </div>
+
+    <div class="card card-teal">
+      <h4>③ Databricks（データレイクハウス）</h4>
+      <p>Apache Spark の生みの親が立ち上げた企業。<strong>データレイク＋DWH</strong>のハイブリッド「データレイクハウス」を提唱。機械学習基盤として急成長、IPO待望株。</p>
+    </div>
+
+    <div class="card card-teal">
+      <h4>④ Walmart のバスケット分析（古典事例）</h4>
+      <p>「金曜夜は<strong>おむつとビール</strong>が一緒に売れる」を発見した有名事例（実在性は議論あるが教科書定番）。<strong>アソシエーション分析</strong>の象徴。「父親が金曜の買い物ついでにビールも買う」というストーリー。</p>
+    </div>
+
+    <div class="card card-teal">
+      <h4>⑤ A/B テスト（カイ二乗検定の実用）</h4>
+      <p>WebサイトのボタンA/Bでクリック率に差があるかを検定する手法。<strong>カイ二乗検定</strong>または<strong>2群比率の検定</strong>を使う。<strong>Google・Amazonは年間数千件</strong>のA/Bテストを実施。中小企業でもツール（Optimizely等）で実装可能。</p>
+    </div>
+
+    <div class="card card-teal">
+      <h4>⑥ Salesforce／Marketo（CRM・MA）</h4>
+      <p>顧客データを<strong>マスタデータ管理（MDM）</strong>の発想で統合し、データマートを生成。<strong>RFM分析</strong>（Recency・Frequency・Monetary）で顧客セグメンテーション。</p>
+    </div>
+
+    <div class="support"><span class="support-icon">📚</span><div class="support-body"><span class="support-name">先生からひとこと</span>固有名詞は<strong>「カテゴリと代表サービス1〜2個」</strong>だけ覚えればOK。「クラウドDWH＝Snowflake／BIツール＝Tableau, Power BI／レイクハウス＝Databricks」、これだけ言えれば実例問題は通るよ。</div></div>
+
+    <h2 class="section-title st-teal"><span class="st-icon">✍️</span> 実例タブ穴埋め</h2>
+    <div class="fill-card"><div class="fill-header bg-teal">実例エッセンス</div>
+      <div class="fill-body">
+        <div class="fill-group">クラウドDWHの代表は Snowflake／<span class="fill-blank">BigQuery</span>／<span class="fill-blank">Redshift</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">セルフサービス<span class="fill-blank">BI</span>の代表は Tableau／<span class="fill-blank">Power BI</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">「おむつとビール」は<span class="fill-blank">アソシエーション</span>分析の象徴的事例。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">WebサイトのA/Bテストでは<span class="fill-blank">カイ二乗</span>検定が代表的。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: 図解 ===== -->
+  <div class="tab-panel theme-purple" id="tab4">
+    <h2 class="section-title st-purple"><span class="st-icon">🆘</span> 紛らわしい用語5組（試験頻出）</h2>
+    <table class="tbl-orange">
+      <tr><th>組</th><th>左</th><th>右</th><th>違いの本質</th></tr>
+      <tr><td>1</td><td>分散</td><td>標準偏差</td><td>2乗単位／元単位</td></tr>
+      <tr><td>2</td><td>相関係数 r</td><td>決定係数 R²</td><td>-1〜+1／0〜1</td></tr>
+      <tr><td>3</td><td>t検定</td><td>ANOVA</td><td>2群／3群以上</td></tr>
+      <tr><td>4</td><td>OLTP</td><td>OLAP</td><td>業務／分析</td></tr>
+      <tr><td>5</td><td>DWH</td><td>データレイク</td><td>構造化／生データ含む</td></tr>
+    </table>
+
+    <h2 class="section-title st-purple"><span class="st-icon">📊</span> 統計手法の使い分けフロー</h2>
+    <div class="diagram"><div class="diagram-title">「何をしたい？」で選ぶ</div>
+      <table class="tbl-blue">
+        <tr><th>やりたいこと</th><th>手法</th></tr>
+        <tr><td>真ん中を見る</td><td>平均／中央値／最頻値</td></tr>
+        <tr><td>ばらつきを見る</td><td>分散／標準偏差</td></tr>
+        <tr><td>2変数の関連</td><td>相関係数（散布図）</td></tr>
+        <tr><td>予測式を作る</td><td>回帰分析（単／重）</td></tr>
+        <tr><td>2群の平均差</td><td>t検定</td></tr>
+        <tr><td>3群以上の平均差</td><td>ANOVA</td></tr>
+        <tr><td>カテゴリ独立性</td><td>カイ二乗検定</td></tr>
+        <tr><td>パターン発掘</td><td>データマイニング</td></tr>
+      </table>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">🏗️</span> データ分析基盤の全体像</h2>
+    <div class="diagram"><div class="diagram-title">業務系→ETL→DWH→BI</div>
+      <div class="flow-row">
+        <div class="flow-box fb-blue">業務系DB<small>OLTP</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-orange">ETL<small>抽出/変換/格納</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-purple">DWH<small>OLAP</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box fb-green">BI<small>可視化</small></div>
+      </div>
+      <p style="text-align:center;margin-top:.5rem;font-size:.85rem;color:#5d6d7e">傍流：データレイク（生データ）／データマート（部署別）／データレイクハウス（最新）</p>
+    </div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">📅</span> 直近7年（R01〜R07）出題マップ</h2>
+    <div class="diagram">
+      <table class="tbl-red">
+        <tr><th>年度</th><th>論点</th><th>キーワード</th></tr>
+        <tr><td><span class="year-badge">R01-16</span></td><td>データ分析基盤</td><td>DWH／BI／ETL</td></tr>
+        <tr><td><span class="year-badge">R01-24</span></td><td>統計解析</td><td>相関／回帰／検定</td></tr>
+        <tr><td><span class="year-badge">R02-14/23</span></td><td>統計基礎・回帰</td><td>分散／標準偏差／回帰</td></tr>
+        <tr><td><span class="year-badge">R03-4/8</span></td><td>OLAP／マイニング</td><td>OLAP／アソシエーション</td></tr>
+        <tr><td><span class="year-badge">R03-23</span></td><td>確率分布</td><td>正規分布</td></tr>
+        <tr><td><span class="year-badge">R04-4</span></td><td>ETL</td><td>3工程の順序</td></tr>
+        <tr><td><span class="year-badge">R04-23/24</span></td><td>回帰／検定</td><td>標準偏回帰係数</td></tr>
+        <tr><td><span class="year-badge">R05-16</span></td><td>BI／OLAP</td><td>ドリル・スライス</td></tr>
+        <tr><td><span class="year-badge">R05追-20</span></td><td>統計解析</td><td>回帰評価</td></tr>
+        <tr><td><span class="year-badge">R07-16</span></td><td>データレイク</td><td>構造化／非構造化</td></tr>
+      </table>
+    </div>
+    <div class="alert-tip">直近7年で「<strong>統計の基本指標／回帰の評価／検定の使い分け／DWH-OLAP-ETL／OLAP操作</strong>」の5テーマで出題の8割をカバー。</div>
+
+    <h2 class="section-title st-purple"><span class="st-icon">✍️</span> 図解タブ穴埋め</h2>
+    <div class="fill-card"><div class="fill-header bg-purple">紛らわしい用語整理</div>
+      <div class="fill-body">
+        <div class="fill-group">分散の単位は2乗、<span class="fill-blank">標準偏差</span>は元の単位。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">相関係数 r は<span class="fill-blank">-1</span>〜<span class="fill-blank">+1</span>、決定係数 R² は<span class="fill-blank">0</span>〜<span class="fill-blank">1</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">業務処理は<span class="fill-blank">OLTP</span>、分析は<span class="fill-blank">OLAP</span>。構造化済が<span class="fill-blank">DWH</span>、生データが<span class="fill-blank">データレイク</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: クイズ ===== -->
+  <div class="tab-panel theme-red" id="tab5">
+    <h2 class="section-title st-red"><span class="st-icon">🎯</span> 応用クイズ（全6問）</h2>
+
+    <div class="quiz-item">
+      <span class="quiz-num">1</span>
+      <div class="quiz-question">第一種の過誤の説明として正しいものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,true,'正解。差がないのに差ありと誤判定する＝冤罪。確率はα（有意水準）。')">A. 真に差が無いのに「差あり」と誤判定すること</li>
+        <li onclick="ans(this,false,'これは第二種の過誤（β、見逃し）。')">B. 真に差があるのに「差なし」と誤判定すること</li>
+        <li onclick="ans(this,false,'計算ミスは過誤の意味ではない。')">C. データの計算ミス</li>
+        <li onclick="ans(this,false,'これは無相関の状態。')">D. 相関係数が0に近い状態</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">2</span>
+      <div class="quiz-question">単位の異なる説明変数の影響度を比較する際に用いる係数はどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'偏回帰係数は単位依存で比較不可。')">A. 偏回帰係数</li>
+        <li onclick="ans(this,true,'正解。標準偏回帰係数は標準化済で単位依存しない。')">B. 標準偏回帰係数</li>
+        <li onclick="ans(this,false,'相関係数は2変数間の関連の強さ。')">C. 相関係数</li>
+        <li onclick="ans(this,false,'決定係数はモデル全体の説明力。')">D. 決定係数</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">3</span>
+      <div class="quiz-question">DWH のスキーマ設計で「中心にファクト表、周りにディメンジョン表」を配置する形式はどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'スノーフレークはディメンジョン表をさらに正規化したもの。')">A. スノーフレークスキーマ</li>
+        <li onclick="ans(this,false,'リレーショナルは一般的なRDBの設計。')">B. リレーショナルスキーマ</li>
+        <li onclick="ans(this,true,'正解。スタースキーマ。中心ファクト＋周辺ディメンジョン。')">C. スタースキーマ</li>
+        <li onclick="ans(this,false,'マスタスキーマは一般的呼称ではない。')">D. マスタスキーマ</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">4</span>
+      <div class="quiz-question">DWH とデータレイクの違いとして最も適切なものはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'逆。DWHは構造化、レイクは生データ。')">A. DWHは生データ、データレイクは構造化済データ</li>
+        <li onclick="ans(this,false,'両者とも分析用。OLTP/OLAPの話と混同。')">B. DWHは業務処理、データレイクは分析処理</li>
+        <li onclick="ans(this,true,'正解。DWH=構造化済／データレイク=生データ含む（非構造化も）。')">C. DWHは構造化済データ、データレイクは構造化／非構造化問わず生データを保管</li>
+        <li onclick="ans(this,false,'同じ概念ではない。')">D. 両者は同じ概念の別名</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">5</span>
+      <div class="quiz-question">「おむつとビールが一緒に売れる」のようなパターンを発見する分析手法はどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'クラスタリングは似たもの同士のグループ化。')">A. クラスタリング</li>
+        <li onclick="ans(this,true,'正解。アソシエーション分析（バスケット分析）。')">B. アソシエーション分析</li>
+        <li onclick="ans(this,false,'回帰は数値予測。')">C. 回帰分析</li>
+        <li onclick="ans(this,false,'テキストマイニングはテキスト解析。')">D. テキストマイニング</li>
+      </ul>
+    </div>
+
+    <div class="quiz-item">
+      <span class="quiz-num">6</span>
+      <div class="quiz-question">ビッグデータの3Vとして正しい組合せはどれか。</div>
+      <ul class="quiz-options">
+        <li onclick="ans(this,false,'Validation は3Vに含まれない。')">A. Volume・Validation・Velocity</li>
+        <li onclick="ans(this,false,'Visibility は3Vに含まれない。')">B. Volume・Variety・Visibility</li>
+        <li onclick="ans(this,false,'Value は4V以降の追加。')">C. Variety・Velocity・Value</li>
+        <li onclick="ans(this,true,'正解。Volume（量）・Variety（多様性）・Velocity（速度）。')">D. Volume・Variety・Velocity</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: 穴埋め（Part2総まとめ） ===== -->
+  <div class="tab-panel theme-orange" id="tab6">
+    <h2 class="section-title st-orange"><span class="st-icon">✍️</span> 穴埋めチェック（Part2総まとめ）</h2>
+    <div style="text-align:center;margin:.8rem 0">
+      <button class="fill-reveal-btn" onclick="revealAllFillIn('tab6')" style="background:#7b1fa2;margin-right:.5rem">🔍 このタブの穴埋めを全て表示</button>
+      <button class="fill-reveal-btn" onclick="resetAllFillIn('tab6')" style="background:#64748b">🔄 リセット</button>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-blue">① 詳細①：統計の深掘り</div>
+      <div class="fill-body">
+        <div class="fill-group">第一種の過誤＝<span class="fill-blank">α</span>（冤罪）／第二種の過誤＝<span class="fill-blank">β</span>（見逃し）。両者は<span class="fill-blank">トレードオフ</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">単位の異なる変数比較は<span class="fill-blank">標準偏回帰係数</span>。多重共線性は<span class="fill-blank">VIF</span>＞<span class="fill-blank">10</span>で警戒。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">正規分布：±1σ＝<span class="fill-blank">68</span>%、±2σ＝<span class="fill-blank">95</span>%、±3σ＝<span class="fill-blank">99.7</span>%。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-blue">② 詳細②：データ基盤の深掘り</div>
+      <div class="fill-body">
+        <div class="fill-group">DWHスキーマ：中心ファクト＋周辺ディメンジョンは<span class="fill-blank">スター</span>、ディメンジョン表をさらに正規化したのは<span class="fill-blank">スノーフレーク</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">部署別小型DWHは<span class="fill-blank">データマート</span>、生データ保管は<span class="fill-blank">データレイク</span>、両者の良いとこ取りは<span class="fill-blank">レイクハウス</span>、マスタ統合は<span class="fill-blank">MDM</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">マイニング：バスケット＝<span class="fill-blank">アソシエーション</span>／SNS＝<span class="fill-blank">テキストマイニング</span>。3V＝<span class="fill-blank">Volume</span>・<span class="fill-blank">Variety</span>・<span class="fill-blank">Velocity</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-green">③ 事例：実務での選択</div>
+      <div class="fill-body">
+        <div class="fill-group">3群以上の平均差は<span class="fill-blank">ANOVA</span>（t検定繰り返しは<span class="fill-blank">第一種の過誤</span>増のためNG）。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+        <div class="fill-group">複数システム横断分析は<span class="fill-blank">ETL</span>でDWHに集約し<span class="fill-blank">BI</span>で可視化。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="fill-card"><div class="fill-header bg-teal">④ 実例：象徴的サービス</div>
+      <div class="fill-body">
+        <div class="fill-group">クラウドDWHは Snowflake／<span class="fill-blank">BigQuery</span>／<span class="fill-blank">Redshift</span>、BIは Tableau／<span class="fill-blank">Power BI</span>、レイクハウスは<span class="fill-blank">Databricks</span>。</div>
+        <button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button>
+      </div>
+    </div>
+
+    <div class="alert-exam">📝 <strong>Part2 修了！</strong> Part1（基礎理解）と組み合わせて反復するのが最強。<a href="14.統計基礎・データ分析基盤まとめ_超初心者版_part1.html" style="color:#1565c0;font-weight:700;">📘 Part1 へ戻る</a></div>
+  </div>
+</div>
+
+<div class="footer">中小企業診断士 経営情報システム | 統計基礎・データ分析基盤（超初心者版・Part2）</div>
+
+<script>
+function switchTab(idx){const n=7;document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i%n===idx));document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));document.querySelector('.tab-container').scrollIntoView({behavior:'smooth',block:'start'})}
+function revealBlanks(btn){var grp=btn.previousElementSibling;if(grp&&grp.classList.contains('fill-group')){grp.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show')});}btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';}
+function revealAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'});}
+function resetAllFillIn(tabId){document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'});}
+document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('fill-blank')){e.target.classList.toggle('show');}});
+function ans(li,correct,exp){const ul=li.parentElement;if(ul.dataset.answered)return;ul.dataset.answered='1';ul.querySelectorAll('li').forEach(x=>x.style.cursor='default');li.classList.add(correct?'correct':'wrong');if(!correct){ul.querySelectorAll('li').forEach(x=>{if(x.getAttribute('onclick')&&x.getAttribute('onclick').includes('true'))x.classList.add('correct');});}const d=document.createElement('div');d.className='quiz-explanation show '+(correct?'correct-exp':'wrong-exp');d.innerHTML=(correct?'⭕ 正解！ ':'❌ 不正解。 ')+exp;ul.parentElement.appendChild(d);}
+</script>
+</body>
+</html>
