@@ -266,6 +266,77 @@ details.ls-scheduler .ls-sched-body{padding:1rem 1.2rem}
       catch(err){alert('JSON解析失敗: '+err.message);}
     };r.readAsText(f);
   }
+  /* clipboard sync (mobile-friendly) */
+  function fileTag(){
+    try{
+      const fn=decodeURIComponent((window.location.pathname.split('/').pop()||'').replace(/\.html$/,''));
+      return fn||C.KEY;
+    }catch(e){return C.KEY;}
+  }
+  function clipFallbackCopy(text,tag){
+    const ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif';
+    ov.innerHTML='<div style="background:#fff;border-radius:12px;padding:18px;max-width:560px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)">'+
+      '<div style="font-weight:700;color:#1a5276;margin-bottom:8px;font-size:.92rem">📋 コピー（手動）：'+tag+'</div>'+
+      '<div style="font-size:.78rem;color:#5d6d7e;margin-bottom:8px">下のテキストを全選択（⌘A / Ctrl+A）→ コピー（⌘C / Ctrl+C）してください</div>'+
+      '<textarea id="lsClipTa" style="width:100%;height:240px;padding:10px;border:2px solid #1a5276;border-radius:8px;font-family:monospace;font-size:.78rem">'+text.replace(/</g,'&lt;')+'</textarea>'+
+      '<div style="text-align:right;margin-top:10px"><button id="lsClipClose" style="background:#1a5276;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-weight:700;cursor:pointer">閉じる</button></div>'+
+    '</div>';
+    document.body.appendChild(ov);
+    const ta=ov.querySelector('#lsClipTa');ta.focus();ta.select();
+    ov.querySelector('#lsClipClose').onclick=()=>ov.remove();
+    ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+  }
+  function clipCopy(){
+    const tag=fileTag();
+    const json=JSON.stringify(load(),null,2);
+    const text='--- '+tag+' '+today()+' ---\n'+json;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(
+        ()=>alert('📋 コピー完了\n\n'+tag+' ('+today()+')\n\nClaude.ai 等に貼付けてください。'),
+        ()=>clipFallbackCopy(text,tag)
+      );
+    }else{clipFallbackCopy(text,tag);}
+  }
+  function processPasteText(text){
+    if(!text||!text.trim()){alert('クリップボードが空、または読み取れません。');return;}
+    const m=text.match(/\{[\s\S]*\}/);
+    if(!m){alert('JSONが見つかりませんでした。\n--- タグ --- の後にJSONを含めてください。');return;}
+    try{
+      const data=JSON.parse(m[0]);
+      if(!data.topics&&!data.fillCards&&!data.wrongQueue){
+        if(!confirm('評定データの形式と異なるようです。本当に取込みますか？'))return;
+      }
+      save(data);refreshPanel();renderScheduler();fillInit();
+      alert('✅ 取込完了\nページをリロードすると評定が反映されます。');
+    }catch(e){alert('JSON解析失敗: '+e.message);}
+  }
+  function clipFallbackPaste(){
+    const ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif';
+    ov.innerHTML='<div style="background:#fff;border-radius:12px;padding:18px;max-width:560px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)">'+
+      '<div style="font-weight:700;color:#922b21;margin-bottom:8px;font-size:.92rem">📋 貼付け（手動）</div>'+
+      '<div style="font-size:.78rem;color:#5d6d7e;margin-bottom:8px">下のテキストエリアにJSON（タグ付きでもOK）を貼付けて、取込ボタンを押してください</div>'+
+      '<textarea id="lsClipTa2" style="width:100%;height:240px;padding:10px;border:2px solid #922b21;border-radius:8px;font-family:monospace;font-size:.78rem" placeholder="--- qz_xxx YYYY-MM-DD ---&#10;{ ... }"></textarea>'+
+      '<div style="text-align:right;margin-top:10px">'+
+        '<button id="lsClipCancel" style="background:#aeb6bf;color:#fff;border:none;border-radius:6px;padding:8px 14px;font-weight:700;cursor:pointer;margin-right:6px">キャンセル</button>'+
+        '<button id="lsClipApply" style="background:#922b21;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-weight:700;cursor:pointer">📥 取込</button>'+
+      '</div>'+
+    '</div>';
+    document.body.appendChild(ov);
+    const ta=ov.querySelector('#lsClipTa2');ta.focus();
+    ov.querySelector('#lsClipCancel').onclick=()=>ov.remove();
+    ov.querySelector('#lsClipApply').onclick=()=>{const v=ta.value;ov.remove();processPasteText(v);};
+    ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+  }
+  function clipPaste(){
+    if(navigator.clipboard&&navigator.clipboard.readText){
+      navigator.clipboard.readText().then(
+        text=>{if(text&&text.trim()){if(confirm('クリップボードのJSONを取込みますか？\n\n先頭：\n'+text.slice(0,120)+(text.length>120?'…':'')))processPasteText(text);}else{clipFallbackPaste();}},
+        ()=>clipFallbackPaste()
+      );
+    }else{clipFallbackPaste();}
+  }
   function clearWrong(){if(!confirm('誤答キューをクリアしますか？'))return;const d=load();d.wrongQueue=[];save(d);renderScheduler();}
   function resetAll(){if(!confirm('このノートの学習記録をすべて削除しますか？'))return;localStorage.removeItem(C.KEY);refreshPanel();renderScheduler();document.querySelectorAll('.fill-card.ls-mastered').forEach(c=>c.classList.remove('ls-mastered'));document.querySelectorAll('.ls-fill-streak').forEach(s=>s.textContent='連続◯ 0回');}
   function logWrong(qText){const d=load();d.wrongQueue=(d.wrongQueue||[]).concat([{ts:today(),q:(qText||'').slice(0,50)}]).slice(-50);save(d);renderScheduler();}
@@ -349,6 +420,8 @@ details.ls-scheduler .ls-sched-body{padding:1rem 1.2rem}
   window.lsToggleMask_=toggleMask;
   window.lsExport_=exportData;
   window.lsImport_=importData;
+  window.lsClipCopy_=clipCopy;
+  window.lsClipPaste_=clipPaste;
   window.lsClearWrong_=clearWrong;
   window.lsResetAll_=resetAll;
   window.lsFillRate_=fillRate;
@@ -385,6 +458,8 @@ details.ls-scheduler .ls-sched-body{padding:1rem 1.2rem}
           '<div class="ls-mgmt-chips" id="lsMgmtChips"><span style="font-size:.72rem;color:#94a3b8;font-style:italic">読み込み中…</span></div>'+
         '</div>'+
         '<div class="ls-mgmt-actions">'+
+          '<button onclick="lsClipCopy_()" title="評定データをクリップボードにコピー（モバイル↔PC同期用）">📋 コピー</button>'+
+          '<button onclick="lsClipPaste_()" title="クリップボードから取込（モバイル↔PC同期用）">📋 貼付け</button>'+
           '<button onclick="lsExport_()" title="このノートのデータをJSON出力">📥 出力</button>'+
           '<button onclick="document.getElementById(\'lsImportInput\').click()" title="JSONインポート">📤 取込</button>'+
           '<button class="home" onclick="window.open(\'../index.html\',\'_blank\')" title="まとめindexを別タブで開く">🏠 index</button>'+

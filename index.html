@@ -367,6 +367,197 @@ footer .mark{color:var(--gold);margin:0 8px}
     document.addEventListener('DOMContentLoaded',lsRefreshDebug);
     </script>
 
+    <script>
+    /* === 評定状況をノートリンクに動的付与 === */
+    (function(){
+      function dec(p){try{return decodeURIComponent(p);}catch(e){return p;}}
+      function todayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+      function md(d){return d?d.slice(5):'';}
+
+      function buildMap(){
+        let reg={};
+        try{reg=JSON.parse(localStorage.getItem('ls_registry'))||{};}catch(e){}
+        const map={};
+        Object.keys(reg).forEach(k=>{
+          let data={};
+          try{data=JSON.parse(localStorage.getItem(k))||{};}catch(e){}
+          const allTopics=reg[k].topics||[];
+          const rated=allTopics.map(t=>{
+            const r=(data.topics||{})[t.id];
+            return r?{name:t.name,stage:r.stage||1,streak:r.streak||0,due:r.due||''}:null;
+          }).filter(Boolean);
+          if(rated.length===0) return;
+          const worst=rated.slice().sort((a,b)=>(a.stage-b.stage)||((a.due||'').localeCompare(b.due||'')))[0];
+          const t=todayISO();
+          const dueCnt=rated.filter(x=>x.due&&x.due<=t).length;
+          map[reg[k].file]={worst,total:allTopics.length,rated:rated.length,dueCnt};
+        });
+        return map;
+      }
+
+      function paint(){
+        const map=buildMap();
+        if(!Object.keys(map).length)return;
+        const today=todayISO();
+        document.querySelectorAll('a[href$=".html"]').forEach(a=>{
+          if(a.querySelector('.ls-idx-badge'))return;
+          const href=dec(a.getAttribute('href')||'');
+          const parts=href.split('/').filter(Boolean);
+          const k2=parts.slice(-2).join('/');
+          const k1=parts.slice(-1).join('/');
+          const info=map[k2]||map[k1]||map[href];
+          if(!info)return;
+          const w=info.worst;
+          const overdue=w.due&&w.due<=today;
+          const badge=document.createElement('span');
+          badge.className='ls-idx-badge';
+          badge.style.cssText='margin-left:8px;font-size:.68rem;font-family:Inter,monospace;border-radius:3px;padding:1px 6px;white-space:nowrap;vertical-align:middle;'+
+            (overdue
+              ?'color:#dc2626;background:#fef2f2;border:1px solid #fca5a5;'
+              :'color:#475569;background:#f1f5f9;border:1px solid #cbd5e1;');
+          const dueTxt=w.due?(' →'+md(w.due)):'';
+          const moreTxt=info.dueCnt>1?' ('+info.dueCnt+'件期限)':'';
+          badge.textContent='S'+w.stage+' ◯'+w.streak+dueTxt+moreTxt+' '+info.rated+'/'+info.total;
+          badge.title='最遅トピック「'+w.name+'」 Stage'+w.stage+'／連続◯'+w.streak+'／次回'+(w.due||'-')+'  評定済'+info.rated+'/'+info.total;
+          a.appendChild(badge);
+        });
+      }
+
+      function refresh(){
+        document.querySelectorAll('.ls-idx-badge').forEach(el=>el.remove());
+        paint();
+      }
+
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',paint);
+      else paint();
+      window.lsIdxRefresh=refresh;
+    })();
+    </script>
+
+    <script>
+    /* === 各科目のダッシュボード（今日/近日/OK/誤答）を動的描画 === */
+    (function(){
+      function todayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+      function md(d){return d?d.slice(5):'';}
+      function basename(file){
+        if(!file)return '';
+        const last=file.split('/').pop()||file;
+        return last.replace(/\.html$/,'');
+      }
+      function loadAll(){
+        let reg={};try{reg=JSON.parse(localStorage.getItem('ls_registry'))||{};}catch(e){}
+        const items=[];
+        Object.keys(reg).forEach(k=>{
+          const r=reg[k];
+          let data={};try{data=JSON.parse(localStorage.getItem(k))||{};}catch(e){}
+          (r.topics||[]).forEach(t=>{
+            const d=(data.topics||{})[t.id];
+            items.push({
+              key:k,
+              subject:r.subject,
+              file:r.file,
+              fileShort:basename(r.file),
+              topicName:t.name,
+              stage:d?(d.stage||1):0,
+              streak:d?(d.streak||0):0,
+              due:d?(d.due||''):'',
+              rated:!!d
+            });
+          });
+        });
+        return items;
+      }
+      function rowHtml(it,cls,extraStatus){
+        const href=it.file?encodeURI(it.file).replace(/'/g,"%27"):'#';
+        const status=extraStatus||('<span class="stage">S'+it.stage+'</span>／<span class="streak">◯'+it.streak+'</span>／'+md(it.due));
+        return '<a href="'+href+'" target="_blank" rel="noopener" class="topic-row '+cls+'">'+
+          '<div class="topic-meta"><span class="file-name">'+it.fileShort+'</span><span class="topic-name">'+it.topicName+'</span></div>'+
+          '<span class="topic-status">'+status+'</span>'+
+          '</a>';
+      }
+      function ensureDash(sec){
+        let dash=sec.querySelector('.subject-dash');
+        if(!dash){
+          dash=document.createElement('div');
+          dash.className='subject-dash';
+          const head=sec.querySelector('.sec-head');
+          if(head&&head.parentNode){
+            head.parentNode.insertBefore(dash,head.nextSibling);
+          }else{
+            sec.insertBefore(dash,sec.firstChild);
+          }
+        }
+        return dash;
+      }
+      function ensureStats(sec){
+        let stats=sec.querySelector('.sec-stats');
+        if(!stats){
+          stats=document.createElement('div');
+          stats.className='sec-stats';
+          const head=sec.querySelector('.sec-head');
+          if(head)head.appendChild(stats);
+        }
+        if(!stats.querySelector('.num')){
+          stats.innerHTML=
+            '<span title="今日復習する論点の数">🔴<span class="lbl">今日</span><span class="num">0</span></span>'+
+            '<span title="3日以内に復習する論点の数">🟡<span class="lbl">近日</span><span class="num">0</span></span>'+
+            '<span title="OK（連続◯3回達成）の論点の数">✅<span class="lbl">OK</span><span class="num">0</span></span>'+
+            '<span title="クイズで誤答した件数（直近3日）">❌<span class="lbl">誤答</span><span class="num">0</span></span>';
+        }
+        return stats;
+      }
+      function renderSubject(sec,subject){
+        const dash=ensureDash(sec);
+        ensureStats(sec);
+        const all=loadAll().filter(x=>x.subject===subject);
+        const today=todayISO();
+        const dueToday=all.filter(x=>x.rated&&x.due&&x.due<=today&&x.streak<3);
+        const inDays=(d,n)=>{const a=new Date(today),b=new Date(d);return (b-a)/86400000<=n;};
+        const dueSoon=all.filter(x=>x.rated&&x.due&&x.due>today&&inDays(x.due,3)&&x.streak<3);
+        const ok=all.filter(x=>x.rated&&x.streak>=3);
+        const groups=[];
+        if(dueToday.length){
+          groups.push('<div class="dash-row-group"><div class="dash-label due-today">🔴 今日復習 <span class="ct">'+dueToday.length+'</span></div>'+
+            dueToday.map(it=>rowHtml(it,'due-today')).join('')+'</div>');
+        }
+        if(dueSoon.length){
+          groups.push('<div class="dash-row-group"><div class="dash-label due-soon">🟡 近日（3日以内） <span class="ct">'+dueSoon.length+'</span></div>'+
+            dueSoon.map(it=>rowHtml(it,'due-soon')).join('')+'</div>');
+        }
+        if(ok.length){
+          groups.push('<div class="dash-row-group"><div class="dash-label threshold">✅ OK <span class="ct">'+ok.length+'</span></div>'+
+            ok.map(it=>rowHtml(it,'threshold')).join('')+'</div>');
+        }
+        if(groups.length===0){
+          dash.innerHTML='<div style="padding:8px 12px;font-size:.78rem;color:#94a3b8;font-style:italic">まだ評定データがありません</div>';
+        }else{
+          dash.innerHTML=groups.join('');
+        }
+        // 上部の sec-stats も更新
+        const stats=sec.querySelector('.sec-stats');
+        if(stats){
+          const nums=stats.querySelectorAll('.num');
+          if(nums.length>=4){
+            nums[0].textContent=dueToday.length;
+            nums[1].textContent=dueSoon.length;
+            nums[2].textContent=ok.length;
+            nums[3].textContent=0;
+          }
+        }
+      }
+      function renderAll(){
+        document.querySelectorAll('section.subject-section').forEach(sec=>{
+          const m=(sec.id||'').match(/^s(\d{3})$/);
+          if(!m)return;
+          renderSubject(sec,m[1]);
+        });
+      }
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderAll);
+      else renderAll();
+      window.lsIdxDashRefresh=renderAll;
+    })();
+    </script>
+
   <section class="subject-section" id="s101" style="--c-deep:#0e7490;--c-soft:#ecfeff;--c-text:#164e63">
     <div class="sec-head">
       <div class="sec-num">101</div>
