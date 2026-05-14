@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SML vs CML 対比シミュレーション - 中小企業診断士 財務・会計</title>
+<style>
+:root{
+  --blue:#2980b9; --blue-light:#d6eaf8; --blue-dark:#1a5276;
+  --green:#27ae60; --green-light:#d5f5e3;
+  --orange:#e67e22; --orange-light:#fdebd0;
+  --red:#e74c3c; --red-light:#fadbd8;
+  --purple:#8e44ad; --purple-light:#e8daef;
+  --teal:#1abc9c; --teal-light:#d1f2eb;
+  --gray:#2c3e50; --gray-mid:#5d6d7e; --gray-light:#aeb6bf;
+  --white:#fff; --shadow:0 2px 12px rgba(0,0,0,.08);
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:#f0f3f7;color:var(--gray);line-height:1.7}
+.header{background:linear-gradient(135deg,#1b2631 0%,#2c3e50 40%,#8e44ad 100%);color:#fff;padding:1.2rem 1rem .8rem;text-align:center}
+.header h1{font-size:1.35rem;font-weight:800}
+.header p{font-size:.82rem;opacity:.9;margin-top:.15rem}
+.main{max-width:1180px;margin:.8rem auto;padding:0 .6rem}
+
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem}
+@media (max-width:780px){.charts{grid-template-columns:1fr}}
+.canvas-wrap{background:var(--white);border-radius:var(--radius);padding:.8rem;box-shadow:var(--shadow)}
+.canvas-wrap h2{font-size:1rem;font-weight:800;margin-bottom:.4rem;text-align:center}
+.canvas-wrap h2 .badge{display:inline-block;font-size:.7rem;padding:.1rem .5rem;border-radius:10px;color:#fff;margin-left:.3rem;vertical-align:middle}
+.h-sml h2{color:var(--blue-dark)} .h-sml .badge{background:var(--blue)}
+.h-cml h2{color:#6c3483}        .h-cml .badge{background:var(--purple)}
+canvas{width:100%;border-radius:8px;border:1px solid #e0e0e0;display:block}
+.canvas-legend{font-size:.7rem;color:var(--gray-mid);margin-top:.3rem;text-align:center;line-height:1.6}
+
+.controls{background:var(--white);border-radius:var(--radius);padding:.9rem 1rem;box-shadow:var(--shadow);margin-bottom:.8rem}
+.controls h3{font-size:.95rem;font-weight:800;color:var(--gray);margin-bottom:.5rem}
+.slider-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.5rem .9rem}
+.slider-group{}
+.slider-label{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;font-weight:600;margin-bottom:.2rem}
+.slider-value{color:#fff;padding:.1rem .55rem;border-radius:16px;font-size:.78rem;font-weight:700;min-width:54px;text-align:center;background:var(--gray-mid)}
+input[type="range"]{width:100%;height:6px;-webkit-appearance:none;appearance:none;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(90deg,#ecf0f1,var(--blue))}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--blue);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.slider-group.beta input[type="range"]{background:linear-gradient(90deg,#ecf0f1,var(--blue))}
+.slider-group.beta input[type="range"]::-webkit-slider-thumb{border-color:var(--blue)}
+.slider-group.sigma input[type="range"]{background:linear-gradient(90deg,#ecf0f1,var(--purple))}
+.slider-group.sigma input[type="range"]::-webkit-slider-thumb{border-color:var(--purple)}
+.slider-group.beta .slider-value{background:var(--blue)}
+.slider-group.sigma .slider-value{background:var(--purple)}
+
+.result-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem}
+.rc{background:var(--white);border-radius:var(--radius);padding:.7rem .9rem;box-shadow:var(--shadow);border-top:4px solid}
+.rc.rc-sml{border-top-color:var(--blue)}
+.rc.rc-cml{border-top-color:var(--purple)}
+.rc h4{font-size:.85rem;margin-bottom:.3rem}
+.rc.rc-sml h4{color:var(--blue-dark)}
+.rc.rc-cml h4{color:#6c3483}
+.rc .formula{background:#fafafa;border:1px dashed #ccc;border-radius:6px;padding:.4rem .5rem;font-family:'Courier New',monospace;font-size:.82rem;text-align:center;margin:.3rem 0}
+.rc .num{font-size:1.4rem;font-weight:800;text-align:center}
+.rc.rc-sml .num{color:var(--blue-dark)}
+.rc.rc-cml .num{color:#6c3483}
+.rc .sub{font-size:.72rem;color:var(--gray-mid);text-align:center}
+
+.cmp-table{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:.8rem}
+.cmp-table th{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;padding:.5rem;font-size:.8rem}
+.cmp-table td{padding:.5rem .6rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+.cmp-table .lbl{background:#f8f9fa;font-weight:700;width:24%}
+.cmp-table .col-sml{background:#eaf3fb;width:38%}
+.cmp-table .col-cml{background:#f4ecf7;width:38%}
+
+.note-box{background:linear-gradient(135deg,#fff8e1,#fff);border:1.5px solid #ffe082;border-radius:var(--radius);padding:.7rem .9rem;font-size:.82rem;line-height:1.7;margin-bottom:.8rem}
+.note-box strong{color:#b8860b}
+.foot-link{font-size:.78rem;color:var(--gray-mid);text-align:center;padding:.6rem 0 1rem}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>SML vs CML 対比シミュレーション</h1>
+  <p>横軸の違い（β vs σ）／傾きの違い／対象範囲の違いを、グラフを並べて確認</p>
+</div>
+
+<div class="main">
+
+  <!-- ===== グラフ2枚並べ ===== -->
+  <div class="charts">
+    <div class="canvas-wrap h-sml">
+      <h2>SML（証券市場線）<span class="badge">CAPM</span></h2>
+      <canvas id="cvSML" width="600" height="380"></canvas>
+      <div class="canvas-legend">横軸 β（システマティックリスク）／対象：<strong>個別株を含む全資産</strong>／傾き：(rM − rf)</div>
+    </div>
+    <div class="canvas-wrap h-cml">
+      <h2>CML（資本市場線）<span class="badge">最適配分</span></h2>
+      <canvas id="cvCML" width="600" height="380"></canvas>
+      <div class="canvas-legend">横軸 σ（標準偏差・総リスク）／対象：<strong>効率的ポートフォリオのみ</strong>／傾き：(rM − rf) / σM（シャープレシオ）</div>
+    </div>
+  </div>
+
+  <!-- ===== スライダー ===== -->
+  <div class="controls">
+    <h3>🎛 共通パラメータ</h3>
+    <div class="slider-grid">
+      <div class="slider-group">
+        <div class="slider-label">リスクフリー金利 r<sub>f</sub><span class="slider-value" id="vRf">2.0%</span></div>
+        <input type="range" id="rf" min="0" max="5" step="0.1" value="2">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label">市場期待収益率 r<sub>M</sub><span class="slider-value" id="vRm">8.0%</span></div>
+        <input type="range" id="rm" min="3" max="15" step="0.1" value="8">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label">市場ポートフォリオの σ<sub>M</sub><span class="slider-value" id="vSm">15.0%</span></div>
+        <input type="range" id="sm" min="5" max="30" step="0.1" value="15">
+      </div>
+    </div>
+
+    <h3 style="margin-top:.7rem">🔵 SML側：個別資産のβ ／ 🟣 CML側：選んだPFのσ</h3>
+    <div class="slider-grid">
+      <div class="slider-group beta">
+        <div class="slider-label">β（個別資産）<span class="slider-value" id="vB">1.00</span></div>
+        <input type="range" id="b" min="0" max="2" step="0.05" value="1">
+      </div>
+      <div class="slider-group sigma">
+        <div class="slider-label">σ（効率的PF）<span class="slider-value" id="vS">15.0%</span></div>
+        <input type="range" id="s" min="0" max="40" step="0.1" value="15">
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 結果 ===== -->
+  <div class="result-row">
+    <div class="rc rc-sml">
+      <h4>🔵 SMLでの期待収益率（個別資産の rE）</h4>
+      <div class="formula">r<sub>E</sub> = r<sub>f</sub> + β × (r<sub>M</sub> − r<sub>f</sub>)</div>
+      <div class="num" id="outSML">—</div>
+      <div class="sub" id="subSML">—</div>
+    </div>
+    <div class="rc rc-cml">
+      <h4>🟣 CMLでの期待収益率（効率的PFの r）</h4>
+      <div class="formula">r = r<sub>f</sub> + (r<sub>M</sub> − r<sub>f</sub>)/σ<sub>M</sub> × σ</div>
+      <div class="num" id="outCML">—</div>
+      <div class="sub" id="subCML">—</div>
+    </div>
+  </div>
+
+  <!-- ===== 比較表 ===== -->
+  <table class="cmp-table">
+    <tr><th>観点</th><th>SML（証券市場線）</th><th>CML（資本市場線）</th></tr>
+    <tr><td class="lbl">横軸</td><td class="col-sml"><strong>β</strong>（システマティックリスク）</td><td class="col-cml"><strong>σ</strong>（標準偏差・総リスク）</td></tr>
+    <tr><td class="lbl">対象</td><td class="col-sml">個別株を含む<strong>全資産</strong></td><td class="col-cml"><strong>効率的ポートフォリオのみ</strong></td></tr>
+    <tr><td class="lbl">傾き</td><td class="col-sml">市場リスクプレミアム<br>(r<sub>M</sub> − r<sub>f</sub>)</td><td class="col-cml">シャープレシオ<br>(r<sub>M</sub> − r<sub>f</sub>) / σ<sub>M</sub></td></tr>
+    <tr><td class="lbl">使い道</td><td class="col-sml">株主資本コスト r<sub>E</sub> を出す<br>（CAPM）</td><td class="col-cml">最適なリスク資産配分<br>（rfとMを混ぜる比率）</td></tr>
+    <tr><td class="lbl">市場PFの位置</td><td class="col-sml">β=1 のときに r<sub>M</sub></td><td class="col-cml">σ=σ<sub>M</sub> のときに r<sub>M</sub></td></tr>
+  </table>
+
+  <div class="note-box">
+    <strong>⚠ 混同注意：</strong>CAPMの式が描く線は <strong>SML</strong>。CMLは「rfと市場PFを混ぜた効率的フロンティア」の直線で、横軸が σ。
+    <strong>線の式は似ていても横軸が違う</strong>のがポイント。SMLでは個別株もプロットできるが、CMLにはのらない（効率的PFだけ）。
+  </div>
+
+  <div class="foot-link">📖 SML詳細→17.CAPMまとめ ／ CML詳細→16.CML（貸出ゾーン・借入ゾーンの考え方）</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ids=['rf','rm','sm','b','s'];
+ids.forEach(id=>$(id).addEventListener('input',draw));
+
+function fmt(v,d=2){return v.toFixed(d);}
+
+function draw(){
+  const rf=parseFloat($('rf').value);
+  const rm=parseFloat($('rm').value);
+  const sm=parseFloat($('sm').value);
+  const b =parseFloat($('b').value);
+  const s =parseFloat($('s').value);
+  $('vRf').textContent=fmt(rf,1)+'%';
+  $('vRm').textContent=fmt(rm,1)+'%';
+  $('vSm').textContent=fmt(sm,1)+'%';
+  $('vB').textContent=fmt(b,2);
+  $('vS').textContent=fmt(s,1)+'%';
+
+  const mrp=rm-rf;            // 市場リスクプレミアム
+  const sharpe=mrp/sm;        // シャープレシオ
+  const rE = rf + b*mrp;      // SML
+  const rC = rf + sharpe*s;   // CML
+
+  $('outSML').textContent = fmt(rE,2)+'%';
+  $('subSML').textContent = `r_f=${fmt(rf,1)}% + β=${fmt(b,2)} ×（r_M−r_f=${fmt(mrp,1)}%）`;
+  $('outCML').textContent = fmt(rC,2)+'%';
+  $('subCML').textContent = `r_f=${fmt(rf,1)}% + シャープ=${fmt(sharpe,3)} × σ=${fmt(s,1)}%`;
+
+  drawChart('cvSML', {
+    color:'#2980b9', mColor:'#1a5276', xLabel:'β（システマティックリスク）',
+    xMax:2.0, xMarketLabel:'β=1', xMarket:1.0,
+    yIntercept:rf, slope:mrp, yMaxHint:rf+2.0*mrp+1,
+    pointX:b, pointY:rE,
+    title:'SML', xTickFmt:v=>v.toFixed(1),
+    extraDots:[
+      {x:0.6, y:rf+0.6*mrp, label:'低β株'},
+      {x:1.4, y:rf+1.4*mrp, label:'高β株'},
+    ]
+  });
+
+  drawChart('cvCML', {
+    color:'#8e44ad', mColor:'#6c3483', xLabel:'σ（総リスク・%）',
+    xMax:40, xMarketLabel:'σ=σ_M', xMarket:sm,
+    yIntercept:rf, slope:sharpe, yMaxHint:rf+40*sharpe+1,
+    pointX:s, pointY:rC,
+    title:'CML', xTickFmt:v=>v.toFixed(0)+'%',
+    zones:[
+      {from:0, to:sm, color:'rgba(39,174,96,0.08)', label:'貸出ゾーン'},
+      {from:sm, to:40, color:'rgba(231,76,60,0.08)', label:'借入ゾーン'},
+    ]
+  });
+}
+
+function drawChart(canvasId, p){
+  const c=$(canvasId), ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=50, padR=20, padT=30, padB=46;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const xMin=0, xMax=p.xMax;
+  const yMin=0, yMax=Math.max(p.yMaxHint, p.pointY+1, 12);
+  const X=x=>padL+(x-xMin)/(xMax-xMin)*plotW;
+  const Y=y=>padT+plotH-(y-yMin)/(yMax-yMin)*plotH;
+
+  // zones
+  if(p.zones){
+    p.zones.forEach(z=>{
+      ctx.fillStyle=z.color;
+      ctx.fillRect(X(z.from),padT,X(z.to)-X(z.from),plotH);
+    });
+  }
+
+  // grid
+  ctx.strokeStyle='#eee'; ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+plotH*i/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+  }
+  for(let i=0;i<=5;i++){
+    const x=padL+plotW*i/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+
+  // axes
+  ctx.strokeStyle='#333'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.lineTo(W-padR,padT+plotH); ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle='#333'; ctx.font='11px sans-serif';
+  for(let i=0;i<=5;i++){
+    const xv=xMin+(xMax-xMin)*i/5;
+    ctx.textAlign='center';
+    ctx.fillText(p.xTickFmt(xv), padL+plotW*i/5, padT+plotH+14);
+    const yv=yMin+(yMax-yMin)*(5-i)/5;
+    ctx.textAlign='right';
+    ctx.fillText(yv.toFixed(1)+'%', padL-6, padT+plotH*i/5+4);
+  }
+  ctx.textAlign='center'; ctx.font='12px sans-serif';
+  ctx.fillText(p.xLabel, padL+plotW/2, H-8);
+  ctx.save(); ctx.translate(14,padT+plotH/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('期待収益率 (%)',0,0); ctx.restore();
+
+  // line
+  ctx.strokeStyle=p.color; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  ctx.moveTo(X(xMin), Y(p.yIntercept+p.slope*xMin));
+  ctx.lineTo(X(xMax), Y(p.yIntercept+p.slope*xMax));
+  ctx.stroke();
+
+  // rf dot
+  ctx.fillStyle='#27ae60';
+  ctx.beginPath(); ctx.arc(X(0),Y(p.yIntercept),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#1b5e20'; ctx.font='10px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('r_f', X(0)+8, Y(p.yIntercept)-6);
+
+  // market PF dot
+  const mY=p.yIntercept+p.slope*p.xMarket;
+  ctx.fillStyle=p.mColor;
+  ctx.beginPath(); ctx.arc(X(p.xMarket),Y(mY),6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=p.mColor; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('M ('+p.xMarketLabel+')', X(p.xMarket), Y(mY)-10);
+
+  // extra dots (個別株 on SML)
+  if(p.extraDots){
+    p.extraDots.forEach(d=>{
+      ctx.fillStyle='#aaa';
+      ctx.beginPath(); ctx.arc(X(d.x),Y(d.y),3.5,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#666'; ctx.font='9px sans-serif'; ctx.textAlign='left';
+      ctx.fillText(d.label, X(d.x)+5, Y(d.y)+3);
+    });
+  }
+
+  // current point
+  ctx.fillStyle=p.color;
+  ctx.beginPath(); ctx.arc(X(p.pointX),Y(p.pointY),8,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle=p.mColor; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('★', X(p.pointX), Y(p.pointY)+4);
+
+  // title
+  ctx.fillStyle=p.mColor; ctx.font='bold 13px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(p.title, padL, padT-10);
+
+  // zone labels
+  if(p.zones){
+    ctx.font='10px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#555';
+    p.zones.forEach(z=>{
+      ctx.fillText(z.label, X((z.from+z.to)/2), padT+12);
+    });
+  }
+}
+
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>共通ブロック プレビュー</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.75;padding:1.5rem;max-width:960px;margin:0 auto}
+h1{color:var(--blue-dark);font-size:1.4rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:3px solid var(--blue-main)}
+h2{color:var(--blue-dark);font-size:1.1rem;margin:1.4rem 0 .6rem;padding:.5rem .8rem;background:#fff;border-left:5px solid var(--blue-main);border-radius:6px}
+.section-title{font-size:1.15rem;font-weight:800;margin:1.4rem 0 .9rem;padding:.55rem .8rem;border-radius:8px;color:#fff;letter-spacing:.02em;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}
+.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}
+.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}
+.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}
+/* ===== 二段チェーン図 ===== */
+.dual-chain{background:#fff;border:2px solid #cbd5e0;border-radius:12px;padding:1.4rem 1rem;margin:1rem 0;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow-x:auto}
+.dc-title{font-size:1rem;font-weight:800;color:var(--blue-dark);text-align:center;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px dashed #e2e8f0}
+.dc-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:start;font-size:.88rem}
+.dc-col{display:flex;flex-direction:column;align-items:center;gap:.25rem}
+.dc-col-head{font-size:.75rem;font-weight:800;letter-spacing:.05em;padding:.3rem .8rem;border-radius:14px;margin-bottom:.4rem;color:#fff}
+.dc-col-head.main{background:linear-gradient(135deg,var(--blue-main),var(--teal-main))}
+.dc-col-head.sub{background:linear-gradient(135deg,#94a3b8,#64748b)}
+.dc-node{background:#fff;border:2.5px solid var(--blue-main);border-radius:10px;padding:.6rem .8rem;text-align:center;width:100%;max-width:240px;box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:800;color:var(--blue-dark);font-size:.92rem;line-height:1.3}
+.dc-node small{display:block;font-size:.7rem;color:var(--gray-mid);font-weight:600;margin-top:.2rem}
+.dc-node.sub-node{border-color:#94a3b8;color:#475569}
+.dc-node.terminal{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#f59e0b;color:#78350f}
+.dc-arrow{display:flex;flex-direction:column;align-items:center;color:#9a3412;font-weight:800;font-size:.78rem;padding:.2rem 0}
+.dc-arrow .op{background:#fff7ed;border:1.5px solid #fdba74;border-radius:6px;padding:2px 8px;line-height:1.2}
+.dc-arrow .op.plus{background:#ecfdf5;border-color:#86efac;color:#15803d}
+.dc-arrow .op.minus{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.dc-arrow .tri{font-size:1rem;margin-top:.1rem;color:#64748b}
+.dc-cross{grid-column:1 / -1;display:flex;align-items:center;justify-content:center;gap:.4rem;margin:.4rem 0;font-size:.78rem;color:#475569;background:#f8fafc;border:1.5px dashed #cbd5e0;border-radius:8px;padding:.4rem .8rem}
+.dc-cross .label{font-weight:700}
+/* ===== 棒グラフ ===== */
+.calc-bars{background:#fff;border:2px solid #cbd5e0;border-radius:12px;padding:18px 10px 14px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow-x:auto}
+.calc-bars-title{font-weight:800;font-size:.98rem;color:#1a5276;text-align:center;margin-bottom:4px}
+.calc-bars-sub{font-size:.78rem;color:#64748b;text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px dashed #e2e8f0}
+.cb-row{display:flex;align-items:flex-end;gap:2px;min-height:280px;padding:8px 2px 0;justify-content:center}
+.cb-col{display:flex;flex-direction:column;align-items:center;flex:1 1 0;min-width:62px;max-width:140px}
+.cb-stack{display:flex;flex-direction:column-reverse;width:100%;border-radius:6px 6px 0 0;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,.15);position:relative;align-items:stretch;border:1px solid rgba(0,0,0,.08)}
+.cb-seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:800;text-align:center;line-height:1.12;padding:1px 2px;text-shadow:0 1px 2px rgba(0,0,0,.4);box-sizing:border-box;border-bottom:1px solid rgba(255,255,255,.35);white-space:nowrap;overflow:hidden}
+.s-blue{background:#3b82f6}.s-skyblue{background:#0ea5e9}.s-green{background:#10b981}.s-emerald{background:#059669}.s-purple{background:#8b5cf6}.s-orange{background:#f97316}.s-pink{background:#ec4899}.s-teal{background:#0d9488}.s-red{background:#ef4444}.s-yellow{background:#eab308;color:#78350f;text-shadow:none}.s-gray{background:#94a3b8}.s-indigo{background:#6366f1}.s-rose{background:#f43f5e}.s-amber{background:#d97706}
+.cb-seg.minus{background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.22),rgba(0,0,0,.22) 5px,transparent 5px,transparent 10px)}
+.cb-name{font-size:.78rem;font-weight:800;color:#1a5276;margin-top:6px;text-align:center;line-height:1.25}
+.cb-name small{font-size:.7rem;color:#64748b;font-weight:600;display:block}
+.cb-arrow{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;font-weight:900;flex-shrink:0;align-self:stretch;padding:0 1px 36px;min-width:54px}
+.cb-arrow .op{font-size:.68rem;font-weight:800;line-height:1.2;color:#9a3412;text-align:center;background:#fff7ed;border:1.5px solid #fdba74;border-radius:6px;padding:2px 4px;margin-bottom:3px;white-space:nowrap}
+.cb-arrow .op.minus{color:#991b1b;background:#fef2f2;border-color:#fca5a5}
+.cb-arrow .op.plus{color:#15803d;background:#ecfdf5;border-color:#86efac}
+.cb-arrow .tri{font-size:1.1rem;color:#64748b}
+.cb-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem .9rem;font-size:.74rem;color:#475569;margin-top:.6rem;padding-top:.5rem;border-top:1px dashed #e2e8f0}
+.cb-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+/* ===== 関係式まとめ ===== */
+.formula-pack{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1rem 0}
+.formula-card{background:#fff;border-radius:10px;padding:1rem 1.1rem;border-top:4px solid var(--blue-main);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.formula-card.fc-blue{border-top-color:var(--blue-main)}
+.formula-card.fc-purple{border-top-color:var(--purple-main)}
+.formula-card.fc-green{border-top-color:var(--green-main)}
+.formula-card.fc-orange{border-top-color:var(--orange-main)}
+.formula-card h4{font-size:.92rem;font-weight:800;color:var(--blue-dark);margin-bottom:.5rem}
+.formula-card.fc-purple h4{color:var(--purple-dark)}
+.formula-card.fc-green h4{color:var(--green-dark)}
+.formula-card.fc-orange h4{color:var(--orange-dark)}
+.formula-card .eq{background:#f8fafc;border-left:3px solid var(--blue-main);padding:.45rem .7rem;margin:.3rem 0;font-size:.86rem;font-weight:700;color:var(--gray-dark);border-radius:0 4px 4px 0;line-height:1.6}
+.formula-card.fc-purple .eq{border-left-color:var(--purple-main)}
+.formula-card.fc-green .eq{border-left-color:var(--green-main)}
+.formula-card.fc-orange .eq{border-left-color:var(--orange-main)}
+.formula-card .eq .plus{color:#15803d;font-weight:900}
+.formula-card .eq .minus{color:#991b1b;font-weight:900}
+.formula-card .eq .eql{color:#1d4ed8;font-weight:900;margin:0 .3rem}
+@media(max-width:600px){.formula-pack{grid-template-columns:1fr}.dc-grid{grid-template-columns:1fr;gap:.5rem}.dc-cross{display:none}}
+</style>
+</head>
+<body>
+
+<h1>📦 所得指標 共通ブロック プレビュー</h1>
+<p style="color:#64748b;font-size:.88rem;margin-bottom:1.5rem">qz_004 / qz_006 で共通利用する4部品。実装前のデザイン確認用。</p>
+
+<!-- ============== 部品①：二段チェーン図 ============== -->
+<h2 style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border-left:none">部品① 二段チェーン図（国民系本流＋国内系参考）</h2>
+<div class="dual-chain">
+  <div class="dc-title">所得指標フローマップ</div>
+  <div class="dc-grid">
+    <!-- 国民系（左） -->
+    <div class="dc-col">
+      <div class="dc-col-head main">国民系・本流</div>
+      <div class="dc-node">GNI<small>国民総所得（最大・起点）</small></div>
+      <div class="dc-arrow"><span class="op minus">− 固定資本減耗</span><span class="tri">▼</span></div>
+      <div class="dc-node">NNP（≡ NNI）<small>国民純生産＝国民純所得（市場価格）</small></div>
+      <div class="dc-arrow"><span class="op minus">− 間接税</span><span class="op plus">＋ 補助金</span><span class="tri">▼</span></div>
+      <div class="dc-node">NI<small>国民所得（要素費用表示）</small></div>
+      <div class="dc-arrow"><span class="op minus">− 法人税・内部留保</span><span class="op plus">＋ 振替支出</span><span class="tri">▼</span></div>
+      <div class="dc-node">PI<small>個人所得</small></div>
+      <div class="dc-arrow"><span class="op minus">− 直接税</span><span class="op minus">− 社会保険料</span><span class="tri">▼</span></div>
+      <div class="dc-node terminal">DI<small>可処分所得（自由に使える）</small></div>
+    </div>
+    <!-- 中央：横の関係 -->
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:3.2rem;font-size:.7rem;color:#64748b;font-weight:700">
+      <div style="background:#f1f5f9;padding:.3rem .5rem;border-radius:6px;border:1px dashed #94a3b8;margin-bottom:.6rem">→ 海外純要素所得 →</div>
+      <div style="font-size:1.4rem;color:#94a3b8;margin:5rem 0 0">─</div>
+      <div style="margin-top:.2rem;font-size:.72rem;color:#475569">≒</div>
+    </div>
+    <!-- 国内系（右） -->
+    <div class="dc-col">
+      <div class="dc-col-head sub">国内系・参考</div>
+      <div class="dc-node sub-node">GDP<small>国内総生産</small></div>
+      <div class="dc-arrow"><span class="op minus">− 固定資本減耗</span><span class="tri">▼</span></div>
+      <div class="dc-node sub-node">NDP<small>国内純生産</small></div>
+    </div>
+  </div>
+  <div class="dc-cross">
+    <span class="label">📌 横の関係：</span>
+    <span>GNI − 海外純要素所得 = GDP</span>
+    <span style="color:#94a3b8">／</span>
+    <span>NNP ≒ NDP（海外要素分の差）</span>
+  </div>
+</div>
+
+<!-- ============== 部品②：差分棒グラフ（国民系一直線） ============== -->
+<h2 style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border-left:none">部品② 差分棒グラフ（国民系：GNI → DI）</h2>
+<div class="calc-bars">
+  <div class="calc-bars-title">📊 GNI から DI への引き算チェーン（差分が常に見える）</div>
+  <div class="calc-bars-sub">隣同士のグラフを比較すると「何を引いたか／足したか」が一目でわかる（数値はイメージ）</div>
+  <div class="cb-row">
+    <!-- GNI -->
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px">
+        <div class="cb-seg s-blue" style="height:240px">GNI<br>100</div>
+      </div>
+      <div class="cb-name">GNI<small>国民総所得</small></div>
+    </div>
+    <div class="cb-arrow"><span class="op minus">− 減耗 15</span><span class="tri">▶</span></div>
+    <!-- NNP -->
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px">
+        <div class="cb-seg s-skyblue" style="height:204px">NNP<br>85</div>
+        <div class="cb-seg s-gray minus" style="height:36px">減耗 15</div>
+      </div>
+      <div class="cb-name">NNP（≡NNI）<small>国民純生産</small></div>
+    </div>
+    <div class="cb-arrow"><span class="op minus">− 税 10</span><span class="op plus">＋ 補助 2</span><span class="tri">▶</span></div>
+    <!-- NI -->
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px">
+        <div class="cb-seg s-teal" style="height:185px">NI<br>77</div>
+        <div class="cb-seg s-orange minus" style="height:19px">税 −8</div>
+        <div class="cb-seg s-gray minus" style="height:36px">減耗 15</div>
+      </div>
+      <div class="cb-name">NI<small>国民所得</small></div>
+    </div>
+    <div class="cb-arrow"><span class="op minus">− 留保 12</span><span class="op plus">＋ 振替 8</span><span class="tri">▶</span></div>
+    <!-- PI -->
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px">
+        <div class="cb-seg s-emerald" style="height:175px">PI<br>73</div>
+        <div class="cb-seg s-purple minus" style="height:10px">留保 −4</div>
+        <div class="cb-seg s-orange minus" style="height:19px">税 −8</div>
+        <div class="cb-seg s-gray minus" style="height:36px">減耗 15</div>
+      </div>
+      <div class="cb-name">PI<small>個人所得</small></div>
+    </div>
+    <div class="cb-arrow"><span class="op minus">− 直接税 8</span><span class="op minus">− 保険 7</span><span class="tri">▶</span></div>
+    <!-- DI -->
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px">
+        <div class="cb-seg s-yellow" style="height:139px">DI<br>58</div>
+        <div class="cb-seg s-red minus" style="height:36px">直接税＋保険 −15</div>
+        <div class="cb-seg s-purple minus" style="height:10px">留保 −4</div>
+        <div class="cb-seg s-orange minus" style="height:19px">税 −8</div>
+        <div class="cb-seg s-gray minus" style="height:36px">減耗 15</div>
+      </div>
+      <div class="cb-name">DI<small>可処分所得</small></div>
+    </div>
+  </div>
+  <div class="cb-legend">
+    <span><i style="background:#3b82f6"></i>所得本体</span>
+    <span><i style="background:#94a3b8"></i>固定資本減耗</span>
+    <span><i style="background:#f97316"></i>純間接税</span>
+    <span><i style="background:#8b5cf6"></i>留保−振替</span>
+    <span><i style="background:#ef4444"></i>直接税＋社会保険料</span>
+  </div>
+</div>
+
+<!-- ============== 部品③：国内系横並び棒グラフ ============== -->
+<h2 style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border-left:none">部品③ 国内系の差分棒グラフ（参考：GDP・NDP）</h2>
+<div class="calc-bars">
+  <div class="calc-bars-title">📊 国民系 vs 国内系（横の関係）</div>
+  <div class="calc-bars-sub">「国民」と「国内」の違いは海外純要素所得の分だけ</div>
+  <div class="cb-row" style="min-height:240px">
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px">
+        <div class="cb-seg s-blue" style="height:240px">GNI<br>100</div>
+      </div>
+      <div class="cb-name">GNI<small>国民総所得</small></div>
+    </div>
+    <div class="cb-arrow"><span class="op minus">− 海外純要素 3</span><span class="tri">▶</span></div>
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px">
+        <div class="cb-seg s-indigo" style="height:233px">GDP<br>97</div>
+        <div class="cb-seg s-rose minus" style="height:7px">海外 3</div>
+      </div>
+      <div class="cb-name">GDP<small>国内総生産</small></div>
+    </div>
+    <div class="cb-arrow"><span class="op minus">− 減耗 15</span><span class="tri">▶</span></div>
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px">
+        <div class="cb-seg s-skyblue" style="height:197px">NDP<br>82</div>
+        <div class="cb-seg s-gray minus" style="height:36px">減耗 15</div>
+        <div class="cb-seg s-rose minus" style="height:7px">海外 3</div>
+      </div>
+      <div class="cb-name">NDP<small>国内純生産</small></div>
+    </div>
+    <div class="cb-arrow" style="padding-bottom:80px"><span class="op" style="background:#eef2ff;border-color:#a5b4fc;color:#3730a3">≒ 横で対応</span></div>
+    <div class="cb-col">
+      <div class="cb-stack" style="height:240px;opacity:.65">
+        <div class="cb-seg s-skyblue" style="height:204px">NNP<br>85</div>
+        <div class="cb-seg s-gray minus" style="height:36px">減耗 15</div>
+      </div>
+      <div class="cb-name">NNP（参考）<small>国民純生産</small></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 部品④：関係式まとめ ============== -->
+<h2 style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border-left:none">部品④ 関係式まとめ（4ブロック）</h2>
+<div class="formula-pack">
+  <div class="formula-card fc-blue">
+    <h4>① 国民系・主流（大→小へ引き算）</h4>
+    <div class="eq">GNI <span class="minus">−</span> 固定資本減耗 <span class="eql">=</span> NNP（≡ NNI）</div>
+    <div class="eq">NNP <span class="minus">−</span> 間接税 <span class="plus">＋</span> 補助金 <span class="eql">=</span> NI</div>
+    <div class="eq">NI <span class="minus">−</span> 法人税・内部留保 <span class="plus">＋</span> 振替支出 <span class="eql">=</span> PI</div>
+    <div class="eq">PI <span class="minus">−</span> 直接税 <span class="minus">−</span> 社会保険料 <span class="eql">=</span> DI</div>
+  </div>
+  <div class="formula-card fc-purple">
+    <h4>② 国内系・横の関係</h4>
+    <div class="eq">GNI <span class="minus">−</span> 海外からの純要素所得 <span class="eql">=</span> GDP</div>
+    <div class="eq">GDP <span class="minus">−</span> 固定資本減耗 <span class="eql">=</span> NDP</div>
+    <div class="eq" style="background:#fef3c7">NNP ≒ NDP（差は海外純要素所得の分）</div>
+  </div>
+  <div class="formula-card fc-green">
+    <h4>③ 3面等価（GDP の別の見方）</h4>
+    <div class="eq">GDP（生産面）<span class="eql">≡</span> GDI（分配面）<span class="eql">≡</span> GDE（支出面）</div>
+    <div class="eq" style="background:#ecfdf5">事後的に必ず一致。ズレは在庫品増加で吸収。</div>
+  </div>
+  <div class="formula-card fc-orange">
+    <h4>④ 整理：使う指標／使わない指標</h4>
+    <div class="eq" style="background:#ecfdf5">✅ 採用：<strong>GNI / NNP(=NNI) / NI / PI / DI</strong>（本流）</div>
+    <div class="eq" style="background:#ecfdf5">✅ 参考：<strong>GDP / NDP</strong>（国内系）</div>
+    <div class="eq" style="background:#fef2f2">❌ 廃止：GNP（→GNIに統一）／旧 Domestic Income 表記</div>
+  </div>
+</div>
+
+<p style="margin-top:2rem;color:#64748b;font-size:.85rem;text-align:center">— このブロックを qz_004 と qz_006 に挿入します —</p>
+
+</body>
+</html>

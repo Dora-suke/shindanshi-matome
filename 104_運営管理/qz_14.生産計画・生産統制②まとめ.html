@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生産計画・生産統制 計算問題 完全対策版</title>
+<style>
+:root{--orange:#ea580c;--orange-main:#f97316;--orange-light:#fed7aa;--orange-pale:#fff7ed;--blue:#2563eb;--blue-main:#3b82f6;--blue-light:#dbeafe;--blue-pale:#eff6ff;--green:#16a34a;--green-main:#22c55e;--green-light:#dcfce7;--green-pale:#f0fdf4;--red:#dc2626;--red-light:#fee2e2;--red-pale:#fef2f2;--purple:#7c3aed;--purple-main:#8b5cf6;--purple-light:#ede9fe;--purple-pale:#faf5ff;--teal:#0d9488;--teal-main:#14b8a6;--teal-light:#ccfbf1;--teal-pale:#f0fdfa;--gray-dark:#1e293b;--gray-mid:#64748b;--gray-light:#cbd5e1;--gray-pale:#f1f5f9;--radius:12px;--radius-sm:8px;--shadow:0 2px 12px rgba(0,0,0,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;line-height:1.75;color:var(--gray-dark);background:var(--orange-pale);min-height:100vh}
+header{background:linear-gradient(135deg,#c2410c 0%,var(--orange) 50%,var(--orange-main) 100%);color:#fff;padding:1.8rem 1.2rem 1.2rem;text-align:center}
+header h1{font-size:1.6rem;font-weight:800;letter-spacing:.03em;margin-bottom:.3rem}
+header .subtitle{font-size:.86rem;opacity:.92}
+header .badge{display:inline-block;background:rgba(255,255,255,.2);padding:.2rem .8rem;border-radius:20px;font-size:.78rem;margin-top:.5rem}
+nav{position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;gap:2px;background:#fff;padding:3px;box-shadow:var(--shadow)}
+.tab-btn{flex:1 1 auto;min-width:60px;padding:.5rem .25rem;border:none;background:#fff;color:var(--gray-mid);font-size:.7rem;line-height:1.25;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:normal;text-align:center}
+.tab-btn:hover{opacity:.8;background:var(--orange-pale)}
+.tab-btn.active{background:var(--orange-light);border-bottom-color:var(--orange);color:var(--gray-dark)}
+.tab-panel{display:none;max-width:960px;margin:0 auto;padding:1.4rem 1.1rem 3rem;animation:fadeIn .3s}
+.tab-panel.active{display:block}
+.tab-panel:not(.active){display:none!important}
+.tab-panel.t-green{background:var(--green-pale)}.tab-panel.t-blue{background:var(--blue-pale)}.tab-panel.t-orange{background:var(--orange-pale)}.tab-panel.t-purple{background:var(--purple-pale)}.tab-panel.t-teal{background:var(--teal-pale)}.tab-panel.t-red{background:var(--red-pale)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* セクション見出し（グラデ） */
+.section-title{font-size:1.12rem;font-weight:800;margin:1.6rem 0 .9rem;padding:.5rem .85rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff;line-height:1.4}
+.section-title:first-child{margin-top:0}
+.st-orange{background:linear-gradient(135deg,var(--orange),var(--orange-main))}
+.st-blue{background:linear-gradient(135deg,var(--blue),var(--blue-main))}
+.st-green{background:linear-gradient(135deg,var(--green),var(--green-main))}
+.st-purple{background:linear-gradient(135deg,var(--purple),var(--purple-main))}
+.st-teal{background:linear-gradient(135deg,var(--teal),var(--teal-main))}
+.st-red{background:linear-gradient(135deg,var(--red),#ef4444)}
+.st-icon{font-size:1.15rem}
+.lead{font-size:.92rem;color:#475569;margin:.2rem 0 1rem}
+/* 基本カード */
+.card{background:#fff;border-radius:var(--radius-sm);padding:1rem 1.15rem;margin:.8rem 0;border-left:5px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card-blue{border-left-color:var(--blue)}.card-green{border-left-color:var(--green)}.card-purple{border-left-color:var(--purple)}.card-red{border-left-color:var(--red)}.card-orange{border-left-color:var(--orange)}.card-teal{border-left-color:var(--teal)}
+.card h4{font-size:1rem;font-weight:800;margin-bottom:.45rem;display:flex;align-items:center;gap:.4rem}
+.card h4 .num{display:inline-flex;width:26px;height:26px;background:var(--gray-dark);color:#fff;border-radius:50%;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+/* アイコンカード（横並びデッキ） */
+.icon-deck{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:1rem 0}
+.icon-card{background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:14px 14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.icon-card .ic-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.icon-card .ic-emoji{font-size:1.8rem;line-height:1}
+.icon-card .ic-title{font-weight:800;font-size:.98rem}
+.icon-card .ic-tag{margin-left:auto;font-size:.66rem;font-weight:800;padding:1px 7px;border-radius:10px;background:#dc2626;color:#fff;white-space:nowrap}
+.icon-card .ic-body{font-size:.85rem;color:#475569;line-height:1.65}
+.icon-card .ic-body b{color:var(--gray-dark)}
+.ic-blue{border-color:#93c5fd;background:linear-gradient(180deg,#fff,#eff6ff)}
+.ic-green{border-color:#86efac;background:linear-gradient(180deg,#fff,#f0fdf4)}
+.ic-orange{border-color:#fdba74;background:linear-gradient(180deg,#fff,#fff7ed)}
+.ic-purple{border-color:#c4b5fd;background:linear-gradient(180deg,#fff,#faf5ff)}
+.ic-teal{border-color:#5eead4;background:linear-gradient(180deg,#fff,#f0fdfa)}
+.ic-red{border-color:#fca5a5;background:linear-gradient(180deg,#fff,#fef2f2)}
+/* 番号つき要点グリッド */
+.factor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:1rem 0}
+.fg-item{background:#fff;border-radius:12px;padding:13px;box-shadow:0 1px 3px rgba(0,0,0,.08);border-top:5px solid var(--gray-light)}
+.fg-item .fg-num{display:inline-flex;width:26px;height:26px;background:var(--gray-dark);color:#fff;border-radius:50%;align-items:center;justify-content:center;font-weight:800;margin-bottom:5px;font-size:.85rem}
+.fg-item .fg-title{font-weight:800;font-size:.95rem;margin-bottom:4px}
+.fg-item .fg-body{font-size:.83rem;color:#475569;line-height:1.6}
+.fg-b1{border-top-color:#3b82f6}.fg-b2{border-top-color:#22c55e}.fg-b3{border-top-color:#f97316}.fg-b4{border-top-color:#8b5cf6}.fg-b5{border-top-color:#14b8a6}.fg-b6{border-top-color:#ef4444}
+/* 視覚的な数式 */
+.formula-vis{background:linear-gradient(135deg,var(--orange-pale),#fff);border:2px dashed var(--orange-main);border-radius:14px;padding:14px 16px;margin:.9rem 0}
+.fv-label{font-size:.82rem;font-weight:800;color:var(--orange);margin-bottom:.5rem;display:flex;align-items:center;gap:.3rem}
+.fv-eq{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;font-size:1rem;font-weight:800}
+.fv-box{background:#fff;border:2px solid var(--orange-main);border-radius:10px;padding:7px 12px;color:#9a3412;box-shadow:0 2px 6px rgba(249,115,22,.2);text-align:center;line-height:1.35}
+.fv-box small{display:block;font-weight:400;font-size:.7rem;color:#78716c}
+.fv-box.fv-result{background:linear-gradient(135deg,#fde68a,#fbbf24);border-color:#f59e0b;color:#78350f}
+.fv-box.fv-blue{border-color:var(--blue-main);color:#1e40af;box-shadow:0 2px 6px rgba(59,130,246,.2)}
+.fv-box.fv-green{border-color:var(--green-main);color:#166534}
+.fv-box.fv-teal{border-color:var(--teal-main);color:#115e59}
+.fv-op{font-size:1.3rem;color:var(--orange);font-weight:800}
+.fv-note{font-size:.8rem;color:#78716c;margin-top:.5rem;text-align:center}
+/* 計算ステップ */
+.calc-steps{counter-reset:cs;margin:.8rem 0}
+.calc-step{display:flex;gap:.7rem;background:#fff;border-radius:10px;padding:.7rem .9rem;margin:.45rem 0;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:4px solid var(--blue-main)}
+.calc-step::before{counter-increment:cs;content:counter(cs);flex-shrink:0;width:24px;height:24px;background:var(--blue);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem}
+.calc-step .cs-body{font-size:.88rem;line-height:1.65}
+.calc-step .cs-body b{color:var(--blue)}
+.calc-step.cs-green{border-left-color:var(--green-main)}.calc-step.cs-green::before{background:var(--green)}.calc-step.cs-green .cs-body b{color:var(--green)}
+.calc-step.cs-orange{border-left-color:var(--orange-main)}.calc-step.cs-orange::before{background:var(--orange)}.calc-step.cs-orange .cs-body b{color:var(--orange)}
+.calc-step.cs-teal{border-left-color:var(--teal-main)}.calc-step.cs-teal::before{background:var(--teal)}.calc-step.cs-teal .cs-body b{color:var(--teal)}
+.calc-step.cs-red{border-left-color:#ef4444}.calc-step.cs-red::before{background:var(--red)}.calc-step.cs-red .cs-body b{color:var(--red)}
+.ans{display:inline-block;background:linear-gradient(135deg,#fde68a,#fbbf24);color:#78350f;font-weight:800;padding:1px 9px;border-radius:6px;border:1.5px solid #f59e0b}
+/* 対比ボックス */
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.6rem;align-items:stretch;margin:.9rem 0}
+.vs-side{background:#fff;border-radius:12px;padding:.9rem 1rem;box-shadow:var(--shadow);border-top:5px solid var(--gray-light)}
+.vs-side.vs-a{border-top-color:var(--blue-main)}.vs-side.vs-b{border-top-color:var(--orange-main)}
+.vs-side h4{font-size:.95rem;font-weight:800;margin-bottom:.4rem}
+.vs-side ul{padding-left:1.1rem}.vs-side li{font-size:.83rem;margin:.25rem 0}
+.vs-mid{display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:var(--gray-mid)}
+/* アラート */
+.alert{border-radius:var(--radius);padding:.75rem .95rem .75rem 2.8rem;margin:.8rem 0;position:relative;font-size:.88rem;line-height:1.65}
+.alert::before{position:absolute;left:.75rem;top:.7rem;font-size:1.15rem}
+.alert-trap{background:var(--red-light);border:1px solid #fca5a5;color:#991b1b}.alert-trap::before{content:"⚠️"}
+.alert-tip{background:var(--green-light);border:1px solid #86efac;color:#166534}.alert-tip::before{content:"💡"}
+.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#9a3412}.alert-exam::before{content:"📝"}
+.alert b{font-weight:800}
+/* チャット風 講師コメント */
+.bubble{display:flex;gap:.55rem;align-items:flex-start;margin:.7rem 0}
+.bubble .av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.bubble .av-t{background:linear-gradient(135deg,#fb923c,#ea580c)}
+.bubble .av-s{background:linear-gradient(135deg,#60a5fa,#2563eb)}
+.bubble .bd{background:#fff8e1;border:1px solid #ffe082;border-radius:14px;padding:.6rem .9rem;font-size:.88rem;line-height:1.65;position:relative}
+.bubble .bd.bd-blue{background:#e3f2fd;border-color:#90caf9}
+.bubble .bd .nm{font-size:.7rem;font-weight:800;color:var(--gray-mid);margin-bottom:.15rem}
+.bubble .bd strong{color:var(--orange)}
+.bubble .bd.bd-blue strong{color:var(--blue)}
+/* テーブル（カラー） */
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.85rem;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+th,td{padding:.5rem .6rem;text-align:left;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.tbl-blue th{background:var(--blue);color:#fff}.tbl-blue tr:nth-child(even) td{background:var(--blue-pale)}
+.tbl-green th{background:var(--green);color:#fff}.tbl-green tr:nth-child(even) td{background:var(--green-pale)}
+.tbl-orange th{background:var(--orange);color:#fff}.tbl-orange tr:nth-child(even) td{background:var(--orange-pale)}
+.tbl-purple th{background:var(--purple);color:#fff}.tbl-purple tr:nth-child(even) td{background:var(--purple-pale)}
+.tbl-teal th{background:var(--teal);color:#fff}.tbl-teal tr:nth-child(even) td{background:var(--teal-pale)}
+.tbl-red th{background:var(--red);color:#fff}.tbl-red tr:nth-child(even) td{background:var(--red-pale)}
+/* フロー */
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.15rem;margin:.7rem 0}
+.flow-box{color:#fff;padding:.55rem .85rem;border-radius:9px;font-weight:700;font-size:.82rem;text-align:center;min-width:80px;line-height:1.3}
+.flow-box small{display:block;font-weight:400;font-size:.71rem;opacity:.92}
+.fb-blue{background:linear-gradient(135deg,var(--blue),var(--blue-main))}.fb-green{background:linear-gradient(135deg,var(--green),var(--green-main))}.fb-orange{background:linear-gradient(135deg,var(--orange),var(--orange-main))}.fb-purple{background:linear-gradient(135deg,var(--purple),var(--purple-main))}.fb-teal{background:linear-gradient(135deg,var(--teal),var(--teal-main))}.fb-red{background:linear-gradient(135deg,var(--red),#ef4444)}.fb-gray{background:linear-gradient(135deg,#475569,#64748b)}
+.flow-arrow{font-size:1.3rem;color:var(--gray-mid);font-weight:800;flex-shrink:0;margin:0 .1rem}
+.diagram{background:#fff;border-radius:var(--radius);padding:1.1rem;margin:1rem 0;box-shadow:var(--shadow);overflow-x:auto}
+.diagram-title{text-align:center;font-weight:800;font-size:.98rem;margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:2px dashed #e2e8f0;color:var(--gray-dark)}
+/* グリッド */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.8rem 0}
+/* 語呂 */
+.mnemonic{background:linear-gradient(135deg,var(--purple-light),#fff);border:3px dashed var(--purple);border-radius:var(--radius);padding:1rem 1.2rem;margin:.8rem 0}
+.mnemonic .big{font-size:1.15rem;font-weight:800;color:var(--purple);letter-spacing:.06em;display:flex;align-items:center;gap:.4rem}
+.mnemonic .big::before{content:"🎵"}
+.mnemonic .desc{font-size:.85rem;color:#475569;margin-top:.3rem}
+/* キープイット */
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1.05rem 1.25rem;margin:1.4rem 0;box-shadow:0 3px 10px rgba(251,192,45,.2)}
+.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.55rem;display:flex;align-items:center;gap:.4rem}
+.keepit ul{list-style:none;padding:0;margin:0}
+.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.88rem;line-height:1.65}
+.keepit li strong{color:var(--blue)}
+/* 穴埋め */
+.qz-fill-wrap{background:linear-gradient(135deg,var(--purple-pale),#fff);border:3px solid var(--purple);border-radius:12px;padding:.9rem 1.1rem;margin:1.4rem 0;box-shadow:0 2px 10px rgba(124,58,237,.12)}
+.qz-fill-wrap > .qz-fill-title{font-size:1rem;font-weight:800;color:var(--purple);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.fill-card,.fill-card-quiet{background:#fff;border-radius:10px;margin:.6rem 0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.fill-header{padding:.55rem .85rem;color:#fff;font-weight:700;font-size:.9rem;background:#475569;display:flex;align-items:center;gap:.4rem}
+.fill-body{padding:.75rem .95rem}
+.fill-group{margin:.4rem 0;font-size:.92rem;line-height:2}
+.fill-blank{display:inline-block;min-width:64px;text-align:center;padding:1px 9px;margin:0 1px;cursor:pointer;font-weight:800;color:transparent;background:#fee2e2;border:1px dashed #ef4444;border-radius:5px;user-select:none;transition:all .2s}
+.fill-blank.show{color:#92400e;background:#fef9c3;border-style:solid;border-color:#facc15}
+.fill-reveal-btn{background:#3b82f6;color:#fff;border:none;border-radius:7px;padding:.35rem .8rem;font-size:.8rem;cursor:pointer;margin:.4rem .2rem 0 0;font-weight:700;font-family:inherit}
+.fill-reveal-btn:hover{opacity:.85}
+/* クイズ */
+.quiz-card{background:#fff;border:3px solid #e2e8f0;border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+.quiz-q{font-weight:700;margin-bottom:.6rem;line-height:1.65}
+.quiz-num{display:inline-flex;width:26px;height:26px;background:var(--orange);color:#fff;border-radius:50%;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;margin-right:.4rem}
+.quiz-opt{display:block;background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;padding:.5rem .8rem;margin:.3rem 0;cursor:pointer;font-size:.9rem;transition:all .15s}
+.quiz-opt:hover{border-color:var(--orange-main);background:var(--orange-pale)}
+.quiz-opt.correct{background:var(--green-light);border-color:var(--green);font-weight:700}
+.quiz-opt.wrong{background:var(--red-light);border-color:var(--red)}
+.quiz-exp{display:none;margin-top:.6rem;background:#fff3e0;border-left:4px solid #f59e0b;padding:.6rem .8rem;font-size:.86rem;border-radius:6px;line-height:1.65}
+.quiz-exp.show{display:block}
+ruby rt{font-size:.55em}
+.tag{display:inline-block;font-size:.66rem;font-weight:800;padding:1px 7px;border-radius:10px;background:#1565c0;color:#fff;margin-left:.3rem;vertical-align:middle}
+.tag.hot{background:#dc2626}
+/* 学習システム対策 */
+.ls-sticky-wrap .tab-btn{color:#475569}
+.ls-sticky-wrap .tab-btn:hover{color:var(--orange);background:rgba(0,0,0,.05)}
+.ls-sticky-wrap .tab-btn.active{color:var(--gray-dark);background:var(--orange-light);border-bottom-color:var(--orange)}
+/* === 余白を広めに：可読性のための上書き（後勝ち） === */
+body{line-height:1.85}
+.tab-panel{padding:1.9rem 1.35rem 3.5rem}
+.section-title{margin:2.3rem 0 1.2rem;padding:.65rem 1rem;line-height:1.5}
+.section-title:first-child{margin-top:.3rem}
+h3.section-title{margin-top:1.9rem}
+.lead{margin:.4rem 0 1.5rem;line-height:1.85}
+.card{padding:1.3rem 1.5rem;margin:1.25rem 0}
+.card h4{margin-bottom:.75rem;line-height:1.5}
+.icon-deck{gap:18px;margin:1.4rem 0}
+.icon-card{padding:18px 18px 20px}
+.icon-card .ic-head{margin-bottom:.65rem}
+.icon-card .ic-body{font-size:.88rem;line-height:1.95}
+.factor-grid{gap:16px;margin:1.4rem 0}
+.fg-item{padding:17px 17px 18px}
+.fg-item .fg-title{margin-bottom:.45rem}
+.fg-item .fg-body{font-size:.86rem;line-height:1.85}
+.formula-vis{padding:22px 22px;margin:1.5rem 0}
+.fv-label{margin-bottom:.85rem}
+.fv-eq{gap:12px;line-height:1.7}
+.fv-eq+.fv-eq{margin-top:.95rem}
+.fv-box{padding:10px 16px;line-height:1.5}
+.fv-note{margin-top:.95rem;font-size:.82rem;line-height:1.8}
+.calc-steps{margin:1.15rem 0}
+.calc-step{padding:.95rem 1.15rem;margin:.7rem 0;gap:.85rem}
+.calc-step .cs-body{font-size:.9rem;line-height:1.85}
+.vs-box{gap:1.05rem;margin:1.4rem 0}
+.vs-side{padding:1.2rem 1.3rem}
+.vs-side h4{margin-bottom:.65rem}
+.vs-side ul{padding-left:1.25rem}
+.vs-side li{font-size:.86rem;margin:.5rem 0;line-height:1.75}
+.alert{padding:1rem 1.2rem 1rem 3rem;margin:1.25rem 0;line-height:1.9}
+.alert::before{top:.9rem}
+.bubble{margin:1.15rem 0}
+.bubble .bd{padding:.85rem 1.1rem;line-height:1.9}
+table{margin:1.15rem 0;font-size:.87rem}
+th,td{padding:.65rem .85rem}
+.flow-row{gap:.4rem;margin:1.15rem 0}
+.flow-box{padding:.7rem 1.05rem;line-height:1.4}
+.diagram{padding:1.5rem;margin:1.4rem 0}
+.diagram-title{margin-bottom:1.25rem;padding-bottom:.6rem}
+.two-col{gap:1.15rem;margin:1.25rem 0}
+.mnemonic{padding:1.35rem 1.55rem;margin:1.15rem 0}
+.mnemonic .big{line-height:1.55}
+.mnemonic .desc{font-size:.88rem;margin-top:.55rem;line-height:1.85}
+.keepit{padding:1.45rem 1.65rem;margin:2.1rem 0}
+.keepit-title{margin-bottom:.85rem}
+.keepit li{padding:.65rem .9rem;margin:.5rem 0;line-height:1.8}
+.qz-fill-wrap{padding:1.35rem 1.55rem;margin:2.1rem 0}
+.qz-fill-wrap > .qz-fill-title{margin-bottom:.85rem}
+.fill-card,.fill-card-quiet{margin:1rem 0}
+.fill-header{padding:.7rem 1.05rem}
+.fill-body{padding:1.15rem 1.35rem}
+.fill-group{margin:.65rem 0;line-height:2.25}
+.fill-reveal-btn{padding:.5rem 1.05rem;margin-top:.75rem}
+.quiz-card{padding:1.35rem 1.45rem;margin:1.35rem 0}
+.quiz-q{margin-bottom:.95rem;line-height:1.9}
+.quiz-opt{padding:.7rem 1.05rem;margin:.5rem 0}
+.quiz-exp{margin-top:.95rem;padding:.9rem 1.1rem;line-height:1.9}
+@media(max-width:600px){.two-col,.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg);padding:.2rem 0}.tab-btn{font-size:.62rem;min-width:50px;padding:.4rem .15rem}header h1{font-size:1.3rem}.fv-eq{font-size:.88rem}.tab-panel{padding:1.4rem .9rem 3rem}.card,.formula-vis,.fill-body,.quiz-card{padding-left:1.05rem;padding-right:1.05rem}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>生産計画・生産統制 計算問題 完全対策版</h1>
+<div class="subtitle">中小企業診断士 運営管理｜PERT/CPM・ライン編成・MRP/BOM・スケジューリング・流動数分析・工数余力 ＋ 生産方式/生産統制</div>
+<div class="badge">全14タブ｜重要度 ⭐⭐⭐⭐⭐（1次・運営管理の計算は毎年）</div>
+</header>
+
+<nav>
+<button class="tab-btn active" onclick="sw(0)">🌱<br>ゼロから</button>
+<button class="tab-btn" onclick="sw(1)">📖<br>入門</button>
+<button class="tab-btn" onclick="sw(2)">📚<br>基本</button>
+<button class="tab-btn" onclick="sw(3)">🔍<br>詳細</button>
+<button class="tab-btn" onclick="sw(4)">🎵<br>語呂</button>
+<button class="tab-btn" onclick="sw(5)">🔤<br>語呂穴</button>
+<button class="tab-btn" onclick="sw(6)">✏️<br>穴①初級</button>
+<button class="tab-btn" onclick="sw(7)">✏️<br>穴②中級</button>
+<button class="tab-btn" onclick="sw(8)">✏️<br>穴③上級</button>
+<button class="tab-btn" onclick="sw(9)">📋<br>事例</button>
+<button class="tab-btn" onclick="sw(10)">🎯<br>クイズ</button>
+<button class="tab-btn" onclick="sw(11)">🏭<br>実例</button>
+<button class="tab-btn" onclick="sw(12)">🗺<br>図解</button>
+<button class="tab-btn" onclick="sw(13)" style="border-bottom-color:#0d9488;color:#0d9488">✏️<br>穴埋め総</button>
+</nav>
+
+<!-- ============ TAB 0: ゼロから ============ -->
+<div class="tab-panel active t-green" id="tab0">
+<h2 class="section-title st-green"><span class="st-icon">🌱</span>運営管理「生産の計算」は、この6種類だけ</h2>
+<div class="bubble"><div class="av av-s">🧑</div><div class="bd bd-blue"><div class="nm">受験生</div>生産計画・統制って計算問題が多くて苦手…どこから手をつければ？</div></div>
+<div class="bubble"><div class="av av-t">👨‍🏫</div><div class="bd"><div class="nm">先生</div>1次で計算が出るのは<strong>ほぼ6パターン</strong>。まず「何を計算しているか」をイメージで掴めば、あとは式に当てはめるだけです。</div></div>
+
+<div class="icon-deck">
+
+<div class="icon-card ic-blue">
+<div class="ic-head"><span class="ic-emoji">🗺️</span><span class="ic-title">① PERT／CPM</span><span class="ic-tag">毎年級</span></div>
+<div class="ic-body">＝ 旅行で「<b>一番時間のかかるルート</b>」が全体の到着時刻を決める。<br>飛行機3h・新幹線4hを並行で進めても、遅い方（4h）が全体の所要時間。この最長経路が<b>クリティカルパス</b>、短い方には「1hの余裕（フロート）」がある。早めたいなら<b>余裕ゼロの経路の作業だけ</b>短縮（CPM）。</div>
+</div>
+
+<div class="icon-card ic-green">
+<div class="ic-head"><span class="ic-emoji">🍣</span><span class="ic-title">② ライン編成</span><span class="ic-tag">毎年級</span></div>
+<div class="ic-body">＝ ベルトコンベアの流れ作業は「<b>一番遅い人</b>」がペースを決める。<br>シャリ20秒・ネタ30秒・盛付15秒を1人ずつ担当 → 1皿は<b>30秒ごと</b>に出る（＝サイクルタイム）。15秒の人は半分手が空く（バランスロス）。「1時間で何皿」「何人で回す」を計算。</div>
+</div>
+
+<div class="icon-card ic-orange">
+<div class="ic-head"><span class="ic-emoji">🍛</span><span class="ic-title">③ MRP／部品表(BOM)</span></div>
+<div class="ic-body">＝ 料理のレシピを「<b>人数分</b>」に展開する。<br>カレー1皿に玉ねぎ2個・肉100g → 10皿なら玉ねぎ20個・肉1kg。「冷蔵庫に玉ねぎ5個」なら買うのは15個（＝<b>正味所要量</b>）。製品の構成表を数量倍して、在庫を引く。それだけ。</div>
+</div>
+
+<div class="icon-card ic-purple">
+<div class="ic-head"><span class="ic-emoji">🌀</span><span class="ic-title">④ スケジューリング</span></div>
+<div class="ic-body">＝ 洗濯機→乾燥機を「<b>どの順で回す</b>」か。<br>3カゴを「洗濯→乾燥」で全部終わる時刻を最短に → <b>洗濯が速いものを先に</b>入れれば乾燥機が早く動き出す（ジョンソン法）。「待ち時間最短」なら短い仕事から（SPT）、「納期遅れ防止」なら締切が近い順（EDD）。</div>
+</div>
+
+<div class="icon-card ic-teal">
+<div class="ic-head"><span class="ic-emoji">📈</span><span class="ic-title">⑤ 流動数分析</span></div>
+<div class="ic-body">＝ お店の「<b>入った人数</b>」と「<b>出た人数</b>」の累計グラフ。<br>ある瞬間の<b>店内人数＝2本の縦の差</b>。1人が<b>店にいた時間＝2本の横の差</b>。工場では「投入累計」と「完成累計」になり、<b>縦の差＝仕掛品、横の差＝停滞（リードタイム）</b>。</div>
+</div>
+
+<div class="icon-card ic-red">
+<div class="ic-head"><span class="ic-emoji">⚖️</span><span class="ic-title">⑥ 工数・余力管理</span></div>
+<div class="ic-body">＝ 「<b>やる仕事の量</b>」と「<b>こなせる量</b>」の差。<br>来週やる作業40時間分（負荷）、人手1人×8h×5日＝40時間（能力）→ ぴったり。負荷48時間なら8時間オーバー＝<b>過負荷</b>。残業・応援（能力↑）／外注・納期再交渉（負荷↓）／忙しい週から空き週へ（<b>山崩し</b>）。</div>
+</div>
+
+</div>
+
+<div class="diagram"><div class="diagram-title">📖 計算問題の「全体地図」</div>
+<div class="flow-row">
+<div class="flow-box fb-blue">①PERT/CPM<small>最短完了・余裕・短縮</small></div><span class="flow-arrow">·</span>
+<div class="flow-box fb-green">②ライン編成<small>CT・工程数・効率</small></div><span class="flow-arrow">·</span>
+<div class="flow-box fb-orange">③MRP/BOM<small>総→正味所要量</small></div>
+</div>
+<div class="flow-row">
+<div class="flow-box fb-purple">④スケジューリング<small>ジョンソン/SPT/EDD</small></div><span class="flow-arrow">·</span>
+<div class="flow-box fb-teal">⑤流動数分析<small>縦=仕掛 横=停滞</small></div><span class="flow-arrow">·</span>
+<div class="flow-box fb-red">⑥工数・余力<small>負荷率・山崩し</small></div>
+</div>
+</div>
+
+<div class="keepit">
+<div class="keepit-title">🔑 ゼロからのキープイット</div>
+<ul>
+<li><strong>クリティカルパス</strong>＝全工程で「一番長い経路」。その長さ＝最短完了時間。余裕ゼロ。</li>
+<li><strong>サイクルタイム</strong>＝ラインで一番遅い工程の時間＝製品が1個出てくる間隔。</li>
+<li><strong>正味所要量</strong>＝総所要量 − 手持在庫 − 入庫予定。</li>
+<li><strong>流動数曲線</strong>：縦の差＝仕掛品の量、横の差＝停滞（リードタイム）。</li>
+<li><strong>負荷率</strong>＝負荷÷能力。100%超なら過負荷。</li>
+</ul>
+</div>
+
+<div class="qz-fill-wrap">
+<div class="qz-fill-title">✏️ このタブの空欄チェック（ゼロから）</div>
+<div style="text-align:center;margin:.5rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab0fill')" style="background:#7c3aed;">🔍 全部表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab0fill')" style="background:#64748b;">🔄 リセット</button>
+</div>
+<div id="tab0fill">
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--orange)">🌱 6種類の計算、ひとことで</div><div class="fill-body"><div class="fill-group">
+・クリティカルパス ＝ 全工程の中で一番<span class="fill-blank">長い</span>経路。その長さ ＝ <span class="fill-blank">最短完了時間</span>。余裕（フロート）は<span class="fill-blank">ゼロ</span><br>
+・サイクルタイム ＝ ラインで一番<span class="fill-blank">遅い</span>工程の時間 ＝ 製品が<span class="fill-blank">1個</span>出てくる間隔<br>
+・正味所要量 ＝ 総所要量 − <span class="fill-blank">手持在庫</span> − <span class="fill-blank">入庫(発注残)予定</span><br>
+・スケジューリングで「待ち時間を短く」なら<span class="fill-blank">短い仕事</span>から、「納期遅れを防ぐ」なら<span class="fill-blank">締切が近い</span>仕事から<br>
+・流動数曲線：縦の差 ＝ <span class="fill-blank">仕掛品</span>の量、横の差 ＝ <span class="fill-blank">停滞</span>（リードタイム）<br>
+・負荷率 ＝ <span class="fill-blank">負荷</span> ÷ <span class="fill-blank">能力</span>。100%超なら<span class="fill-blank">過負荷</span>（残業・応援で能力↑／外注・納期再交渉で負荷↓／忙しい週から空き週へ＝<span class="fill-blank">山崩し</span>）
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div>
+</div>
+</div>
+
+<!-- ============ TAB 1: 入門（公式） ============ -->
+<div class="tab-panel t-blue" id="tab1">
+<h2 class="section-title st-blue"><span class="st-icon">📖</span>6テーマ、それぞれの「公式」</h2>
+<div class="bubble"><div class="av av-t">👨‍🏫</div><div class="bd"><div class="nm">先生</div>式は<strong>記号より日本語</strong>で覚えるのが本番で速い。「期待値は楽観・悲観・最頻×4を6で割る」式です。</div></div>
+
+<h3 class="section-title st-blue" style="font-size:1rem;margin-top:1rem;"><span class="st-icon">🗺️</span>① PERT／CPM</h3>
+<div class="card card-blue">
+<table class="tbl-blue">
+<tr><th>用語</th><th>意味</th></tr>
+<tr><td>最早結合点時刻 ES</td><td>その点に最も早く到達できる時刻。経路を進む＝足す、<b>合流＝大きい方を採用</b></td></tr>
+<tr><td>最遅結合点時刻 LS</td><td>納期を遅らせない範囲で最も遅く出てよい時刻。後ろから引いていき、<b>分岐＝小さい方</b></td></tr>
+<tr><td>クリティカルパス CP</td><td>ES＝LS となる結合点を結んだ経路＝最も時間のかかる経路。<b>余裕ゼロ</b></td></tr>
+<tr><td>トータルフロート（全余裕）</td><td>その作業の遅れを「全体の納期を遅らせずに」吸収できる時間</td></tr>
+</table>
+</div>
+<div class="formula-vis">
+<div class="fv-label">PERT 3点見積（a=楽観値・m=最可能値・b=悲観値）</div>
+<div class="fv-eq"><span class="fv-box fv-result">期待値 te</span><span class="fv-op">＝</span><span class="fv-box">( a ＋ <b>4</b>m ＋ b )</span><span class="fv-op">÷</span><span class="fv-box"><b>6</b></span></div>
+<div class="fv-eq" style="margin-top:.6rem;"><span class="fv-box fv-result">標準偏差 σ</span><span class="fv-op">＝</span><span class="fv-box">( b − a )</span><span class="fv-op">÷</span><span class="fv-box">6</span><span class="fv-op">／</span><span class="fv-box">分散 σ² ＝ σ の2乗</span></div>
+<div class="fv-note">重み 1：4：1。最頻値 m に重み4。足し算できるのは「分散」の方（標準偏差は足せない）</div>
+</div>
+<div class="formula-vis">
+<div class="fv-label">CP全体・完了確率</div>
+<div class="fv-eq"><span class="fv-box fv-blue">z</span><span class="fv-op">＝</span><span class="fv-box">( 締切 − CP期待値 )</span><span class="fv-op">÷</span><span class="fv-box fv-blue">√( CP上の各作業の σ² の合計 )</span></div>
+<div class="fv-note">求めた z を正規分布表で引く → 締切までに完了する確率</div>
+</div>
+<div class="alert alert-trap"><b>期待値を (a+m+b)÷3 と覚えるのは誤り。</b>m に重み4。／ σ²（分散）と σ（標準偏差）を取り違えない。</div>
+
+<h3 class="section-title st-green" style="font-size:1rem;"><span class="st-icon">🍣</span>② ライン編成（ライン・バランシング）</h3>
+<div class="formula-vis" style="border-color:var(--green-main);background:linear-gradient(135deg,var(--green-pale),#fff)">
+<div class="fv-label" style="color:var(--green)">サイクルタイム・工程数・編成効率</div>
+<div class="fv-eq"><span class="fv-box fv-green fv-result" style="background:linear-gradient(135deg,#bbf7d0,#86efac);border-color:#22c55e;color:#166534;">サイクルタイム CT</span><span class="fv-op" style="color:var(--green)">＝</span><span class="fv-box fv-green">稼働時間</span><span class="fv-op" style="color:var(--green)">÷</span><span class="fv-box fv-green">必要生産量</span></div>
+<div class="fv-note">（CT は、ライン上で最も長い工程時間より大きくないとダメ）</div>
+<div class="fv-eq" style="margin-top:.6rem;"><span class="fv-box fv-green fv-result" style="background:linear-gradient(135deg,#bbf7d0,#86efac);border-color:#22c55e;color:#166534;">必要工程数</span><span class="fv-op" style="color:var(--green)">＝</span><span class="fv-box fv-green">総作業時間</span><span class="fv-op" style="color:var(--green)">÷</span><span class="fv-box fv-green">CT</span><span class="fv-op" style="color:var(--green)">→</span><span class="fv-box fv-green"><b>切り上げ</b></span></div>
+<div class="fv-eq" style="margin-top:.6rem;"><span class="fv-box fv-green fv-result" style="background:linear-gradient(135deg,#bbf7d0,#86efac);border-color:#22c55e;color:#166534;">ライン編成効率</span><span class="fv-op" style="color:var(--green)">＝</span><span class="fv-box fv-green">総作業時間</span><span class="fv-op" style="color:var(--green)">÷</span><span class="fv-box fv-green">( 工程数 × CT )</span></div>
+<div class="fv-note">バランスロス率 ＝ 1 − 編成効率　／　1時間あたり生産量 ＝ 3600 ÷ CT(秒)　／　タクトタイム ＝ 稼働時間 ÷ 必要数（注文ペース）</div>
+</div>
+<div class="alert alert-exam"><b>CT＝能力（最短どれだけ早く出せるか）、タクトタイム＝需要（どのペースで作るべきか）。</b>値が同じになることも多いが意味は別物。</div>
+<div class="alert alert-trap">必要工程数は<b>切り上げ</b>（割り切れなければ1工程増やす）。／ 編成効率の分母は「工程数×CT」であって「総作業時間」ではない。／ 編成効率は<b>必ず100%以下</b>。</div>
+
+<h3 class="section-title st-orange" style="font-size:1rem;"><span class="st-icon">🍛</span>③ MRP／部品表(BOM)</h3>
+<div class="card card-orange">
+<table class="tbl-orange">
+<tr><th>用語</th><th>意味</th></tr>
+<tr><td>独立需要 / 従属需要</td><td>独立＝製品そのもの（市場が決める）／従属＝それを作るのに必要な部品（計算で決まる）。MRPが扱うのは<b>従属需要</b></td></tr>
+<tr><td>ストラクチャ型部品表</td><td>「製品→中間品→部品」を階層（ツリー）で表す。各枝に「親1個あたり子◯個（員数）」</td></tr>
+<tr><td>タイムバケット</td><td>MRPで所要量をまとめる時間の単位（週など）</td></tr>
+</table>
+</div>
+<div class="formula-vis" style="border-color:var(--orange-main)">
+<div class="fv-label">所要量の計算</div>
+<div class="fv-eq"><span class="fv-box fv-result">ある部品の総所要量</span><span class="fv-op">＝</span><span class="fv-box">Σ（その部品を使う全経路で：上位の所要量 × 1個あたり員数）</span></div>
+<div class="fv-eq" style="margin-top:.6rem;"><span class="fv-box fv-result">正味所要量</span><span class="fv-op">＝</span><span class="fv-box">総所要量</span><span class="fv-op">−</span><span class="fv-box">手持在庫</span><span class="fv-op">−</span><span class="fv-box">入庫(発注残)予定</span></div>
+</div>
+<div class="alert alert-trap">同じ部品が複数の中間品に使われていたら<b>全経路を合計</b>する。／ 在庫・入庫予定の差し引きを忘れて「総所要量」をそのまま答えにしない。</div>
+
+<h3 class="section-title st-purple" style="font-size:1rem;"><span class="st-icon">🌀</span>④ スケジューリング</h3>
+<div class="card card-purple">
+<table class="tbl-purple">
+<tr><th>手法</th><th>使う場面</th><th>やり方</th></tr>
+<tr><td>ジョンソン法</td><td>2工程フローショップ（全ジョブが工程1→工程2の順）でメイクスパン（総所要時間）最小化</td><td>最小値が工程1にあれば<b>先頭</b>へ、工程2にあれば<b>末尾</b>へ。確定したら除き繰り返す</td></tr>
+<tr><td>SPT（最短作業時間順）</td><td>平均待ち時間・平均滞留時間を最小化</td><td>処理時間の<b>短い</b>ジョブから流す</td></tr>
+<tr><td>EDD（最早納期順）</td><td>最大の納期遅れ（最大ラテネス）を最小化</td><td>納期が<b>早い</b>ジョブから流す</td></tr>
+<tr><td>LPT（最長作業時間順）</td><td>並列機械で全体完了を均す（負荷分散）</td><td>処理時間の<b>長い</b>ジョブから割り付け</td></tr>
+</table>
+</div>
+<div class="alert alert-trap">ジョンソン法は「工程1→工程2の固定順序」が前提（順序が逆／3工程以上だと単純適用できない）。／「待ち時間最小＝SPT」「納期遅れ最小＝EDD」を混同しない。</div>
+
+<h3 class="section-title st-teal" style="font-size:1rem;"><span class="st-icon">📈</span>⑤ 流動数分析（流動数曲線）</h3>
+<div class="card card-teal">
+<table class="tbl-teal">
+<tr><th>2本の累積線</th><th>意味</th></tr>
+<tr><td>投入累積線（受入線）</td><td>その地点に投入された量の累計</td></tr>
+<tr><td>産出累積線（払出線・完成線）</td><td>その地点から出ていった量の累計</td></tr>
+</table>
+</div>
+<div class="formula-vis" style="border-color:var(--teal-main);background:linear-gradient(135deg,var(--teal-pale),#fff)">
+<div class="fv-label" style="color:var(--teal)">2本の線の差が答え</div>
+<div class="fv-eq"><span class="fv-box fv-teal fv-result" style="background:linear-gradient(135deg,#99f6e4,#5eead4);border-color:#14b8a6;color:#115e59;">仕掛品（在庫）量</span><span class="fv-op" style="color:var(--teal)">＝</span><span class="fv-box fv-teal">2本の線の「<b>縦</b>方向の差」</span></div>
+<div class="fv-eq" style="margin-top:.6rem;"><span class="fv-box fv-teal fv-result" style="background:linear-gradient(135deg,#99f6e4,#5eead4);border-color:#14b8a6;color:#115e59;">停滞時間（リードタイム）</span><span class="fv-op" style="color:var(--teal)">＝</span><span class="fv-box fv-teal">2本の線の「<b>横</b>方向の差」</span></div>
+<div class="fv-note">FIFO（先入先出）を前提に読む。投入線が上、産出線が下（産出は投入を追いかける）。傾き＝処理スピード</div>
+</div>
+<div class="alert alert-trap">縦と横を取り違えない（縦＝量、横＝時間）。／ 投入線と産出線が交差したらおかしい（出た量が入った量を超えることはない）。</div>
+
+<h3 class="section-title st-red" style="font-size:1rem;"><span class="st-icon">⚖️</span>⑥ 工数管理・余力管理</h3>
+<div class="formula-vis" style="border-color:#ef4444;background:linear-gradient(135deg,var(--red-pale),#fff)">
+<div class="fv-label" style="color:var(--red)">負荷・能力・余力</div>
+<div class="fv-eq"><span class="fv-box fv-result" style="background:linear-gradient(135deg,#fecaca,#fca5a5);border-color:#ef4444;color:#991b1b;">負荷工数</span><span class="fv-op" style="color:var(--red)">＝</span><span class="fv-box" style="border-color:#ef4444;color:#991b1b">標準時間</span><span class="fv-op" style="color:var(--red)">×</span><span class="fv-box" style="border-color:#ef4444;color:#991b1b">生産（指示）数量</span></div>
+<div class="fv-eq" style="margin-top:.6rem;"><span class="fv-box fv-result" style="background:linear-gradient(135deg,#fecaca,#fca5a5);border-color:#ef4444;color:#991b1b;">能力工数</span><span class="fv-op" style="color:var(--red)">＝</span><span class="fv-box" style="border-color:#ef4444;color:#991b1b">作業者数</span><span class="fv-op" style="color:var(--red)">×</span><span class="fv-box" style="border-color:#ef4444;color:#991b1b">1日の稼働時間</span><span class="fv-op" style="color:var(--red)">×</span><span class="fv-box" style="border-color:#ef4444;color:#991b1b">稼働日数</span><span class="fv-op" style="color:var(--red)">×</span><span class="fv-box" style="border-color:#ef4444;color:#991b1b">(稼働率)</span></div>
+<div class="fv-eq" style="margin-top:.6rem;"><span class="fv-box fv-result" style="background:linear-gradient(135deg,#fecaca,#fca5a5);border-color:#ef4444;color:#991b1b;">余力</span><span class="fv-op" style="color:var(--red)">＝</span><span class="fv-box" style="border-color:#ef4444;color:#991b1b">能力 − 負荷</span><span class="fv-op" style="color:var(--red)">／</span><span class="fv-box" style="border-color:#ef4444;color:#991b1b">負荷率 ＝ 負荷 ÷ 能力 ×100(%)</span></div>
+</div>
+<div class="alert alert-exam">対策：<b>能力を増やす</b>＝残業・応援・設備増。<b>負荷を減らす</b>＝外注・納期再交渉・設計変更。<b>期間で均す</b>＝山積み→山崩し（平準化）。</div>
+<div class="alert alert-trap">負荷と能力は<b>同じ単位（工数＝人時など）</b>にそろえてから比べる。／「余力＝負荷−能力」ではない。能力−負荷。</div>
+
+<div class="qz-fill-wrap">
+<div class="qz-fill-title">✏️ このタブの空欄チェック（入門：公式の再現）</div>
+<div style="text-align:center;margin:.5rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab1fill')" style="background:#7c3aed;">🔍 全部表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab1fill')" style="background:#64748b;">🔄 リセット</button>
+</div>
+<div id="tab1fill">
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--blue)">🗺️ PERT/CPM の式</div><div class="fill-body"><div class="fill-group">
+期待値 te ＝（a ＋ <span class="fill-blank">4</span>m ＋ b）÷ <span class="fill-blank">6</span>／ 標準偏差 σ ＝（<span class="fill-blank">b − a</span>）÷ 6／ 分散 ＝ それを<span class="fill-blank">2乗</span>（足し算できるのは<span class="fill-blank">分散</span>）<br>
+最早結合点時刻：合流点では流入経路の<span class="fill-blank">最大値</span>を採用／ 最遅結合点時刻：分岐点では<span class="fill-blank">最小値</span><br>
+クリティカルパス ＝ 最早＝<span class="fill-blank">最遅</span>となる結合点を結んだ経路。その長さ ＝ <span class="fill-blank">最短完了時間</span>／ トータルフロート ＝ LS(後) − ES(前) − <span class="fill-blank">作業時間</span><br>
+完了確率：z ＝（締切 − CP期待値）÷ <span class="fill-blank">√(CP上のσ²の合計)</span> を正規分布表で
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--green)">🍣 ライン編成 の式</div><div class="fill-body"><div class="fill-group">
+サイクルタイム CT ＝ <span class="fill-blank">稼働時間</span> ÷ <span class="fill-blank">必要生産量</span>（≧ ライン上で最も長い<span class="fill-blank">工程時間</span>）<br>
+必要工程数（最小）＝ <span class="fill-blank">総作業時間</span> ÷ CT（端数は<span class="fill-blank">切り上げ</span>）<br>
+ライン編成効率 ＝ 総作業時間 ÷（<span class="fill-blank">工程数</span> × CT）／ バランスロス率 ＝ 1 − <span class="fill-blank">編成効率</span>／ 編成効率は<span class="fill-blank">100%以下</span><br>
+1時間あたり生産量 ＝ <span class="fill-blank">3600 ÷ CT(秒)</span>／ タクトタイム ＝ 稼働時間 ÷ <span class="fill-blank">必要数（注文ペース）</span>
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--orange)">🍛 MRP/BOM・スケジューリング の式</div><div class="fill-body"><div class="fill-group">
+MRPが扱うのは<span class="fill-blank">従属</span>需要（製品そのものは<span class="fill-blank">独立</span>需要）<br>
+ある部品の総所要量 ＝ Σ（上位の所要量 × <span class="fill-blank">1個あたり員数</span>）を<span class="fill-blank">全経路</span>で合計／ 正味所要量 ＝ 総所要量 − <span class="fill-blank">手持在庫</span> − <span class="fill-blank">入庫(発注残)予定</span><br>
+ジョンソン法：最小値が工程1にあれば<span class="fill-blank">先頭</span>、工程2にあれば<span class="fill-blank">末尾</span>。目的は<span class="fill-blank">メイクスパン</span>最小化<br>
+平均待ち時間最小 ＝ <span class="fill-blank">SPT</span>（短い順）／ 最大納期遅れ最小 ＝ <span class="fill-blank">EDD</span>（納期早い順）
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--teal)">📈 流動数分析・⚖️ 工数余力 の式</div><div class="fill-body"><div class="fill-group">
+流動数曲線の2本：<span class="fill-blank">投入累積線</span>と<span class="fill-blank">産出累積線</span>。縦の差 ＝ <span class="fill-blank">仕掛品（在庫）量</span>、横の差 ＝ <span class="fill-blank">停滞時間</span>。前提は<span class="fill-blank">先入先出（FIFO）</span><br>
+負荷工数 ＝ <span class="fill-blank">標準時間</span> × 生産（指示）数量／ 能力工数 ＝ 作業者数 × 1日の稼働時間 × <span class="fill-blank">稼働日数</span> ×（稼働率）<br>
+余力 ＝ <span class="fill-blank">能力 − 負荷</span>／ 負荷率 ＝ <span class="fill-blank">負荷 ÷ 能力</span> ×100(%)（負荷と能力は同じ<span class="fill-blank">単位（工数）</span>にそろえる）
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div>
+</div>
+</div>
+
+<!-- ============ TAB 2: 基本（典型計算例） ============ -->
+<div class="tab-panel t-orange" id="tab2">
+<h2 class="section-title st-orange"><span class="st-icon">📚</span>過去問ベースの典型計算例（手順をなぞる）</h2>
+
+<h3 class="section-title st-blue" style="font-size:1rem;"><span class="st-icon">①</span>PERT：最短完了時間とクリティカルパス</h3>
+<div class="card card-blue">
+<div style="font-size:.86rem;color:#475569;margin-bottom:.4rem;">作業：A(3日)→C(4日)、A(3日)→B(2日)→D(5日)、C・D → E(2日)。開始＝0。</div>
+<div class="calc-steps">
+<div class="calc-step"><div class="cs-body">結合点②（A後）＝ 0 ＋ 3 ＝ <b>3</b></div></div>
+<div class="calc-step"><div class="cs-body">③（C後）＝ 3 ＋ 4 ＝ 7／（B後）＝ 3 ＋ 2 ＝ 5 → E手前で<b>合流は大きい方</b>を採るので max(7+…) を後で計算</div></div>
+<div class="calc-step"><div class="cs-body">④（D後）＝ 5 ＋ 5 ＝ 10。点E手前 ＝ max(C後7, D後10) ＝ 10、＋ E2 ＝ <b>12日</b></div></div>
+<div class="calc-step cs-orange"><div class="cs-body">∴ 最短完了 <span class="ans">12日</span>、クリティカルパス ＝ <span class="ans">A→B→D→E</span>（A→C→E は 3+4+2＝9日で<b>3日の余裕</b>）</div></div>
+</div>
+<div class="alert alert-trap">合流点は必ず「最大値」を採る。これを「最小」と取り違えるのが定番のミス。</div>
+</div>
+
+<h3 class="section-title st-blue" style="font-size:1rem;"><span class="st-icon">②</span>PERT 3点見積：期待値と完了確率</h3>
+<div class="card card-blue">
+<div style="font-size:.86rem;color:#475569;margin-bottom:.4rem;">ある作業：a=5, m=7, b=15。CP上の作業のσ²の合計＝4 とする。</div>
+<div class="calc-steps">
+<div class="calc-step"><div class="cs-body">期待値 te ＝ (5 ＋ 4×7 ＋ 15) ÷ 6 ＝ 48 ÷ 6 ＝ <span class="ans">8日</span>（単純平均 (5+7+15)/3 ＝ 9日 ← これがダミー選択肢）</div></div>
+<div class="calc-step"><div class="cs-body">σ ＝ (15 − 5) ÷ 6 ≒ <b>1.67日</b>、σ² ≒ 2.78</div></div>
+<div class="calc-step"><div class="cs-body">CP全体の標準偏差 ＝ √4 ＝ 2。締切が「CP期待値＋2日」なら z ＝ 2 ÷ 2 ＝ <b>1.0</b></div></div>
+<div class="calc-step cs-orange"><div class="cs-body">正規分布表で z＝1.0 → 約 <span class="ans">84%</span> の確率で締切に間に合う</div></div>
+</div>
+</div>
+
+<h3 class="section-title st-green" style="font-size:1rem;"><span class="st-icon">③</span>ライン編成：CT・工程数・編成効率</h3>
+<div class="card card-green">
+<div style="font-size:.86rem;color:#475569;margin-bottom:.4rem;">作業時間：a=20, b=30, c=10, d=25, e=15秒（合計100秒）。1日稼働7時間＝25,200秒、必要生産量700個。</div>
+<div class="calc-steps">
+<div class="calc-step cs-green"><div class="cs-body">CT ＝ 25,200 ÷ 700 ＝ <span class="ans">36秒</span>（各工程時間（最大30秒）より大きいのでOK）</div></div>
+<div class="calc-step cs-green"><div class="cs-body">必要工程数 ＝ 100 ÷ 36 ＝ 2.78 → <b>切り上げて</b> <span class="ans">3工程</span></div></div>
+<div class="calc-step cs-green"><div class="cs-body">編成効率 ＝ 100 ÷ (3 × 36) ＝ 100 ÷ 108 ≒ <span class="ans">92.6%</span>、バランスロス率 ≒ 7.4%</div></div>
+<div class="calc-step cs-orange"><div class="cs-body">1時間あたり生産量 ＝ 3600 ÷ CT ＝ 3600 ÷ 36 ＝ <span class="ans">100個/h</span></div></div>
+</div>
+</div>
+
+<h3 class="section-title st-orange" style="font-size:1rem;"><span class="st-icon">④</span>MRP／BOM：必要部品数と正味所要量</h3>
+<div class="card card-orange">
+<div class="diagram" style="margin:.5rem 0;"><div class="diagram-title">ストラクチャ型部品表（製品Xを10個作る）</div>
+<div class="flow-row"><div class="flow-box fb-orange">製品X<small>×10</small></div></div>
+<div class="flow-row"><span class="flow-arrow">┌─</span><div class="flow-box fb-blue">中間品P<small>X1個に2個</small></div><span class="flow-arrow">─┐</span><div class="flow-box fb-teal">部品Q<small>X1個に1個</small></div></div>
+<div class="flow-row"><div class="flow-box fb-teal">部品Q<small>P1個に3個</small></div><div class="flow-box fb-purple">部品R<small>P1個に1個</small></div></div>
+</div>
+<div class="calc-steps">
+<div class="calc-step cs-orange"><div class="cs-body">中間品P ＝ 10 × 2 ＝ <span class="ans">20個</span></div></div>
+<div class="calc-step cs-orange"><div class="cs-body">部品Q ＝（Xから直接）10×1 ＋（Pから）20×3 ＝ 10 ＋ 60 ＝ <span class="ans">70個</span> ← <b>両方の経路を合計</b></div></div>
+<div class="calc-step cs-orange"><div class="cs-body">部品R ＝ 20 × 1 ＝ <span class="ans">20個</span></div></div>
+<div class="calc-step cs-red"><div class="cs-body">部品Qの手持在庫15・発注残5 → 正味所要量 ＝ 70 − 15 − 5 ＝ <span class="ans">50個</span></div></div>
+</div>
+<div class="alert alert-trap">部品Qを「Pから60個だけ」にしない。X直結ぶんも足す。</div>
+</div>
+
+<h3 class="section-title st-purple" style="font-size:1rem;"><span class="st-icon">⑤</span>ジョンソン法：2工程メイクスパン最小化</h3>
+<div class="card card-purple">
+<div style="font-size:.86rem;color:#475569;margin-bottom:.4rem;">4ジョブ、(工程1, 工程2)＝ J1(5,4)、J2(2,6)、J3(8,3)、J4(4,7)。</div>
+<div class="calc-steps">
+<div class="calc-step" style="border-left-color:var(--purple-main)"><div class="cs-body" style=""><b style="color:var(--purple)">①</b> 全体の最小値はJ2の「工程1=2」→ <b>先頭</b>へ</div></div>
+<div class="calc-step" style="border-left-color:var(--purple-main)"><div class="cs-body"><b style="color:var(--purple)">②</b> 次の最小はJ3の「工程2=3」→ <b>末尾</b>へ</div></div>
+<div class="calc-step" style="border-left-color:var(--purple-main)"><div class="cs-body"><b style="color:var(--purple)">③</b> 残りはJ1(工程2=4)→末尾側へ、J4(工程1=4)→先頭側へ</div></div>
+<div class="calc-step cs-orange"><div class="cs-body">∴ 投入順序 ＝ <span class="ans">J2 → J4 → J1 → J3</span>（この順でガントを描けばメイクスパン最小）</div></div>
+</div>
+</div>
+
+<h3 class="section-title st-teal" style="font-size:1rem;"><span class="st-icon">⑥</span>流動数曲線の読み取り</h3>
+<div class="card card-teal">
+<div class="calc-steps">
+<div class="calc-step cs-teal"><div class="cs-body">時刻10で投入累計80・産出累計50 → そのときの<b>仕掛品 ＝ 80 − 50 ＝ <span class="ans">30個</span></b>（縦の差）</div></div>
+<div class="calc-step cs-teal"><div class="cs-body">「50個目に投入されたモノ」が投入線で時刻4、産出線で時刻10に出た → <b>停滞時間 ＝ 10 − 4 ＝ <span class="ans">6時間</span></b>（横の差、FIFO前提）</div></div>
+<div class="calc-step cs-teal"><div class="cs-body">傾き＝処理スピード。産出線が水平＝その間、出荷ゼロ（停止）</div></div>
+</div>
+</div>
+
+<h3 class="section-title st-red" style="font-size:1rem;"><span class="st-icon">⑦</span>工数・余力管理</h3>
+<div class="card card-red">
+<div class="calc-steps">
+<div class="calc-step cs-red"><div class="cs-body">負荷 ＝ 標準時間0.5h/個 × 指示700個 ＝ <span class="ans">350人時</span></div></div>
+<div class="calc-step cs-red"><div class="cs-body">能力 ＝ 8人 × 8h × 5日 × 稼働率0.9 ＝ <span class="ans">288人時</span></div></div>
+<div class="calc-step cs-red"><div class="cs-body">余力 ＝ 288 − 350 ＝ <span class="ans">−62人時（過負荷）</span>、負荷率 ＝ 350 ÷ 288 ≒ <span class="ans">122%</span></div></div>
+<div class="calc-step cs-orange"><div class="cs-body">→ 残業/応援で能力↑、一部を外注で負荷↓、来週の一部を翌週へ（山崩し）</div></div>
+</div>
+</div>
+
+<div class="keepit">
+<div class="keepit-title">🔑 基本のキープイット</div>
+<ul>
+<li>PERT 合流点＝<strong>最大値</strong>、CP＝余裕ゼロの経路、その長さ＝最短完了時間。</li>
+<li>CT＝稼働時間÷必要数、工程数は<strong>切り上げ</strong>、編成効率＝総作業時間÷(工程数×CT)。</li>
+<li>BOMは<strong>全経路合計</strong>してから在庫・入庫予定を引く＝正味所要量。</li>
+<li>ジョンソン法：工程1で最小→先頭、工程2で最小→末尾。</li>
+<li>流動数：縦＝仕掛、横＝停滞。負荷率＝負荷÷能力。</li>
+</ul>
+</div>
+
+<div class="qz-fill-wrap">
+<div class="qz-fill-title">✏️ このタブの空欄チェック（基本：計算をなぞる）</div>
+<div style="text-align:center;margin:.5rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab2fill')" style="background:#7c3aed;">🔍 全部表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab2fill')" style="background:#64748b;">🔄 リセット</button>
+</div>
+<div id="tab2fill">
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--blue)">①② PERT 計算例</div><div class="fill-body"><div class="fill-group">
+A(3)→C(4)、A(3)→B(2)→D(5)、C・D → E(2)。点Eの最早 ＝ max(3+4, 3+2+5) ＋ 2 ＝ <span class="fill-blank">12</span>日。CP ＝ <span class="fill-blank">A→B→D→E</span>、A→C→E（9日）の余裕 ＝ <span class="fill-blank">3</span>日。<br>
+3点見積 a=5, m=7, b=15 → te ＝ (5 ＋ 4×7 ＋ 15) ÷ 6 ＝ <span class="fill-blank">8</span>日（単純平均 <span class="fill-blank">9</span>日 がダミー）／ σ ＝ (15−5)/6 ≒ <span class="fill-blank">1.67</span>日。<br>
+CP上σ²の合計が4なら √4＝2。締切が「CP期待値＋2日」→ z ＝ 2÷2 ＝ <span class="fill-blank">1.0</span> → 正規分布表で約<span class="fill-blank">84</span>%。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--green)">③ ライン編成 計算例</div><div class="fill-body"><div class="fill-group">
+作業時間合計100秒、1日稼働25,200秒、必要700個 → CT ＝ 25,200 ÷ 700 ＝ <span class="fill-blank">36</span>秒。<br>
+必要工程数 ＝ 100 ÷ 36 ＝ 2.78 → <span class="fill-blank">3</span>工程（切り上げ）。編成効率 ＝ 100 ÷（3 × 36）≒ <span class="fill-blank">92.6%</span>、バランスロス率 ≒ <span class="fill-blank">7.4%</span>。<br>
+1時間あたり生産量 ＝ 3600 ÷ CT ＝ 3600 ÷ 36 ＝ <span class="fill-blank">100</span>個/h。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--orange)">④⑤ BOM・ジョンソン法 計算例</div><div class="fill-body"><div class="fill-group">
+製品X ＝ 中間品P 2個 ＋ 部品Q 1個。中間品P ＝ 部品Q 3個 ＋ 部品R 1個。Xを10個：P ＝ <span class="fill-blank">20</span>個、Q ＝ 10×1 ＋ 20×3 ＝ <span class="fill-blank">70</span>個、R ＝ <span class="fill-blank">20</span>個。Q在庫15・発注残5 → 正味所要量 ＝ <span class="fill-blank">50</span>個。<br>
+ジョンソン法 J1(5,4) J2(2,6) J3(8,3) J4(4,7)：最小はJ2の工程1=2 → <span class="fill-blank">先頭</span>、次はJ3の工程2=3 → <span class="fill-blank">末尾</span>。順序 ＝ <span class="fill-blank">J2 → J4 → J1 → J3</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--teal)">⑥⑦ 流動数・工数余力 計算例</div><div class="fill-body"><div class="fill-group">
+時刻10で投入累計80・産出累計50 → 仕掛品 ＝ <span class="fill-blank">30</span>個（縦の差）。「50個目」が投入で時刻4・産出で時刻10 → 停滞時間 ＝ <span class="fill-blank">6</span>時間（横の差）。<br>
+標準時間0.5h/個 × 700個 → 負荷 ＝ <span class="fill-blank">350</span>人時。8人×8h×5日×0.9 → 能力 ＝ <span class="fill-blank">288</span>人時。余力 ＝ <span class="fill-blank">−62</span>人時、負荷率 ＝ 350÷288 ≒ <span class="fill-blank">122%</span> → <span class="fill-blank">過負荷</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div>
+</div>
+</div>
+
+<!-- ============ TAB 3: 詳細（応用・ひっかけ） ============ -->
+<div class="tab-panel t-purple" id="tab3">
+<h2 class="section-title st-purple"><span class="st-icon">🔍</span>応用論点・ひっかけ・周辺知識</h2>
+
+<h3 class="section-title st-blue" style="font-size:1rem;"><span class="st-icon">①</span>CPM：費用最小でプロジェクトを短縮する</h3>
+<div class="card card-blue">
+各作業に「1日短縮の追加費用（クラッシュコスト/日）」がある。短縮の手順は：
+<div class="calc-steps" style="margin-top:.5rem;">
+<div class="calc-step"><div class="cs-body">今の<b>クリティカルパス上の作業</b>に注目する（CP以外は対象外）</div></div>
+<div class="calc-step"><div class="cs-body">その中で<b>短縮単価が最も安い作業</b>を選ぶ</div></div>
+<div class="calc-step"><div class="cs-body">短縮可能な限界まで縮める。並行経路が追いつくと<b>CPが別経路に移る（複数になる）</b>→ その場合は両方を同時に縮める</div></div>
+</div>
+<div class="alert alert-trap">CP以外の作業をいくら短縮しても全体は縮まない＝引っかけ。／「一番安い作業」を無条件に選ばない。<b>CP上で</b>一番安い作業。</div>
+</div>
+
+<h3 class="section-title st-green" style="font-size:1rem;"><span class="st-icon">②</span>ライン編成効率の「とりうる範囲」／ロットと段取り</h3>
+<div class="two-col">
+<div class="card card-green">
+<h4>編成効率 ＝ 総作業時間 ÷ (工程数 × CT)</h4>
+<ul style="padding-left:1.1rem;font-size:.86rem;">
+<li>分子（総作業時間）は固定。CTを大きくすると効率↓だが生産量も↓</li>
+<li>CTを「最大の工程時間ちょうど」にすると編成効率は最大</li>
+<li>工程数を増やすと（同じCTなら）効率は下がる</li>
+<li><b>編成効率は必ず100%以下</b>。「100%超」の選択肢は誤り</li>
+</ul>
+</div>
+<div class="card card-orange">
+<h4>ロットサイズと段取り（EOQの発想）</h4>
+<ul style="padding-left:1.1rem;font-size:.86rem;">
+<li>ロット大 → 段取り回数↓（段取り費↓）／仕掛・在庫↑（在庫費↑）</li>
+<li>最適ロットは「段取り費＋在庫費」の合計が最小の点（＝EOQと同じ）</li>
+<li>「1個流し（ロット1）」はJIT/平準化の理想 → だから<b>段取り短縮（シングル段取り）</b>が重要、という流れで出る</li>
+</ul>
+</div>
+</div>
+
+<h3 class="section-title st-teal" style="font-size:1rem;"><span class="st-icon">③</span>流動数分析の応用：ボトルネックの見つけ方／TOC</h3>
+<div class="card card-teal">
+<ul style="padding-left:1.1rem;font-size:.88rem;">
+<li><b>仕掛が異常に積み上がる工程の手前</b>＝そこがボトルネック（処理が追いつかず滞留）</li>
+<li>産出線の傾きが小さい（フラットに近い）工程＝処理能力が低い＝ボトルネック候補</li>
+</ul>
+<div class="diagram" style="margin:.6rem 0;"><div class="diagram-title">TOC（制約理論）：ドラム・バッファ・ロープ</div>
+<div class="flow-row">
+<div class="flow-box fb-gray">投入<small>ロープで絞る</small></div><span class="flow-arrow">→</span>
+<div class="flow-box fb-blue">前工程<small>バッファ<br>(在庫を置く)</small></div><span class="flow-arrow">→</span>
+<div class="flow-box fb-red">ボトルネック<small>ドラム<br>(全体のペース)</small></div><span class="flow-arrow">→</span>
+<div class="flow-box fb-green">後工程</div>
+</div>
+<div class="fv-note">ボトルネックのペース(ドラム)に合わせて投入を絞る(ロープ)＝プッシュしすぎない。手前にバッファ在庫を置いてボトルネックを止めない</div>
+</div>
+</div>
+
+<h3 class="section-title st-red" style="font-size:1rem;"><span class="st-icon">④</span>進捗・現品・余力管理（生産統制の3本柱）</h3>
+<div class="factor-grid">
+<div class="fg-item fg-b1"><div class="fg-num">進</div><div class="fg-title">進度（進捗）管理</div><div class="fg-body">計画 vs 実績の進み/遅れ。<br><b>製造三角図</b>・ガントチャート・流動数曲線・<b>差立て板</b>・<b>カムアップシステム</b></div></div>
+<div class="fg-item fg-b3"><div class="fg-num">現</div><div class="fg-title">現品管理</div><div class="fg-body">モノ（仕掛・在庫）の所在・数量・状態。<br>現品票・ロケーション管理・<b>RFID・バーコード</b>・トレーサビリティ</div></div>
+<div class="fg-item fg-b6"><div class="fg-num">余</div><div class="fg-title">余力（工数）管理</div><div class="fg-body">各工程の負荷と能力のバランス。<br><b>山積み表</b>・<b>山崩し</b>（平準化）・負荷率</div></div>
+</div>
+<div class="alert alert-trap">「差立て（さしだて）板」＝個別生産で各機械に次の仕事カードを差す＝<b>進度管理</b>（現品管理ではない）。／「製造三角図」＝累計の計画線と実績線を三角形で比較＝進度管理。</div>
+
+<h3 class="section-title st-purple" style="font-size:1rem;"><span class="st-icon">⑤</span>生産方式の分類（デカップリングポイントで整理）</h3>
+<div class="card card-purple">
+<table class="tbl-purple">
+<tr><th>方式</th><th>受注が入る位置（デカップリングポイント）</th><th>例</th></tr>
+<tr><td>MTS（見込生産 / Make to Stock）</td><td>完成品在庫から出荷。受注は最下流</td><td>日用品・標準家電</td></tr>
+<tr><td>ATO / オーダエントリー（Assemble to Order）</td><td>共通の中間品まで作っておき、受注後に組合せ・最終組立</td><td>自動車（オプション選択）、PC</td></tr>
+<tr><td>MTO（受注生産 / Make to Order）</td><td>受注後に部品調達〜製造</td><td>特注機械</td></tr>
+<tr><td>ETO（受注設計生産 / Engineer to Order）</td><td>受注後に設計から開始。受注が最上流</td><td>プラント・船舶・注文住宅</td></tr>
+</table>
+<div class="diagram" style="margin:.5rem 0;"><div class="diagram-title">デカップリングポイントの位置</div>
+<div class="flow-row">
+<div class="flow-box fb-purple">ETO<small>受注設計</small></div><span class="flow-arrow">←上流</span>
+<div class="flow-box fb-blue">MTO<small>受注生産</small></div><span class="flow-arrow">―</span>
+<div class="flow-box fb-teal">ATO/オーダエントリー<small>受注組立</small></div><span class="flow-arrow">下流→</span>
+<div class="flow-box fb-orange">MTS<small>見込生産</small></div>
+</div>
+<div class="fv-note">上流ほど：個別性高・リードタイム長・在庫リスク低／下流ほど：標準品・短納期だが見込み在庫リスク高。BTO（Build to Order）はATO寄りの呼び方</div>
+</div>
+</div>
+
+<h3 class="section-title st-orange" style="font-size:1rem;"><span class="st-icon">⑥</span>製番管理 vs 追番管理（個別 vs 量産）</h3>
+<div class="vs-box">
+<div class="vs-side vs-a">
+<h4>🔢 製番管理</h4>
+<ul>
+<li>対象：<b>個別受注生産</b></li>
+<li>受注ごとに製造番号を付け、その番号で材料〜完成品まで一貫管理</li>
+<li>受注対応が明確／共通部品もバラバラ管理で非効率になりがち</li>
+</ul>
+</div>
+<div class="vs-mid">VS</div>
+<div class="vs-side vs-b">
+<h4>📈 追番管理</h4>
+<ul>
+<li>対象：<b>繰返し・連続量産</b></li>
+<li>製品に通し番号（追番）を連番で付け、累計で進度管理。<b>遅れ＝計画追番 − 実績追番</b></li>
+<li>進度が一目／設計変更の管理が煩雑</li>
+</ul>
+</div>
+</div>
+<div class="alert alert-trap">「製番＝量産」「追番＝個別」と<b>逆にした選択肢</b>が定番。製番＝個別、追番＝量産。／ 追番がマイナス（先行）でも、仕掛在庫を増やすので必ずしも望ましくない。</div>
+
+<div class="keepit">
+<div class="keepit-title">🔑 詳細のキープイット</div>
+<ul>
+<li>CPM短縮は「<strong>CP上で・単価の安い</strong>作業から」。CPが移ったら追随。</li>
+<li>ライン編成効率は<strong>100%以下</strong>。CT＝最大工程時間で効率最大。</li>
+<li>流動数で仕掛が積もる手前＝ボトルネック。TOC＝ドラム・バッファ・ロープ。</li>
+<li>生産統制：進度（製造三角図・差立て板・カムアップ）／現品（RFID・現品票）／余力（山積み山崩し）。</li>
+<li>生産方式：MTS＜ATO/オーダエントリー＜MTO＜ETO の順で上流へ。製番＝個別、追番＝量産（逆に注意）。</li>
+</ul>
+</div>
+
+<div class="qz-fill-wrap">
+<div class="qz-fill-title">✏️ このタブの空欄チェック（詳細：応用・ひっかけ）</div>
+<div style="text-align:center;margin:.5rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab3fill')" style="background:#7c3aed;">🔍 全部表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab3fill')" style="background:#64748b;">🔄 リセット</button>
+</div>
+<div id="tab3fill">
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--blue)">①② CPM短縮・ライン編成・ロット</div><div class="fill-body"><div class="fill-group">
+プロジェクト短縮：まず<span class="fill-blank">クリティカルパス</span>上の作業のうち<span class="fill-blank">短縮単価が最も安い</span>ものから縮める。CP以外をいくら短縮しても全体は<span class="fill-blank">縮まない</span>。短縮の結果、並行経路が追いついて<span class="fill-blank">クリティカルパスが移る（複数になる）</span>ことがある。<br>
+ライン編成効率は必ず<span class="fill-blank">100%</span>以下。CTを<span class="fill-blank">最大の工程時間</span>ちょうどにすると編成効率が最大。CTを大きくすると効率は<span class="fill-blank">下がる</span>が生産量も下がる。<br>
+ロットを大きくする → 段取り回数は<span class="fill-blank">減る</span>が仕掛・在庫は<span class="fill-blank">増える</span>。小ロット化（1個流し）の鍵は<span class="fill-blank">段取り短縮（シングル段取り）</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--teal)">③④ 流動数・TOC・生産統制</div><div class="fill-body"><div class="fill-group">
+複数工程の流動数曲線で、仕掛が異常に積み上がる工程の<span class="fill-blank">手前</span>がボトルネック。産出線の傾きが<span class="fill-blank">小さい（フラット）</span>工程＝処理能力が低い。<br>
+TOC（制約理論）：<span class="fill-blank">ドラム</span>＝ボトルネックのペース、<span class="fill-blank">バッファ</span>＝その手前に置く在庫、<span class="fill-blank">ロープ</span>＝ボトルネックに合わせて投入を絞る。<br>
+生産統制3本柱：進度（進捗）管理＝<span class="fill-blank">製造三角図</span>・<span class="fill-blank">差立て板</span>・カムアップシステム／現品管理＝現品票・<span class="fill-blank">RFID（バーコード）</span>・トレーサビリティ／<span class="fill-blank">余力（工数）</span>管理＝山積み表・山崩し。「差立て板」は<span class="fill-blank">進度</span>管理の道具（現品管理ではない）。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--purple)">⑤⑥ 生産方式・製番/追番</div><div class="fill-body"><div class="fill-group">
+デカップリングポイント（上流←→下流）：<span class="fill-blank">ETO（受注設計）</span> ＞ MTO（受注生産）＞ <span class="fill-blank">ATO/オーダエントリー（受注組立）</span> ＞ <span class="fill-blank">MTS（見込生産）</span>。上流ほど個別性<span class="fill-blank">高</span>・リードタイム<span class="fill-blank">長</span>・在庫リスク<span class="fill-blank">低</span>。下流ほど短納期だが在庫リスク<span class="fill-blank">高</span>。<br>
+製番管理 ＝ <span class="fill-blank">個別受注</span>生産／ 追番管理 ＝ <span class="fill-blank">繰返し量産</span>（<span class="fill-blank">逆にした</span>選択肢が定番のワナ）。追番の遅れ ＝ <span class="fill-blank">計画追番 − 実績追番</span>。マイナスなら<span class="fill-blank">先行</span>だが仕掛<span class="fill-blank">在庫</span>を増やす。部品の累計所要 ＝ 製品追番 × <span class="fill-blank">員数（BOM）</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div>
+</div>
+</div>
+
+<!-- ============ TAB 4: 語呂 ============ -->
+<div class="tab-panel t-purple" id="tab4">
+<h2 class="section-title st-purple"><span class="st-icon">🎵</span>公式の語呂・覚え方</h2>
+<div class="mnemonic"><div class="big">よ・ろ・し・く（4m、÷6）</div><div class="desc">PERT期待値 ＝ (a ＋ <b>4</b>m ＋ b) ÷ <b>6</b>。「最頻 m に重み4、6で割る」</div></div>
+<div class="mnemonic"><div class="big">悲しい引き算、6で割る</div><div class="desc">PERT標準偏差 σ ＝ (b − a) ÷ 6。分散はその2乗。足せるのは分散の方</div></div>
+<div class="mnemonic"><div class="big">合流は「強い方」＝最大</div><div class="desc">PERTの最早結合点時刻は合流点で「大きい方」を採用。最遅は逆に分岐点で「小さい方」</div></div>
+<div class="mnemonic"><div class="big">サイクル＝時間 ÷ 数（工程数は切り上げ）</div><div class="desc">CT ＝ 稼働時間 ÷ 必要生産量。必要工程数 ＝ 総作業時間 ÷ CT を切り上げ</div></div>
+<div class="mnemonic"><div class="big">編成効率＝中身 ÷ ハコ</div><div class="desc">編成効率 ＝ 総作業時間（中身）÷（工程数 × CT）（用意したハコ）。1 − これ ＝ バランスロス</div></div>
+<div class="mnemonic"><div class="big">正味＝総から在庫を引く</div><div class="desc">正味所要量 ＝ 総所要量 − 手持在庫 − 入庫予定。BOMは全経路を足してから引く</div></div>
+<div class="mnemonic"><div class="big">ジョンソン：1なら前、2なら後</div><div class="desc">2工程ジョンソン法。最小値が工程1にあれば先頭、工程2にあれば末尾に配置</div></div>
+<div class="mnemonic"><div class="big">待ちはSPT、遅れはEDD</div><div class="desc">平均待ち時間最小＝最短作業時間順(SPT)。最大納期遅れ最小＝最早納期順(EDD)</div></div>
+<div class="mnemonic"><div class="big">流動数：タテは仕掛、ヨコは停滞</div><div class="desc">流動数曲線の縦の差＝仕掛品量、横の差＝停滞時間（リードタイム）</div></div>
+<div class="mnemonic"><div class="big">負荷は「時間×数」、能力は「人×時間×日」</div><div class="desc">負荷工数＝標準時間×数量。能力工数＝作業者数×稼働時間×稼働日数×稼働率。余力＝能力−負荷</div></div>
+<div class="mnemonic"><div class="big">セ・オ・タ・カ・ザ（製・追・かんばん/オーダ・座席）</div><div class="desc">製番（個別）／追番（量産）／かんばん（混流JIT）／オーダエントリー（多仕様量産）／生産座席予約（大型・納期重視）</div></div>
+<div class="mnemonic"><div class="big">デカップリング、上流ほど特注</div><div class="desc">MTS（下流）→ ATO/オーダエントリー → MTO → ETO（上流・受注設計）。上流ほど個別性高・在庫リスク低</div></div>
+<div class="mnemonic"><div class="big">生産統制は「シン・ゲン・ヨ」＝進度・現品・余力</div><div class="desc">進度（製造三角図・差立て板・カムアップ）／現品（RFID・現品票）／余力（山積み山崩し）</div></div>
+</div>
+
+<!-- ============ TAB 5: 語呂穴 ============ -->
+<div class="tab-panel t-purple" id="tab5">
+<h2 class="section-title st-purple"><span class="st-icon">🔤</span>語呂の穴埋め</h2>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab5')" style="background:#7c3aed;">🔍 全部表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab5')" style="background:#64748b;">🔄 リセット</button>
+</div>
+<div class="fill-card-quiet"><div class="fill-header" style="background:var(--purple)">🎵 語呂で公式を再現</div><div class="fill-body"><div class="fill-group">
+・PERT期待値「<span class="fill-blank">よろしく</span>」＝ (a ＋ <span class="fill-blank">4</span>m ＋ b) ÷ <span class="fill-blank">6</span><br>
+・PERT標準偏差「悲しい引き算、6で割る」＝ (<span class="fill-blank">b − a</span>) ÷ 6。足せるのは<span class="fill-blank">分散</span>の方<br>
+・PERT合流点は「<span class="fill-blank">大きい方（最大）</span>」を採用、最遅は「<span class="fill-blank">小さい方</span>」<br>
+・サイクルタイム ＝ <span class="fill-blank">稼働時間</span> ÷ 必要生産量。必要工程数は<span class="fill-blank">切り上げ</span><br>
+・編成効率 ＝ <span class="fill-blank">総作業時間</span> ÷（工程数 × <span class="fill-blank">CT</span>）。1 − これ ＝ <span class="fill-blank">バランスロス</span>率<br>
+・正味所要量 ＝ 総所要量 − <span class="fill-blank">手持在庫</span> − <span class="fill-blank">入庫(発注残)予定</span>。BOMは<span class="fill-blank">全経路</span>を合計してから引く<br>
+・ジョンソン法：最小値が工程1なら<span class="fill-blank">先頭</span>、工程2なら<span class="fill-blank">末尾</span><br>
+・平均待ち時間最小 ＝ <span class="fill-blank">SPT</span>（短い順）／最大納期遅れ最小 ＝ <span class="fill-blank">EDD</span>（納期早い順）<br>
+・流動数曲線：縦の差 ＝ <span class="fill-blank">仕掛品量</span>、横の差 ＝ <span class="fill-blank">停滞時間</span><br>
+・負荷工数 ＝ <span class="fill-blank">標準時間</span> × 数量／能力工数 ＝ 作業者数 × 稼働時間 × <span class="fill-blank">稼働日数</span> ×（稼働率）。余力 ＝ <span class="fill-blank">能力 − 負荷</span><br>
+・生産方式：製番＝<span class="fill-blank">個別受注</span>／追番＝<span class="fill-blank">量産</span>／かんばん＝<span class="fill-blank">混流(JIT)</span>／オーダエントリー＝<span class="fill-blank">多仕様量産</span>／生産座席予約＝<span class="fill-blank">大型・納期重視</span><br>
+・デカップリングポイント：<span class="fill-blank">MTS</span>（下流）→ ATO/オーダエントリー → MTO → <span class="fill-blank">ETO</span>（上流・受注設計）<br>
+・生産統制3本柱 ＝ <span class="fill-blank">進度（進捗）</span>管理／<span class="fill-blank">現品</span>管理／<span class="fill-blank">余力（工数）</span>管理
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div>
+
+<!-- ============ TAB 6: 穴① 初級 ============ -->
+<div class="tab-panel t-green" id="tab6">
+<h2 class="section-title st-green"><span class="st-icon">✏️</span>初級：用語と公式の確認</h2>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab6')" style="background:#7c3aed;">🔍 全部表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab6')" style="background:#64748b;">🔄 リセット</button>
+</div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">🗺️ PERT/CPM 用語</div><div class="fill-body"><div class="fill-group">
+<table class="tbl-blue">
+<tr><th>用語</th><th>意味</th></tr>
+<tr><td><span class="fill-blank">クリティカルパス</span></td><td>最も時間のかかる経路。長さ＝最短完了時間。余裕<span class="fill-blank">ゼロ</span></td></tr>
+<tr><td>最早結合点時刻</td><td>最も早く到達できる時刻。合流点では<span class="fill-blank">最大値</span>を採用</td></tr>
+<tr><td>最遅結合点時刻</td><td>納期を遅らせない範囲で最も遅く出てよい時刻。分岐では<span class="fill-blank">最小値</span></td></tr>
+<tr><td><span class="fill-blank">トータルフロート</span></td><td>全体の納期を遅らせずに吸収できる作業の余裕時間</td></tr>
+</table>
+3点見積：期待値 ＝（a ＋ <span class="fill-blank">4</span>m ＋ b）÷ <span class="fill-blank">6</span>、標準偏差 ＝（<span class="fill-blank">b − a</span>）÷ 6
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">🍣 ライン編成</div><div class="fill-body"><div class="fill-group">
+<table class="tbl-green">
+<tr><th>項目</th><th>式</th></tr>
+<tr><td>サイクルタイム CT</td><td><span class="fill-blank">稼働時間</span> ÷ <span class="fill-blank">必要生産量</span></td></tr>
+<tr><td>必要工程数（最小）</td><td><span class="fill-blank">総作業時間</span> ÷ CT（端数は<span class="fill-blank">切り上げ</span>）</td></tr>
+<tr><td>ライン編成効率</td><td>総作業時間 ÷（<span class="fill-blank">工程数</span> × <span class="fill-blank">CT</span>）</td></tr>
+<tr><td>バランスロス率</td><td>1 − <span class="fill-blank">編成効率</span></td></tr>
+<tr><td><span class="fill-blank">タクトタイム</span></td><td>稼働時間 ÷ 必要数（注文ペース）</td></tr>
+</table>
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">🍛 MRP/BOM・スケジューリング</div><div class="fill-body"><div class="fill-group">
+MRPが扱うのは<span class="fill-blank">従属</span>需要（製品そのものは<span class="fill-blank">独立</span>需要）。<br>
+ある部品の総所要量 ＝ 各経路の「上位所要量 × <span class="fill-blank">員数（1個あたり個数）</span>」を<span class="fill-blank">合計</span>。正味所要量 ＝ 総所要量 − <span class="fill-blank">手持在庫</span> − <span class="fill-blank">入庫予定</span>。<br>
+ジョンソン法：最小値が工程1なら<span class="fill-blank">先頭</span>、工程2なら<span class="fill-blank">末尾</span>に置く。目的は<span class="fill-blank">メイクスパン</span>最小化。<br>
+平均待ち時間最小 ＝ <span class="fill-blank">SPT</span>（短い順）、最大納期遅れ最小 ＝ <span class="fill-blank">EDD</span>（納期早い順）。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--teal)">📈 流動数分析・⚖️ 工数余力</div><div class="fill-body"><div class="fill-group">
+流動数曲線：2本の線は<span class="fill-blank">投入累積線</span>と<span class="fill-blank">産出累積線</span>。縦の差＝<span class="fill-blank">仕掛品量</span>、横の差＝<span class="fill-blank">停滞時間</span>。前提は<span class="fill-blank">先入先出（FIFO）</span>。<br>
+負荷工数 ＝ <span class="fill-blank">標準時間</span> × 生産数量。能力工数 ＝ 作業者数 × 稼働時間 × <span class="fill-blank">稼働日数</span> ×（稼働率）。<br>
+余力 ＝ <span class="fill-blank">能力 − 負荷</span>。負荷率 ＝ <span class="fill-blank">負荷 ÷ 能力</span>。100%超 ＝ <span class="fill-blank">過負荷</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">⚙️ 生産方式・生産統制</div><div class="fill-body"><div class="fill-group">
+<table class="tbl-purple">
+<tr><th>生産形態</th><th>管理方式</th></tr>
+<tr><td>個別受注生産</td><td><span class="fill-blank">製番管理</span></td></tr>
+<tr><td>繰返し量産</td><td><span class="fill-blank">追番管理</span></td></tr>
+<tr><td>多品種・混流</td><td><span class="fill-blank">かんばん方式（JIT）</span></td></tr>
+<tr><td>多仕様量産</td><td><span class="fill-blank">オーダエントリー方式</span></td></tr>
+<tr><td>大型・納期重視</td><td><span class="fill-blank">生産座席予約方式</span></td></tr>
+</table>
+デカップリングポイント（上流←→下流）：ETO ＞ MTO ＞ <span class="fill-blank">ATO（オーダエントリー）</span> ＞ <span class="fill-blank">MTS</span>。生産統制3本柱 ＝ <span class="fill-blank">進度（進捗）</span>管理／<span class="fill-blank">現品</span>管理／<span class="fill-blank">余力（工数）</span>管理。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div>
+
+<!-- ============ TAB 7: 穴② 中級 ============ -->
+<div class="tab-panel t-blue" id="tab7">
+<h2 class="section-title st-blue"><span class="st-icon">✏️</span>中級：計算と判定</h2>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab7')" style="background:#7c3aed;">🔍 全部表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab7')" style="background:#64748b;">🔄 リセット</button>
+</div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">🗺️ PERT 計算</div><div class="fill-body"><div class="fill-group">
+a=4, m=6, b=14 → 期待値 ＝ (4 ＋ 4×6 ＋ 14) ÷ 6 ＝ <span class="fill-blank">7</span>（単純平均なら<span class="fill-blank">8</span>＝ダミー）。σ ＝ (14−4)/6 ≒ <span class="fill-blank">1.67</span>。<br>
+経路 A(3)→C(4) と A(3)→B(2)→D(5) が点Eに合流（E自体は2）。点Eの最早 ＝ max(3+4, 3+2+5) ＋ 2 ＝ <span class="fill-blank">12</span>。CP ＝ <span class="fill-blank">A→B→D→E</span>、A→C→E の余裕 ＝ <span class="fill-blank">3</span>。<br>
+完了確率：z ＝（締切 − CP期待値）÷ <span class="fill-blank">√(CP上のσ²の合計)</span>。zが大きいほど確率は<span class="fill-blank">高い</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">🍣 ライン編成 計算</div><div class="fill-body"><div class="fill-group">
+作業時間合計100秒、1日稼働25,200秒、必要700個 → CT ＝ 25,200 ÷ 700 ＝ <span class="fill-blank">36</span>秒。必要工程数 ＝ 100 ÷ 36 ＝ 2.78 → <span class="fill-blank">3</span>工程（切り上げ）。<br>
+編成効率 ＝ 100 ÷（3 × 36）≒ <span class="fill-blank">92.6%</span>、バランスロス率 ≒ <span class="fill-blank">7.4%</span>。1時間あたり生産量 ＝ 3600 ÷ CT ＝ 3600 ÷ 36 ＝ <span class="fill-blank">100</span>個/h。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">🍛 BOM・ジョンソン法</div><div class="fill-body"><div class="fill-group">
+製品X ＝ 中間品P 2個 ＋ 部品Q 1個。中間品P ＝ 部品Q 3個 ＋ 部品R 1個。Xを10個：P ＝ <span class="fill-blank">20</span>個、Q ＝ 10×1 ＋ 20×3 ＝ <span class="fill-blank">70</span>個、R ＝ <span class="fill-blank">20</span>個。Q在庫15・発注残5 → 正味所要量 ＝ <span class="fill-blank">50</span>個。<br>
+ジョンソン法 J1(5,4) J2(2,6) J3(8,3) J4(4,7)：最小はJ2の工程1=2 →<span class="fill-blank">先頭</span>、次はJ3の工程2=3 →<span class="fill-blank">末尾</span>。順序 ＝ <span class="fill-blank">J2 → J4 → J1 → J3</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--teal)">📈 流動数・⚖️ 工数余力 判定</div><div class="fill-body"><div class="fill-group">
+時刻10で投入累計80・産出累計50 → そのときの仕掛品 ＝ <span class="fill-blank">30</span>個。「50個目」が投入で時刻4・産出で時刻10 → 停滞時間 ＝ <span class="fill-blank">6</span>時間。産出線が水平 ＝ その間の出荷は<span class="fill-blank">ゼロ（停止）</span>。<br>
+標準時間0.5h/個 × 700個 → 負荷 ＝ <span class="fill-blank">350</span>人時。8人×8h×5日×0.9 → 能力 ＝ <span class="fill-blank">288</span>人時。余力 ＝ <span class="fill-blank">−62</span>人時、負荷率 ≒ <span class="fill-blank">122%</span> → <span class="fill-blank">過負荷</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div>
+
+<!-- ============ TAB 8: 穴③ 上級 ============ -->
+<div class="tab-panel t-red" id="tab8">
+<h2 class="section-title st-red"><span class="st-icon">✏️</span>上級：応用とひっかけ</h2>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab8')" style="background:#7c3aed;">🔍 全部表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab8')" style="background:#64748b;">🔄 リセット</button>
+</div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--blue)">🗺️ CPM 費用最小短縮</div><div class="fill-body"><div class="fill-group">
+プロジェクトを短縮するには、まず<span class="fill-blank">クリティカルパス</span>上の作業のうち<span class="fill-blank">短縮単価が最も安い</span>ものから縮める。CP以外の作業をいくら短縮しても全体は<span class="fill-blank">縮まない</span>。短縮の結果、並行経路の長さが追いついて<span class="fill-blank">クリティカルパスが移る（複数になる）</span>ことがあり、その場合は両方を同時に縮める必要が出る。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--green)">🍣 ライン編成 / ロット</div><div class="fill-body"><div class="fill-group">
+ライン編成効率は必ず<span class="fill-blank">100%以下</span>（1工程に全作業を入れない限り手待ちが出る）。CTを<span class="fill-blank">最大の工程時間</span>ちょうどにすると編成効率が最大。CTを大きくすると効率は<span class="fill-blank">下がる</span>が生産量も下がる。<br>
+ロットを大きくする → 段取り回数は<span class="fill-blank">減る</span>が仕掛・在庫は<span class="fill-blank">増える</span>。だから<span class="fill-blank">段取り短縮（シングル段取り）</span>が小ロット化（1個流し）の鍵。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--teal)">📈 流動数・TOC・生産統制</div><div class="fill-body"><div class="fill-group">
+複数工程の流動数曲線で、仕掛が異常に積み上がる工程の<span class="fill-blank">手前</span>がボトルネック。産出線の傾きが<span class="fill-blank">小さい（フラット）</span>工程＝能力が低い。<br>
+TOC（制約理論）：<span class="fill-blank">ドラム</span>＝ボトルネックのペース、<span class="fill-blank">バッファ</span>＝その手前に置く在庫、<span class="fill-blank">ロープ</span>＝ボトルネックに合わせて投入を絞る。<br>
+生産統制：<span class="fill-blank">差立て板</span>＝個別生産で各機械に次の仕事カードを差す（進度管理）。<span class="fill-blank">製造三角図</span>＝累計の計画線と実績線を比較（進度管理）。<span class="fill-blank">カムアップ</span>システム＝着手予定日順に伝票を整理しておく。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">⚙️ 生産方式・現品/追番のひっかけ</div><div class="fill-body"><div class="fill-group">
+製番管理＝<span class="fill-blank">個別受注</span>生産、追番管理＝<span class="fill-blank">繰返し量産</span>（逆にした選択肢が定番のワナ）。追番の「遅れ」＝ <span class="fill-blank">計画追番 − 実績追番</span>。プラスなら遅れ、マイナスなら<span class="fill-blank">先行</span>（ただし先行は仕掛<span class="fill-blank">在庫</span>を増やすので必ずしも望ましくない）。部品の累計所要 ＝ 製品追番 × <span class="fill-blank">員数（BOM）</span>。<br>
+デカップリングポイントが上流（ETO側）ほど個別性が<span class="fill-blank">高く</span>リードタイムは<span class="fill-blank">長い</span>が見込み在庫リスクは<span class="fill-blank">低い</span>。下流（MTS側）ほど短納期だが在庫リスクが<span class="fill-blank">高い</span>。
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div>
+
+<!-- ============ TAB 9: 事例 ============ -->
+<div class="tab-panel t-green" id="tab9">
+<h2 class="section-title st-green"><span class="st-icon">📋</span>中小製造業のお悩み相談（計算で答える）</h2>
+
+<div class="card card-blue">
+<h4>🏭 事例1：A社「新製品の量産立ち上げ、何人ラインを組めばいい？」</h4>
+工程の作業時間が a=22, b=28, c=12, d=18, e=20秒（合計100秒）。1日7時間稼働で日産600個が目標。
+<div class="calc-steps" style="margin-top:.4rem;">
+<div class="calc-step cs-green"><div class="cs-body">CT ＝ 25,200 ÷ 600 ＝ <span class="ans">42秒</span></div></div>
+<div class="calc-step cs-green"><div class="cs-body">必要工程数 ＝ 100 ÷ 42 ＝ 2.38 → <span class="ans">3工程（3人）</span>。編成効率 ＝ 100 ÷ (3×42) ≒ <span class="ans">79%</span></div></div>
+</div>
+<div class="alert alert-exam">効率を上げたいなら、作業の組み替えで各ステーションを42秒に近づける（バランシング）か、需要が増えてCTを28秒（最長工程）まで詰めれば4工程で編成効率は約89%に。</div>
+</div>
+
+<div class="card card-blue">
+<h4>🏭 事例2：B社「特注機械の納期がいつも読めず、客に怒られる」</h4>
+作業ネットワーク：設計5日→部品調達8日→加工6日／設計5日→治具製作4日→加工6日／加工→組立3日→検査2日。
+<div class="calc-steps" style="margin-top:.4rem;">
+<div class="calc-step"><div class="cs-body">経路①「設計→調達→加工→組立→検査」＝ 5+8+6+3+2 ＝ <b>24日</b></div></div>
+<div class="calc-step"><div class="cs-body">経路②「設計→治具→加工→組立→検査」＝ 5+4+6+3+2 ＝ 20日（4日の余裕）</div></div>
+<div class="calc-step cs-orange"><div class="cs-body">∴ クリティカルパス ＝ <span class="ans">設計→部品調達→加工→組立→検査＝24日</span>。短縮したいなら<b>部品調達</b>を縮める。治具を急いでも全体は縮まない</div></div>
+</div>
+<div class="alert alert-exam">ETO（受注設計生産）だから「設計」が最上流。納期回答は最低でもCPの長さ24日＋安全余裕。</div>
+</div>
+
+<div class="card card-orange">
+<h4>🏭 事例3：C社「部品の発注量がいつもどんぶり勘定。欠品も過剰在庫も出る」</h4>
+製品Y ＝ ユニットP 2個。ユニットP ＝ ボルトB 4個。来月Yを300個出荷予定、Y在庫50個、P在庫100個、B在庫400個・発注残200個。
+<div class="calc-steps" style="margin-top:.4rem;">
+<div class="calc-step cs-orange"><div class="cs-body">Yの正味所要 ＝ 300 − 50 ＝ <b>250個</b></div></div>
+<div class="calc-step cs-orange"><div class="cs-body">Pの総所要 ＝ 250×2 ＝ 500、正味 ＝ 500 − 100 ＝ <b>400個</b></div></div>
+<div class="calc-step cs-red"><div class="cs-body">Bの総所要 ＝ 400×4 ＝ 1,600、正味 ＝ 1,600 − 400 − 200 ＝ <span class="ans">1,000個</span></div></div>
+</div>
+<div class="alert alert-trap">在庫・発注残を引かずに「総所要量1,600個」と答えるのが典型ミス。</div>
+</div>
+
+<div class="card card-red">
+<h4>🏭 事例4：D社「特定の週だけ残業地獄、ほかの週はヒマ」</h4>
+来週の負荷420人時、能力 ＝ 10人×8h×5日×稼働率0.9 ＝ 360人時 → 余力 −60人時（過負荷）、負荷率 約117%。再来週は負荷280人時で能力360人時（余力80人時）。
+<div class="calc-steps" style="margin-top:.4rem;">
+<div class="calc-step cs-red"><div class="cs-body">能力を上げる：残業・応援</div></div>
+<div class="calc-step cs-red"><div class="cs-body">負荷を下げる：一部を外注、客と納期再交渉</div></div>
+<div class="calc-step cs-green"><div class="cs-body">期間で均す：来週の60人時ぶんを再来週へ＝<span class="ans">山崩し（平準化）</span>。まず山積み表で見える化</div></div>
+</div>
+</div>
+
+<div class="card card-purple">
+<h4>🏭 事例5：E社「客の細かい仕様要望に振り回されてリードタイムが伸びる」</h4>
+→ 共通の中間品（半製品）まではまとめて作っておき、受注を受けてから最終組立だけ行う＝<b>オーダエントリー方式（ATO）</b>。デカップリングポイントを「中間品在庫」に置くことで、個別対応しつつ短納期を実現。全部見込み（MTS）にすると陳腐化リスク、全部受注設計（ETO）にすると納期が伸びる——その中間。
+</div>
+</div>
+
+<!-- ============ TAB 10: クイズ ============ -->
+<div class="tab-panel t-orange" id="tab10">
+<h2 class="section-title st-orange"><span class="st-icon">🎯</span>選択クイズ（過去問風 A〜D）</h2>
+
+<div class="quiz-card"><div class="quiz-q"><span class="quiz-num">1</span>PERT 3点見積で a=6, m=9, b=18 のとき、その作業の期待所要時間は？</div>
+<span class="quiz-opt" onclick="qa(this,false)">A. 9</span>
+<span class="quiz-opt" onclick="qa(this,true)">B. 10</span>
+<span class="quiz-opt" onclick="qa(this,false)">C. 11</span>
+<span class="quiz-opt" onclick="qa(this,false)">D. 12</span>
+<div class="quiz-exp">te ＝ (a+4m+b)/6 ＝ (6+4×9+18)/6 ＝ 60/6 ＝ <strong>10</strong>。正解B。単純平均(6+9+18)/3＝11（選択肢C）がダミー。「÷3」と覚えていると引っかかる。</div></div>
+
+<div class="quiz-card"><div class="quiz-q"><span class="quiz-num">2</span>あるラインの作業時間合計が120秒、1日の稼働時間が7時間、必要生産量が840個。サイクルタイムと最小工程数は？</div>
+<span class="quiz-opt" onclick="qa(this,false)">A. CT=25秒、3工程</span>
+<span class="quiz-opt" onclick="qa(this,true)">B. CT=30秒、4工程</span>
+<span class="quiz-opt" onclick="qa(this,false)">C. CT=30秒、3工程</span>
+<span class="quiz-opt" onclick="qa(this,false)">D. CT=36秒、4工程</span>
+<div class="quiz-exp">CT ＝ 25,200秒 ÷ 840 ＝ <strong>30秒</strong>。最小工程数 ＝ 120 ÷ 30 ＝ 4.0 → <strong>4工程</strong>（編成効率 ＝ 120 ÷ (4×30) ＝ 100%）。正解B。</div></div>
+
+<div class="quiz-card"><div class="quiz-q"><span class="quiz-num">3</span>ライン編成効率について正しいものは？</div>
+<span class="quiz-opt" onclick="qa(this,false)">A. 工程数を増やすほど（同じCTなら）編成効率は上がる</span>
+<span class="quiz-opt" onclick="qa(this,false)">B. 編成効率は100%を超えることがある</span>
+<span class="quiz-opt" onclick="qa(this,true)">C. 編成効率＝総作業時間÷(工程数×CT)で、100%以下になる</span>
+<span class="quiz-opt" onclick="qa(this,false)">D. バランスロス率＝編成効率と等しい</span>
+<div class="quiz-exp">C。工程数を増やすと（分母が増えて）効率は下がる。100%超はあり得ない。バランスロス率 ＝ 1 − 編成効率。</div></div>
+
+<div class="quiz-card"><div class="quiz-q"><span class="quiz-num">4</span>製品Zは部品Aを2個・部品Bを1個使い、部品Aは部品Cを3個使う。製品Zを20個作るとき必要な部品Cの総数は？（在庫は無視）</div>
+<span class="quiz-opt" onclick="qa(this,false)">A. 60個</span>
+<span class="quiz-opt" onclick="qa(this,true)">B. 120個</span>
+<span class="quiz-opt" onclick="qa(this,false)">C. 20個</span>
+<span class="quiz-opt" onclick="qa(this,false)">D. 100個</span>
+<div class="quiz-exp">部品A ＝ 20×2 ＝ 40個。部品C ＝ 40×3 ＝ <strong>120個</strong>（CはZに直結しないのでAだけ経由）。正解B。</div></div>
+
+<div class="quiz-card"><div class="quiz-q"><span class="quiz-num">5</span>2工程フローショップ（全ジョブが工程1→工程2の順）でメイクスパンを最小化したい。J1(工程1=3,工程2=6) J2(工程1=7,工程2=2) J3(工程1=5,工程2=5)。最適な投入順序は？</div>
+<span class="quiz-opt" onclick="qa(this,true)">A. J1 → J3 → J2</span>
+<span class="quiz-opt" onclick="qa(this,false)">B. J2 → J3 → J1</span>
+<span class="quiz-opt" onclick="qa(this,false)">C. J3 → J1 → J2</span>
+<span class="quiz-opt" onclick="qa(this,false)">D. J1 → J2 → J3</span>
+<div class="quiz-exp">ジョンソン法：全体の最小値はJ2の工程2=2 → <strong>末尾</strong>。次の最小はJ1の工程1=3 → <strong>先頭</strong>。残りJ3は中央。→ <strong>J1 → J3 → J2</strong>。正解A。</div></div>
+
+<div class="quiz-card"><div class="quiz-q"><span class="quiz-num">6</span>流動数曲線（流動数グラフ）の読み方として正しいものは？</div>
+<span class="quiz-opt" onclick="qa(this,false)">A. 投入累積線と産出累積線の縦の差＝停滞時間</span>
+<span class="quiz-opt" onclick="qa(this,true)">B. 縦の差＝仕掛品量、横の差＝停滞時間（FIFO前提）</span>
+<span class="quiz-opt" onclick="qa(this,false)">C. 産出累積線が投入累積線を上回ることがある</span>
+<span class="quiz-opt" onclick="qa(this,false)">D. 線の傾きは在庫量を表す</span>
+<div class="quiz-exp">B。縦＝量（仕掛品）、横＝時間（停滞・リードタイム）。産出が投入を超えることはない。傾き＝処理スピード。</div></div>
+
+<div class="quiz-card"><div class="quiz-q"><span class="quiz-num">7</span>ある工程：標準時間0.4h/個、来週の生産指示900個。作業者6人、1日8時間、稼働日5日、稼働率0.9。負荷率はおよそ？</div>
+<span class="quiz-opt" onclick="qa(this,false)">A. 約80%（余力あり）</span>
+<span class="quiz-opt" onclick="qa(this,true)">B. 約167%（過負荷）</span>
+<span class="quiz-opt" onclick="qa(this,false)">C. 約100%（ちょうど）</span>
+<span class="quiz-opt" onclick="qa(this,false)">D. 約120%（やや過負荷）</span>
+<div class="quiz-exp">負荷 ＝ 0.4×900 ＝ 360人時。能力 ＝ 6×8×5×0.9 ＝ 216人時。負荷率 ＝ 360÷216 ≒ <strong>1.67＝167%</strong>。過負荷。正解B。</div></div>
+
+<div class="quiz-card"><div class="quiz-q"><span class="quiz-num">8</span>生産方式と管理方式の対応で誤っているものは？</div>
+<span class="quiz-opt" onclick="qa(this,false)">A. 個別受注生産 ─ 製番管理</span>
+<span class="quiz-opt" onclick="qa(this,true)">B. 個別受注生産 ─ 追番管理</span>
+<span class="quiz-opt" onclick="qa(this,false)">C. 繰返し量産 ─ 追番管理</span>
+<span class="quiz-opt" onclick="qa(this,false)">D. 自動車のオプション選択生産 ─ オーダエントリー方式</span>
+<div class="quiz-exp">B が誤り。追番管理は繰返し量産向け。個別受注は製番管理。製番と追番を入れ替えるのが定番のひっかけ。</div></div>
+</div>
+
+<!-- ============ TAB 11: 実例 ============ -->
+<div class="tab-panel t-red" id="tab11">
+<h2 class="section-title st-red"><span class="st-icon">🏭</span>実在の事例で記憶に定着</h2>
+<div class="icon-deck">
+<div class="icon-card ic-blue"><div class="ic-head"><span class="ic-emoji">🚀</span><span class="ic-title">NASA アポロ計画と PERT</span></div><div class="ic-body">PERTは1950年代、米海軍ポラリス潜水艦ミサイル開発で生まれ、アポロ計画でも使用。何千もの作業の依存関係から「全体を遅らせる経路（クリティカルパス）」を割り出す。試験では数個の作業のネットワーク図で問われるが、発想は同じ＝<b>一番長い経路が全体の所要時間</b>。</div></div>
+<div class="icon-card ic-green"><div class="ic-head"><span class="ic-emoji">🚗</span><span class="ic-title">トヨタ生産方式 ─ かんばん（プル型）</span></div><div class="ic-body">後工程が使った分だけ前工程に「かんばん」で取りに行く＝必要なものを必要なときに（JIT）。流動数で言えば<b>仕掛品（縦の差）を極小にする</b>運用。前提として平準化（山崩し）し、段取り時間を短縮（シングル段取り）して小ロット化。MRP（プッシュ型・計画起点）と対の考え方。</div></div>
+<div class="icon-card ic-orange"><div class="ic-head"><span class="ic-emoji">🏎️</span><span class="ic-title">自動車のオーダエントリー方式（ATO/BTO）</span></div><div class="ic-body">ボディやエンジンなど共通部分は見込みで作っておき、グレード・色・オプションは受注を受けてから組み付ける。デカップリングポイントを「中間品在庫」に置くことで、無数の仕様バリエーションに対応しつつ納期を短く保つ。PCのBTOも同じ仕組み。</div></div>
+<div class="icon-card ic-purple"><div class="ic-head"><span class="ic-emoji">🏗️</span><span class="ic-title">建設・造船 ─ 山積み山崩しと製造三角図</span></div><div class="ic-body">工期の決まった大型工事では、職種ごと・週ごとの工数を「山積み表」で見える化し、ピークを前後にならす「山崩し」で人員のムダ・残業を抑える。進捗は累計の計画と実績を比べる「製造三角図」やネットワーク工程表（PERT/CPM）で管理。</div></div>
+<div class="icon-card ic-teal"><div class="ic-head"><span class="ic-emoji">📦</span><span class="ic-title">RFID／バーコードによる現品管理</span></div><div class="ic-body">仕掛品・部品にICタグやバーコードを付け、どこに何個あるか・どのロットがどの製品に使われたかを追跡。リコール時の原因切り分けや、流動数データの自動取得（投入・産出の記録）に役立つ。「現品管理」の現代的な実装例。</div></div>
+</div>
+</div>
+
+<!-- ============ TAB 12: 図解 ============ -->
+<div class="tab-panel t-blue" id="tab12">
+<h2 class="section-title st-blue"><span class="st-icon">🗺</span>流れと整理表</h2>
+
+<h3 class="section-title st-blue" style="font-size:1rem;"><span class="st-icon">🔎</span>計算問題の「見分け方」フロー</h3>
+<div class="card">
+<div class="flow-row"><span class="flow-box fb-gray" style="min-width:200px;">作業の前後関係・ネットワーク図</span><span class="flow-arrow">→</span><span class="flow-box fb-blue">PERT/CPM<small>最短完了・CP・余裕・短縮</small></span></div>
+<div class="flow-row"><span class="flow-box fb-gray" style="min-width:200px;">流れ作業・工程に分ける・「何人/何個」</span><span class="flow-arrow">→</span><span class="flow-box fb-green">ライン編成<small>CT・工程数・編成効率</small></span></div>
+<div class="flow-row"><span class="flow-box fb-gray" style="min-width:200px;">「製品○個に部品いくつ」「部品表」</span><span class="flow-arrow">→</span><span class="flow-box fb-orange">MRP/BOM<small>総所要→正味所要</small></span></div>
+<div class="flow-row"><span class="flow-box fb-gray" style="min-width:200px;">「投入する順番」「2つの機械」</span><span class="flow-arrow">→</span><span class="flow-box fb-purple">スケジューリング<small>ジョンソン/SPT/EDD</small></span></div>
+<div class="flow-row"><span class="flow-box fb-gray" style="min-width:200px;">「累積のグラフ」「2本の線」</span><span class="flow-arrow">→</span><span class="flow-box fb-teal">流動数分析<small>縦=仕掛・横=停滞</small></span></div>
+<div class="flow-row"><span class="flow-box fb-gray" style="min-width:200px;">「仕事量と人手」「残業・外注」</span><span class="flow-arrow">→</span><span class="flow-box fb-red">工数・余力管理<small>負荷率・山崩し</small></span></div>
+</div>
+
+<h3 class="section-title st-blue" style="font-size:1rem;"><span class="st-icon">🗺️</span>PERT 計算の手順</h3>
+<div class="diagram"><div class="diagram-title">前向きに足す → 後向きに引く → 一致する経路がCP</div>
+<div class="flow-row">
+<div class="flow-box fb-blue">①開始から前向きに足す<small>合流＝最大</small></div><span class="flow-arrow">→</span>
+<div class="flow-box fb-blue">②最短完了時間が出る</div><span class="flow-arrow">→</span>
+<div class="flow-box fb-blue">③終点から後向きに引く<small>分岐＝最小</small></div><span class="flow-arrow">→</span>
+<div class="flow-box fb-orange">④最早＝最遅の経路<small>＝クリティカルパス</small></div>
+</div>
+<div class="fv-note">余裕（トータルフロート）＝ LS(後) − ES(前) − 作業時間。短縮は「CP上で安い作業から」</div>
+</div>
+
+<h3 class="section-title st-orange" style="font-size:1rem;"><span class="st-icon">📐</span>主要公式の早見表</h3>
+<table class="tbl-orange">
+<tr><th>テーマ</th><th>公式</th></tr>
+<tr><td>PERT 期待値</td><td>(a + 4m + b) ÷ 6</td></tr>
+<tr><td>PERT 標準偏差/分散</td><td>σ=(b−a)÷6、σ²=その2乗（足せるのは分散）</td></tr>
+<tr><td>PERT 完了確率</td><td>z=(締切 − CP期待値)÷√(CP上σ²の和) を正規分布表で</td></tr>
+<tr><td>サイクルタイム</td><td>稼働時間 ÷ 必要生産量（≧最長工程時間）</td></tr>
+<tr><td>必要工程数</td><td>総作業時間 ÷ CT（切り上げ）</td></tr>
+<tr><td>ライン編成効率</td><td>総作業時間 ÷ (工程数 × CT)　／ バランスロス率＝1−編成効率</td></tr>
+<tr><td>1時間あたり生産量</td><td>3600 ÷ CT（秒）</td></tr>
+<tr><td>BOM 総所要量</td><td>Σ（上位所要量 × 員数）　全経路合計</td></tr>
+<tr><td>正味所要量</td><td>総所要量 − 手持在庫 − 入庫(発注残)予定</td></tr>
+<tr><td>負荷工数</td><td>標準時間 × 生産数量</td></tr>
+<tr><td>能力工数</td><td>作業者数 × 稼働時間 × 稼働日数 ×（稼働率）</td></tr>
+<tr><td>余力 / 負荷率</td><td>能力 − 負荷　／　負荷 ÷ 能力</td></tr>
+</table>
+
+<h3 class="section-title st-purple" style="font-size:1rem;"><span class="st-icon">⚙️</span>生産方式の位置（デカップリングポイント）</h3>
+<div class="diagram"><div class="diagram-title">受注が入る位置が上流ほど「特注」、下流ほど「標準品・短納期」</div>
+<div class="flow-row">
+<div class="flow-box fb-purple">ETO<small>受注設計</small></div><span class="flow-arrow">←上流</span>
+<div class="flow-box fb-blue">MTO<small>受注生産</small></div><span class="flow-arrow">―</span>
+<div class="flow-box fb-teal">ATO/オーダエントリー<small>受注組立</small></div><span class="flow-arrow">下流→</span>
+<div class="flow-box fb-orange">MTS<small>見込生産</small></div>
+</div>
+<div class="fv-note">上流ほど：個別性高・リードタイム長・在庫リスク低／下流ほど：標準品・短納期・見込み在庫リスク高</div>
+</div>
+
+<h3 class="section-title st-red" style="font-size:1rem;"><span class="st-icon">🧭</span>生産統制の3本柱</h3>
+<div class="factor-grid">
+<div class="fg-item fg-b1"><div class="fg-num">進</div><div class="fg-title">進度（進捗）管理</div><div class="fg-body">計画 vs 実績の進み遅れ。製造三角図／ガントチャート／流動数曲線／差立て板／カムアップシステム</div></div>
+<div class="fg-item fg-b3"><div class="fg-num">現</div><div class="fg-title">現品管理</div><div class="fg-body">モノの所在・数量・状態。現品票／ロケーション管理／RFID・バーコード／トレーサビリティ</div></div>
+<div class="fg-item fg-b6"><div class="fg-num">余</div><div class="fg-title">余力（工数）管理</div><div class="fg-body">各工程の負荷と能力。山積み表／山崩し（平準化）／負荷率</div></div>
+</div>
+</div>
+
+<!-- ============ TAB 13: 穴埋め総まとめ ============ -->
+<div class="tab-panel t-teal" id="tab13">
+<h2 class="section-title st-teal"><span class="st-icon">✏️</span>穴埋め総まとめ（初級〜上級を集約 ＋ 早見表ミラー）</h2>
+<p class="lead">初級・中級・上級タブの穴埋めをここに集約（◯ ボタンの評定は難度別タブとは別管理）。下に公式早見表のミラーも追加。</p>
+<div style="text-align:center;margin:.8rem 0;">
+<button class="fill-reveal-btn" onclick="revealAllFillIn('tab13')" style="background:#7c3aed;margin-right:.5rem;">🔍 このタブの穴埋めを全て表示</button>
+<button class="fill-reveal-btn" onclick="resetAllFillIn('tab13')" style="background:#64748b;">🔄 リセット</button>
+</div>
+
+<div id="tab13_content"></div>
+
+<h3 class="section-title st-teal" style="font-size:1rem;"><span class="st-icon">📐</span>公式早見表ミラー</h3>
+<div class="fill-card"><div class="fill-header" style="background:var(--orange)">📐 主要公式（穴埋め）</div><div class="fill-body"><div class="fill-group">
+PERT 期待値 ＝（a ＋ <span class="fill-blank">4</span>m ＋ b）÷ <span class="fill-blank">6</span>／ σ ＝（<span class="fill-blank">b − a</span>）÷ 6（足せるのは<span class="fill-blank">分散</span>）<br>
+PERT 完了確率：z ＝（締切 − <span class="fill-blank">CP期待値</span>）÷ <span class="fill-blank">√(CP上σ²の和)</span> を正規分布表で<br>
+サイクルタイム ＝ <span class="fill-blank">稼働時間</span> ÷ <span class="fill-blank">必要生産量</span>（≧最長工程時間）／ 必要工程数 ＝ 総作業時間 ÷ CT（<span class="fill-blank">切り上げ</span>）<br>
+ライン編成効率 ＝ <span class="fill-blank">総作業時間</span> ÷（<span class="fill-blank">工程数 × CT</span>）／ バランスロス率 ＝ 1 − <span class="fill-blank">編成効率</span>／ 1時間あたり生産量 ＝ <span class="fill-blank">3600 ÷ CT(秒)</span><br>
+BOM 総所要量 ＝ Σ（上位所要量 × <span class="fill-blank">員数</span>）を<span class="fill-blank">全経路合計</span>／ 正味所要量 ＝ 総所要量 − <span class="fill-blank">手持在庫</span> − <span class="fill-blank">入庫予定</span><br>
+負荷工数 ＝ <span class="fill-blank">標準時間</span> × 数量／ 能力工数 ＝ 作業者数 × 稼働時間 × <span class="fill-blank">稼働日数</span> ×（稼働率）／ 余力 ＝ <span class="fill-blank">能力 − 負荷</span>、負荷率 ＝ <span class="fill-blank">負荷 ÷ 能力</span><br>
+ジョンソン法：最小値が工程1なら<span class="fill-blank">先頭</span>、工程2なら<span class="fill-blank">末尾</span>。SPT＝<span class="fill-blank">待ち時間</span>最小、EDD＝<span class="fill-blank">最大納期遅れ</span>最小／ 流動数曲線：縦の差 ＝ <span class="fill-blank">仕掛品量</span>、横の差 ＝ <span class="fill-blank">停滞時間</span>（FIFO前提）
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+
+<div class="fill-card"><div class="fill-header" style="background:var(--purple)">⚙️ 生産方式・生産統制（穴埋め）</div><div class="fill-body"><div class="fill-group">
+製番管理＝<span class="fill-blank">個別受注</span>生産／追番管理＝<span class="fill-blank">繰返し量産</span>／かんばん＝<span class="fill-blank">混流(JIT)</span>／オーダエントリー＝<span class="fill-blank">多仕様量産</span>／生産座席予約＝<span class="fill-blank">大型・納期重視</span>（製番と追番を逆にした選択肢に注意）<br>
+デカップリングポイント（上流→下流）：<span class="fill-blank">ETO</span> ＞ MTO ＞ <span class="fill-blank">ATO/オーダエントリー</span> ＞ <span class="fill-blank">MTS</span>。上流ほど個別性<span class="fill-blank">高</span>・在庫リスク<span class="fill-blank">低</span><br>
+生産統制3本柱：<span class="fill-blank">進度（進捗）</span>管理（製造三角図・差立て板・カムアップ）／<span class="fill-blank">現品</span>管理（現品票・RFID・トレーサビリティ）／<span class="fill-blank">余力（工数）</span>管理（山積み・山崩し）<br>
+CPM短縮：<span class="fill-blank">クリティカルパス</span>上の<span class="fill-blank">単価の安い</span>作業から。CP以外を短縮しても全体は<span class="fill-blank">縮まない</span>。TOC＝<span class="fill-blank">ドラム</span>・<span class="fill-blank">バッファ</span>・<span class="fill-blank">ロープ</span>
+</div><button class="fill-reveal-btn" onclick="revealBlanks(this)">👁 答えを見る</button></div></div>
+</div><!-- /tab13 -->
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,k)=>b.classList.toggle('active',k===i));
+  document.querySelectorAll('.tab-panel').forEach((p,k)=>p.classList.toggle('active',k===i));
+  window.scrollTo(0,0);
+}
+/* tab13（穴埋め総まとめ）：tab6/7/8 の fill-card を動的にクローン */
+(function(){
+  var dst=document.getElementById('tab13_content');
+  if(!dst)return;
+  ['tab6','tab7','tab8'].forEach(function(id){
+    var src=document.getElementById(id);
+    if(!src)return;
+    var st=src.querySelector('.section-title');
+    if(st){
+      var h=document.createElement('h3');
+      h.style.cssText='font-size:1rem;margin:1.2rem 0 .5rem;color:#0d9488;border-left:4px solid #0d9488;padding-left:.6rem;font-weight:800;';
+      h.textContent=st.textContent.trim();
+      dst.appendChild(h);
+    }
+    src.querySelectorAll('.fill-card').forEach(function(card){
+      dst.appendChild(card.cloneNode(true));
+    });
+  });
+})();
+function revealBlanks(btn){
+  var card=btn.closest('.fill-body');
+  if(!card)return;
+  card.querySelectorAll('.fill-blank').forEach(el=>el.classList.add('show'));
+  btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';
+}
+function revealAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});
+  document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){
+    b.textContent='✅ 表示済み';b.disabled=true;b.style.opacity='.5'
+  });
+}
+function resetAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});
+  document.querySelectorAll('#'+tabId+' .fill-reveal-btn[onclick*=revealBlanks]').forEach(function(b){
+    b.textContent='👁 答えを見る';b.disabled=false;b.style.opacity='1'
+  });
+}
+document.addEventListener('click',function(e){
+  if(e.target.classList.contains('fill-blank')){e.target.classList.toggle('show')}
+});
+function qa(el,correct){
+  var card=el.closest('.quiz-card');
+  card.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  if(correct){el.classList.add('correct')}else{el.classList.add('wrong')}
+  var exp=card.querySelector('.quiz-exp');if(exp)exp.classList.add('show');
+}
+</script>
+
+<script>
+window.LS_CONFIG = {
+  KEY: 'ls_104_qz_seisan_calc',
+  TOPICS: [
+    {id:'qz_fill_beg',    name:'穴埋め初級（用語と式）', tab:6},
+    {id:'qz_fill_mid',    name:'穴埋め中級（計算と判定）', tab:7},
+    {id:'qz_fill_adv',    name:'穴埋め上級（応用ひっかけ）', tab:8},
+    {id:'qz_fill_normal', name:'穴埋め総まとめ', tab:13}
+  ],
+  CURIOSITY: {
+    hook: 'PERTのクリティカルパスを「一番"短い"経路」だと思っていませんか？ 逆です。なぜ「一番長い経路」が全体の所要時間になる？',
+    hint: 'ゼロから・入門タブの「旅行で一番時間のかかるルートが到着時刻を決める」で腑に落ちるよ。'
+  },
+  PRETEST: [
+    {q:'Q1. PERTで合流点（複数の経路が集まる点）の最早結合点時刻は、流入する経路の「最大」「最小」どちら？', a:'最大（一番遅く着く経路に引きずられる）。最遅は逆に分岐点で最小'},
+    {q:'Q2. サイクルタイムの式は？ また必要工程数の端数処理は？', a:'CT＝稼働時間÷必要生産量。必要工程数＝総作業時間÷CT を切り上げ'},
+    {q:'Q3. 正味所要量の式は？（MRP/BOM）', a:'正味所要量＝総所要量 − 手持在庫 − 入庫(発注残)予定。総所要量は全経路を合計'},
+    {q:'Q4. 製番管理と追番管理、それぞれどんな生産形態向け？', a:'製番＝個別受注生産、追番＝繰返し量産（逆にしない）'},
+    {q:'Q5. 流動数曲線で、2本の累積線の「縦の差」「横の差」はそれぞれ何を表す？', a:'縦の差＝仕掛品量、横の差＝停滞時間（リードタイム）。FIFO前提'}
+  ]
+};
+</script>
+<script src="../learning-system.js"></script>
+
+</body>
+</html>

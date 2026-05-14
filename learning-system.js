@@ -539,6 +539,11 @@ details.ls-scheduler .ls-sched-body{padding:1rem 1.2rem}
       const orig=window.switchTab;
       window.switchTab=function(i){orig(i);setTimeout(()=>refreshPanel(),30);};
     }
+    /* 6b. hook showTab (旧式 id ベースのタブ切替を使うノート用) */
+    if(typeof window.showTab==='function'){
+      const orig=window.showTab;
+      window.showTab=function(id){orig(id);setTimeout(()=>refreshPanel(),30);};
+    }
 
     fillInit();
     refreshPanel();
