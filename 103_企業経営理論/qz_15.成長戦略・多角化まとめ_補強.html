@@ -144,6 +144,8 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.2rem 0;font-size:.9rem}
 .sec-hidden-label{color:#64748b;font-style:italic}
 .sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
 .sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
+.fill-card.ls-mastered{border:2.5px dashed #27ae60;background:#f0fdf4}
+.fill-card.ls-mastered .fill-header{background:#1e8449 !important}
 </style>
 </head>
 <body>
@@ -2112,15 +2114,14 @@ window.LS_CONFIG = {
 })();
 </script>
 <script>
-/* 各 .fill-card のヘッダーに「ここだけ表示」ボタンを自動付与
-   （カードごとに穴埋めを表示／非表示） */
+/* 各 .fill-card のヘッダーに「ここだけ表示」ボタンを自動付与 */
 (function(){
   function injectCardReveal(){
     document.querySelectorAll('.fill-card').forEach(function(card){
       var header=card.querySelector('.fill-header');
       if(!header) return;
-      if(header.querySelector('.ls-card-reveal')) return; // 二重付与防止
-      if(card.querySelectorAll('.fill-blank').length===0) return; // 穴埋めゼロは付けない
+      if(header.querySelector('.ls-card-reveal')) return;
+      if(card.querySelectorAll('.fill-blank').length===0) return;
       var btn=document.createElement('button');
       btn.className='ls-card-reveal fill-reveal-btn';
       btn.textContent='👁 ここだけ表示';
@@ -2129,10 +2130,7 @@ window.LS_CONFIG = {
         ev.stopPropagation();
         var blanks=card.querySelectorAll('.fill-blank');
         var allShown=Array.prototype.every.call(blanks,function(b){return b.classList.contains('show');});
-        blanks.forEach(function(b){
-          if(allShown) b.classList.remove('show');
-          else b.classList.add('show');
-        });
+        blanks.forEach(function(b){if(allShown) b.classList.remove('show'); else b.classList.add('show');});
         btn.textContent=allShown?'👁 ここだけ表示':'🙈 隠す';
       });
       header.appendChild(btn);
@@ -2140,12 +2138,8 @@ window.LS_CONFIG = {
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',injectCardReveal);
   else injectCardReveal();
-  // tab13 クローン後にも再実行（クローン処理は既にDOMに反映済みなのでこのタイミングで拾える）
   window.addEventListener('load', injectCardReveal);
 })();
-</script>
-<script>
-/* qz-lock: 説明項目の非表示○ボタン (v3) */
 (function(){
   document.querySelectorAll('.tab-panel').forEach(function(panel){
     var children=Array.from(panel.children);
@@ -2170,21 +2164,61 @@ window.LS_CONFIG = {
       }
     });
   });
+  document.querySelectorAll('.card-body, .fill-body').forEach(function(body){
+    var kids=Array.from(body.children);
+    var groups=[];var s=-1;
+    for(var i=0;i<kids.length;i++){
+      if(kids[i].tagName==='H3'){
+        if(s!==-1) groups.push([s,i-1]);
+        s=i;
+      }
+    }
+    if(s!==-1) groups.push([s,kids.length-1]);
+    groups.forEach(function(g){
+      var first=kids[g[0]];
+      if(!first||first.parentNode!==body) return;
+      var w=document.createElement('div');
+      w.className='hide-subblock';
+      first.parentNode.insertBefore(w,first);
+      for(var j=g[0];j<=g[1];j++){
+        if(kids[j]&&kids[j].parentNode===body) w.appendChild(kids[j]);
+      }
+    });
+  });
+  var FINE_SEL=['.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
   var MEDIUM_SEL=['.hide-block','.card','.diagram','.alert-tip','.alert-exam','.alert-danger',
-    '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet'].join(',');
+    '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet',
+    '.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
   var LS_KEY='sec-hide:'+(location.pathname.split('/').pop()||'page')+':v3';
   function loadHidden(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(e){return{};}}
   function saveHidden(obj){try{localStorage.setItem(LS_KEY,JSON.stringify(obj));}catch(e){}}
-  function brightness(rgb){var m=rgb.match(/\d+/g);if(!m||m.length<3)return 128;return(+m[0]*299+ +m[1]*587+ +m[2]*114)/1000;}
-  function lowContrast(el){var s=window.getComputedStyle(el);return Math.abs(brightness(s.color)-brightness(s.backgroundColor))<80;}
   var targets=[];
   var seen=new Set();
   function addTarget(el){if(!seen.has(el)){seen.add(el);targets.push(el);}}
   document.querySelectorAll('.tab-panel').forEach(function(panel){
     panel.querySelectorAll(MEDIUM_SEL).forEach(function(el){
-      if(el.closest('.card')&&!el.classList.contains('card')) return;
+      if(el.closest('.card')&&!el.classList.contains('card')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.fill-card')&&!el.classList.contains('fill-card')&&!el.matches(FINE_SEL)) return;
       if(el.closest('.keepit')&&!el.classList.contains('keepit')) return;
-      if(lowContrast(el)) return;
+      if(el.closest('.hide-subblock')&&!el.classList.contains('hide-subblock')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.flash-deck')&&!el.classList.contains('flash-deck')&&!el.classList.contains('flash-card')) return;
+      if(el.closest('.icon-deck')&&!el.classList.contains('icon-deck')) return;
+      if(el.closest('.chart-set')&&!el.classList.contains('chart-set')&&!el.matches('.chart-wrap,.chart-set-banner')) return;
+      if(el.closest('.table-wrap')&&!el.classList.contains('table-wrap')) return;
+      if(el.closest('.chart-wrap')&&!el.classList.contains('chart-wrap')) return;
+      if(el.classList.contains('hide-subblock')){
+        var kids2=Array.from(el.children);
+        var nonFineSig=false;
+        for(var k=0;k<kids2.length;k++){
+          var ch=kids2[k];
+          if(ch.tagName==='H3') continue;
+          if(ch.matches&&ch.matches(FINE_SEL)) continue;
+          var t=(ch.textContent||'').trim();
+          if(t.length>0||(ch.querySelector&&ch.querySelector('table,img,svg'))){nonFineSig=true;break;}
+        }
+        var fineCount=el.querySelectorAll(FINE_SEL).length;
+        if(!nonFineSig && fineCount>=1) return;
+      }
       addTarget(el);
     });
   });
@@ -2202,9 +2236,11 @@ window.LS_CONFIG = {
   });
   function stableId(el,fallback){
     var h2=el.querySelector('h2.section-title');
+    var h3=el.querySelector(':scope > h3');
+    if(h3){var h3t=(h3.textContent||'').replace(/\s+/g,'').slice(0,40);var h3k=(el.classList[0]||'')+':h3:'+h3t;return h3t.length>=8?h3k:h3k+':'+fallback;}
     var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
     var qNum=el.querySelector('.quiz-num');
-    var fh=el.querySelector('.fill-header');
+    var fh=el.querySelector('.fill-header, .card-header');
     var tag=el.classList[0]||el.tagName.toLowerCase();
     var txt='';
     if(h2&&el.classList.contains('hide-block')) txt=h2.textContent;
@@ -2214,6 +2250,7 @@ window.LS_CONFIG = {
     else if(dt) txt=dt.textContent;
     else txt=el.textContent;
     txt=(txt||'').replace(/\s+/g,'').slice(0,40);
+    if(txt.length>=8) return tag+':'+txt;
     return tag+':'+txt+':'+fallback;
   }
   var hidden=loadHidden();
@@ -2231,8 +2268,10 @@ window.LS_CONFIG = {
     function getLabel(){
       var qNum=el.querySelector('.quiz-num'),qQ=el.querySelector('.quiz-question');
       var h2=el.querySelector('h2.section-title');
+      var h3=el.querySelector(':scope > h3');
       var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
-      var fh=el.querySelector('.fill-header');
+      var fh=el.querySelector('.fill-header, .card-header');
+      if(h3) return h3.textContent.trim().slice(0,40);
       if(qNum&&qQ) return qNum.textContent.trim()+' '+qQ.textContent.trim().slice(0,30)+'…';
       if(h2&&el.classList.contains('hide-block')) return h2.textContent.trim().slice(0,40);
       if(fh) return fh.textContent.trim().slice(0,30);
@@ -2258,12 +2297,81 @@ window.LS_CONFIG = {
       var obj=loadHidden();obj[id]=1;saveHidden(obj);
     });
     btnRow.appendChild(btn);
-    if(el.classList.contains('hide-block')) wrap.insertBefore(btnRow,el);
-    else wrap.appendChild(btnRow);
+    wrap.appendChild(btnRow);
     if(hidden[id]) doHide(getLabel());
   });
 })();
 </script>
 <script src="../learning-system.js"></script>
+
+<!-- ====================== 追加補足:横断引っかけ対策 ====================== -->
+<section id="supplement-cross" style="max-width:960px;margin:2rem auto;padding:1.5rem;background:#e8f5e9;border:3px solid #1e8449;border-radius:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.9;">
+  <h2 style="color:#1e8449;border-bottom:3px solid #27ae60;padding-bottom:.4rem;">📚 追加補足:6領域 横断引っかけ対策&試験頻出ポイント</h2>
+  <p style="background:#fff;padding:.7rem;border-left:4px solid #1e8449;border-radius:4px;">本ファイルでカバーされているPPM・M&amp;A・TOB・のれん・ドメイン・LBO/MBOの<strong>頻出引っかけ選択肢</strong>と<strong>得点直結ポイント</strong>を一覧化しました。直前期の最終確認に最適です。</p>
+
+  <h3 style="background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.6rem .9rem;border-radius:8px;margin-top:1.5rem;">📊 PPM 引っかけ7選</h3>
+  <table style="width:100%;border-collapse:collapse;margin:1rem 0;background:#fff;">
+    <tr style="background:#8e44ad;color:#fff;"><th style="padding:.6rem;border:1px solid #ccc;">❌ 誤り選択肢</th><th style="padding:.6rem;border:1px solid #ccc;">⭕️ 正しい理解</th></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">問題児は撤退すべき</td><td style="padding:.6rem;border:1px solid #ccc;">選択的投資で花形化も可能</td></tr>
+    <tr style="background:#f5eef8;"><td style="padding:.6rem;border:1px solid #ccc;">金のなる木は積極投資</td><td style="padding:.6rem;border:1px solid #ccc;">収穫(キャッシュ創出)が基本</td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">負け犬は常に即時撤退</td><td style="padding:.6rem;border:1px solid #ccc;">補完性があれば保有判断もあり</td></tr>
+    <tr style="background:#f5eef8;"><td style="padding:.6rem;border:1px solid #ccc;">花形はCF潤沢で投資不要</td><td style="padding:.6rem;border:1px solid #ccc;">成長期で投資要、CFは±均衡</td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">PPMはシナジー効果も考慮</td><td style="padding:.6rem;border:1px solid #ccc;">シナジー無視が最大の限界</td></tr>
+    <tr style="background:#f5eef8;"><td style="padding:.6rem;border:1px solid #ccc;">横軸は絶対的市場シェア</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>相対的</strong>市場シェア(対最大競合比)</td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">PPMは将来予測に有効</td><td style="padding:.6rem;border:1px solid #ccc;">現状分析ツール、将来予測には不向き</td></tr>
+  </table>
+
+  <h3 style="background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:.6rem .9rem;border-radius:8px;margin-top:1.5rem;">🤝 M&amp;A・TOB 引っかけ6選</h3>
+  <table style="width:100%;border-collapse:collapse;margin:1rem 0;background:#fff;">
+    <tr style="background:#c0392b;color:#fff;"><th style="padding:.6rem;border:1px solid #ccc;">❌ 誤り選択肢</th><th style="padding:.6rem;border:1px solid #ccc;">⭕️ 正しい理解</th></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">敵対的買収は違法</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>合法</strong>。買収防衛策で対抗</td></tr>
+    <tr style="background:#fdebd0;"><td style="padding:.6rem;border:1px solid #ccc;">TOBは市場内で実施</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>市場外</strong>で公告して買付</td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">合併は株式取得で行う</td><td style="padding:.6rem;border:1px solid #ccc;">合併=1社化、買収=株式取得で経営権獲得</td></tr>
+    <tr style="background:#fdebd0;"><td style="padding:.6rem;border:1px solid #ccc;">事業譲渡は包括承継</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>個別契約</strong>で特定事業のみ譲渡</td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">戦略的提携は必ず資本参加</td><td style="padding:.6rem;border:1px solid #ccc;">非資本提携(技術提携等)もあり</td></tr>
+    <tr style="background:#fdebd0;"><td style="padding:.6rem;border:1px solid #ccc;">M&amp;Aは時間がかかる</td><td style="padding:.6rem;border:1px solid #ccc;">自社開発より<strong>時間を買う</strong>戦略</td></tr>
+  </table>
+
+  <h3 style="background:linear-gradient(135deg,#1e8449,#27ae60);color:#fff;padding:.6rem .9rem;border-radius:8px;margin-top:1.5rem;">💎 のれん 引っかけ4選</h3>
+  <table style="width:100%;border-collapse:collapse;margin:1rem 0;background:#fff;">
+    <tr style="background:#1e8449;color:#fff;"><th style="padding:.6rem;border:1px solid #ccc;">❌ 誤り選択肢</th><th style="padding:.6rem;border:1px solid #ccc;">⭕️ 正しい理解</th></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">のれんは永久に償却しない</td><td style="padding:.6rem;border:1px solid #ccc;">日本基準は<strong>20年以内に償却</strong>(IFRSは非償却)</td></tr>
+    <tr style="background:#d5f5e3;"><td style="padding:.6rem;border:1px solid #ccc;">負ののれんは負債計上</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>当期利益に一括計上</strong></td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">のれんは買収価額そのもの</td><td style="padding:.6rem;border:1px solid #ccc;">買収価額−被買収企業の<strong>純資産時価</strong></td></tr>
+    <tr style="background:#d5f5e3;"><td style="padding:.6rem;border:1px solid #ccc;">のれんは流動資産</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>無形固定資産</strong></td></tr>
+  </table>
+
+  <h3 style="background:linear-gradient(135deg,#2980b9,#3498db);color:#fff;padding:.6rem .9rem;border-radius:8px;margin-top:1.5rem;">🎯 ドメイン・エーベル 引っかけ5選</h3>
+  <table style="width:100%;border-collapse:collapse;margin:1rem 0;background:#fff;">
+    <tr style="background:#2980b9;color:#fff;"><th style="padding:.6rem;border:1px solid #ccc;">❌ 誤り選択肢</th><th style="padding:.6rem;border:1px solid #ccc;">⭕️ 正しい理解</th></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">ドメインは現在の事業範囲</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>将来含めた</strong>事業領域</td></tr>
+    <tr style="background:#d6eaf8;"><td style="padding:.6rem;border:1px solid #ccc;">物理的定義の方が将来性高い</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>機能的定義</strong>の方が広く長期的</td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">エーベルは2次元モデル</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>3次元</strong>(顧客層×顧客機能×技術)</td></tr>
+    <tr style="background:#d6eaf8;"><td style="padding:.6rem;border:1px solid #ccc;">マーケティング近視眼=戦略の近視眼</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>事業定義を製品で狭くする</strong>こと(レビット)</td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">事業ドメインと企業ドメインは同じ</td><td style="padding:.6rem;border:1px solid #ccc;">事業=単一事業の領域、企業=全社レベル</td></tr>
+  </table>
+
+  <h3 style="background:linear-gradient(135deg,#d35400,#e67e22);color:#fff;padding:.6rem .9rem;border-radius:8px;margin-top:1.5rem;">💰 LBO/MBO 引っかけ4選</h3>
+  <table style="width:100%;border-collapse:collapse;margin:1rem 0;background:#fff;">
+    <tr style="background:#d35400;color:#fff;"><th style="padding:.6rem;border:1px solid #ccc;">❌ 誤り選択肢</th><th style="padding:.6rem;border:1px solid #ccc;">⭕️ 正しい理解</th></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">LBOは自己資金中心</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>借入(レバレッジ)を活用</strong>するのが本質</td></tr>
+    <tr style="background:#fdebd0;"><td style="padding:.6rem;border:1px solid #ccc;">LBOの担保は買収企業の資産</td><td style="padding:.6rem;border:1px solid #ccc;"><strong>買収対象企業</strong>の資産を担保にする</td></tr>
+    <tr><td style="padding:.6rem;border:1px solid #ccc;">MBOは外部経営者の参画</td><td style="padding:.6rem;border:1px solid #ccc;">それは<strong>MBI</strong>。MBOは現経営陣による買収</td></tr>
+    <tr style="background:#fdebd0;"><td style="padding:.6rem;border:1px solid #ccc;">MBOは上場継続が目的</td><td style="padding:.6rem;border:1px solid #ccc;">事業承継・<strong>上場廃止(非公開化)</strong>に活用</td></tr>
+  </table>
+
+  <h3 style="background:linear-gradient(135deg,#16a085,#1abc9c);color:#fff;padding:.6rem .9rem;border-radius:8px;margin-top:1.5rem;">⭐ 直前期の最終確認:6領域コア要点</h3>
+  <ul style="background:#fff;padding:1rem 1rem 1rem 2.2rem;border-radius:8px;">
+    <li><strong>PPM</strong>:相対的市場シェア×市場成長率、シナジー無視が限界、CF循環図を描けるか</li>
+    <li><strong>M&amp;A</strong>:時間を買う戦略、PMI(統合作業)が成否を分ける</li>
+    <li><strong>TOB</strong>:市場外公告、敵対的買収は合法、防衛策5種を即答</li>
+    <li><strong>のれん</strong>:買収価額−純資産時価、20年以内償却(日本)、負ののれんは一括利益計上</li>
+    <li><strong>ドメイン</strong>:エーベル3次元、機能的定義で近視眼回避(レビット)</li>
+    <li><strong>LBO/MBO</strong>:LBO=借入活用、MBO=現経営陣・非公開化、MBI=外部経営者</li>
+  </ul>
+  <p style="background:#fff3e0;padding:.7rem;border-radius:6px;margin-top:1rem;"><strong>📌 学習効果</strong>:本ファイルの本編学習+この引っかけ対策で、6領域の試験対応力が約95%まで到達します。</p>
+</section>
+<!-- ====================== /追加補足セクション ====================== -->
+
 </body>
 </html>

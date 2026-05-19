@@ -82,6 +82,8 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
 .sec-hidden-label{color:#64748b;font-style:italic}
 .sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
 .sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
+.fill-card.ls-mastered{border:2.5px dashed #27ae60;background:#f0fdf4}
+.fill-card.ls-mastered .fill-header{background:#1e8449 !important}
 </style>
 </head>
 <body>
@@ -1237,7 +1239,7 @@ document.addEventListener('click',function(e){var fc=e.target.closest('.flash-ca
 window.LS_CONFIG={KEY:'ls_103_qz_channel',TOPICS:[{id:'qz_fill_beg',name:'穴埋め初級',tab:3},{id:'qz_fill_mid',name:'穴埋め中級',tab:4},{id:'qz_fill_adv',name:'穴埋め上級',tab:5},{id:'qz_fill_normal',name:'穴埋め通常',tab:11}],CURIOSITY:{hook:'高級ブランドはなぜ「1店舗1地域」？',hint:'排他的チャネルの戦略意図'},PRETEST:[{q:'Q1. 流通の3開放度は？',a:'開放的・選択的・排他的'},{q:'Q2. SCMの目的は？',a:'在庫最小化＋顧客満足最大化'},{q:'Q3. 3PLとは？',a:'物流のアウトソース'}]};
 </script>
 <script>
-/* qz-lock: 各 .fill-card のヘッダーに「ここだけ表示」ボタンを自動付与 */
+/* 各 .fill-card のヘッダーに「ここだけ表示」ボタンを自動付与 */
 (function(){
   function injectCardReveal(){
     document.querySelectorAll('.fill-card').forEach(function(card){
@@ -1263,9 +1265,6 @@ window.LS_CONFIG={KEY:'ls_103_qz_channel',TOPICS:[{id:'qz_fill_beg',name:'穴埋
   else injectCardReveal();
   window.addEventListener('load', injectCardReveal);
 })();
-</script>
-<script>
-/* qz-lock: 説明項目の非表示○ボタン (v3) */
 (function(){
   document.querySelectorAll('.tab-panel').forEach(function(panel){
     var children=Array.from(panel.children);
@@ -1290,21 +1289,61 @@ window.LS_CONFIG={KEY:'ls_103_qz_channel',TOPICS:[{id:'qz_fill_beg',name:'穴埋
       }
     });
   });
+  document.querySelectorAll('.card-body, .fill-body').forEach(function(body){
+    var kids=Array.from(body.children);
+    var groups=[];var s=-1;
+    for(var i=0;i<kids.length;i++){
+      if(kids[i].tagName==='H3'){
+        if(s!==-1) groups.push([s,i-1]);
+        s=i;
+      }
+    }
+    if(s!==-1) groups.push([s,kids.length-1]);
+    groups.forEach(function(g){
+      var first=kids[g[0]];
+      if(!first||first.parentNode!==body) return;
+      var w=document.createElement('div');
+      w.className='hide-subblock';
+      first.parentNode.insertBefore(w,first);
+      for(var j=g[0];j<=g[1];j++){
+        if(kids[j]&&kids[j].parentNode===body) w.appendChild(kids[j]);
+      }
+    });
+  });
+  var FINE_SEL=['.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
   var MEDIUM_SEL=['.hide-block','.card','.diagram','.alert-tip','.alert-exam','.alert-danger',
-    '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet'].join(',');
+    '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet',
+    '.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
   var LS_KEY='sec-hide:'+(location.pathname.split('/').pop()||'page')+':v3';
   function loadHidden(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(e){return{};}}
   function saveHidden(obj){try{localStorage.setItem(LS_KEY,JSON.stringify(obj));}catch(e){}}
-  function brightness(rgb){var m=rgb.match(/\d+/g);if(!m||m.length<3)return 128;return(+m[0]*299+ +m[1]*587+ +m[2]*114)/1000;}
-  function lowContrast(el){var s=window.getComputedStyle(el);return Math.abs(brightness(s.color)-brightness(s.backgroundColor))<80;}
   var targets=[];
   var seen=new Set();
   function addTarget(el){if(!seen.has(el)){seen.add(el);targets.push(el);}}
   document.querySelectorAll('.tab-panel').forEach(function(panel){
     panel.querySelectorAll(MEDIUM_SEL).forEach(function(el){
-      if(el.closest('.card')&&!el.classList.contains('card')) return;
+      if(el.closest('.card')&&!el.classList.contains('card')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.fill-card')&&!el.classList.contains('fill-card')&&!el.matches(FINE_SEL)) return;
       if(el.closest('.keepit')&&!el.classList.contains('keepit')) return;
-      if(lowContrast(el)) return;
+      if(el.closest('.hide-subblock')&&!el.classList.contains('hide-subblock')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.flash-deck')&&!el.classList.contains('flash-deck')&&!el.classList.contains('flash-card')) return;
+      if(el.closest('.icon-deck')&&!el.classList.contains('icon-deck')) return;
+      if(el.closest('.chart-set')&&!el.classList.contains('chart-set')&&!el.matches('.chart-wrap,.chart-set-banner')) return;
+      if(el.closest('.table-wrap')&&!el.classList.contains('table-wrap')) return;
+      if(el.closest('.chart-wrap')&&!el.classList.contains('chart-wrap')) return;
+      if(el.classList.contains('hide-subblock')){
+        var kids2=Array.from(el.children);
+        var nonFineSig=false;
+        for(var k=0;k<kids2.length;k++){
+          var ch=kids2[k];
+          if(ch.tagName==='H3') continue;
+          if(ch.matches&&ch.matches(FINE_SEL)) continue;
+          var t=(ch.textContent||'').trim();
+          if(t.length>0||(ch.querySelector&&ch.querySelector('table,img,svg'))){nonFineSig=true;break;}
+        }
+        var fineCount=el.querySelectorAll(FINE_SEL).length;
+        if(!nonFineSig && fineCount>=1) return;
+      }
       addTarget(el);
     });
   });
@@ -1322,9 +1361,11 @@ window.LS_CONFIG={KEY:'ls_103_qz_channel',TOPICS:[{id:'qz_fill_beg',name:'穴埋
   });
   function stableId(el,fallback){
     var h2=el.querySelector('h2.section-title');
+    var h3=el.querySelector(':scope > h3');
+    if(h3){var h3t=(h3.textContent||'').replace(/\s+/g,'').slice(0,40);var h3k=(el.classList[0]||'')+':h3:'+h3t;return h3t.length>=8?h3k:h3k+':'+fallback;}
     var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
     var qNum=el.querySelector('.quiz-num');
-    var fh=el.querySelector('.fill-header');
+    var fh=el.querySelector('.fill-header, .card-header');
     var tag=el.classList[0]||el.tagName.toLowerCase();
     var txt='';
     if(h2&&el.classList.contains('hide-block')) txt=h2.textContent;
@@ -1334,6 +1375,7 @@ window.LS_CONFIG={KEY:'ls_103_qz_channel',TOPICS:[{id:'qz_fill_beg',name:'穴埋
     else if(dt) txt=dt.textContent;
     else txt=el.textContent;
     txt=(txt||'').replace(/\s+/g,'').slice(0,40);
+    if(txt.length>=8) return tag+':'+txt;
     return tag+':'+txt+':'+fallback;
   }
   var hidden=loadHidden();
@@ -1351,8 +1393,10 @@ window.LS_CONFIG={KEY:'ls_103_qz_channel',TOPICS:[{id:'qz_fill_beg',name:'穴埋
     function getLabel(){
       var qNum=el.querySelector('.quiz-num'),qQ=el.querySelector('.quiz-question');
       var h2=el.querySelector('h2.section-title');
+      var h3=el.querySelector(':scope > h3');
       var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
-      var fh=el.querySelector('.fill-header');
+      var fh=el.querySelector('.fill-header, .card-header');
+      if(h3) return h3.textContent.trim().slice(0,40);
       if(qNum&&qQ) return qNum.textContent.trim()+' '+qQ.textContent.trim().slice(0,30)+'…';
       if(h2&&el.classList.contains('hide-block')) return h2.textContent.trim().slice(0,40);
       if(fh) return fh.textContent.trim().slice(0,30);
@@ -1378,8 +1422,7 @@ window.LS_CONFIG={KEY:'ls_103_qz_channel',TOPICS:[{id:'qz_fill_beg',name:'穴埋
       var obj=loadHidden();obj[id]=1;saveHidden(obj);
     });
     btnRow.appendChild(btn);
-    if(el.classList.contains('hide-block')) wrap.insertBefore(btnRow,el);
-    else wrap.appendChild(btnRow);
+    wrap.appendChild(btnRow);
     if(hidden[id]) doHide(getLabel());
   });
 })();
