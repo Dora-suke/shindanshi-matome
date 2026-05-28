@@ -109,9 +109,9 @@ strong{color:#1f2937;font-weight:800}
 .quiz-explanation{display:none;margin-top:12px;padding:16px 18px;background:#eef0ff;border-radius:12px;border-left:4px solid #6366f1;font-size:.92rem;line-height:1.8}
 .quiz-explanation.show{display:block;animation:fadeUp .3s ease}
 
-.fill-card,.fill-card-quiet{background:var(--card);border-radius:14px;margin-bottom:18px;box-shadow:var(--shadow-sm);overflow:hidden}
-.fill-card .fill-header,.fill-card-quiet .fill-header{padding:14px 20px;font-weight:800;font-size:1.08rem;color:#fff;display:flex;align-items:center;gap:8px;letter-spacing:.02em}
-.fill-card .fill-body,.fill-card-quiet .fill-body{padding:20px 22px}
+.fill-card,.fill-card{background:var(--card);border-radius:14px;margin-bottom:18px;box-shadow:var(--shadow-sm);overflow:hidden}
+.fill-card .fill-header,.fill-card .fill-header{padding:14px 20px;font-weight:800;font-size:1.08rem;color:#fff;display:flex;align-items:center;gap:8px;letter-spacing:.02em}
+.fill-card .fill-body,.fill-card .fill-body{padding:20px 22px}
 .fill-blank{display:inline-block;min-width:96px;border-bottom:2.5px solid #c4b5fd;text-align:center;padding:3px 12px;margin:0 3px;cursor:pointer;font-weight:800;color:transparent;background:#f3eeff;border-radius:5px;transition:all .25s;user-select:none;font-size:1rem}
 .fill-blank.show{color:#be185d;background:#fdf2f8;border-color:#f472b6}
 .fill-reveal-btn{display:inline-block;background:#a78bfa;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:8px;font-family:inherit}
@@ -247,11 +247,9 @@ strong{color:#1f2937;font-weight:800}
 /* DEFENSIVE-TAB-HIDE: 非activeなタブ内容が他タブ表示時に漏れない保証 */
 .tab-content:not(.active){display:none!important}
 
-/* === ls-mastered（評定ロック視覚化） === */
+/* qz-lock v3 */
 .fill-card.ls-mastered{border:2.5px dashed #27ae60;background:#f0fdf4}
 .fill-card.ls-mastered .fill-header{background:#1e8449 !important}
-
-/* === sec-hide（項目非表示ボタン） === */
 .sec-hide-wrap{position:relative}
 .sec-hide-btn-row{text-align:right;margin:-2px 0 6px}
 .sec-hide-btn-row button{background:none;border:2px solid #cbd5e1;border-radius:50%;width:26px;height:26px;font-size:.85rem;cursor:pointer;color:#94a3b8;line-height:1;transition:all .18s;vertical-align:middle}
@@ -397,7 +395,7 @@ strong{color:#1f2937;font-weight:800}
       <div class="table-wrap"><table>
         <thead><tr><th>白書の図</th><th>データ出典</th></tr></thead>
         <tbody>
-          <tr><td>業況判断DI</td><td>中小企業庁・中小機構「<strong>中小企業景況調査</strong>」</td></tr>
+          <tr><td>業況判断DI</td><td>中小企業庁・中小機構（中小企業基盤整備機構）「<strong>中小企業景況調査</strong>」</td></tr>
           <tr><td>売上高・経常利益<br>労働生産性</td><td>財務省「<strong>法人企業統計調査</strong>」（季報・年報）</td></tr>
         </tbody>
       </table></div>
@@ -524,7 +522,7 @@ strong{color:#1f2937;font-weight:800}
       </div>
 
       <div class="source">
-        &#x1F4DA; 出典：2025年版中小企業白書 第1部第1章 第1-1-7図／中小企業庁・中小機構「中小企業景況調査」
+        &#x1F4DA; 出典：2025年版中小企業白書 第1部第1章 第1-1-7図／中小企業庁・中小機構（中小企業基盤整備機構）「中小企業景況調査」
       </div>
       <div class="goro-row"><span class="goro-chip">&#x1F3B5; ゴロ</span><span class="g-text"><strong>「ニ・サン・キュー・ヨン」（23年Q2 → 1994以降最高）</strong></span></div>
     </div>
@@ -1929,7 +1927,7 @@ function resetAllFillIn(tabId){
 }
 /* カテゴリ（fill-card）単位でその中の穴埋めをまとめて表示／非表示 */
 function revealCard(btn){
-  var card=btn.closest('.fill-card')||btn.closest('.fill-card-quiet');
+  var card=btn.closest('.fill-card')||btn.closest('.fill-card');
   if(!card)return;
   var blanks=card.querySelectorAll('.fill-blank');
   var allShown=Array.prototype.every.call(blanks,function(b){return b.classList.contains('show')});
@@ -1990,8 +1988,12 @@ window.LS_CONFIG = {
   });
 })();
 </script>
+
+<script src="../learning-system.js"></script>
+
+
 <script>
-/* === 各 .fill-card のヘッダーに「ここだけ表示」ボタンを自動付与 === */
+/* qz-lock v3: ここだけ表示ボタン */
 (function(){
   function injectCardReveal(){
     document.querySelectorAll('.fill-card').forEach(function(card){
@@ -2001,14 +2003,14 @@ window.LS_CONFIG = {
       if(card.querySelectorAll('.fill-blank').length===0) return;
       var btn=document.createElement('button');
       btn.className='ls-card-reveal fill-reveal-btn';
-      btn.textContent='\u{1F441} ここだけ表示';
+      btn.textContent='👁 ここだけ表示';
       btn.style.cssText='font-size:.7rem;padding:.2rem .6rem;margin:0 0 0 auto;background:rgba(255,255,255,.25);color:#fff;border:1px solid rgba(255,255,255,.5);';
       btn.addEventListener('click',function(ev){
         ev.stopPropagation();
         var blanks=card.querySelectorAll('.fill-blank');
         var allShown=Array.prototype.every.call(blanks,function(b){return b.classList.contains('show');});
         blanks.forEach(function(b){if(allShown) b.classList.remove('show'); else b.classList.add('show');});
-        btn.textContent=allShown?'\u{1F441} ここだけ表示':'\u{1F648} 隠す';
+        btn.textContent=allShown?'👁 ここだけ表示':'🙈 隠す';
       });
       header.appendChild(btn);
     });
@@ -2017,58 +2019,34 @@ window.LS_CONFIG = {
   else injectCardReveal();
   window.addEventListener('load', injectCardReveal);
 })();
-</script>
 
-<script>
-/* === sec-hide：意味区切りごとの非表示○ボタン === */
+/* qz-lock v3: STEP A/A2/B 非表示○ボタン */
 (function(){
   document.querySelectorAll('.tab-panel').forEach(function(panel){
-    var children=Array.from(panel.children);
-    var sections=[];var start=-1;
-    for(var i=0;i<children.length;i++){
-      var c=children[i];
-      if(c.matches&&c.matches('h2.section-title')){
-        if(start!==-1) sections.push([start,i-1]);
-        start=i;
-      }
-    }
+    var children=Array.from(panel.children);var sections=[];var start=-1;
+    for(var i=0;i<children.length;i++){var c=children[i];if(c.matches&&c.matches('h2.section-title')){if(start!==-1) sections.push([start,i-1]);start=i;}}
     if(start!==-1) sections.push([start,children.length-1]);
     sections.forEach(function(sec){
-      var first=children[sec[0]];
-      if(!first||first.parentNode!==panel) return;
-      var wrap=document.createElement('div');
-      wrap.className='hide-block';
+      var first=children[sec[0]];if(!first||first.parentNode!==panel) return;
+      var wrap=document.createElement('div');wrap.className='hide-block';
       first.parentNode.insertBefore(wrap,first);
-      for(var j=sec[0];j<=sec[1];j++){
-        if(children[j]&&children[j].parentNode===panel) wrap.appendChild(children[j]);
-      }
+      for(var j=sec[0];j<=sec[1];j++){if(children[j]&&children[j].parentNode===panel) wrap.appendChild(children[j]);}
     });
   });
+  /* STEP A2 */
   document.querySelectorAll('.card-body, .fill-body').forEach(function(body){
-    var kids=Array.from(body.children);
-    var groups=[];var s=-1;
-    for(var i=0;i<kids.length;i++){
-      if(kids[i].tagName==='H3'){
-        if(s!==-1) groups.push([s,i-1]);
-        s=i;
-      }
-    }
+    var kids=Array.from(body.children);var groups=[];var s=-1;
+    for(var i=0;i<kids.length;i++){if(kids[i].tagName==='H3'){if(s!==-1) groups.push([s,i-1]);s=i;}}
     if(s!==-1) groups.push([s,kids.length-1]);
     groups.forEach(function(g){
-      var first=kids[g[0]];
-      if(!first||first.parentNode!==body) return;
-      var w=document.createElement('div');
-      w.className='hide-subblock';
+      var first=kids[g[0]];if(!first||first.parentNode!==body) return;
+      var w=document.createElement('div');w.className='hide-subblock';
       first.parentNode.insertBefore(w,first);
-      for(var j=g[0];j<=g[1];j++){
-        if(kids[j]&&kids[j].parentNode===body) w.appendChild(kids[j]);
-      }
+      for(var j=g[0];j<=g[1];j++){if(kids[j]&&kids[j].parentNode===body) w.appendChild(kids[j]);}
     });
   });
   var FINE_SEL=['.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
-  var MEDIUM_SEL=['.hide-block','.card','.diagram','.alert-tip','.alert-exam','.alert-danger',
-    '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet',
-    '.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
+  var MEDIUM_SEL=['.hide-block','.card','.diagram','.alert-tip','.alert-exam','.alert-danger','.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet','.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
   var LS_KEY='sec-hide:'+(location.pathname.split('/').pop()||'page')+':v3';
   function loadHidden(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(e){return{};}}
   function saveHidden(obj){try{localStorage.setItem(LS_KEY,JSON.stringify(obj));}catch(e){}}
@@ -2086,17 +2064,10 @@ window.LS_CONFIG = {
       if(el.closest('.table-wrap')&&!el.classList.contains('table-wrap')) return;
       if(el.closest('.chart-wrap')&&!el.classList.contains('chart-wrap')) return;
       if(el.classList.contains('hide-subblock')){
-        var kids2=Array.from(el.children);
-        var nonFineSig=false;
-        for(var k=0;k<kids2.length;k++){
-          var ch=kids2[k];
-          if(ch.tagName==='H3') continue;
-          if(ch.matches&&ch.matches(FINE_SEL)) continue;
-          var t=(ch.textContent||'').trim();
-          if(t.length>0||(ch.querySelector&&ch.querySelector('table,img,svg'))){nonFineSig=true;break;}
-        }
+        var kids2=Array.from(el.children);var nonFineSig=false;
+        for(var k=0;k<kids2.length;k++){var ch=kids2[k];if(ch.tagName==='H3') continue;if(ch.matches&&ch.matches(FINE_SEL)) continue;var t=(ch.textContent||'').trim();if(t.length>0||(ch.querySelector&&ch.querySelector('table,img,svg'))){nonFineSig=true;break;}}
         var fineCount=el.querySelectorAll(FINE_SEL).length;
-        if(!nonFineSig && fineCount>=1) return;
+        if(!nonFineSig&&fineCount>=1) return;
       }
       addTarget(el);
     });
@@ -2114,74 +2085,50 @@ window.LS_CONFIG = {
     });
   });
   function stableId(el,fallback){
-    var h2=el.querySelector('h2.section-title');
     var h3=el.querySelector(':scope > h3');
-    if(h3) return (el.classList[0]||'')+':h3:'+(h3.textContent||'').replace(/\s+/g,'').slice(0,40)+':'+fallback;
-    var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
-    var qNum=el.querySelector('.quiz-num');
-    var fh=el.querySelector('.fill-header, .card-header');
-    var tag=el.classList[0]||el.tagName.toLowerCase();
-    var txt='';
+    if(h3){var h3t=(h3.textContent||'').replace(/\s+/g,'').slice(0,40);var h3k=(el.classList[0]||'')+':h3:'+h3t;return h3t.length>=8?h3k:h3k+':'+fallback;}
+    var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');var qNum=el.querySelector('.quiz-num');
+    var fh=el.querySelector('.fill-header, .card-header');var tag=el.classList[0]||el.tagName.toLowerCase();var txt='';
+    var h2=el.querySelector('h2.section-title');
     if(h2&&el.classList.contains('hide-block')) txt=h2.textContent;
     else if(qNum){var qq=el.querySelector('.quiz-question');txt='q'+qNum.textContent+(qq?qq.textContent:'');}
-    else if(fh) txt=fh.textContent;
-    else if(h4) txt=h4.textContent;
-    else if(dt) txt=dt.textContent;
-    else txt=el.textContent;
+    else if(fh) txt=fh.textContent;else if(h4) txt=h4.textContent;else if(dt) txt=dt.textContent;else txt=el.textContent;
     txt=(txt||'').replace(/\s+/g,'').slice(0,40);
+    if(txt.length>=8) return tag+':'+txt;
     return tag+':'+txt+':'+fallback;
   }
   var hidden=loadHidden();
   targets.forEach(function(el,idx){
     var id=stableId(el,idx);
-    var wrap=document.createElement('div');
-    wrap.className='sec-hide-wrap';
-    el.parentNode.insertBefore(wrap,el);
-    wrap.appendChild(el);
-    var btnRow=document.createElement('div');
-    btnRow.className='sec-hide-btn-row';
-    var btn=document.createElement('button');
-    btn.textContent='○';
-    btn.title='この項目を非表示にする';
+    var wrap=document.createElement('div');wrap.className='sec-hide-wrap';
+    el.parentNode.insertBefore(wrap,el);wrap.appendChild(el);
+    var btnRow=document.createElement('div');btnRow.className='sec-hide-btn-row';
+    var btn=document.createElement('button');btn.textContent='○';btn.title='この項目を非表示にする';
     function getLabel(){
       var qNum=el.querySelector('.quiz-num'),qQ=el.querySelector('.quiz-question');
-      var h2=el.querySelector('h2.section-title');
-      var h3=el.querySelector(':scope > h3');
-      var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
-      var fh=el.querySelector('.fill-header, .card-header');
+      var h2=el.querySelector('h2.section-title');var h3=el.querySelector(':scope > h3');
+      var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');var fh=el.querySelector('.fill-header, .card-header');
       if(h3) return h3.textContent.trim().slice(0,40);
       if(qNum&&qQ) return qNum.textContent.trim()+' '+qQ.textContent.trim().slice(0,30)+'…';
       if(h2&&el.classList.contains('hide-block')) return h2.textContent.trim().slice(0,40);
-      if(fh) return fh.textContent.trim().slice(0,30);
-      if(h4) return h4.textContent.trim().slice(0,30);
-      if(dt) return dt.textContent.trim().slice(0,30);
-      return el.textContent.trim().slice(0,30)+'…';
+      if(fh) return fh.textContent.trim().slice(0,30);if(h4) return h4.textContent.trim().slice(0,30);
+      if(dt) return dt.textContent.trim().slice(0,30);return el.textContent.trim().slice(0,30)+'…';
     }
     function doHide(label){
       el.style.display='none';btnRow.style.display='none';
-      var ph=document.createElement('div');
-      ph.className='sec-hidden-ph';
+      var ph=document.createElement('div');ph.className='sec-hidden-ph';
       ph.innerHTML='（非表示：<span class="sec-hidden-label"></span>） <button>再表示 ○</button>';
       ph.querySelector('.sec-hidden-label').textContent=label;
       ph.querySelector('button').addEventListener('click',function(){
-        el.style.display='';btnRow.style.display='';ph.remove();
-        var obj=loadHidden();delete obj[id];saveHidden(obj);
+        el.style.display='';btnRow.style.display='';ph.remove();var obj=loadHidden();delete obj[id];saveHidden(obj);
       });
       wrap.appendChild(ph);
     }
-    btn.addEventListener('click',function(){
-      var label=getLabel();
-      doHide(label);
-      var obj=loadHidden();obj[id]=1;saveHidden(obj);
-    });
-    btnRow.appendChild(btn);
-    wrap.appendChild(btnRow);
+    btn.addEventListener('click',function(){var label=getLabel();doHide(label);var obj=loadHidden();obj[id]=1;saveHidden(obj);});
+    btnRow.appendChild(btn);wrap.appendChild(btnRow);
     if(hidden[id]) doHide(getLabel());
   });
 })();
 </script>
-<script src="../learning-system.js"></script>
-
-
 </body>
 </html>

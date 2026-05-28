@@ -84,7 +84,8 @@
 .fill-card.ls-mastered .fill-header::after{content:" ✅マスター済";font-size:.75rem;font-weight:400;opacity:.85}
 .ls-fill-show{display:inline-block;margin:.5rem 0 0;font-size:.78rem;color:#1a5276;background:#fff;border:1px dashed #1a5276;border-radius:5px;padding:.25rem .7rem;cursor:pointer;font-family:inherit}
 .fill-card:not(.ls-mastered) .ls-fill-show{display:none}
-.ls-sticky-wrap{position:sticky;top:0;z-index:101;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.ls-sticky-wrap{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.ls-sticky-wrap.ls-is-sticky{position:sticky;top:0;z-index:100}
 .ls-sticky-wrap .tab-nav{box-shadow:none;position:static!important}
 .ls-mgmt-header{background:#fffbf2;border-top:1px solid #d8cfbb;border-bottom:1px solid #b08a3e;padding:.4rem .7rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.4rem;font-size:.78rem;line-height:1.4;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif}
 .ls-mgmt-info{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem}
@@ -448,8 +449,9 @@ details.ls-scheduler .ls-sched-body{padding:1rem 1.2rem}
     /* 1b. management header above tab-nav (sticky together) */
     const tabNav=document.querySelector('.tab-nav');
     if(tabNav){
+      const wasSticky=tabNav.classList.contains('tab-nav-sticky');
       const wrap=document.createElement('div');
-      wrap.className='ls-sticky-wrap';
+      wrap.className='ls-sticky-wrap'+(wasSticky?' ls-is-sticky':'');
       const mgmt=document.createElement('div');
       mgmt.className='ls-mgmt-header';
       mgmt.innerHTML=

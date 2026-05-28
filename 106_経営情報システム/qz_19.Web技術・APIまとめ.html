@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web技術・API（HTTP/REST/JSON/OAuth/GraphQL/WebSocket/マイクロサービス）まとめ（暗記特化qz版） - 中小企業診断士 経営情報システム</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.85;min-height:100vh}
+.header{background:linear-gradient(135deg,#1e3a5f 0%,#1565c0 50%,#1976d2 100%);color:#fff;padding:1.4rem 1.5rem 1rem;text-align:center}.header h1{font-size:1.4rem;font-weight:800;margin-bottom:.3rem}.header .subtitle{font-size:.9rem;opacity:.95}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.2rem .8rem;border-radius:20px;font-size:.78rem;margin-top:.5rem}
+.tab-container{max-width:920px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:#fff;border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow)}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.7rem .25rem;border:none;background:#fff;color:var(--gray-mid);font-size:.68rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=green]{color:var(--green-main)}.tab-btn[data-color=orange]{color:var(--orange-main)}.tab-btn[data-color=red]{color:var(--red-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=green]{border-bottom-color:var(--green-main);background:var(--green-light)}.tab-btn.active[data-color=orange]{border-bottom-color:var(--orange-main);background:var(--orange-pale)}.tab-btn.active[data-color=red]{border-bottom-color:var(--red-main);background:var(--red-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}
+.tab-panel{display:none;padding:1.5rem 1.2rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-purple{background:var(--purple-bg)}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-green{background:var(--green-bg)}.tab-panel.theme-orange{background:var(--orange-bg)}.tab-panel.theme-teal{background:var(--teal-light)}.tab-panel.theme-red{background:var(--red-bg)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.05rem;font-weight:800;margin:1.4rem 0 .7rem;padding:.5rem .8rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.st-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-red{background:linear-gradient(135deg,var(--red-main),#ec7063)}
+.card{background:#fff;border-radius:var(--radius-sm);padding:1rem 1.2rem;margin:.7rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-green{border-left-color:var(--green-main)}.card-purple{border-left-color:var(--purple-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card-red{border-left-color:var(--red-main)}.card h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.85rem;background:#fff;border-radius:6px;overflow:hidden}th,td{padding:.5rem .55rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-orange th{background:var(--orange-main);color:#fff}.tbl-orange tr:nth-child(even){background:var(--orange-pale)}.tbl-green th{background:var(--green-main);color:#fff}.tbl-green tr:nth-child(even){background:var(--green-light)}.tbl-red th{background:var(--red-main);color:#fff}.tbl-red tr:nth-child(even){background:var(--red-light)}
+ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.7rem 0}.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin:.7rem 0}@media(max-width:600px){.two-col,.three-col{grid-template-columns:1fr}.tab-btn{font-size:.58rem;padding:.55rem .12rem}.header h1{font-size:1.1rem}}
+.diagram{background:#fff;border-radius:var(--radius);padding:1rem;margin:1rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:.95rem;margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:2px dashed #e0e0e0}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.55rem 1rem;border-radius:8px;font-weight:700;font-size:.82rem;text-align:center;min-width:70px;margin:.2rem}.flow-box small{display:block;font-weight:400;font-size:.7rem;opacity:.9}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.flow-arrow{font-size:1.3rem;margin:0 .25rem;font-weight:700;color:#5d6d7e}
+.fill-card,.fill-card-quiet{background:var(--gray-pale);border-radius:var(--radius);margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}.fill-card .fill-header,.fill-card-quiet .fill-header{padding:11px 16px;font-weight:700;font-size:.92rem;color:#fff;display:flex;align-items:center}.fill-card .fill-header.bg-purple,.fill-card-quiet .fill-header.bg-purple{background:var(--purple-main)}.fill-card .fill-header.bg-blue,.fill-card-quiet .fill-header.bg-blue{background:var(--blue-main)}.fill-card .fill-header.bg-green,.fill-card-quiet .fill-header.bg-green{background:var(--green-main)}.fill-card .fill-header.bg-orange,.fill-card-quiet .fill-header.bg-orange{background:var(--orange-main)}.fill-card .fill-header.bg-red,.fill-card-quiet .fill-header.bg-red{background:var(--red-main)}.fill-card .fill-header.bg-teal,.fill-card-quiet .fill-header.bg-teal{background:var(--teal-main)}.fill-card .fill-body,.fill-card-quiet .fill-body{padding:14px 18px}
+.fill-blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.9rem}.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
+.fill-group{margin-bottom:4px;font-size:.92rem;line-height:2}
+.exam-pt{font-size:.82rem;margin-top:.4rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;line-height:1.65}
+.exam-warn{font-size:.82rem;margin-top:.3rem;color:#b71c1c;background:#fce4ec;padding:.35rem .6rem;border-radius:6px;line-height:1.65}
+.year-badge{display:inline-block;background:#c0392b;color:#fff;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:10px;margin:0 .2rem}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0}.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.5rem}.keepit ul{list-style:none;padding:0;margin:0}.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.88rem;line-height:1.7}.keepit li strong{color:#1565c0}
+.zk{font-size:.78em;color:#546e7a;font-weight:400;background:#eceff1;padding:1px 6px;border-radius:4px;margin-left:2px}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:.6rem;align-items:center;margin:.8rem 0}
+.vs-side{background:#fff;border-radius:8px;padding:.9rem;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.vs-side h4{font-size:.9rem;font-weight:700;margin-bottom:.3rem}
+.vs-mid{font-size:1.4rem;font-weight:800;color:var(--gray-mid);text-align:center}
+@media(max-width:600px){.vs-box{grid-template-columns:1fr}.vs-mid{transform:rotate(90deg)}}
+.flash-deck{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:14px 0;align-items:stretch}
+.flash-card{position:relative;min-height:170px;perspective:1000px;cursor:pointer;display:flex}
+.flash-card .flash-inner{display:grid;flex:1;transition:transform .55s;transform-style:preserve-3d;min-height:inherit}
+.flash-card.flipped .flash-inner{transform:rotateY(180deg)}
+.flash-card .flash-face{grid-area:1/1;backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 16px 26px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:700;line-height:1.55;word-break:break-word;overflow-wrap:anywhere;hyphens:auto}
+.flash-card .flash-front{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#78350f;border:2px solid #f59e0b}
+.flash-card .flash-back{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;transform:rotateY(180deg);font-size:.92rem;line-height:1.6}
+.flash-card .flash-back b{display:inline-block;margin-bottom:4px}
+.flash-card .flash-front .fc-q{font-size:.95rem;color:#92400e;line-height:1.6}
+.flash-card::after{content:"\1F504 \30AF\30EA\30C3\30AF\3067\7B54\3048";position:absolute;bottom:6px;right:10px;font-size:.7rem;color:#a16207;opacity:.7;pointer-events:none}
+.flash-card.flipped::after{content:""}
+.ls-sticky-wrap .tab-btn{color:#475569}
+.ls-sticky-wrap .tab-btn:hover{color:#1a5276;background:rgba(0,0,0,.05)}
+.ls-sticky-wrap .tab-btn.active{color:#1a5276;background:#e2e8f0;border-bottom-color:#1a5276}
+.fill-card.ls-mastered{border:2.5px dashed #27ae60;background:#f0fdf4}
+.fill-card.ls-mastered .fill-header{background:#1e8449 !important}
+.tab-nav{flex-wrap:wrap}
+.sec-hide-wrap{position:relative}
+.sec-hide-btn-row{text-align:right;margin:-2px 0 6px}
+.sec-hide-btn-row button{background:none;border:2px solid #cbd5e1;border-radius:50%;width:26px;height:26px;font-size:.85rem;cursor:pointer;color:#94a3b8;line-height:1;transition:all .18s;vertical-align:middle}
+.sec-hide-btn-row button:hover{border-color:#64748b;color:#475569;background:#f1f5f9}
+.sec-hidden-ph{text-align:right;padding:3px 0;font-size:.78rem;color:#94a3b8}
+.sec-hidden-label{color:#64748b;font-style:italic}
+.sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
+.sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
+.code-block{background:#1e293b;color:#e2e8f0;border-radius:8px;padding:1rem 1.2rem;font-family:'Courier New',monospace;font-size:.82rem;line-height:1.8;margin:.7rem 0;overflow-x:auto}
+.code-block .cm{color:#94a3b8}.code-block .ck{color:#93c5fd}.code-block .cv{color:#fde68a}.code-block .cs{color:#86efac}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🌐 Web技術・API（HTTP/REST/JSON/OAuth/GraphQL/WebSocket/マイクロサービス）まとめ（暗記特化qz版）</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム ｜ 直近7年（R01〜R07）出題実績準拠</div>
+  <span class="badge">qz_19</span>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="green" onclick="switchTab(0)">🌐 Web全体</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(1)">🔌 REST API</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(2)">📊 JSON/XML</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(3)">🔧 API活用</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(4)">⚖️ SOAP比較</button>
+    <button class="tab-btn" data-color="red" onclick="switchTab(5)">🔐 OAuth/OIDC</button>
+    <button class="tab-btn" data-color="orange" onclick="switchTab(6)">⚡ GraphQL</button>
+    <button class="tab-btn" data-color="blue" onclick="switchTab(7)">🔁 WebSocket</button>
+    <button class="tab-btn" data-color="green" onclick="switchTab(8)">🏗️ マイクロSVC</button>
+  </nav>
+
+<!-- ============ TAB 0: Web全体構造 ============ -->
+<div class="tab-panel active theme-green" id="tab0">
+
+<h2 class="section-title st-green">🌐 1-1. Webの基本的な仕組み</h2>
+<div class="card card-green">
+  <h4>HTTP通信の全体フロー</h4>
+  <div class="diagram">
+    <div class="diagram-title">ブラウザ ↔ Webサーバー 通信の流れ</div>
+    <div class="flow-row">
+      <div class="flow-box fb-blue">① URL入力<small>ブラウザ</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box fb-orange">② DNS検索<small>IPアドレス変換</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box fb-blue">③ HTTPリクエスト<small>ブラウザ→サーバー</small></div>
+    </div>
+    <div class="flow-row" style="margin-top:.5rem">
+      <div class="flow-box fb-green">⑤ 画面描画<small>HTML/CSS/JS解釈</small></div>
+      <span class="flow-arrow">←</span>
+      <div class="flow-box fb-red">④ HTTPレスポンス<small>HTML返却</small></div>
+      <span class="flow-arrow">←</span>
+      <div class="flow-box fb-purple">Webサーバー<small>ファイル返却</small></div>
+    </div>
+  </div>
+  <p class="exam-pt">💡 DNSは「電話帳」：URLという名前をIPアドレス（番号）に変換する仕組み</p>
+</div>
+
+<h2 class="section-title st-green">🎨 1-2. フロントエンド3技術</h2>
+<div class="card card-green">
+  <h4>HTML・CSS・JavaScript の役割分担</h4>
+  <table class="tbl-green">
+    <tr><th>技術</th><th>役割</th><th>建築に例えると</th></tr>
+    <tr><td><strong>HTML</strong></td><td>ページの構造・骨格</td><td>間取り・柱・壁</td></tr>
+    <tr><td><strong>CSS</strong></td><td>見た目・デザイン・配色</td><td>内装・壁紙・色</td></tr>
+    <tr><td><strong>JavaScript</strong></td><td>動的な動作・インタラクション</td><td>電気・水道・動く設備</td></tr>
+  </table>
+</div>
+
+<h2 class="section-title st-green">📡 1-3. HTTPステータスコード（試験頻出）</h2>
+<div class="card card-green">
+  <table class="tbl-green">
+    <tr><th>コード</th><th>意味</th><th>記憶法</th></tr>
+    <tr><td><strong>200</strong></td><td>成功（OK）</td><td>完璧</td></tr>
+    <tr><td><strong>201</strong></td><td>作成成功（Created）</td><td>新規作成</td></tr>
+    <tr><td><strong>400</strong></td><td>クライアントエラー（Bad Request）</td><td>客が悪い</td></tr>
+    <tr><td><strong>401</strong></td><td>認証エラー（Unauthorized）</td><td>入場券なし</td></tr>
+    <tr><td><strong>403</strong></td><td>禁止（Forbidden）</td><td>立入禁止</td></tr>
+    <tr><td><strong>404</strong></td><td>見つからない（Not Found）</td><td>部屋番号なし</td></tr>
+    <tr><td><strong>500</strong></td><td>サーバーエラー（Internal Server Error）</td><td>厨房がパニック</td></tr>
+  </table>
+  <p class="exam-pt">📌 4xxは「クライアント側」の問題、5xxは「サーバー側」の問題</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">ステータスコードは「信号機」のようなもの。2で始まれば「青（成功）」、4で始まれば「あなたのミス（赤）」、5で始まれば「お店側のミス（赤）」と覚えよう。</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem;">
+    <div style="background:#dcfce7;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.4rem;">✅</div>
+      <div style="font-size:.82rem;font-weight:700;color:#166534;">2xx 成功</div>
+      <div style="font-size:.73rem;color:#14532d;margin-top:.2rem;">200 OK<br>201 Created</div>
+    </div>
+    <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.4rem;">😟</div>
+      <div style="font-size:.82rem;font-weight:700;color:#b91c1c;">4xx クライアント</div>
+      <div style="font-size:.73rem;color:#7f1d1d;margin-top:.2rem;">400 Bad Request<br>401/403/404</div>
+    </div>
+    <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.4rem;">🔥</div>
+      <div style="font-size:.82rem;font-weight:700;color:#c2410c;">5xx サーバー</div>
+      <div style="font-size:.73rem;color:#9a3412;margin-top:.2rem;">500 Internal<br>Server Error</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title st-green">🚀 1-4. HTTPバージョン比較</h2>
+<div class="card card-green">
+  <table class="tbl-green">
+    <tr><th>バージョン</th><th>特徴</th><th>例え</th></tr>
+    <tr><td><strong>HTTP/1.1</strong></td><td>1リクエスト＝1レスポンス（逐次）</td><td>一本レーンの道路</td></tr>
+    <tr><td><strong>HTTP/2</strong></td><td>多重化・ヘッダ圧縮・現在の主流</td><td>複数レーンの高速道路</td></tr>
+    <tr><td><strong>HTTP/3</strong></td><td>UDPベース（QUIC）・パケットロスに強い</td><td>専用超高速レーン</td></tr>
+  </table>
+  <p class="exam-pt">📌 HTTP/2の「多重化」＝1接続で複数リクエストを並列処理</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">HTTPバージョンは「道路の進化」。1車線→複数車線→専用超高速レーンと進化した。HTTP/2の「多重化」が試験のポイント。</p>
+  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+    <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:600;color:#1e40af;">HTTP/1.1<br><span style="font-weight:400;font-size:.72rem;">一車線・逐次</span></div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+    <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:600;color:#166534;">HTTP/2<br><span style="font-weight:400;font-size:.72rem;">多重化・主流</span></div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+    <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:600;color:#854d0e;">HTTP/3<br><span style="font-weight:400;font-size:.72rem;">UDP(QUIC)ベース</span></div>
+  </div>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab0 ここだけ覚える</div>
+  <ul>
+    <li><strong>DNS</strong>：URLをIPアドレスに変換（電話帳）</li>
+    <li><strong>HTTP通信</strong>：ブラウザ→リクエスト→サーバー→レスポンス→ブラウザ</li>
+    <li><strong>200/400/500</strong>：成功 / クライアントエラー / サーバーエラー</li>
+    <li><strong>HTTP/2</strong>：多重化・現在の主流。HTTP/3はUDP（QUIC）ベース</li>
+    <li><strong>HTML=構造、CSS=見た目、JS=動作</strong>：フロントエンド3技術の役割</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab0_1">
+  <div class="fill-header bg-green">✏️ 穴埋め｜HTTPステータスコード＋バージョン</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-green">
+        <tr><th>コード</th><th>意味</th></tr>
+        <tr><td><span class="fill-blank">200</span></td><td>成功（OK）</td></tr>
+        <tr><td><span class="fill-blank">400</span></td><td>クライアントエラー</td></tr>
+        <tr><td><span class="fill-blank">401</span></td><td>認証エラー（Unauthorized）</td></tr>
+        <tr><td><span class="fill-blank">403</span></td><td>禁止（Forbidden）</td></tr>
+        <tr><td><span class="fill-blank">404</span></td><td>見つからない</td></tr>
+        <tr><td><span class="fill-blank">500</span></td><td>サーバーエラー</td></tr>
+      </table>
+    </div>
+    <div class="fill-group" style="margin-top:.8rem">
+      <table class="tbl-green">
+        <tr><th>バージョン</th><th>特徴キーワード</th></tr>
+        <tr><td>HTTP/1.1</td><td><span class="fill-blank">逐次処理</span>（1リクエスト1レスポンス）</td></tr>
+        <tr><td>HTTP/2</td><td><span class="fill-blank">多重化</span>・ヘッダ圧縮・現在の主流</td></tr>
+        <tr><td>HTTP/3</td><td><span class="fill-blank">UDP</span>ベース（QUICプロトコル）</td></tr>
+      </table>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab0')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab0 -->
+
+<!-- ============ TAB 1: REST API ============ -->
+<div class="tab-panel theme-blue" id="tab1">
+
+<h2 class="section-title st-blue">🔌 2-1. RESTとは何か</h2>
+<div class="card card-blue">
+  <h4>REST（REpresentational State Transfer）</h4>
+  <p>WebAPIの<strong>設計思想・アーキテクチャスタイル</strong>。プロトコルではない点が試験頻出の引っかかり。</p>
+  <div class="vs-box" style="margin-top:.8rem">
+    <div class="vs-side">
+      <h4 style="color:#c62828">❌ 非RESTな設計</h4>
+      <div class="code-block" style="font-size:.78rem">/getUserById?id=123
+/createNewUser
+/deleteUserAccount</div>
+      <small>URLに動詞が入る</small>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-side">
+      <h4 style="color:#1565c0">✅ RESTな設計</h4>
+      <div class="code-block" style="font-size:.78rem">GET    /users/123
+POST   /users
+DELETE /users/123</div>
+      <small>URLは名詞・操作はHTTPメソッド</small>
+    </div>
+  </div>
+  <p class="exam-warn">⚠️ 「RESTはプロトコルである」は<strong>誤り</strong>。設計思想（アーキテクチャスタイル）</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">RESTは「設計のルール集」で、プロトコル（通信のやり方）ではない。URLは「モノの名前（名詞）」で、何をするか（動詞）はHTTPメソッドで決める、という約束事。</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+    <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.2rem;">❌</div>
+      <div style="font-size:.78rem;font-weight:700;color:#b91c1c;">非REST（悪い例）</div>
+      <div style="font-size:.72rem;color:#7f1d1d;margin-top:.2rem;">/getUserById?id=1<br>/deleteUser</div>
+      <div style="font-size:.7rem;color:#9ca3af;margin-top:.2rem;">URLに動詞が混ざる</div>
+    </div>
+    <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.2rem;">✅</div>
+      <div style="font-size:.78rem;font-weight:700;color:#15803d;">REST（良い例）</div>
+      <div style="font-size:.72rem;color:#14532d;margin-top:.2rem;">GET /users/1<br>DELETE /users/1</div>
+      <div style="font-size:.7rem;color:#9ca3af;margin-top:.2rem;">URLは名詞、操作はメソッド</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title st-blue">📋 2-2. RESTの4原則（試験の核心）</h2>
+<div class="card card-blue">
+  <table class="tbl-blue">
+    <tr><th>原則</th><th>内容</th><th>イメージ</th></tr>
+    <tr><td><strong>① ステートレス</strong></td><td>サーバーはセッション状態を保持しない。各リクエストが自己完結</td><td>毎回「初めまして」で会話</td></tr>
+    <tr><td><strong>② 統一インターフェース</strong></td><td>GET/POST/PUT/DELETEのHTTPメソッドで操作を統一</td><td>世界共通のボタン配置</td></tr>
+    <tr><td><strong>③ リソース指向</strong></td><td>URLがリソース（データ）の場所を指す</td><td>「棚番号」でモノの場所を特定</td></tr>
+    <tr><td><strong>④ キャッシュ可能</strong></td><td>レスポンスをキャッシュして効率化できる</td><td>一度調べた電話番号をメモ</td></tr>
+  </table>
+</div>
+
+<h2 class="section-title st-blue">⚖️ 2-3. HTTPメソッドと冪等性</h2>
+<div class="card card-blue">
+  <h4>冪等性（べきとうせい）＝「同じ操作を何回繰り返しても結果が同じ」</h4>
+  <table class="tbl-blue">
+    <tr><th>メソッド</th><th>操作</th><th>冪等性</th><th>安全性</th><th>使用例</th></tr>
+    <tr><td><strong>GET</strong></td><td>取得</td><td>○</td><td>○</td><td>商品一覧を見る</td></tr>
+    <tr><td><strong>POST</strong></td><td>作成</td><td>✗</td><td>✗</td><td>注文を確定する</td></tr>
+    <tr><td><strong>PUT</strong></td><td>全更新</td><td>○</td><td>✗</td><td>プロフィールを上書き</td></tr>
+    <tr><td><strong>PATCH</strong></td><td>部分更新</td><td>△</td><td>✗</td><td>メールアドレスだけ変更</td></tr>
+    <tr><td><strong>DELETE</strong></td><td>削除</td><td>○</td><td>✗</td><td>アカウントを削除</td></tr>
+  </table>
+  <p class="exam-pt">💡 POST（注文確定）を2回押すと2つ注文が入る → 非冪等 → 二重送信防止が重要</p>
+  <p class="exam-pt">💡 GETとHEADのみが「安全なメソッド」（サーバーの状態を変えない）</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">「冪等（べきとう）」とは「何回やっても同じ結果」ということ。消しゴムで消した後にまた消しても同じ（DELETEは冪等）。でも注文ボタンを2回押したら2つ注文が入る（POSTは非冪等）。</p>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.3rem;margin-top:.4rem;text-align:center;font-size:.75rem;">
+    <div style="background:#dcfce7;border-radius:6px;padding:.4rem .2rem;"><div style="font-weight:700;color:#166534;">GET</div><div style="color:#14532d;">冪等 ✓<br>安全 ✓</div></div>
+    <div style="background:#fef2f2;border-radius:6px;padding:.4rem .2rem;"><div style="font-weight:700;color:#b91c1c;">POST</div><div style="color:#7f1d1d;">非冪等 ✗<br>安全 ✗</div></div>
+    <div style="background:#dcfce7;border-radius:6px;padding:.4rem .2rem;"><div style="font-weight:700;color:#166534;">PUT</div><div style="color:#14532d;">冪等 ✓<br>安全 ✗</div></div>
+    <div style="background:#fef3c7;border-radius:6px;padding:.4rem .2rem;"><div style="font-weight:700;color:#92400e;">PATCH</div><div style="color:#78350f;">△<br>安全 ✗</div></div>
+    <div style="background:#dcfce7;border-radius:6px;padding:.4rem .2rem;"><div style="font-weight:700;color:#166534;">DELETE</div><div style="color:#14532d;">冪等 ✓<br>安全 ✗</div></div>
+  </div>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab1 ここだけ覚える</div>
+  <ul>
+    <li><strong>REST</strong>：プロトコルではなく<strong>設計思想</strong>（アーキテクチャスタイル）</li>
+    <li><strong>4原則</strong>：ステートレス・統一インターフェース・リソース指向・キャッシュ可能</li>
+    <li><strong>ステートレス</strong>：サーバーは状態を持たない。毎回必要情報を全て含める</li>
+    <li><strong>POST は非冪等</strong>：同じリクエストを2回送ると2回作成される</li>
+    <li><strong>GET・DELETE・PUT は冪等</strong>：何度やっても結果は同じ</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab1_1">
+  <div class="fill-header bg-blue">✏️ 穴埋め｜RESTの4原則＋HTTPメソッド</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-blue">
+        <tr><th>RESTの原則</th><th>キーワード</th></tr>
+        <tr><td>① <span class="fill-blank">ステートレス</span></td><td>サーバーは状態を保持しない</td></tr>
+        <tr><td>② <span class="fill-blank">統一インターフェース</span></td><td>HTTPメソッドで操作を統一</td></tr>
+        <tr><td>③ <span class="fill-blank">リソース指向</span></td><td>URLがリソースの場所を指す</td></tr>
+        <tr><td>④ <span class="fill-blank">キャッシュ可能</span></td><td>レスポンスをキャッシュして効率化</td></tr>
+      </table>
+    </div>
+    <div class="fill-group" style="margin-top:.8rem">
+      <table class="tbl-blue">
+        <tr><th>メソッド</th><th>操作</th><th>冪等性</th></tr>
+        <tr><td>GET</td><td><span class="fill-blank">取得</span></td><td><span class="fill-blank">○</span></td></tr>
+        <tr><td>POST</td><td><span class="fill-blank">作成</span></td><td><span class="fill-blank">✗</span></td></tr>
+        <tr><td>PUT</td><td><span class="fill-blank">全更新</span></td><td><span class="fill-blank">○</span></td></tr>
+        <tr><td>DELETE</td><td><span class="fill-blank">削除</span></td><td><span class="fill-blank">○</span></td></tr>
+      </table>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab1 -->
+
+<!-- ============ TAB 2: JSON/XML ============ -->
+<div class="tab-panel theme-orange" id="tab2">
+
+<h2 class="section-title st-orange">📊 3-1. JSON（現在の主流）</h2>
+<div class="card card-orange">
+  <h4>JSON（JavaScript Object Notation）の構造</h4>
+  <div class="code-block">
+{
+  <span class="ck">"user"</span>: {
+    <span class="ck">"id"</span>: <span class="cv">123</span>,
+    <span class="ck">"name"</span>: <span class="cs">"山田太郎"</span>,
+    <span class="ck">"tags"</span>: [<span class="cs">"manager"</span>, <span class="cs">"tokyo"</span>],  <span class="cm">← 配列 [ ]</span>
+    <span class="ck">"address"</span>: {              <span class="cm">← ネスト（入れ子）</span>
+      <span class="ck">"city"</span>: <span class="cs">"東京"</span>
+    }
+  }
+}
+  </div>
+  <p>構造の特徴：<code>{ }</code>オブジェクト / <code>[ ]</code>配列 / <code>"値"</code>文字列 / 数値はそのまま / <code>true/false</code> / <code>null</code></p>
+</div>
+
+<h2 class="section-title st-orange">📄 3-2. XML（比較対象・レガシー）</h2>
+<div class="card card-orange">
+  <div class="code-block">
+&lt;user&gt;
+  &lt;id&gt;<span class="cv">123</span>&lt;/id&gt;
+  &lt;name&gt;<span class="cs">山田太郎</span>&lt;/name&gt;
+  &lt;tags&gt;
+    &lt;tag&gt;<span class="cs">manager</span>&lt;/tag&gt;  <span class="cm">← 配列は同名タグを繰り返す</span>
+    &lt;tag&gt;<span class="cs">tokyo</span>&lt;/tag&gt;
+  &lt;/tags&gt;
+&lt;/user&gt;
+  </div>
+  <p class="exam-warn">⚠️ 同じ情報でもXMLはJSONの約<strong>1.5〜2倍</strong>のデータ量になる</p>
+</div>
+
+<h2 class="section-title st-orange">🔄 3-3. JSON vs XML 徹底比較</h2>
+<div class="card card-orange">
+  <table class="tbl-orange">
+    <tr><th>比較軸</th><th>JSON</th><th>XML</th></tr>
+    <tr><td>データ量</td><td>軽量</td><td>重い（タグ分が増える）</td></tr>
+    <tr><td>可読性</td><td>高い</td><td>やや低い</td></tr>
+    <tr><td>JS親和性</td><td>◎ 直接扱える</td><td>△ 変換が必要</td></tr>
+    <tr><td>スキーマ定義</td><td>JSON Schema</td><td>◎ XSD（厳密）</td></tr>
+    <tr><td>属性表現</td><td>✗（できない）</td><td>○ タグに属性付与可</td></tr>
+    <tr><td>コメント</td><td>✗（できない）</td><td>○ 可能</td></tr>
+    <tr><td>現在の主用途</td><td>Web API・モバイル</td><td>設定ファイル・企業間EDI</td></tr>
+    <tr><td>試験での位置づけ</td><td>主流として出題</td><td>比較対象として出題</td></tr>
+  </table>
+  <p class="exam-pt">📌 H25前後にJSON・XMLの普及度が逆転。現在はJSONが圧倒的主流</p>
+  <p class="exam-warn">⚠️ 「XMLはJSONより軽量」は<strong>誤り</strong>。JSONの方が軽量</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">JSONは「{ }と[ ]」で情報をまとめた軽量な形式。XMLはHTMLみたいに「&lt;タグ&gt;で囲む」ので文字数が増えて重くなる。今のWebはほぼJSONが主流。</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+    <div style="background:#dcfce7;border:2px solid #16a34a;border-radius:6px;padding:.6rem;text-align:center;">
+      <div style="font-size:1.1rem;">⚡</div>
+      <div style="font-size:.82rem;font-weight:700;color:#166534;">JSON（現在の主流）</div>
+      <div style="font-size:.73rem;color:#14532d;margin-top:.3rem;">✓ 軽量<br>✓ JS親和性◎<br>✗ コメント不可<br>✗ 属性不可</div>
+    </div>
+    <div style="background:#f5f3ff;border:2px solid #7c3aed;border-radius:6px;padding:.6rem;text-align:center;">
+      <div style="font-size:1.1rem;">📜</div>
+      <div style="font-size:.82rem;font-weight:700;color:#5b21b6;">XML（レガシー）</div>
+      <div style="font-size:.73rem;color:#4c1d95;margin-top:.3rem;">✗ 重い(1.5〜2倍)<br>△ JS変換が必要<br>✓ コメント可<br>✓ XSD厳密</div>
+    </div>
+  </div>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab2 ここだけ覚える</div>
+  <ul>
+    <li><strong>JSON</strong>：{ }オブジェクト、[ ]配列。軽量・JS親和性◎・現在の主流</li>
+    <li><strong>XML</strong>：タグで囲む。重い・コメント可・XSDスキーマ定義◎・レガシー</li>
+    <li><strong>JSONはコメント不可・属性表現不可</strong>（XMLとの違い）</li>
+    <li><strong>XMLは1.5〜2倍重い</strong>。「JSONより軽量」は誤り</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab2_1">
+  <div class="fill-header bg-orange">✏️ 穴埋め｜JSON vs XML 比較表</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-orange">
+        <tr><th>比較軸</th><th>JSON</th><th>XML</th></tr>
+        <tr><td>データ量</td><td><span class="fill-blank">軽量</span></td><td><span class="fill-blank">重い</span></td></tr>
+        <tr><td>JS親和性</td><td><span class="fill-blank">◎直接扱える</span></td><td><span class="fill-blank">△変換が必要</span></td></tr>
+        <tr><td>コメント記述</td><td><span class="fill-blank">✗不可</span></td><td><span class="fill-blank">○可能</span></td></tr>
+        <tr><td>スキーマ定義</td><td>JSON Schema</td><td><span class="fill-blank">XSD</span>（厳密）</td></tr>
+        <tr><td>現在の主用途</td><td><span class="fill-blank">Web API</span></td><td><span class="fill-blank">設定ファイル・EDI</span></td></tr>
+      </table>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab2 -->
+
+<!-- ============ TAB 3: API活用 ============ -->
+<div class="tab-panel theme-teal" id="tab3">
+
+<h2 class="section-title st-teal">🔧 4-1. APIとは何か</h2>
+<div class="card card-teal">
+  <h4>API（Application Programming Interface）の3つのイメージ</h4>
+  <div class="three-col">
+    <div class="card" style="border-left-color:var(--teal-main);text-align:center">
+      <div style="font-size:2rem">🔌</div>
+      <strong>コンセントと家電</strong>
+      <p style="font-size:.82rem;margin-top:.4rem">規格（API）さえ合えばどんな家電でも使える。内部の仕組みは不要</p>
+    </div>
+    <div class="card" style="border-left-color:var(--teal-main);text-align:center">
+      <div style="font-size:2rem">🍽️</div>
+      <strong>レストランの注文</strong>
+      <p style="font-size:.82rem;margin-top:.4rem">料理の作り方（内部実装）を知らなくてもメニュー（API仕様）で注文できる</p>
+    </div>
+    <div class="card" style="border-left-color:var(--teal-main);text-align:center">
+      <div style="font-size:2rem">🥤</div>
+      <strong>自動販売機</strong>
+      <p style="font-size:.82rem;margin-top:.4rem">お金（リクエスト）を入れてボタン（エンドポイント）を押すと商品（レスポンス）</p>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title st-teal">🗂️ 4-2. API連携の種類と分類</h2>
+<div class="card card-teal">
+  <table class="tbl-green">
+    <tr><th>種別</th><th>公開範囲</th><th>例</th></tr>
+    <tr><td><strong>オープンAPI</strong></td><td>誰でも無料で使える</td><td>天気API、地図API（無料枠）</td></tr>
+    <tr><td><strong>パートナーAPI</strong></td><td>契約した企業のみ</td><td>決済API、物流API</td></tr>
+    <tr><td><strong>プライベートAPI</strong></td><td>社内システム間のみ</td><td>基幹系データ連携</td></tr>
+  </table>
+</div>
+
+<h2 class="section-title st-teal">🔀 4-3. マッシュアップ（試験頻出）</h2>
+<div class="card card-teal">
+  <h4>マッシュアップ＝複数の外部APIを組み合わせて新しいサービスを作る</h4>
+  <div class="diagram">
+    <div class="diagram-title">不動産情報サービスの例</div>
+    <div class="flow-row">
+      <div class="flow-box fb-blue">地図API<small>Google Maps等</small></div>
+      <span class="flow-arrow">＋</span>
+      <div class="flow-box fb-green">不動産API<small>物件情報</small></div>
+      <span class="flow-arrow">＋</span>
+      <div class="flow-box fb-orange">交通API<small>最寄り駅</small></div>
+      <span class="flow-arrow">＋</span>
+      <div class="flow-box fb-purple">口コミAPI<small>周辺評判</small></div>
+    </div>
+    <div style="text-align:center;margin-top:.7rem;font-weight:700">⬇️ 組み合わせて</div>
+    <div class="flow-row" style="margin-top:.4rem">
+      <div class="flow-box fb-red" style="min-width:200px">「地図上で物件検索＋周辺情報」サービス<small>自社でゼロから作るより低コスト・高速</small></div>
+    </div>
+  </div>
+  <p class="exam-pt">💡 LEGOブロックの例え：各APIが標準化されたパーツ → 組み合わせて様々なサービスを作れる</p>
+  <p class="exam-pt">📌 中小企業のDX推進での重要概念。低コスト・高速でサービス構築可能</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">マッシュアップとは、既存のAPIを「レゴブロック」のように組み合わせて新しいサービスを作ること。ゼロから作る必要がなく、コストも時間も大幅節約できる。</p>
+  <div style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin-top:.4rem;">
+    <div style="background:#dbeafe;border-radius:6px;padding:.3rem .6rem;font-size:.8rem;font-weight:600;color:#1e40af;">🗺️ 地図API</div>
+    <span style="color:#94a3b8;">＋</span>
+    <div style="background:#dcfce7;border-radius:6px;padding:.3rem .6rem;font-size:.8rem;font-weight:600;color:#166534;">🏠 不動産API</div>
+    <span style="color:#94a3b8;">＋</span>
+    <div style="background:#fef9c3;border-radius:6px;padding:.3rem .6rem;font-size:.8rem;font-weight:600;color:#854d0e;">🚃 交通API</div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+    <div style="background:#fce7f3;border-radius:6px;padding:.3rem .8rem;font-size:.8rem;font-weight:700;color:#9d174d;">🎯 新サービス完成！</div>
+  </div>
+  <div style="position:relative;background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.5rem .8rem;margin-top:.6rem;font-size:.82rem;color:#713f12;">
+    <span style="position:absolute;top:-10px;left:12px;background:#fde047;font-size:.68rem;font-weight:700;padding:.1rem .4rem;border-radius:4px;color:#713f12;">🔑 ポイント</span>
+    中小企業でも低コスト・高速でDXサービスが作れる（ゼロから開発不要）
+  </div>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab3 ここだけ覚える</div>
+  <ul>
+    <li><strong>API</strong>：内部の仕組みを知らなくても使えるインターフェース（コンセント・自販機）</li>
+    <li><strong>マッシュアップ</strong>：複数の外部APIを組み合わせて新サービスを作る</li>
+    <li><strong>オープンAPI</strong>：誰でも利用可 / <strong>パートナーAPI</strong>：契約企業のみ</li>
+    <li><strong>低コスト・高速</strong>：マッシュアップによりゼロから開発不要</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab3_1">
+  <div class="fill-header bg-teal">✏️ 穴埋め｜API種類・マッシュアップ</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-green">
+        <tr><th>種別</th><th>公開範囲</th></tr>
+        <tr><td><span class="fill-blank">オープンAPI</span></td><td>誰でも無料で使える</td></tr>
+        <tr><td><span class="fill-blank">パートナーAPI</span></td><td>契約した企業のみ</td></tr>
+        <tr><td><span class="fill-blank">プライベートAPI</span></td><td>社内システム間のみ</td></tr>
+      </table>
+    </div>
+    <div class="fill-group" style="margin-top:.8rem">
+      <p><strong>マッシュアップ</strong>とは：複数の<span class="fill-blank">外部API</span>を組み合わせて<span class="fill-blank">新サービス</span>を構築する手法。自社開発より<span class="fill-blank">低コスト</span>・高速。</p>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab3 -->
+
+<!-- ============ TAB 4: SOAP比較 ============ -->
+<div class="tab-panel theme-purple" id="tab4">
+
+<h2 class="section-title st-purple">⚖️ 5-1. SOAP（旧世代・レガシー）</h2>
+<div class="card card-purple">
+  <h4>SOAP（Simple Object Access Protocol）のイメージ</h4>
+  <div class="diagram">
+    <div class="diagram-title">SOAPメッセージ構造</div>
+    <div style="background:#fff3e0;border:2px solid #fb8c00;border-radius:8px;padding:1rem;font-size:.85rem">
+      <div style="background:#fb8c00;color:#fff;padding:.3rem .8rem;border-radius:4px;margin-bottom:.5rem;font-weight:700">Envelope（封筒）</div>
+      <div style="padding-left:1rem">
+        <div style="background:#ffe0b2;border-left:3px solid #ef6c00;padding:.4rem .7rem;margin:.3rem 0;border-radius:4px">Header（宛先・認証情報）</div>
+        <div style="background:#fff8e1;border-left:3px solid #f9a825;padding:.4rem .7rem;margin:.3rem 0;border-radius:4px">Body（実際のデータ：XML形式）</div>
+      </div>
+    </div>
+  </div>
+  <p>仕様定義は<strong>WSDL</strong>（Web Services Description Language）で厳密に記述。</p>
+  <p class="exam-pt">📌 銀行・官公庁・大企業の基幹システム間連携で今も稼働。新規採用はほぼなし</p>
+</div>
+
+<h2 class="section-title st-purple">📊 5-2. SOAP vs REST 完全比較</h2>
+<div class="card card-purple">
+  <table class="tbl-purple">
+    <tr><th>比較軸</th><th>SOAP</th><th>REST</th></tr>
+    <tr><td>プロトコル</td><td>SOAP専用（HTTP/SMTP等で動く）</td><td>HTTP</td></tr>
+    <tr><td>データ形式</td><td>XMLのみ</td><td>JSON（主流）・XMLなど</td></tr>
+    <tr><td>仕様定義</td><td><strong>WSDL</strong>（厳密）</td><td>OpenAPI/Swagger（推奨）</td></tr>
+    <tr><td>複雑さ</td><td>高い・規約が多い</td><td>シンプル</td></tr>
+    <tr><td>セキュリティ</td><td>WS-Security（組込）</td><td>HTTPS＋OAuth</td></tr>
+    <tr><td>トランザクション</td><td>対応（ACID保証）</td><td>非対応</td></tr>
+    <tr><td>向いている用途</td><td>金融・医療・企業間EDI</td><td>Web/モバイルAPI全般</td></tr>
+    <tr><td>現在の普及度</td><td>レガシー維持のみ</td><td>圧倒的主流</td></tr>
+    <tr><td>試験での扱い</td><td>消去法用の引っかかり選択肢</td><td>正答候補</td></tr>
+  </table>
+  <p class="exam-warn">⚠️ 「SOAPはRESTの一種」は<strong>誤り</strong>。別物。SOAP＝厳密プロトコル、REST＝設計思想</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">SOAPは「昔の堅苦しい規則だらけの通信」、RESTは「シンプルで現代的な通信」。銀行や役所のシステムに今もSOAPが残っているが、新規採用はほぼなし。</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+    <div style="background:#f5f3ff;border:2px solid #7c3aed;border-radius:6px;padding:.6rem;">
+      <div style="font-size:.82rem;font-weight:700;color:#5b21b6;margin-bottom:.3rem;">📜 SOAP（レガシー）</div>
+      <div style="font-size:.73rem;color:#4c1d95;line-height:1.7;">✓ XMLのみ<br>✓ WSDL仕様定義<br>✓ ACID保証<br>✓ 金融・官公庁用</div>
+    </div>
+    <div style="background:#dcfce7;border:2px solid #16a34a;border-radius:6px;padding:.6rem;">
+      <div style="font-size:.82rem;font-weight:700;color:#166534;margin-bottom:.3rem;">⚡ REST（現在の主流）</div>
+      <div style="font-size:.73rem;color:#14532d;line-height:1.7;">✓ JSON主流<br>✓ シンプル<br>✓ Web/モバイル全般<br>✓ 圧倒的普及</div>
+    </div>
+  </div>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab4 ここだけ覚える</div>
+  <ul>
+    <li><strong>SOAP</strong>：XMLのみ・WSDL仕様定義・厳密プロトコル・レガシー維持</li>
+    <li><strong>REST</strong>：JSON主流・シンプル・現在の圧倒的主流</li>
+    <li><strong>WSDLはSOAPの仕様定義言語</strong>（RESTはOpenAPI/Swagger）</li>
+    <li><strong>SOAPはトランザクション対応</strong>（ACID保証）。RESTは非対応</li>
+    <li>試験：SOAPは「消去法用」。REST・JSONが正答候補</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab4_1">
+  <div class="fill-header bg-purple">✏️ 穴埋め｜SOAP vs REST 比較</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-purple">
+        <tr><th>比較軸</th><th>SOAP</th><th>REST</th></tr>
+        <tr><td>データ形式</td><td><span class="fill-blank">XMLのみ</span></td><td><span class="fill-blank">JSON主流</span></td></tr>
+        <tr><td>仕様定義</td><td><span class="fill-blank">WSDL</span>（厳密）</td><td><span class="fill-blank">OpenAPI</span>/Swagger</td></tr>
+        <tr><td>トランザクション</td><td><span class="fill-blank">対応（ACID）</span></td><td><span class="fill-blank">非対応</span></td></tr>
+        <tr><td>現在の普及度</td><td><span class="fill-blank">レガシー維持</span></td><td><span class="fill-blank">圧倒的主流</span></td></tr>
+      </table>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab4')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab4 -->
+
+<!-- ============ TAB 5: OAuth/OpenID Connect ============ -->
+<div class="tab-panel theme-red" id="tab5">
+
+<h2 class="section-title st-red">🔐 6-1. OAuth2.0とは</h2>
+<div class="card card-red">
+  <h4>「パスワードを渡さずに、権限だけを委譲する仕組み」</h4>
+  <div class="diagram">
+    <div class="diagram-title">OAuth2.0 認可フロー（Googleカレンダーの例）</div>
+    <div class="flow-row">
+      <div class="flow-box fb-blue">① カレンダーApp<small>権限リクエスト</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box fb-orange">② Google認可画面<small>「許可しますか？」</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box fb-green">③ ユーザー許可<small>「許可する」</small></div>
+    </div>
+    <div class="flow-row" style="margin-top:.5rem">
+      <div class="flow-box fb-blue">⑤ カレンダー読取<small>トークンで操作</small></div>
+      <span class="flow-arrow">←</span>
+      <div class="flow-box fb-red">④ アクセストークン<small>発行（パスワードは不要）</small></div>
+    </div>
+  </div>
+  <p class="exam-pt">💡 パスワードを渡さず、指定した権限（カレンダー読取のみ等）だけを委譲できる</p>
+</div>
+
+<h2 class="section-title st-red">👥 6-2. OAuth2.0の登場人物（4者）</h2>
+<div class="card card-red">
+  <table class="tbl-red">
+    <tr><th>登場人物</th><th>役割</th><th>具体例</th></tr>
+    <tr><td><strong>リソースオーナー</strong></td><td>ユーザー本人</td><td>Googleアカウント所有者</td></tr>
+    <tr><td><strong>クライアント</strong></td><td>権限をもらう側（アプリ）</td><td>カレンダーアプリ</td></tr>
+    <tr><td><strong>認可サーバー</strong></td><td>権限を発行する側</td><td>Google（認証・認可を担当）</td></tr>
+    <tr><td><strong>リソースサーバー</strong></td><td>データの保管場所</td><td>Googleカレンダー</td></tr>
+  </table>
+</div>
+
+<h2 class="section-title st-red">🪪 6-3. OpenID Connect（OAuth2.0の拡張）</h2>
+<div class="card card-red">
+  <div class="vs-box">
+    <div class="vs-side">
+      <h4>OAuth2.0</h4>
+      <p style="font-size:.85rem"><strong>認可</strong>（Authorization）</p>
+      <p style="font-size:.82rem">「何をしてよいか」</p>
+      <p style="font-size:.82rem">アクセストークン</p>
+    </div>
+    <div class="vs-mid">＋</div>
+    <div class="vs-side">
+      <h4>OpenID Connect</h4>
+      <p style="font-size:.85rem"><strong>認証＋認可</strong></p>
+      <p style="font-size:.82rem">「誰か」＋「何をしてよいか」</p>
+      <p style="font-size:.82rem">IDトークン（JWT）＋アクセストークン</p>
+    </div>
+  </div>
+  <p class="exam-pt">💡 「Googleでログイン」「LINEでログイン」の正体 ＝ OpenID Connect</p>
+  <p class="exam-warn">⚠️ 「OAuth2.0は認証の仕組み」は<strong>誤り</strong>。OAuth2.0は<strong>認可</strong>の仕組み。認証はOpenID Connectが担当</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">OAuth2.0は「パスワードを教えずに、部屋の鍵だけ貸す」しくみ。「認証（誰？）」と「認可（何してOK？）」は別物。OpenID ConnectはOAuth2.0に「誰？」の機能を追加したもの。</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+    <div style="background:#fef2f2;border:2px solid #ef4444;border-radius:6px;padding:.6rem;text-align:center;">
+      <div style="font-size:1.1rem;">🔑</div>
+      <div style="font-size:.82rem;font-weight:700;color:#b91c1c;">OAuth 2.0</div>
+      <div style="font-size:.73rem;color:#7f1d1d;margin-top:.3rem;line-height:1.6;">「認可」のみ<br>何をしてOKか<br>アクセストークン</div>
+    </div>
+    <div style="background:#ecfdf5;border:2px solid #10b981;border-radius:6px;padding:.6rem;text-align:center;">
+      <div style="font-size:1.1rem;">🪪</div>
+      <div style="font-size:.82rem;font-weight:700;color:#065f46;">OpenID Connect</div>
+      <div style="font-size:.73rem;color:#064e3b;margin-top:.3rem;line-height:1.6;">「認証＋認可」<br>誰？＋何してOK？<br>IDトークン(JWT)＋AC</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title st-red">🎫 6-4. JWT（IDトークンの形式）</h2>
+<div class="card card-red">
+  <h4>JWT（JSON Web Token）＝自己完結した証明書</h4>
+  <div class="code-block" style="font-size:.8rem">
+<span class="cm">// eyJhbGciOi... をBase64デコードすると</span>
+{
+  <span class="ck">"sub"</span>: <span class="cs">"user123"</span>,    <span class="cm">← ユーザーID</span>
+  <span class="ck">"email"</span>: <span class="cs">"xxx@gmail.com"</span>,
+  <span class="ck">"exp"</span>: <span class="cv">1700000000</span>    <span class="cm">← 有効期限</span>
+}
+  </div>
+  <p class="exam-pt">💡 JWTはサーバーに毎回問い合わせせず、トークン自体に情報が入っている（ステートレス）</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">JWTは「住民票」のようなもの。住民票には名前・住所・有効期限が印刷されているので、役所に確認しなくても内容を信頼できる。サーバー問い合わせ不要でステートレスを実現できる。</p>
+  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+    <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:600;color:#1e40af;">ヘッダー<br><span style="font-weight:400;font-size:.7rem;">署名アルゴリズム</span></div>
+    <span style="color:#94a3b8;font-size:.9rem;">.</span>
+    <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:600;color:#166534;">ペイロード<br><span style="font-weight:400;font-size:.7rem;">ユーザーID・有効期限</span></div>
+    <span style="color:#94a3b8;font-size:.9rem;">.</span>
+    <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:600;color:#854d0e;">署名<br><span style="font-weight:400;font-size:.7rem;">改ざん検証</span></div>
+  </div>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab5 ここだけ覚える</div>
+  <ul>
+    <li><strong>OAuth2.0</strong>：<strong>認可</strong>の仕組み（認証ではない）。パスワードを渡さず権限委譲</li>
+    <li><strong>4者</strong>：リソースオーナー / クライアント / 認可サーバー / リソースサーバー</li>
+    <li><strong>OpenID Connect</strong>：OAuth2.0 + 認証。「Googleでログイン」の正体</li>
+    <li><strong>JWT</strong>：自己完結したIDトークン。サーバー問い合わせ不要</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab5_1">
+  <div class="fill-header bg-red">✏️ 穴埋め｜OAuth2.0・OpenID Connect</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-red">
+        <tr><th>登場人物</th><th>役割</th></tr>
+        <tr><td><span class="fill-blank">リソースオーナー</span></td><td>ユーザー本人</td></tr>
+        <tr><td><span class="fill-blank">クライアント</span></td><td>権限をもらう側（アプリ）</td></tr>
+        <tr><td><span class="fill-blank">認可サーバー</span></td><td>権限を発行する側</td></tr>
+        <tr><td><span class="fill-blank">リソースサーバー</span></td><td>データの保管場所</td></tr>
+      </table>
+    </div>
+    <div class="fill-group" style="margin-top:.8rem">
+      <table class="tbl-red">
+        <tr><th></th><th>OAuth2.0</th><th>OpenID Connect</th></tr>
+        <tr><td>目的</td><td><span class="fill-blank">認可</span>（権限委譲）</td><td><span class="fill-blank">認証＋認可</span></td></tr>
+        <tr><td>トークン</td><td><span class="fill-blank">アクセストークン</span></td><td>IDトークン（<span class="fill-blank">JWT</span>）＋アクセストークン</td></tr>
+        <tr><td>使用例</td><td>APIアクセス権限</td><td><span class="fill-blank">SNSログイン連携</span></td></tr>
+      </table>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab5')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab5 -->
+
+<!-- ============ TAB 6: GraphQL ============ -->
+<div class="tab-panel theme-orange" id="tab6">
+
+<h2 class="section-title st-orange">⚡ 7-1. RESTの課題</h2>
+<div class="card card-orange">
+  <h4>「ユーザーの名前と最新3件の注文だけ欲しい」場合</h4>
+  <div class="vs-box">
+    <div class="vs-side">
+      <h4 style="color:#c62828">❌ RESTの問題</h4>
+      <div class="code-block" style="font-size:.78rem">GET /users/123
+→ 全フィールド返ってくる
+  (名前・住所・電話・生年月日…)
+
+GET /users/123/orders
+→ 注文全件返ってくる
+  (最新3件だけ欲しいのに)</div>
+      <p style="font-size:.8rem;margin-top:.4rem;color:#c62828">① オーバーフェッチ（必要以上）<br>② アンダーフェッチ（2回必要）</p>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-side">
+      <h4 style="color:#1565c0">✅ GraphQL</h4>
+      <div class="code-block" style="font-size:.78rem">query {
+  user(id: 123) {
+    name
+    orders(last: 3) {
+      id
+      total
+    }
+  }
+}</div>
+      <p style="font-size:.8rem;margin-top:.4rem;color:#1565c0">1回で必要なデータだけ取得</p>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title st-orange">📊 7-2. REST vs GraphQL 比較</h2>
+<div class="card card-orange">
+  <table class="tbl-orange">
+    <tr><th>比較軸</th><th>REST</th><th>GraphQL</th></tr>
+    <tr><td>エンドポイント</td><td>複数（リソースごと）</td><td><strong>1つ</strong></td></tr>
+    <tr><td>データ取得</td><td>固定レスポンス</td><td>必要な項目のみ指定</td></tr>
+    <tr><td>過不足</td><td>オーバー/アンダーフェッチ</td><td><strong>なし</strong></td></tr>
+    <tr><td>学習コスト</td><td>低い</td><td>高い</td></tr>
+    <tr><td>キャッシュ</td><td>簡単</td><td>難しい</td></tr>
+    <tr><td>採用例</td><td>ほぼ全てのWebAPI</td><td>GitHub・Facebook・Shopify</td></tr>
+  </table>
+  <p class="exam-pt">📌 オーバーフェッチ＝必要以上のデータが返る / アンダーフェッチ＝必要なデータが足りず複数回リクエスト</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">GraphQLは「ファミレスのオーダー式ビュッフェ」。RESTは「セットメニュー」で要らないものも来るが、GraphQLは「欲しいものだけ」を一度に注文できる。エンドポイントは全メニュー共通で1つだけ。</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+    <div style="background:#fef2f2;border-radius:6px;padding:.6rem;">
+      <div style="font-size:.82rem;font-weight:700;color:#b91c1c;margin-bottom:.3rem;">😟 RESTの問題</div>
+      <div style="font-size:.73rem;color:#7f1d1d;line-height:1.7;">・オーバーフェッチ：要らない情報も全部返る<br>・アンダーフェッチ：2回リクエスト必要<br>・エンドポイントが複数</div>
+    </div>
+    <div style="background:#f0fdf4;border-radius:6px;padding:.6rem;">
+      <div style="font-size:.82rem;font-weight:700;color:#166534;margin-bottom:.3rem;">😊 GraphQL解決</div>
+      <div style="font-size:.73rem;color:#14532d;line-height:1.7;">・必要な項目だけ指定取得<br>・1回のリクエストで完結<br>・エンドポイントは1つのみ</div>
+    </div>
+  </div>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab6 ここだけ覚える</div>
+  <ul>
+    <li><strong>GraphQL</strong>：クライアントが必要なデータだけ指定して取得できる</li>
+    <li><strong>オーバーフェッチ解消</strong>：RESTでは全フィールドが返るが、GraphQLは指定したもののみ</li>
+    <li><strong>エンドポイントは1つ</strong>（RESTは複数）</li>
+    <li>採用例：GitHub・Facebook・Shopify</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab6_1">
+  <div class="fill-header bg-orange">✏️ 穴埋め｜REST vs GraphQL</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-orange">
+        <tr><th>比較軸</th><th>REST</th><th>GraphQL</th></tr>
+        <tr><td>エンドポイント</td><td><span class="fill-blank">複数</span></td><td><span class="fill-blank">1つ</span></td></tr>
+        <tr><td>データ取得</td><td><span class="fill-blank">固定レスポンス</span></td><td><span class="fill-blank">必要項目のみ指定</span></td></tr>
+        <tr><td>RESTの問題</td><td><span class="fill-blank">オーバーフェッチ</span>・<span class="fill-blank">アンダーフェッチ</span></td><td>解消</td></tr>
+      </table>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab6')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab6 -->
+
+<!-- ============ TAB 7: WebSocket ============ -->
+<div class="tab-panel theme-blue" id="tab7">
+
+<h2 class="section-title st-blue">🔁 8-1. HTTP vs WebSocket 通信モデル</h2>
+<div class="card card-blue">
+  <div class="vs-box">
+    <div class="vs-side">
+      <h4>HTTP（REST）</h4>
+      <div class="diagram" style="margin:.4rem 0">
+        <div class="flow-row">
+          <div class="flow-box fb-blue" style="font-size:.75rem">クライアント</div>
+          <span class="flow-arrow" style="font-size:.9rem">→リクエスト→</span>
+          <div class="flow-box fb-green" style="font-size:.75rem">サーバー</div>
+        </div>
+        <div class="flow-row" style="margin-top:.3rem">
+          <div class="flow-box fb-blue" style="font-size:.75rem">クライアント</div>
+          <span class="flow-arrow" style="font-size:.9rem">←レスポンス←</span>
+          <div class="flow-box fb-green" style="font-size:.75rem">サーバー</div>
+        </div>
+      </div>
+      <p style="font-size:.8rem">毎回接続・切断を繰り返す<br>一方通行</p>
+      <p style="font-size:.78rem;color:#c62828;margin-top:.3rem">「注文するたびに電話を切る」</p>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-side">
+      <h4>WebSocket</h4>
+      <div class="diagram" style="margin:.4rem 0">
+        <div class="flow-row">
+          <div class="flow-box fb-blue" style="font-size:.75rem">クライアント</div>
+          <span class="flow-arrow" style="font-size:.9rem">⇄ 双方向</span>
+          <div class="flow-box fb-green" style="font-size:.75rem">サーバー</div>
+        </div>
+        <p style="text-align:center;font-size:.78rem;margin-top:.3rem">接続を維持したまま<br>どちらからでも送信可</p>
+      </div>
+      <p style="font-size:.8rem">サーバー側から自発的に送信できる</p>
+      <p style="font-size:.78rem;color:#1565c0;margin-top:.3rem">「電話を切らずに話し続ける」</p>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title st-blue">🎯 8-2. 用途の違い</h2>
+<div class="card card-blue">
+  <table class="tbl-blue">
+    <tr><th>通信方式</th><th>向いている用途</th></tr>
+    <tr><td><strong>HTTP（REST）</strong></td><td>商品を検索する・注文を確定する（都度リクエスト）</td></tr>
+    <tr><td><strong>WebSocket</strong></td><td>
+      チャットアプリ（メッセージを即時受信）<br>
+      株価リアルタイム表示（価格変動を即座に反映）<br>
+      オンラインゲーム（操作を即時同期）
+    </td></tr>
+  </table>
+  <p class="exam-pt">💡 WebSocket = 「リアルタイム双方向通信」がキーワード</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">HTTPは「電話して用件を伝えたら切る」方式。WebSocketは「通話し続けながらいつでも話せる」方式。チャットや株価のリアルタイム更新には電話を切らないWebSocketが適している。</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+    <div style="background:#fff7ed;border:2px solid #fb923c;border-radius:6px;padding:.6rem;text-align:center;">
+      <div style="font-size:1.2rem;">📞</div>
+      <div style="font-size:.82rem;font-weight:700;color:#c2410c;">HTTP（都度）</div>
+      <div style="font-size:.73rem;color:#9a3412;margin-top:.2rem;line-height:1.6;">クライアント→サーバー<br>毎回接続・切断<br>一方向のみ</div>
+    </div>
+    <div style="background:#eff6ff;border:2px solid #3b82f6;border-radius:6px;padding:.6rem;text-align:center;">
+      <div style="font-size:1.2rem;">🤝</div>
+      <div style="font-size:.82rem;font-weight:700;color:#1d4ed8;">WebSocket（持続）</div>
+      <div style="font-size:.73rem;color:#1e3a8a;margin-top:.2rem;line-height:1.6;">クライアント⇄サーバー<br>接続を維持<br>双方向リアルタイム</div>
+    </div>
+  </div>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab7 ここだけ覚える</div>
+  <ul>
+    <li><strong>WebSocket</strong>：接続を維持した<strong>双方向リアルタイム通信</strong></li>
+    <li><strong>HTTP</strong>：都度リクエスト・レスポンス型（一方通行）</li>
+    <li><strong>サーバーから自発的に送信できる</strong>：WebSocketの最大の特徴</li>
+    <li>用途：チャット・株価・ゲームなどリアルタイム性が必要なもの</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab7_1">
+  <div class="fill-header bg-blue">✏️ 穴埋め｜WebSocket vs HTTP</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-blue">
+        <tr><th>比較軸</th><th>HTTP（REST）</th><th>WebSocket</th></tr>
+        <tr><td>接続方式</td><td><span class="fill-blank">都度接続・切断</span></td><td><span class="fill-blank">接続を維持</span></td></tr>
+        <tr><td>通信方向</td><td><span class="fill-blank">一方向</span>（クライアント→）</td><td><span class="fill-blank">双方向</span></td></tr>
+        <tr><td>向いている用途</td><td><span class="fill-blank">都度リクエスト</span>（検索・注文）</td><td><span class="fill-blank">リアルタイム</span>（チャット・株価）</td></tr>
+      </table>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab7')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab7 -->
+
+<!-- ============ TAB 8: マイクロサービス ============ -->
+<div class="tab-panel theme-green" id="tab8">
+
+<h2 class="section-title st-green">🏗️ 9-1. モノリシック vs マイクロサービス</h2>
+<div class="card card-green">
+  <div class="vs-box">
+    <div class="vs-side">
+      <h4 style="color:#c62828">モノリシック（従来型）</h4>
+      <div style="background:#fce4ec;border:2px solid #ef9a9a;border-radius:8px;padding:.7rem;font-size:.82rem;margin:.4rem 0">
+        <div style="text-align:center;padding:.3rem;background:#ef9a9a;border-radius:4px;margin-bottom:.4rem">全部一つのシステム</div>
+        <div>注文機能</div><div>決済機能</div><div>在庫管理機能</div><div>会員管理機能</div>
+      </div>
+      <p style="font-size:.8rem;color:#c62828">一部変更 → 全体を再ビルド<br>一部障害 → 全体が止まる</p>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-side">
+      <h4 style="color:#1565c0">マイクロサービス（現代型）</h4>
+      <div style="font-size:.78rem;margin:.4rem 0">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+          <div style="background:#e3f2fd;border:1px solid #1565c0;border-radius:6px;padding:.3rem;text-align:center">注文<br>サービス</div>
+          <div style="background:#e8f5e9;border:1px solid #2e7d32;border-radius:6px;padding:.3rem;text-align:center">決済<br>サービス</div>
+          <div style="background:#fff3e0;border:1px solid #e65100;border-radius:6px;padding:.3rem;text-align:center">在庫<br>サービス</div>
+          <div style="background:#f3e5f5;border:1px solid #6a1b9a;border-radius:6px;padding:.3rem;text-align:center">会員<br>サービス</div>
+        </div>
+        <div style="text-align:center;font-size:.7rem;margin-top:.3rem">REST APIで連携</div>
+      </div>
+      <p style="font-size:.8rem;color:#1565c0">一部変更 → そのサービスだけ更新<br>一部障害 → 他は継続稼働</p>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title st-green">🔀 9-2. APIゲートウェイ</h2>
+<div class="card card-green">
+  <h4>APIゲートウェイ＝複数のマイクロサービスへの「受付・警備・案内係」</h4>
+  <div class="diagram">
+    <div class="diagram-title">APIゲートウェイの構造</div>
+    <div class="flow-row">
+      <div class="flow-box fb-orange">外部クライアント<small>スマホ・ブラウザ</small></div>
+    </div>
+    <div style="text-align:center;font-size:1.5rem;margin:.3rem">↓</div>
+    <div class="flow-row">
+      <div class="flow-box fb-purple" style="min-width:200px">APIゲートウェイ<small>認証確認・レート制限・ルーティング・ログ・集約</small></div>
+    </div>
+    <div style="text-align:center;font-size:1.5rem;margin:.3rem">↓ ルーティング（振り分け）</div>
+    <div class="flow-row">
+      <div class="flow-box fb-blue" style="font-size:.75rem">注文サービス</div>
+      <div class="flow-box fb-green" style="font-size:.75rem">決済サービス</div>
+      <div class="flow-box fb-orange" style="font-size:.75rem">在庫サービス</div>
+    </div>
+  </div>
+  <p class="exam-pt">📌 セキュリティ・監視・制限を一カ所で管理。AWS API Gateway等がクラウドで提供</p>
+</div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">マイクロサービスは「専門店街」のしくみ。一つのお店（サービス）が閉まっても、他のお店は営業できる。APIゲートウェイは「総合受付」で、どの専門店に行けばいいか案内してくれる。</p>
+  <div style="margin-top:.4rem;font-size:.8rem;line-height:1.9;color:#334155;">
+    <div style="font-weight:700;color:#1e40af;">🏬 マイクロサービス構成</div>
+    <div style="padding-left:1.2rem;">
+      <div>└ <span style="background:#dbeafe;padding:.05rem .4rem;border-radius:3px;">APIゲートウェイ</span>（認証・ルーティング・制限を一括管理）</div>
+      <div style="padding-left:1.2rem;">
+        <div>├ <span style="background:#dcfce7;padding:.05rem .3rem;border-radius:3px;">注文サービス</span> … 独立して動く</div>
+        <div>├ <span style="background:#fef9c3;padding:.05rem .3rem;border-radius:3px;">決済サービス</span> … 独立して動く</div>
+        <div>└ <span style="background:#f3e8ff;padding:.05rem .3rem;border-radius:3px;">在庫サービス</span> … 独立して動く</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title st-green">🎯 試験対策まとめ（論点別優先度）</h2>
+<div class="card card-green">
+  <table class="tbl-green">
+    <tr><th>論点</th><th>優先度</th><th>変化</th></tr>
+    <tr><td>RESTの4原則</td><td>🔴 最優先</td><td>変わらず</td></tr>
+    <tr><td>JSON の特徴・構造</td><td>🔴 最優先</td><td>変わらず</td></tr>
+    <tr><td>HTTPメソッド（冪等性）</td><td>🔴 最優先</td><td>変わらず</td></tr>
+    <tr><td>マッシュアップ</td><td>🟡 重要</td><td>変わらず</td></tr>
+    <tr><td>JSON vs XML 比較</td><td>🟡 重要</td><td>XMLの位置づけ低下</td></tr>
+    <tr><td>OAuth2.0 / OpenID Connect</td><td>🟡 重要</td><td>⚠️ 新出題候補</td></tr>
+    <tr><td>GraphQL の概念</td><td>🟢 加点</td><td>⚠️ REST比較問題に</td></tr>
+    <tr><td>WebSocket の特徴</td><td>🟢 加点</td><td>⚠️ リアルタイム通信</td></tr>
+    <tr><td>SOAP の詳細（WSDL等）</td><td>△ 消去法のみ</td><td>深追い不要に</td></tr>
+  </table>
+</div>
+
+<h2 class="section-title st-green">⚠️ 頻出 引っかかりポイント</h2>
+<div class="card card-green">
+  <table class="tbl-green">
+    <tr><th>よくある誤り</th><th>正しい理解</th></tr>
+    <tr><td>「RESTはプロトコルである」</td><td>設計思想（アーキテクチャスタイル）</td></tr>
+    <tr><td>「RESTはセッション状態を管理する」</td><td>ステートレスが原則</td></tr>
+    <tr><td>「XMLはJSONより軽量」</td><td>逆。JSONの方が軽量</td></tr>
+    <tr><td>「SOAPはRESTの一種」</td><td>別物。SOAP＝厳密プロトコル・REST＝設計思想</td></tr>
+    <tr><td>「OAuth2.0は認証の仕組み」</td><td>認可の仕組み。認証はOpenID Connectが担当</td></tr>
+  </table>
+</div>
+
+<div class="keepit">
+  <div class="keepit-title">⭐ Tab8 ここだけ覚える</div>
+  <ul>
+    <li><strong>マイクロサービス</strong>：機能ごとに独立したサービス。一部障害でも他は動く</li>
+    <li><strong>APIゲートウェイ</strong>：全サービスへの入口を一本化。認証・制限・ルーティングを一括管理</li>
+    <li><strong>AWS API Gateway</strong>：クラウドでのAPIゲートウェイサービス</li>
+    <li>試験最重要：RESTの4原則 / HTTPメソッド冪等性 / JSON vs XML</li>
+  </ul>
+</div>
+
+<div class="fill-card" id="fill_tab8_1">
+  <div class="fill-header bg-green">✏️ 穴埋め｜マイクロサービス・試験対策まとめ</div>
+  <div class="fill-body">
+    <div class="fill-group">
+      <table class="tbl-green">
+        <tr><th>比較軸</th><th>モノリシック</th><th>マイクロサービス</th></tr>
+        <tr><td>障害時</td><td><span class="fill-blank">全体が停止</span></td><td><span class="fill-blank">他は継続稼働</span></td></tr>
+        <tr><td>変更時</td><td><span class="fill-blank">全体を再ビルド</span></td><td><span class="fill-blank">該当サービスのみ</span></td></tr>
+      </table>
+    </div>
+    <div class="fill-group" style="margin-top:.8rem">
+      <p>APIゲートウェイの機能：<span class="fill-blank">認証・認可</span>確認 / <span class="fill-blank">レート制限</span> / <span class="fill-blank">ルーティング</span>（振り分け）/ ログ・監視</p>
+    </div>
+    <div class="fill-group" style="margin-top:.6rem">
+      <table class="tbl-green">
+        <tr><th>誤り</th><th>正しくは</th></tr>
+        <tr><td>RESTはプロトコル</td><td><span class="fill-blank">設計思想（アーキテクチャスタイル）</span></td></tr>
+        <tr><td>OAuth2.0は認証</td><td><span class="fill-blank">認可</span>の仕組み（認証はOpenID Connect）</td></tr>
+        <tr><td>XMLはJSONより軽量</td><td><span class="fill-blank">JSONの方が軽量</span></td></tr>
+      </table>
+    </div>
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab8')">全て表示 / 隠す</button>
+  </div>
+</div>
+
+</div><!-- /tab8 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer" style="text-align:center;padding:1.5rem;color:#aeb6bf;font-size:.8rem">
+  経営情報システム ｜ 19.Web技術・APIまとめ（qz版） ｜ 直近7年（R01〜R07）出題実績準拠
+</div>
+
+<script>
+function switchTab(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.addEventListener('click',function(e){
+  var fb=e.target.closest('.fill-blank');
+  if(fb)fb.classList.toggle('show');
+  var fc=e.target.closest('.flash-card');
+  if(fc)fc.classList.toggle('flipped');
+});
+function revealAllFillIn(tabId){
+  var blanks=document.querySelectorAll('#'+tabId+' .fill-blank');
+  var allShown=Array.from(blanks).every(b=>b.classList.contains('show'));
+  blanks.forEach(b=>{if(allShown)b.classList.remove('show');else b.classList.add('show');});
+}
+function resetAllFillIn(tabId){
+  document.querySelectorAll('#'+tabId+' .fill-blank').forEach(b=>b.classList.remove('show'));
+}
+function revealBlanks(btn){
+  btn.parentElement.querySelectorAll('.fill-blank').forEach(el=>el.classList.add('show'));
+  btn.textContent='✅ 表示済み';btn.disabled=true;btn.style.opacity='.5';
+}
+</script>
+<script>
+window.LS_CONFIG = {
+  KEY: 'ls_106_qz_web_api',
+  TOPICS: [
+    {id:'fill_tab0_1',name:'HTTP基礎',tab:0},
+    {id:'fill_tab1_1',name:'REST原則',tab:1},
+    {id:'fill_tab2_1',name:'JSON/XML',tab:2},
+    {id:'fill_tab3_1',name:'API活用',tab:3},
+    {id:'fill_tab4_1',name:'SOAP',tab:4},
+    {id:'fill_tab5_1',name:'OAuth',tab:5},
+    {id:'fill_tab6_1',name:'GraphQL',tab:6},
+    {id:'fill_tab7_1',name:'WebSocket',tab:7},
+    {id:'fill_tab8_1',name:'マイクロSVC',tab:8}
+  ],
+  CURIOSITY:{hook:'RESTの「ステートレス」は何が嬉しい？',hint:'サーバーを何台に増やしても全て同じように動く（スケールアウトしやすい）'},
+  PRETEST:[
+    {q:'Q1. RESTはプロトコル？',a:'<strong>NO</strong>（設計思想・アーキテクチャスタイル）'},
+    {q:'Q2. POSTメソッドに冪等性はある？',a:'<strong>NO</strong>（2回送ると2回作成される）'},
+    {q:'Q3. OAuth2.0は認証？認可？',a:'<strong>認可</strong>（認証はOpenID Connect）'}
+  ]
+};
+</script>
+<script>
+(function(){
+  function injectCardReveal(){
+    document.querySelectorAll('.fill-card').forEach(function(card){
+      var header=card.querySelector('.fill-header');
+      if(!header) return;
+      if(header.querySelector('.ls-card-reveal')) return;
+      if(card.querySelectorAll('.fill-blank').length===0) return;
+      var btn=document.createElement('button');
+      btn.className='ls-card-reveal fill-reveal-btn';
+      btn.textContent='👁 ここだけ表示';
+      btn.style.cssText='font-size:.7rem;padding:.2rem .6rem;margin:0 0 0 auto;background:rgba(255,255,255,.25);color:#fff;border:1px solid rgba(255,255,255,.5);';
+      btn.addEventListener('click',function(ev){
+        ev.stopPropagation();
+        var blanks=card.querySelectorAll('.fill-blank');
+        var allShown=Array.prototype.every.call(blanks,function(b){return b.classList.contains('show');});
+        blanks.forEach(function(b){if(allShown) b.classList.remove('show'); else b.classList.add('show');});
+        btn.textContent=allShown?'👁 ここだけ表示':'🙈 隠す';
+      });
+      header.appendChild(btn);
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',injectCardReveal);
+  else injectCardReveal();
+  window.addEventListener('load', injectCardReveal);
+})();
+</script>
+<script>
+(function(){
+  document.querySelectorAll('.flash-card').forEach(function(card){
+    card.removeAttribute('onclick');
+    if(!card.querySelector('.flash-inner')){
+      var inner=document.createElement('div');
+      inner.className='flash-inner';
+      while(card.firstChild) inner.appendChild(card.firstChild);
+      card.appendChild(inner);
+    }
+  });
+})();
+</script>
+<script>
+(function(){
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var children=Array.from(panel.children);
+    var sections=[];
+    var start=-1;
+    for(var i=0;i<children.length;i++){
+      var c=children[i];
+      if(c.matches&&c.matches('h2.section-title')){
+        if(start!==-1) sections.push([start,i-1]);
+        start=i;
+      }
+    }
+    if(start!==-1) sections.push([start,children.length-1]);
+    sections.forEach(function(sec){
+      var first=children[sec[0]];
+      if(!first||first.parentNode!==panel) return;
+      var wrap=document.createElement('div');
+      wrap.className='hide-block';
+      first.parentNode.insertBefore(wrap,first);
+      for(var j=sec[0];j<=sec[1];j++){
+        if(children[j]&&children[j].parentNode===panel) wrap.appendChild(children[j]);
+      }
+    });
+  });
+  var MEDIUM_SEL=['.hide-block','.card','.diagram','.support','.keepit','.vs-box','.fill-card','.fill-card-quiet'].join(',');
+  var LS_KEY='sec-hide:'+(location.pathname.split('/').pop()||'page')+':v3';
+  function loadHidden(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(e){return{};}}
+  function saveHidden(obj){try{localStorage.setItem(LS_KEY,JSON.stringify(obj));}catch(e){}}
+  var targets=[];
+  var seen=new Set();
+  function addTarget(el){if(!seen.has(el)){seen.add(el);targets.push(el);}}
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    panel.querySelectorAll(MEDIUM_SEL).forEach(function(el){
+      if(el.closest('.card')&&!el.classList.contains('card')) return;
+      if(el.closest('.fill-card')&&!el.classList.contains('fill-card')) return;
+      if(el.closest('.keepit')&&!el.classList.contains('keepit')) return;
+      addTarget(el);
+    });
+  });
+  function stableId(el,fallback){
+    var h2=el.querySelector('h2.section-title');
+    var h4=el.querySelector('h4');
+    var fh=el.querySelector('.fill-header, .card-header');
+    var tag=el.classList[0]||el.tagName.toLowerCase();
+    var txt='';
+    if(h2&&el.classList.contains('hide-block')) txt=h2.textContent;
+    else if(fh) txt=fh.textContent;
+    else if(h4) txt=h4.textContent;
+    else txt=el.textContent;
+    txt=(txt||'').replace(/\s+/g,'').slice(0,40);
+    if(txt.length>=8) return tag+':'+txt;
+    return tag+':'+txt+':'+fallback;
+  }
+  var hidden=loadHidden();
+  targets.forEach(function(el,idx){
+    var id=stableId(el,idx);
+    var wrap=document.createElement('div');
+    wrap.className='sec-hide-wrap';
+    el.parentNode.insertBefore(wrap,el);
+    wrap.appendChild(el);
+    var btnRow=document.createElement('div');
+    btnRow.className='sec-hide-btn-row';
+    var btn=document.createElement('button');
+    btn.textContent='○';
+    btn.title='この項目を非表示にする';
+    function getLabel(){
+      var h2=el.querySelector('h2.section-title');
+      var h4=el.querySelector('h4');
+      var fh=el.querySelector('.fill-header, .card-header');
+      if(h2&&el.classList.contains('hide-block')) return h2.textContent.trim().slice(0,40);
+      if(fh) return fh.textContent.trim().slice(0,30);
+      if(h4) return h4.textContent.trim().slice(0,30);
+      return el.textContent.trim().slice(0,30)+'…';
+    }
+    function doHide(label){
+      el.style.display='none';btnRow.style.display='none';
+      var ph=document.createElement('div');
+      ph.className='sec-hidden-ph';
+      ph.innerHTML='（非表示：<span class="sec-hidden-label"></span>） <button>再表示 ○</button>';
+      ph.querySelector('.sec-hidden-label').textContent=label;
+      ph.querySelector('button').addEventListener('click',function(){
+        el.style.display='';btnRow.style.display='';ph.remove();
+        var obj=loadHidden();delete obj[id];saveHidden(obj);
+      });
+      wrap.appendChild(ph);
+    }
+    btn.addEventListener('click',function(){
+      var label=getLabel();
+      doHide(label);
+      var obj=loadHidden();obj[id]=1;saveHidden(obj);
+    });
+    btnRow.appendChild(btn);
+    wrap.appendChild(btnRow);
+    if(hidden[id]) doHide(getLabel());
+  });
+})();
+</script>
+<script src="../learning-system.js"></script>
+</body>
+</html>

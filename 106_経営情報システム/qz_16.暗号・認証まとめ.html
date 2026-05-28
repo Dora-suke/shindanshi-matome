@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>暗号・認証（公開鍵/共通鍵/SSL-TLS/PKI/MFA） まとめ（暗記特化qz版） - 中小企業診断士 経営情報システム</title>
+<title>暗号・認証（公開鍵/共通鍵/SSL-TLS/PKI（Public Key Infrastructure・公開鍵基盤）/MFA（Multi-Factor Authentication・多要素認証）） まとめ（暗記特化qz版） - 中小企業診断士 経営情報システム</title>
 <style>
 :root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.85;min-height:100vh}
@@ -59,14 +59,14 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
 .flash-deck{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:14px 0;align-items:stretch}
 .flash-card{position:relative;min-height:170px;perspective:1000px;cursor:pointer;display:flex}
 .flash-card .flash-inner{display:grid;flex:1;transition:transform .55s;transform-style:preserve-3d;min-height:inherit}
-.flash-card.flip .flash-inner{transform:rotateY(180deg)}
+.flash-card.flipped .flash-inner{transform:rotateY(180deg)}
 .flash-card .flash-face{grid-area:1/1;backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 16px 26px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:700;line-height:1.55;word-break:break-word;overflow-wrap:anywhere;hyphens:auto}
 .flash-card .flash-front{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#78350f;border:2px solid #f59e0b}
 .flash-card .flash-back{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;transform:rotateY(180deg);font-size:.92rem;line-height:1.6}
 .flash-card .flash-back b{display:inline-block;margin-bottom:4px}
 .flash-card .flash-front .fc-q{font-size:.95rem;color:#92400e;line-height:1.6}
 .flash-card::after{content:"\1F504 \30AF\30EA\30C3\30AF\3067\7B54\3048";position:absolute;bottom:6px;right:10px;font-size:.7rem;color:#a16207;opacity:.7;pointer-events:none}
-.flash-card.flip::after{content:""}
+.flash-card.flipped::after{content:""}
 @media(max-width:600px){.flash-card{min-height:160px}.flash-card .flash-face{padding:14px 12px 24px}.flash-card .flash-back{font-size:.88rem}}
 .factor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:14px 0}
 .factor-grid .fg-item{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08);border-top:5px solid;position:relative}
@@ -121,11 +121,19 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
 .ls-sticky-wrap .tab-btn{color:#475569}
 .ls-sticky-wrap .tab-btn:hover{color:#1a5276;background:rgba(0,0,0,.05)}
 .ls-sticky-wrap .tab-btn.active{color:#1a5276;background:#e2e8f0;border-bottom-color:#1a5276}
+.sec-hide-wrap{position:relative}
+.sec-hide-btn-row{text-align:right;margin:-2px 0 6px}
+.sec-hide-btn-row button{background:none;border:2px solid #cbd5e1;border-radius:50%;width:26px;height:26px;font-size:.85rem;cursor:pointer;color:#94a3b8;line-height:1;transition:all .18s;vertical-align:middle}
+.sec-hide-btn-row button:hover{border-color:#64748b;color:#475569;background:#f1f5f9}
+.sec-hidden-ph{text-align:right;padding:3px 0;font-size:.78rem;color:#94a3b8}
+.sec-hidden-label{color:#64748b;font-style:italic}
+.sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
+.sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
 </style>
 </head>
 <body>
 <div class="header">
-  <h1>🔐 暗号・認証（公開鍵/共通鍵/SSL-TLS/PKI/MFA） まとめ（暗記特化qz版）</h1>
+  <h1>🔐 暗号・認証（公開鍵/共通鍵/SSL-TLS/PKI（Public Key Infrastructure・公開鍵基盤）/MFA（Multi-Factor Authentication・多要素認証）） まとめ（暗記特化qz版）</h1>
   <div class="subtitle">中小企業診断士 経営情報システム ｜ 直近7年（R01〜R07）出題実績準拠</div>
   <span class="badge">qz_16</span>
 </div>
@@ -237,7 +245,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <ul>
       <li>❶ 暗号は<strong>共通鍵（同じ鍵）／公開鍵（違う鍵ペア）</strong>の2方式</li>
       <li>❷ <strong>共通鍵＝速いが鍵配送が難しい／公開鍵＝遅いが鍵配送が楽</strong></li>
-      <li>❸ SSL/TLSは<strong>ハイブリッド</strong>（鍵交換は公開鍵・本通信は共通鍵）</li>
+      <li>❸ SSL（Secure Sockets Layer）/TLS（Transport Layer Security）は<strong>ハイブリッド</strong>（鍵交換は公開鍵・本通信は共通鍵）</li>
     </ul>
   </div>
 
@@ -689,7 +697,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
         <li>速度：<strong class="" style="color:#16a34a">⚡高速</strong></li>
         <li>鍵配送：<strong style="color:#dc2626">⚠️ 問題あり</strong>（事前共有が必要）</li>
         <li>鍵管理数：<strong style="color:#dc2626">n(n-1)/2</strong>（100人＝<strong>4,950個</strong>）</li>
-        <li>代表例：<strong>AES</strong></li>
+        <li>代表例：<strong>AES（Advanced Encryption Standard・共通鍵暗号標準）</strong></li>
       </ul>
     </div>
     <div class="cmp-card kou">
@@ -700,7 +708,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
         <li>速度：<strong style="color:#dc2626">🐢低速</strong>（共通鍵の数百〜数千倍重い）</li>
         <li>鍵配送：<strong style="color:#16a34a">✅ 不要</strong>（公開鍵はバラまきOK）</li>
         <li>鍵管理数：<strong style="color:#16a34a">2n</strong>（100人＝<strong>200個</strong>）</li>
-        <li>代表例：<strong>RSA・楕円曲線</strong></li>
+        <li>代表例：<strong>RSA（Rivest-Shamir-Adleman）・楕円曲線（ECC：Elliptic Curve Cryptography）</strong></li>
       </ul>
     </div>
   </div>
@@ -722,7 +730,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <tr><td>機密性のための復号</td><td><strong>受信者の秘密鍵</strong></td><td>「送信者の秘密鍵」「受信者の公開鍵」</td></tr>
     <tr><td>署名作成</td><td><strong>送信者の秘密鍵</strong></td><td>「送信者の公開鍵」「受信者の秘密鍵」</td></tr>
     <tr><td>署名検証</td><td><strong>送信者の公開鍵</strong></td><td>「受信者の公開鍵」「送信者の秘密鍵」</td></tr>
-    <tr><td>SSL/TLSの初期鍵交換</td><td><strong>公開鍵方式</strong>で共通鍵を渡す</td><td>「共通鍵方式で全部やる」</td></tr>
+    <tr><td>SSL（Secure Sockets Layer）/TLS（Transport Layer Security）の初期鍵交換</td><td><strong>公開鍵方式</strong>で共通鍵を渡す</td><td>「共通鍵方式で全部やる」</td></tr>
     <tr><td>本通信の暗号化</td><td><strong>共通鍵方式</strong>（高速）</td><td>「公開鍵で本データも暗号化」</td></tr>
   </table>
   <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>4択問題で迷ったら<strong>「目的は機密性か署名か」を先に判定</strong>→ それから鍵を決めると正答率が上がる。「<strong>受信者の公開鍵で暗号化</strong>」と「<strong>送信者の秘密鍵で署名</strong>」の2フレーズを<strong>音で丸暗記</strong>するのも有効。</div></div>
@@ -767,7 +775,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <ul>
       <li>❶ 機密性：<strong>受信者の公開鍵で暗号化 → 受信者の秘密鍵で復号</strong></li>
       <li>❷ 署名：<strong>送信者の秘密鍵で署名 → 送信者の公開鍵で検証</strong></li>
-      <li>❸ 共通鍵：暗号化も復号も<strong>同じ1つの鍵</strong>。SSL/TLSは公開鍵で鍵交換→共通鍵で本通信</li>
+      <li>❸ 共通鍵：暗号化も復号も<strong>同じ1つの鍵</strong>。SSL（Secure Sockets Layer）/TLS（Transport Layer Security）は公開鍵で鍵交換→共通鍵で本通信</li>
     </ul>
   </div>
 
@@ -955,7 +963,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <tr><td>速度</td><td><strong>高速</strong></td><td>低速（数百〜千倍重い）</td></tr>
     <tr><td>鍵配送問題</td><td><strong>あり</strong>（事前に安全に渡す必要）</td><td><strong>なし</strong>（公開鍵を公開してOK）</td></tr>
     <tr><td>鍵管理数（n人で通信）</td><td><strong>n(n-1)/2</strong>（爆発する）</td><td><strong>2n</strong>（線形）</td></tr>
-    <tr><td>代表アルゴリズム</td><td>AES／DES／3DES</td><td>RSA／ECC／DSA</td></tr>
+    <tr><td>代表アルゴリズム</td><td>AES（Advanced Encryption Standard・共通鍵暗号標準）／DES（Data Encryption Standard）／3DES（Triple DES）</td><td>RSA（Rivest-Shamir-Adleman）／ECC（Elliptic Curve Cryptography・楕円曲線暗号）／DSA（Digital Signature Algorithm・デジタル署名アルゴリズム）</td></tr>
   </table></div>
   <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span><strong>「公開鍵は速い」は引っかけTOP1</strong>。公開鍵は計算が重いから本データには使わない。だからSSL/TLSは<strong>「鍵交換だけ公開鍵／本通信は共通鍵」</strong>のハイブリッド設計になっている。</div></div>
 
@@ -983,23 +991,107 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <p style="color:#0f766e;font-weight:bold;">→ 公開鍵方式は「公開鍵は公開してOK」なので<strong>事前配送が不要</strong>。これが最大の利点であり、公開鍵暗号が発明された動機。</p>
   </div>
 
-  <h2 class="section-title st-teal">④⚠️ 公開鍵の弱点 ＝ 中間者攻撃（MITM）→ PKIが必要</h2>
-  <div class="card card-red">
-    <p>公開鍵を渡されたとき、<strong>「その公開鍵が本当に本人のものか」</strong>をどう確認する？</p>
-    <p>→ 攻撃者が「私の公開鍵です」と<strong>偽の公開鍵</strong>を渡せば、暗号通信ごと盗まれる＝<strong>中間者攻撃(MITM)</strong>。</p>
-    <p style="color:#c62828;font-weight:bold;">→ 解決策が <strong>PKI（公開鍵基盤）と認証局CAの電子証明書</strong>。CAが「この公開鍵は本人のもの」と保証してくれる。<span style="font-size:.85rem;font-weight:normal">（詳細は次の「📘 基本」タブ）</span></p>
+  <h2 class="section-title st-teal">④⚠️ 公開鍵の弱点 ＝ 中間者攻撃（MITM：Man-in-the-Middle Attack）→ PKIが必要</h2>
+
+  <!-- ===== MITM 図解ブロック ===== -->
+  <div style="background:#fff;border-radius:12px;padding:1.2rem 1.2rem 1rem;margin:.8rem 0;box-shadow:0 2px 10px rgba(0,0,0,.08);border-top:5px solid #dc2626">
+
+    <!-- ❌ PKIなし：MITM成立 -->
+    <div style="font-weight:800;font-size:.95rem;color:#dc2626;margin-bottom:.7rem">❌ PKI（Public Key Infrastructure・公開鍵基盤）なし：攻撃者が公開鍵をすり替えられる（中間者攻撃）</div>
+
+    <!-- 本来の意図（上段・薄灰） -->
+    <div style="font-size:.78rem;color:#64748b;text-align:center;margin-bottom:.25rem">本来やりたかったこと（点線）</div>
+    <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;margin-bottom:.3rem;opacity:.45;font-size:.8rem">
+      <div style="background:#dbeafe;border:2px dashed #3b82f6;border-radius:8px;padding:.4rem .7rem;text-align:center;min-width:80px">👤<br><strong>Aさん</strong><br>本物の公開鍵</div>
+      <div style="padding:0 .4rem;color:#3b82f6;font-size:1.1rem">- - - - ▶</div>
+      <div style="background:#dbeafe;border:2px dashed #3b82f6;border-radius:8px;padding:.4rem .7rem;text-align:center;min-width:80px">👤<br><strong>Bさん</strong></div>
+    </div>
+
+    <!-- 実際に起きること（下段・赤） -->
+    <div style="font-size:.78rem;color:#dc2626;text-align:center;margin-bottom:.3rem;font-weight:700">実際に起きること（攻撃者が間に割り込む）</div>
+    <div style="display:flex;align-items:stretch;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:.5rem">
+      <div style="background:#dbeafe;border:2px solid #3b82f6;border-radius:10px;padding:.6rem .8rem;text-align:center;min-width:90px;font-size:.84rem">
+        👤<br><strong>Aさん</strong><br><span style="font-size:.72rem;color:#1d4ed8">「Bに安全に<br>送りたい」</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#dc2626;font-weight:700;font-size:.8rem;padding:0 2px">
+        ▶<br><span style="font-size:.68rem;color:#64748b">公開鍵を<br>もらおうとする</span>
+      </div>
+      <div style="background:#fee2e2;border:3px solid #dc2626;border-radius:10px;padding:.6rem .8rem;text-align:center;min-width:110px;font-size:.84rem;position:relative">
+        😈<br><strong style="color:#dc2626">攻撃者</strong><br>
+        <div style="font-size:.7rem;line-height:1.4;margin-top:.3rem;color:#7f1d1d">「Bの公開鍵です」<br>と<strong>偽の公開鍵</strong>を渡す</div>
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#dc2626;color:#fff;font-size:.65rem;padding:.1rem .5rem;border-radius:8px;white-space:nowrap">中間に割り込み！</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#dc2626;font-weight:700;font-size:.8rem;padding:0 2px">
+        ▶<br><span style="font-size:.68rem;color:#64748b">偽鍵で<br>暗号化</span>
+      </div>
+      <div style="background:#fef3c7;border:2px solid #f59e0b;border-radius:10px;padding:.6rem .8rem;text-align:center;min-width:90px;font-size:.84rem">
+        🔒<br><strong>暗号文</strong><br><span style="font-size:.7rem;color:#92400e">攻撃者の鍵<br>で作られた</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#dc2626;font-weight:700;font-size:.8rem;padding:0 2px">
+        ▶<br><span style="font-size:.68rem;color:#64748b">攻撃者が<br>復号・中身読む</span>
+      </div>
+      <div style="background:#fee2e2;border:2px solid #dc2626;border-radius:10px;padding:.6rem .8rem;text-align:center;min-width:80px;font-size:.84rem">
+        😈💬<br><strong style="color:#dc2626">盗聴</strong><br><span style="font-size:.7rem;color:#7f1d1d">秘密を<br>丸読み！</span>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:.82rem;color:#7f1d1d;background:#fef2f2;border:1px dashed #dc2626;border-radius:6px;padding:.45rem .7rem;margin:.2rem 0 .9rem">
+      ⚠️ Aさんは「Bに安全に送った」つもりが、実際は<strong>攻撃者の公開鍵で暗号化</strong>→攻撃者が復号して盗聴。これが<strong>中間者攻撃（MITM：Man-in-the-Middle Attack）</strong>。
+    </div>
+
+    <!-- ✅ PKIあり：CA が保証 -->
+    <div style="font-weight:800;font-size:.95rem;color:#16a34a;margin-bottom:.7rem;border-top:2px dashed #d1d5db;padding-top:.8rem">✅ PKI（Public Key Infrastructure・公開鍵基盤）あり：CA（Certificate Authority・認証局）が公開鍵の正当性を保証する</div>
+    <div style="display:flex;align-items:stretch;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:.5rem">
+      <div style="background:#ede9fe;border:2px solid #7c3aed;border-radius:10px;padding:.6rem .8rem;text-align:center;min-width:90px;font-size:.84rem">
+        🏛️<br><strong style="color:#6d28d9">CA<br>（認証局）</strong><br><span style="font-size:.7rem;color:#4c1d95">信頼できる<br>第三者機関</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#7c3aed;font-weight:700;font-size:.8rem;padding:0 2px">
+        ▶<br><span style="font-size:.68rem;color:#64748b">本人確認後<br>署名して発行</span>
+      </div>
+      <div style="background:#ecfdf5;border:2px solid #16a34a;border-radius:10px;padding:.6rem .8rem;text-align:center;min-width:110px;font-size:.84rem">
+        📜<br><strong style="color:#15803d">電子証明書</strong><br>
+        <div style="font-size:.7rem;line-height:1.4;margin-top:.3rem;color:#166534">「Bの公開鍵は<br><strong>本物</strong>」<br>+CAの署名</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#16a34a;font-weight:700;font-size:.8rem;padding:0 2px">
+        ▶<br><span style="font-size:.68rem;color:#64748b">証明書ごと<br>受け取る</span>
+      </div>
+      <div style="background:#dbeafe;border:2px solid #3b82f6;border-radius:10px;padding:.6rem .8rem;text-align:center;min-width:90px;font-size:.84rem">
+        👤<br><strong>Aさん</strong><br><span style="font-size:.7rem;color:#1d4ed8">CAの公開鍵で<br>署名を検証</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#16a34a;font-weight:700;font-size:.8rem;padding:0 2px">
+        ▶<br><span style="font-size:.68rem;color:#64748b">本物と確認</span>
+      </div>
+      <div style="background:#ecfdf5;border:2px solid #16a34a;border-radius:10px;padding:.6rem .8rem;text-align:center;min-width:90px;font-size:.84rem">
+        ✅<br><strong style="color:#15803d">安心</strong><br><span style="font-size:.7rem;color:#166534">Bの本物の<br>公開鍵で暗号化</span>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:.82rem;color:#166534;background:#f0fdf4;border:1px dashed #16a34a;border-radius:6px;padding:.45rem .7rem">
+      📌 攻撃者は<strong>CA（Certificate Authority・認証局）の署名を偽造できない</strong>（CAの秘密鍵がなければ不可能）→ 偽の公開鍵を証明書付きで渡せない → MITM（Man-in-the-Middle Attack・中間者攻撃）防止
+    </div>
+
+    <!-- まとめ矢印図 -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:.4rem;flex-wrap:wrap;margin-top:1rem;background:#f8fafc;border-radius:8px;padding:.6rem">
+      <div style="background:#fee2e2;border:2px solid #dc2626;border-radius:8px;padding:.4rem .7rem;text-align:center;font-size:.82rem;font-weight:700;color:#7f1d1d">公開鍵だけ<br>渡す</div>
+      <div style="color:#dc2626;font-weight:800">→</div>
+      <div style="background:#fee2e2;border:2px solid #dc2626;border-radius:8px;padding:.4rem .7rem;text-align:center;font-size:.82rem;font-weight:700;color:#dc2626">MITM（Man-in-the-Middle Attack・中間者攻撃）危険<br>😈</div>
+      <div style="color:#64748b;font-size:1.2rem;margin:0 .3rem">｜</div>
+      <div style="background:#ecfdf5;border:2px solid #16a34a;border-radius:8px;padding:.4rem .7rem;text-align:center;font-size:.82rem;font-weight:700;color:#166534">CA（Certificate Authority・認証局）証明書<br>付きで渡す</div>
+      <div style="color:#16a34a;font-weight:800">→</div>
+      <div style="background:#ecfdf5;border:2px solid #16a34a;border-radius:8px;padding:.4rem .7rem;text-align:center;font-size:.82rem;font-weight:700;color:#16a34a">MITM（Man-in-the-Middle Attack・中間者攻撃）防止<br>✅ PKI（Public Key Infrastructure・公開鍵基盤）</div>
+    </div>
   </div>
-  <div class="alert-exam">📝 <strong>R03・R06</strong>：「公開鍵暗号は鍵配送問題がなく、中間者攻撃の心配もない」→ <strong>誤</strong>（MITM対策にPKIが必要）。</div>
+  <!-- ===== /MITM 図解ブロック ===== -->
+
+  <div class="alert-exam">📝 <strong>R03・R06</strong>：「公開鍵暗号は鍵配送問題がなく、中間者攻撃の心配もない」→ <strong>誤</strong>（MITM（Man-in-the-Middle Attack）対策にPKIが必要）。</div>
 
   <h2 class="section-title st-teal">⑤🔧 代表アルゴリズムの整理（択一頻出）</h2>
   <table class="tbl-teal">
     <tr><th>方式</th><th>アルゴリズム</th><th>鍵長</th><th>状態／用途</th></tr>
-    <tr><td rowspan="3"><strong>共通鍵</strong></td><td><strong>AES</strong>（Advanced Encryption Standard）</td><td>128/192/256bit</td><td>✅ 現在の標準・推奨</td></tr>
+    <tr><td rowspan="3"><strong>共通鍵</strong></td><td><strong>AES（Advanced Encryption Standard・共通鍵暗号標準）</strong></td><td>128/192/256bit</td><td>✅ 現在の標準・推奨</td></tr>
     <tr><td>DES（Data Encryption Standard）</td><td>56bit</td><td>❌ 短く脆弱・非推奨</td></tr>
-    <tr><td>3DES（Triple DES）</td><td>168bit</td><td>△ DESの強化版・移行中</td></tr>
-    <tr><td rowspan="3"><strong>公開鍵</strong></td><td><strong>RSA</strong>（Rivest-Shamir-Adleman）</td><td>2048/3072/4096bit</td><td>✅ 最も普及・素因数分解の困難性</td></tr>
-    <tr><td><strong>ECC</strong>（楕円曲線暗号）</td><td>256bit でRSA 3072bit相当</td><td>✅ 短い鍵で高強度・モバイル向き</td></tr>
-    <tr><td>DSA（Digital Signature Algorithm）</td><td>1024bit〜</td><td>署名専用</td></tr>
+    <tr><td>3DES（Triple DES・3重DES）</td><td>168bit</td><td>△ DESの強化版・移行中</td></tr>
+    <tr><td rowspan="3"><strong>公開鍵</strong></td><td><strong>RSA（Rivest-Shamir-Adleman）</strong></td><td>2048/3072/4096bit</td><td>✅ 最も普及・素因数分解の困難性</td></tr>
+    <tr><td><strong>ECC（Elliptic Curve Cryptography・楕円曲線暗号）</strong></td><td>256bit でRSA（Rivest-Shamir-Adleman） 3072bit相当</td><td>✅ 短い鍵で高強度・モバイル向き</td></tr>
+    <tr><td>DSA（Digital Signature Algorithm・デジタル署名アルゴリズム）</td><td>1024bit〜</td><td>署名専用</td></tr>
   </table>
   <div class="goro-row"><span class="goro-chip">エ・デ・3 で共通／RSA・ECC・DSA で公開<small>代表アルゴリズム</small></span></div>
   <div class="support"><span class="support-icon">👩‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>「<strong>AESは共通鍵／RSAは公開鍵</strong>」が最頻出ペア。「<strong>ECCは短い鍵で同等強度</strong>」（IoT・スマホ向け）もセットで。鍵長の桁感もR05・R06で出題。</div></div>
@@ -1018,8 +1110,8 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <div class="keepit-title">⭐ 今日のこれだけ覚えて（暗復号②）</div>
     <ul>
       <li>❶ <strong>鍵管理数：共通＝n(n-1)/2／公開＝2n</strong>。100人なら4,950 vs 200</li>
-      <li>❷ 共通鍵の弱点＝<strong>鍵配送問題</strong>／公開鍵の弱点＝<strong>MITM</strong>（→PKIで解決）</li>
-      <li>❸ <strong>AES＝共通鍵／RSA・ECC＝公開鍵</strong>。署名の効能は本人性・改ざん検知・否認防止（機密性は含まない）</li>
+      <li>❷ 共通鍵の弱点＝<strong>鍵配送問題</strong>／公開鍵の弱点＝<strong>MITM（Man-in-the-Middle Attack・中間者攻撃）</strong>（→PKI（Public Key Infrastructure・公開鍵基盤）で解決）</li>
+      <li>❸ <strong>AES（Advanced Encryption Standard・共通鍵暗号標準）共通鍵／RSA（Rivest-Shamir-Adleman）・ECC（Elliptic Curve Cryptography・楕円曲線暗号）＝公開鍵</strong>。署名の効能は本人性・改ざん検知・否認防止（機密性は含まない）</li>
     </ul>
   </div>
 
@@ -1035,7 +1127,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     </div></div>
     <div class="flash-card"><div class="flash-inner">
       <div class="flash-face flash-front"><div class="fc-q">Q. 公開鍵方式の弱点は？</div></div>
-      <div class="flash-face flash-back">A. <b>中間者攻撃(MITM)</b><br>偽の公開鍵を掴まされるリスク。PKI・CAで解決。</div>
+      <div class="flash-face flash-back">A. <b>中間者攻撃（MITM：Man-in-the-Middle Attack）</b><br>偽の公開鍵を掴まされるリスク。PKI・CAで解決。</div>
     </div></div>
     <div class="flash-card"><div class="flash-inner">
       <div class="flash-face flash-front"><div class="fc-q">Q. デジタル署名が保証しない性質は？</div></div>
@@ -1088,7 +1180,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   <div class="card card-blue">
     <h4>ハッシュ関数（ざっくり：データを固定長の指紋に変換する関数）</h4>
     <ul>
-      <li><strong>固定長出力</strong>：入力長に関わらず出力は一定（例：SHA-256＝256ビット）</li>
+      <li><strong>固定長出力</strong>：入力長に関わらず出力は一定（例：SHA（Secure Hash Algorithm）-256＝256ビット）</li>
       <li><strong>一方向性</strong>：ハッシュ値から元データは復元<strong>不可能</strong></li>
       <li><strong>衝突耐性</strong>：別の入力から同じハッシュは作りにくい</li>
       <li><strong>用途</strong>：デジタル署名／パスワード保存／改ざん検知</li>
@@ -1096,9 +1188,9 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   </div>
   <div class="tbl-wrap"><table class="tbl-blue">
     <tr><th>アルゴリズム</th><th>出力長</th><th>評価</th></tr>
-    <tr><td>SHA-256</td><td>256bit</td><td>✅ 推奨（現役）</td></tr>
-    <tr><td>SHA-1</td><td>160bit</td><td>⚠️ 非推奨（衝突発見済）</td></tr>
-    <tr><td>MD5</td><td>128bit</td><td>❌ 非推奨（脆弱）</td></tr>
+    <tr><td>SHA（Secure Hash Algorithm）-256</td><td>256bit</td><td>✅ 推奨（現役）</td></tr>
+    <tr><td>SHA（Secure Hash Algorithm）-1</td><td>160bit</td><td>⚠️ 非推奨（衝突発見済）</td></tr>
+    <tr><td>MD5（Message Digest 5）</td><td>128bit</td><td>❌ 非推奨（脆弱）</td></tr>
   </table></div>
   <p class="exam-warn">⚠️【1次】<strong>「ハッシュ値から元データを復元できる」は誤り</strong>。一方向性が定義。</p>
   <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>ハッシュは<strong>「指紋」</strong>のイメージ。指紋から人物像は復元できないでしょ？それが一方向性。署名では「平文の指紋」を秘密鍵で暗号化することで、改ざん検知＋本人性を同時に実現するんだ。</div></div>
@@ -1192,12 +1284,12 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
 
   <h2 class="section-title st-blue">📜 デジタル証明書とPKI</h2>
   <div class="factor-grid">
-    <div class="fg-item"><div class="fg-num">1</div><div class="fg-title">CA（認証局）</div><div class="fg-body">公開鍵が本人のものと保証する第三者機関</div></div>
+    <div class="fg-item"><div class="fg-num">1</div><div class="fg-title">CA（Certificate Authority・認証局）</div><div class="fg-body">公開鍵が本人のものと保証する第三者機関</div></div>
     <div class="fg-item"><div class="fg-num">2</div><div class="fg-title">電子証明書</div><div class="fg-body">「この公開鍵はXさん本人」とCAが署名した証明書</div></div>
-    <div class="fg-item"><div class="fg-num">3</div><div class="fg-title">PKI</div><div class="fg-body">CA・証明書・失効管理を含む全体の仕組み</div></div>
-    <div class="fg-item"><div class="fg-num">4</div><div class="fg-title">CRL/OCSP</div><div class="fg-body">失効リスト／リアルタイム照会で無効な証明書を排除</div></div>
+    <div class="fg-item"><div class="fg-num">3</div><div class="fg-title">PKI（Public Key Infrastructure・公開鍵基盤）</div><div class="fg-body">CA・証明書・失効管理を含む全体の仕組み</div></div>
+    <div class="fg-item"><div class="fg-num">4</div><div class="fg-title">CRL（Certificate Revocation List・証明書失効リスト）/OCSP（Online Certificate Status Protocol・オンライン証明書状態プロトコル）</div><div class="fg-body">失効リスト／リアルタイム照会で無効な証明書を排除</div></div>
   </div>
-  <p class="exam-pt">📝【1次】<strong>PKI</strong>＝Public Key Infrastructure（公開鍵基盤）。CA・証明書・失効管理の総称。証明書の発行元はCA、失効照会は<strong>CRL</strong>（一覧）と<strong>OCSP</strong>（リアルタイム）の2方式。</p>
+  <p class="exam-pt">📝【1次】<strong>PKI（Public Key Infrastructure・公開鍵基盤）</strong>＝Public Key Infrastructure。CA・証明書・失効管理の総称。証明書の発行元はCA（Certificate Authority・認証局）、失効照会は<strong>CRL（Certificate Revocation List・証明書失効リスト）</strong>（一覧）と<strong>OCSP（Online Certificate Status Protocol・オンライン証明書状態プロトコル）</strong>（リアルタイム）の2方式。</p>
 
   <div class="diag-box">
     <h4>🪪 デジタル証明書はなぜ必要？ ─ なりすまし問題</h4>
@@ -1211,7 +1303,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     </div>
     <div class="diag-note" style="background:#ffebee;border-color:#c62828;color:#c62828">📌 そもそも<strong>「その公開鍵が本当にAさんのものか」を保証する仕組み</strong>が必要 → これが証明書／PKI</div>
 
-    <h4 style="margin-top:14px">🏛️ PKIの信頼チェーン</h4>
+    <h4 style="margin-top:14px">🏛️ PKI（Public Key Infrastructure・公開鍵基盤）の信頼チェーン</h4>
     <div class="diag-row">
       <div class="diag-card safe" style="background:#ede9fe;border-color:#7c3aed"><span class="ico">🏛️</span><div class="ttl">①CA<br>(認証局)</div><div class="desc">信頼できる<br>第三者機関</div></div>
       <div class="diag-arrow">▶<small>Aの本人確認<br>＋CAの秘密鍵<br>で署名</small></div>
@@ -1228,7 +1320,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
       <div class="diag-card neutral"><span class="ico">📡</span><div class="ttl">OCSP</div><div class="desc"><strong>Online Cert Status Protocol</strong><br><strong>リアルタイム</strong>照会<br>「この証明書、今有効？」<br>と1件ずつ問合せ</div></div>
     </div>
 
-    <h4 style="margin-top:14px">🌐 PKIの全体像</h4>
+    <h4 style="margin-top:14px">🌐 PKI（Public Key Infrastructure・公開鍵基盤）の全体像</h4>
     <div class="diag-row">
       <div class="diag-card safe" style="background:#f5f3ff;border-color:#7c3aed"><span class="ico">🏛️</span><div class="ttl">CA</div><div class="desc">発行</div></div>
       <div class="diag-arrow">＋</div>
@@ -1244,14 +1336,14 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   <div class="card card-purple">
     <ul>
       <li><strong>TLS（Transport Layer Security）</strong>はSSL（Secure Sockets Layer）の<strong>後継</strong>。SSL3.0までで終わり、現在は<strong>TLS1.2/1.3</strong>が主流</li>
-      <li><strong>HTTPS＝HTTP＋TLS</strong>。ポート番号は<strong>443</strong></li>
+      <li><strong>HTTPS（HTTP over TLS）＝HTTP（HyperText Transfer Protocol）＋TLS</strong>。ポート番号は<strong>443</strong></li>
       <li>ハンドシェイク：①証明書検証 → ②共通鍵交換 → ③共通鍵で通信</li>
     </ul>
   </div>
   <div class="goro-row"><span class="goro-chip">ヨンヨンサンで安全<small>HTTPS = 443</small></span><span class="goro-chip">SSLは引退・TLSが現役<small>後継関係</small></span></div>
 
   <div class="diag-box">
-    <h4>🤝 TLSハンドシェイク ─ なぜ公開鍵 + 共通鍵のハイブリッド？</h4>
+    <h4>🤝 TLS（Transport Layer Security）ハンドシェイク ─ なぜ公開鍵 + 共通鍵のハイブリッド？</h4>
     <div class="diag-sub">💡 課題：公開鍵は安全だが遅い／共通鍵は速いが鍵配送問題 → <strong>いいとこ取り</strong>する</div>
 
     <div class="diag-row">
@@ -1288,11 +1380,11 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
 
     <div class="diag-sub" style="margin-top:14px">🆚 HTTP vs HTTPS</div>
     <table class="tbl-blue" style="margin-top:6px">
-      <tr><th></th><th>HTTP</th><th>HTTPS</th></tr>
-      <tr><td>暗号化</td><td>❌ なし（平文）</td><td>✅ TLSで暗号化</td></tr>
+      <tr><th></th><th>HTTP（HyperText Transfer Protocol）</th><th>HTTPS（HTTP over TLS）</th></tr>
+      <tr><td>暗号化</td><td>❌ なし（平文）</td><td>✅ TLS（Transport Layer Security）で暗号化</td></tr>
       <tr><td>ポート</td><td><strong>80</strong></td><td><strong>443</strong></td></tr>
       <tr><td>URL</td><td>http://</td><td>https:// 🔒鍵マーク</td></tr>
-      <tr><td>盗聴・改ざん</td><td>筒抜け（MITM容易）</td><td>防げる</td></tr>
+      <tr><td>盗聴・改ざん</td><td>筒抜け（MITM（Man-in-the-Middle Attack・中間者攻撃）容易）</td><td>防げる</td></tr>
     </table>
   </div>
 
@@ -1323,9 +1415,9 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   <div class="keepit">
     <div class="keepit-title">⭐ 今日のこれだけ覚えて（基本）</div>
     <ul>
-      <li>❶ ハッシュは<strong>固定長・一方向・衝突耐性</strong>。SHA-256現役／SHA-1・MD5は非推奨</li>
+      <li>❶ ハッシュは<strong>固定長・一方向・衝突耐性</strong>。SHA（Secure Hash Algorithm）-256現役／SHA（Secure Hash Algorithm）-1・MD5（Message Digest 5）は非推奨</li>
       <li>❷ 署名作成＝<strong>平文ハッシュを送信者の秘密鍵で暗号化</strong>。検証は公開鍵で復号して受信平文のハッシュと一致確認</li>
-      <li>❸ <strong>HTTPS=HTTP+TLS／ポート443</strong>。PKIはCA＋証明書＋CRL/OCSPの仕組み</li>
+      <li>❸ <strong>HTTPS（HTTP over TLS）=HTTP+TLS／ポート443</strong>。PKI（Public Key Infrastructure・公開鍵基盤）はCA（Certificate Authority・認証局）＋証明書＋CRL（Certificate Revocation List・証明書失効リスト）/OCSP（Online Certificate Status Protocol・オンライン証明書状態プロトコル）の仕組み</li>
     </ul>
   </div>
 
@@ -1483,12 +1575,12 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   </div>
   <div class="goro-row"><span class="goro-chip">知・持・体<small>SYK / SYH / SYA</small></span></div>
   <div class="card card-red">
-    <h4>⚠️ MFA（多要素認証）の定義</h4>
+    <h4>⚠️ MFA（Multi-Factor Authentication・多要素認証）の定義</h4>
     <p><strong>異なる要素を2つ以上</strong>組み合わせる。同じ要素を2つ重ねるのは「<strong>多段階認証</strong>」であって多要素ではない。</p>
     <ul>
-      <li>✅ MFA：パスワード（知識）＋スマホ（所持）</li>
-      <li>❌ MFA<strong>ではない</strong>：パスワード＋秘密の質問（両方とも知識）</li>
-      <li>❌ MFA<strong>ではない</strong>：パスワード＋PIN（両方とも知識）</li>
+      <li>✅ MFA（Multi-Factor Authentication・多要素認証）：パスワード（知識）＋スマホ（所持）</li>
+      <li>❌ MFA（Multi-Factor Authentication・多要素認証）<strong>ではない</strong>：パスワード＋秘密の質問（両方とも知識）</li>
+      <li>❌ MFA（Multi-Factor Authentication・多要素認証）<strong>ではない</strong>：パスワード＋PIN（Personal Identification Number）（両方とも知識）</li>
     </ul>
   </div>
   <p class="exam-warn">⚠️【1次】R04新出。<strong>「パスワード＋秘密の質問でMFA」は誤り</strong>。要素が同じ（知識）なので多段階に過ぎない。</p>
@@ -1502,7 +1594,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
       <div class="diag-card neutral" style="background:#fce7f3;border-color:#ec4899"><span class="ico">🖐️</span><div class="ttl">③生体(SYA)</div><div class="desc">Something You <strong>Are</strong><br>身体的特徴<br>👆 指紋／👁️ 虹彩<br>😀 顔／🩸 静脈</div></div>
     </div>
 
-    <h4 style="margin-top:14px">⚖️ MFA（多要素認証）の○×判定</h4>
+    <h4 style="margin-top:14px">⚖️ MFA（Multi-Factor Authentication・多要素認証）の○×判定</h4>
     <div class="diag-row">
       <div class="diag-card safe" style="flex:0 0 auto"><span class="ico">✅</span><div class="ttl">MFA成立</div><div class="desc">異なる要素</div></div>
       <div class="diag-card neutral" style="text-align:left;font-size:.8rem"><strong>パスワード(知識)＋スマホ(所持)</strong><br>→ 知識×所持 ✅</div>
@@ -1520,14 +1612,14 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   <div class="tbl-wrap"><table class="tbl-purple">
     <tr><th>方式</th><th>仕組み</th><th>特徴</th></tr>
     <tr><td>チャレンジレスポンス</td><td>サーバが乱数（チャレンジ）を出し、クライアントがハッシュ計算して返す</td><td>パスワードがネット上を流れない</td></tr>
-    <tr><td>OTP（ワンタイムパスワード）</td><td>時間ベース（TOTP）／カウンタベース（HOTP）で1回限りのパスワード</td><td>盗聴されても再利用不能</td></tr>
-    <tr><td>CHAP</td><td>チャレンジレスポンス型（暗号化）</td><td>PPP接続認証で標準</td></tr>
-    <tr><td>PAP</td><td>平文でパスワード送信</td><td>❌ 非推奨（盗聴に弱い）</td></tr>
+    <tr><td>OTP（One-Time Password・ワンタイムパスワード）</td><td>時間ベース（TOTP：Time-based One-Time Password）／カウンタベース（HOTP：HMAC-based One-Time Password）で1回限りのパスワード</td><td>盗聴されても再利用不能</td></tr>
+    <tr><td>CHAP（Challenge Handshake Authentication Protocol・チャレンジハンドシェイク認証プロトコル）</td><td>チャレンジレスポンス型（暗号化）</td><td>PPP（Point-to-Point Protocol・ポイントツーポイントプロトコル）接続認証で標準</td></tr>
+    <tr><td>PAP（Password Authentication Protocol・パスワード認証プロトコル）</td><td>平文でパスワード送信</td><td>❌ 非推奨（盗聴に弱い）</td></tr>
   </table></div>
 
   <div class="diag-box">
     <h4>🤝 チャレンジレスポンス ─ パスワードを流さない仕組み</h4>
-    <div class="diag-sub" style="color:#c62828">❌ PAP（平文送信）：盗聴一発でアウト</div>
+    <div class="diag-sub" style="color:#c62828">❌ PAP（Password Authentication Protocol・パスワード認証プロトコル）：盗聴一発でアウト</div>
     <div class="diag-row">
       <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">クライアント</div></div>
       <div class="diag-arrow">▶<small>パスワード<br>そのまま送信</small></div>
@@ -1535,7 +1627,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
       <div class="diag-arrow">▶</div>
       <div class="diag-card victim"><span class="ico">🖥️</span><div class="ttl">サーバ</div></div>
     </div>
-    <div class="diag-sub" style="color:#16a34a;margin-top:10px">✅ CHAP（チャレンジレスポンス）：パスワード本体は流れない</div>
+    <div class="diag-sub" style="color:#16a34a;margin-top:10px">✅ CHAP（Challenge Handshake Authentication Protocol・チャレンジハンドシェイク認証プロトコル）：パスワード本体は流れない</div>
     <div class="diag-row">
       <div class="diag-card neutral"><span class="ico">👤</span><div class="ttl">クライアント</div></div>
       <div class="diag-arrow">◀<small>①乱数<br>「これハッシュして」</small></div>
@@ -1548,7 +1640,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     </div>
     <div class="diag-note">📌 通信路を流れるのは<strong>毎回違う乱数とハッシュ値</strong>だけ。盗聴されても再利用不能（リプレイ攻撃も封じる）</div>
 
-    <h4 style="margin-top:14px">🔢 OTP（ワンタイムパスワード）：1回限りで使い捨て</h4>
+    <h4 style="margin-top:14px">🔢 OTP（One-Time Password・ワンタイムパスワード）：1回限りで使い捨て</h4>
     <div class="diag-grid4">
       <div class="diag-card neutral"><span class="ico">⏰</span><div class="ttl">TOTP</div><div class="desc"><strong>時間ベース</strong><br>(Time-based)<br>30秒ごとに自動更新<br>Google Authenticator等</div></div>
       <div class="diag-card neutral"><span class="ico">🔢</span><div class="ttl">HOTP</div><div class="desc"><strong>カウンタベース</strong><br>(HMAC-based)<br>使う度に1ずつ加算<br>ハードトークン等</div></div>
@@ -1556,81 +1648,24 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <div class="diag-note">📌 盗聴されても、その値は<strong>もう次の瞬間／次の認証で無効</strong>。「パスワード再利用」攻撃を物理的に不可能にする</div>
   </div>
 
-  <h2 class="section-title st-purple">📊 生体認証の評価指標</h2>
-  <div class="vs-box">
-    <div class="vs-side" style="background:#fce4ec">
-      <h4>FAR（他人受入率）</h4>
-      <strong>他人を本人と誤認</strong><br>セキュリティ低下要因<br>
-      <span class="zk">ざっくり：偽物を通してしまう率</span>
-    </div>
-    <div class="vs-mid">VS</div>
-    <div class="vs-side" style="background:#e3f2fd">
-      <h4>FRR（本人拒否率）</h4>
-      <strong>本人を他人と誤認</strong><br>利便性低下要因<br>
-      <span class="zk">ざっくり：本物を弾いてしまう率</span>
-    </div>
-  </div>
-  <p class="exam-pt">📝【1次】FARとFRRは<strong>トレードオフ</strong>。閾値を厳しくするとFAR↓だがFRR↑。両者が等しくなる点を<strong>EER</strong>（等価エラー率）という。</p>
 
-  <div class="diag-box">
-    <h4>📈 FAR vs FRR：トレードオフをグラフで理解</h4>
-    <svg viewBox="0 0 720 280" style="width:100%;height:auto;font-family:sans-serif;background:#fff;border-radius:8px">
-      <defs>
-        <marker id="arEER" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
-      </defs>
-      <!-- 軸 -->
-      <line x1="80" y1="220" x2="660" y2="220" stroke="#475569" stroke-width="2" marker-end="url(#arEER)"/>
-      <line x1="80" y1="220" x2="80" y2="30" stroke="#475569" stroke-width="2" marker-end="url(#arEER)"/>
-      <text x="660" y="245" font-size="12" fill="#475569">認証の厳しさ →</text>
-      <text x="20" y="32" font-size="12" fill="#475569">誤り率</text>
-      <text x="60" y="225" font-size="11" fill="#94a3b8">緩い</text>
-      <text x="620" y="240" font-size="11" fill="#94a3b8">厳しい</text>
 
-      <!-- FAR曲線（右下がり：厳しくすると下がる） -->
-      <path d="M 90 50 Q 250 90 370 130 Q 490 170 650 210" stroke="#dc2626" stroke-width="3" fill="none"/>
-      <text x="115" y="60" font-size="13" font-weight="bold" fill="#dc2626">FAR（他人受入）</text>
-      <text x="115" y="76" font-size="10" fill="#dc2626">他人を本人と誤認＝偽物を通す</text>
-
-      <!-- FRR曲線（右上がり：厳しくすると上がる） -->
-      <path d="M 90 210 Q 250 170 370 130 Q 490 90 650 50" stroke="#3b82f6" stroke-width="3" fill="none"/>
-      <text x="500" y="60" font-size="13" font-weight="bold" fill="#3b82f6">FRR（本人拒否）</text>
-      <text x="430" y="76" font-size="10" fill="#3b82f6">本人を他人と誤認＝本物を弾く</text>
-
-      <!-- 交点 EER -->
-      <circle cx="370" cy="130" r="7" fill="#7c3aed" stroke="#fff" stroke-width="2"/>
-      <line x1="370" y1="130" x2="370" y2="220" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,3"/>
-      <text x="380" y="125" font-size="14" font-weight="bold" fill="#7c3aed">★ EER</text>
-      <text x="380" y="142" font-size="10" fill="#7c3aed">等価エラー率</text>
-      <text x="335" y="240" font-size="11" fill="#7c3aed">最適点</text>
-
-      <!-- ラベル下部 -->
-      <text x="160" y="265" font-size="11" fill="#475569" text-anchor="middle">⬅ 利便性◯／セキュ△</text>
-      <text x="560" y="265" font-size="11" fill="#475569" text-anchor="middle">セキュ◯／利便性△ ➡</text>
-    </svg>
-    <div class="diag-grid4">
-      <div class="diag-card neutral" style="background:#fee2e2;border-color:#dc2626"><span class="ico">😈</span><div class="ttl">FAR↑だと</div><div class="desc">他人が通る<br>＝<strong>セキュリティ低下</strong></div></div>
-      <div class="diag-card neutral" style="background:#dbeafe;border-color:#3b82f6"><span class="ico">😤</span><div class="ttl">FRR↑だと</div><div class="desc">本人が弾かれる<br>＝<strong>利便性低下</strong></div></div>
-      <div class="diag-card neutral" style="background:#ede9fe;border-color:#7c3aed"><span class="ico">⚖️</span><div class="ttl">EER</div><div class="desc">FAR=FRRとなる点<br>＝<strong>性能評価の基準</strong></div></div>
-    </div>
-    <div class="diag-note">📌 認証の閾値を厳しくする→<strong>FAR↓・FRR↑</strong>／緩める→<strong>FAR↑・FRR↓</strong>。両立できないトレードオフ関係</div>
-  </div>
-
-  <h2 class="section-title st-purple">🔁 SSO（シングルサインオン）とJPKI</h2>
+  <h2 class="section-title st-purple">🔁 SSO（Single Sign-On・シングルサインオン）とJPKI</h2>
   <div class="two-col">
     <div class="card card-teal">
-      <h4>SSO</h4>
-      <p>1度のログインで複数システムにアクセス可能。<strong>SAML／OAuth／OpenID Connect</strong>などの規格で実現。</p>
+      <h4>SSO（Single Sign-On・シングルサインオン）</h4>
+      <p>1度のログインで複数システムにアクセス可能。<strong>SAML（Security Assertion Markup Language・セキュリティアサーションマークアップ言語）／OAuth（オープン認可）／OpenID Connect</strong>などの規格で実現。</p>
       <p class="exam-pt">📝【1次】利便性向上の半面、SSO破られると全システム陥落のリスク。</p>
     </div>
     <div class="card card-orange">
-      <h4>JPKI（公的個人認証）</h4>
+      <h4>JPKI（Japan Public Key Infrastructure・公的個人認証サービス）</h4>
       <p>マイナンバーカードのICチップに格納された電子証明書で本人認証。<strong>署名用</strong>（実印相当）と<strong>利用者証明用</strong>（認印相当）の2種類。</p>
       <p class="exam-pt">📝【1次】R06新出論点。e-Tax・各種行政手続きで活用。</p>
     </div>
   </div>
 
   <div class="diag-box">
-    <h4>🔁 SSO（シングルサインオン）の動き</h4>
+    <h4>🔁 SSO（Single Sign-On・シングルサインオン）の動き</h4>
     <div class="diag-sub" style="color:#c62828">❌ SSOなし：サービス毎に毎回ログイン地獄</div>
     <div class="diag-row">
       <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">利用者</div></div>
@@ -1652,7 +1687,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     </div>
     <div class="diag-note" style="background:#fef2f2;border-color:#dc2626;color:#7f1d1d">⚠️ <strong>SSO破られると全システム陥落</strong>のリスク。だから認証サーバ(IdP)はMFAで厳重に守る必要あり</div>
 
-    <h4 style="margin-top:14px">🪪 JPKI（マイナンバーカードの2つの証明書）</h4>
+    <h4 style="margin-top:14px">🪪 JPKI（Japan Public Key Infrastructure・マイナンバーカードの2つの証明書）</h4>
     <div class="diag-row">
       <div class="diag-card safe" style="background:#fee2e2;border-color:#dc2626"><span class="ico">🖋️</span><div class="ttl">署名用電子証明書</div><div class="desc"><strong>実印相当</strong><br>e-Taxの確定申告等<br>「文書を私が作成しました」<br>を証明</div></div>
       <div class="diag-card safe" style="background:#dbeafe;border-color:#3b82f6"><span class="ico">🪪</span><div class="ttl">利用者証明用電子証明書</div><div class="desc"><strong>認印相当</strong><br>マイナポータルログイン等<br>「私本人がアクセスしています」<br>を証明</div></div>
@@ -1671,10 +1706,6 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
       <div class="flash-face flash-back">A. <b>MFA</b><br>知識＋生体（異なる要素）。</div>
     </div></div>
     <div class="flash-card"><div class="flash-inner">
-      <div class="flash-face flash-front"><div class="fc-q">Q. 他人を本人と誤認する率は？</div></div>
-      <div class="flash-face flash-back">A. <b>FAR</b>（False Acceptance Rate）<br>セキュリティに関わる。</div>
-    </div></div>
-    <div class="flash-card"><div class="flash-inner">
       <div class="flash-face flash-front"><div class="fc-q">Q. PAPとCHAP、安全なのは？</div></div>
       <div class="flash-face flash-back">A. <b>CHAP</b><br>PAPは平文送信、CHAPはチャレンジレスポンス型。</div>
     </div></div>
@@ -1687,9 +1718,8 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   <div class="keepit">
     <div class="keepit-title">⭐ 今日のこれだけ覚えて（詳細）</div>
     <ul>
-      <li>❶ 認証3要素＝<strong>知識・所持・生体</strong>。MFAは<strong>異なる要素</strong>を2つ以上</li>
-      <li>❷ <strong>FAR↑＝偽物を通す／FRR↑＝本物を弾く</strong>。EERは両者の交点</li>
-      <li>❸ <strong>CHAPは暗号／PAPは平文</strong>。OTPは1回限り。JPKIは署名用＋利用者証明用</li>
+      <li>❶ 認証3要素＝<strong>知識・所持・生体</strong>。MFA（Multi-Factor Authentication・多要素認証）は<strong>異なる要素</strong>を2つ以上</li>
+      <li>❸ <strong>CHAP（Challenge Handshake Authentication Protocol・チャレンジハンドシェイク認証プロトコル）は暗号／PAP（Password Authentication Protocol・パスワード認証プロトコル）は平文</strong>。OTP（One-Time Password・ワンタイムパスワード）は1回限り。JPKI（Japan Public Key Infrastructure・公的個人認証サービス）は署名用＋利用者証明用</li>
     </ul>
   </div>
 
@@ -1709,20 +1739,10 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     </div>
   </div>
 
-  <div class="fill-card"><div class="fill-header bg-purple">📈 本文の図をうめる：FAR vs FRR トレードオフ</div>
-    <div class="fill-body">
-      <div class="diag-grid4">
-        <div class="diag-card neutral" style="background:#fee2e2;border-color:#dc2626"><span class="ico">😈</span><div class="ttl"><span class="fill-blank">FAR</span>(他人受入)↑</div><div class="desc">他人を本人と誤認<br>＝<strong>セキュリティ低下</strong></div></div>
-        <div class="diag-card neutral" style="background:#dbeafe;border-color:#3b82f6"><span class="ico">😤</span><div class="ttl"><span class="fill-blank">FRR</span>(本人拒否)↑</div><div class="desc">本人を他人と誤認<br>＝<strong>利便性低下</strong></div></div>
-        <div class="diag-card neutral" style="background:#ede9fe;border-color:#7c3aed"><span class="ico">⚖️</span><div class="ttl"><span class="fill-blank">EER</span></div><div class="desc">FAR=FRRとなる点<br>＝性能評価基準</div></div>
-      </div>
-      <p style="font-size:.85rem;color:var(--gray-mid);margin-top:.4rem">閾値を厳しくする→FAR<span class="fill-blank">↓</span>・FRR<span class="fill-blank">↑</span>／緩める→FAR<span class="fill-blank">↑</span>・FRR<span class="fill-blank">↓</span>。両立できない<span class="fill-blank">トレードオフ</span>関係</p>
-    </div>
-  </div>
 
-  <div class="fill-card"><div class="fill-header bg-teal">🔁 本文の図をうめる：SSO（シングルサインオン）</div>
+  <div class="fill-card"><div class="fill-header bg-teal">🔁 本文の図をうめる：SSO（Single Sign-On・シングルサインオン）</div>
     <div class="fill-body">
-      <p style="font-size:.85rem;color:#c62828;margin:4px 0">❌ SSOなし：サービス毎にログイン地獄</p>
+      <p style="font-size:.85rem;color:#c62828;margin:4px 0">❌ SSO（Single Sign-On・シングルサインオン）なし：サービス毎にログイン地獄</p>
       <div class="diag-row">
         <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">利用者</div></div>
         <div class="diag-arrow">▶<small>都度<br>ログイン</small></div>
@@ -1730,7 +1750,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
         <div class="diag-card neutral"><span class="ico">📊</span></div>
         <div class="diag-card neutral"><span class="ico">📅</span></div>
       </div>
-      <p style="font-size:.85rem;color:#16a34a;margin:6px 0 4px">✅ SSOあり：1回ログインで全部</p>
+      <p style="font-size:.85rem;color:#16a34a;margin:6px 0 4px">✅ SSO（Single Sign-On・シングルサインオン）あり：1回ログインで全部</p>
       <div class="diag-row">
         <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">利用者</div></div>
         <div class="diag-arrow">▶<small>1回だけ</small></div>
@@ -1742,7 +1762,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     </div>
   </div>
 
-  <div class="fill-card"><div class="fill-header bg-orange">🪪 本文の図をうめる：JPKI（マイナンバーカードの2証明書）</div>
+  <div class="fill-card"><div class="fill-header bg-orange">🪪 本文の図をうめる：JPKI（Japan Public Key Infrastructure・マイナンバーカードの2証明書）</div>
     <div class="fill-body">
       <div class="diag-row">
         <div class="diag-card safe" style="background:#fee2e2;border-color:#dc2626"><span class="ico">🖋️</span><div class="ttl"><span class="fill-blank">署名用</span>電子証明書</div><div class="desc"><span class="fill-blank">実印</span>相当<br>e-Tax確定申告等<br>「文書を私が作成」を証明</div></div>
@@ -1762,26 +1782,16 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
       </table>
     </div>
   </div>
-  <div class="fill-card"><div class="fill-header bg-purple">D2：MFA（多要素認証）の判定</div>
+  <div class="fill-card"><div class="fill-header bg-purple">D2：MFA（Multi-Factor Authentication・多要素認証）の判定</div>
     <div class="fill-body">
       <table class="tbl-purple">
-        <tr><th>組み合わせ</th><th>要素</th><th>MFA？</th></tr>
+        <tr><th>組み合わせ</th><th>要素</th><th>MFA（Multi-Factor Authentication）？</th></tr>
         <tr><td>パスワード＋スマホ</td><td>知識＋所持</td><td>⭕ <span class="fill-blank">MFA</span></td></tr>
         <tr><td>パスワード＋指紋</td><td>知識＋生体</td><td>⭕ <span class="fill-blank">MFA</span></td></tr>
         <tr><td>パスワード＋PIN</td><td>知識＋知識</td><td>❌ <span class="fill-blank">MFAではない</span>（多段階認証）</td></tr>
         <tr><td>パスワード＋秘密の質問</td><td>知識＋知識</td><td>❌ <span class="fill-blank">MFAではない</span>（多段階認証）</td></tr>
       </table>
       <p style="font-size:.86rem;margin-top:.4rem">※ MFAの定義は<span class="fill-blank">異なる要素</span>を2つ以上組み合わせること。</p>
-    </div>
-  </div>
-  <div class="fill-card"><div class="fill-header bg-purple">D3：生体認証の評価指標</div>
-    <div class="fill-body">
-      <table class="tbl-purple">
-        <tr><th>指標</th><th>意味</th><th>影響</th></tr>
-        <tr><td><span class="fill-blank">FAR</span></td><td>他人を本人と誤認する率</td><td>セキュリティ低下</td></tr>
-        <tr><td><span class="fill-blank">FRR</span></td><td>本人を他人と誤認する率</td><td>利便性低下</td></tr>
-        <tr><td><span class="fill-blank">EER</span></td><td>FARとFRRが等しくなる点</td><td>性能評価指標（両者は<span class="fill-blank">トレードオフ</span>）</td></tr>
-      </table>
     </div>
   </div>
   <div class="fill-card"><div class="fill-header bg-purple">D4：個別認証方式</div>
@@ -1805,7 +1815,6 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   <div class="mnemonic"><div class="big">本・改・否　＝署名の効能3つ</div><div class="desc">本人性・改ざん検知・否認防止（※機密性は含まない）</div></div>
   <div class="mnemonic"><div class="big">ヨンヨンサン　でHTTPS</div><div class="desc">ポート443＝HTTP+TLS</div></div>
   <div class="mnemonic"><div class="big">知・持・体（しじたい）の3要素</div><div class="desc">認証要素：知識・所持・生体</div></div>
-  <div class="mnemonic"><div class="big">FARで偽物通る／FRRで本物弾く</div><div class="desc">生体認証2指標の覚え方</div></div>
   <div class="mnemonic"><div class="big">SHAニーゴロ／MD5ゴロゴロ消えてく</div><div class="desc">SHA-256現役・MD5非推奨</div></div>
   <div class="mnemonic"><div class="big">郵便ポストで覚える公開鍵</div><div class="desc">投函口（公開鍵・誰でも投函）／取り出し鍵（秘密鍵・本人のみ）</div></div>
 </div>
@@ -1827,7 +1836,6 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
         <tr><td>署名の3効能</td><td><span class="fill-blank">本人性</span>・<span class="fill-blank">改ざん検知</span>・<span class="fill-blank">否認防止</span></td></tr>
         <tr><td>HTTPSのポート／HTTP</td><td><span class="fill-blank">443</span>／<span class="fill-blank">80</span></td></tr>
         <tr><td>認証3要素</td><td><span class="fill-blank">知識</span>・<span class="fill-blank">所持</span>・<span class="fill-blank">生体</span></td></tr>
-        <tr><td>偽物通る率／本物弾く率</td><td><span class="fill-blank">FAR</span>／<span class="fill-blank">FRR</span></td></tr>
       </table>
     </div>
   </div>
@@ -1945,11 +1953,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <div class="fill-body">
       <table class="tbl-orange">
         <tr><th>指標</th><th>意味</th><th>影響</th></tr>
-        <tr><td><span class="fill-blank">FAR</span></td><td>他人を本人と誤認</td><td>セキュリティ低下</td></tr>
-        <tr><td><span class="fill-blank">FRR</span></td><td>本人を他人と誤認</td><td>利便性低下</td></tr>
-        <tr><td><span class="fill-blank">EER</span></td><td>FARとFRRが等しい点</td><td>性能評価指標</td></tr>
       </table>
-      <p style="font-size:.86rem;margin-top:.4rem">※ FARとFRRは<span class="fill-blank">トレードオフ</span>。閾値を厳しくするとFARは下がるがFRRは上がる。</p>
     </div>
   </div>
 </div>
@@ -2018,7 +2022,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     </div>
   </div>
 
-  <div class="fill-card"><div class="fill-header bg-red">⑥ JPKI（マイナンバーカードの公的個人認証）</div>
+  <div class="fill-card"><div class="fill-header bg-red">⑥ JPKI（Japan Public Key Infrastructure・公的個人認証サービス）</div>
     <div class="fill-body">
       <table class="tbl-red">
         <tr><th>証明書の種類</th><th>相当する印鑑</th><th>主な用途</th></tr>
@@ -2074,7 +2078,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
       <li onclick="ans(this,false,'公開鍵は計算が重く<strong>低速</strong>。共通鍵が高速。')">公開鍵は共通鍵より高速である</li>
       <li onclick="ans(this,true,'正解。n人通信の鍵管理数：共通鍵=n(n-1)/2、公開鍵=2n。')">n人通信で必要な鍵管理数は共通鍵がn(n-1)/2、公開鍵が2nである</li>
       <li onclick="ans(this,false,'公開鍵方式こそ鍵配送問題を解消する仕組み。')">公開鍵方式には鍵配送問題がある</li>
-      <li onclick="ans(this,false,'RSAは公開鍵、AESは共通鍵。逆に書かれた選択肢に注意。')">RSAは共通鍵、AESは公開鍵の代表例である</li>
+      <li onclick="ans(this,false,'RSA（Rivest-Shamir-Adleman）は公開鍵、AES（Advanced Encryption Standard）は共通鍵。逆に書かれた選択肢に注意。')">RSA（Rivest-Shamir-Adleman）は共通鍵、AES（Advanced Encryption Standard）は公開鍵の代表例である</li>
     </ul>
   </div>
 
@@ -2093,10 +2097,10 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <span class="quiz-num">3</span>
     <div class="quiz-question">多要素認証（MFA）の説明として最も適切なのはどれか。</div>
     <ul class="quiz-options">
-      <li onclick="ans(this,false,'パスワード＋秘密の質問は両方「知識」要素。MFAではない。')">パスワードと秘密の質問の組み合わせはMFAである</li>
-      <li onclick="ans(this,true,'正解。MFA＝異なる要素を2つ以上。')">知識・所持・生体のうち異なる要素を2つ以上組み合わせる</li>
-      <li onclick="ans(this,false,'パスワード＋PINも両方「知識」要素。多段階認証に過ぎない。')">パスワードとPINの組み合わせはMFAである</li>
-      <li onclick="ans(this,false,'SSOは利便性向上の仕組みで、MFAとは別概念。')">SSO（シングルサインオン）はMFAの一形態である</li>
+      <li onclick="ans(this,false,'パスワード＋秘密の質問は両方「知識」要素。MFA（Multi-Factor Authentication・多要素認証）ではない。')">パスワードと秘密の質問の組み合わせはMFA（Multi-Factor Authentication・多要素認証）である</li>
+      <li onclick="ans(this,true,'正解。MFA（Multi-Factor Authentication・多要素認証）＝異なる要素を2つ以上。')">知識・所持・生体のうち異なる要素を2つ以上組み合わせる</li>
+      <li onclick="ans(this,false,'パスワード＋PIN（Personal Identification Number）も両方「知識」要素。多段階認証に過ぎない。')">パスワードとPIN（Personal Identification Number）の組み合わせはMFA（Multi-Factor Authentication・多要素認証）である</li>
+      <li onclick="ans(this,false,'SSO（Single Sign-On・シングルサインオン）は利便性向上の仕組みで、MFA（Multi-Factor Authentication・多要素認証）とは別概念。')">SSO（Single Sign-On・シングルサインオン）はMFA（Multi-Factor Authentication・多要素認証）の一形態である</li>
     </ul>
   </div>
 
@@ -2104,10 +2108,10 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <span class="quiz-num">4</span>
     <div class="quiz-question">SSL/TLSの説明として最も適切なのはどれか。</div>
     <ul class="quiz-options">
-      <li onclick="ans(this,false,'SSLが先、TLSが後継。')">SSLはTLSの後継規格である</li>
-      <li onclick="ans(this,false,'HTTPSのポートは443。80はHTTP。')">HTTPSのポート番号は80である</li>
+      <li onclick="ans(this,false,'SSL（Secure Sockets Layer）が先、TLS（Transport Layer Security）が後継。')">SSL（Secure Sockets Layer）はTLS（Transport Layer Security）の後継規格である</li>
+      <li onclick="ans(this,false,'HTTPS（HTTP over TLS）のポートは443。80はHTTP（HyperText Transfer Protocol）。')">HTTPS（HTTP over TLS）のポート番号は80である</li>
       <li onclick="ans(this,true,'正解。鍵交換は公開鍵、本通信は共通鍵。')">公開鍵で共通鍵を交換し、以降の通信は共通鍵で暗号化する</li>
-      <li onclick="ans(this,false,'TLSは公開鍵だけでなく共通鍵も使うハイブリッド方式。')">TLSは公開鍵暗号のみで通信全体を暗号化する</li>
+      <li onclick="ans(this,false,'TLS（Transport Layer Security）は公開鍵だけでなく共通鍵も使うハイブリッド方式。')">TLSは公開鍵暗号のみで通信全体を暗号化する</li>
     </ul>
   </div>
 
@@ -2117,7 +2121,7 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
     <ul class="quiz-options">
       <li onclick="ans(this,false,'一方向性により復元はできない。')">ハッシュ値から元データを復元できる</li>
       <li onclick="ans(this,true,'正解。入力長に関わらず固定長を出力。')">入力長に関わらず固定長の出力が得られる</li>
-      <li onclick="ans(this,false,'MD5・SHA-1は非推奨。SHA-256が現役。')">MD5は現在も推奨される標準アルゴリズムである</li>
+      <li onclick="ans(this,false,'MD5（Message Digest 5）・SHA（Secure Hash Algorithm）-1は非推奨。SHA（Secure Hash Algorithm）-256が現役。')">MD5（Message Digest 5）は現在も推奨される標準アルゴリズムである</li>
       <li onclick="ans(this,false,'デジタル署名・パスワード保存・改ざん検知などに広く利用される。')">ハッシュ関数は暗号化と復号の両方に使える</li>
     </ul>
   </div>
@@ -2128,23 +2132,15 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   <h2 class="section-title st-teal">🏢 実例で覚える</h2>
   <div class="card card-teal">
     <h4>💳 クレジットカード決済（ECサイト）</h4>
-    <p>https通信（TLS）で保護。サーバ証明書はDV／OV／EV証明書のいずれか。EVは緑バー表示で信頼性高。</p>
+    <p>HTTPS（HTTP over TLS）通信で保護。サーバ証明書はDV／OV／EV証明書のいずれか。EVは緑バー表示で信頼性高。</p>
   </div>
   <div class="card card-teal">
-    <h4>📧 PGP / S/MIMEメール暗号化</h4>
-    <p>受信者の公開鍵で本文を暗号化（機密性）＋送信者の秘密鍵で署名（本人性）。両方を組み合わせる典型例。</p>
+    <h4>📱 ネットバンキングのMFA（Multi-Factor Authentication・多要素認証）</h4>
+    <p>パスワード（知識）＋ワンタイムパスワード（所持＝トークン／スマホ）。これが本来のMFA（Multi-Factor Authentication・多要素認証）。</p>
   </div>
   <div class="card card-teal">
-    <h4>📱 ネットバンキングのMFA</h4>
-    <p>パスワード（知識）＋ワンタイムパスワード（所持＝トークン／スマホ）。これが本来のMFA。</p>
-  </div>
-  <div class="card card-teal">
-    <h4>🆔 マイナンバーカード（JPKI）</h4>
+    <h4>🆔 マイナンバーカード（JPKI：Japan Public Key Infrastructure・公的個人認証サービス）</h4>
     <p>e-Taxで電子申告するとき、ICチップの<strong>署名用証明書</strong>で確定申告書に電子署名。<strong>利用者証明用</strong>はマイナポータルログインに使用。</p>
-  </div>
-  <div class="card card-teal">
-    <h4>📡 Wi-Fi WPA2/WPA3</h4>
-    <p>事前共有鍵（PSK）方式は共通鍵ベース。WPA3はSAE（Simultaneous Authentication of Equals）で鍵交換を強化。</p>
   </div>
 
   <h3 style="margin-top:1rem">📝【1次試験】実例からの試験ポイント穴埋め</h3>
@@ -2157,8 +2153,6 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
       <table class="tbl-teal">
         <tr><th>実例</th><th>キーワード</th></tr>
         <tr><td>ECサイトのカード情報保護</td><td><span class="fill-blank">TLS</span></td></tr>
-        <tr><td>PGP／S/MIMEの暗号化に使う鍵</td><td>受信者の<span class="fill-blank">公開鍵</span></td></tr>
-        <tr><td>PGP／S/MIMEの署名に使う鍵</td><td>送信者の<span class="fill-blank">秘密鍵</span></td></tr>
         <tr><td>パス＋OTPの要素</td><td>知識＋<span class="fill-blank">所持</span>（MFA）</td></tr>
         <tr><td>マイナンバーカードの2証明書</td><td><span class="fill-blank">署名用</span>／<span class="fill-blank">利用者証明用</span></td></tr>
       </table>
@@ -2208,10 +2202,10 @@ ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
   <div class="diagram">
     <div class="diagram-title">🌳 PKIの全体像</div>
     <div class="tree">
-      <div class="tr-root">PKI（公開鍵基盤）</div>
+      <div class="tr-root">PKI（Public Key Infrastructure・公開鍵基盤）</div>
       <div class="tr-trunk"></div>
       <div class="tr-branches">
-        <div class="tr-node"><b>CA（認証局）</b>第三者機関<div class="tr-leaf">証明書を発行</div></div>
+        <div class="tr-node"><b>CA（Certificate Authority・認証局）</b>第三者機関<div class="tr-leaf">証明書を発行</div></div>
         <div class="tr-node"><b>電子証明書</b>「公開鍵＋所有者」<div class="tr-leaf">CAの署名付き</div></div>
         <div class="tr-node"><b>失効管理</b>CRL／OCSP<div class="tr-leaf">無効な証明書を排除</div></div>
         <div class="tr-node"><b>利用者</b>SSL/TLS等<div class="tr-leaf">証明書を検証して通信</div></div>
@@ -2278,6 +2272,8 @@ function switchTab(i){
 document.addEventListener('click',function(e){
   var fb=e.target.closest('.fill-blank');
   if(fb)fb.classList.toggle('show');
+  var fc=e.target.closest('.flash-card');
+  if(fc)fc.classList.toggle('flipped');
 });
 function revealAllFillIn(tabId){
   var blanks=document.querySelectorAll('#'+tabId+' .fill-blank');
@@ -2314,8 +2310,8 @@ window.LS_CONFIG = {
   CURIOSITY:{hook:'デジタル署名は機密性も守ってくれる？',hint:'NO。署名の効能は本人性・改ざん検知・否認防止の3つだけ。'},
   PRETEST:[
     {q:'Q1. 機密ファイルを送るとき暗号化に使う鍵は？',a:'<strong>受信者の公開鍵</strong>'},
-    {q:'Q2. パスワード＋PIN は MFA？',a:'<strong>NO</strong>（両方知識要素）'},
-    {q:'Q3. HTTPSのポート番号は？',a:'<strong>443</strong>'}
+    {q:'Q2. パスワード＋PIN（Personal Identification Number）は MFA（Multi-Factor Authentication・多要素認証）？',a:'<strong>NO</strong>（両方知識要素）'},
+    {q:'Q3. HTTPS（HTTP over TLS）のポート番号は？',a:'<strong>443</strong>'}
   ]
 };
 </script>
@@ -2363,6 +2359,187 @@ window.LS_CONFIG = {
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',injectCardReveal);
   else injectCardReveal();
   window.addEventListener('load', injectCardReveal);
+})();
+</script>
+<script>
+// フラッシュカード構造を統一: flash-inner がないカードに追加し、onclick を除去してグローバルリスナーに統一
+(function(){
+  document.querySelectorAll('.flash-card').forEach(function(card){
+    card.removeAttribute('onclick');
+    if(!card.querySelector('.flash-inner')){
+      var inner=document.createElement('div');
+      inner.className='flash-inner';
+      while(card.firstChild) inner.appendChild(card.firstChild);
+      card.appendChild(inner);
+    }
+  });
+})();
+</script>
+<script>
+(function(){
+  // STEP A: 各 .tab-panel 内の h2.section-title 区切りで自動 .hide-block ラップ
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var children=Array.from(panel.children);
+    var sections=[];
+    var start=-1;
+    for(var i=0;i<children.length;i++){
+      var c=children[i];
+      if(c.matches&&c.matches('h2.section-title')){
+        if(start!==-1) sections.push([start,i-1]);
+        start=i;
+      }
+    }
+    if(start!==-1) sections.push([start,children.length-1]);
+    sections.forEach(function(sec){
+      var first=children[sec[0]];
+      if(!first||first.parentNode!==panel) return;
+      var wrap=document.createElement('div');
+      wrap.className='hide-block';
+      first.parentNode.insertBefore(wrap,first);
+      for(var j=sec[0];j<=sec[1];j++){
+        if(children[j]&&children[j].parentNode===panel) wrap.appendChild(children[j]);
+      }
+    });
+  });
+  // STEP A2: 各 .card-body / .fill-body 内の <h3> 区切りで自動 .hide-subblock ラップ
+  document.querySelectorAll('.card-body, .fill-body').forEach(function(body){
+    var kids=Array.from(body.children);
+    var groups=[];var s=-1;
+    for(var i=0;i<kids.length;i++){
+      if(kids[i].tagName==='H3'){
+        if(s!==-1) groups.push([s,i-1]);
+        s=i;
+      }
+    }
+    if(s!==-1) groups.push([s,kids.length-1]);
+    groups.forEach(function(g){
+      var first=kids[g[0]];
+      if(!first||first.parentNode!==body) return;
+      var w=document.createElement('div');
+      w.className='hide-subblock';
+      first.parentNode.insertBefore(w,first);
+      for(var j=g[0];j<=g[1];j++){
+        if(kids[j]&&kids[j].parentNode===body) w.appendChild(kids[j]);
+      }
+    });
+  });
+  // STEP B: ○ボタン付与対象を収集
+  var FINE_SEL=['.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
+  var MEDIUM_SEL=['.hide-block','.card','.diagram','.alert-tip','.alert-exam','.alert-danger',
+    '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet',
+    '.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
+  var LS_KEY='sec-hide:'+(location.pathname.split('/').pop()||'page')+':v3';
+  function loadHidden(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(e){return{};}}
+  function saveHidden(obj){try{localStorage.setItem(LS_KEY,JSON.stringify(obj));}catch(e){}}
+  var targets=[];
+  var seen=new Set();
+  function addTarget(el){if(!seen.has(el)){seen.add(el);targets.push(el);}}
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    panel.querySelectorAll(MEDIUM_SEL).forEach(function(el){
+      if(el.closest('.card')&&!el.classList.contains('card')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.fill-card')&&!el.classList.contains('fill-card')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.keepit')&&!el.classList.contains('keepit')) return;
+      if(el.closest('.hide-subblock')&&!el.classList.contains('hide-subblock')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.flash-deck')&&!el.classList.contains('flash-deck')&&!el.classList.contains('flash-card')) return;
+      if(el.closest('.icon-deck')&&!el.classList.contains('icon-deck')) return;
+      if(el.closest('.chart-set')&&!el.classList.contains('chart-set')&&!el.matches('.chart-wrap,.chart-set-banner')) return;
+      if(el.closest('.table-wrap')&&!el.classList.contains('table-wrap')) return;
+      if(el.closest('.chart-wrap')&&!el.classList.contains('chart-wrap')) return;
+      if(el.classList.contains('hide-subblock')){
+        var kids2=Array.from(el.children);
+        var nonFineSig=false;
+        for(var k=0;k<kids2.length;k++){
+          var ch=kids2[k];
+          if(ch.tagName==='H3') continue;
+          if(ch.matches&&ch.matches(FINE_SEL)) continue;
+          var t=(ch.textContent||'').trim();
+          if(t.length>0||(ch.querySelector&&ch.querySelector('table,img,svg'))){nonFineSig=true;break;}
+        }
+        var fineCount=el.querySelectorAll(FINE_SEL).length;
+        if(!nonFineSig && fineCount>=1) return;
+      }
+      addTarget(el);
+    });
+  });
+  // STEP B-2: .hide-block 直下のクラス無し div/table/長めp/ul/ol も対象に追加
+  document.querySelectorAll('.hide-block').forEach(function(block){
+    Array.from(block.children).forEach(function(child){
+      var tag=child.tagName;
+      if(tag==='H1'||tag==='H2'||tag==='H3'||tag==='H4'||tag==='H5') return;
+      if(child.matches&&child.matches(MEDIUM_SEL)) return;
+      if(child.closest('.card')&&!child.classList.contains('card')) return;
+      if(child.closest('.keepit')&&!child.classList.contains('keepit')) return;
+      if(tag==='P'&&(child.textContent||'').trim().length<40) return;
+      if(tag!=='DIV'&&tag!=='TABLE'&&tag!=='P'&&tag!=='UL'&&tag!=='OL') return;
+      addTarget(child);
+    });
+  });
+  function stableId(el,fallback){
+    var h2=el.querySelector('h2.section-title');
+    var h3=el.querySelector(':scope > h3');
+    if(h3){var h3t=(h3.textContent||'').replace(/\s+/g,'').slice(0,40);var h3k=(el.classList[0]||'')+':h3:'+h3t;return h3t.length>=8?h3k:h3k+':'+fallback;}
+    var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
+    var qNum=el.querySelector('.quiz-num');
+    var fh=el.querySelector('.fill-header, .card-header');
+    var tag=el.classList[0]||el.tagName.toLowerCase();
+    var txt='';
+    if(h2&&el.classList.contains('hide-block')) txt=h2.textContent;
+    else if(qNum){var qq=el.querySelector('.quiz-question');txt='q'+qNum.textContent+(qq?qq.textContent:'');}
+    else if(fh) txt=fh.textContent;
+    else if(h4) txt=h4.textContent;
+    else if(dt) txt=dt.textContent;
+    else txt=el.textContent;
+    txt=(txt||'').replace(/\s+/g,'').slice(0,40);
+    if(txt.length>=8) return tag+':'+txt;
+    return tag+':'+txt+':'+fallback;
+  }
+  var hidden=loadHidden();
+  targets.forEach(function(el,idx){
+    var id=stableId(el,idx);
+    var wrap=document.createElement('div');
+    wrap.className='sec-hide-wrap';
+    el.parentNode.insertBefore(wrap,el);
+    wrap.appendChild(el);
+    var btnRow=document.createElement('div');
+    btnRow.className='sec-hide-btn-row';
+    var btn=document.createElement('button');
+    btn.textContent='○';
+    btn.title='この項目を非表示にする';
+    function getLabel(){
+      var qNum=el.querySelector('.quiz-num'),qQ=el.querySelector('.quiz-question');
+      var h2=el.querySelector('h2.section-title');
+      var h3=el.querySelector(':scope > h3');
+      var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
+      var fh=el.querySelector('.fill-header, .card-header');
+      if(h3) return h3.textContent.trim().slice(0,40);
+      if(qNum&&qQ) return qNum.textContent.trim()+' '+qQ.textContent.trim().slice(0,30)+'…';
+      if(h2&&el.classList.contains('hide-block')) return h2.textContent.trim().slice(0,40);
+      if(fh) return fh.textContent.trim().slice(0,30);
+      if(h4) return h4.textContent.trim().slice(0,30);
+      if(dt) return dt.textContent.trim().slice(0,30);
+      return el.textContent.trim().slice(0,30)+'…';
+    }
+    function doHide(label){
+      el.style.display='none';btnRow.style.display='none';
+      var ph=document.createElement('div');
+      ph.className='sec-hidden-ph';
+      ph.innerHTML='（非表示：<span class="sec-hidden-label"></span>） <button>再表示 ○</button>';
+      ph.querySelector('.sec-hidden-label').textContent=label;
+      ph.querySelector('button').addEventListener('click',function(){
+        el.style.display='';btnRow.style.display='';ph.remove();
+        var obj=loadHidden();delete obj[id];saveHidden(obj);
+      });
+      wrap.appendChild(ph);
+    }
+    btn.addEventListener('click',function(){
+      var label=getLabel();
+      doHide(label);
+      var obj=loadHidden();obj[id]=1;saveHidden(obj);
+    });
+    btnRow.appendChild(btn);
+    wrap.appendChild(btnRow);
+    if(hidden[id]) doHide(getLabel());
+  });
 })();
 </script>
 <script src="../learning-system.js"></script>

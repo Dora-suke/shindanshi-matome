@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商品予算計画 公式シート｜中小企業診断士 運営管理</title>
+<style>
+:root{
+  --bg:#f0f4f8;--card:#fff;--ink:#1a202c;--muted:#64748b;
+  --navy:#1a365d;--teal:#0d9488;--orange:#ea580c;--blue:#2563eb;
+  --red:#dc2626;--purple:#7c3aed;--green:#059669;--yellow:#d97706;
+  --line:#e2e8f0;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo","Noto Sans JP",sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.8;font-size:15px}
+
+/* ---- header ---- */
+.page-header{
+  background:linear-gradient(135deg,#1a365d 0%,#2a4a7f 50%,#0d9488 100%);
+  color:#fff;text-align:center;padding:36px 20px 28px;position:relative;overflow:hidden
+}
+.page-header::after{
+  content:'';position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);
+  width:120%;height:56px;background:var(--bg);border-radius:50%
+}
+.page-header h1{font-size:clamp(1.4rem,4vw,1.8rem);font-weight:800;letter-spacing:.05em;position:relative}
+.page-header .sub{font-size:.9rem;opacity:.82;margin-top:6px;position:relative}
+.header-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;position:relative}
+.header-badges span{
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+  border-radius:999px;padding:4px 14px;font-size:.8rem
+}
+
+/* ---- layout ---- */
+.container{max-width:860px;margin:0 auto;padding:40px 16px 80px}
+
+/* ---- section block ---- */
+.section{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:28px;overflow:hidden}
+.section-header{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 22px;color:#fff;font-size:1.1rem;font-weight:700
+}
+.section-header .num{
+  background:rgba(255,255,255,.25);width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;flex-shrink:0
+}
+.section-body{padding:20px 24px}
+.bg-navy{background:linear-gradient(135deg,#1a365d,#2a4a7f)}
+.bg-teal{background:linear-gradient(135deg,#134e4a,#0d9488)}
+.bg-orange{background:linear-gradient(135deg,#9a3412,#ea580c)}
+.bg-purple{background:linear-gradient(135deg,#4c1d95,#7c3aed)}
+.bg-blue{background:linear-gradient(135deg,#1e3a5f,#2563eb)}
+.bg-green{background:linear-gradient(135deg,#064e3b,#059669)}
+.bg-red{background:linear-gradient(135deg,#991b1b,#dc2626)}
+
+/* ---- formula card ---- */
+.fcard{
+  border-radius:10px;border-left:5px solid;padding:14px 18px;margin:10px 0;
+  background:#f8fafc;font-size:.97rem
+}
+.fcard.navy{border-color:var(--navy)} .fcard.teal{border-color:var(--teal)}
+.fcard.orange{border-color:var(--orange)} .fcard.purple{border-color:var(--purple)}
+.fcard.blue{border-color:var(--blue)} .fcard.green{border-color:var(--green)}
+.fcard.red{border-color:var(--red)}
+
+.fcard .label{
+  font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--muted);margin-bottom:6px
+}
+.fcard .formula{
+  font-size:1.08rem;font-weight:700;color:var(--navy);
+  background:#fff;border:2px solid var(--line);border-radius:8px;
+  padding:10px 16px;text-align:center;margin:8px 0
+}
+.fcard .formula .hi{color:var(--red)}
+.fcard .formula .gr{color:var(--green)}
+.fcard .memo{font-size:.85rem;color:var(--muted);margin-top:6px;line-height:1.7}
+
+/* ---- 2-col grid ---- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+
+/* ---- vs table ---- */
+.vs-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+.vs-table th,.vs-table td{border:1px solid var(--line);padding:10px 14px;text-align:left;vertical-align:top}
+.vs-table th{background:var(--navy);color:#fff;font-weight:600;white-space:nowrap}
+.vs-table tbody tr:nth-child(even){background:#f0f4f8}
+.vs-table tbody tr:nth-child(odd){background:#fff}
+
+/* ---- derivation box ---- */
+.derive{
+  background:linear-gradient(135deg,#faf5ff,#fdf2f8);
+  border:2px dashed #c084fc;border-radius:12px;padding:16px 18px;margin:14px 0
+}
+.derive .derive-title{font-weight:700;color:var(--purple);margin-bottom:10px;font-size:.95rem}
+.derive-step{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:.93rem}
+.derive-step .arrow{color:var(--purple);font-weight:700;font-size:1.1rem;flex-shrink:0}
+.derive-step .eq{
+  background:#fff;border:1.5px solid #c4b5fd;border-radius:8px;
+  padding:6px 12px;font-weight:700;color:#6d28d9;flex:1
+}
+
+/* ---- memo box ---- */
+.memo-box{
+  background:#fffbeb;border:2px solid #f59e0b;border-radius:10px;
+  padding:12px 16px;margin:14px 0;font-size:.9rem;line-height:1.75
+}
+.memo-box .memo-title{font-weight:700;color:#92400e;margin-bottom:4px;font-size:.85rem}
+
+/* ---- highlight ---- */
+.hl{background:linear-gradient(transparent 60%,#fef08a 60%);font-weight:700;padding:0 2px}
+.kw{
+  display:inline-block;font-weight:700;color:#fff;background:var(--red);
+  border-radius:4px;padding:1px 8px;font-size:.83rem;margin:0 2px
+}
+.kw.blue{background:var(--blue)}.kw.green{background:var(--green)}
+.kw.purple{background:var(--purple)}.kw.orange{background:var(--orange)}
+.kw.teal{background:var(--teal)}.kw.navy{background:var(--navy)}
+
+/* ---- print ---- */
+@media print{
+  body{font-size:13px}
+  .page-header{padding:18px;break-after:avoid}
+  .page-header::after{display:none}
+  .container{padding:20px 8px}
+  .section{page-break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div style="font-size:2.4rem;position:relative">📐</div>
+  <h1>商品予算計画 公式シート</h1>
+  <p class="sub">導くべき公式を端的に整理｜中小企業診断士 運営管理</p>
+  <div class="header-badges">
+    <span>値入率・換算</span>
+    <span>GMROI・交差比率</span>
+    <span>相乗積</span>
+    <span>在庫高予算</span>
+    <span>仕入高予算・OTB</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ===== 全体マップ ===== -->
+<div class="section">
+  <div class="section-header bg-navy">
+    <div class="num">0</div>
+    <span>4予算の関係と策定順序</span>
+  </div>
+  <div class="section-body">
+    <div style="text-align:center;font-size:1.5rem;font-weight:700;color:var(--navy);letter-spacing:.15em;padding:10px 0">
+      <span style="background:#1a365d;color:#fff;padding:6px 18px;border-radius:8px">う</span>
+      <span style="color:var(--muted);font-size:1rem"> → </span>
+      <span style="background:#2a4a7f;color:#fff;padding:6px 18px;border-radius:8px">ざ</span>
+      <span style="color:var(--muted);font-size:1rem"> → </span>
+      <span style="background:#0d9488;color:#fff;padding:6px 18px;border-radius:8px">ね</span>
+      <span style="color:var(--muted);font-size:1rem"> → </span>
+      <span style="background:#ea580c;color:#fff;padding:6px 18px;border-radius:8px">し</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;text-align:center;font-size:.88rem">
+      <div><strong>①売上高</strong><br><span style="color:var(--muted)">予算</span></div>
+      <div><strong>②在庫高</strong><br><span style="color:var(--muted)">予算</span></div>
+      <div><strong>③値入高</strong><br><span style="color:var(--muted)">予算</span></div>
+      <div><strong>④仕入高</strong><br><span style="color:var(--muted)">予算</span></div>
+    </div>
+    <div class="memo-box" style="margin-top:14px">
+      <div class="memo-title">⚠️ 順序の理由</div>
+      売上目標が決まらなければ、必要な在庫水準も値入目標も発注額も決められない。<strong>売上→在庫→値入→仕入</strong>の一方通行で策定する。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 1. 値入率 ===== -->
+<div class="section">
+  <div class="section-header bg-teal">
+    <div class="num">1</div>
+    <span>値入率（マークアップ率）</span>
+  </div>
+  <div class="section-body">
+
+    <div class="grid2">
+      <div class="fcard teal">
+        <div class="label">基本定義</div>
+        <div class="formula">値入額 ＝ <span class="hi">売価</span> − <span class="gr">原価</span></div>
+        <div class="memo">粗利・マージンと同義</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="fcard teal">
+          <div class="label">売価値入率</div>
+          <div class="formula" style="font-size:.97rem">値入額 ÷ <span class="hi">売価</span></div>
+        </div>
+        <div class="fcard teal">
+          <div class="label">原価値入率</div>
+          <div class="formula" style="font-size:.97rem">値入額 ÷ <span class="gr">原価</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="memo-box">
+      <div class="memo-title">💡 原価値入率 ＞ 売価値入率（分母が小さいほど値が大きい）</div>
+      同じ値入額でも分母が小さい原価で割れば、より大きな比率になる。
+    </div>
+
+    <!-- 換算導出 -->
+    <div class="derive">
+      <div class="derive-title">🔄 売価値入率 ⇔ 原価値入率 換算公式</div>
+
+      <div class="grid2">
+        <div>
+          <div style="font-weight:700;color:var(--purple);margin-bottom:6px;font-size:.9rem">売価値入率 → 原価値入率</div>
+          <div class="formula" style="margin:0">
+            原価値入率 ＝ 売価値入率 ÷ <span class="hi">(1 − 売価値入率)</span>
+          </div>
+          <div class="memo" style="margin-top:6px">「引いて割る」</div>
+        </div>
+        <div>
+          <div style="font-weight:700;color:var(--purple);margin-bottom:6px;font-size:.9rem">原価値入率 → 売価値入率</div>
+          <div class="formula" style="margin:0">
+            売価値入率 ＝ 原価値入率 ÷ <span class="gr">(1 + 原価値入率)</span>
+          </div>
+          <div class="memo" style="margin-top:6px">「足して割る」</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;font-size:.88rem;color:#6d28d9">
+        <strong>導出の核：</strong>
+        売価 ＝ 原価 + 値入額、かつ 売価 ＝ 原価 ÷ (1 − 売価値入率) から導く。
+        「売価 → 原価は (1−) で縮む、原価 → 売価は (1+) で伸びる」と覚える。
+      </div>
+    </div>
+
+    <table class="vs-table" style="margin-top:14px">
+      <thead><tr><th>指標</th><th>式</th><th>分母</th></tr></thead>
+      <tbody>
+        <tr><td><strong>売価値入率</strong></td><td>値入額 ÷ 売価</td><td>売価（大きい）→ 値が小さい</td></tr>
+        <tr><td><strong>原価値入率</strong></td><td>値入額 ÷ 原価</td><td>原価（小さい）→ 値が大きい</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 2. 商品回転率 ===== -->
+<div class="section">
+  <div class="section-header bg-blue">
+    <div class="num">2</div>
+    <span>商品回転率</span>
+  </div>
+  <div class="section-body">
+    <div class="fcard blue">
+      <div class="label">定義</div>
+      <div class="formula">商品回転率 ＝ 売上高 ÷ <span class="hi">平均在庫高（売価）</span></div>
+      <div class="memo">「年に何回在庫が入れ替わったか」。分母は常に<strong>売価</strong>ベース。</div>
+    </div>
+    <div class="memo-box">
+      <div class="memo-title">⚠️ GMROI の分母との違いに注意</div>
+      商品回転率の分母＝<strong>売価</strong>ベース の平均在庫高。<br>
+      GMROI で使う「商品投下資本回転率」の分母＝<strong>原価</strong>ベース の平均在庫高。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3. GMROI ===== -->
+<div class="section">
+  <div class="section-header bg-orange">
+    <div class="num">3</div>
+    <span>GMROI（グロス・マージン・リターン・オン・インベストメント）</span>
+  </div>
+  <div class="section-body">
+
+    <div class="fcard orange">
+      <div class="label">基本定義</div>
+      <div class="formula">GMROI ＝ 粗利益 ÷ <span class="hi">平均在庫高（原価）</span></div>
+      <div class="memo">仕入れに使った1円あたり何円の粗利を稼いだか</div>
+    </div>
+
+    <!-- 分解 -->
+    <div class="derive">
+      <div class="derive-title">📐 分解公式（デュポン的分解）</div>
+      <div class="derive-step">
+        <div class="eq">GMROI ＝ <strong>粗利益率</strong> × <strong>商品投下資本回転率</strong></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:.88rem">
+        <div style="background:#fff;border:1.5px solid #fed7aa;border-radius:8px;padding:8px 12px">
+          <div style="font-weight:700;color:var(--orange)">粗利益率</div>
+          粗利益 ÷ 売上高
+        </div>
+        <div style="background:#fff;border:1.5px solid #fed7aa;border-radius:8px;padding:8px 12px">
+          <div style="font-weight:700;color:var(--orange)">商品投下資本回転率</div>
+          売上高 ÷ 平均在庫高（<strong>原価</strong>）
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:.85rem;color:#92400e">
+        低い場合の診断：<strong>粗利益率が低い</strong>（値入が薄い）か、<strong>回転率が低い</strong>（在庫が滞留）か切り分ける。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 4. 交差比率 ===== -->
+<div class="section">
+  <div class="section-header bg-purple">
+    <div class="num">4</div>
+    <span>交差比率（交差主義比率）</span>
+  </div>
+  <div class="section-body">
+
+    <div class="fcard purple">
+      <div class="label">基本定義</div>
+      <div class="formula">交差比率 ＝ 粗利益 ÷ <span class="hi">平均在庫高（売価）</span></div>
+      <div class="memo">棚の値札合計1円あたり何円の粗利を生んだか</div>
+    </div>
+
+    <!-- 分解 -->
+    <div class="derive">
+      <div class="derive-title">📐 分解公式</div>
+      <div class="derive-step">
+        <div class="eq">交差比率 ＝ <strong>粗利益率</strong> × <strong>商品回転率</strong></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:.88rem">
+        <div style="background:#fff;border:1.5px solid #d8b4fe;border-radius:8px;padding:8px 12px">
+          <div style="font-weight:700;color:var(--purple)">粗利益率</div>
+          粗利益 ÷ 売上高（GMROI と共通）
+        </div>
+        <div style="background:#fff;border:1.5px solid #d8b4fe;border-radius:8px;padding:8px 12px">
+          <div style="font-weight:700;color:var(--purple)">商品回転率</div>
+          売上高 ÷ 平均在庫高（<strong>売価</strong>）
+        </div>
+      </div>
+    </div>
+
+    <!-- GMROI ⇔ 交差比率 -->
+    <div class="derive" style="margin-top:14px">
+      <div class="derive-title">🔄 GMROI ⇔ 交差比率 換算</div>
+      <div class="derive-step">
+        <div class="arrow">▶</div>
+        <div class="eq">交差比率 ＝ GMROI × <span style="color:var(--red)">(1 − 売価値入率)</span></div>
+      </div>
+      <div class="derive-step">
+        <div class="arrow">▶</div>
+        <div class="eq">GMROI ＝ 交差比率 ÷ <span style="color:var(--red)">(1 − 売価値入率)</span></div>
+      </div>
+      <div style="margin-top:10px;font-size:.85rem;color:#6d28d9">
+        <strong>なぜ (1−売価値入率) か：</strong>
+        原価 ＝ 売価 × (1 − 売価値入率) なので、分母を「原価 → 売価」に換算するとき同係数を掛ける。
+      </div>
+    </div>
+
+    <!-- 対比表 -->
+    <table class="vs-table" style="margin-top:14px">
+      <thead><tr><th>指標</th><th>分母の在庫基準</th><th>分解式（回転率部分）</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>GMROI</strong></td>
+          <td><span class="kw">原価</span> ベース</td>
+          <td>粗利益率 × <strong>商品投下資本回転率</strong></td>
+        </tr>
+        <tr>
+          <td><strong>交差比率</strong></td>
+          <td><span class="kw blue">売価</span> ベース</td>
+          <td>粗利益率 × <strong>商品回転率</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 5. 相乗積 ===== -->
+<div class="section">
+  <div class="section-header bg-green">
+    <div class="num">5</div>
+    <span>相乗積（そうじょうせき）</span>
+  </div>
+  <div class="section-body">
+
+    <div class="grid2">
+      <div class="fcard green">
+        <div class="label">1部門の相乗積</div>
+        <div class="formula">相乗積 ＝ <span class="hi">売上構成比</span> × <span class="gr">値入率</span></div>
+      </div>
+      <div class="fcard green">
+        <div class="label">全体の値入率</div>
+        <div class="formula">全体値入率 ＝ <span style="color:var(--purple);font-weight:700">Σ 相乗積</span></div>
+        <div class="memo">全部門の合計</div>
+      </div>
+    </div>
+
+    <div class="memo-box">
+      <div class="memo-title">💡 活用ポイント</div>
+      値入率が高くても<strong>売上構成比が低ければ</strong>全体への貢献は小さい。<br>
+      全体の収益性を上げるには → 値入率の高い部門の<strong>売上構成比を高める</strong>。
+    </div>
+
+    <!-- 計算例 -->
+    <table class="vs-table">
+      <thead>
+        <tr><th>部門</th><th>売上構成比</th><th>値入率</th><th>相乗積</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>食品</td><td>60%</td><td>25%</td><td><strong>15%</strong></td></tr>
+        <tr><td>日用品</td><td>30%</td><td>40%</td><td><strong>12%</strong></td></tr>
+        <tr><td>衣料</td><td>10%</td><td>50%</td><td><strong>5%</strong></td></tr>
+        <tr style="background:#e2e8f0"><td colspan="3"><strong>全体値入率</strong></td><td><strong>32%</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 6. 在庫高予算 ===== -->
+<div class="section">
+  <div class="section-header bg-red">
+    <div class="num">6</div>
+    <span>在庫高予算（月初適正在庫の算定）</span>
+  </div>
+  <div class="section-body">
+
+    <table class="vs-table">
+      <thead>
+        <tr><th>手法</th><th>公式</th><th>適用条件</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>基準在庫法</strong><br><span style="font-size:.8rem;color:var(--muted)">Basic Stock Method</span></td>
+          <td>
+            月初在庫 ＝ 当月売上予算<br>
+            　　　　＋ (年間平均在庫 − 月間平均売上)
+          </td>
+          <td>商品回転率 <strong>6回以下</strong><br>（安定型・変動小）</td>
+        </tr>
+        <tr>
+          <td><strong>百分率変異法</strong><br><span style="font-size:.8rem;color:var(--muted)">Percentage Variation Method</span></td>
+          <td>
+            月初在庫 ＝ 年間平均在庫<br>
+            　　　　× ½ × (1 ＋ 当月売上予算 ÷ 月間平均売上)
+          </td>
+          <td>商品回転率 <strong>6回超</strong><br>（変動型・売上連動）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="memo-box" style="margin-top:10px">
+      <div class="memo-title">💡 選択の目安</div>
+      <strong>回転率6回以下</strong>（年6回転、つまり約2か月に1回転）なら基準在庫法。<br>
+      <strong>回転率6回超</strong>（それより速い高回転）なら百分率変異法で売上変動の½だけ在庫を連動させる。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 7. 仕入高予算・OTB ===== -->
+<div class="section">
+  <div class="section-header bg-navy">
+    <div class="num">7</div>
+    <span>仕入高予算・OTB（Open-To-Buy）</span>
+  </div>
+  <div class="section-body">
+
+    <div class="fcard navy">
+      <div class="label">仕入高予算</div>
+      <div class="formula">
+        仕入高予算 ＝ 売上高予算 ＋ <span class="gr">月末在庫</span> − <span class="hi">月初在庫</span>
+      </div>
+      <div class="memo">語呂：「<strong>売って、残して、引く月初</strong>」（売上 + 月末 − 月初）</div>
+    </div>
+
+    <!-- 導出 -->
+    <div class="derive">
+      <div class="derive-title">📐 なぜこの式になるか（在庫方程式から導く）</div>
+      <div class="derive-step">
+        <div class="arrow">①</div>
+        <div class="eq">月初在庫 ＋ 仕入高 ＝ 売上高 ＋ 月末在庫</div>
+      </div>
+      <div class="derive-step">
+        <div class="arrow">②</div>
+        <div class="eq">仕入高 ＝ 売上高 ＋ 月末在庫 − 月初在庫</div>
+      </div>
+    </div>
+
+    <div class="fcard navy" style="margin-top:14px">
+      <div class="label">OTB（Open-To-Buy：発注可能額）</div>
+      <div class="formula">
+        OTB ＝ 仕入高予算 − <span class="hi">既発注未入荷額</span>
+      </div>
+      <div class="memo">「今月あといくら発注できるか」の枠。アパレル等で週次管理される。</div>
+    </div>
+
+    <div class="memo-box">
+      <div class="memo-title">💡 OTBの意味</div>
+      予算の範囲内でも、すでに発注して未着の商品がある分は「使用済み枠」。
+      残りの発注余力（OTB）を管理することで<strong>在庫過多・欠品の両方</strong>を防ぐ。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 8. 公式一覧（チートシート） ===== -->
+<div class="section">
+  <div class="section-header" style="background:linear-gradient(135deg,#2d3748,#4a5568)">
+    <div class="num">✓</div>
+    <span>公式チートシート（全まとめ）</span>
+  </div>
+  <div class="section-body">
+    <table class="vs-table">
+      <thead>
+        <tr><th>カテゴリ</th><th>公式</th><th>備考</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3"><strong>値入率</strong></td>
+          <td>売価値入率 ＝ 値入額 ÷ 売価</td>
+          <td>分母＝売価</td>
+        </tr>
+        <tr>
+          <td>原価値入率 ＝ 値入額 ÷ 原価</td>
+          <td>分母＝原価（値が大きくなる）</td>
+        </tr>
+        <tr>
+          <td>原価値入率 ＝ 売価値入率 ÷ (1 − 売価値入率)</td>
+          <td>逆換算：売価値入率 ＝ 原価値入率 ÷ (1 + 原価値入率)</td>
+        </tr>
+        <tr>
+          <td><strong>商品回転率</strong></td>
+          <td>売上高 ÷ 平均在庫高（売価）</td>
+          <td>分母は売価ベース</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><strong>GMROI</strong></td>
+          <td>粗利益 ÷ 平均在庫高（原価）</td>
+          <td>分母は原価ベース</td>
+        </tr>
+        <tr>
+          <td>粗利益率 × 商品投下資本回転率</td>
+          <td>投下資本回転率の分母＝原価</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><strong>交差比率</strong></td>
+          <td>粗利益 ÷ 平均在庫高（売価）</td>
+          <td>分母は売価ベース</td>
+        </tr>
+        <tr>
+          <td>粗利益率 × 商品回転率</td>
+          <td>交差比率 ＝ GMROI × (1 − 売価値入率)</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><strong>相乗積</strong></td>
+          <td>相乗積 ＝ 売上構成比 × 値入率</td>
+          <td>1部門分</td>
+        </tr>
+        <tr>
+          <td>全体値入率 ＝ Σ相乗積</td>
+          <td>全部門合計</td>
+        </tr>
+        <tr>
+          <td><strong>基準在庫法</strong></td>
+          <td>月初在庫 ＝ 当月売上 ＋ (年間平均在庫 − 月間平均売上)</td>
+          <td>回転率6回以下</td>
+        </tr>
+        <tr>
+          <td><strong>百分率変異法</strong></td>
+          <td>月初在庫 ＝ 年間平均在庫 × ½ × (1 ＋ 当月売上 ÷ 月間平均売上)</td>
+          <td>回転率6回超</td>
+        </tr>
+        <tr>
+          <td><strong>仕入高予算</strong></td>
+          <td>売上高 ＋ 月末在庫 − 月初在庫</td>
+          <td>「売って、残して、引く月初」</td>
+        </tr>
+        <tr>
+          <td><strong>OTB</strong></td>
+          <td>仕入高予算 − 既発注未入荷額</td>
+          <td>今月の発注可能枠</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>

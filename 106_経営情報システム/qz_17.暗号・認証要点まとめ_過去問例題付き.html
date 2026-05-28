@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>暗号・認証 要点まとめ - 中小企業診断士 経営情報システム</title>
+<style>
+:root{--orange-dark:#d35400;--orange-main:#e67e22;--orange-light:#f39c12;--orange-pale:#fdebd0;--orange-bg:#fef9f3;--blue-dark:#1a5276;--blue-main:#2980b9;--blue-light:#d6eaf8;--blue-bg:#eaf2f8;--red-dark:#922b21;--red-main:#e74c3c;--red-light:#fadbd8;--red-bg:#fdf2f0;--green-dark:#1e8449;--green-main:#27ae60;--green-light:#d5f5e3;--green-bg:#eafaf1;--purple-dark:#6c3483;--purple-main:#8e44ad;--purple-light:#e8daef;--purple-bg:#f5eef8;--teal-main:#00897b;--teal-light:#e0f2f1;--gray-dark:#2c3e50;--gray-mid:#5d6d7e;--gray-light:#aeb6bf;--gray-pale:#f4f6f7;--white:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--blue-bg);color:var(--gray-dark);line-height:1.85;min-height:100vh}
+.header{background:linear-gradient(135deg,#7f1d1d 0%,#b91c1c 50%,#dc2626 100%);color:#fff;padding:1.4rem 1.5rem 1rem;text-align:center}.header h1{font-size:1.4rem;font-weight:800;margin-bottom:.3rem}.header .subtitle{font-size:.9rem;opacity:.95}.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.2rem .8rem;border-radius:20px;font-size:.78rem;margin-top:.5rem}
+.tab-container{max-width:920px;margin:0 auto 2rem;padding:0 .8rem}.tab-nav{display:flex;gap:0;background:#fff;border-radius:var(--radius) var(--radius) 0 0;overflow-x:auto;box-shadow:var(--shadow);flex-wrap:wrap}.tab-nav-sticky{position:sticky;top:0;z-index:100}.tab-btn{flex:1;min-width:0;padding:.7rem .5rem;border:none;background:#fff;color:var(--gray-mid);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:4px solid transparent;white-space:nowrap;text-align:center}.tab-btn:hover{opacity:.85}.tab-btn[data-color=blue]{color:var(--blue-main)}.tab-btn[data-color=teal]{color:var(--teal-main)}.tab-btn[data-color=purple]{color:var(--purple-main)}.tab-btn.active[data-color=blue]{border-bottom-color:var(--blue-main);background:var(--blue-light)}.tab-btn.active[data-color=teal]{border-bottom-color:var(--teal-main);background:var(--teal-light)}.tab-btn.active[data-color=purple]{border-bottom-color:var(--purple-main);background:var(--purple-light)}
+.tab-panel{display:none;padding:1.5rem 1.2rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}.tab-panel.active{display:block}.tab-panel.theme-blue{background:var(--blue-bg)}.tab-panel.theme-teal{background:var(--teal-light)}.tab-panel.theme-purple{background:var(--purple-bg)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.05rem;font-weight:800;margin:1.4rem 0 .7rem;padding:.5rem .8rem;border-radius:8px;display:flex;align-items:center;gap:.5rem;color:#fff}.section-title:first-child{margin-top:0}.st-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.st-teal{background:linear-gradient(135deg,var(--teal-main),#26a69a)}.st-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}
+.card{background:#fff;border-radius:var(--radius-sm);padding:1rem 1.2rem;margin:.7rem 0;border-left:4px solid var(--gray-light);box-shadow:0 1px 4px rgba(0,0,0,.06)}.card-blue{border-left-color:var(--blue-main)}.card-purple{border-left-color:var(--purple-main)}.card-orange{border-left-color:var(--orange-main)}.card-teal{border-left-color:var(--teal-main)}.card-red{border-left-color:var(--red-main)}.card h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.85rem;background:#fff;border-radius:6px;overflow:hidden}th,td{padding:.5rem .55rem;text-align:left;border-bottom:1px solid #e0e0e0;vertical-align:top}.tbl-blue th{background:var(--blue-main);color:#fff}.tbl-blue tr:nth-child(even){background:var(--blue-light)}.tbl-purple th{background:var(--purple-main);color:#fff}.tbl-purple tr:nth-child(even){background:var(--purple-light)}.tbl-teal th{background:var(--teal-main);color:#fff}.tbl-teal tr:nth-child(even){background:var(--teal-light)}.tbl-red th{background:var(--red-main);color:#fff}.tbl-red tr:nth-child(even){background:var(--red-light)}.tbl-wrap{overflow-x:auto;margin:.7rem 0}
+ul,ol{padding-left:1.3rem;margin:.4rem 0}li{margin:.25rem 0;font-size:.92rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.7rem 0}@media(max-width:600px){.two-col{grid-template-columns:1fr}.tab-btn{font-size:.68rem;padding:.6rem .3rem}.header h1{font-size:1.1rem}}
+.exam-pt{font-size:.82rem;margin-top:.4rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;line-height:1.65}
+.exam-warn{font-size:.82rem;margin-top:.3rem;color:#b71c1c;background:#fce4ec;padding:.35rem .6rem;border-radius:6px;line-height:1.65}
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.75rem .9rem;margin:.9rem 0;font-size:.9rem;line-height:1.8}.support-icon{font-size:1.5rem;flex-shrink:0;line-height:1}.support-body{flex:1}.support-body strong{color:#e65100}.support-name{font-size:.7rem;font-weight:700;color:#bf360c;margin-bottom:.15rem;display:block}
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0}.keepit-title{font-size:.95rem;font-weight:800;color:#f57f17;margin-bottom:.5rem}.keepit ul{list-style:none;padding:0;margin:0}.keepit li{padding:.4rem .6rem;margin:.3rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.88rem;line-height:1.7}.keepit li strong{color:#1565c0}
+.icon-deck{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:14px 0}
+.icon-card{background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:16px 14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:transform .2s}.icon-card .ic-emoji{font-size:2.4rem;display:block;margin-bottom:6px;line-height:1.1}.icon-card .ic-title{font-weight:800;font-size:1rem;color:#7c3aed;margin-bottom:4px}.icon-card .ic-sub{font-size:.82rem;color:#64748b;line-height:1.55}.icon-card.bd-orange{border-color:#fb923c;background:linear-gradient(180deg,#fff,#fff7ed)}.icon-card.bd-blue{border-color:#818cf8;background:linear-gradient(180deg,#fff,#eef0ff)}.icon-card.bd-green{border-color:#34d399;background:linear-gradient(180deg,#fff,#ecfdf5)}.icon-card.bd-pink{border-color:#f472b6;background:linear-gradient(180deg,#fff,#fdf2f8)}
+.diagram{background:#fff;border-radius:var(--radius);padding:1rem;margin:1rem 0;box-shadow:var(--shadow);overflow-x:auto}.diagram-title{text-align:center;font-weight:700;font-size:.95rem;margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:2px dashed #e0e0e0}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}.flow-box{color:#fff;padding:.55rem 1rem;border-radius:8px;font-weight:700;font-size:.82rem;text-align:center;min-width:70px;margin:.2rem}.flow-box small{display:block;font-weight:400;font-size:.7rem;opacity:.9}.fb-blue{background:linear-gradient(135deg,var(--blue-main),#3498db)}.fb-red{background:linear-gradient(135deg,var(--red-main),#e57373)}.fb-green{background:linear-gradient(135deg,var(--green-main),#2ecc71)}.fb-orange{background:linear-gradient(135deg,var(--orange-main),var(--orange-light))}.fb-purple{background:linear-gradient(135deg,var(--purple-main),#9b59b6)}.flow-arrow{font-size:1.3rem;margin:0 .25rem;font-weight:700;color:#5d6d7e}
+.factor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:14px 0}.factor-grid .fg-item{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08);border-top:5px solid;position:relative}.factor-grid .fg-item:nth-child(1){border-color:#ef4444}.factor-grid .fg-item:nth-child(2){border-color:#f59e0b}.factor-grid .fg-item:nth-child(3){border-color:#8b5cf6}.factor-grid .fg-item:nth-child(4){border-color:#10b981}.factor-grid .fg-num{display:inline-block;width:28px;height:28px;background:#1f2937;color:#fff;border-radius:50%;font-weight:800;line-height:28px;margin-bottom:6px}.factor-grid .fg-title{font-weight:800;font-size:.95rem;color:#1f2937;margin-bottom:6px}.factor-grid .fg-body{font-size:.82rem;color:#64748b;line-height:1.65}
+.diag-row{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.diag-card{background:#fff3e0;border:2px solid #ef6c00;border-radius:8px;padding:10px 12px;min-width:110px;flex:1;text-align:center;font-size:.85rem;line-height:1.4}.diag-card.attacker{background:#ffebee;border-color:#c62828}.diag-card.victim{background:#fff3e0;border-color:#ef6c00}.diag-card.goal{background:#fce4ec;border-color:#c2185b}.diag-card.safe{background:#e8f5e9;border-color:#2e7d32}.diag-card.neutral{background:#fafafa;border-color:#999}.diag-card.plain{background:#fff;border-color:#3b82f6}.diag-card.cipher{background:#fef3c7;border-color:#f59e0b}.diag-card .ico{font-size:1.6rem;display:block;margin-bottom:4px}.diag-card .ttl{font-weight:bold;font-size:.9rem;margin-bottom:3px}.diag-card .desc{font-size:.78rem;color:#555}
+.diag-arrow{display:flex;align-items:center;justify-content:center;color:#ea580c;font-weight:bold;font-size:1.2rem;padding:0 2px;min-width:30px;flex-direction:column}.diag-arrow small{display:block;font-size:.7rem;color:#777;font-weight:normal;line-height:1.15;margin-top:2px;text-align:center}
+.diag-note{text-align:center;font-size:.85rem;color:#1e40af;background:#eff6ff;border:1px dashed #3b82f6;border-radius:6px;padding:8px;margin:6px 0}
+.diag-box{background:#fff;border-radius:var(--radius);padding:1rem 1.2rem;margin:1rem 0;box-shadow:var(--shadow);border-top:4px solid #3b82f6}
+.diag-box h4{font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:#1e40af}
+.diag-sub{font-size:.88rem;font-weight:700;color:#475569;margin:.5rem 0;padding:.3rem .5rem;background:#f8fafc;border-radius:4px}
+.diag-grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:10px 0}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.4rem .8rem;border-radius:20px;font-size:.82rem;font-weight:700;margin:.3rem .3rem .3rem 0;box-shadow:0 2px 6px rgba(142,68,173,.25)}.goro-chip::before{content:"🎵 ";margin-right:.2rem}.goro-chip small{font-weight:400;opacity:.95;margin-left:.3rem;font-size:.74rem}
+.goro-row{margin:.5rem 0;padding:.4rem .7rem;background:#faf5fc;border-left:3px solid var(--purple-main);border-radius:4px}
+.kids-box{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:3px solid #fbbf24;border-radius:16px;padding:1rem 1.2rem;margin:1rem 0;position:relative}.kids-box::before{content:"🧒 小学生でもわかるイメージ";display:block;font-size:.78rem;font-weight:800;color:#92400e;background:#fbbf24;padding:.2rem .7rem;border-radius:10px;margin-bottom:.7rem;display:inline-block}.kids-box .kids-scene{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.5rem 0}.kids-box .kids-bubble{background:#fff;border:2px solid #fcd34d;border-radius:12px;padding:.5rem .8rem;font-size:.88rem;line-height:1.65;flex:1;min-width:140px}.kids-box .kids-arrow{font-size:1.4rem;color:#f59e0b;font-weight:bold;flex-shrink:0}.kids-box .kids-point{font-size:.85rem;color:#92400e;background:#fef9c3;border-left:4px solid #fbbf24;border-radius:4px;padding:.4rem .7rem;margin-top:.6rem;line-height:1.7}
+/* 穴埋めタブ */
+.fill-card{background:#fff;border-radius:var(--radius-sm);margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.08);overflow:hidden}
+.fill-header{padding:12px 18px;font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px}
+.fill-body{padding:16px 18px}
+.fill-blank{display:inline-block;min-width:72px;border-bottom:2.5px solid #94a3b8;text-align:center;padding:2px 8px;margin:0 2px;cursor:pointer;font-weight:700;color:transparent;background:#f1f5f9;border-radius:4px;transition:all .25s;user-select:none;font-size:.9rem}
+.fill-blank.show{color:#dc2626;background:#fef2f2;border-color:#dc2626}
+.fill-reveal-btn{display:inline-block;background:#6d28d9;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.84rem;font-weight:600;cursor:pointer;margin:4px 4px 4px 0;font-family:inherit}
+.fill-reveal-btn.reset-btn{background:#64748b}
+.fill-reveal-btn:hover{opacity:.85}
+.tab-btn[data-color=orange]{color:#e67e22}.tab-btn.active[data-color=orange]{border-bottom-color:#e67e22;background:#fdebd0}
+.tab-panel.theme-orange{background:#fef9f3}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🔐 暗号・認証 要点まとめ</h1>
+  <div class="subtitle">中小企業診断士 経営情報システム ｜ 署名・ハッシュ ／ PKI・SSL/TLS ／ 認証</div>
+  <span class="badge">qz_17</span>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav tab-nav-sticky">
+    <button class="tab-btn active" data-color="blue" onclick="switchTab(0)">✍️ 署名・ハッシュ</button>
+    <button class="tab-btn" data-color="teal" onclick="switchTab(1)">🏛️ PKI・SSL/TLS</button>
+    <button class="tab-btn" data-color="purple" onclick="switchTab(2)">🔑 認証</button>
+  </nav>
+
+<!-- ============ TAB 0: 署名・ハッシュ ============ -->
+<div class="tab-panel active theme-blue" id="tab0">
+
+  <h2 class="section-title st-blue">🔬 ハッシュ関数の性質</h2>
+
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">ハッシュ関数は「何でもミキサーで混ぜてスムージーにする機械」。どんな量の食材を入れても同じカップサイズのスムージーが出てくる（固定長）。スムージーから元の食材は取り出せない（一方向性）。同じ食材・同じレシピなら必ず同じ味になる（再現性）。</p>
+  <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:.4rem;">
+    <div style="background:#dbeafe;border-radius:6px;padding:.4rem .7rem;font-size:.82rem;font-weight:600;color:#1e40af;text-align:center;">📝 元データ<br><span style="font-size:.68rem;">(長さバラバラ)</span></div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→ ミキサー →</span>
+    <div style="background:#dcfce7;border-radius:6px;padding:.4rem .7rem;font-size:.82rem;font-weight:600;color:#166534;text-align:center;">🔢 ハッシュ値<br><span style="font-size:.68rem;">(常に固定長)</span></div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→ ❌ →</span>
+    <div style="background:#fef2f2;border-radius:6px;padding:.4rem .7rem;font-size:.82rem;font-weight:600;color:#b91c1c;text-align:center;">❓ 元データ<br><span style="font-size:.68rem;">(復元不可能)</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.5rem;">
+    <div style="background:#dbeafe;border-radius:5px;padding:.4rem;text-align:center;font-size:.75rem;font-weight:700;color:#1e40af;">📐 固定長出力<br><span style="font-weight:400;color:#334155;font-size:.7rem;">入力長に関わらず<br>SHA-256=256bit</span></div>
+    <div style="background:#fef9c3;border-radius:5px;padding:.4rem;text-align:center;font-size:.75rem;font-weight:700;color:#854d0e;">🚫 一方向性<br><span style="font-weight:400;color:#334155;font-size:.7rem;">元データに<br>戻せない</span></div>
+    <div style="background:#dcfce7;border-radius:5px;padding:.4rem;text-align:center;font-size:.75rem;font-weight:700;color:#166534;">🛡️ 衝突耐性<br><span style="font-weight:400;color:#334155;font-size:.7rem;">別入力で同じ<br>ハッシュが出にくい</span></div>
+  </div>
+</div>
+
+  <div class="card card-blue">
+    <h4>ハッシュ関数（ざっくり：データを固定長の指紋に変換する関数）</h4>
+    <ul>
+      <li><strong>固定長出力</strong>：入力長に関わらず出力は一定（例：SHA（Secure Hash Algorithm）-256＝256ビット）</li>
+      <li><strong>一方向性</strong>：ハッシュ値から元データは復元<strong>不可能</strong></li>
+      <li><strong>衝突耐性</strong>：別の入力から同じハッシュは作りにくい</li>
+      <li><strong>用途</strong>：デジタル署名／パスワード保存／改ざん検知</li>
+    </ul>
+  </div>
+  <div class="tbl-wrap"><table class="tbl-blue">
+    <tr><th>アルゴリズム</th><th>出力長</th><th>評価</th></tr>
+    <tr><td>SHA（Secure Hash Algorithm）-256</td><td>256bit</td><td>✅ 推奨（現役）</td></tr>
+    <tr><td>SHA（Secure Hash Algorithm）-1</td><td>160bit</td><td>⚠️ 非推奨（衝突発見済）</td></tr>
+    <tr><td>MD5（Message Digest 5）</td><td>128bit</td><td>❌ 非推奨（脆弱）</td></tr>
+  </table></div>
+  <p class="exam-warn">⚠️【1次】<strong>「ハッシュ値から元データを復元できる」は誤り</strong>。一方向性が定義。</p>
+
+  <div class="kids-box">
+    <div class="kids-scene">
+      <div class="kids-bubble">🍎🥕🥦<br><strong>野菜・果物</strong><br>（元データ）</div>
+      <div class="kids-arrow">ミキサーで<br>混ぜる▶</div>
+      <div class="kids-bubble">🥤<br><strong>スムージー</strong><br>（ハッシュ値）</div>
+      <div class="kids-arrow">❌<br>戻せない</div>
+      <div class="kids-bubble">❓🍎❓<br><strong>元の形は<br>もう出てこない</strong></div>
+    </div>
+    <div class="kids-point">📌 スムージーを見ても「どんな野菜が入ってたか」は正確にわからない＝それが<strong>一方向性</strong>。でも同じ材料・同じレシピで作ると必ず同じ味になる＝それが<strong>固定長出力と再現性</strong>。</div>
+  </div>
+
+  <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>ハッシュは<strong>「指紋」</strong>のイメージ。指紋から人物像は復元できないでしょ？それが一方向性。署名では「平文の指紋」を秘密鍵で暗号化することで、改ざん検知＋本人性を同時に実現するんだ。</div></div>
+
+  <div class="diag-box">
+    <h4>📊 ハッシュアルゴリズムの世代交代</h4>
+    <div class="diag-row">
+      <div class="diag-card attacker"><span class="ico">❌</span><div class="ttl">MD5</div><div class="desc">128bit<br>1991年〜<br><strong>脆弱</strong>（衝突容易）</div></div>
+      <div class="diag-arrow">▶<small>世代交代</small></div>
+      <div class="diag-card victim"><span class="ico">⚠️</span><div class="ttl">SHA-1</div><div class="desc">160bit<br>1995年〜<br><strong>非推奨</strong>（衝突発見済）</div></div>
+      <div class="diag-arrow">▶<small>現役</small></div>
+      <div class="diag-card safe"><span class="ico">✅</span><div class="ttl">SHA-256</div><div class="desc">256bit<br>2001年〜<br><strong>推奨</strong></div></div>
+    </div>
+    <div class="diag-note">📌 出力長が長いほど衝突しにくい。MD5・SHA-1は<strong>パスワード保存に使うと即アウト</strong>（引っかけ頻出）</div>
+  </div>
+
+<div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">出題年度不明</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> ハッシュ関数の性質として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. ハッシュ値から元のデータを復元することは計算量が多いが原理的には可能である</li>
+    <li>イ. SHA-256は出力が128ビットであり、MD5より安全性が高い</li>
+    <li>ウ. ハッシュ関数は入力データの長さに関わらず固定長のハッシュ値を出力し、一方向性を持つ</li>
+    <li>エ. 衝突耐性とは同一の入力から異なるハッシュ値が生成される性質のことである</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#1565c0;">✅ 正解:ウ</strong> &nbsp;<span style="color:#555;">ハッシュ関数の核心は「固定長出力」と「一方向性」。入力長がどれだけ長くてもSHA-256なら256ビット固定で出力される。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: 一方向性が定義。「計算量が多いだけで復元可能」は誤り。原理的に復元不可。</li>
+      <li><strong style="color:#c62828;">イ ✗</strong>: SHA-256の出力は256ビット。128ビットはMD5の出力長。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: 衝突耐性は「異なる入力から同じハッシュ値が生成されにくい」性質。説明が逆。</li>
+    </ul>
+  </div></details>
+</div>
+
+<div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜パスワード保存に適切なアルゴリズムの選択</div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> パスワード保存に用いるハッシュアルゴリズムの選択として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. MD5は128ビット出力で計算が高速なため、パスワード保存の現役標準として推奨される</li>
+    <li>イ. SHA-1は衝突が発見されていないため、現在も最も安全なパスワード保存用アルゴリズムである</li>
+    <li>ウ. MD5・SHA-1・SHA-256はすべて現在も推奨されており、用途に応じて選択してよい</li>
+    <li>エ. SHA-256は256ビット出力の推奨現役アルゴリズムであり、MD5・SHA-1はパスワード保存に非推奨である</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#065f46;">✅ 正解:エ</strong> &nbsp;<span style="color:#555;">SHA-256が現役推奨。MD5（衝突容易）・SHA-1（衝突発見済）はパスワード保存に使うと即アウト。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: MD5は衝突が容易に生成でき脆弱。パスワード保存への使用は非推奨。</li>
+      <li><strong style="color:#c62828;">イ ✗</strong>: SHA-1は衝突が発見済みで非推奨。「発見されていない」は誤り。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: MD5・SHA-1は非推奨であり「すべて推奨」は誤り。</li>
+    </ul>
+  </div></details>
+</div>
+
+  <h2 class="section-title st-blue">✍️ デジタル署名の3つの効能（＋1つの非効能）</h2>
+  <div class="icon-deck">
+    <div class="icon-card bd-blue"><span class="ic-emoji">👤</span><div class="ic-title">①本人性</div><div class="ic-sub">送信者が本人であることの証明</div></div>
+    <div class="icon-card bd-orange"><span class="ic-emoji">🛡️</span><div class="ic-title">②改ざん検知</div><div class="ic-sub">途中で内容が書き換えられていないか</div></div>
+    <div class="icon-card bd-green"><span class="ic-emoji">📝</span><div class="ic-title">③否認防止</div><div class="ic-sub">「送ってない」と後で言い逃れできない</div></div>
+    <div class="icon-card bd-pink"><span class="ic-emoji">❌</span><div class="ic-title">機密性は含まない</div><div class="ic-sub">署名は中身を隠す技術ではない（引っかけ）</div></div>
+  </div>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">デジタル署名は「電子のハンコ」。押したら「誰が押した（本人性）」「押した後に書き換えてない（改ざん検知）」「後で知らないとは言えない（否認防止）」の3つが証明できる。ただし「中身を隠す」（機密性）は署名の仕事ではなく、暗号化が別途必要。</p>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;margin-top:.4rem;">
+    <div style="background:#dbeafe;border-radius:5px;padding:.5rem;text-align:center;font-size:.78rem;font-weight:700;color:#1e40af;">👤 本人性<br><span style="font-weight:400;color:#334155;font-size:.7rem;">送信者が本人であることを証明</span></div>
+    <div style="background:#dcfce7;border-radius:5px;padding:.5rem;text-align:center;font-size:.78rem;font-weight:700;color:#166534;">🛡️ 改ざん検知<br><span style="font-weight:400;color:#334155;font-size:.7rem;">途中で書き換えがないか確認</span></div>
+    <div style="background:#fef9c3;border-radius:5px;padding:.5rem;text-align:center;font-size:.78rem;font-weight:700;color:#854d0e;">📝 否認防止<br><span style="font-weight:400;color:#334155;font-size:.7rem;">「送ってない」と後で言えない</span></div>
+    <div style="background:#fef2f2;border-radius:5px;padding:.5rem;text-align:center;font-size:.78rem;font-weight:700;color:#b91c1c;">❌ 機密性なし<br><span style="font-weight:400;color:#334155;font-size:.7rem;">中身を隠す機能は別途暗号化が必要</span></div>
+  </div>
+</div>
+
+  <div class="exam-warn">⚠️【1次】<strong>「デジタル署名で機密性が得られる」は誤り</strong>。機密性が欲しければ別途暗号化が必要（＝署名＋暗号の<strong>合わせ技</strong>）。</div>
+
+  <div class="kids-box">
+    <div class="kids-scene">
+      <div class="kids-bubble">✍️<br><strong>自分だけの<br>ハンコ（秘密鍵）</strong><br>誰も偽造できない<br>特注の判子</div>
+      <div class="kids-arrow">手紙に<br>押す▶</div>
+      <div class="kids-bubble">📄✍️<br><strong>署名付き<br>手紙</strong><br>「誰が書いたか」<br>わかる</div>
+      <div class="kids-arrow">▶確認</div>
+      <div class="kids-bubble">🔍<br><strong>受け取った人</strong><br>「本物のハンコだ！<br>内容も変えられてない！」</div>
+    </div>
+    <div class="kids-point">📌 デジタル署名は「電子のハンコ」。<strong>誰が送ったか（本人性）・途中で書き換えられていないか（改ざん検知）・後で「知らない」と言えない（否認防止）</strong>を証明できる。ただし手紙の<strong>中身を隠す封筒（暗号化）は別</strong>—署名だけでは内容は丸見え。</div>
+  </div>
+
+<div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">出題年度不明</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> デジタル署名が提供する機能として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. 本人性・改ざん検知・否認防止の3つを提供するが、機密性（暗号化）は提供しない</li>
+    <li>イ. 本人性・改ざん検知・否認防止・機密性の4つすべてを提供する</li>
+    <li>ウ. 機密性（暗号化）と改ざん検知を提供するが、否認防止は提供できない</li>
+    <li>エ. 受信者が送信者の同一人物であることを確認する機能のみを提供する</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#1565c0;">✅ 正解:ア</strong> &nbsp;<span style="color:#555;">デジタル署名の3効能は「本人性・改ざん検知・否認防止」。機密性は署名の役割ではなく、別途暗号化が必要。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">イ ✗</strong>: 機密性は署名で提供されない。機密性が必要なら暗号化を別途実施する。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: 否認防止も署名の3効能の一つ。また機密性は署名の機能ではない。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: 本人性確認だけでなく改ざん検知と否認防止も同時に提供する。</li>
+    </ul>
+  </div></details>
+</div>
+
+<div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜署名作成時の鍵の使い方</div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> デジタル署名における送信者の鍵の使い方として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. 送信者は自分の公開鍵でハッシュ値を暗号化し、受信者は送信者の秘密鍵で復号して検証する</li>
+    <li>イ. 送信者は自分の秘密鍵でハッシュ値を暗号化（署名）し、受信者は送信者の公開鍵で復号して検証する</li>
+    <li>ウ. 送信者は受信者の公開鍵でハッシュ値を暗号化し、受信者は自分の秘密鍵で復号して検証する</li>
+    <li>エ. 送信者は受信者の秘密鍵でハッシュ値を暗号化し、受信者は自分の公開鍵で復号して検証する</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#065f46;">✅ 正解:イ</strong> &nbsp;<span style="color:#555;">署名＝秘密鍵（本人だけが持つ）で暗号化。検証＝公開鍵（誰でも入手可）で復号して一致確認。これが本人性・否認防止の根拠。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: 公開鍵で暗号化・秘密鍵で復号は「暗号化通信」の流れ。署名は逆（秘密鍵→公開鍵）。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: 受信者の公開鍵を使うのは「受信者へ向けた暗号化」。署名は送信者の秘密鍵を使う。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: 秘密鍵は本人以外が使えない。受信者の秘密鍵を送信者が使うことは不可能。</li>
+    </ul>
+  </div></details>
+</div>
+
+  <h2 class="section-title st-blue">✍️ デジタル署名の流れ（フロー）</h2>
+  <div class="diagram">
+    <div class="diagram-title">📤 送信側：署名作成</div>
+    <div class="flow-row">
+      <div class="flow-box fb-blue">平文</div><span class="flow-arrow">▶</span>
+      <div class="flow-box fb-purple">ハッシュ化</div><span class="flow-arrow">▶</span>
+      <div class="flow-box fb-red">送信者の秘密鍵で暗号化</div><span class="flow-arrow">＝</span>
+      <div class="flow-box fb-green">署名</div>
+    </div>
+    <div class="diagram-title" style="margin-top:1rem">📥 受信側：署名検証</div>
+    <div class="flow-row">
+      <div class="flow-box fb-green">署名</div><span class="flow-arrow">＋</span>
+      <div class="flow-box fb-blue">送信者の公開鍵で復号</div><span class="flow-arrow">⇔</span>
+      <div class="flow-box fb-purple">受信平文のハッシュ</div><span class="flow-arrow">＝？</span>
+      <div class="flow-box fb-orange">一致なら本物</div>
+    </div>
+  </div>
+  <p class="exam-pt">📝【1次】R03・R05で署名フローのどの鍵か（送信者の秘密鍵 vs 公開鍵）が問われた。<strong>「署名を公開鍵で作成」</strong>は誤り（公開鍵は検証側で使う）。</p>
+
+  <div class="diag-box">
+    <h4>✍️ デジタル署名の全体像（送信側 → 受信側）</h4>
+    <div class="diag-sub" style="color:#1e40af">📤 ① 送信側（Aさん）：署名を作る</div>
+    <div class="diag-row">
+      <div class="diag-card plain"><span class="ico">📄</span><div class="ttl">平文</div><div class="desc">"契約します"</div></div>
+      <div class="diag-arrow">▶<small>SHA-256で<br>ハッシュ化</small></div>
+      <div class="diag-card neutral" style="font-family:monospace;font-size:.72rem"><span class="ico">🖐️</span><div class="ttl">指紋（ハッシュ）</div><div class="desc">2cf24dba...</div></div>
+      <div class="diag-arrow">▶<small>🔴Aの秘密鍵<br>で暗号化</small></div>
+      <div class="diag-card goal"><span class="ico">✍️</span><div class="ttl">デジタル署名</div></div>
+    </div>
+    <div class="diag-note" style="background:#dbeafe;border-color:#3b82f6;color:#1e40af">📌 送信は「<strong>平文＋署名</strong>」をセットで送る（平文は暗号化しないので機密性はなし。署名は改ざん検知＋本人性のみ）</div>
+
+    <div class="diag-sub" style="color:#16a34a;margin-top:14px">📥 ② 受信側（Bさん）：署名を検証する</div>
+    <div class="diag-row">
+      <div class="diag-card goal"><span class="ico">✍️</span><div class="ttl">署名</div></div>
+      <div class="diag-arrow">▶<small>🟣Aの公開鍵<br>で復号</small></div>
+      <div class="diag-card neutral" style="font-family:monospace;font-size:.72rem"><span class="ico">🖐️</span><div class="ttl">復号した指紋</div><div class="desc">2cf24dba...</div></div>
+      <div class="diag-arrow">⇔<small>一致<br>するか?</small></div>
+      <div class="diag-card neutral" style="font-family:monospace;font-size:.72rem"><span class="ico">🖐️</span><div class="ttl">受信平文の指紋</div><div class="desc">2cf24dba...</div></div>
+      <div class="diag-arrow">▶<small>判定</small></div>
+      <div class="diag-card safe"><span class="ico">✅</span><div class="ttl">本物</div><div class="desc">一致＝OK</div></div>
+    </div>
+
+    <div class="diag-sub" style="margin-top:14px">🎯 署名で「同時に」証明できる3つ</div>
+    <div class="diag-grid4">
+      <div class="diag-card safe"><span class="ico">👤</span><div class="ttl">①本人性</div><div class="desc">Aしか持たない秘密鍵<br>で作られた証拠</div></div>
+      <div class="diag-card safe"><span class="ico">🛡️</span><div class="ttl">②改ざん検知</div><div class="desc">1文字でも変われば<br>指紋が一致しない</div></div>
+      <div class="diag-card safe"><span class="ico">🙅</span><div class="ttl">③否認防止</div><div class="desc">後で「送ってない」<br>と言い逃れできない</div></div>
+    </div>
+    <div class="diag-note" style="background:#fef2f2;border-color:#dc2626;color:#7f1d1d">⚠️ <strong>機密性は守れない</strong>（平文は暗号化していない）／機密性も欲しい時は別途、受信者の公開鍵で暗号化する＝<strong>署名＋暗号の合わせ技</strong></div>
+  </div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ このタブの要点</div>
+    <ul>
+      <li>❶ ハッシュは<strong>固定長・一方向・衝突耐性</strong>。SHA（Secure Hash Algorithm）-256現役／SHA（Secure Hash Algorithm）-1・MD5（Message Digest 5）は非推奨</li>
+      <li>❷ 署名作成＝<strong>平文ハッシュを送信者の秘密鍵で暗号化</strong>。検証は公開鍵で復号して受信平文のハッシュと一致確認</li>
+      <li>❸ 署名の3効能＝<strong>本人性・改ざん検知・否認防止</strong>。<strong>機密性は含まれない</strong>（引っかけ頻出）</li>
+    </ul>
+  </div>
+</div>
+
+<div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">出題年度不明</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> デジタル署名の作成・検証の流れとして最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. 送信者：平文を公開鍵で暗号化→送信 / 受信者：秘密鍵で復号して真正性確認</li>
+    <li>イ. 送信者：平文のハッシュを受信者の公開鍵で暗号化→送信 / 受信者：秘密鍵で復号して比較</li>
+    <li>ウ. 送信者：平文のハッシュを自分の秘密鍵で暗号化（署名）→送信 / 受信者：送信者の公開鍵で復号→受信ハッシュと比較</li>
+    <li>エ. 送信者：平文のハッシュを自分の公開鍵で暗号化→送信 / 受信者：受信者の秘密鍵で復号して比較</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#1565c0;">✅ 正解:ウ</strong> &nbsp;<span style="color:#555;">署名は「ハッシュを送信者の秘密鍵で暗号化」。検証は「送信者の公開鍵で復号→受信平文ハッシュと一致を確認」の流れ。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: 平文全体を公開鍵で暗号化するのは「暗号化通信」。署名はハッシュを秘密鍵で暗号化する。</li>
+      <li><strong style="color:#c62828;">イ ✗</strong>: 受信者の公開鍵を使う流れは暗号化（受信者向け）。署名は送信者の秘密鍵を使う。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: 自分の公開鍵で暗号化するのは矛盾。誰でも公開鍵を持つため本人性が証明できない。</li>
+    </ul>
+  </div></details>
+</div>
+
+<div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜改ざん検知の仕組み</div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> デジタル署名による改ざん検知の仕組みとして最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. 受信者が送信者の秘密鍵を使って署名を復号し、平文と突き合わせることで改ざんを検知する</li>
+    <li>イ. 送信者が受信者の公開鍵で平文を暗号化することで、第三者の改ざんを防止する</li>
+    <li>ウ. 認証局（CA）が送信された全ての平文をリアルタイムで監視し、改ざんを検知する</li>
+    <li>エ. 受信者が送信者の公開鍵で署名（暗号化ハッシュ）を復号し、受信平文のハッシュと一致するか確認する</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#065f46;">✅ 正解:エ</strong> &nbsp;<span style="color:#555;">署名（秘密鍵で暗号化したハッシュ）を送信者の公開鍵で復号→受信データのハッシュと比較→一致しなければ改ざんあり。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: 秘密鍵は本人のみ所持。受信者が送信者の秘密鍵を使うことはできない。</li>
+      <li><strong style="color:#c62828;">イ ✗</strong>: 受信者の公開鍵で暗号化するのは「暗号化通信」。改ざん検知の仕組みとは別。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: CAは証明書の発行・失効管理を担う。個々の通信内容をリアルタイム監視はしない。</li>
+    </ul>
+  </div></details>
+</div>
+
+<!-- ============ TAB 1: PKI・SSL/TLS ============ -->
+<div class="tab-panel theme-teal" id="tab1">
+
+  <h2 class="section-title st-teal">📜 デジタル証明書とPKI</h2>
+  <div class="factor-grid">
+    <div class="fg-item"><div class="fg-num">1</div><div class="fg-title">CA（Certificate Authority・認証局）</div><div class="fg-body">公開鍵が本人のものと保証する第三者機関</div></div>
+    <div class="fg-item"><div class="fg-num">2</div><div class="fg-title">電子証明書</div><div class="fg-body">「この公開鍵はXさん本人」とCAが署名した証明書</div></div>
+    <div class="fg-item"><div class="fg-num">3</div><div class="fg-title">PKI</div><div class="fg-body">CA・証明書・失効管理を含む全体の仕組み（Public Key Infrastructure）</div></div>
+    <div class="fg-item"><div class="fg-num">4</div><div class="fg-title">CRL/OCSP</div><div class="fg-body">失効リスト（CRL）／リアルタイム照会（OCSP）で無効な証明書を排除</div></div>
+  </div>
+  <p class="exam-pt">📝【1次】<strong>PKI</strong>＝Public Key Infrastructure（公開鍵基盤）。CA・証明書・失効管理の総称。証明書の発行元はCA、失効照会は<strong>CRL</strong>（一覧）と<strong>OCSP</strong>（リアルタイム）の2方式。</p>
+
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">インターネットには「なりすまし」の危険がある。PKIはその問題を解決するために「CA（役所）」「証明書（住民票）」「失効管理（無効証明書のリスト）」の3つをセットで使う仕組み。CAが保証した公開鍵なら信頼して使える。</p>
+  <div style="font-size:.8rem;line-height:1.9;color:#334155;margin-top:.4rem;">
+    <div style="font-weight:700;color:#0d9488;">🏗️ PKIの3構成要素</div>
+    <div style="padding-left:1.2rem;">
+      <div>├ <span style="background:#ccfbf1;padding:.05rem .3rem;border-radius:3px;font-weight:600;">CA（認証局）</span>　公開鍵が本人のものと保証する第三者機関（役所）</div>
+      <div>├ <span style="background:#cffafe;padding:.05rem .3rem;border-radius:3px;font-weight:600;">電子証明書</span>　CAが署名した「この公開鍵は本物」という証明書</div>
+      <div>└ <span style="background:#dbeafe;padding:.05rem .3rem;border-radius:3px;font-weight:600;">CRL / OCSP</span>　無効になった証明書を管理する仕組み</div>
+      <div style="padding-left:1.4rem;font-size:.72rem;color:#64748b;">CRL＝失効リスト一覧 / OCSP＝リアルタイム1件照会</div>
+    </div>
+  </div>
+</div>
+
+  <div class="kids-box">
+    <div class="kids-scene">
+      <div class="kids-bubble">👤<br><strong>Aさん</strong><br>「私はAです！」<br>でも証明できない…</div>
+      <div class="kids-arrow">▶役所に<br>申請</div>
+      <div class="kids-bubble">🏛️<br><strong>役所（CA）</strong><br>本人確認OK！<br>証明書を発行</div>
+      <div class="kids-arrow">▶証明書<br>を渡す</div>
+      <div class="kids-bubble">📜<br><strong>住民票</strong><br>（電子証明書）<br>「この人はAさん」<br>と役所が保証</div>
+    </div>
+    <div class="kids-scene">
+      <div class="kids-bubble" style="flex:2">👤<strong>Bさん</strong>が見る<br>「役所（CA）が発行した住民票なら信頼できる！」<br>→ Aさんの公開鍵を安心して使える</div>
+    </div>
+    <div class="kids-point">📌 CA（Certificate Authority・認証局）＝インターネット上の「役所」。自分で「私がAです」と言うだけでは誰も信じないが、信頼できる役所（CA）が「確かにこの人はAさん」と証明書（住民票）を発行することで初めて第三者が信頼できる。</div>
+  </div>
+
+  <div class="diag-box">
+    <h4>🪪 デジタル証明書はなぜ必要？ ─ なりすまし問題</h4>
+    <div class="diag-sub" style="color:#c62828">⚠️ 証明書なしの世界（公開鍵だけだと…）</div>
+    <div class="diag-row">
+      <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">Bさん</div><div class="desc">"これがAの公開鍵"</div></div>
+      <div class="diag-arrow">▶<small>受信</small></div>
+      <div class="diag-card attacker"><span class="ico">😈</span><div class="ttl">本当は攻撃者</div><div class="desc">Aになりすまし<br>偽の公開鍵を送付</div></div>
+      <div class="diag-arrow">▶</div>
+      <div class="diag-card goal"><span class="ico">💥</span><div class="ttl">中身を読まれる</div></div>
+    </div>
+    <div class="diag-note" style="background:#ffebee;border-color:#c62828;color:#c62828">📌 「その公開鍵が本当にAさんのものか」を保証する仕組みが必要 → これが証明書／PKI</div>
+
+    <h4 style="margin-top:14px">🏛️ PKI（Public Key Infrastructure・公開鍵基盤）の信頼チェーン</h4>
+    <div class="diag-row">
+      <div class="diag-card safe" style="background:#ede9fe;border-color:#7c3aed"><span class="ico">🏛️</span><div class="ttl">①CA<br>（認証局）</div><div class="desc">信頼できる<br>第三者機関</div></div>
+      <div class="diag-arrow">▶<small>Aの本人確認<br>＋CAの秘密鍵<br>で署名</small></div>
+      <div class="diag-card safe"><span class="ico">📜</span><div class="ttl">②電子証明書</div><div class="desc">"このpublic keyは<br>Aさん本人"<br>+CAの署名</div></div>
+      <div class="diag-arrow">▶<small>送付</small></div>
+      <div class="diag-card neutral"><span class="ico">👤</span><div class="ttl">③Bさん</div><div class="desc">CAの公開鍵で<br>署名を検証</div></div>
+      <div class="diag-arrow">▶</div>
+      <div class="diag-card safe"><span class="ico">✅</span><div class="ttl">④信頼OK</div><div class="desc">Aの公開鍵を<br>安心して使える</div></div>
+    </div>
+
+    <h4 style="margin-top:14px">🚫 失効管理：盗まれた／期限切れの証明書を排除</h4>
+    <div class="diag-grid4">
+      <div class="diag-card neutral"><span class="ico">📋</span><div class="ttl">CRL</div><div class="desc"><strong>Certificate Revocation List</strong><br>失効した証明書の<strong>一覧（リスト）</strong><br>定期更新／オフラインOK</div></div>
+      <div class="diag-card neutral"><span class="ico">📡</span><div class="ttl">OCSP</div><div class="desc"><strong>Online Cert Status Protocol</strong><br><strong>リアルタイム</strong>照会<br>「この証明書、今有効？」<br>と1件ずつ問合せ</div></div>
+    </div>
+
+    <h4 style="margin-top:14px">🌐 PKI（Public Key Infrastructure・公開鍵基盤）の全体像</h4>
+    <div class="diag-row">
+      <div class="diag-card safe" style="background:#f5f3ff;border-color:#7c3aed"><span class="ico">🏛️</span><div class="ttl">CA</div><div class="desc">発行</div></div>
+      <div class="diag-arrow">＋</div>
+      <div class="diag-card safe"><span class="ico">📜</span><div class="ttl">証明書</div></div>
+      <div class="diag-arrow">＋</div>
+      <div class="diag-card neutral"><span class="ico">📋</span><div class="ttl">CRL/OCSP</div><div class="desc">失効管理</div></div>
+      <div class="diag-arrow">＝</div>
+      <div class="diag-card goal" style="background:#fef3c7;border-color:#f59e0b"><span class="ico">🔐</span><div class="ttl">PKI</div><div class="desc">公開鍵基盤の<br>全体の仕組み</div></div>
+    </div>
+  </div>
+
+<div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">出題年度不明</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> PKI（Public Key Infrastructure・公開鍵基盤）の構成要素として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. CA（認証局）・電子証明書・CRL/OCSP（失効管理）を組み合わせた公開鍵基盤の仕組み全体</li>
+    <li>イ. 共通鍵を安全に配送するためのアルゴリズムと鍵管理サーバの組み合わせ</li>
+    <li>ウ. パスワードと生体情報を組み合わせた多要素認証の基盤となる仕組み</li>
+    <li>エ. TLSハンドシェイクで使われる乱数と証明書の交換プロトコルのみを指す概念</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#1565c0;">✅ 正解:ア</strong> &nbsp;<span style="color:#555;">PKI＝Public Key Infrastructure（公開鍵基盤）。CA・電子証明書・CRL/OCSPの失効管理を含む全体の仕組みを指す。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">イ ✗</strong>: 共通鍵の配送基盤はPKIではなく鍵交換プロトコル（Diffie-Hellman等）。PKIは公開鍵基盤。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: 多要素認証はPKIの定義ではない。PKIは証明書・CA・失効管理の仕組み。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: TLSのハンドシェイク手順はPKIの一応用であり、PKIの定義そのものではない。</li>
+    </ul>
+  </div></details>
+</div>
+
+<div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜CRLとOCSPの違い</div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> 電子証明書の失効確認に関する説明として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. OCSP（Online Certificate Status Protocol）は失効した全証明書のシリアル番号を一覧で配布する方式である</li>
+    <li>イ. CRL（Certificate Revocation List）は失効証明書の一覧リストであり、OCSPはリアルタイム照会方式である</li>
+    <li>ウ. CRL（Certificate Revocation List）はリアルタイムで1件ずつ証明書の有効性を確認する方式である</li>
+    <li>エ. OCSPとCRLは同一の概念であり、どちらも失効リストを定期的に配布する方式を指す</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#065f46;">✅ 正解:イ</strong> &nbsp;<span style="color:#555;">CRL＝失効証明書の一覧リスト（バッチ配布型）。OCSP＝個別照会にリアルタイム応答する方式。この対比が試験頻出。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: リストを一覧配布するのはCRLの説明。OCSPは個別照会にリアルタイム応答。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: リアルタイム1件照会はOCSPの説明。CRLとOCSPが逆になっている。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: CRLとOCSPは異なる方式。同一概念ではない。</li>
+    </ul>
+  </div></details>
+</div>
+
+  <h2 class="section-title st-teal">🔐 SSL/TLSの基本</h2>
+
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">HTTPS（鍵マーク付きのサイト）はTLSで守られている。TLSはSSLの後継（SSLは引退）。「ヨンヨンサンで安全（443番）」と覚える。ハンドシェイクは「身分証の確認→合言葉の交換→以降は合言葉で話す」という3ステップ。</p>
+  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+    <div style="background:#cffafe;border-radius:6px;padding:.4rem .7rem;font-size:.8rem;font-weight:600;color:#0e7490;text-align:center;">📜 ①証明書<br>確認</div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+    <div style="background:#dbeafe;border-radius:6px;padding:.4rem .7rem;font-size:.8rem;font-weight:600;color:#1e40af;text-align:center;">🔑 ②公開鍵で<br>共通鍵交換</div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+    <div style="background:#dcfce7;border-radius:6px;padding:.4rem .7rem;font-size:.8rem;font-weight:600;color:#166534;text-align:center;">🔒 ③共通鍵で<br>本通信暗号化</div>
+  </div>
+  <div style="position:relative;background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.5rem .8rem;margin-top:.6rem;font-size:.82rem;color:#713f12;">
+    <span style="position:absolute;top:-10px;left:12px;background:#fde047;font-size:.68rem;font-weight:700;padding:.1rem .4rem;border-radius:4px;color:#713f12;">🔑 ポイント</span>
+    SSL（引退）→ TLS（現役）/ HTTPS＝HTTP＋TLS / ポート番号 <strong>443</strong>
+  </div>
+</div>
+
+  <div class="card card-teal">
+    <ul>
+      <li><strong>TLS（Transport Layer Security）</strong>はSSL（Secure Sockets Layer）の<strong>後継</strong>。SSL3.0までで終わり、現在は<strong>TLS1.2/1.3</strong>が主流</li>
+      <li><strong>HTTPS（HTTP over TLS）＝HTTP（HyperText Transfer Protocol）＋TLS</strong>。ポート番号は<strong>443</strong></li>
+      <li>ハンドシェイク：①証明書検証 → ②共通鍵交換 → ③共通鍵で通信</li>
+    </ul>
+  </div>
+  <div class="goro-row"><span class="goro-chip">ヨンヨンサンで安全<small>HTTPS = 443</small></span><span class="goro-chip">SSLは引退・TLSが現役<small>後継関係</small></span></div>
+
+  <div class="kids-box">
+    <div class="kids-scene">
+      <div class="kids-bubble">👤<strong>あなた</strong><br>「金庫の番号を<br>決めて送りたい！<br>でも盗み見られたら…」</div>
+      <div class="kids-arrow">▶</div>
+      <div class="kids-bubble">🔒<br><strong>お店（サーバ）</strong><br>「この南京錠（公開鍵）<br>を使って番号を<br>入れて送って」</div>
+      <div class="kids-arrow">▶南京錠に<br>入れて送信</div>
+      <div class="kids-bubble">🔑<br><strong>お店が開錠</strong><br>お店しか持ってない<br>鍵（秘密鍵）で開ける</div>
+    </div>
+    <div class="kids-scene">
+      <div class="kids-bubble" style="flex:2">🎉 これで2人だけが知ってる<strong>秘密の番号（共通鍵）</strong>が決まった！<br>あとはその番号で高速に暗号化してやりとりする ＝ <strong>TLSハンドシェイクの本質</strong></div>
+    </div>
+    <div class="kids-point">📌 最初だけ「南京錠（公開鍵）で番号を守りながら渡す」=遅いが安全。以降は「決まった番号（共通鍵）で高速やりとり」。これが<strong>ハイブリッド暗号</strong>のしくみ。</div>
+  </div>
+
+  <div class="diag-box">
+    <h4>🤝 TLS（Transport Layer Security）ハンドシェイク ─ なぜ公開鍵＋共通鍵のハイブリッド？</h4>
+    <div class="diag-sub">💡 課題：公開鍵は安全だが遅い／共通鍵は速いが鍵配送問題 → <strong>いいとこ取り</strong>する</div>
+
+    <div class="diag-sub" style="margin-top:12px;color:#1e40af">📜 ステップ① 証明書検証（公開鍵フェーズ）</div>
+    <div class="diag-row">
+      <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">ブラウザ</div></div>
+      <div class="diag-arrow">◀<small>サーバ証明書<br>送信</small></div>
+      <div class="diag-card neutral"><span class="ico">📜</span><div class="ttl">証明書</div><div class="desc">CA署名付き</div></div>
+      <div class="diag-arrow">▶<small>CAの公開鍵<br>で検証</small></div>
+      <div class="diag-card safe"><span class="ico">✅</span><div class="ttl">サーバ本物確認</div></div>
+    </div>
+
+    <div class="diag-sub" style="margin-top:12px;color:#7c3aed">🔑 ステップ② 共通鍵を秘密裏に共有（公開鍵で送る）</div>
+    <div class="diag-row">
+      <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">ブラウザ</div><div class="desc">共通鍵Kを生成</div></div>
+      <div class="diag-arrow">▶<small>🟢サーバの公開鍵<br>でKを暗号化</small></div>
+      <div class="diag-card cipher"><span class="ico">🔒</span><div class="ttl">暗号化されたK</div></div>
+      <div class="diag-arrow">▶<small>送信</small></div>
+      <div class="diag-card neutral"><span class="ico">🏦</span><div class="ttl">サーバ</div><div class="desc">🔴秘密鍵で<br>Kを取り出す</div></div>
+    </div>
+
+    <div class="diag-sub" style="margin-top:12px;color:#16a34a">⚡ ステップ③ 本通信は共通鍵で高速暗号化</div>
+    <div class="diag-row">
+      <div class="diag-card safe"><span class="ico">👤</span><div class="ttl">ブラウザ</div></div>
+      <div class="diag-arrow" style="color:#16a34a">⇄<small>🔵共通鍵K<br>で暗号化<br>（AES等）</small></div>
+      <div class="diag-card safe"><span class="ico">🏦</span><div class="ttl">サーバ</div></div>
+    </div>
+    <div class="diag-note">📌 <strong>「鍵交換だけ公開鍵 / 本通信は共通鍵」</strong>がTLSの本質。公開鍵の遅さは1回だけ我慢して、以降の大量データは高速な共通鍵で送る</div>
+
+    <div class="diag-sub" style="margin-top:14px">🆚 HTTP vs HTTPS</div>
+    <table class="tbl-blue" style="margin-top:6px">
+      <tr><th></th><th>HTTP（HyperText Transfer Protocol）</th><th>HTTPS（HTTP over TLS）</th></tr>
+      <tr><td>暗号化</td><td>❌ なし（平文）</td><td>✅ TLS（Transport Layer Security）で暗号化</td></tr>
+      <tr><td>ポート</td><td><strong>80</strong></td><td><strong>443</strong></td></tr>
+      <tr><td>URL</td><td>http://</td><td>https:// 🔒鍵マーク</td></tr>
+      <tr><td>盗聴・改ざん</td><td>筒抜け（MITM（Man-in-the-Middle Attack・中間者攻撃）容易）</td><td>防げる</td></tr>
+    </table>
+  </div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ このタブの要点</div>
+    <ul>
+      <li>❶ PKI（Public Key Infrastructure・公開鍵基盤）＝<strong>CA（Certificate Authority・認証局）＋電子証明書＋CRL（Certificate Revocation List・証明書失効リスト）/OCSP（Online Certificate Status Protocol・オンライン証明書状態プロトコル）</strong> の全体の仕組み</li>
+      <li>❷ CA（Certificate Authority・認証局）＝公開鍵が本人のものと保証する第三者機関。CRL（Certificate Revocation List・証明書失効リスト）＝失効リスト／OCSP（Online Certificate Status Protocol・オンライン証明書状態プロトコル）＝リアルタイム照会</li>
+      <li>❸ <strong>HTTPS（HTTP over TLS）=HTTP+TLS／ポート443</strong>。TLS（Transport Layer Security）ハンドシェイクは「公開鍵で鍵交換→共通鍵で本通信」</li>
+    </ul>
+  </div>
+</div>
+
+<div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">出題年度不明</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> SSL/TLSに関する説明として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. SSLはTLSの後継規格であり、現在の主流はSSL3.0/SSL4.0である</li>
+    <li>イ. HTTPSはHTTPにSSLを付加したプロトコルであり、ポート番号80番で通信する</li>
+    <li>ウ. TLSはSSLの後継であり、現在はTLS1.2/1.3が主流。HTTPSのポート番号は443番である</li>
+    <li>エ. TLSハンドシェイクでは最初から共通鍵のみを使って全データを暗号化し通信する</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#1565c0;">✅ 正解:ウ</strong> &nbsp;<span style="color:#555;">TLSはSSLの後継（SSLが「引退」、TLSが「現役」）。HTTPS=HTTP+TLS。ポート443。「ヨンヨンサンで安全」と覚える。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: SSLはTLSの前身（旧版）。後継はTLS。SSL4.0という規格も存在しない。</li>
+      <li><strong style="color:#c62828;">イ ✗</strong>: HTTPSのポート番号は443。ポート80はHTTP（暗号化なし）。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: TLSハンドシェイクは公開鍵で共通鍵を交換してから共通鍵で本通信を行う。最初から共通鍵のみではない。</li>
+    </ul>
+  </div></details>
+</div>
+
+<div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜TLSハンドシェイクの流れ</div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> TLSハンドシェイクの流れとして最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. 最初から共通鍵のみを使って暗号化通信を確立し、証明書の確認は省略される</li>
+    <li>イ. 公開鍵と秘密鍵を用いて全データを暗号化し、証明書は通信の終了後に確認する</li>
+    <li>ウ. サーバは共通鍵をそのままクライアントに送付し、その共通鍵で以降の通信を暗号化する</li>
+    <li>エ. 証明書検証→公開鍵による共通鍵交換→交換した共通鍵で本通信を暗号化、の順で行われる</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#065f46;">✅ 正解:エ</strong> &nbsp;<span style="color:#555;">TLSのハンドシェイクは①証明書検証→②公開鍵暗号で共通鍵を安全に交換→③共通鍵で本通信を暗号化、の3ステップ。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: 証明書確認はハンドシェイクの最初のステップ。省略はされない。</li>
+      <li><strong style="color:#c62828;">イ ✗</strong>: 全データを公開鍵で暗号化すると処理が重い。本通信は共通鍵を使う。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: 共通鍵を平文で送ると傍受されるリスクがある。公開鍵で安全に交換するのがTLSの仕組み。</li>
+    </ul>
+  </div></details>
+</div>
+
+<!-- ============ TAB 2: 認証 ============ -->
+<div class="tab-panel theme-purple" id="tab2">
+
+  <h2 class="section-title st-purple">🔑 認証の3要素＋MFA</h2>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">本人確認の方法は「知ってること」「持ってるもの」「体の特徴」の3種類。MFA（多要素認証）は<strong>種類が違う</strong>ものを2つ以上組み合わせることで、1つ盗まれても大丈夫にする仕組み。パスワード2つは同じ種類なのでMFAにならない点が試験の引っかけ。</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem;">
+    <div style="background:#dbeafe;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.3rem;">🧠</div>
+      <div style="font-size:.78rem;font-weight:700;color:#1e40af;">知識（SYK）</div>
+      <div style="font-size:.73rem;color:#1e3a8a;margin-top:.2rem;">パスワード<br>PIN・秘密の質問</div>
+    </div>
+    <div style="background:#dcfce7;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.3rem;">🗝️</div>
+      <div style="font-size:.78rem;font-weight:700;color:#166534;">所持（SYH）</div>
+      <div style="font-size:.73rem;color:#14532d;margin-top:.2rem;">ICカード<br>スマホ・トークン</div>
+    </div>
+    <div style="background:#fce7f3;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.3rem;">👁️</div>
+      <div style="font-size:.78rem;font-weight:700;color:#9d174d;">生体（SYA）</div>
+      <div style="font-size:.73rem;color:#831843;margin-top:.2rem;">指紋・顔<br>虹彩・静脈</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.5rem;">
+    <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.2rem;">✅</div>
+      <div style="font-size:.78rem;font-weight:700;color:#15803d;">MFA（多要素認証）</div>
+      <div style="font-size:.73rem;color:#14532d;margin-top:.2rem;">知識＋所持（異なる種類）</div>
+    </div>
+    <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.2rem;">❌</div>
+      <div style="font-size:.78rem;font-weight:700;color:#b91c1c;">多段階認証（MFAでない）</div>
+      <div style="font-size:.73rem;color:#7f1d1d;margin-top:.2rem;">パスワード＋秘密の質問（同じ知識）</div>
+    </div>
+  </div>
+</div>
+  <div class="factor-grid">
+    <div class="fg-item"><div class="fg-num">1</div><div class="fg-title">知識（SYK）</div><div class="fg-body">本人のみが知る情報<br>パスワード／PIN／秘密の質問</div></div>
+    <div class="fg-item"><div class="fg-num">2</div><div class="fg-title">所持（SYH）</div><div class="fg-body">本人のみが持つモノ<br>ICカード／スマホ／トークン</div></div>
+    <div class="fg-item"><div class="fg-num">3</div><div class="fg-title">生体（SYA）</div><div class="fg-body">本人の身体的特徴<br>指紋／顔／虹彩／静脈</div></div>
+  </div>
+  <div class="goro-row"><span class="goro-chip">知・持・体<small>SYK / SYH / SYA</small></span></div>
+
+  <div class="kids-box">
+    <div class="kids-scene">
+      <div class="kids-bubble">🧠<br><strong>①知識</strong><br>合言葉を知ってる？<br>「お誕生日おめでとう！」</div>
+      <div class="kids-bubble">🗝️<br><strong>②所持</strong><br>家の鍵を持ってる？<br>「鍵が開いた！」</div>
+      <div class="kids-bubble">👁️<br><strong>③生体</strong><br>あなた本人？<br>「指紋が一致！」</div>
+    </div>
+    <div class="kids-scene">
+      <div class="kids-bubble" style="flex:2">🏠 家に入るとき：<strong>暗証番号（知識）</strong>だけだと忘れたり人に教えちゃうかも。<strong>鍵（所持）＋暗証番号（知識）</strong>の2種類が必要＝それがMFA（Multi-Factor Authentication・多要素認証）。<br>「合言葉を2個覚える」だけでは同じ種類だからMFAにならない！</div>
+    </div>
+    <div class="kids-point">📌 MFAは「<strong>種類の違う</strong>鍵を2つ以上」。知識だけ2つ（パスワード＋秘密の質問）は種類が同じ→多段階でMFAではない。</div>
+  </div>
+
+  <div class="card card-red">
+    <h4>⚠️ MFA（Multi-Factor Authentication・多要素認証）の定義</h4>
+    <p><strong>異なる要素を2つ以上</strong>組み合わせる。同じ要素を2つ重ねるのは「<strong>多段階認証</strong>」であって多要素ではない。</p>
+    <ul>
+      <li>✅ MFA（Multi-Factor Authentication・多要素認証）：パスワード（知識）＋スマホ（所持）</li>
+      <li>❌ MFA（Multi-Factor Authentication・多要素認証）<strong>ではない</strong>：パスワード＋秘密の質問（両方とも知識）</li>
+      <li>❌ MFA（Multi-Factor Authentication・多要素認証）<strong>ではない</strong>：パスワード＋PIN（Personal Identification Number）（両方とも知識）</li>
+    </ul>
+  </div>
+  <p class="exam-warn">⚠️【1次】R04新出。<strong>「パスワード＋秘密の質問でMFA」は誤り</strong>。要素が同じ（知識）なので多段階に過ぎない。</p>
+
+  <div class="diag-box">
+    <h4>⚖️ MFA（Multi-Factor Authentication・多要素認証）の○×判定</h4>
+    <div class="diag-row">
+      <div class="diag-card safe" style="flex:0 0 auto"><span class="ico">✅</span><div class="ttl">MFA成立</div><div class="desc">異なる要素</div></div>
+      <div class="diag-card neutral" style="text-align:left;font-size:.8rem"><strong>パスワード（知識）＋スマホ（所持）</strong><br>→ 知識×所持 ✅</div>
+      <div class="diag-card neutral" style="text-align:left;font-size:.8rem"><strong>パスワード（知識）＋指紋（生体）</strong><br>→ 知識×生体 ✅</div>
+    </div>
+    <div class="diag-row">
+      <div class="diag-card attacker" style="flex:0 0 auto"><span class="ico">❌</span><div class="ttl">MFAではない</div><div class="desc">同じ要素2つ</div></div>
+      <div class="diag-card neutral" style="text-align:left;font-size:.8rem"><strong>パスワード＋PIN</strong><br>→ 両方とも<strong>知識</strong> ❌<br>＝多段階認証（2段階）に過ぎない</div>
+      <div class="diag-card neutral" style="text-align:left;font-size:.8rem"><strong>パスワード＋秘密の質問</strong><br>→ 両方とも<strong>知識</strong> ❌</div>
+    </div>
+    <div class="diag-note" style="background:#fef2f2;border-color:#dc2626;color:#7f1d1d">⚠️ <strong>「多段階」≠「多要素」</strong>がR04新出の引っかけ。要素の<strong>種類が違うか</strong>で判定する</div>
+  </div>
+
+<div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">R04近辺</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> MFA（多要素認証）の説明として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. 知識（パスワード）・所持（ICカード）・生体（指紋）などの異なる種類の認証要素を2つ以上組み合わせた認証</li>
+    <li>イ. 同じパスワードを2つの画面で入力させる2段階認証はMFAの一種である</li>
+    <li>ウ. 「パスワード＋PIN（Personal Identification Number）」は異なる要素の組み合わせなのでMFAに該当する</li>
+    <li>エ. 生体認証のみでログインする方式は生体の1要素のみだが、それ自体がMFAと定義されている</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#1565c0;">✅ 正解:ア</strong> &nbsp;<span style="color:#555;">MFAは「種類の異なる要素を2つ以上」組み合わせることが定義。知識+所持、知識+生体など。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">イ ✗</strong>: パスワードを2回入力するのは「多段階認証」。要素の種類が同じ（知識×知識）なのでMFAではない。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: パスワードもPINも「知識」要素。種類が同じなのでMFAには該当しない。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: 生体認証1つだけでは1要素認証。MFAは定義として2種類以上の異なる要素が必要。</li>
+    </ul>
+  </div></details>
+</div>
+
+<div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜認証3要素の分類</div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> 認証の3要素（知識・所持・生体）の分類として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. ICカードは「知識」要素、指紋認証は「所持」要素に分類される</li>
+    <li>イ. ICカードは「所持」、パスワードは「知識」、顔認証は「生体」要素にそれぞれ分類される</li>
+    <li>ウ. PIN（暗証番号）は「生体」要素に分類され、生体認証は「所持」要素として扱われる</li>
+    <li>エ. ハードウェアトークンは「知識」要素に、静脈認証は「所持」要素に分類される</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#065f46;">✅ 正解:イ</strong> &nbsp;<span style="color:#555;">ICカード＝所持（Something You Have）、パスワード＝知識（SYK）、顔認証・指紋・虹彩＝生体（SYA）。この3分類が基本。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: ICカードは所持要素（物を持つ）。指紋・顔は生体要素（身体的特徴）。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: PINは「知識」要素（記憶している情報）。生体ではない。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: ハードウェアトークンは「所持」要素（物を持つ）。静脈認証は「生体」要素。</li>
+    </ul>
+  </div></details>
+</div>
+
+  <h2 class="section-title st-purple">🔄 個別認証手法</h2>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">PAPはパスワードをそのままネットに流す古い方式（盗まれる危険あり）。CHAPはパスワードを流さず「なぞなぞ（チャレンジ）の答え」だけを送る安全な方式。OTPは1回使い捨てなので盗んでも無駄。</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+    <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.4rem;">😟</div>
+      <div style="font-size:.78rem;font-weight:700;color:#b91c1c;">PAP（非推奨）</div>
+      <div style="font-size:.75rem;color:#7f1d1d;margin-top:.2rem;">パスワードを<strong>平文で送信</strong><br>→盗聴に丸裸</div>
+    </div>
+    <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.4rem;">😊</div>
+      <div style="font-size:.78rem;font-weight:700;color:#15803d;">CHAP（推奨）</div>
+      <div style="font-size:.75rem;color:#14532d;margin-top:.2rem;"><strong>チャレンジ→ハッシュ応答</strong><br>→パスワード流れない</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.5rem;">
+    <div style="background:#ede9fe;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#5b21b6;">⏰ TOTP（時間ベース）</div>
+    <span style="color:#94a3b8;font-size:1.1rem;">＋</span>
+    <div style="background:#fce7f3;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#9d174d;">🔢 HOTP（カウンタベース）</div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+    <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#854d0e;">使い捨てOTP（再利用不能）</div>
+  </div>
+</div>
+  <div class="tbl-wrap"><table class="tbl-purple">
+    <tr><th>方式</th><th>仕組み</th><th>特徴</th></tr>
+    <tr><td>CHAP（Challenge Handshake Authentication Protocol・チャレンジハンドシェイク認証プロトコル）</td><td>サーバが乱数（チャレンジ）を出し、クライアントがハッシュ計算して返す</td><td>パスワードがネット上を流れない。PPP（Point-to-Point Protocol・ポイントツーポイントプロトコル）接続で標準</td></tr>
+    <tr><td>PAP（Password Authentication Protocol・パスワード認証プロトコル）</td><td>平文でパスワード送信</td><td>❌ 非推奨（盗聴に弱い）</td></tr>
+    <tr><td>OTP（One-Time Password・ワンタイムパスワード）</td><td>時間ベース（TOTP：Time-based One-Time Password）／カウンタベース（HOTP：HMAC-based One-Time Password）で1回限りのパスワード</td><td>盗聴されても再利用不能</td></tr>
+  </table></div>
+
+  <div class="diag-box">
+    <h4>🤝 チャレンジレスポンス ─ パスワードを流さない仕組み</h4>
+    <div class="diag-sub" style="color:#c62828">❌ PAP（Password Authentication Protocol・パスワード認証プロトコル）：盗聴一発でアウト</div>
+    <div class="diag-row">
+      <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">クライアント</div></div>
+      <div class="diag-arrow">▶<small>パスワード<br>そのまま送信</small></div>
+      <div class="diag-card attacker"><span class="ico">😈</span><div class="ttl">盗聴者</div><div class="desc">パスワード入手</div></div>
+      <div class="diag-arrow">▶</div>
+      <div class="diag-card victim"><span class="ico">🖥️</span><div class="ttl">サーバ</div></div>
+    </div>
+    <div class="diag-sub" style="color:#16a34a;margin-top:10px">✅ CHAP（Challenge Handshake Authentication Protocol・チャレンジハンドシェイク認証プロトコル）：パスワード本体は流れない</div>
+    <div class="diag-row">
+      <div class="diag-card neutral"><span class="ico">👤</span><div class="ttl">クライアント</div></div>
+      <div class="diag-arrow">◀<small>①乱数<br>"これハッシュして"</small></div>
+      <div class="diag-card safe"><span class="ico">🖥️</span><div class="ttl">サーバ</div><div class="desc">乱数（challenge）<br>を発行</div></div>
+    </div>
+    <div class="diag-row">
+      <div class="diag-card neutral"><span class="ico">👤</span><div class="ttl">クライアント</div><div class="desc">パスワード+乱数を<br>ハッシュ化</div></div>
+      <div class="diag-arrow">▶<small>②ハッシュ値<br>（response）</small></div>
+      <div class="diag-card safe"><span class="ico">🖥️</span><div class="ttl">サーバ</div><div class="desc">同じ計算をして<br>一致を確認</div></div>
+    </div>
+    <div class="diag-note">📌 通信路を流れるのは<strong>毎回違う乱数とハッシュ値</strong>だけ。盗聴されても再利用不能（リプレイ攻撃も封じる）</div>
+
+    <div class="kids-box" style="margin-top:14px">
+      <div class="kids-scene">
+        <div class="kids-bubble">🖥️<br><strong>先生（サーバ）</strong><br>「今日のなぞなぞは<br>『りんご＋みかん=？』」<br>（毎日違う問題）</div>
+        <div class="kids-arrow">▶答えを<br>計算して送る</div>
+        <div class="kids-bubble">👤<br><strong>あなた（クライアント）</strong><br>「答えは みかんご です！」<br>（パスワード本体は言わない）</div>
+        <div class="kids-arrow">▶先生も<br>答え合わせ</div>
+        <div class="kids-bubble">✅<br><strong>先生</strong><br>「正解！本人確認OK」<br>（盗み聞きしても<br>明日は違う問題）</div>
+      </div>
+      <div class="kids-point">📌 CHAPは「毎回違うなぞなぞ（チャレンジ）に答える」しくみ。パスワードそのものは一度もネットに流れない。盗み聞きした答えは明日のなぞなぞには使えない＝再利用不能。</div>
+    </div>
+
+    <h4 style="margin-top:14px">🔢 OTP（One-Time Password・ワンタイムパスワード）：1回限りで使い捨て</h4>
+    <div class="diag-grid4">
+      <div class="diag-card neutral"><span class="ico">⏰</span><div class="ttl">TOTP</div><div class="desc"><strong>時間ベース</strong>（Time-based）<br>30秒ごとに自動更新<br>Google Authenticator等</div></div>
+      <div class="diag-card neutral"><span class="ico">🔢</span><div class="ttl">HOTP</div><div class="desc"><strong>カウンタベース</strong>（HMAC-based）<br>使う度に1ずつ加算<br>ハードトークン等</div></div>
+    </div>
+    <div class="diag-note">📌 盗聴されても、その値は<strong>もう次の瞬間／次の認証で無効</strong>。「パスワード再利用」攻撃を物理的に不可能にする</div>
+  </div>
+
+<div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">出題年度不明</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> CHAP（Challenge Handshake Authentication Protocol）に関する説明として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. クライアントがパスワードを平文でサーバに送信し、サーバ側で照合するシンプルな認証方式</li>
+    <li>イ. 時間ベースで変化するワンタイムパスワードを使い、30秒ごとに更新される認証方式</li>
+    <li>ウ. サーバが乱数（チャレンジ）をクライアントに送り、クライアントがハッシュ計算した結果を返す方式</li>
+    <li>エ. SSLハンドシェイクで証明書交換後に共通鍵を生成するプロトコルの別名である</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#1565c0;">✅ 正解:ウ</strong> &nbsp;<span style="color:#555;">CHAPはチャレンジレスポンス認証。サーバが乱数（チャレンジ）を送り→クライアントが「パスワード+乱数」のハッシュで応答→パスワード自体はネットを流れない。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: パスワードを平文で送るのはPAP（Password Authentication Protocol）。CHAPは平文を流さない。</li>
+      <li><strong style="color:#c62828;">イ ✗</strong>: 時間ベース30秒更新はTOTP（Time-based OTP）の説明。CHAPとは別の技術。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: CHAPはSSLとは無関係。PPP接続の認証プロトコルである。</li>
+    </ul>
+  </div></details>
+</div>
+
+<div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜OTP（ワンタイムパスワード）の種類</div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> OTP（One-Time Password・ワンタイムパスワード）に関する説明として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. 同じパスワードを複数のサービスで使い回す方式で、記憶コストを下げるために設計された</li>
+    <li>イ. 使い捨てパスワードだが盗聴されると同じ値が翌日まで再利用可能な点が欠点である</li>
+    <li>ウ. TOTPはハードウェアカウンタに基づくワンタイムパスワードであり、HOTPは時間ベースである</li>
+    <li>エ. TOTPは時間ベース（30秒更新）、HOTPはカウンタベースのOTPであり、盗聴されても再利用不能である</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#065f46;">✅ 正解:エ</strong> &nbsp;<span style="color:#555;">TOTP（Time-based）は30秒ごとに更新。HOTP（HMAC-based）はカウンタで更新。どちらも使い捨てで盗聴されても再利用不能。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: OTPは使い回しを防ぐために1回限りのパスワードを生成する技術。説明が真逆。</li>
+      <li><strong style="color:#c62828;">イ ✗</strong>: OTPは盗聴されても「その値はもう無効」なのが利点。再利用可能というのは誤り。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: TOTPとHOTPの説明が逆。TOTPが時間ベース、HOTPがカウンタベース。</li>
+    </ul>
+  </div></details>
+</div>
+
+  <h2 class="section-title st-purple">🔁 SSO（Single Sign-On・シングルサインオン）とJPKI</h2>
+<div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+  <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+  <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">SSOは「一回ログインしたら全部のサービスが使える」便利な仕組み。ただし入口（IdP）を破られると全サービスが陥落するリスクがある。JPKIはマイナンバーカードの2種類の電子証明書で、「署名用＝実印（重要文書）」「利用者証明用＝認印（ログイン）」と役割が違う。</p>
+  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+    <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#1e40af;">👤 利用者（1回ログイン）</div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+    <div style="background:#ede9fe;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#5b21b6;">🔑 IdP（認証サーバ）<br><span style="font-weight:400;font-size:.75rem;">SAML/OAuth/OpenID</span></div>
+    <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+    <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#166534;">📧📊📅 全サービス利用可</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.5rem;">
+    <div style="background:#fee2e2;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.2rem;">🖋️</div>
+      <div style="font-size:.78rem;font-weight:700;color:#b91c1c;">署名用証明書（実印）</div>
+      <div style="font-size:.73rem;color:#7f1d1d;margin-top:.2rem;">e-Tax・重要文書<br>「この文書は私が作成」</div>
+    </div>
+    <div style="background:#dbeafe;border-radius:6px;padding:.5rem;text-align:center;">
+      <div style="font-size:1.2rem;">🪪</div>
+      <div style="font-size:.78rem;font-weight:700;color:#1e40af;">利用者証明用（認印）</div>
+      <div style="font-size:.73rem;color:#1e3a8a;margin-top:.2rem;">マイナポータル<br>「本人がアクセス」</div>
+    </div>
+  </div>
+</div>
+  <div class="two-col">
+    <div class="card card-teal">
+      <h4>SSO（Single Sign-On・シングルサインオン）</h4>
+      <p>1度のログインで複数システムにアクセス可能。<strong>SAML（Security Assertion Markup Language・セキュリティアサーションマークアップ言語）／OAuth（オープン認可）／OpenID Connect</strong>などの規格で実現。</p>
+      <p class="exam-pt">📝【1次】利便性向上の半面、SSO破られると全システム陥落のリスク。</p>
+    </div>
+    <div class="card card-orange">
+      <h4>JPKI（Japan Public Key Infrastructure・公的個人認証サービス）</h4>
+      <p>マイナンバーカードのICチップに格納された電子証明書で本人認証。<strong>署名用</strong>（実印相当）と<strong>利用者証明用</strong>（認印相当）の2種類。</p>
+      <p class="exam-pt">📝【1次】R06新出論点。e-Tax・各種行政手続きで活用。</p>
+    </div>
+  </div>
+
+  <div class="diag-box">
+    <h4>🔁 SSO（Single Sign-On・シングルサインオン）の動き</h4>
+    <div class="diag-sub" style="color:#c62828">❌ SSOなし：サービス毎に毎回ログイン地獄</div>
+    <div class="diag-row">
+      <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">利用者</div></div>
+      <div class="diag-arrow">▶<small>都度<br>ログイン</small></div>
+      <div class="diag-card neutral"><span class="ico">📧</span><div class="ttl">メール</div><div class="desc">ID/Pass</div></div>
+      <div class="diag-card neutral"><span class="ico">📊</span><div class="ttl">経費</div><div class="desc">ID/Pass</div></div>
+      <div class="diag-card neutral"><span class="ico">📅</span><div class="ttl">勤怠</div><div class="desc">ID/Pass</div></div>
+    </div>
+    <div class="diag-sub" style="color:#16a34a;margin-top:10px">✅ SSOあり：1回のログインで全部使える</div>
+    <div class="diag-row">
+      <div class="diag-card victim"><span class="ico">👤</span><div class="ttl">利用者</div></div>
+      <div class="diag-arrow">▶<small>1回だけ<br>ログイン</small></div>
+      <div class="diag-card safe" style="background:#ede9fe;border-color:#7c3aed"><span class="ico">🔑</span><div class="ttl">IdP<br>（認証サーバ）</div><div class="desc">SAML/OAuth/<br>OpenID Connect</div></div>
+      <div class="diag-arrow">▶<small>トークン<br>発行</small></div>
+      <div class="diag-card safe"><span class="ico">📧📊📅</span><div class="ttl">全サービス</div></div>
+    </div>
+    <div class="diag-note" style="background:#fef2f2;border-color:#dc2626;color:#7f1d1d">⚠️ <strong>SSO破られると全システム陥落</strong>のリスク→IdPは<strong>MFA</strong>で厳重に守る必要あり</div>
+
+    <h4 style="margin-top:14px">🪪 JPKI（Japan Public Key Infrastructure・公的個人認証サービス）：マイナンバーカードの2つの証明書</h4>
+    <div class="diag-row">
+      <div class="diag-card safe" style="background:#fee2e2;border-color:#dc2626"><span class="ico">🖋️</span><div class="ttl">署名用電子証明書</div><div class="desc"><strong>実印相当</strong><br>e-Tax確定申告等<br>「文書を私が作成」<br>を証明</div></div>
+      <div class="diag-card safe" style="background:#dbeafe;border-color:#3b82f6"><span class="ico">🪪</span><div class="ttl">利用者証明用電子証明書</div><div class="desc"><strong>認印相当</strong><br>マイナポータルログイン等<br>「私本人がアクセス」<br>を証明</div></div>
+    </div>
+    <div class="diag-note">📌 <strong>署名用＝重要文書用 / 利用者証明用＝ログイン用</strong>と役割が分離（R06新出）</div>
+  </div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ このタブの要点</div>
+    <ul>
+      <li>❶ 認証3要素＝<strong>知識（SYK：Something You Know）・所持（SYH：Something You Have）・生体（SYA：Something You Are）</strong>。MFA（Multi-Factor Authentication・多要素認証）は<strong>異なる要素</strong>を2つ以上</li>
+      <li>❷ <strong>CHAP（Challenge Handshake Authentication Protocol・チャレンジハンドシェイク認証プロトコル）は暗号（チャレンジレスポンス）／PAP（Password Authentication Protocol・パスワード認証プロトコル）は平文（非推奨）</strong>。OTP（One-Time Password・ワンタイムパスワード）は1回限り（TOTP（Time-based One-Time Password）＝時間ベース）</li>
+      <li>❸ SSO（Single Sign-On・シングルサインオン）破られると全システム陥落リスク。JPKI（Japan Public Key Infrastructure・公的個人認証サービス）は<strong>署名用（実印）＋利用者証明用（認印）</strong>の2種</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /tab-container -->
+
+<div style="max-width:920px;margin:0 auto 2rem;padding:0 .8rem;">
+
+<div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">R06近辺</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> SSO（Single Sign-On・シングルサインオン）に関する説明として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. 一度の認証で複数のシステムにアクセスできる仕組みで、SAMLやOAuthなどの規格で実現される</li>
+    <li>イ. SSO環境では認証が強化されるため、攻撃者がSSO基盤を突破しても被害は1システムに限定される</li>
+    <li>ウ. JPKIはSSO技術の一種であり、複数の行政サービスに一度のログインでアクセスする専用規格である</li>
+    <li>エ. OAuthはSSO専用のプロトコルで、国際規格として認証と認可の両方に特化した仕様となっている</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#1565c0;">✅ 正解:ア</strong> &nbsp;<span style="color:#555;">SSOは「1回ログイン→複数システム」の利便性向上の仕組み。SAML・OAuth・OpenID Connectで実現される。半面、SSO基盤が破られると全システムが危険にさらされるリスクがある。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">イ ✗</strong>: SSOが破られると全システムへの不正アクセスが可能になる。被害が限定されるのではなく拡大するリスクがある。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: JPKIはマイナンバーカードの電子証明書を使う本人認証サービス。SSOの一種ではない。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: OAuthは「認可」のプロトコル。認証はOpenID Connectが担う。SSO専用でもない。</li>
+    </ul>
+  </div></details>
+</div>
+
+<div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+  <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜JPKI（公的個人認証サービス）の特徴</div>
+  <p style="margin:.3rem 0;"><strong>Q.</strong> JPKI（公的個人認証サービス）に関する説明として最も適切なものはどれか。</p>
+  <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+    <li>ア. JPKIは住民票をデジタル化し、インターネット上で住民情報を閲覧できるサービスである</li>
+    <li>イ. マイナンバーカードのICチップの電子証明書を用いた本人認証で、署名用と利用者証明用の2種類がある</li>
+    <li>ウ. JPKIはOAuth2.0を基盤とした認証フレームワークであり、民間企業のIDと連携して使用する</li>
+    <li>エ. JPKIの電子証明書は1種類のみで、行政手続きと金融取引の両方に共通して使用できる</li>
+  </ul>
+  <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+  <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+    <strong style="color:#065f46;">✅ 正解:イ</strong> &nbsp;<span style="color:#555;">JPKIはマイナンバーカードICチップの電子証明書で本人認証。署名用（実印相当・e-Tax等）と利用者証明用（認印相当・コンビニ交付等）の2種類が核心ポイント。</span>
+    <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+      <li><strong style="color:#c62828;">ア ✗</strong>: 住民票のデジタル閲覧はJPKIの機能ではない。JPKIは「本人認証」が目的。</li>
+      <li><strong style="color:#c62828;">ウ ✗</strong>: JPKIはOAuthベースではなく公開鍵基盤（PKI）を使った電子証明書方式。</li>
+      <li><strong style="color:#c62828;">エ ✗</strong>: 証明書は2種類（署名用と利用者証明用）。1種類のみというのは誤り。</li>
+    </ul>
+  </div></details>
+</div>
+
+  <div style="background:linear-gradient(135deg,#1a5276,#2980b9);border-radius:10px;padding:1rem 1.4rem;margin:1.5rem 0 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+    <span style="color:#fff;font-weight:800;font-size:1.05rem;">✏️ 穴埋め確認</span>
+    <span style="display:flex;gap:.5rem;">
+      <button class="fill-reveal-btn" onclick="revealAll('fill-section-17')">🔍 全て表示</button>
+      <button class="fill-reveal-btn reset-btn" onclick="resetAll('fill-section-17')">🔄 リセット</button>
+    </span>
+  </div>
+  <div id="fill-section-17">
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#2980b9,#3498db)">① ハッシュアルゴリズム比較</div>
+    <div class="fill-body">
+      <div class="tbl-wrap"><table class="tbl-blue">
+        <tr><th>アルゴリズム</th><th>出力長</th><th>現在の評価</th></tr>
+        <tr><td>SHA（Secure Hash Algorithm）-256</td><td>256bit</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">✅ 推奨（現役標準）</span></td></tr>
+        <tr><td>SHA（Secure Hash Algorithm）-1</td><td>160bit</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">⚠️ 非推奨（衝突発見済）</span></td></tr>
+        <tr><td>MD5（Message Digest 5）</td><td>128bit</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">❌ 非推奨（脆弱・衝突容易）</span></td></tr>
+      </table></div>
+      <p style="font-size:.83rem;color:#b71c1c;background:#fce4ec;padding:.35rem .6rem;border-radius:6px;margin-top:.5rem;">⚠️ 「ハッシュ値から元データを復元できる」は<strong>誤り</strong>（一方向性が定義）</p>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#2980b9,#3498db)">② デジタル署名フロー（使う鍵の種類）</div>
+    <div class="fill-body">
+      <div class="tbl-wrap"><table class="tbl-blue">
+        <tr><th>フェーズ</th><th>操作</th><th>使う鍵</th></tr>
+        <tr><td>送信側①</td><td>平文をハッシュ化して指紋を作る</td><td>（鍵は不要）</td></tr>
+        <tr><td>送信側②</td><td>指紋を暗号化して「署名」を作る</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">送信者の秘密鍵</span></td></tr>
+        <tr><td>受信側①</td><td>署名を復号して指紋を取り出す</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">送信者の公開鍵</span></td></tr>
+        <tr><td>受信側②</td><td>受信平文のハッシュ値と照合</td><td>（一致なら本物）</td></tr>
+      </table></div>
+      <p style="font-size:.83rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;margin-top:.5rem;">📝 署名の3効能：<span class="fill-blank" onclick="this.classList.toggle('show')">本人性・改ざん検知・否認防止</span>　❌ <span class="fill-blank" onclick="this.classList.toggle('show')">機密性は含まない</span></p>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#00897b,#26a69a)">③ PKI（Public Key Infrastructure・公開鍵基盤）の構成要素</div>
+    <div class="fill-body">
+      <div class="tbl-wrap"><table class="tbl-teal">
+        <tr><th>要素</th><th>役割・内容</th></tr>
+        <tr><td>CA（Certificate Authority・認証局）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">公開鍵が本人のものと保証する信頼できる第三者機関</span></td></tr>
+        <tr><td>電子証明書</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">「この公開鍵はXさん本人」とCAが署名した証明書</span></td></tr>
+        <tr><td>CRL（Certificate Revocation List・証明書失効リスト）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">失効した証明書の一覧リスト（定期更新・オフライン参照可）</span></td></tr>
+        <tr><td>OCSP（Online Certificate Status Protocol）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">証明書の有効性を1件ずつリアルタイムで照会する方式</span></td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#00897b,#26a69a)">④ HTTP vs HTTPS 比較</div>
+    <div class="fill-body">
+      <div class="tbl-wrap"><table class="tbl-teal">
+        <tr><th>項目</th><th>HTTP（HyperText Transfer Protocol）</th><th>HTTPS（HTTP over TLS）</th></tr>
+        <tr><td>暗号化</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">❌ なし（平文・筒抜け）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">✅ TLS（Transport Layer Security）で暗号化</span></td></tr>
+        <tr><td>ポート番号</td><td>80</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">443</span></td></tr>
+        <tr><td>盗聴・改ざん</td><td>防げない（MITM攻撃が容易）</td><td>防げる</td></tr>
+      </table></div>
+      <p style="font-size:.83rem;color:#004d40;background:#e0f2f1;padding:.35rem .6rem;border-radius:6px;margin-top:.5rem;">📝 TLSハンドシェイクの順序：①証明書検証 → ②<span class="fill-blank" onclick="this.classList.toggle('show')">公開鍵で共通鍵を安全に交換</span> → ③<span class="fill-blank" onclick="this.classList.toggle('show')">共通鍵で本通信（高速）</span></p>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#8e44ad,#9b59b6)">⑤ 認証の3要素とMFA（Multi-Factor Authentication・多要素認証）</div>
+    <div class="fill-body">
+      <div class="tbl-wrap"><table class="tbl-purple">
+        <tr><th>要素</th><th>英略語</th><th>具体例</th></tr>
+        <tr><td>知識（Something You Know）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">SYK</span></td><td>パスワード・PIN・秘密の質問</td></tr>
+        <tr><td>所持（Something You Have）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">SYH</span></td><td>ICカード・スマホ・トークン</td></tr>
+        <tr><td>生体（Something You Are）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">SYA</span></td><td>指紋・顔・虹彩・静脈</td></tr>
+      </table></div>
+      <div class="tbl-wrap" style="margin-top:1rem"><table class="tbl-purple">
+        <tr><th>組み合わせ</th><th>MFA成立？</th></tr>
+        <tr><td>パスワード（知識）＋スマホ（所持）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">✅ 成立（異なる要素）</span></td></tr>
+        <tr><td>パスワード＋秘密の質問（両方とも知識）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">❌ 成立しない（同じ要素）＝多段階認証</span></td></tr>
+        <tr><td>指紋＋虹彩（両方とも生体）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">❌ 成立しない（同じ要素）</span></td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header" style="background:linear-gradient(135deg,#8e44ad,#9b59b6)">⑥ 個別認証手法の比較</div>
+    <div class="fill-body">
+      <div class="tbl-wrap"><table class="tbl-purple">
+        <tr><th>方式</th><th>仕組みのポイント</th><th>安全性</th></tr>
+        <tr><td>CHAP（Challenge Handshake Authentication Protocol）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">サーバが乱数（チャレンジ）を発行し、クライアントがハッシュ計算して返す</span></td><td>✅ パスワードが流れない</td></tr>
+        <tr><td>PAP（Password Authentication Protocol）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">平文でパスワードをそのまま送信する</span></td><td>❌ 盗聴に弱い・非推奨</td></tr>
+        <tr><td>OTP（TOTP：Time-based One-Time Password）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">時間ベースで30秒ごとに自動更新される1回限りのパスワード</span></td><td>✅ 盗聴されても再利用不能</td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  </div><!-- /fill-section-17 -->
+</div>
+
+<div class="footer" style="text-align:center;padding:1.5rem;color:#aeb6bf;font-size:.8rem">
+  経営情報システム ｜ 17.暗号・認証 要点まとめ ｜ 署名・ハッシュ ／ PKI・SSL/TLS ／ 認証
+</div>
+
+<script>
+function switchTab(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function revealAll(tabId){
+  var el=document.getElementById(tabId);if(!el)return;
+  var blanks=el.querySelectorAll('.fill-blank');
+  var allShown=Array.from(blanks).every(function(b){return b.classList.contains('show');});
+  blanks.forEach(function(b){allShown?b.classList.remove('show'):b.classList.add('show');});
+}
+function resetAll(tabId){
+  var el=document.getElementById(tabId);if(!el)return;
+  el.querySelectorAll('.fill-blank').forEach(function(b){b.classList.remove('show');});
+}
+</script>
+</body>
+</html>

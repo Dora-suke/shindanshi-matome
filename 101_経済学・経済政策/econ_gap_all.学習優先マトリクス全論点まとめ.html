@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>経済学・経済政策 学習優先マトリクス（全14論点）</title>
+<link rel="stylesheet" href="note_style.css">
+<style>
+.priority-badge{display:inline-block;background:#fff;border:2px solid currentColor;padding:.25rem .8rem;border-radius:20px;font-size:.82rem;font-weight:700;margin:.3rem .3rem .3rem 0}
+.priority-badge.p-green{color:var(--green-main)}
+.priority-badge.p-orange{color:var(--orange-main)}
+.priority-badge.p-teal{color:var(--teal-main)}
+.priority-badge.p-red{color:var(--red-main)}
+.priority-badge.p-blue{color:var(--blue-main)}
+.priority-badge.p-purple{color:var(--purple-main)}
+.trap-item{display:flex;align-items:baseline;gap:.4rem;padding:.45rem .7rem;margin:.35rem 0;border-radius:6px;font-size:.88rem;line-height:1.7}
+.trap-item.ng{background:#fce4ec;border-left:4px solid var(--red-main);color:#7b1fa2}
+.trap-item.ok{background:#e8f5e9;border-left:4px solid var(--green-main);color:#1b5e20}
+.trap-badge{font-size:1rem;flex-shrink:0}
+.dep-flow{background:#fff;border-radius:12px;padding:1.2rem;margin:1rem 0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.dep-row{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;margin:.5rem 0}
+.dep-node{display:inline-block;padding:.3rem .75rem;border-radius:18px;font-size:.82rem;font-weight:700;white-space:nowrap}
+.dep-node.none{background:#f1f5f9;color:#546e7a;border:1px solid #b0bec5}
+.dep-node.green{background:var(--green-light);color:var(--green-dark);border:1px solid var(--green-main)}
+.dep-node.orange{background:var(--orange-pale);color:var(--orange-dark);border:1px solid var(--orange-main)}
+.dep-node.teal{background:var(--teal-light);color:var(--teal-main);border:1px solid var(--teal-main)}
+.dep-node.red{background:var(--red-light);color:var(--red-dark);border:1px solid var(--red-main)}
+.dep-node.blue{background:var(--blue-light);color:var(--blue-dark);border:1px solid var(--blue-main)}
+.dep-node.purple{background:var(--purple-light);color:var(--purple-dark);border:1px solid var(--purple-main)}
+.dep-arrow{font-size:1.1rem;color:var(--gray-mid)}
+svg.econ-chart{background:#fff;border-radius:8px;border:1px solid #e0e0e0;margin:.7rem 0;max-width:100%;display:block}
+.four-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid #b0bec5;border-radius:8px;overflow:hidden;margin:1rem 0;font-size:.88rem;text-align:center}
+.four-grid-header{background:#546e7a;color:#fff;font-weight:700;padding:.5rem;font-size:.8rem}
+.four-grid-cell{padding:.7rem .5rem;border:1px solid #e0e0e0;line-height:1.6}
+.four-grid-cell.private{background:var(--blue-light)}
+.four-grid-cell.club{background:var(--green-light)}
+.four-grid-cell.common{background:var(--orange-pale)}
+.four-grid-cell.public{background:var(--purple-light)}
+.payoff-table{width:auto;margin:1rem auto;font-size:.88rem;border:2px solid #546e7a}
+.payoff-table th,.payoff-table td{border:1px solid #b0bec5;padding:.5rem .9rem;text-align:center}
+.payoff-table th{background:#37474f;color:#fff}
+.payoff-table .ne-cell{background:#ffebee;font-weight:700;color:#b71c1c}
+.payoff-table .eff-cell{background:#e8f5e9;font-weight:700;color:#1b5e20}
+.matrix-scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 経済学・経済政策 学習優先マトリクス（全14論点）</h1>
+  <div class="subtitle">中小企業診断士 1次試験 / 出題頻度・前提関係を踏まえた学習ロードマップ</div>
+  <div class="badge">R2-R6過去問分析に基づく優先順</div>
+</div>
+
+<div class="tab-container">
+  <div class="tab-nav">
+    <button class="tab-btn active" data-color="blue" data-target="tab_index" onclick="switchTab('tab_index')">📋 全論点一覧</button>
+    <button class="tab-btn" data-color="green" data-target="tab_a" onclick="switchTab('tab_a')">前提A 完全競争</button>
+    <button class="tab-btn" data-color="green" data-target="tab_b" onclick="switchTab('tab_b')">前提B 独占市場</button>
+    <button class="tab-btn" data-color="orange" data-target="tab_a1" onclick="switchTab('tab_a1')">A1 IS-LM</button>
+    <button class="tab-btn" data-color="teal" data-target="tab_a2" onclick="switchTab('tab_a2')">A2 国際貿易</button>
+    <button class="tab-btn" data-color="teal" data-target="tab_a3" onclick="switchTab('tab_a3')">A3 マンデル=F</button>
+    <button class="tab-btn" data-color="red" data-target="tab_ext" onclick="switchTab('tab_ext')">③ 外部性</button>
+    <button class="tab-btn" data-color="purple" data-target="tab_phil" onclick="switchTab('tab_phil')">前提C+⑤ フィリップス等</button>
+    <button class="tab-btn" data-color="blue" data-target="tab_game" onclick="switchTab('tab_game')">① ゲーム理論</button>
+    <button class="tab-btn" data-color="orange" data-target="tab_info" onclick="switchTab('tab_info')">② 情報非対称</button>
+    <button class="tab-btn" data-color="green" data-target="tab_cost" onclick="switchTab('tab_cost')">⑥ 費用逓減</button>
+    <button class="tab-btn" data-color="teal" data-target="tab_pub" onclick="switchTab('tab_pub')">④ 公共財</button>
+    <button class="tab-btn" data-color="purple" data-target="tab_mono" onclick="switchTab('tab_mono')">⑭ 独占的競争</button>
+  </div>
+
+  <!-- ===== tab_index ===== -->
+  <div class="tab-panel theme-blue active" id="tab_index">
+    <div class="section-title st-blue">📋 学習優先マトリクス（全14論点）</div>
+    <div class="matrix-scroll">
+      <table class="tbl-blue">
+        <thead>
+          <tr><th>優先</th><th>論点</th><th>前提知識</th><th>種別</th><th>R2-R6出題数</th><th>ページ量</th><th>グラフ</th><th>穴埋め</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>前提A 完全競争・余剰分析</td><td>なし</td><td>G</td><td>（土台）</td><td>小</td><td>1枚</td><td>少</td></tr>
+          <tr><td>2</td><td>前提B 独占市場（MR・死荷重）</td><td>前提A</td><td>G</td><td>R6,R5,R4,R3各1問</td><td>小〜中</td><td>1枚</td><td>少</td></tr>
+          <tr><td>3</td><td>A1 IS-LM・財政金融政策</td><td>貨幣需要・投資関数</td><td>G</td><td>8問（最多）R6-11,R5-8,R3-6等</td><td>大</td><td>2枚</td><td>多</td></tr>
+          <tr><td>4</td><td>A2 国際貿易・比較優位</td><td>前提A</td><td>K</td><td>R6-9,R5-9,R5-21</td><td>中</td><td>1枚</td><td>中</td></tr>
+          <tr><td>5</td><td>A3 マンデル=フレミング</td><td>A1(IS-LM)</td><td>G+K</td><td>R6-11,R5-10,R3-10</td><td>中</td><td>1枚</td><td>多</td></tr>
+          <tr><td>6</td><td>③ 外部性・ピグー税・コースの定理</td><td>前提A</td><td>G</td><td>各年1問程度</td><td>大</td><td>3〜4枚</td><td>中</td></tr>
+          <tr><td>7</td><td>前提C AD-AS（総需要・総供給）</td><td>A1(IS-LM)</td><td>G</td><td>R4-7,H27-7</td><td>小〜中</td><td>1枚</td><td>少</td></tr>
+          <tr><td>8</td><td>⑤-a フィリップス曲線</td><td>前提C</td><td>G+K</td><td>R6-12,R4-10</td><td>中</td><td>2枚</td><td>中</td></tr>
+          <tr><td>9</td><td>⑤-b 消費理論</td><td>なし</td><td>K</td><td>R4-4,R3-4,R1-4</td><td>中</td><td>0枚</td><td>多</td></tr>
+          <tr><td>10</td><td>① ゲーム理論</td><td>前提B（寡占理解）</td><td>K</td><td>R5-22,R4-20等</td><td>中</td><td>1〜2枚</td><td>多</td></tr>
+          <tr><td>11</td><td>② 情報の非対称性</td><td>なし</td><td>K</td><td>R5-18,R1-19</td><td>中</td><td>0枚</td><td>中</td></tr>
+          <tr><td>12</td><td>⑥ 費用逓減産業・自然独占</td><td>前提B</td><td>G</td><td>R5-19,R2-21</td><td>中</td><td>1枚</td><td>中</td></tr>
+          <tr><td>13</td><td>④ 公共財・フリーライダー</td><td>なし</td><td>K</td><td>R4-18等</td><td>小</td><td>1枚</td><td>少</td></tr>
+          <tr><td>14</td><td>⑭ 独占的競争市場</td><td>前提B</td><td>K</td><td>H30以降散発</td><td>小</td><td>1枚</td><td>少</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title st-blue" style="margin-top:1.6rem">🔗 前提関係の依存フロー</div>
+    <div class="dep-flow">
+      <div class="dep-row">
+        <span class="dep-node none">なし</span><span class="dep-arrow">→</span>
+        <span class="dep-node green">前提A 完全競争</span><span class="dep-arrow">→</span>
+        <span class="dep-node green">前提B 独占市場</span><span class="dep-arrow">→</span>
+        <span class="dep-node blue">① ゲーム理論</span>
+      </div>
+      <div class="dep-row" style="padding-left:16rem">
+        <span class="dep-arrow">→</span><span class="dep-node green">⑥ 費用逓減産業</span>
+      </div>
+      <div class="dep-row" style="padding-left:16rem">
+        <span class="dep-arrow">→</span><span class="dep-node purple">⑭ 独占的競争市場</span>
+      </div>
+      <div class="dep-row">
+        <span class="dep-node none">なし</span><span class="dep-arrow">→</span>
+        <span class="dep-node green">前提A 完全競争</span><span class="dep-arrow">→</span>
+        <span class="dep-node red">③ 外部性・ピグー税</span>
+      </div>
+      <div class="dep-row">
+        <span class="dep-node none">なし</span><span class="dep-arrow">→</span>
+        <span class="dep-node orange">② 情報の非対称性</span>
+      </div>
+      <div class="dep-row">
+        <span class="dep-node none">なし</span><span class="dep-arrow">→</span>
+        <span class="dep-node teal">④ 公共財</span>
+      </div>
+      <div class="dep-row">
+        <span class="dep-node none">なし</span><span class="dep-arrow">→</span>
+        <span class="dep-node purple">⑤-b 消費理論</span>
+      </div>
+      <div class="dep-row">
+        <span class="dep-node none">なし</span><span class="dep-arrow">→</span>
+        <span class="dep-node orange">A1 IS-LM</span><span class="dep-arrow">→</span>
+        <span class="dep-node teal">A2 国際貿易</span><span class="dep-arrow">→</span>
+        <span class="dep-node teal">A3 マンデル=F</span>
+      </div>
+      <div class="dep-row">
+        <span class="dep-node none">なし</span><span class="dep-arrow">→</span>
+        <span class="dep-node orange">A1 IS-LM</span><span class="dep-arrow">→</span>
+        <span class="dep-node purple">前提C AD-AS</span><span class="dep-arrow">→</span>
+        <span class="dep-node purple">⑤-a フィリップス曲線</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== tab_a ===== -->
+  <div class="tab-panel theme-green" id="tab_a">
+    <span class="priority-badge p-green">優先度 1 / 14</span>
+    <div class="section-title st-green">前提A 完全競争・余剰分析</div>
+    <table class="tbl-green">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>需要曲線</td><td>右下がり。価格↓→需要量↑</td><td>グラフ読み取り</td></tr>
+        <tr><td>供給曲線</td><td>右上がり。価格↑→供給量↑（=MC曲線）</td><td>グラフ読み取り</td></tr>
+        <tr><td>市場均衡</td><td>需要曲線と供給曲線の交点 → 均衡価格P*・均衡数量Q*</td><td>「均衡点はどこか」</td></tr>
+        <tr><td>消費者余剰</td><td>需要曲線と市場価格の差の面積（需要曲線より下・P*より上）</td><td>グラフで三角形の面積</td></tr>
+        <tr><td>生産者余剰</td><td>市場価格と供給曲線の差の面積（P*より上・供給曲線より下）</td><td>グラフで三角形の面積</td></tr>
+        <tr><td>社会的総余剰</td><td>消費者余剰＋生産者余剰。完全競争で最大化</td><td>「余剰が最大となる市場形態は」</td></tr>
+        <tr><td>死荷重</td><td>課税・独占等で生じる余剰の損失（三角形の面積）</td><td>「課税による厚生損失はどこか」</td></tr>
+        <tr><td>利潤最大化条件</td><td>完全競争ではP＝MC（価格受容者＝プライステイカー）</td><td>「企業はどの数量で供給するか」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-green">📊 余剰分析 基本グラフ</div>
+    <svg class="econ-chart" width="380" height="300" viewBox="0 0 380 300">
+      <!-- axes -->
+      <line x1="50" y1="260" x2="340" y2="260" stroke="#555" stroke-width="2"/>
+      <line x1="50" y1="20" x2="50" y2="260" stroke="#555" stroke-width="2"/>
+      <text x="345" y="264" font-size="13" fill="#555">Q</text>
+      <text x="38" y="16" font-size="13" fill="#555">P</text>
+      <!-- Demand curve D: from (70,40) to (330,220) -->
+      <!-- Supply curve S: from (70,220) to (330,80) -->
+      <!-- Equilibrium: D and S cross at x=200, y=130 → P*,Q* -->
+      <!-- Consumer surplus: triangle (70,40),(200,40),(200,130) fill lightblue -->
+      <polygon points="70,40 200,40 200,130" fill="rgba(41,128,185,0.25)" stroke="none"/>
+      <!-- Producer surplus: triangle (70,220),(200,220),(200,130) fill lightgreen -->
+      <polygon points="70,220 200,220 200,130" fill="rgba(39,174,96,0.25)" stroke="none"/>
+      <!-- Demand line -->
+      <line x1="70" y1="40" x2="330" y2="220" stroke="#2980b9" stroke-width="2.5"/>
+      <!-- Supply line -->
+      <line x1="70" y1="220" x2="330" y2="80" stroke="#e74c3c" stroke-width="2.5"/>
+      <!-- P* horizontal line -->
+      <line x1="50" y1="130" x2="200" y2="130" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- Q* vertical line -->
+      <line x1="200" y1="130" x2="200" y2="260" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- labels -->
+      <text x="335" y="218" font-size="13" fill="#2980b9" font-weight="bold">D</text>
+      <text x="335" y="78" font-size="13" fill="#e74c3c" font-weight="bold">S</text>
+      <text x="34" y="134" font-size="12" fill="#555">P*</text>
+      <text x="196" y="275" font-size="12" fill="#555">Q*</text>
+      <circle cx="200" cy="130" r="5" fill="#333"/>
+      <text x="204" y="125" font-size="11" fill="#333">E</text>
+      <!-- labels surplus -->
+      <text x="100" y="100" font-size="11" fill="#1a5276">消費者余剰</text>
+      <text x="95" y="195" font-size="11" fill="#1e8449">生産者余剰</text>
+    </svg>
+
+    <div class="section-title st-green">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「完全競争市場の企業はプライスメイカーである」→ ×（プライステイカー）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「社会的総余剰は独占市場でも最大となる」→ ×（死荷重が生じる）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ok"><span class="trap-badge">✅</span>「供給曲線は限界費用曲線と一致する」→ ○</div></div>
+  </div>
+
+  <!-- ===== tab_b ===== -->
+  <div class="tab-panel theme-green" id="tab_b">
+    <span class="priority-badge p-green">優先度 2 / 14</span>
+    <div class="section-title st-green">前提B 独占市場（MR・死荷重）</div>
+    <table class="tbl-green">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>プライスメイカー</td><td>独占企業は市場価格を自ら決定できる</td><td>「完全競争との違いは何か」</td></tr>
+        <tr><td>限界収入（MR）</td><td>供給量を1単位増やしたときの収入増加額。MR&lt;P。MR曲線は需要曲線の2倍の傾き</td><td>「なぜMRが価格より低いか」</td></tr>
+        <tr><td>利潤最大化条件</td><td>MR＝MC となる生産量Q0を選択</td><td>グラフでB点の読み取り</td></tr>
+        <tr><td>独占均衡の特徴</td><td>完全競争より：価格高い・数量少ない・死荷重発生</td><td>「完全競争と比較して何が変わるか」</td></tr>
+        <tr><td>死荷重（独占）</td><td>独占均衡Q0と完全競争均衡Q1の差に対応する三角形</td><td>グラフで三角形の面積</td></tr>
+        <tr><td>独占禁止法</td><td>不当な独占を防止し公正な競争を促進</td><td>「独占の弊害を防ぐ手段は」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-green">📊 独占均衡グラフ</div>
+    <svg class="econ-chart" width="400" height="310" viewBox="0 0 400 310">
+      <line x1="50" y1="270" x2="360" y2="270" stroke="#555" stroke-width="2"/>
+      <line x1="50" y1="20" x2="50" y2="270" stroke="#555" stroke-width="2"/>
+      <text x="365" y="274" font-size="13" fill="#555">Q</text>
+      <text x="36" y="16" font-size="13" fill="#555">P</text>
+      <!-- D: (70,50)→(340,230) -->
+      <!-- MR: (70,50)→(205,230) (2x slope) -->
+      <!-- MC: (70,200)→(340,120) right upward -->
+      <!-- B point: MR=MC at ~x=148,y=167 -->
+      <!-- Q0 vertical at x=148, P0 from D at x=148: y≈106 -->
+      <!-- C point: MC=D at x=240, y=155 → Q1,P1 -->
+      <!-- deadweight triangle: B(148,167) C(240,155) and (240,108) approx -->
+
+      <!-- deadweight hatch region -->
+      <polygon points="148,106 240,155 148,167" fill="rgba(231,76,60,0.22)" stroke="#e74c3c" stroke-width="1" stroke-dasharray="4,2"/>
+
+      <!-- D line -->
+      <line x1="70" y1="50" x2="340" y2="230" stroke="#2980b9" stroke-width="2.5"/>
+      <!-- MR line -->
+      <line x1="70" y1="50" x2="205" y2="230" stroke="#9b59b6" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- MC line -->
+      <line x1="70" y1="210" x2="340" y2="120" stroke="#e74c3c" stroke-width="2.5"/>
+
+      <!-- P0 horizontal -->
+      <line x1="50" y1="106" x2="148" y2="106" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- P1 horizontal -->
+      <line x1="50" y1="155" x2="240" y2="155" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- Q0 vertical -->
+      <line x1="148" y1="106" x2="148" y2="270" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- Q1 vertical -->
+      <line x1="240" y1="155" x2="240" y2="270" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- labels -->
+      <text x="344" y="228" font-size="13" fill="#2980b9" font-weight="bold">D</text>
+      <text x="208" y="228" font-size="12" fill="#9b59b6" font-weight="bold">MR</text>
+      <text x="344" y="118" font-size="13" fill="#e74c3c" font-weight="bold">MC</text>
+      <text x="32" y="110" font-size="12" fill="#555">P0</text>
+      <text x="32" y="159" font-size="12" fill="#555">P1</text>
+      <text x="143" y="284" font-size="12" fill="#555">Q0</text>
+      <text x="236" y="284" font-size="12" fill="#555">Q1</text>
+
+      <!-- B point (MR=MC) -->
+      <circle cx="148" cy="167" r="5" fill="#9b59b6"/>
+      <text x="152" y="164" font-size="11" fill="#9b59b6">B</text>
+      <!-- C point (MC=D) -->
+      <circle cx="240" cy="155" r="5" fill="#27ae60"/>
+      <text x="244" y="152" font-size="11" fill="#27ae60">C</text>
+      <!-- demand point at Q0 -->
+      <circle cx="148" cy="106" r="4" fill="#2980b9"/>
+
+      <text x="160" y="145" font-size="10" fill="#c0392b">死荷重</text>
+    </svg>
+
+    <div class="section-title st-green">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「独占企業のMR曲線は需要曲線と一致する」→ ×（MR&lt;P、傾きは2倍）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「独占では社会的余剰が最大化される」→ ×（死荷重が発生）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「独占企業はどんな高価格でも設定できる」→ ×（需要曲線の制約を受ける）</div></div>
+  </div>
+
+  <!-- ===== tab_a1 ===== -->
+  <div class="tab-panel theme-orange" id="tab_a1">
+    <span class="priority-badge p-orange">優先度 3 / 14 ★最頻出★</span>
+    <span class="priority-badge p-orange">R2-R6出題：8問（最多）</span>
+    <div class="section-title st-orange">A1 IS-LM・財政金融政策</div>
+    <table class="tbl-orange">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>貨幣需要</td><td>取引動機＋予備的動機＋投機的動機（利子率の減少関数）</td><td>「流動性選好説の3動機」</td></tr>
+        <tr><td>流動性の罠</td><td>利子率が極めて低いとき貨幣需要が無限大 → LM曲線が水平→金融政策無効</td><td>「金融政策が無効になる条件」</td></tr>
+        <tr><td>IS曲線</td><td>財市場均衡（投資＝貯蓄）。右下がり。投資の利子弾力性大→傾きが緩やか</td><td>「IS曲線が右シフトする要因は」</td></tr>
+        <tr><td>LM曲線</td><td>貨幣市場均衡（需要＝供給）。右上がり。貨幣需要の利子弾力性大→傾きが緩やか</td><td>「LM曲線が右シフトする要因は」</td></tr>
+        <tr><td>IS-LM均衡</td><td>IS曲線とLM曲線の交点 → 利子率rと所得Yが同時決定</td><td>グラフで交点を読む</td></tr>
+        <tr><td>財政政策（G増加）</td><td>IS右シフト→利子率上昇→民間投資減少（クラウディングアウト）</td><td>「財政政策の乗数効果が小さい理由」</td></tr>
+        <tr><td>金融政策（Ms増加）</td><td>LM右シフト→利子率低下→投資増加→所得増加</td><td>「金融緩和の効果の経路」</td></tr>
+        <tr><td>財政政策が有効な条件</td><td>LMが水平（流動性の罠）→クラウディングアウトゼロ</td><td>「財政政策が最も有効なのはどの場合か」</td></tr>
+        <tr><td>金融政策が無効な条件</td><td>LMが水平（流動性の罠）→Ms増加してもr変化せず。ISが垂直（投資利子非弾力的）→金融政策無効</td><td>「金融政策が無効になる条件」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-orange">📊 IS-LM 基本グラフ</div>
+    <svg class="econ-chart" width="380" height="280" viewBox="0 0 380 280">
+      <line x1="50" y1="250" x2="340" y2="250" stroke="#555" stroke-width="2"/>
+      <line x1="50" y1="20" x2="50" y2="250" stroke="#555" stroke-width="2"/>
+      <text x="345" y="254" font-size="13" fill="#555">Y</text>
+      <text x="33" y="16" font-size="13" fill="#555">r</text>
+      <!-- IS: right downward (70,60)→(320,220) -->
+      <line x1="70" y1="60" x2="320" y2="220" stroke="#2980b9" stroke-width="2.5"/>
+      <!-- LM: right upward (70,200)→(320,70) -->
+      <line x1="70" y1="200" x2="320" y2="70" stroke="#e74c3c" stroke-width="2.5"/>
+      <!-- intersection at ~(195,140) -->
+      <line x1="50" y1="140" x2="195" y2="140" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="195" y1="140" x2="195" y2="250" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <circle cx="195" cy="140" r="5" fill="#333"/>
+      <text x="199" y="136" font-size="11" fill="#333">E</text>
+      <text x="325" y="218" font-size="13" fill="#2980b9" font-weight="bold">IS</text>
+      <text x="325" y="68" font-size="13" fill="#e74c3c" font-weight="bold">LM</text>
+      <text x="33" y="144" font-size="12" fill="#555">r*</text>
+      <text x="190" y="265" font-size="12" fill="#555">Y*</text>
+    </svg>
+
+    <div class="section-title st-orange">📊 財政政策（IS右シフト）→クラウディングアウト</div>
+    <svg class="econ-chart" width="380" height="280" viewBox="0 0 380 280">
+      <line x1="50" y1="250" x2="340" y2="250" stroke="#555" stroke-width="2"/>
+      <line x1="50" y1="20" x2="50" y2="250" stroke="#555" stroke-width="2"/>
+      <text x="345" y="254" font-size="13" fill="#555">Y</text>
+      <text x="33" y="16" font-size="13" fill="#555">r</text>
+      <!-- IS: (70,80)→(300,230) -->
+      <line x1="70" y1="80" x2="300" y2="230" stroke="#2980b9" stroke-width="2" stroke-dasharray="5,3"/>
+      <!-- IS': shifted right (120,60)→(340,210) -->
+      <line x1="120" y1="60" x2="340" y2="210" stroke="#2980b9" stroke-width="2.5"/>
+      <!-- LM: (70,210)→(320,70) -->
+      <line x1="70" y1="210" x2="320" y2="70" stroke="#e74c3c" stroke-width="2.5"/>
+      <!-- E: IS∩LM ~(190,140) -->
+      <circle cx="190" cy="140" r="5" fill="#333"/>
+      <text x="194" y="137" font-size="11" fill="#333">E</text>
+      <!-- E': IS'∩LM ~(236,110) -->
+      <circle cx="236" cy="110" r="5" fill="#e74c3c"/>
+      <text x="240" y="107" font-size="11" fill="#e74c3c">E'</text>
+      <!-- dashed lines E -->
+      <line x1="50" y1="140" x2="190" y2="140" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="190" y1="140" x2="190" y2="250" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- dashed lines E' -->
+      <line x1="50" y1="110" x2="236" y2="110" stroke="#e74c3c" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="236" y1="110" x2="236" y2="250" stroke="#e74c3c" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="304" y="228" font-size="13" fill="#2980b9" font-weight="bold">IS'</text>
+      <text x="265" y="227" font-size="11" fill="#2980b9">IS</text>
+      <text x="324" y="68" font-size="13" fill="#e74c3c" font-weight="bold">LM</text>
+      <text x="28" y="144" font-size="11" fill="#555">r*</text>
+      <text x="28" y="114" font-size="11" fill="#e74c3c">r*'</text>
+      <text x="183" y="265" font-size="11" fill="#555">Y*</text>
+      <text x="229" y="265" font-size="11" fill="#e74c3c">Y*'</text>
+      <text x="150" y="40" font-size="11" fill="#c0392b">↑r上昇でクラウディングアウト発生</text>
+    </svg>
+
+    <div class="section-title st-orange">政策の有効・無効 整理表</div>
+    <table class="tbl-orange">
+      <thead><tr><th>政策</th><th>有効な条件</th><th>無効になる条件</th></tr></thead>
+      <tbody>
+        <tr><td>財政政策</td><td>LM水平（流動性の罠）</td><td>LM垂直・IS垂直</td></tr>
+        <tr><td>金融政策</td><td>IS緩やか（投資弾力的）</td><td>LM水平（流動性の罠）・IS垂直</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-orange">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「流動性の罠では財政政策は無効になる」→ ×（財政政策が最も有効になる）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「LM曲線が急なほど金融政策の効果は小さい」→ ×（大きくなる）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「IS曲線が垂直なら財政政策の効果が最大」→ ×（クラウディングアウト完全→無効）</div></div>
+  </div>
+
+  <!-- ===== tab_a2 ===== -->
+  <div class="tab-panel theme-teal" id="tab_a2">
+    <span class="priority-badge p-teal">優先度 4 / 14</span>
+    <span class="priority-badge p-teal">R2-R6出題：R6-9,R5-9,R5-21</span>
+    <div class="section-title st-teal">A2 国際貿易・比較優位</div>
+    <table class="tbl-teal">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>絶対優位</td><td>同じ財を他国より少ない投入量で生産できる能力</td><td>「絶対優位と比較優位の違い」</td></tr>
+        <tr><td>比較優位（リカード）</td><td>機会費用が相対的に低い財に特化すると両国が利益を得る。絶対劣位でも比較優位は存在する</td><td>「どの国がどの財を輸出すべきか」</td></tr>
+        <tr><td>自由貿易の利益</td><td>特化と交易により両国の消費可能領域が拡大</td><td>「保護貿易vs自由貿易の厚生比較」</td></tr>
+        <tr><td>関税の効果</td><td>輸入財に課税→国内価格上昇→消費者余剰減・生産者余剰増・死荷重発生</td><td>グラフで余剰の変化を読む</td></tr>
+        <tr><td>輸入割当</td><td>輸入数量を直接制限。効果は関税と類似</td><td>「関税と割当の違いは」</td></tr>
+        <tr><td>購買力平価説</td><td>為替レート＝両国の物価水準の比率</td><td>「円安になる条件」</td></tr>
+        <tr><td>経常収支・資本収支</td><td>経常収支（貿易収支等）＋資本収支＝０（BOP）</td><td>「経常黒字と資本収支の関係」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-teal">📊 関税の余剰分析グラフ</div>
+    <svg class="econ-chart" width="400" height="310" viewBox="0 0 400 310">
+      <line x1="50" y1="270" x2="360" y2="270" stroke="#555" stroke-width="2"/>
+      <line x1="50" y1="20" x2="50" y2="270" stroke="#555" stroke-width="2"/>
+      <text x="365" y="274" font-size="13" fill="#555">Q</text>
+      <text x="36" y="16" font-size="13" fill="#555">P</text>
+      <!-- D: (70,40)→(340,240) -->
+      <!-- S: (70,230)→(340,70) -->
+      <!-- Pw=180: horizontal line at y=180 -->
+      <!-- Pd=150: horizontal at y=150 (with tariff, lower number = higher price) -->
+      <!-- Let Pw correspond to y=190, Pd to y=160 -->
+      <!-- S∩Pw: supply y=190 → x = 70+(230-190)/(230-70)*(340-70) = 70+40/160*270 = 70+67.5=137 -->
+      <!-- D∩Pw: demand y=190 → x = 70+(240-190)/(240-40)*(340-70) = 70+50/200*270=70+67.5=137 ... let me redo -->
+      <!-- D: P = 240 - (200/270)*x_off → at x=70,P=240; x=340,P=40 slope=-200/270 -->
+      <!-- S: P = 230 - (160/270)*x_off wait → at x=70,P=230; x=340,P=70 slope=-160/270 (downward?) no -->
+      <!-- S right upward: at x=70,P=70; x=340,P=230 slope=160/270 -->
+      <!-- Pw=150 (y=150): -->
+      <!-- S∩Pw: 70+(150-70)/160*270=70+135=205 → Qs1=x=205 -->
+      <!-- D∩Pw: demand at y=150: x=70+(240-150)/200*270=70+121.5=191.5 ... demand slope negative so at lower price more Q -->
+      <!-- Let me set axes: Demand (70,40)→(340,230), Supply (70,230)→(340,70) -->
+      <!-- Pw=195: y=195. Qs1: supply y=195 at x=70+(195-230)/(70-230)*(340-70)=70+35/160*270=70+59=129. Qd1: demand y=195 at x=70+(195-40)/(230-40)*(340-70)=70+155/190*270=70+220=290. Import=290-129=161 -->
+      <!-- Pd=165 (tariff): Qs2: 70+(165-230)/(-160)*270=70+65/160*270=70+109.7=180. Qd2: 70+(165-40)/190*270=70+125/190*270=70+177.6=248 -->
+      <!-- Shading: CS loss = (165,248)-(165,129) trapezoid on demand side from 165 to 195 -->
+
+      <!-- Consumer surplus loss: large trapezoid -->
+      <polygon points="129,165 248,165 290,195 129,195" fill="rgba(231,76,60,0.25)" stroke="none"/>
+      <!-- Producer surplus gain: left rectangle-ish -->
+      <polygon points="129,165 129,195 70,195 70,165" fill="rgba(39,174,96,0.25)" stroke="none"/>
+      <!-- Tariff revenue: middle rectangle -->
+      <polygon points="180,165 248,165 248,195 180,195" fill="rgba(255,165,0,0.35)" stroke="none"/>
+      <!-- DW triangles -->
+      <polygon points="129,165 180,165 129,195" fill="rgba(150,0,150,0.25)" stroke="none"/>
+      <polygon points="248,165 290,195 248,195" fill="rgba(150,0,150,0.25)" stroke="none"/>
+
+      <!-- D line -->
+      <line x1="70" y1="40" x2="340" y2="230" stroke="#2980b9" stroke-width="2.5"/>
+      <!-- S line -->
+      <line x1="70" y1="230" x2="340" y2="70" stroke="#e74c3c" stroke-width="2.5"/>
+      <!-- Pw line -->
+      <line x1="50" y1="195" x2="360" y2="195" stroke="#27ae60" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- Pd line -->
+      <line x1="50" y1="165" x2="360" y2="165" stroke="#e67e22" stroke-width="2" stroke-dasharray="6,3"/>
+
+      <text x="344" y="228" font-size="13" fill="#2980b9" font-weight="bold">D</text>
+      <text x="344" y="68" font-size="13" fill="#e74c3c" font-weight="bold">S</text>
+      <text x="364" y="198" font-size="12" fill="#27ae60">Pw（世界価格）</text>
+      <text x="364" y="168" font-size="12" fill="#e67e22">Pd（関税後）</text>
+      <!-- vertical lines -->
+      <line x1="129" y1="165" x2="129" y2="270" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="180" y1="165" x2="180" y2="270" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="248" y1="165" x2="248" y2="270" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="290" y1="195" x2="290" y2="270" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="117" y="285" font-size="10" fill="#555">Qs1</text>
+      <text x="169" y="285" font-size="10" fill="#555">Qs2</text>
+      <text x="239" y="285" font-size="10" fill="#555">Qd2</text>
+      <text x="281" y="285" font-size="10" fill="#555">Qd1</text>
+      <text x="145" y="184" font-size="9" fill="#b71c1c">死荷重</text>
+      <text x="202" y="184" font-size="9" fill="#e65100">関税収入</text>
+      <text x="257" y="184" font-size="9" fill="#b71c1c">死荷重</text>
+    </svg>
+
+    <div class="section-title st-teal">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「絶対優位がない国は貿易から利益を得られない」→ ×（比較優位があれば利益あり）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「関税は国内生産者・消費者・政府すべてを豊かにする」→ ×（消費者余剰が減り死荷重が生じる）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「自国の物価が上昇すると自国通貨は増価する」→ ×（減価：購買力平価説）</div></div>
+  </div>
+
+  <!-- ===== tab_a3 ===== -->
+  <div class="tab-panel theme-teal" id="tab_a3">
+    <span class="priority-badge p-teal">優先度 5 / 14</span>
+    <span class="priority-badge p-teal">R2-R6出題：R6-11,R5-10,R3-10</span>
+    <span class="priority-badge p-teal">前提：A1 IS-LM を理解してから</span>
+    <div class="section-title st-teal">A3 マンデル=フレミング</div>
+    <table class="tbl-teal">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>モデルの前提</td><td>小国開放経済・資本移動完全自由・世界利子率r*が所与</td><td>「マンデル=フレミングの前提条件」</td></tr>
+        <tr><td>BP曲線</td><td>国際収支均衡（経常収支＋資本収支＝0）。資本移動完全自由→水平（r＝r*の水準）</td><td>「BP曲線はなぜ水平か」</td></tr>
+        <tr><td>変動相場・財政政策</td><td>IS右シフト→r上昇→資本流入→通貨増価→純輸出減少→ISが元の位置に戻る（完全クラウディングアウト）</td><td>「変動相場制では財政政策が無効な理由」</td></tr>
+        <tr><td>変動相場・金融政策</td><td>LM右シフト→r低下→資本流出→通貨減価→純輸出増加→IS右シフト→所得大きく増加</td><td>「変動相場制では金融政策が有効な理由」</td></tr>
+        <tr><td>固定相場・財政政策</td><td>IS右シフト→r上昇→資本流入→通貨増価圧力→Ms増加介入→LM右シフト→所得大きく増加（有効）</td><td>「固定相場制では財政政策が有効な理由」</td></tr>
+        <tr><td>固定相場・金融政策</td><td>LM右シフト→r低下→資本流出→通貨減価圧力→Ms減少介入→LM元に戻る（無効）</td><td>「固定相場制では金融政策が無効な理由」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-teal">📋 政策効果の整理表（必須暗記）</div>
+    <table class="tbl-teal">
+      <thead><tr><th></th><th>財政政策</th><th>金融政策</th></tr></thead>
+      <tbody>
+        <tr><td>変動相場制</td><td>❌ 無効（為替増価で相殺）</td><td>✅ 有効（為替減価で増幅）</td></tr>
+        <tr><td>固定相場制</td><td>✅ 有効（介入でMs増加）</td><td>❌ 無効（介入でMs元に戻る）</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-teal">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「変動相場制では財政政策が最も有効」→ ×（無効：為替増価で完全相殺）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「固定相場制では金融政策で景気を調整できる」→ ×（無効）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「BP曲線は資本移動が完全自由のとき右上がりになる」→ ×（水平）</div></div>
+  </div>
+
+  <!-- ===== tab_ext ===== -->
+  <div class="tab-panel theme-red" id="tab_ext">
+    <span class="priority-badge p-red">優先度 6 / 14</span>
+    <span class="priority-badge p-red">R2-R6出題：各年1問程度</span>
+    <div class="section-title st-red">③ 外部性・ピグー税・コースの定理</div>
+    <table class="tbl-red">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>外部不経済</td><td>生産が第三者に費用を与える（公害）</td><td>グラフでの余剰損失計算</td></tr>
+        <tr><td>外部経済</td><td>生産が第三者に便益を与える（養蜂・R&amp;D）。ネットワーク外部性も正の外部性の例</td><td>グラフでの過少供給確認</td></tr>
+        <tr><td>私的限界費用（PMC）</td><td>企業が実際に負担する費用の増分</td><td>グラフのPMC曲線</td></tr>
+        <tr><td>社会的限界費用（SMC）</td><td>PMC＋外部費用（外部不経済の場合SMC&gt;PMC）</td><td>グラフのSMC曲線</td></tr>
+        <tr><td>死荷重（過剰生産分）</td><td>外部不経済時：企業は過剰生産 → 社会的余剰の損失</td><td>グラフで三角形の面積</td></tr>
+        <tr><td>ピグー税</td><td>外部不経済時：SMC－PMCの差額を課税 → 生産量をQ*に誘導</td><td>「税率はいくらが適切か」</td></tr>
+        <tr><td>ピグー補助金</td><td>外部経済時：PMC－SMCの差額を補助 → 過少供給を是正</td><td>「補助金額の決め方」</td></tr>
+        <tr><td>コースの定理</td><td>取引費用＝0 かつ所有権が明確なら → 当事者交渉で最適解に到達</td><td>「コースの定理が成立する条件」</td></tr>
+        <tr><td>排出権取引</td><td>汚染排出枠を企業間で売買。効率的な削減を実現</td><td>「ピグー税と排出権取引の比較」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-red">📊 外部不経済グラフ（過剰生産・死荷重）</div>
+    <svg class="econ-chart" width="400" height="300" viewBox="0 0 400 300">
+      <line x1="50" y1="265" x2="360" y2="265" stroke="#555" stroke-width="2"/>
+      <line x1="50" y1="20" x2="50" y2="265" stroke="#555" stroke-width="2"/>
+      <text x="365" y="269" font-size="13" fill="#555">Q</text>
+      <text x="36" y="16" font-size="13" fill="#555">P</text>
+      <!-- D: (70,50)→(340,230) -->
+      <!-- PMC: (70,200)→(340,100) -->
+      <!-- SMC: (70,160)→(340,60) → shifted up from PMC by constant 40 -->
+      <!-- Wait: SMC > PMC so SMC is above PMC -->
+      <!-- PMC: slope=(100-200)/(340-70)=-100/270. At x=70,y=200; x=340,y=100 -->
+      <!-- SMC: PMC+40 → at x=70,y=160; x=340,y=60 -->
+      <!-- D∩PMC: market equilibrium Qm -->
+      <!-- D y=50+(230-50)/(340-70)*(x-70); PMC y=200-100/270*(x-70) -->
+      <!-- D=PMC: 50+180/270*(x-70)=200-100/270*(x-70) → 50+2/3*(x-70)=200-100/270*(x-70) -->
+      <!-- Let u=x-70: 50+2u/3=200-10u/27 → 2u/3+10u/27=150 → 18u/27+10u/27=150 → 28u/27=150 → u=150*27/28=144.6 → x=214.6≈215,y=PMC=200-100/270*144.6=200-53.6=146 -->
+      <!-- D∩SMC: y=200-100/270*(x-70)-40=160-100/270*(x-70) = D: 50+180/270*(x-70) -->
+      <!-- 50+180u/270=160-100u/270 → 280u/270=110 → u=110*270/280=105.9→x=176,y=D=50+180/270*105.9=50+70.6=121 -->
+
+      <!-- deadweight triangle: Qm(215,146) Q*(176,121) and the SMC-D gap -->
+      <!-- triangle: (176,121) (215,146) (215,121)? -->
+      <polygon points="176,121 215,121 215,146" fill="rgba(231,76,60,0.3)" stroke="none"/>
+
+      <!-- D line -->
+      <line x1="70" y1="50" x2="340" y2="230" stroke="#2980b9" stroke-width="2.5"/>
+      <!-- PMC line -->
+      <line x1="70" y1="200" x2="340" y2="100" stroke="#27ae60" stroke-width="2.5"/>
+      <!-- SMC line -->
+      <line x1="70" y1="160" x2="340" y2="60" stroke="#e74c3c" stroke-width="2.5" stroke-dasharray="7,3"/>
+
+      <!-- Q* vertical -->
+      <line x1="176" y1="121" x2="176" y2="265" stroke="#e74c3c" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- Qm vertical -->
+      <line x1="215" y1="146" x2="215" y2="265" stroke="#27ae60" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <text x="344" y="228" font-size="13" fill="#2980b9" font-weight="bold">D</text>
+      <text x="344" y="98" font-size="12" fill="#27ae60" font-weight="bold">PMC</text>
+      <text x="344" y="58" font-size="12" fill="#e74c3c" font-weight="bold">SMC</text>
+      <text x="168" y="279" font-size="12" fill="#e74c3c">Q*</text>
+      <text x="207" y="279" font-size="12" fill="#27ae60">Qm</text>
+      <text x="185" y="140" font-size="10" fill="#b71c1c">死荷重</text>
+
+      <!-- P* horizontal -->
+      <line x1="50" y1="121" x2="176" y2="121" stroke="#e74c3c" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="30" y="125" font-size="11" fill="#e74c3c">P*</text>
+    </svg>
+
+    <div class="section-title st-red">📊 ピグー税グラフ（PMC+t = SMC に誘導）</div>
+    <svg class="econ-chart" width="400" height="280" viewBox="0 0 400 280">
+      <line x1="50" y1="250" x2="360" y2="250" stroke="#555" stroke-width="2"/>
+      <line x1="50" y1="20" x2="50" y2="250" stroke="#555" stroke-width="2"/>
+      <text x="365" y="254" font-size="13" fill="#555">Q</text>
+      <text x="36" y="16" font-size="13" fill="#555">P</text>
+      <!-- Same structure -->
+      <line x1="70" y1="50" x2="340" y2="220" stroke="#2980b9" stroke-width="2.5"/>
+      <!-- PMC before tax -->
+      <line x1="70" y1="195" x2="340" y2="100" stroke="#27ae60" stroke-width="2" stroke-dasharray="5,3"/>
+      <!-- PMC+t = SMC -->
+      <line x1="70" y1="155" x2="340" y2="60" stroke="#e74c3c" stroke-width="2.5"/>
+      <!-- arrow showing t -->
+      <line x1="200" y1="125" x2="200" y2="150" stroke="#e67e22" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#e67e22"/>
+        </marker>
+      </defs>
+      <text x="204" y="140" font-size="11" fill="#e67e22">t（ピグー税）</text>
+      <text x="344" y="218" font-size="13" fill="#2980b9" font-weight="bold">D</text>
+      <text x="344" y="98" font-size="11" fill="#27ae60">PMC</text>
+      <text x="315" y="58" font-size="11" fill="#e74c3c">PMC+t=SMC</text>
+    </svg>
+
+    <div class="section-title st-red">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「外部不経済では過少生産が起きる」→ ×（過剰生産）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「コースの定理は取引費用が大きい場合に成立する」→ ×（取引費用＝0が前提）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「ピグー税は外部経済に対して課される」→ ×（外部不経済）</div></div>
+  </div>
+
+  <!-- ===== tab_phil ===== -->
+  <div class="tab-panel theme-purple" id="tab_phil">
+    <span class="priority-badge p-purple">優先度 7-9 / 14</span>
+    <span class="priority-badge p-purple">フィリップスR6-12,R4-10 / 消費理論R4-4,R3-4,R1-4</span>
+
+    <div class="section-title st-purple">前提C 総需要・総供給分析（AD-AS）</div>
+    <table class="tbl-purple">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>AD曲線（総需要）</td><td>右下がり。物価↓→実質Ms増→利子率低下→投資増</td><td>「AD曲線が右シフトする要因」</td></tr>
+        <tr><td>AS曲線（総供給）</td><td>短期：右上がり（物価↑→生産量↑）。長期：垂直（潜在GDP）</td><td>「AS曲線が左シフトする要因」</td></tr>
+        <tr><td>需給ギャップ</td><td>実際のGDP－潜在GDP。プラスならインフレ圧力</td><td>「需給ギャップとインフレの関係」</td></tr>
+        <tr><td>オークンの法則</td><td>需給ギャップと失業率の間に負の相関関係</td><td>「GDPが増えると失業率はどうなるか」</td></tr>
+        <tr><td>供給ショック</td><td>原油価格上昇→AS左シフト→物価↑・産出量↓→スタグフレーション</td><td>「スタグフレーションの発生メカニズム」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-purple">⑤-a フィリップス曲線</div>
+    <table class="tbl-purple">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>元のフィリップス曲線</td><td>失業率↓ ⇔ 名目賃金上昇率↑ のトレードオフ（1958年フィリップス発見）</td><td>曲線の形状問題</td></tr>
+        <tr><td>インフレ率版</td><td>横軸：失業率、縦軸：インフレ率 → 右下がり曲線</td><td>グラフ読み取り</td></tr>
+        <tr><td>自然失業率</td><td>完全雇用時にも存在する摩擦的・構造的失業率。長期均衡点</td><td>「なぜ失業がゼロにならないか」</td></tr>
+        <tr><td>長期フィリップス曲線</td><td>自然失業率の水準で垂直（金融緩和で失業は長期的に減らない）</td><td>「長期と短期の違い」</td></tr>
+        <tr><td>スタグフレーション</td><td>1970年代オイルショック → 失業率↑かつインフレ↑ → 曲線が右上にシフト</td><td>「なぜフィリップス曲線が崩れたか」</td></tr>
+        <tr><td>期待インフレ率</td><td>期待が変化すると曲線がシフト。フリードマンの加速主義</td><td>「期待インフレ上昇で曲線はどうシフトするか」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-purple">⑤-b 消費理論</div>
+    <table class="tbl-purple">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>ケインズ型消費関数</td><td>C = C₀ + c・Y（cは限界消費性向、0&lt;c&lt;1）</td><td>「消費関数の形は何に依存するか」</td></tr>
+        <tr><td>ケインズ型の問題点</td><td>長期では平均消費性向が一定（クズネッツの発見と矛盾）</td><td>「ケインズ型が説明できない事実は何か」</td></tr>
+        <tr><td>恒常所得仮説（フリードマン）</td><td>消費は恒常所得（予測される平均的所得）に依存。一時所得は消費にほぼ影響しない</td><td>「ボーナス増でも消費が増えない理由」</td></tr>
+        <tr><td>ライフサイクル仮説（モジリアーニ）</td><td>消費は生涯所得を平準化するように決定。若年期借入・壮年期貯蓄・老後取り崩し</td><td>「高齢化で貯蓄率が下がる理由」</td></tr>
+        <tr><td>相対所得仮説（デューゼンベリー）</td><td>消費は他者との比較と過去の最高所得に依存（ラチェット効果）</td><td>「景気後退時に消費が下がりにくい理由」</td></tr>
+        <tr><td>恒常所得 vs 一時所得</td><td>恒常所得の増加→消費大きく増加 ／ 一時所得の増加→消費はほぼ増加しない</td><td>「減税の消費刺激効果が小さい理由」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-purple">3仮説の比較表</div>
+    <table class="tbl-purple">
+      <thead><tr><th></th><th>消費の決定要因</th><th>含意</th></tr></thead>
+      <tbody>
+        <tr><td>ケインズ型</td><td>現在所得Y</td><td>乗数効果が大きく働く</td></tr>
+        <tr><td>恒常所得仮説</td><td>恒常所得（将来込みの平均）</td><td>一時的な財政政策の効果は小さい</td></tr>
+        <tr><td>ライフサイクル仮説</td><td>生涯所得・資産・余命</td><td>高齢化 → 貯蓄率低下</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-purple">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「長期フィリップス曲線は右下がりである」→ ×（垂直）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「スタグフレーションはフィリップス曲線上の移動で説明できる」→ ×（曲線自体がシフト）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「一時的な減税は消費を大きく刺激する」→ ×（恒常所得仮説では効果小）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「ライフサイクル仮説では高齢者は貯蓄を増やす」→ ×（資産を取り崩す）</div></div>
+  </div>
+
+  <!-- ===== tab_game ===== -->
+  <div class="tab-panel theme-blue" id="tab_game">
+    <span class="priority-badge p-blue">優先度 10 / 14</span>
+    <span class="priority-badge p-blue">R2-R6出題：R5-22,R4-20等</span>
+    <div class="section-title st-blue">① ゲーム理論</div>
+    <table class="tbl-blue">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>利得表の読み方</td><td>行プレイヤー／列プレイヤーの利得を表で表現</td><td>「利得表が与えられたとき、ナッシュ均衡を選べ」</td></tr>
+        <tr><td>支配戦略</td><td>相手の行動に関わらず常に自分の利得が高い戦略</td><td>「支配戦略が存在するか」</td></tr>
+        <tr><td>ナッシュ均衡の定義</td><td>互いに相手の戦略を所与として逸脱する動機がない組み合わせ</td><td>「どのマスがナッシュ均衡か」</td></tr>
+        <tr><td>囚人のジレンマ</td><td>支配戦略＝裏切り → ナッシュ均衡は双方にとって非効率</td><td>「協調しない理由を説明せよ」</td></tr>
+        <tr><td>パレート効率との乖離</td><td>ナッシュ均衡≠パレート最適になる点が問題</td><td>「なぜ協調できないのか」</td></tr>
+        <tr><td>繰り返しゲーム</td><td>無限繰り返しでは協調均衡が成立しうる（しっぺ返し戦略）</td><td>「繰り返しゲームで協調が成立する条件」</td></tr>
+        <tr><td>クールノー均衡</td><td>生産量を戦略変数とした寡占のナッシュ均衡</td><td>「反応関数の交点が均衡」</td></tr>
+        <tr><td>シュタッケルベルク</td><td>先手企業が先に生産量決定、後手がそれを所与に決定</td><td>「先手と後手の利潤比較」</td></tr>
+        <tr><td>ベルトラン均衡</td><td>価格を戦略変数とした寡占。均衡価格＝MC（完全競争と同じ）</td><td>「クールノーvsベルトランの比較」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-blue">🎲 囚人のジレンマ 利得行列</div>
+    <div style="overflow-x:auto">
+      <table class="payoff-table">
+        <thead>
+          <tr><th colspan="2" rowspan="2"></th><th colspan="2" style="background:#37474f;color:#fff">企業B</th></tr>
+          <tr><th>黙秘</th><th>自白</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th rowspan="2" style="background:#37474f;color:#fff">企業A</th>
+            <th>黙秘</th>
+            <td class="eff-cell">(-1, -1) ← 社会的最適</td>
+            <td>(-10, 0)</td>
+          </tr>
+          <tr>
+            <th>自白</th>
+            <td>(0, -10)</td>
+            <td class="ne-cell">(-8, -8) ← ナッシュ均衡</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="point-box pb-blue" style="margin-top:.8rem">
+      <h4>🔑 ポイント</h4>
+      自白は「支配戦略」（相手がどう動いても自白の方が得）。その結果ナッシュ均衡は（自白,自白）=(-8,-8)だが、社会的には（黙秘,黙秘）=(-1,-1)の方が良い。これが「囚人のジレンマ」。
+    </div>
+
+    <div class="section-title st-blue">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「ナッシュ均衡は必ずパレート効率的」→ ×</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ok"><span class="trap-badge">✅</span>「支配戦略が存在すればそれがナッシュ均衡」→ ○（逆は×）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「繰り返しゲームでは必ず協調が成立する」→ ×（無限繰り返しの条件が必要）</div></div>
+  </div>
+
+  <!-- ===== tab_info ===== -->
+  <div class="tab-panel theme-orange" id="tab_info">
+    <span class="priority-badge p-orange">優先度 11 / 14</span>
+    <span class="priority-badge p-orange">R2-R6出題：R5-18,R1-19</span>
+    <div class="section-title st-orange">② 情報の非対称性</div>
+    <table class="tbl-orange">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>情報の非対称性の定義</td><td>売り手と買い手で保有情報が異なる状態</td><td>「次の状況はどの問題か」</td></tr>
+        <tr><td>逆選択（事前の問題）</td><td>取引前の情報格差。質の悪い財・人材が残る</td><td>事例の分類問題</td></tr>
+        <tr><td>レモン市場</td><td>中古車市場。買い手は品質不明 → 低品質車だけ残る（アカロフ）</td><td>「レモン市場で何が起こるか」</td></tr>
+        <tr><td>モラルハザード（事後）</td><td>取引後の情報格差。保険加入後に注意が低下</td><td>事例の分類問題</td></tr>
+        <tr><td>シグナリング</td><td>高品質側が質の証明として行動（学歴・保証書・資格）</td><td>「なぜ企業は保証を付けるか」</td></tr>
+        <tr><td>スクリーニング</td><td>情報を持たない側が相手を選別（保険の免責金額設定）</td><td>「スクリーニングの仕組み」</td></tr>
+        <tr><td>自己選択メカニズム</td><td>複数メニューを提示して相手に選ばせ情報を引き出す</td><td>「なぜ複数プランを提示するか」</td></tr>
+        <tr><td>プリンシパル＝エージェント</td><td>依頼人（P）と代理人（A）の利益相反。Aが隠れた行動をとる</td><td>「この関係がモラルハザードになる理由」</td></tr>
+        <tr><td>解決策</td><td>インセンティブ契約・モニタリング・評判メカニズム</td><td>「適切な対策はどれか」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-orange">逆選択 vs モラルハザード 整理表</div>
+    <table class="tbl-orange">
+      <thead><tr><th></th><th>逆選択</th><th>モラルハザード</th></tr></thead>
+      <tbody>
+        <tr><td>タイミング</td><td>取引前</td><td>取引後</td></tr>
+        <tr><td>典型例</td><td>中古車市場・保険加入前の健康状態</td><td>保険加入後の不注意・経営者の怠慢</td></tr>
+        <tr><td>対策</td><td>シグナリング・スクリーニング</td><td>インセンティブ設計・モニタリング</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-orange">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「逆選択は取引後に生じる」→ ×（事前）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「学歴シグナルは生産性を直接高める」→ ×（シグナルの価値は情報の伝達のみ）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「モラルハザードはプリンシパル側に生じる」→ ×（エージェント側）</div></div>
+  </div>
+
+  <!-- ===== tab_cost ===== -->
+  <div class="tab-panel theme-green" id="tab_cost">
+    <span class="priority-badge p-green">優先度 12 / 14</span>
+    <span class="priority-badge p-green">R2-R6出題：R5-19,R2-21</span>
+    <div class="section-title st-green">⑥ 費用逓減産業・自然独占</div>
+    <table class="tbl-green">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>費用逓減産業の定義</td><td>固定費用が膨大 → 生産量増加に伴って平均費用が逓減する産業。例：電力・ガス・水道・鉄道</td><td>「費用逓減産業の例はどれか」</td></tr>
+        <tr><td>自然独占</td><td>複数企業が供給すると非効率 → 自由競争の結果1社しか生き残れない独占状態</td><td>「なぜ自然独占が生じるか」</td></tr>
+        <tr><td>市場の失敗</td><td>自由な市場取引に任せると：MR=MCで生産→Q少・P高・総余剰が最大にならない</td><td>「費用逓減産業が市場の失敗になる理由」</td></tr>
+        <tr><td>限界費用価格形成原理</td><td>需要曲線∩MC点で価格設定 → 社会最適・総余剰最大だが企業は赤字 → 政府が赤字補填必要</td><td>「限界費用価格形成原理のメリット・デメリットは」</td></tr>
+        <tr><td>平均費用価格形成原理</td><td>需要曲線∩AC点で価格設定 → 独立採算（黒字）だが総余剰は最大にならない</td><td>「平均費用価格形成原理のメリット・デメリットは」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-green">2原理の比較表</div>
+    <table class="tbl-green">
+      <thead><tr><th></th><th>限界費用価格形成原理</th><th>平均費用価格形成原理</th></tr></thead>
+      <tbody>
+        <tr><td>価格設定点</td><td>需要曲線∩MC</td><td>需要曲線∩AC</td></tr>
+        <tr><td>総余剰</td><td>最大（社会最適）</td><td>最大にならない</td></tr>
+        <tr><td>企業の採算</td><td>赤字（政府補填必要）</td><td>黒字（独立採算可能）</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-green">📊 費用逓減産業グラフ</div>
+    <svg class="econ-chart" width="420" height="320" viewBox="0 0 420 320">
+      <line x1="50" y1="280" x2="380" y2="280" stroke="#555" stroke-width="2"/>
+      <line x1="50" y1="20" x2="50" y2="280" stroke="#555" stroke-width="2"/>
+      <text x="385" y="284" font-size="13" fill="#555">Q</text>
+      <text x="36" y="16" font-size="13" fill="#555">P</text>
+      <!-- D: right downward (70,50)→(360,240) -->
+      <!-- AC: right downward decreasing (70,210)→(360,100) -->
+      <!-- MC: right upward (70,140)→(360,200) but below AC -->
+      <!-- Monopoly F: MR=MC. MR starts at (70,50) and twice slope: (70,50)→(215,240) -->
+      <!-- MR: D slope = (240-50)/(360-70) = 190/290 ≈ 0.655. MR slope = 2*0.655=1.31 from same intercept -->
+      <!-- MR: at x=70,y=50; slope=2*(240-50)/(360-70)=2*190/290 = 380/290 per unit... -->
+      <!-- MR=MC: find intersection -->
+      <!-- MC: slope=(200-140)/(360-70)=60/290. y=140+60/290*(x-70) -->
+      <!-- MR: y=50+380/290*(x-70) -->
+      <!-- 140+60/290*(x-70)=50+380/290*(x-70) → 90=320/290*(x-70) → x-70=90*290/320=81.6→x=151.6≈152, y=MC=140+60/290*81.6=140+16.9=157 -->
+      <!-- F: x=152, MR=MC: MC y≈157. On D at x=152: y=50+190/290*82=50+53.7=104 → PF=104 -->
+      <!-- G (AC=D): AC=(210+(100-210)/(360-70)*(x-70))=210-110/290*(x-70); D=50+190/290*(x-70) -->
+      <!-- AC=D: 210-110u/290=50+190u/290 → 160=300u/290 → u=160*290/300=154.7→x=224.7≈225, y=210-110/290*154.7=210-58.7=151 → PG=151 (wrong, PG should be between PF and PE) -->
+      <!-- Hmm let me adjust. PE (MC=D): 140+60u/290=50+190u/290 → 90=130u/290 → u=90*290/130=200.8→x=271, y=MC=140+60/290*200.8=181.5≈182; on D at x=271:y=50+190/290*201=50+131.6=182 ✓ -->
+      <!-- So: F(152,104), G(225,151), E(271,182) -->
+
+      <!-- D: right downward -->
+      <line x1="70" y1="50" x2="360" y2="240" stroke="#2980b9" stroke-width="2.5"/>
+      <!-- MR: steeper downward (70,50)→(215,240) -->
+      <line x1="70" y1="50" x2="215" y2="240" stroke="#9b59b6" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- AC: downward (70,210)→(360,100) -->
+      <line x1="70" y1="210" x2="360" y2="100" stroke="#e67e22" stroke-width="2.5"/>
+      <!-- MC: upward (70,140)→(360,200) -->
+      <line x1="70" y1="140" x2="360" y2="200" stroke="#e74c3c" stroke-width="2.5"/>
+
+      <!-- vertical lines for F, G, E -->
+      <line x1="152" y1="104" x2="152" y2="280" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="225" y1="151" x2="225" y2="280" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="271" y1="182" x2="271" y2="280" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- horizontal lines -->
+      <line x1="50" y1="104" x2="152" y2="104" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="50" y1="151" x2="225" y2="151" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="50" y1="182" x2="271" y2="182" stroke="#888" stroke-width="1" stroke-dasharray="3,3"/>
+
+      <!-- points -->
+      <circle cx="152" cy="104" r="5" fill="#2980b9"/>
+      <text x="156" y="101" font-size="12" fill="#2980b9">F（独占）</text>
+      <circle cx="225" cy="151" r="5" fill="#e67e22"/>
+      <text x="229" y="148" font-size="12" fill="#e67e22">G（AC原理）</text>
+      <circle cx="271" cy="182" r="5" fill="#e74c3c"/>
+      <text x="275" y="179" font-size="12" fill="#e74c3c">E（MC原理）</text>
+
+      <!-- labels -->
+      <text x="363" y="238" font-size="13" fill="#2980b9" font-weight="bold">D</text>
+      <text x="218" y="238" font-size="12" fill="#9b59b6" font-weight="bold">MR</text>
+      <text x="363" y="98" font-size="12" fill="#e67e22" font-weight="bold">AC</text>
+      <text x="363" y="198" font-size="12" fill="#e74c3c" font-weight="bold">MC</text>
+      <text x="30" y="108" font-size="11" fill="#2980b9">PF</text>
+      <text x="30" y="155" font-size="11" fill="#e67e22">PG</text>
+      <text x="30" y="186" font-size="11" fill="#e74c3c">PE</text>
+      <text x="144" y="294" font-size="11" fill="#888">QF</text>
+      <text x="218" y="294" font-size="11" fill="#888">QG</text>
+      <text x="263" y="294" font-size="11" fill="#888">QE</text>
+    </svg>
+
+    <div class="section-title st-green">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「費用逓減産業では自由市場に任せれば最適な資源配分が実現する」→ ×（市場の失敗）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「限界費用価格形成原理では企業は黒字になる」→ ×（赤字、政府補填が必要）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「平均費用価格形成原理は総余剰を最大化する」→ ×（限界費用価格形成原理が最大化）</div></div>
+  </div>
+
+  <!-- ===== tab_pub ===== -->
+  <div class="tab-panel theme-teal" id="tab_pub">
+    <span class="priority-badge p-teal">優先度 13 / 14</span>
+    <span class="priority-badge p-teal">R2-R6出題：R4-18等</span>
+    <div class="section-title st-teal">④ 公共財・フリーライダー</div>
+    <table class="tbl-teal">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>排除性</td><td>対価を払わない人を消費から排除できる性質</td><td>財の分類問題</td></tr>
+        <tr><td>競合性</td><td>ある人が消費すると他者の消費可能量が減る性質</td><td>財の分類問題</td></tr>
+        <tr><td>純粋公共財</td><td>非排除性＋非競合性（国防・一般道路・灯台）</td><td>「次の財のうち純粋公共財はどれか」</td></tr>
+        <tr><td>純粋私的財</td><td>排除性＋競合性（通常の商品）</td><td>4象限の分類</td></tr>
+        <tr><td>クラブ財</td><td>排除性＋非競合性（有料道路・ケーブルTV）</td><td>「クラブ財の例を選べ」</td></tr>
+        <tr><td>共有資源</td><td>非排除性＋競合性（公海の魚・共有の牧草地）</td><td>「コモンズの悲劇が生じるのはどれか」</td></tr>
+        <tr><td>フリーライダー問題</td><td>非排除性ゆえに対価を払わずに消費できる → 市場では過少供給</td><td>「公共財が過少供給される理由」</td></tr>
+        <tr><td>政府による供給</td><td>フリーライダー問題の解決手段</td><td>「なぜ政府が供給するか」</td></tr>
+        <tr><td>コモンズの悲劇</td><td>競合性あり・排除なし → 共有資源が過剰利用される</td><td>「対策は所有権の設定」</td></tr>
+        <tr><td>サミュエルソン条件</td><td>公共財の最適供給条件：各個人のMRS（限界代替率）の合計＝MRT</td><td>上級問題</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-teal">財の4分類（2×2マトリクス）</div>
+    <div class="four-grid">
+      <div class="four-grid-header"></div>
+      <div class="four-grid-header">競合性あり</div>
+      <div class="four-grid-header">競合性なし</div>
+      <div class="four-grid-header">排除性あり</div>
+      <div class="four-grid-cell private">🛍️ 私的財<br><small>通常の商品</small></div>
+      <div class="four-grid-cell club">🎡 クラブ財<br><small>有料道路・ケーブルTV</small></div>
+      <div class="four-grid-header">排除性なし</div>
+      <div class="four-grid-cell common">🌊 共有資源<br><small>公海の魚・共有牧草地</small></div>
+      <div class="four-grid-cell public">🏛️ 純粋公共財<br><small>国防・一般道路・灯台</small></div>
+    </div>
+
+    <div class="section-title st-teal">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「有料道路は純粋公共財である」→ ×（クラブ財：排除性あり）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「公共財は必ず政府が供給しなければならない」→ ×（民間供給も理論上は可能）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「共有資源は非競合性を持つ」→ ×（競合性あり）</div></div>
+  </div>
+
+  <!-- ===== tab_mono ===== -->
+  <div class="tab-panel theme-purple" id="tab_mono">
+    <span class="priority-badge p-purple">優先度 14 / 14（優先度低）</span>
+    <span class="priority-badge p-purple">出題頻度：H30以降散発</span>
+    <div class="section-title st-purple">⑭ 独占的競争市場</div>
+    <table class="tbl-purple">
+      <thead><tr><th>項目</th><th>内容</th><th>試験での出し方</th></tr></thead>
+      <tbody>
+        <tr><td>独占的競争市場の定義</td><td>多数の企業が存在し、それぞれが差別化された製品を供給する市場</td><td>「独占的競争市場の特徴を選べ」</td></tr>
+        <tr><td>完全競争との違い</td><td>製品が「異質的（差別化）」→ プライスメイカーとして行動できる（ただし価格支配力は小さい）</td><td>「完全競争との違いは何か」</td></tr>
+        <tr><td>短期均衡</td><td>需要曲線が右下がり・MR＝MCで生産 →超過利潤が発生しうる</td><td>「短期では何が起こるか」</td></tr>
+        <tr><td>長期均衡</td><td>超過利潤があれば新規参入 → 需要曲線がシフト → 長期均衡では超過利潤＝0</td><td>「長期では超過利潤はどうなるか」</td></tr>
+        <tr><td>独占との違い</td><td>独占：参入障壁あり→長期も超過利潤残る。独占的競争：参入自由→長期で超過利潤消滅</td><td>「独占との比較問題」</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-purple">3市場形態の比較表</div>
+    <table class="tbl-purple">
+      <thead><tr><th></th><th>完全競争</th><th>独占的競争</th><th>独占</th></tr></thead>
+      <tbody>
+        <tr><td>企業数</td><td>無数</td><td>多数</td><td>1社</td></tr>
+        <tr><td>製品</td><td>同質的</td><td>差別化</td><td>同質的（唯一）</td></tr>
+        <tr><td>価格支配力</td><td>なし（テイカー）</td><td>小（メイカー）</td><td>大（メイカー）</td></tr>
+        <tr><td>長期超過利潤</td><td>ゼロ</td><td>ゼロ</td><td>残る</td></tr>
+        <tr><td>参入</td><td>自由</td><td>自由</td><td>障壁あり</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title st-purple">⚠️ 引っかけパターン</div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「独占的競争市場では長期でも超過利潤が生じる」→ ×（新規参入でゼロになる）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ng"><span class="trap-badge">❌</span>「独占的競争市場の企業はプライステイカーである」→ ×（差別化製品ゆえプライスメイカー）</div></div>
+    <div class="alert-box alert-danger"><div class="trap-item ok"><span class="trap-badge">✅</span>「独占的競争は完全競争と同じく長期均衡で超過利潤ゼロ」→ ○（ただし非効率な生産水準）</div></div>
+  </div>
+
+</div><!-- .tab-container -->
+
+<div class="footer">中小企業診断士 1次試験 経済学・経済政策 学習優先マトリクス | R2-R6過去問分析</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-target="${id}"]`).classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>

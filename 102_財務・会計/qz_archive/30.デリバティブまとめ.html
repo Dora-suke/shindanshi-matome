@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>デリバティブまとめ - 中小企業診断士まとめ</title>
+<style>
+:root{--blue:#2980b9;--blue-d:#1a5276;--blue-light:#d6eaf8;--green:#27ae60;--green-d:#1e8449;--green-light:#d5f5e3;--orange:#e67e22;--orange-d:#d35400;--orange-pale:#fdebd0;--purple:#8e44ad;--purple-d:#6c3483;--purple-light:#e8daef;--red:#e74c3c;--red-d:#922b21;--red-light:#fadbd8;--teal:#00897b;--teal-light:#e0f2f1;--gray-d:#2c3e50;--gray:#5d6d7e;--gray-l:#aeb6bf;--bg:#f0f4ff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--gray-d);line-height:1.75;min-height:100vh}
+.header{background:linear-gradient(135deg,#0d3b6e,#1a73e8);color:#fff;padding:1.28rem .8rem .88rem;text-align:center}
+.header h1{font-size:1.2rem;font-weight:800;letter-spacing:.04em}
+.header .subtitle{font-size:.7rem;opacity:.92;margin-top:.24rem}
+.header .badge{display:inline-block;background:rgba(255,255,255,.22);padding:.16rem .64rem;border-radius:20px;font-size:.62rem;margin-top:.32rem}
+.container{max-width:960px;margin:0 auto 2rem;padding:0 .7rem}
+.tab-nav{display:flex;flex-wrap:wrap;gap:2px;background:#fff;border-radius:var(--radius) var(--radius) 0 0;box-shadow:var(--shadow);position:sticky;top:0;z-index:100;padding:2px}
+.tab-btn{flex:1 1 11%;min-width:0;padding:.4rem .2rem;border:none;background:#fafafa;color:var(--gray);font-size:.64rem;font-weight:700;cursor:pointer;border-radius:6px 6px 0 0;border-bottom:2px solid transparent;line-height:1.2;text-align:center;font-family:inherit;transition:all .2s;white-space:normal;word-break:keep-all}
+.tab-btn:hover{background:#eee}
+.tab-btn.active{background:#fff;color:var(--blue-d);border-bottom-color:var(--blue)}
+.tab-btn[data-color=green].active{color:var(--green-d);border-bottom-color:var(--green)}
+.tab-btn[data-color=orange].active{color:var(--orange-d);border-bottom-color:var(--orange)}
+.tab-btn[data-color=purple].active{color:var(--purple-d);border-bottom-color:var(--purple)}
+.tab-btn[data-color=red].active{color:var(--red-d);border-bottom-color:var(--red)}
+.tab-btn[data-color=teal].active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-panel{display:none;background:#fff;padding:1.3rem 1rem;box-shadow:var(--shadow);animation:fadeIn .25s}
+.tab-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-title{font-size:1.05rem;font-weight:800;margin:1.2rem 0 .6rem;padding:.45rem .7rem;border-radius:8px;color:#fff;display:flex;align-items:center;gap:.4rem}
+.section-title:first-child{margin-top:0}
+.st-blue{background:linear-gradient(135deg,var(--blue),#3498db)}
+.st-orange{background:linear-gradient(135deg,var(--orange),#f39c12)}
+.st-green{background:linear-gradient(135deg,var(--green),#2ecc71)}
+.st-purple{background:linear-gradient(135deg,var(--purple),#9b59b6)}
+.st-red{background:linear-gradient(135deg,var(--red),#e57373)}
+.st-teal{background:linear-gradient(135deg,var(--teal),#26a69a)}
+.card{background:#fff;border-radius:8px;padding:.85rem 1rem;margin:.6rem 0;border-left:4px solid var(--gray-l);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-blue{border-left-color:var(--blue);background:#f5fbff}
+.card-green{border-left-color:var(--green);background:#f4fdf6}
+.card-orange{border-left-color:var(--orange);background:#fff9f1}
+.card-purple{border-left-color:var(--purple);background:#fbf7fd}
+.card-red{border-left-color:var(--red);background:#fef5f3}
+.card-teal{border-left-color:var(--teal);background:#f0faf9}
+.card h4{font-size:.95rem;font-weight:700;margin-bottom:.3rem;color:var(--gray-d)}
+.alert{border-radius:var(--radius);padding:.7rem .9rem .7rem 2.7rem;margin:.7rem 0;position:relative;font-size:.88rem;line-height:1.65}
+.alert::before{position:absolute;left:.8rem;top:.6rem;font-size:1.1rem}
+.alert-tip{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}
+.alert-tip::before{content:"💡"}
+.alert-warn{background:#fce4ec;border:1px solid #ef9a9a;color:#b71c1c}
+.alert-warn::before{content:"⚠️"}
+.alert-exam{background:#fff3e0;border:1px solid #ffcc80;color:#e65100}
+.alert-exam::before{content:"📝"}
+.alert-key{background:#e3f2fd;border:1px solid #90caf9;color:#0d47a1}
+.alert-key::before{content:"🔑"}
+table{width:100%;border-collapse:collapse;margin:.6rem 0;font-size:.86rem;background:#fff;border-radius:6px;overflow:hidden}
+th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical-align:top}
+.tbl-blue th{background:var(--blue);color:#fff;font-size:.82rem}
+.tbl-blue tr:nth-child(even){background:var(--blue-light)}
+.tbl-green th{background:var(--green);color:#fff;font-size:.82rem}
+.tbl-green tr:nth-child(even){background:var(--green-light)}
+.tbl-orange th{background:var(--orange);color:#fff;font-size:.82rem}
+.tbl-orange tr:nth-child(even){background:var(--orange-pale)}
+.tbl-purple th{background:var(--purple);color:#fff;font-size:.82rem}
+.tbl-purple tr:nth-child(even){background:var(--purple-light)}
+.tbl-red th{background:var(--red);color:#fff;font-size:.82rem}
+.tbl-red tr:nth-child(even){background:var(--red-light)}
+.tbl-teal th{background:var(--teal);color:#fff;font-size:.82rem}
+.tbl-teal tr:nth-child(even){background:var(--teal-light)}
+/* 穴埋め */
+.fill-card{background:#f8fafc;border-radius:var(--radius);margin:.8rem 0;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
+.fill-header{padding:.55rem .9rem;font-weight:700;font-size:.9rem;color:#fff;display:flex;align-items:center;justify-content:space-between}
+.fill-header.bg-blue{background:var(--blue)}
+.fill-header.bg-orange{background:var(--orange)}
+.fill-header.bg-green{background:var(--green)}
+.fill-header.bg-purple{background:var(--purple)}
+.fill-header.bg-red{background:var(--red)}
+.fill-header.bg-teal{background:var(--teal)}
+.fill-body{padding:.8rem 1rem}
+.fill-blank{display:inline-block;min-width:80px;padding:1px 8px;background:#f1f5f9;border-bottom:2px solid #94a3b8;border-radius:4px;color:transparent;font-weight:700;cursor:pointer;user-select:none;transition:all .15s;font-size:.9rem}
+.fill-blank.show{color:#c62828;background:#ffebee;border-bottom-color:#c62828}
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.84rem;font-weight:600;cursor:pointer;margin:4px 4px 4px 0;font-family:inherit}
+.fill-reveal-btn.reset-btn{background:#64748b}
+.fill-reveal-btn:hover{opacity:.85}
+/* vs比較 */
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.6rem 0}
+.vs-card{border-radius:8px;padding:.8rem 1rem}
+.vs-blue{background:var(--blue-light);border-left:4px solid var(--blue)}
+.vs-green{background:var(--green-light);border-left:4px solid var(--green)}
+.vs-orange{background:var(--orange-pale);border-left:4px solid var(--orange)}
+.vs-purple{background:var(--purple-light);border-left:4px solid var(--purple)}
+.vs-card h4{font-size:.9rem;font-weight:800;margin-bottom:.3rem}
+/* サポート */
+.support{display:flex;gap:.6rem;align-items:flex-start;background:#fff8e1;border:2px dashed #ffb74d;border-radius:12px;padding:.85rem 1rem;margin:1rem 0;font-size:.9rem;line-height:1.8}
+.support-icon{font-size:1.7rem;flex-shrink:0}
+.support-body{flex:1}
+.support-body strong{color:#e65100}
+/* 語呂 */
+.goro-row{margin:.6rem 0;padding:.5rem .7rem;background:#faf5fc;border-left:3px solid #8e44ad;border-radius:4px}
+.goro-chip{display:inline-block;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;padding:.35rem .8rem;border-radius:20px;font-size:.82rem;font-weight:700;margin:.2rem .2rem}
+/* keepit */
+.keepit{background:linear-gradient(135deg,#fffde7,#fff9c4);border:3px solid #fbc02d;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0}
+.keepit-title{font-size:.9rem;font-weight:800;color:#f57f17;margin-bottom:.5rem}
+.keepit ul{list-style:none;padding:0;margin:0}
+.keepit li{padding:.35rem .6rem;margin:.25rem 0;background:#fff;border-radius:6px;border-left:4px solid #fbc02d;font-size:.88rem;line-height:1.7}
+.keepit li strong{color:#1565c0}
+/* 損益図 */
+.payoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.6rem 0}
+.payoff-box{border-radius:8px;padding:.8rem;font-size:.82rem}
+.payoff-buy{background:#e8f5e9;border:2px solid #27ae60}
+.payoff-sell{background:#fce4ec;border:2px solid #e74c3c}
+.payoff-box h5{font-size:.85rem;font-weight:800;margin-bottom:.4rem}
+.payoff-diagram{font-family:'Courier New',monospace;font-size:.75rem;line-height:1.5;background:#fff;padding:.4rem .5rem;border-radius:5px;margin:.3rem 0;white-space:pre}
+/* flow */
+.flow-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:.5rem 0}
+.flow-box{background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#1e40af}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.flow-box.green{background:#dcfce7;color:#166534}
+.flow-box.orange{background:#ffedd5;color:#9a3412}
+.flow-box.purple{background:#ede9fe;color:#5b21b6}
+.flow-box.red{background:#fee2e2;color:#991b1b}
+.flow-box.teal{background:#ccfbf1;color:#134e4a}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📊 デリバティブまとめ</h1>
+  <div class="subtitle">中小企業診断士 財務・会計 — 先物・オプション・スワップ・為替予約</div>
+  <div class="badge">🎯 試験頻出 | R01〜R07対応</div>
+</div>
+<div class="container">
+<div class="tab-nav">
+  <button class="tab-btn active" data-tab="tab1">①全体像<br>デリバティブとは</button>
+  <button class="tab-btn" data-tab="tab2" data-color="green">②コール・<br>プット基本</button>
+  <button class="tab-btn" data-tab="tab3" data-color="orange">③オプション<br>価格</button>
+  <button class="tab-btn" data-tab="tab4" data-color="purple">④先物<br>vs先渡</button>
+  <button class="tab-btn" data-tab="tab5" data-color="teal">⑤為替予約</button>
+  <button class="tab-btn" data-tab="tab6" data-color="blue">⑥スワップ</button>
+  <button class="tab-btn" data-tab="tab7" data-color="red">⑦リアルOP</button>
+  <button class="tab-btn" data-tab="tab8" data-color="orange">⑧試験対策</button>
+</div>
+
+<!-- ===== タブ1: 全体像 ===== -->
+<div class="tab-panel active" id="tab1">
+  <h2 class="section-title st-blue">① デリバティブとは何か（全体像）</h2>
+
+  <div class="card card-blue">
+    <h4>定義</h4>
+    <p>デリバティブ（金融派生商品）とは、<strong>原資産</strong>（株式・債券・通貨・金利等）の価格変動リスクを管理するために生まれた金融契約。原資産そのものを取引するのではなく、その「価格変動の<strong>権利や義務</strong>」を取引する。</p>
+  </div>
+
+  <div class="alert alert-tip">「保険」に例えると分かりやすい。火災保険は家が燃えるリスクに備える契約。火事が起きなければ保険料は掛け捨て（コスト）だが、火事になれば保険金（利益）が入る。</div>
+
+  <h2 class="section-title st-blue">3種類の分類</h2>
+  <table class="tbl-blue">
+    <tr><th>種類</th><th>概要</th><th>代表例</th></tr>
+    <tr><td><strong>先物・先渡</strong></td><td>将来の売買を今の価格で約束（<strong>義務</strong>）</td><td>株価指数先物・為替先渡</td></tr>
+    <tr><td><strong>オプション</strong></td><td>将来の売買を行う<strong>権利</strong>（義務なし）</td><td>コール・プットオプション</td></tr>
+    <tr><td><strong>スワップ</strong></td><td>キャッシュフローを<strong>交換</strong>する契約</td><td>金利スワップ・通貨スワップ</td></tr>
+  </table>
+
+  <h2 class="section-title st-blue">なぜ使うのか（用途）</h2>
+  <div class="vs-grid">
+    <div class="vs-card vs-blue">
+      <h4>🛡️ ヘッジ（リスク回避）</h4>
+      <p>将来の価格変動による損失をデリバティブで相殺する<br>例: 円安リスク → 為替予約で固定</p>
+    </div>
+    <div class="vs-card vs-orange">
+      <h4>📈 投機（利益追求）</h4>
+      <p>少額の証拠金で大きなポジション（<strong>レバレッジ効果</strong>）<br>→ 試験では「ヘッジ目的」が中心</p>
+    </div>
+  </div>
+  <div class="card card-teal">
+    <h4>⚖️ 裁定（アービトラージ）</h4>
+    <p>市場間の価格差を利用した<strong>無リスク利益</strong>獲得</p>
+  </div>
+
+  <div class="alert alert-exam">📝 <strong>【1次】試験ポイント</strong>：デリバティブの3種類（先物/オプション/スワップ）の特徴を問う選択肢が頻出。「オプションは義務」は誤り（権利）。</div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ ①全体像 これだけ覚えて</div>
+    <ul>
+      <li>❶ <strong>先物・先渡＝義務</strong>、<strong>オプション＝権利（選択可）</strong>、<strong>スワップ＝交換</strong></li>
+      <li>❷ 用途3つ：<strong>ヘッジ（リスク回避）・投機・裁定</strong>。試験ではヘッジが主役</li>
+      <li>❸ デリバティブは<strong>原資産の「価格変動」を取引</strong>する（原資産そのものではない）</li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:1.4rem;color:var(--blue-d);border-left:5px solid var(--blue);padding-left:.5rem;">✏️ このタブの穴埋めチェック</h3>
+  <div style="text-align:center;margin:.4rem 0 .8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab1')">🔍 全て表示</button>
+    <button class="fill-reveal-btn reset-btn" onclick="resetAllFillIn('tab1')">🔄 リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-blue">① デリバティブ3種類の分類 — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-blue">
+        <tr><th>種類</th><th>性質</th><th>例</th></tr>
+        <tr><td>先物・先渡</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">義務</span></td><td>株価指数先物</td></tr>
+        <tr><td>オプション</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">権利（選択可）</span></td><td>コール・プット</td></tr>
+        <tr><td>スワップ</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">キャッシュフロー交換</span></td><td>金利スワップ</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-blue">② 用途の分類 — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-blue">
+        <tr><th>用途</th><th>内容</th></tr>
+        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">ヘッジ</span></td><td>価格変動による損失をデリバティブで相殺（リスク回避）</td></tr>
+        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">投機</span></td><td>少額の証拠金で大きなポジション（レバレッジ効果）</td></tr>
+        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">裁定（アービトラージ）</span></td><td>市場間の価格差を利用した無リスク利益獲得</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ2: コール・プット基本 ===== -->
+<div class="tab-panel" id="tab2">
+  <h2 class="section-title st-green">② オプション（コール・プット）基本</h2>
+
+  <div class="card card-green">
+    <h4>権利義務の構造</h4>
+    <table class="tbl-green">
+      <tr><th></th><th>コールオプション</th><th>プットオプション</th></tr>
+      <tr><td><strong>権利内容</strong></td><td>原資産を「<strong>買う権利</strong>」</td><td>原資産を「<strong>売る権利</strong>」</td></tr>
+      <tr><td><strong>買い手</strong></td><td colspan="2">権利を行使するかどうか<strong>選べる</strong></td></tr>
+      <tr><td><strong>売り手</strong></td><td>買い手が行使したら必ず<strong>売る義務</strong></td><td>買い手が行使したら必ず<strong>買う義務</strong></td></tr>
+      <tr><td><strong>プレミアム</strong></td><td colspan="2">買い手が売り手に支払う</td></tr>
+    </table>
+  </div>
+
+  <h2 class="section-title st-green">コールオプションの損益構造</h2>
+  <div class="payoff-grid">
+    <div class="payoff-box payoff-buy">
+      <h5>📈 買い手（ロング・コール）</h5>
+      <div class="payoff-diagram">利益
+ |              /
+ |            /
+─┼────────●──── 原資産価格
+ |       権利行使価格(100)
+ 損失上限=プレミアム(10)</div>
+      <p style="font-size:.8rem;margin-top:.3rem;"><strong>損益分岐点 = 権利行使価格(100) + プレミアム(10) = 110</strong><br>原資産が110超→利益無限大 / 110以下→損失はプレミアム10のみ</p>
+    </div>
+    <div class="payoff-box payoff-sell">
+      <h5>📉 売り手（ショート・コール）</h5>
+      <div class="payoff-diagram">利益  プレミアム(10)固定
+ |────●
+ |       \
+─┼─────────●── 原資産価格
+ |          \（損失下限なし）</div>
+      <p style="font-size:.8rem;margin-top:.3rem;">原資産が下落・横ばい → プレミアム10を丸取り<br><strong>原資産が急騰 → 損失無限大（リスク大）</strong></p>
+    </div>
+  </div>
+
+  <h2 class="section-title st-green">プットオプションの損益構造</h2>
+  <div class="payoff-grid">
+    <div class="payoff-box payoff-buy">
+      <h5>📈 買い手（ロング・プット）</h5>
+      <div class="payoff-diagram">利益
+ \
+  \
+───●──────────── 原資産価格
+  権利行使価格(100)
+損益分岐点 = 100 − 10 = 90</div>
+      <p style="font-size:.8rem;margin-top:.3rem;"><strong>損益分岐点 = 権利行使価格(100) − プレミアム(10) = 90</strong><br>株の下落保険（プロテクティブプット）として機能</p>
+    </div>
+    <div class="payoff-box payoff-sell">
+      <h5>📉 売り手（ショート・プット）</h5>
+      <div class="payoff-diagram">利益  ─────●
+            /
+           /
+─────────●──── 原資産価格
+         |
+         損失（急落で大きな損失）</div>
+      <p style="font-size:.8rem;margin-top:.3rem;">原資産が上昇・横ばい → プレミアムを丸取り<br><strong>原資産が急落 → 大きな損失</strong></p>
+    </div>
+  </div>
+
+  <h2 class="section-title st-green">買い手 vs 売り手 比較</h2>
+  <table class="tbl-green">
+    <tr><th></th><th>買い手</th><th>売り手</th></tr>
+    <tr><td>初期コスト</td><td>プレミアム<strong>支払い</strong></td><td>プレミアム<strong>受取り</strong></td></tr>
+    <tr><td>最大損失</td><td><strong>プレミアムのみ（有限）</strong></td><td>無限大（コール売り）または大きな損失（プット売り）</td></tr>
+    <tr><td>最大利益</td><td>無限大（コール買い）または大きな利益（プット買い）</td><td><strong>プレミアムのみ（有限）</strong></td></tr>
+    <tr><td>権利 vs 義務</td><td><strong>権利</strong>（行使選択自由）</td><td><strong>義務</strong>（行使されたら従う）</td></tr>
+  </table>
+
+  <div class="alert alert-warn">⚠️ 【1次】引っかけ：「オプションの買い手は必ず権利行使する」→ 誤り。<strong>不利なら権利放棄できる</strong>（だから損失はプレミアム止まり）</div>
+
+  <div class="alert alert-exam">📝 【1次】試験ポイント：損益図4パターン（コール買い・売り／プット買い・売り）は毎年類似問題。損益分岐点の計算と、最大損失・最大利益を問う問題が頻出。</div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ ②コール・プット基本 これだけ覚えて</div>
+    <ul>
+      <li>❶ <strong>コール＝買う権利</strong>、<strong>プット＝売る権利</strong>。買い手に権利、売り手に義務</li>
+      <li>❷ <strong>買い手の最大損失＝プレミアムのみ</strong>（有限）／売り手の最大損失は無限大</li>
+      <li>❸ 損益分岐点：コール買い＝<strong>行使価格＋プレミアム</strong>、プット買い＝<strong>行使価格−プレミアム</strong></li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:1.4rem;color:var(--green-d);border-left:5px solid var(--green);padding-left:.5rem;">✏️ このタブの穴埋めチェック</h3>
+  <div style="text-align:center;margin:.4rem 0 .8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab2')" style="background:var(--green);">🔍 全て表示</button>
+    <button class="fill-reveal-btn reset-btn" onclick="resetAllFillIn('tab2')">🔄 リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-green">① コール・プット基本構造 — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-green">
+        <tr><th></th><th>コール</th><th>プット</th></tr>
+        <tr><td>権利内容</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">買う権利</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">売る権利</span></td></tr>
+        <tr><td>買い手の最大損失</td><td colspan="2"><span class="fill-blank" onclick="this.classList.toggle('show')">プレミアムのみ（有限）</span></td></tr>
+        <tr><td>売り手の最大損失（コール）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">無限大</span></td><td>大きな損失（有限）</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-green">② 損益分岐点の計算 — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-green">
+        <tr><th>種類</th><th>損益分岐点</th></tr>
+        <tr><td>コール買い（行使価格100・プレミアム10）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">110</span>（100+10）</td></tr>
+        <tr><td>プット買い（行使価格100・プレミアム10）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">90</span>（100−10）</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ3: オプション価格 ===== -->
+<div class="tab-panel" id="tab3">
+  <h2 class="section-title st-orange">③ オプション価格の構成（本質的価値・時間価値）</h2>
+
+  <div class="card card-orange">
+    <h4>オプション価格の2要素</h4>
+    <div class="flow-row">
+      <div class="flow-box orange">オプション価格（プレミアム）</div>
+      <div class="flow-arrow">=</div>
+      <div class="flow-box" style="background:#fff3cd;color:#664d03;">本質的価値</div>
+      <div class="flow-arrow">＋</div>
+      <div class="flow-box green">時間価値</div>
+    </div>
+  </div>
+
+  <h2 class="section-title st-orange">本質的価値（Intrinsic Value）</h2>
+  <div class="card card-orange">
+    <h4>今すぐ権利行使した場合に得られる価値</h4>
+    <table class="tbl-orange">
+      <tr><th>状態</th><th>呼び方</th><th>コールの本質的価値</th></tr>
+      <tr><td>原資産価格 ＞ 権利行使価格</td><td><strong>イン・ザ・マネー（ITM）</strong></td><td><strong>原資産価格 − 権利行使価格</strong></td></tr>
+      <tr><td>原資産価格 ＝ 権利行使価格</td><td><strong>アット・ザ・マネー（ATM）</strong></td><td>0</td></tr>
+      <tr><td>原資産価格 ＜ 権利行使価格</td><td><strong>アウト・オブ・ザ・マネー（OTM）</strong></td><td><strong>0（マイナスにはならない）</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="support">
+    <span class="support-icon">👨‍🏫</span>
+    <div class="support-body">本質的価値は「今すぐ使ったらいくら得するか」の即時換金価値。株価100円・行使価格90円のコールオプションなら、今すぐ行使して<strong>10円の利益 → 本質的価値=10円</strong>。OTM（損する状態）でも権利放棄できるのでマイナスにはならない！</div>
+  </div>
+
+  <h2 class="section-title st-orange">時間価値（Time Value）</h2>
+  <div class="card card-orange">
+    <h4>満期までの時間に起因する価値（将来有利になる可能性の値段）</h4>
+    <p style="font-size:.85rem;margin:.4rem 0;">満期に近づくほど時間価値はゼロに収束 → <strong>タイムディケイ（時間的価値の減少）</strong></p>
+    <div style="margin:.5rem 0;background:#fff;border-radius:6px;padding:.5rem .7rem;font-size:.82rem;">
+      <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#666;margin-bottom:.2rem;"><span>⬅️ 満期まで長い</span><span>満期まで短い ➡️</span></div>
+      <div style="background:#e2e8f0;border-radius:99px;height:14px;position:relative;">
+        <div style="background:linear-gradient(90deg,#f39c12,#e74c3c);border-radius:99px;height:14px;width:100%;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#64748b;margin-top:.1rem;"><span style="color:#27ae60;font-weight:700;">時間価値 大</span><span style="color:#e74c3c;font-weight:700;">時間価値→0</span></div>
+    </div>
+  </div>
+
+  <h2 class="section-title st-orange">オプション価格に影響する要因</h2>
+  <table class="tbl-orange">
+    <tr><th>要因</th><th>コール価格</th><th>プット価格</th><th>理由</th></tr>
+    <tr><td>原資産価格↑</td><td>↑上昇</td><td>↓低下</td><td>コールは行使しやすくなる</td></tr>
+    <tr><td>権利行使価格↑</td><td>↓低下</td><td>↑上昇</td><td>コールは行使しにくくなる</td></tr>
+    <tr><td>残存期間↑</td><td>↑上昇</td><td>↑上昇</td><td>時間価値が増加</td></tr>
+    <tr><td><strong>ボラティリティ↑</strong></td><td><strong>↑上昇</strong></td><td><strong>↑上昇</strong></td><td><strong>変動大=有利に転じる確率↑</strong></td></tr>
+    <tr><td>金利↑</td><td>↑上昇</td><td>↓低下</td><td>原資産保有コスト増</td></tr>
+  </table>
+
+  <div class="alert alert-exam">📝 <strong>【1次】試験頻出（R03出題）</strong>：<strong>ボラティリティが高いほどコール・プット両方の価格が上昇する</strong>。これはブラック・ショールズ式の核心。「ボラが高い → オプション価値下がる」は誤り！</div>
+  <div class="alert alert-warn">⚠️ 【1次】引っかけ：「アウト・オブ・ザ・マネーの本質的価値はマイナス」→ 誤り。権利放棄するので<strong>ゼロ</strong>（負にはならない）</div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ ③オプション価格 これだけ覚えて</div>
+    <ul>
+      <li>❶ プレミアム ＝ <strong>本質的価値（今すぐ行使の利益）＋ 時間価値（将来への期待）</strong></li>
+      <li>❷ <strong>ITM＞ATM＞OTM</strong>（本質的価値の順）。OTMでも本質的価値はゼロ（マイナスなし）</li>
+      <li>❸ <strong>ボラティリティ↑ → コール・プット両方↑</strong>（残存期間も同様）</li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:1.4rem;color:var(--orange-d);border-left:5px solid var(--orange);padding-left:.5rem;">✏️ このタブの穴埋めチェック</h3>
+  <div style="text-align:center;margin:.4rem 0 .8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab3')" style="background:var(--orange);">🔍 全て表示</button>
+    <button class="fill-reveal-btn reset-btn" onclick="resetAllFillIn('tab3')">🔄 リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-orange">① ITM/ATM/OTM と本質的価値 — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-orange">
+        <tr><th>状態</th><th>呼び方</th><th>コール本質的価値</th></tr>
+        <tr><td>原資産 ＞ 行使価格</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">イン・ザ・マネー（ITM）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">原資産価格−行使価格</span></td></tr>
+        <tr><td>原資産 ＝ 行使価格</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">アット・ザ・マネー（ATM）</span></td><td>0</td></tr>
+        <tr><td>原資産 ＜ 行使価格</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">アウト・オブ・ザ・マネー（OTM）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">0（マイナスなし）</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-orange">② 価格影響要因 — ボラティリティ・残存期間</div>
+    <div class="fill-body">
+      <table class="tbl-orange">
+        <tr><th>要因</th><th>コール</th><th>プット</th></tr>
+        <tr><td>ボラティリティ↑</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td></tr>
+        <tr><td>残存期間↑</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td></tr>
+        <tr><td>原資産価格↑</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↓低下</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ4: 先物vs先渡 ===== -->
+<div class="tab-panel" id="tab4">
+  <h2 class="section-title st-purple">④ 先物取引 vs 先渡取引</h2>
+
+  <div class="card card-purple">
+    <h4>定義</h4>
+    <p>どちらも「将来の特定時点に、あらかじめ決めた価格で売買する契約」。ただし制度設計が大きく異なる。</p>
+  </div>
+
+  <div class="support">
+    <span class="support-icon">🍱</span>
+    <div class="support-body"><strong>先物</strong>は「コンビニのおにぎり（規格化・どこでも買える・転売できる）」。<strong>先渡</strong>は「料亭の特注弁当（完全オーダーメイド・当日キャンセル不可・相手先との一対一）」のイメージ。</div>
+  </div>
+
+  <h2 class="section-title st-purple">比較表（試験の核心）</h2>
+  <table class="tbl-purple">
+    <tr><th>比較軸</th><th>先物取引（Futures）</th><th>先渡取引（Forward）</th></tr>
+    <tr><td>取引場所</td><td><strong>取引所（上場）</strong></td><td><strong>相対（店頭・OTC）</strong></td></tr>
+    <tr><td>契約内容</td><td><strong>標準化</strong>（数量・期日固定）</td><td><strong>自由設計</strong>（オーダーメイド）</td></tr>
+    <tr><td>決済方法</td><td><strong>差金決済</strong>が基本</td><td><strong>現物決済</strong>が多い</td></tr>
+    <tr><td>信用リスク</td><td><strong>低い</strong>（清算機関が介在）</td><td><strong>高い</strong>（相手方リスク）</td></tr>
+    <tr><td>証拠金</td><td><strong>必要</strong>（値洗い毎日）</td><td>不要が多い</td></tr>
+    <tr><td>流動性</td><td><strong>高い</strong>（市場で転売可）</td><td><strong>低い</strong>（相対のため）</td></tr>
+    <tr><td>向いている用途</td><td>投機・ヘッジ全般</td><td>為替など特定条件のヘッジ</td></tr>
+  </table>
+
+  <h2 class="section-title st-purple">ヘッジの仕組み（先物を使った場合）</h2>
+  <div class="card card-purple">
+    <h4>現物保有＋先物売りのヘッジ</h4>
+    <table class="tbl-purple">
+      <tr><th>ポジション</th><th>価格↑</th><th>価格↓</th></tr>
+      <tr><td>現物保有</td><td>利益</td><td>損失</td></tr>
+      <tr><td>先物売り</td><td>損失</td><td>利益</td></tr>
+      <tr><td><strong>合計</strong></td><td colspan="2"><strong>ほぼゼロ（価格変動リスクを消す）</strong></td></tr>
+    </table>
+    <div class="alert alert-tip" style="margin-top:.5rem;">「ヘッジとは、反対方向のポジションを持ってリスクを相殺すること」</div>
+  </div>
+
+  <div class="alert alert-warn">⚠️ 【1次】引っかけ：「先物取引は現物受渡しが基本」→ 誤り。<strong>差金決済</strong>が基本（現物決済が多いのは先渡取引）</div>
+
+  <div class="alert alert-exam">📝 【1次】試験ポイント：先物と先渡の6〜7軸比較表は選択肢そのまま出題。特に「取引場所（上場vs店頭）」「決済方法（差金vs現物）」「信用リスク」の3軸は必須暗記。</div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ ④先物vs先渡 これだけ覚えて</div>
+    <ul>
+      <li>❶ <strong>先物＝取引所・標準化・差金決済・信用リスク低</strong></li>
+      <li>❷ <strong>先渡＝相対（OTC）・自由設計・現物決済・信用リスク高</strong></li>
+      <li>❸ ヘッジ＝<strong>反対方向のポジションで損益を相殺</strong>（現物保有+先物売りで価格変動ゼロ化）</li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:1.4rem;color:var(--purple-d);border-left:5px solid var(--purple);padding-left:.5rem;">✏️ このタブの穴埋めチェック</h3>
+  <div style="text-align:center;margin:.4rem 0 .8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab4')" style="background:var(--purple);">🔍 全て表示</button>
+    <button class="fill-reveal-btn reset-btn" onclick="resetAllFillIn('tab4')">🔄 リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-purple">① 先物 vs 先渡 比較 — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-purple">
+        <tr><th>比較軸</th><th>先物（Futures）</th><th>先渡（Forward）</th></tr>
+        <tr><td>取引場所</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">取引所（上場）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">相対（OTC）</span></td></tr>
+        <tr><td>契約内容</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">標準化</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">自由設計</span></td></tr>
+        <tr><td>決済方法</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">差金決済</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">現物決済</span></td></tr>
+        <tr><td>信用リスク</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">低い（清算機関介在）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">高い（相手方リスク）</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ5: 為替予約 ===== -->
+<div class="tab-panel" id="tab5">
+  <h2 class="section-title st-teal">⑤ 為替予約</h2>
+
+  <div class="card card-teal">
+    <h4>仕組みと目的</h4>
+    <p>将来の外貨取引を、現時点の<strong>先物レート</strong>で予約する契約。為替変動リスクを排除するために使う。</p>
+  </div>
+
+  <h2 class="section-title st-teal">為替予約のイメージ</h2>
+  <div class="card card-teal">
+    <h4>輸入企業（3ヶ月後に$1,000支払い予定）</h4>
+    <div class="vs-grid">
+      <div class="vs-card vs-blue">
+        <h4>❌ 予約なし</h4>
+        <p>3ヶ月後のレート次第<br>円安(1$=150円)→支払い増<br>円高(1$=130円)→支払い減</p>
+      </div>
+      <div class="vs-card vs-green">
+        <h4>✅ 為替予約あり</h4>
+        <p>「1$=140円」で固定予約<br>円安でも円高でも<strong>140円で確定</strong><br>リスクはなくなるが「得する機会」も消える</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title st-teal">直物レート vs 先物レート（直先差額）</h2>
+  <table class="tbl-teal">
+    <tr><th>用語</th><th>意味</th></tr>
+    <tr><td><strong>直物レート（スポット）</strong></td><td>今すぐ決済する場合のレート</td></tr>
+    <tr><td><strong>先物レート（フォワード）</strong></td><td>将来の決済を予約する場合のレート</td></tr>
+    <tr><td><strong>直先差額（スワップポイント）</strong></td><td><strong>先物レート − 直物レート</strong></td></tr>
+  </table>
+
+  <div class="card card-teal">
+    <h4>直先差額のイメージ</h4>
+    <p>直物: 1$=140円 / 先物: 1$=142円 / 直先差額: <strong>+2円</strong></p>
+    <div class="alert alert-tip" style="margin-top:.4rem;">日本金利＜米国金利のとき、先物は直物より<strong>円安</strong>になる（金利差が反映される）</div>
+  </div>
+
+  <h2 class="section-title st-teal">為替予約 vs 通貨オプション の比較（R06の核心）</h2>
+  <table class="tbl-teal">
+    <tr><th>比較軸</th><th>為替予約</th><th>通貨オプション</th></tr>
+    <tr><td>法的性質</td><td><strong>義務</strong>（必ず履行）</td><td><strong>権利</strong>（選択可）</td></tr>
+    <tr><td>コスト</td><td>スプレッドのみ</td><td><strong>プレミアム支払い</strong></td></tr>
+    <tr><td>有利な動きの享受</td><td><strong>できない</strong>（固定）</td><td><strong>できる</strong>（権利放棄）</td></tr>
+    <tr><td>不利な動きの回避</td><td>できる</td><td>できる</td></tr>
+    <tr><td>向いている場面</td><td>確実にヘッジしたい</td><td>有利な動きも取りたい</td></tr>
+  </table>
+
+  <div class="support">
+    <span class="support-icon">🚄</span>
+    <div class="support-body"><strong>為替予約</strong>は「新幹線の指定席予約（キャンセル不可・確実に座れる）」。<strong>通貨オプション</strong>は「キャンセル料を払えば自由席に乗り換えられる指定席（プレミアム＝キャンセル料）」。円高になれば予約をキャンセルして円高の恩恵を受けられる点がオプションの強み。</div>
+  </div>
+
+  <div class="alert alert-warn">⚠️ 【1次】引っかけ：「為替予約は有利な為替変動の恩恵も受けられる」→ 誤り。<strong>受けられない</strong>（義務として固定される）</div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ ⑤為替予約 これだけ覚えて</div>
+    <ul>
+      <li>❶ 為替予約＝<strong>義務（固定・有利な動きの恩恵なし）</strong>、通貨オプション＝<strong>権利（プレミアム払いで有利な動きも享受）</strong></li>
+      <li>❷ 直先差額（スワップポイント）＝<strong>先物レート − 直物レート</strong>（金利差が反映）</li>
+      <li>❸ <strong>日本金利＜米国金利</strong>のとき、先物は直物より<strong>円安</strong>になる</li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:1.4rem;color:var(--teal);border-left:5px solid var(--teal);padding-left:.5rem;">✏️ このタブの穴埋めチェック</h3>
+  <div style="text-align:center;margin:.4rem 0 .8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab5')" style="background:var(--teal);">🔍 全て表示</button>
+    <button class="fill-reveal-btn reset-btn" onclick="resetAllFillIn('tab5')">🔄 リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-teal">① 為替予約 vs 通貨オプション — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-teal">
+        <tr><th>比較軸</th><th>為替予約</th><th>通貨オプション</th></tr>
+        <tr><td>法的性質</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">義務</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">権利</span></td></tr>
+        <tr><td>コスト</td><td>スプレッドのみ</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">プレミアム支払い</span></td></tr>
+        <tr><td>有利な動きの享受</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">できない（固定）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">できる（権利放棄）</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-teal">② 直先差額 — 空欄を答えよ</div>
+    <div class="fill-body">
+      <p style="font-size:.9rem;line-height:2;">直先差額（スワップポイント）＝ <span class="fill-blank" onclick="this.classList.toggle('show')">先物レート</span> − <span class="fill-blank" onclick="this.classList.toggle('show')">直物レート</span><br>
+      日本金利 ＜ 米国金利 のとき、先物は直物より <span class="fill-blank" onclick="this.classList.toggle('show')">円安</span> になる</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ6: スワップ ===== -->
+<div class="tab-panel" id="tab6">
+  <h2 class="section-title st-blue">⑥ スワップ取引（金利スワップ）</h2>
+
+  <div class="card card-blue">
+    <h4>仕組み</h4>
+    <p>異なる種類のキャッシュフロー（<strong>固定金利 vs 変動金利</strong>）を交換する契約。</p>
+  </div>
+
+  <h2 class="section-title st-blue">金利スワップのイメージ</h2>
+  <div class="card card-blue">
+    <div class="flow-row">
+      <div class="flow-box">A社（変動金利借入）</div>
+      <div style="text-align:center;font-size:.8rem;color:#666;">
+        <div>←─ 固定金利5% ─→</div>
+        <div>─→ 変動金利LIBOR →─</div>
+      </div>
+      <div class="flow-box green">B社（固定金利借入）</div>
+    </div>
+    <table class="tbl-blue" style="margin-top:.6rem;">
+      <tr><th>参加者</th><th>スワップ前</th><th>スワップ後</th><th>目的</th></tr>
+      <tr><td><strong>A社</strong></td><td>変動金利 → 金利上昇リスクあり</td><td><strong>実質固定金利</strong></td><td>金利リスク回避</td></tr>
+      <tr><td><strong>B社</strong></td><td>固定金利 → 金利低下の恩恵なし</td><td><strong>実質変動金利</strong></td><td>低金利環境を享受</td></tr>
+    </table>
+  </div>
+
+  <div class="support">
+    <span class="support-icon">🔄</span>
+    <div class="support-body">スワップは「お互いのほしいものを交換するバーター取引」。A社は「固定が欲しい」、B社は「変動が欲しい」。互いのニーズが合致して成立。<strong>実際に借入を切り替えるわけではなく、金利の支払いだけを交換する</strong>。</div>
+  </div>
+
+  <div class="alert alert-exam">📝 【1次】試験ポイント：金利スワップは「変動↔固定の交換」「互いのニーズが合致」「元本交換なし・利息のみ交換」が頻出。通貨スワップとの違い（元本交換の有無）も押さえる。</div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ ⑥スワップ これだけ覚えて</div>
+    <ul>
+      <li>❶ 金利スワップ＝<strong>固定金利と変動金利のキャッシュフローを交換</strong></li>
+      <li>❷ <strong>元本は交換しない</strong>（利息部分のみ交換）← 通貨スワップは元本も交換</li>
+      <li>❸ 変動借入の会社が「固定に変えたい」→ <strong>固定受取・変動支払のスワップ</strong>で実質固定化</li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:1.4rem;color:var(--blue-d);border-left:5px solid var(--blue);padding-left:.5rem;">✏️ このタブの穴埋めチェック</h3>
+  <div style="text-align:center;margin:.4rem 0 .8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab6')" style="background:var(--blue);">🔍 全て表示</button>
+    <button class="fill-reveal-btn reset-btn" onclick="resetAllFillIn('tab6')">🔄 リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-blue">① 金利スワップ — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-blue">
+        <tr><th>項目</th><th>内容</th></tr>
+        <tr><td>交換するもの</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">固定金利と変動金利</span>のキャッシュフロー</td></tr>
+        <tr><td>元本交換</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">しない</span>（利息部分のみ）</td></tr>
+        <tr><td>変動金利借入のA社</td><td>スワップ後、実質<span class="fill-blank" onclick="this.classList.toggle('show')">固定金利</span>になる</td></tr>
+        <tr><td>固定金利借入のB社</td><td>スワップ後、実質<span class="fill-blank" onclick="this.classList.toggle('show')">変動金利</span>になる</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ7: リアルOP ===== -->
+<div class="tab-panel" id="tab7">
+  <h2 class="section-title st-red">⑦ リアルオプション（H25出題）</h2>
+
+  <div class="card card-red">
+    <h4>定義</h4>
+    <p>投資プロジェクトに内在する「<strong>意思決定の柔軟性</strong>」をオプションとして評価する手法。</p>
+    <div class="alert alert-tip" style="margin-top:.5rem;">NPV（正味現在価値）だけでは「今やるかやらないか」の二択しか評価できない。リアルオプションは「後で状況を見て決める」という経営の柔軟性を価値として上乗せする。</div>
+  </div>
+
+  <h2 class="section-title st-red">代表的なリアルオプションの種類</h2>
+  <table class="tbl-red">
+    <tr><th>種類</th><th>内容</th><th>対応するオプション</th></tr>
+    <tr><td><strong>延期オプション</strong></td><td>投資を待って情報を集める権利</td><td><strong>コールオプション</strong></td></tr>
+    <tr><td><strong>拡張オプション</strong></td><td>成功したら規模を拡大する権利</td><td><strong>コールオプション</strong></td></tr>
+    <tr><td><strong>縮小オプション</strong></td><td>不振なら規模を縮小する権利</td><td><strong>プットオプション</strong></td></tr>
+    <tr><td><strong>撤退オプション</strong></td><td>損失が大きければ撤退する権利</td><td><strong>プットオプション</strong></td></tr>
+  </table>
+
+  <div class="card card-red">
+    <h4>不確実性とリアルオプション価値の関係</h4>
+    <div style="margin:.4rem 0;background:#fff;border-radius:6px;padding:.5rem .7rem;font-size:.82rem;">
+      <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#666;margin-bottom:.2rem;"><span>⬅️ 不確実性が低い</span><span>不確実性が高い ➡️</span></div>
+      <div style="background:#e2e8f0;border-radius:99px;height:14px;position:relative;">
+        <div style="background:linear-gradient(90deg,#ef9a9a,#c62828);border-radius:99px;height:14px;width:100%;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#64748b;margin-top:.1rem;"><span>リアルOP価値 小</span><span style="color:#c62828;font-weight:700;">リアルOP価値 大（待つ価値↑）</span></div>
+    </div>
+    <p style="font-size:.85rem;margin-top:.3rem;">不確実性が高い（ボラティリティが大きい）ほど、待つ価値（リアルオプション価値）は<strong>大きくなる</strong></p>
+  </div>
+
+  <div class="alert alert-exam">📝 【1次・H25出題】：4種類のリアルオプション名と「コール/プット」の対応が問われる。延期・拡張＝コール、縮小・撤退＝プット。不確実性が高いほどリアルOP価値が大きくなることも出題。</div>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ ⑦リアルOP これだけ覚えて</div>
+    <ul>
+      <li>❶ <strong>延期・拡張＝コール</strong>（プラス方向への選択権）、<strong>縮小・撤退＝プット</strong>（損失制限の選択権）</li>
+      <li>❷ リアルオプション価値は<strong>不確実性（ボラティリティ）が高いほど大きい</strong></li>
+      <li>❸ NPV単独では捉えられない「<strong>経営の柔軟性（将来の選択肢）</strong>」の価値を上乗せ評価する</li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:1.4rem;color:var(--red-d);border-left:5px solid var(--red);padding-left:.5rem;">✏️ このタブの穴埋めチェック</h3>
+  <div style="text-align:center;margin:.4rem 0 .8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab7')" style="background:var(--red);">🔍 全て表示</button>
+    <button class="fill-reveal-btn reset-btn" onclick="resetAllFillIn('tab7')">🔄 リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-red">① リアルオプション4種類 — 空欄を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-red">
+        <tr><th>種類</th><th>内容</th><th>対応OP</th></tr>
+        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">延期オプション</span></td><td>投資を待って情報収集</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">コール</span></td></tr>
+        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">拡張オプション</span></td><td>成功したら規模拡大</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">コール</span></td></tr>
+        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">縮小オプション</span></td><td>不振なら規模縮小</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">プット</span></td></tr>
+        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">撤退オプション</span></td><td>損失が大きければ撤退</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">プット</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ8: 試験対策 ===== -->
+<div class="tab-panel" id="tab8">
+  <h2 class="section-title st-orange">⑧ 試験対策 総括</h2>
+
+  <h2 class="section-title st-orange">得点最大化の学習順序</h2>
+
+  <div class="card card-orange">
+    <h4>STEP 1（即得点）</h4>
+    <p>コール・プット損益図を4パターン（各買い手・売り手）完全習得<br>→ 毎年類似問題。確実に4点</p>
+  </div>
+  <div class="card card-blue">
+    <h4>STEP 2（頻出論点）</h4>
+    <p>本質的価値・時間価値の定義と計算、ITM・ATM・OTMの判定<br>→ R01〜R05追試で5年連続出題</p>
+  </div>
+  <div class="card card-purple">
+    <h4>STEP 3（差別化論点）</h4>
+    <p>先物 vs 先渡の比較表（6つの軸を覚える）、為替予約の損益計算（直先差額の読み取り）<br>→ 記述・計算両方に対応</p>
+  </div>
+  <div class="card card-green">
+    <h4>STEP 4（加点）</h4>
+    <p>通貨オプション vs 為替予約の比較（R06型）、ボラティリティとオプション価格の関係、リアルオプションの概念と種類</p>
+  </div>
+
+  <h2 class="section-title st-orange">最重要 引っかかりポイント集</h2>
+  <table class="tbl-orange">
+    <tr><th>よくある誤り</th><th>正しい理解</th></tr>
+    <tr><td>「オプションの買い手は必ず権利行使する」</td><td><strong>不利なら権利放棄できる（義務なし）</strong></td></tr>
+    <tr><td>「時間価値は満期になると増える」</td><td><strong>満期に近づくほどゼロに収束（タイムディケイ）</strong></td></tr>
+    <tr><td>「ボラティリティが高いとオプション価値は下がる」</td><td><strong>逆。ボラティリティ↑ → オプション価値↑</strong></td></tr>
+    <tr><td>「先物取引は現物受渡しが基本」</td><td><strong>差金決済が基本</strong>（先渡は現物決済が多い）</td></tr>
+    <tr><td>「為替予約は有利な為替変動の恩恵も受けられる」</td><td><strong>受けられない</strong>（義務として固定される）</td></tr>
+    <tr><td>「アウト・オブ・ザ・マネーの本質的価値はマイナス」</td><td><strong>ゼロ</strong>（権利放棄するので負にならない）</td></tr>
+  </table>
+
+  <h2 class="section-title st-orange">優先度マトリクス</h2>
+  <table class="tbl-orange">
+    <tr><th></th><th>出題頻度：高い</th><th>出題頻度：低い</th></tr>
+    <tr><td><strong>難度：低い（概念）</strong></td><td>コール・プット基本損益図</td><td>スワップ・リアルOP</td></tr>
+    <tr><td><strong>難度：高い（計算）</strong></td><td>本質的価値・時間価値<br>為替予約計算・通貨OP比較</td><td>先物・先渡計算<br>ブラック・ショールズ</td></tr>
+  </table>
+
+  <div class="alert alert-key">🔑 最優先で覚えること：①損益図4パターン ②ITM/ATM/OTM ③先物vs先渡6軸 ④為替予約vs通貨OP ⑤リアルOP4種類（コール/プット対応）</div>
+
+  <h3 style="margin-top:1.4rem;color:var(--orange-d);border-left:5px solid var(--orange);padding-left:.5rem;">✏️ このタブの穴埋めチェック</h3>
+  <div style="text-align:center;margin:.4rem 0 .8rem;">
+    <button class="fill-reveal-btn" onclick="revealAllFillIn('tab8')" style="background:var(--orange);">🔍 全て表示</button>
+    <button class="fill-reveal-btn reset-btn" onclick="resetAllFillIn('tab8')">🔄 リセット</button>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-header bg-orange">① 引っかかりポイント — 正しい理解を答えよ</div>
+    <div class="fill-body">
+      <table class="tbl-orange">
+        <tr><th>誤り</th><th>正しい理解</th></tr>
+        <tr><td>オプション買い手は必ず権利行使する</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">不利なら権利放棄できる（義務なし）</span></td></tr>
+        <tr><td>ボラが高いとオプション価値は下がる</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">逆。ボラ↑→オプション価値↑</span></td></tr>
+        <tr><td>先物は現物受渡しが基本</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">差金決済が基本</span></td></tr>
+        <tr><td>為替予約は有利な動きも享受できる</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">できない（義務として固定）</span></td></tr>
+        <tr><td>OTMの本質的価値はマイナス</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">ゼロ（権利放棄するので負にならない）</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+(function(){
+  // タブ切替
+  var btns=document.querySelectorAll('.tab-btn');
+  var panels=document.querySelectorAll('.tab-panel');
+  btns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      btns.forEach(function(b){b.classList.remove('active')});
+      panels.forEach(function(p){p.classList.remove('active')});
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // fill-blank クリックトグル
+  document.querySelectorAll('.fill-blank').forEach(function(el){
+    el.addEventListener('click',function(){this.classList.toggle('show')});
+  });
+
+  // 一括表示
+  window.revealAllFillIn=function(tabId){
+    document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.add('show')});
+  };
+  window.resetAllFillIn=function(tabId){
+    document.querySelectorAll('#'+tabId+' .fill-blank').forEach(function(el){el.classList.remove('show')});
+  };
+})();
+</script>
+</body>
+</html>
