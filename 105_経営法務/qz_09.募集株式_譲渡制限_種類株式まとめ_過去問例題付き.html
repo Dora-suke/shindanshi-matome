@@ -282,6 +282,14 @@ strong { color: var(--ink); }
 .sec-hidden-label{color:#64748b;font-style:italic}
 .sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
 .sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -2302,6 +2310,18 @@ function revealBlanks(btn){
     wrap.appendChild(btnRow); /* 常に右下に配置 */
     if(hidden[id]) doHide(getLabel());
   });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head,.fill-header'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); return h&&(h.textContent.trim().startsWith('予習｜')||h.textContent.trim().startsWith('🔰')); }
+  function mkPh(e2,k2){ var ph=document.createElement('div'); ph.className='row-hidden-ph'; ph.innerHTML='— <button>表示</button>'; ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); }); return ph; }
+  function mkTrPh(r,k){ var cols=r.querySelectorAll('td,th').length; var phR=document.createElement('tr'); phR.className='tr-hidden-ph'; var phTd=document.createElement('td'); phTd.colSpan=cols; phTd.innerHTML='— <button>表示</button>'; phR.appendChild(phTd); phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); }); return phR; }
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){ if(isPreview(el)) return; var key='fg:'+cardHead(el)+'|'+i; var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○'; el.insertBefore(btn,el.firstChild); btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }); if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); } });
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){ if(isPreview(tr)) return; var key='tr:'+cardHead(tr)+'|'+i; var tds=tr.querySelectorAll('td'); if(!tds.length) return; var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px'; var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○'; last.appendChild(btn); btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }); if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); } });
 })();
 </script>
 

@@ -290,6 +290,23 @@ footer{text-align:center;padding:26px 16px;color:var(--muted);font-size:.8rem;bo
   table{font-size:.82rem}
   th,td{padding:7px 8px}
 }
+/* === sec-hide-fine === */
+.sec-hide-btn-row.fine{margin:-1px 0 4px}
+.sec-hide-btn-row.fine button{width:21px;height:21px;font-size:.7rem;border-style:dashed;border-color:#d8b4fe;color:#a78bda}
+.sec-hide-btn-row.fine button:hover{border-color:#7c3aed;color:#6d28d9;background:#f5f3ff}
+.sec-hidden-ph.fine{font-size:.74rem}
+.sec-hide-iwrap{display:inline-block;position:relative}
+.sec-hide-ibtn{border:1.5px dashed #d8b4fe;background:#fff;border-radius:50%;width:17px;height:17px;font-size:.62rem;line-height:1;color:#a78bda;cursor:pointer;margin-left:2px;vertical-align:middle;padding:0}
+.sec-hide-ibtn:hover{border-color:#7c3aed;color:#6d28d9;background:#f5f3ff}
+.sec-hide-ighost{display:inline-block;font-size:.72rem;color:#94a3b8;font-style:italic;border:1px dashed #cbd5e1;border-radius:6px;padding:1px 8px;margin:0 2px;cursor:pointer}
+.sec-hide-ighost:hover{background:#f8fafc;color:#475569}
+/* === term-pop === */
+.term-pop{border-bottom:1.5px dotted #d97706;cursor:pointer;color:inherit}
+.term-pop .tp-mark{font-size:.62em;color:#d97706;vertical-align:super;margin-left:1px;font-weight:700}
+.term-popover{display:none;position:fixed;z-index:9999;width:min(300px,86vw);background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:10px 13px;font-size:.84rem;line-height:1.7;color:#444;box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.term-popover .tp-term{display:block;font-weight:800;color:#92400e;margin-bottom:3px;font-size:.9rem}
+.term-popover .tp-def{font-weight:400}
+.term-popover .tp-def strong{color:#1a202c}
 </style>
 </head>
 <body>
@@ -838,7 +855,15 @@ footer{text-align:center;padding:26px 16px;color:var(--muted);font-size:.8rem;bo
         .vt-cap{text-align:center;font-size:.8rem;color:#c53030;font-weight:700;margin-top:8px;line-height:1.55}
         @keyframes vtA{0%{width:0}55%,100%{width:55%}}
         @keyframes vtB{0%{width:0}55%,100%{width:67%}}
-      </style>
+      /* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+</style>
       <div class="vt-anim">
         <div class="vt-title">🎬 「賛成ライン」の高さが決議の種類で変わる（母数＝出席議決権）</div>
         <div class="vt-row">
@@ -2943,6 +2968,168 @@ function resetZukai(tabId){
     wrap.appendChild(btnRow);
     if(hidden[id]) doHide(getLabel());
   });
+})();
+
+/* === sec-hide-fine: 箱単位の細かい非表示ボタン（紫点線○）=== */
+(function(){
+  var BLOCK_SEL=['.hl-box','.goro','.goro-box','.keepit','.kotoba','.warn','.diff','.tutor','.al','.memo-bubble','.support','.tbl-wrap','.table-wrap','.flow-row','.vs-grid','.vs-grid3','.cmp-card-wrap','.tree','.diagram-box','.exam-pt','.exam-trap','.exam-point','.bubble-wrap'].join(',');
+  var INLINE_SEL='.goro-chip';
+  var KEY='sec-hide-fine:'+(location.pathname.split('/').pop()||'page')+':v1';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return{};}}
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  var state=load();var idCount={};
+  function fineId(el){
+    var base=el.classList[0]||el.tagName.toLowerCase();
+    var txt=(el.textContent||'').replace(/\s+/g,'').slice(0,40);
+    var raw='f:'+base+':'+txt;
+    var n=idCount[raw]||0;idCount[raw]=n+1;
+    return n===0?raw:raw+'#'+n;
+  }
+  function makeBlock(el){
+    var id=fineId(el);
+    var wrap=document.createElement('div');wrap.className='sec-hide-wrap sec-hide-fwrap';
+    el.parentNode.insertBefore(wrap,el);wrap.appendChild(el);
+    var row=document.createElement('div');row.className='sec-hide-btn-row fine';
+    var btn=document.createElement('button');btn.textContent='○';btn.title='この箱だけ非表示';
+    function label(){
+      var h=el.querySelector('h3,h4,.fill-header,.card-head,.card-header,.kt-title,.goro-key,.keepit-head,.keepit-title,.d-title,.exam-point-title');
+      var t=h?h.textContent:el.textContent;
+      return (t||'').trim().replace(/\s+/g,' ').slice(0,26);
+    }
+    function doHide(lb){
+      el.style.display='none';row.style.display='none';
+      var ph=document.createElement('div');ph.className='sec-hidden-ph fine';
+      ph.innerHTML='（非表示：<span class="sec-hidden-label"></span>） <button>再表示 ○</button>';
+      ph.querySelector('.sec-hidden-label').textContent=lb;
+      ph.querySelector('button').addEventListener('click',function(){
+        el.style.display='';row.style.display='';ph.remove();
+        var o=load();delete o[id];save(o);
+      });
+      wrap.appendChild(ph);
+    }
+    btn.addEventListener('click',function(){var lb=label();doHide(lb);var o=load();o[id]=1;save(o);});
+    row.appendChild(btn);wrap.appendChild(row);
+    if(state[id])doHide(label());
+  }
+  function makeInline(el){
+    var id=fineId(el);
+    var w=document.createElement('span');w.className='sec-hide-iwrap';
+    el.parentNode.insertBefore(w,el);w.appendChild(el);
+    var btn=document.createElement('button');btn.className='sec-hide-ibtn';btn.textContent='×';btn.title='この語呂だけ非表示';
+    function doHide(){
+      el.style.display='none';btn.style.display='none';
+      var g=document.createElement('span');g.className='sec-hide-ighost';g.textContent='非表示 ○';
+      g.addEventListener('click',function(){el.style.display='';btn.style.display='';g.remove();var o=load();delete o[id];save(o);});
+      w.appendChild(g);
+    }
+    btn.addEventListener('click',function(){doHide();var o=load();o[id]=1;save(o);});
+    w.appendChild(btn);
+    if(state[id])doHide();
+  }
+  var seen=new Set();
+  document.querySelectorAll('.tab-panel,.tab-content').forEach(function(panel){
+    panel.querySelectorAll(BLOCK_SEL).forEach(function(el){
+      if(seen.has(el))return;
+      if(el.closest('.fill-card'))return;
+      if(el.parentNode&&el.parentNode.classList.contains('sec-hide-wrap'))return;
+      seen.add(el);makeBlock(el);
+    });
+    panel.querySelectorAll(INLINE_SEL).forEach(function(el){
+      if(seen.has(el))return;
+      if(el.closest('.fill-card'))return;
+      if(el.parentNode&&el.parentNode.classList.contains('sec-hide-iwrap'))return;
+      seen.add(el);makeInline(el);
+    });
+  });
+})();
+
+/* === 用語ポップ：「📖 ことば」箱を解体し、本文初出箇所にタップ式説明を付ける === */
+(function(){
+  function coreTerm(s){s=(s||'').trim();var i=s.search(/[（(]/);if(i>0)s=s.slice(0,i);return s.trim();}
+  var pop=document.createElement('div');pop.className='term-popover';
+  pop.innerHTML='<span class="tp-term"></span><span class="tp-def"></span>';
+  document.body.appendChild(pop);
+  var openSpan=null;
+  function place(span){
+    pop.querySelector('.tp-term').textContent=span.getAttribute('data-term')||'';
+    pop.querySelector('.tp-def').innerHTML=span.getAttribute('data-def')||'';
+    pop.style.display='block';pop.style.left='-9999px';pop.style.top='0px';
+    var r=span.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;
+    var left=Math.min(r.left,window.innerWidth-pw-8);left=Math.max(8,left);
+    var top=r.bottom+6;if(top+ph>window.innerHeight-8)top=Math.max(8,r.top-ph-6);
+    pop.style.left=left+'px';pop.style.top=top+'px';openSpan=span;
+  }
+  function closePop(){pop.style.display='none';openSpan=null;}
+  function toggle(span){if(openSpan===span)closePop();else place(span);}
+  document.addEventListener('click',function(e){if(openSpan&&!pop.contains(e.target)&&!(e.target.closest&&e.target.closest('.term-pop')))closePop();});
+  window.addEventListener('scroll',closePop,true);window.addEventListener('resize',closePop);
+
+  var SKIP_TAG={SCRIPT:1,STYLE:1,SUP:1,BUTTON:1};
+  var SKIP_ALWAYS=['term-pop','tp-mark','fill-blank','sec-hide-btn-row','sec-hidden-ph','ls-card-reveal','term-popover'];
+  var HEADER_TAG={H1:1,H2:1,H3:1,H4:1,H5:1,H6:1};
+  var HEADER_CLS=['card-head','card-header','fill-header','kt-title','card-num','num'];
+  function rejected(node,root,allowH){
+    var p=node.parentNode;
+    while(p&&p!==root){
+      if(SKIP_TAG[p.nodeName])return true;
+      if(p.style&&p.style.display==='none')return true;
+      if(p.classList){
+        for(var i=0;i<SKIP_ALWAYS.length;i++)if(p.classList.contains(SKIP_ALWAYS[i]))return true;
+        if(!allowH)for(var j=0;j<HEADER_CLS.length;j++)if(p.classList.contains(HEADER_CLS[j]))return true;
+      }
+      if(!allowH&&HEADER_TAG[p.nodeName])return true;
+      p=p.parentNode;
+    }
+    return false;
+  }
+  function wrapFirst(root,term,def,allowH){
+    var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(node){
+      if(!node.nodeValue||node.nodeValue.indexOf(term)===-1)return NodeFilter.FILTER_REJECT;
+      if(rejected(node,root,allowH))return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }});
+    var node=walker.nextNode();if(!node)return false;
+    var idx=node.nodeValue.indexOf(term);
+    var mid=node.splitText(idx);mid.splitText(term.length);
+    var span=document.createElement('span');
+    span.className='term-pop';span.setAttribute('data-term',term);span.setAttribute('data-def',def);span.tabIndex=0;
+    span.textContent=term;
+    var mk=document.createElement('sup');mk.className='tp-mark';mk.textContent='※';span.appendChild(mk);
+    span.addEventListener('click',function(e){e.stopPropagation();toggle(span);});
+    span.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle(span);}});
+    mid.parentNode.replaceChild(span,mid);
+    return true;
+  }
+  function placeTerm(t,d){return wrapFirst(document.body,t,d,false)||wrapFirst(document.body,t,d,true);}
+
+  /* 収集 → まとめ箱撤去 → 配置（長い語優先） */
+  var termMap={},order=[];
+  document.querySelectorAll('.tab-panel,.tab-content').forEach(function(panel){
+    panel.querySelectorAll('.kotoba').forEach(function(box){
+      box.querySelectorAll('dl').forEach(function(dl){
+        var dts=dl.querySelectorAll('dt'),dds=dl.querySelectorAll('dd');
+        for(var i=0;i<dts.length;i++){
+          var t=coreTerm(dts[i].textContent),d=dds[i]?dds[i].innerHTML.trim():'';
+          if(t&&d&&!termMap[t]){termMap[t]=d;order.push(t);}
+        }
+      });
+      var w=box.closest('.sec-hide-fwrap');(w||box).remove();
+    });
+  });
+  order.sort(function(a,b){return b.length-a.length;});
+  order.forEach(function(t){placeTerm(t,termMap[t]);});
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head,.fill-header'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); return h&&(h.textContent.trim().startsWith('予習｜')||h.textContent.trim().startsWith('🔰')); }
+  function mkPh(e2,k2){ var ph=document.createElement('div'); ph.className='row-hidden-ph'; ph.innerHTML='— <button>表示</button>'; ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); }); return ph; }
+  function mkTrPh(r,k){ var cols=r.querySelectorAll('td,th').length; var phR=document.createElement('tr'); phR.className='tr-hidden-ph'; var phTd=document.createElement('td'); phTd.colSpan=cols; phTd.innerHTML='— <button>表示</button>'; phR.appendChild(phTd); phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); }); return phR; }
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){ if(isPreview(el)) return; var key='fg:'+cardHead(el)+'|'+i; var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○'; el.insertBefore(btn,el.firstChild); btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }); if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); } });
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){ if(isPreview(tr)) return; var key='tr:'+cardHead(tr)+'|'+i; var tds=tr.querySelectorAll('td'); if(!tds.length) return; var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px'; var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○'; last.appendChild(btn); btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }); if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); } });
 })();
 </script>
 

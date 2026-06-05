@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>localStorage 保存テスト</title>
+<style>
+  body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif;max-width:640px;margin:0 auto;padding:24px;line-height:1.8;color:#1e293b;}
+  h1{font-size:1.2rem;}
+  .big{font-size:2.4rem;font-weight:800;text-align:center;margin:.4rem 0;}
+  .card{border:2px solid #cbd5e1;border-radius:12px;padding:16px 18px;margin:14px 0;}
+  .ok{color:#15803d;font-weight:800;}
+  .ng{color:#b91c1c;font-weight:800;}
+  button{font-size:1rem;font-family:inherit;padding:10px 18px;border-radius:8px;border:none;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;}
+  button.sub{background:#64748b;}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:.9em;}
+  .row{margin:.4rem 0;}
+  .note{font-size:.85rem;color:#475569;background:#f8fafc;border-radius:8px;padding:10px 12px;}
+</style>
+</head>
+<body>
+  <h1>🔍 localStorage 保存テスト</h1>
+  <p class="note">手順：①下の「＋1して保存」を数回押す → ②このページを<b>再読込（リロード）</b> → ③数字が<b>0に戻らず増えたまま</b>なら保存OK。</p>
+
+  <div class="card">
+    <div class="row">いまの開き方（オリジン）：<code id="origin">-</code></div>
+    <div class="row">localStorage が使えるか：<span id="avail">-</span></div>
+  </div>
+
+  <div class="card">
+    <div style="text-align:center;font-size:.9rem;color:#475569;">保存されているカウント</div>
+    <div class="big" id="count">-</div>
+    <div style="text-align:center;">
+      <button onclick="inc()">＋1して保存</button>
+      <button class="sub" onclick="resetAll()">0にリセット</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-weight:700;margin-bottom:.3rem;">判定</div>
+    <div id="verdict">再読込して数字が増えていれば「保存OK」です。</div>
+  </div>
+
+<script>
+  var KEY='__save_test_count';
+  // 1) オリジン表示
+  document.getElementById('origin').textContent = location.origin || ('file:// ('+location.protocol+')');
+
+  // 2) 可用性チェック（書いて読んで消す）
+  var avail=true, availMsg='';
+  try{
+    localStorage.setItem('__probe','1');
+    if(localStorage.getItem('__probe')!=='1') throw new Error('読み戻し不一致');
+    localStorage.removeItem('__probe');
+  }catch(e){ avail=false; availMsg=e.name+': '+e.message; }
+  document.getElementById('avail').innerHTML = avail
+    ? '<span class="ok">✅ 使える（このセッション内では）</span>'
+    : '<span class="ng">❌ 使えない（'+availMsg+'）</span>';
+
+  // 3) 現在のカウントを表示
+  function read(){ try{ return parseInt(localStorage.getItem(KEY)||'0',10)||0; }catch(e){ return 0; } }
+  function render(){
+    var n=read();
+    document.getElementById('count').textContent=n;
+    var v=document.getElementById('verdict');
+    if(!avail){
+      v.innerHTML='<span class="ng">localStorage が使えません。</span> プライベートブラウズや「Cookie/サイトデータをブロック」設定が原因のことが多いです。';
+    }else if(n>0){
+      v.innerHTML='<span class="ok">この数字が再読込後も残っていれば、保存は正常に効いています。</span> もし「＋1」を押した直後は増えるのに<b>再読込で0に戻る</b>なら、ブラウザが閉じる/離れるタイミングで消去しています（プライベートモード等）。';
+    }else{
+      v.innerHTML='まだ0です。「＋1して保存」を押してから<b>再読込</b>してください。';
+    }
+  }
+  function inc(){ try{ localStorage.setItem(KEY,String(read()+1)); }catch(e){} render(); }
+  function resetAll(){ try{ localStorage.removeItem(KEY); }catch(e){} render(); }
+  render();
+</script>
+</body>
+</html>

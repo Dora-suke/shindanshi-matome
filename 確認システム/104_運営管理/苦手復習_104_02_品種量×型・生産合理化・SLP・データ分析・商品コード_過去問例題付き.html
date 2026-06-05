@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苦手復習 104-02 ｜ 品種量×型・生産合理化・SLP・データ分析・商品コード</title>
+<style>
+:root{--p:#7b1fa2;--pl:#f3e5f5;--b:#1a5276;--bl:#eaf2f8;--g:#1e8449;--gl:#eafaf1;--o:#b9770e;--ol:#fef9e7;--r:#c0392b;--rl:#fdedec;--ink:#1e293b;--mut:#64748b;--line:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:var(--ink);line-height:1.7;}
+.header{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;padding:22px 16px;text-align:center;}
+.header h1{font-size:1.25rem;}
+.header p{font-size:.82rem;opacity:.85;margin-top:4px;}
+.tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
+.tab-nav{display:flex;flex-wrap:wrap;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
+.tab-btn{flex:1;min-width:88px;padding:14px 6px;border:none;background:#fff;color:var(--mut);font-size:.9rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-btn.active[data-c=b]{color:var(--b);border-bottom-color:var(--b);background:var(--bl);}
+.tab-btn.active[data-c=o]{color:var(--o);border-bottom-color:var(--o);background:var(--ol);}
+.tab-btn.active[data-c=g]{color:var(--g);border-bottom-color:var(--g);background:var(--gl);}
+.tab-btn.active[data-c=t]{color:#0f766e;border-bottom-color:#0f766e;background:#ccfbf1;}
+.tab-btn.active[data-c=p]{color:var(--p);border-bottom-color:var(--p);background:var(--pl);}
+.tab-panel{display:none;background:#fff;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;animation:f .3s;}
+@keyframes f{from{opacity:0}to{opacity:1}}
+h2{font-size:1.05rem;margin:22px 0 10px;padding-left:10px;border-left:5px solid var(--b);}
+h2:first-of-type{margin-top:6px;}
+.weak{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;font-size:.86rem;margin-bottom:8px;}
+.weak b{color:#c2410c;}
+.weak small{color:#64748b;}
+.fig{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfcfd;}
+.note{font-size:.8rem;text-align:center;color:var(--mut);margin-top:8px;}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.84rem;}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:center;vertical-align:middle;}
+th{background:var(--b);color:#fff;}
+tr:nth-child(even) td{background:#f8fafc;}
+td.l{text-align:left;}
+.yes{background:#dcfce7!important;color:#166534;font-weight:800;}
+.no{background:#fee2e2!important;color:#991b1b;font-weight:800;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cell{border:2px solid var(--line);border-radius:8px;padding:9px 11px;font-size:.81rem;}
+.cell b{display:block;color:var(--b);margin-bottom:2px;}
+.trap{background:var(--rl);border-left:4px solid var(--r);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.82rem;margin:10px 0;}
+.trap b{color:var(--r);}
+.formula{text-align:center;font-weight:800;color:var(--b);font-size:1.02rem;margin:6px 0;background:#eef6fb;border:1.5px solid #b6d4e6;border-radius:8px;padding:9px 8px;}
+.formula .ex{display:block;font-size:.82rem;font-weight:700;color:var(--g);margin-top:4px;}
+.nosrc{display:inline-block;background:#475569;color:#fff;font-size:.74rem;font-weight:700;padding:5px 11px;border-radius:6px;margin:2px 0 8px;}
+.vz-supplement{background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;}
+.vz-label{font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;}
+.vz-supplement p{margin:0 0 .6rem;line-height:1.7;color:#334155;}
+.fill-section-title{margin:24px 0 6px;font-size:1rem;font-weight:800;color:#7b1fa2;}
+.revall-btn{width:100%;padding:13px;font-size:.98rem;font-weight:800;background:#7b1fa2;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;}
+.revall-btn:hover{background:#6a1b9a;}
+.fill-card{background:#faf5ff;border:2px solid var(--p);border-radius:12px;margin-top:12px;overflow:hidden;position:relative;}
+.fill-head{background:var(--p);color:#fff;padding:10px 16px;font-weight:800;font-size:.92rem;}
+.fill-body{padding:14px 18px;font-size:.9rem;line-height:2.2;}
+.fill-body table{margin:4px 0 6px;}
+.fill-body table .blank{min-width:84px;}
+.blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #a855f7;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:800;color:transparent;background:#f3e8ff;border-radius:4px;user-select:none;}
+.blank.show{color:#c2410c;background:#fff7ed;border-color:#c2410c;}
+.revbtn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;}
+.fig,.fill-card,.vz-supplement{position:relative;}
+.mz-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:2px solid #16a34a;background:#fff;color:#16a34a;font-weight:800;cursor:pointer;z-index:5;font-size:.95rem;line-height:1;padding:0;}
+.mz-btn:hover{background:#dcfce7;}
+.mz-done>:not(.mz-btn){display:none!important;}
+.mz-done{background:#f0fdf4!important;border-color:#16a34a!important;padding:12px 16px!important;cursor:pointer;}
+.mz-done::after{content:"✓ 覚えた（タップで再表示）";color:#16a34a;font-weight:700;font-size:.82rem;}
+.mz-done .mz-btn{background:#16a34a;color:#fff;}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.tab-btn{font-size:.76rem;min-width:74px}table{font-size:.76rem}}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+/* ===== 元ノート(qz_03)から移植：U字ライン配置図 ===== */
+.ucell-container{display:flex;justify-content:center;padding:1rem 0;}
+.ucell{position:relative;width:300px;height:220px;}
+.ucell-station{position:absolute;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;width:60px;height:60px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:.74rem;box-shadow:0 3px 8px rgba(39,174,96,.3);z-index:2;}
+.ucell-station span{font-size:.6rem;font-weight:400;}
+.ucell-path{position:absolute;border:3px dashed #e67e22;border-radius:0 0 34px 34px;top:30px;left:30px;width:240px;height:160px;border-top:none;z-index:1;}
+.ucell-worker{position:absolute;top:82px;left:118px;width:64px;height:64px;background:linear-gradient(135deg,#e67e22,#f39c12);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.68rem;font-weight:700;box-shadow:0 4px 12px rgba(230,126,34,.4);z-index:3;text-align:center;line-height:1.1;}
+@media(max-width:600px){.ucell{width:260px;height:190px;}.ucell-station{width:50px;height:50px;font-size:.66rem;}.ucell-worker{top:68px;left:103px;width:54px;height:54px;}.ucell-path{left:25px;top:25px;width:210px;height:140px;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>苦手復習 104-02</h1>
+  <p>運営管理 Sティア後半の🔁論点（生産方式/合理化/SLP/データ分析）＋📘未学習(商品コード)の <b>×・△観点だけ</b>に絞った図解＋ミラー穴埋め</p>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-c="t" onclick="sw(0)">🏭 品種量×型</button>
+    <button class="tab-btn" data-c="o" onclick="sw(1)">🔧 生産合理化</button>
+    <button class="tab-btn" data-c="b" onclick="sw(2)">🏗 SLP</button>
+    <button class="tab-btn" data-c="g" onclick="sw(3)">📊 データ分析</button>
+    <button class="tab-btn" data-c="p" onclick="sw(4)">🔖 商品コード</button>
+  </nav>
+
+  <!-- TAB0 品種量×型 -->
+  <div class="tab-panel active">
+    <h2>図1：品種×量 → 生産方式・レイアウトの対応（マスター表）</h2>
+    <div class="fig">
+      <table>
+        <tr><th>品種×量</th><th>生産方式</th><th>レイアウト（形のイメージ）</th><th>例</th></tr>
+        <tr>
+          <td class="yes">少品種・多量</td>
+          <td class="l">連続生産（ライン）</td>
+          <td class="l">製品別レイアウト<div style="margin-top:4px;display:flex;align-items:center;gap:3px;flex-wrap:wrap;font-size:.72rem;"><span style="background:#3b82f6;color:#fff;border-radius:4px;padding:1px 5px;">工程A</span>→<span style="background:#3b82f6;color:#fff;border-radius:4px;padding:1px 5px;">B</span>→<span style="background:#3b82f6;color:#fff;border-radius:4px;padding:1px 5px;">C</span>→🚚<br><span style="color:#64748b;">工程順に一直線で流す</span></div></td>
+          <td>🚗🥤<br>自動車・飲料</td>
+        </tr>
+        <tr>
+          <td>中品種・中量</td>
+          <td class="l">ロット生産</td>
+          <td class="l">グループ別(GT)・セル<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;font-size:.72rem;"><span style="background:#a855f7;color:#fff;border-radius:6px;padding:1px 6px;">⬡セル1</span><span style="background:#a855f7;color:#fff;border-radius:6px;padding:1px 6px;">⬡セル2</span><br><span style="color:#64748b;">似た部品ごとに小集団</span></div></td>
+          <td>🔩<br>部品加工</td>
+        </tr>
+        <tr>
+          <td class="no">多品種・少量</td>
+          <td class="l">個別生産（ジョブショップ）・セル</td>
+          <td class="l">機能別（工程別）レイアウト<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;font-size:.72rem;"><span style="background:#22c55e;color:#fff;border-radius:4px;padding:1px 5px;">旋盤▦▦</span><span style="background:#22c55e;color:#fff;border-radius:4px;padding:1px 5px;">溶接▦▦</span><br><span style="color:#64748b;">同じ機械を一カ所にまとめる</span></div></td>
+          <td>🛠️<br>受注品・試作</td>
+        </tr>
+      </table>
+      <div class="trap"><b>急所（外したQ）</b>：「多品種少量に<b>製品別（ライン）</b>が最適」は<b>誤り</b>。多品種少量＝<b>機能別/セル</b>。覚え方＝<b>量が多い＝流す（ライン・製品別）／種類が多い＝まとめる（機能別）</b>。</div>
+
+      <!-- 覚え方：量と種類で決まる軸図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">💡 覚え方：量と種類のどちらが多いかで決まる</div>
+        <div style="background:#fff;border-radius:8px;padding:.6rem .5rem;">
+          <div style="display:flex;align-items:stretch;gap:.4rem;text-align:center;">
+            <div style="flex:1;background:#dcfce7;border:1.5px solid #22c55e;border-radius:8px;padding:.5rem;">
+              <div style="font-size:1.4rem;">📦📦📦</div>
+              <b style="color:#166534;">種類が多い</b><br><span style="font-size:.78rem;">→ <u>まとめる</u><br>機能別／セル</span>
+            </div>
+            <div style="align-self:center;font-size:1.3rem;color:#94a3b8;">↔</div>
+            <div style="flex:1;background:#dbeafe;border:1.5px solid #3b82f6;border-radius:8px;padding:.5rem;">
+              <div style="font-size:1.4rem;">🌊➡️➡️</div>
+              <b style="color:#1e40af;">量が多い</b><br><span style="font-size:.78rem;">→ <u>流す</u><br>ライン／製品別</span>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:.78rem;color:#475569;margin-top:.5rem;font-weight:700;">同じ物を大量＝コンベアで流す／いろいろ少しずつ＝似た物をまとめて作る</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>図2：レイアウトの4類型</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--b)"><b>製品別（ライン）</b>流れに沿って配置。少品種多量。効率◎・柔軟性✕
+          <div style="margin-top:6px;display:flex;align-items:center;gap:3px;justify-content:center;font-size:.72rem;flex-wrap:wrap;"><span style="background:#dbeafe;border:1px solid #3b82f6;border-radius:4px;padding:2px 6px;">A</span>→<span style="background:#dbeafe;border:1px solid #3b82f6;border-radius:4px;padding:2px 6px;">B</span>→<span style="background:#dbeafe;border:1px solid #3b82f6;border-radius:4px;padding:2px 6px;">C</span>→🚚</div>
+          <div style="text-align:center;font-size:.67rem;color:#64748b;margin-top:2px;">製品が一直線に流れる</div>
+        </div>
+        <div class="cell" style="border-color:var(--g)"><b>機能別（工程別/ジョブショップ）</b>同種機械をまとめる。多品種少量。柔軟◎・運搬が複雑
+          <div style="margin-top:6px;display:flex;gap:4px;justify-content:center;font-size:.66rem;flex-wrap:wrap;"><span style="background:#dcfce7;border:1px solid #22c55e;border-radius:5px;padding:2px 6px;">旋盤▦▦</span><span style="background:#dcfce7;border:1px solid #22c55e;border-radius:5px;padding:2px 6px;">溶接▦▦</span><span style="background:#dcfce7;border:1px solid #22c55e;border-radius:5px;padding:2px 6px;">塗装▦▦</span></div>
+          <div style="text-align:center;font-size:.67rem;color:#64748b;margin-top:2px;">製品が機械を渡り歩く（運搬↑）</div>
+        </div>
+        <div class="cell" style="border-color:var(--o)"><b>固定式（プロジェクト）</b>製品が動かず人・設備が動く。船・航空機・建設
+          <div style="margin-top:6px;text-align:center;font-size:.72rem;">👷🔧 →<span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:2px 8px;margin:0 4px;">🚢 製品<br>(動かない)</span>← 🏗️👷</div>
+          <div style="text-align:center;font-size:.67rem;color:#64748b;margin-top:2px;">人・設備のほうが集まる</div>
+        </div>
+        <div class="cell" style="border-color:var(--p)"><b>グループ別（GT/セル）</b>似た部品をまとめ流れに近づける。中品種中量
+          <div style="margin-top:6px;display:flex;gap:5px;justify-content:center;font-size:.68rem;flex-wrap:wrap;"><span style="background:#f3e8ff;border:1px solid #a855f7;border-radius:8px;padding:3px 7px;text-align:center;">⬡セル1<br><span style="font-size:.6rem;">旋+溶+塗</span></span><span style="background:#f3e8ff;border:1px solid #a855f7;border-radius:8px;padding:3px 7px;text-align:center;">⬡セル2<br><span style="font-size:.6rem;">旋+溶+塗</span></span></div>
+          <div style="text-align:center;font-size:.67rem;color:#64748b;margin-top:2px;">小さな製品別ラインの集まり</div>
+        </div>
+      </div>
+      <!-- ★元ノート(qz_03)の図解そのまま移植：機能別(ジョブショップ) vs 製品別(フローショップ) -->
+      <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0;">
+        <div style="text-align:center;font-weight:700;font-size:.95rem;color:#d35400;margin-bottom:12px;padding-bottom:6px;border-bottom:2px dashed #fde0c4;">機能別と製品別の「モノの流れ」を図で比較</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div style="text-align:center;">
+            <div style="font-weight:700;font-size:.92rem;color:#2980b9;margin-bottom:8px;">機能別（ジョブショップ型）</div>
+            <svg viewBox="0 0 240 180" style="width:100%;max-width:320px;" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+              <text x="45" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">旋盤</text>
+              <text x="45" y="44" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+              <rect x="160" y="10" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+              <text x="195" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">フライス</text>
+              <text x="195" y="44" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+              <rect x="10" y="120" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+              <text x="45" y="140" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">溶接</text>
+              <text x="45" y="154" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+              <rect x="160" y="120" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+              <text x="195" y="140" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">検査</text>
+              <text x="195" y="154" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+              <defs>
+                <marker id="arrRed" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#e53935"/></marker>
+                <marker id="arrGreen2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#43a047"/></marker>
+              </defs>
+              <polyline points="45,60 45,80 195,80 195,120" fill="none" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrRed)"/>
+              <text x="85" y="74" font-size="8" font-weight="700" fill="#e53935">製品A</text>
+              <polyline points="195,60 195,90 45,90 45,120" fill="none" stroke="#43a047" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrGreen2)"/>
+              <text x="135" y="100" font-size="8" font-weight="700" fill="#43a047">製品B</text>
+            </svg>
+            <div style="font-size:.76rem;color:#64748b;margin-top:4px;">製品ごとに経路が異なる（運搬↑）</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:700;font-size:.92rem;color:#d35400;margin-bottom:8px;">製品別（フローショップ型）</div>
+            <svg viewBox="0 0 240 180" style="width:100%;max-width:320px;" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="arrOrange" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#e67e22"/></marker>
+              </defs>
+              <rect x="10" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+              <text x="35" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程1</text>
+              <text x="35" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">旋盤</text>
+              <line x1="60" y1="90" x2="72" y2="90" stroke="#e67e22" stroke-width="2" marker-end="url(#arrOrange)"/>
+              <rect x="75" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+              <text x="100" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程2</text>
+              <text x="100" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">溶接</text>
+              <line x1="125" y1="90" x2="137" y2="90" stroke="#e67e22" stroke-width="2" marker-end="url(#arrOrange)"/>
+              <rect x="140" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+              <text x="165" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程3</text>
+              <text x="165" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">検査</text>
+              <text x="15" y="55" font-size="8" font-weight="700" fill="#e53935">製品A →</text>
+              <text x="15" y="140" font-size="8" font-weight="700" fill="#43a047">製品B →</text>
+              <line x1="55" y1="138" x2="165" y2="118" stroke="#43a047" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <line x1="55" y1="53" x2="165" y2="68" stroke="#e53935" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <text x="60" y="160" font-size="8" fill="#5d6d7e">全製品が同じ方向に流れる</text>
+            </svg>
+            <div style="font-size:.76rem;color:#64748b;margin-top:4px;">全製品が同じ経路を一方向に流れる</div>
+          </div>
+        </div>
+      </div>
+      <div class="trap"><b>急所</b>：固定式は「製品（対象物）が動かない」のが特徴。機能別は柔軟だが<b>運搬・仕掛が増える</b>。</div>
+    </div>
+
+    <h2>図3：セル生産の利点（⑤の残り弱点）</h2>
+    <div class="fig">
+      <div class="formula">セル生産＝少人数が複数工程を担当（U字・屋台／多能工が前提）</div>
+
+      <!-- ★元ノート(qz_03)の図解そのまま移植：U字ライン配置図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🔧 U字ライン＝多能工が入口→出口をぐるっと担当（元ノートの図）</div>
+        <div style="background:#fff;border-radius:8px;padding:.4rem 0;">
+          <div class="ucell-container">
+            <div class="ucell">
+              <div class="ucell-station" style="top:0;left:0;">工程1<span>投入</span></div>
+              <div class="ucell-station" style="top:0;right:0;">工程2</div>
+              <div class="ucell-station" style="top:50%;right:0;transform:translateY(-50%);">工程3</div>
+              <div class="ucell-station" style="bottom:0;right:0;">工程4</div>
+              <div class="ucell-station" style="bottom:0;left:0;">工程5<span>完成</span></div>
+              <div class="ucell-path"></div>
+              <div class="ucell-worker">多能工<br>1人</div>
+            </div>
+          </div>
+          <p style="text-align:center;margin:0;font-size:.8rem;color:#334155;">入口と出口が近いU字型。1人（多能工）が複数工程をこなすので<b>手待ち・仕掛品が少ない</b>。</p>
+        </div>
+      </div>
+
+      <!-- 利点・欠点の図 -->
+      <div class="grid2">
+        <div class="cell" style="border-color:#16a34a;background:#f0fdf4;"><b style="color:#166534;">○ 利点（少人数で完結するから）</b>
+          <div style="font-size:.78rem;line-height:1.9;">📉 仕掛品の削減<br>⏱️ リードタイム短縮<br>🔀 需要変動への柔軟対応<br>😊 モチベーション向上</div>
+        </div>
+        <div class="cell" style="border-color:#ea580c;background:#fff7ed;"><b style="color:#c2410c;">△ 欠点</b>
+          <div style="font-size:.78rem;line-height:1.9;">📚 <b>多能工の育成負担</b><br><span style="color:#64748b;">＝複数工程をこなせる人を育てるのが大変</span></div>
+        </div>
+      </div>
+      <div class="note">利点＝<b>仕掛品の削減・リードタイム短縮・需要変動への柔軟対応・モチベーション向上</b>（少人数で完結するから）。欠点＝<b>多能工の育成負担</b>。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：品種×量 → 生産方式・レイアウト</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>品種×量</th><th>生産方式</th><th>レイアウト</th><th>例</th></tr>
+          <tr><td>少品種・多量</td><td><span class="blank">連続生産（ライン）</span></td><td><span class="blank">製品別</span></td><td>自動車・飲料</td></tr>
+          <tr><td>中品種・中量</td><td><span class="blank">ロット生産</span></td><td><span class="blank">グループ別(GT)・セル</span></td><td>部品加工</td></tr>
+          <tr><td>多品種・少量</td><td><span class="blank">個別生産（ジョブショップ）・セル</span></td><td><span class="blank">機能別（工程別）</span></td><td>受注品・試作</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：レイアウトの4類型</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>レイアウト型</th><th>特徴</th></tr>
+          <tr><td><span class="blank">製品別（ライン）</span></td><td>流れに沿って配置。少品種多量。効率◎・柔軟性✕</td></tr>
+          <tr><td><span class="blank">機能別（工程別）</span></td><td>同種機械をまとめる。多品種少量。柔軟◎・運搬が複雑</td></tr>
+          <tr><td><span class="blank">固定式（プロジェクト）</span></td><td>製品が動かず人・設備が動く。船・航空機・建設</td></tr>
+          <tr><td><span class="blank">グループ別（GT/セル）</span></td><td>似た部品をまとめ流れに近づける。中品種中量</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3：セル生産の利点</div>
+      <div class="fill-body">
+        <table>
+          <tr><td>定義</td><td>少人数が複数工程を担当（U字・屋台／<span class="blank">多能工</span>が前提）</td></tr>
+          <tr><td>利点</td><td><span class="blank">仕掛品</span>の削減・<span class="blank">リードタイム</span>短縮・需要変動への柔軟対応・モチベ向上</td></tr>
+          <tr><td>欠点</td><td><span class="blank">多能工</span>の育成負担</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+    <div class="fill-section-title" style="color:#e65100;">📚 過去問チャレンジ（解いて確認）</div>
+
+    <div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">R03-7</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> 品種数が多く生産量が少ない「多品種少量生産」に最も適した工場レイアウトはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. 機能別（工程別）レイアウト</li>
+        <li>イ. 製品別（ライン）レイアウト</li>
+        <li>ウ. 固定式（プロジェクト）レイアウト</li>
+        <li>エ. 製品固定・連続生産レイアウト</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#1565c0;">✅ 正解:ア</strong> &nbsp;<span style="color:#555;">多品種少量＝種類が多い＝同種の機械を一カ所にまとめる「機能別」が基本。柔軟性は高いが運搬・仕掛は増える。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">イ ✗</strong>:製品別（ライン）は少品種多量向け。多品種少量だと段取替えが多発し非効率。</li>
+          <li><strong style="color:#c62828;">ウ ✗</strong>:固定式は船・建設など製品が動かせない超大型品向けで、一般加工の多品種少量には不適。</li>
+          <li><strong style="color:#c62828;">エ ✗</strong>:連続生産は少品種多量の代表。多品種少量の前提と真逆。</li>
+        </ul>
+      </div></details>
+    </div>
+
+    <div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜セル生産方式</div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> セル生産方式（U字ライン・屋台方式）の特徴として、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. 1工程1人の分業を徹底し、単能工で高速にライン生産する。</li>
+        <li>イ. 少人数の多能工が複数工程を担当し、仕掛品の削減・需要変動への柔軟対応が利点。</li>
+        <li>ウ. 製品を固定したまま人と設備を集めて作る大型品向けの方式である。</li>
+        <li>エ. 同種の機械をまとめ、製品が機械間を渡り歩くため運搬が増える。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#065f46;">✅ 正解:イ</strong> &nbsp;<span style="color:#555;">セル生産は多能工が複数工程を完結。仕掛品減・リードタイム短縮・柔軟対応・モチベ向上が利点で、欠点は多能工育成の負担。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">ア ✗</strong>:単能工の1工程分業はライン（製品別）の説明。セルは多能工が複数工程を担う。</li>
+          <li><strong style="color:#c62828;">ウ ✗</strong>:製品を固定するのは固定式レイアウト。セルは小さな製品別ラインの集まり。</li>
+          <li><strong style="color:#c62828;">エ ✗</strong>:機械をまとめ製品が渡り歩くのは機能別レイアウト。セルは流れに近づける配置。</li>
+        </ul>
+      </div></details>
+    </div>
+  </div>
+
+  <!-- TAB1 生産合理化 -->
+  <div class="tab-panel">
+    <h2>図1：平準化＝小ロット・混流（“ならす”）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p><b>平準化＝でこぼこをならすこと</b>。1日に「Aだけ100個」とドカ作りすると前後が忙しさの波だらけ。代わりに<b>A・B・Cを少しずつ混ぜて毎日同じペースで作る</b>（小ロット・混流）と、波が消えて後工程も部品供給も安定する。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div style="background:#fef2f2;border:1.5px solid #f87171;border-radius:8px;padding:.5rem;text-align:center;font-size:.78rem;"><b style="color:#b91c1c;">✕ 大ロットまとめ</b><br>AAAA…BBBB…CCCC<br>
+            <div style="display:flex;align-items:flex-end;justify-content:center;gap:2px;height:42px;margin:5px 0;">
+              <div style="width:12px;height:40px;background:#f87171;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:8px;background:#fca5a5;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:38px;background:#f87171;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:6px;background:#fca5a5;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:40px;background:#f87171;border-radius:2px 2px 0 0;"></div>
+            </div>
+            <span style="color:#7f1d1d;">忙しさの波が大きい📈📉</span></div>
+          <div style="background:#f0fdf4;border:1.5px solid #4ade80;border-radius:8px;padding:.5rem;text-align:center;font-size:.78rem;"><b style="color:#166534;">○ 平準化（混流）</b><br>ABCABCABC…<br>
+            <div style="display:flex;align-items:flex-end;justify-content:center;gap:2px;height:42px;margin:5px 0;">
+              <div style="width:12px;height:22px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:23px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:22px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:23px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:22px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+            </div>
+            <span style="color:#14532d;">毎日ほぼ同じ＝平ら➖</span></div>
+        </div>
+        <div style="text-align:center;font-size:.74rem;color:#475569;margin-top:.5rem;">↑ 棒の高さ＝その日の忙しさ（生産量）。<b>でこぼこ→平ら</b>にするのが平準化。</div>
+      </div>
+      <div class="trap"><b>急所（外したQ6）</b>：「平準化＝同じ製品を大ロットでまとめて連続生産」は<b>逆</b>。平準化は<b>小ロット・混流</b>で量と種類の波を消すこと。</div>
+    </div>
+
+    <h2>図2：7つのムダ（根源＝作りすぎ）</h2>
+    <div class="fig">
+      <table>
+        <tr><th>7つのムダ</th></tr>
+        <tr><td class="no l"><b>① 作りすぎのムダ（最悪・根源）</b>…在庫・運搬・手待ちを誘発し問題を隠す</td></tr>
+        <tr><td class="l">② 手待ち　③ 運搬　④ 加工そのもの　⑤ 在庫　⑥ 動作　⑦ 不良をつくる</td></tr>
+      </table>
+      <!-- 作りすぎが根源＝他のムダを生む図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🌳 「作りすぎ」が根っこ＝他のムダを次々に生む</div>
+        <div style="background:#fff;border-radius:8px;padding:.7rem .5rem;text-align:center;">
+          <div style="display:inline-block;background:#fee2e2;border:2px solid #ef4444;border-radius:10px;padding:.5rem .9rem;font-weight:800;color:#991b1b;font-size:.9rem;">① 作りすぎのムダ<br><span style="font-size:.72rem;">（最悪・根源）</span></div>
+          <div style="font-size:1.2rem;color:#94a3b8;margin:.2rem 0;">⬇ 誘発する ⬇</div>
+          <div style="display:flex;gap:.35rem;justify-content:center;flex-wrap:wrap;font-size:.74rem;">
+            <span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:3px 8px;">📦 在庫が増える</span>
+            <span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:3px 8px;">🚚 運搬が増える</span>
+            <span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:3px 8px;">⏳ 手待ち</span>
+            <span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:3px 8px;">🔍 不良の発見が遅れる</span>
+          </div>
+          <div style="font-size:.74rem;color:#475569;margin-top:.5rem;">余分に作る → 置き場・運ぶ手間・問題が在庫に隠れる、と<b>連鎖</b>する</div>
+        </div>
+      </div>
+      <div class="note">「作りすぎ」が一番悪い＝余分に作ると在庫が増え、運搬・手待ち・不良の発見遅れを生む。</div>
+    </div>
+
+    <h2>図3：自働化（にんべん）・ポカヨケ・アンドン</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--b)"><b>自働化（にんべん付き）</b>異常が起きたら機械が<b>自動で止まる</b>→不良を作り続けない・人を呼ぶ。1人で多台持ち可能。<span style="color:var(--r)">※単なる自動運転ではない</span></div>
+        <div class="cell" style="border-color:var(--g)"><b>ポカヨケ</b>うっかりミス（ポカ）を<b>防止・検知</b>するしかけ（治具・センサ）</div>
+      </div>
+
+      <!-- 自働化 vs ただの自動化 の対比図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🤖 ここが急所：「自働化（にんべん）」と「ただの自動化」のちがい</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div style="background:#f0fdf4;border:1.5px solid #4ade80;border-radius:8px;padding:.55rem;text-align:center;font-size:.76rem;">
+            <b style="color:#166534;">○ 自働化（にんべん付き）</b>
+            <div style="font-size:1.5rem;margin:.2rem 0;">⚙️→⚠️→🛑</div>
+            異常が出たら<b>機械が自分で止まる</b><br>→ 不良を作り続けない・人を呼ぶ<br><span style="color:#15803d;">1人で何台も見られる</span>
+          </div>
+          <div style="background:#fef2f2;border:1.5px solid #f87171;border-radius:8px;padding:.55rem;text-align:center;font-size:.76rem;">
+            <b style="color:#b91c1c;">✕ ただの自動化</b>
+            <div style="font-size:1.5rem;margin:.2rem 0;">⚙️→⚠️→⚙️⚙️</div>
+            異常が出ても<b>止まらず動き続ける</b><br>→ <span style="color:#991b1b;">不良を大量に作ってしまう</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:.5rem;margin-top:.5rem;font-size:.74rem;">
+          <div style="flex:1;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:.45rem;text-align:center;">🚧 <b>ポカヨケ</b><br>センサ・治具がミスを<u>その場で弾く</u><br><span style="color:#64748b;">例：向き違いだと挿さらない治具</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:.45rem;text-align:center;">🚨 <b>アンドン</b><br>異常をランプ／表示板で<u>みんなに知らせる</u><br><span style="color:#64748b;">例：赤ランプ点灯で応援</span></div>
+        </div>
+      </div>
+      <div class="note">アンドン＝異常を<b>表示して知らせる</b>ランプ／表示板。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：平準化</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>やり方</th><th>イメージ</th></tr>
+          <tr><td>✕ 大ロットまとめ</td><td>AAAA…BBBB…CCCC（波が大きい）</td></tr>
+          <tr><td>○ 平準化＝<span class="blank">小ロット</span>・<span class="blank">混流</span></td><td>ABCABCABC…（毎日ならす）</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：7つのムダ</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>7つのムダ</th></tr>
+          <tr><td>① <span class="blank">作りすぎ</span>のムダ（最悪・根源）…在庫・運搬・手待ちを誘発し問題を隠す</td></tr>
+          <tr><td>② 手待ち　③ 運搬　④ 加工そのもの　⑤ <span class="blank">在庫</span>　⑥ 動作　⑦ <span class="blank">不良</span>をつくる</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3：自働化・ポカヨケ・アンドン</div>
+      <div class="fill-body">
+        <table>
+          <tr><td><span class="blank">自働化</span>（にんべん付き）</td><td>異常が起きたら機械が<span class="blank">自動で止まる</span>→不良を作り続けない（単なる自動運転ではない）</td></tr>
+          <tr><td><span class="blank">ポカヨケ</span></td><td>うっかりミスを防止・検知するしかけ（治具・センサ）</td></tr>
+          <tr><td><span class="blank">アンドン</span></td><td>異常を表示して知らせるランプ／表示板</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+    <div class="fill-section-title" style="color:#e65100;">📚 過去問チャレンジ（解いて確認）</div>
+
+    <div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">R03-6</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> JIT（トヨタ生産方式）における「平準化」の説明として、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. 需要が多い製品だけを大ロットでまとめて連続生産すること。</li>
+        <li>イ. 後工程が必要な分だけ前工程へ取りに行く仕組みのこと。</li>
+        <li>ウ. 製品の種類と量の生産の波をならし、小ロット・混流で毎日一定ペースに近づけること。</li>
+        <li>エ. 異常が起きたら機械が自動で停止する仕組みのこと。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#1565c0;">✅ 正解:ウ</strong> &nbsp;<span style="color:#555;">平準化＝でこぼこをならすこと。小ロット・混流（ABCABC…）で量と種類の波を消し、後工程・部品供給を安定させる。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">ア ✗</strong>:大ロットまとめは平準化の真逆。波が大きくなり後工程・部品供給が不安定になる。</li>
+          <li><strong style="color:#c62828;">イ ✗</strong>:これは「後工程引き取り（かんばん）」の説明で、平準化とは別概念。</li>
+          <li><strong style="color:#c62828;">エ ✗</strong>:機械が自動で止まるのは「自働化（にんべん）」。平準化ではない。</li>
+        </ul>
+      </div></details>
+    </div>
+
+    <div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜自働化（にんべん）・ポカヨケ</div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> 「自働化（にんべん付き）」の説明として、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. 人手を介さず機械を高速に連続運転し、生産量を最大化すること。</li>
+        <li>イ. うっかりミスを治具やセンサでその場で防ぐ仕組みのこと。</li>
+        <li>ウ. 異常をランプや表示板でみんなに知らせる仕組みのこと。</li>
+        <li>エ. 異常が起きたら機械が自動で止まり、不良を作り続けず人を呼ぶ仕組みで、1人で多台持ちが可能になること。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#065f46;">✅ 正解:エ</strong> &nbsp;<span style="color:#555;">自働化＝異常時に機械が自分で止まる。不良の作り込みを防ぎ、1人で複数台を監視できる。単なる自動運転ではない点が急所。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">ア ✗</strong>:止まらず動き続ける「ただの自動化」。異常時に不良を大量生産してしまう。</li>
+          <li><strong style="color:#c62828;">イ ✗</strong>:これはポカヨケ（治具・センサでミスを弾く）の説明。</li>
+          <li><strong style="color:#c62828;">ウ ✗</strong>:これはアンドン（異常を表示で知らせる）の説明。</li>
+        </ul>
+      </div></details>
+    </div>
+  </div>
+
+  <!-- TAB2 SLP -->
+  <div class="tab-panel">
+    <h2>図1：SLPの基礎をなす5要素 — P-Q-R-S-T</h2>
+    <div class="fig">
+      <table>
+        <tr><th>記号</th><th>意味</th></tr>
+        <tr><td><b>P</b></td><td class="l">Product＝製品（何を作るか）</td></tr>
+        <tr><td><b>Q</b></td><td class="l">Quantity＝数量（どれだけ）</td></tr>
+        <tr><td><b>R</b></td><td class="l">Route＝経路（生産工程・流れ）</td></tr>
+        <tr><td><b>S</b></td><td class="l">Service＝補助・付帯サービス（保全・倉庫等）</td></tr>
+        <tr><td><b>T</b></td><td class="l">Time＝時間（タイミング・期間）</td></tr>
+      </table>
+      <!-- 5要素のアイコン図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🔤 P-Q-R-S-T を絵で（「何を・どれだけ・どう流す・何で支える・いつ」）</div>
+        <div style="display:flex;gap:.3rem;text-align:center;font-size:.72rem;">
+          <div style="flex:1;background:#dbeafe;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">📦</div><b style="color:#1e40af;">P</b><br>製品<br><span style="color:#64748b;">何を</span></div>
+          <div style="flex:1;background:#dbeafe;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">🔢</div><b style="color:#1e40af;">Q</b><br>数量<br><span style="color:#64748b;">どれだけ</span></div>
+          <div style="flex:1;background:#dcfce7;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">🔀</div><b style="color:#166534;">R</b><br>経路<br><span style="color:#64748b;">どう流す</span></div>
+          <div style="flex:1;background:#fef9c3;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">🛠️</div><b style="color:#a16207;">S</b><br>補助<br><span style="color:#64748b;">何で支える</span></div>
+          <div style="flex:1;background:#fae8ff;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">⏱️</div><b style="color:#7e22ce;">T</b><br>時間<br><span style="color:#64748b;">いつ</span></div>
+        </div>
+        <p style="text-align:center;margin:.5rem 0 0;font-size:.78rem;">まず<b>P（製品）とQ（数量）</b>から出発（＝P-Q分析）。残りR・S・Tはその後の検討材料。</p>
+      </div>
+      <div class="note">マザー(Muther)が提唱。出発点は<b>P と Q の分析（P-Q分析）</b>。</div>
+    </div>
+
+    <h2>図2：SLPの手順（流れ）</h2>
+    <div class="fig">
+      <!-- 各ステップに「成果物のミニ図」を付けた視覚フロー -->
+      <div style="display:flex;flex-direction:column;gap:.3rem;font-size:.82rem;">
+
+        <!-- ① P-Q分析 -->
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <div style="flex:1.5;background:#dbeafe;border-radius:8px;padding:.5rem .7rem;display:flex;flex-direction:column;justify-content:center;"><b>① P-Q分析</b><span style="font-size:.72rem;color:#475569;">製品×数量で「製品別か機能別か」の方針決め</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #93c5fd;border-radius:8px;padding:.4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div style="display:flex;align-items:flex-end;gap:2px;height:32px;">
+              <div style="width:9px;height:30px;background:#3b82f6;border-radius:1px;"></div>
+              <div style="width:9px;height:22px;background:#60a5fa;border-radius:1px;"></div>
+              <div style="width:9px;height:14px;background:#93c5fd;border-radius:1px;"></div>
+              <div style="width:9px;height:8px;background:#bfdbfe;border-radius:1px;"></div>
+              <div style="width:9px;height:5px;background:#dbeafe;border-radius:1px;"></div>
+            </div>
+            <div style="font-size:.6rem;color:#64748b;margin-top:2px;">パレート図(量の多い順)</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:#94a3b8;">▼</div>
+
+        <!-- ② 物の流れ分析 -->
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <div style="flex:1.5;background:#dcfce7;border-radius:8px;padding:.5rem .7rem;display:flex;flex-direction:column;justify-content:center;"><b>② 物の流れ分析</b><span style="font-size:.72rem;color:#475569;">単純工程分析／フロムツーチャートで「どこへ何回」</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #86efac;border-radius:8px;padding:.4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.66rem;">
+            <div style="display:flex;align-items:center;gap:2px;"><span style="background:#bbf7d0;border-radius:3px;padding:2px 4px;">A</span>→<span style="background:#bbf7d0;border-radius:3px;padding:2px 4px;">B</span>→<span style="background:#bbf7d0;border-radius:3px;padding:2px 4px;">C</span></div>
+            <div style="font-size:.6rem;color:#64748b;margin-top:3px;">どこから→どこへ</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:#94a3b8;">▼</div>
+
+        <!-- ③ アクティビティ相互関係分析（AEIOUXダイヤモンド） -->
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <div style="flex:1.5;background:#fef9c3;border-radius:8px;padding:.5rem .7rem;display:flex;flex-direction:column;justify-content:center;"><b>③ アクティビティ相互関係分析</b><span style="font-size:.72rem;color:#475569;">流れ以外も含め近接度を A〜X で評価（相互関係図表）</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #fde047;border-radius:8px;padding:.45rem .3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.62rem;">
+            <div style="display:flex;align-items:center;gap:3px;">倉庫<span style="display:inline-block;width:18px;height:18px;background:#16a34a;color:#fff;font-weight:800;transform:rotate(45deg);text-align:center;line-height:18px;border-radius:3px;"><span style="display:inline-block;transform:rotate(-45deg);">A</span></span>加工<span style="display:inline-block;width:18px;height:18px;background:#4ade80;color:#14532d;font-weight:800;transform:rotate(45deg);text-align:center;line-height:18px;border-radius:3px;"><span style="display:inline-block;transform:rotate(-45deg);">E</span></span>出荷</div>
+            <div style="margin-top:5px;">倉庫⇔出荷＝<span style="display:inline-block;width:18px;height:18px;background:#ef4444;color:#fff;font-weight:800;transform:rotate(45deg);text-align:center;line-height:18px;border-radius:3px;vertical-align:middle;"><span style="display:inline-block;transform:rotate(-45deg);">X</span></span></div>
+            <div style="font-size:.58rem;color:#64748b;margin-top:3px;">近さを記号で評価</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:#94a3b8;">▼</div>
+
+        <!-- ④⑤ 面積→レイアウト案 -->
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <div style="flex:1.5;background:#fae8ff;border-radius:8px;padding:.5rem .7rem;display:flex;flex-direction:column;justify-content:center;"><b>④ 面積相互関係ダイアグラム → ⑤ レイアウト案</b><span style="font-size:.72rem;color:#475569;">近さに「広さ」を足して実際の区画図に</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #e9d5ff;border-radius:8px;padding:.4rem;display:flex;align-items:center;justify-content:center;">
+            <div style="display:grid;grid-template-columns:24px 18px;grid-template-rows:18px 16px;gap:2px;">
+              <div style="background:#c4b5fd;border-radius:2px;"></div>
+              <div style="background:#ddd6fe;border-radius:2px;"></div>
+              <div style="background:#ddd6fe;border-radius:2px;"></div>
+              <div style="background:#c4b5fd;border-radius:2px;"></div>
+            </div>
+            <div style="font-size:.58rem;color:#64748b;margin-left:4px;">区画<br>レイアウト</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>図3：分析ツール（A〜X・フロムツー・DI・活性示数）</h2>
+    <div class="fig">
+      <div class="vz-supplement" style="margin-top:0;">
+        <div class="vz-label">🧭 なぜこのパートに「道具」が並ぶ？</div>
+        <p style="margin:0;font-size:.82rem;">図2のSLP手順を実際にやるには<b>「測る・記録する道具」</b>が要る。ここはその<b>道具箱</b>。各ツールが手順のどこで・何のために使われるかをセットで覚えると混乱しない。</p>
+      </div>
+
+      <div class="cell" style="margin-bottom:8px;"><b>アクティビティ相互関係図表</b>部門間の近接の必要度を母音で評価：<b>A</b>絶対必要・<b>E</b>特に重要・<b>I</b>重要・<b>O</b>普通・<b>U</b>不要・<b>X</b>近接不可（離す）
+        <div style="margin-top:5px;background:#f0fdfa;border-radius:6px;padding:.4rem .55rem;font-size:.74rem;color:#134e4a;"><b>🎯 目的・使いどころ</b>：SLP手順<b>③（アクティビティ相互関係分析）</b>で作る図表。流れの量だけでなく「騒音・動線・情報共有」など<u>数値にできない近さの理由</u>も含めて配置の根拠にする。<b>評価するのは近さだけで面積ではない</b>（面積は④で加える）。</div>
+      </div>
+
+      <!-- AEIOUX：くっつける↔離す の段階図 -->
+      <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:.55rem;margin-bottom:8px;">
+        <div style="text-align:center;font-size:.74rem;font-weight:700;color:#475569;margin-bottom:.4rem;">🔗 どれだけ近くに置くべきか（AEIOU）↔ 離すべき（X）</div>
+        <div style="display:flex;gap:2px;align-items:stretch;text-align:center;font-size:.7rem;font-weight:700;">
+          <div style="flex:1;background:#16a34a;color:#fff;border-radius:6px 0 0 6px;padding:.4rem .2rem;">A<br><span style="font-size:.6rem;font-weight:400;">絶対必要</span></div>
+          <div style="flex:1;background:#4ade80;color:#14532d;padding:.4rem .2rem;">E<br><span style="font-size:.6rem;font-weight:400;">特に重要</span></div>
+          <div style="flex:1;background:#bbf7d0;color:#14532d;padding:.4rem .2rem;">I<br><span style="font-size:.6rem;font-weight:400;">重要</span></div>
+          <div style="flex:1;background:#fde68a;color:#78350f;padding:.4rem .2rem;">O<br><span style="font-size:.6rem;font-weight:400;">普通</span></div>
+          <div style="flex:1;background:#e2e8f0;color:#475569;padding:.4rem .2rem;">U<br><span style="font-size:.6rem;font-weight:400;">不要</span></div>
+          <div style="flex:1;background:#ef4444;color:#fff;border-radius:0 6px 6px 0;padding:.4rem .2rem;">X<br><span style="font-size:.6rem;font-weight:400;">離す</span></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.66rem;color:#64748b;margin-top:3px;"><span>◀ くっつける</span><span>離す ▶</span></div>
+      </div>
+
+      <div class="grid2">
+        <div class="cell"><b>フロムツーチャート</b>多品種で経路が<b>交錯</b>する場合の流れ分析（単純な流れは単純工程分析）
+          <div style="margin-top:5px;background:#f0fdf4;border-radius:6px;padding:.4rem .55rem;font-size:.74rem;color:#14532d;"><b>🎯 目的・なぜここ</b>：「<u>どこからどこへ何回運んだか</u>」を記録する<b>基礎データ表</b>。手順②（物の流れ分析）の入力になり、<b>SLPにもDI分析にも使う共通データ</b>。だから流れ分析の道具としてこのパートに置かれる（単純な一方向の流れなら単純工程分析でよい）。</div>
+        </div>
+        <div class="cell"><b>DI分析</b>運搬の<b>距離(D)×物流量(I)</b>を図示。右上（遠くて多い）が改善対象
+          <div style="margin-top:5px;background:#fef2f2;border-radius:6px;padding:.4rem .55rem;font-size:.74rem;color:#7f1d1d;"><b>🎯 目的・なぜここ</b>：フロムツーで集めたデータを<u>距離×回数でプロット</u>し、<b>「遠いのによく運ぶ」ムダなペアを発見</b>する道具。レイアウト<b>改善の優先順位づけ</b>に使うため、分析ツールのパートに入る。</div>
+        </div>
+      </div>
+
+      <!-- ★元ノート(qz_11)の図解そのまま移植：DI分析の散布図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">📊 DI分析の散布図（元ノートの図）＝「遠い×よく運ぶ」を見つける</div>
+        <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:16px 16px 38px;margin:6px 0">
+          <div style="font-weight:800;color:#1e40af;text-align:center;font-size:.9rem;margin-bottom:4px">DI分析 ＝ Distance（距離）× Intensity（運搬回数）</div>
+          <div style="text-align:center;font-size:.8rem;color:#64748b;margin-bottom:18px">2軸にプロットするだけ ──「遠いのにしょっちゅう運ぶ」ペアが一目で分かる</div>
+          <div style="position:relative;width:calc(100% - 70px);max-width:420px;margin:10px auto 0;height:260px;border-left:3px solid #475569;border-bottom:3px solid #475569">
+            <div style="position:absolute;left:-62px;top:50%;transform:translateY(-50%) rotate(-90deg);font-size:.76rem;font-weight:800;color:#475569;white-space:nowrap">↑ 運搬距離 D（遠い）</div>
+            <div style="position:absolute;bottom:-30px;right:0;font-size:.76rem;font-weight:800;color:#475569">運搬回数 I（多い） →</div>
+            <div style="position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #e2e8f0"></div>
+            <div style="position:absolute;top:50%;left:0;right:0;border-top:1px dashed #e2e8f0"></div>
+            <div style="position:absolute;top:6px;right:6px;background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:5px 8px;font-size:.74rem;font-weight:800;color:#dc2626;line-height:1.4">🔴 右上<br>遠い＋多い<br>→ 最優先改善！</div>
+            <div style="position:absolute;top:6px;left:6px;background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:5px 8px;font-size:.71rem;color:#92400e;line-height:1.4">🟡 左上<br>遠い＋少ない<br>→ 低優先</div>
+            <div style="position:absolute;bottom:34px;right:6px;background:#ecfdf5;border:1px solid #4ade80;border-radius:8px;padding:5px 8px;font-size:.71rem;color:#166534;line-height:1.4">🟢 右下<br>近い＋多い<br>→ 問題なし◎</div>
+            <div style="position:absolute;bottom:34px;left:6px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:5px 8px;font-size:.71rem;color:#64748b;line-height:1.4">⚪ 左下<br>近い＋少ない<br>→ 問題なし</div>
+            <div style="position:absolute;top:16%;right:20%;width:18px;height:18px;background:#dc2626;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #dc2626" title="部品倉庫→加工A"></div>
+            <div style="position:absolute;top:13%;right:16%;font-size:.68rem;color:#dc2626;font-weight:700;white-space:nowrap">倉庫→加工A</div>
+            <div style="position:absolute;top:30%;right:12%;width:16px;height:16px;background:#dc2626;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #dc2626"></div>
+            <div style="position:absolute;top:27%;right:13%;font-size:.68rem;color:#dc2626;font-weight:700;white-space:nowrap">検査→出荷</div>
+            <div style="position:absolute;top:62%;right:25%;width:15px;height:15px;background:#16a34a;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #16a34a"></div>
+            <div style="position:absolute;top:70%;right:20%;font-size:.68rem;color:#16a34a;font-weight:700">加工A→加工B</div>
+            <div style="position:absolute;top:72%;left:28%;width:12px;height:12px;background:#94a3b8;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #94a3b8"></div>
+            <div style="position:absolute;top:63%;left:20%;font-size:.68rem;color:#64748b;font-weight:700">事務所→駐車場</div>
+          </div>
+        </div>
+        <p style="text-align:center;margin:.5rem 0 0;font-size:.78rem;"><b>右上（遠い＋よく運ぶ）</b>のペア（倉庫→加工A）＝ムダ最大→「近くに移動」が改善案。</p>
+      </div>
+
+      <!-- 運搬活性示数 0〜4 -->
+      <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:.55rem;margin-top:8px;">
+        <div style="text-align:center;font-size:.74rem;font-weight:700;color:#475569;margin-bottom:.4rem;">🚜 運搬活性示数＝次に動かしやすい状態か（0＝バラ置き → 4＝動いている）</div>
+        <div style="display:flex;gap:3px;text-align:center;font-size:.66rem;">
+          <div style="flex:1;background:#fee2e2;border-radius:6px;padding:.4rem .2rem;"><b>0</b><br>バラ置き<br><span style="font-size:1.1rem;">🪨</span></div>
+          <div style="flex:1;background:#fed7aa;border-radius:6px;padding:.4rem .2rem;"><b>1</b><br>箱に<br><span style="font-size:1.1rem;">📦</span></div>
+          <div style="flex:1;background:#fef08a;border-radius:6px;padding:.4rem .2rem;"><b>2</b><br>パレット<br><span style="font-size:1.1rem;">🟫</span></div>
+          <div style="flex:1;background:#bbf7d0;border-radius:6px;padding:.4rem .2rem;"><b>3</b><br>台車に<br><span style="font-size:1.1rem;">🛒</span></div>
+          <div style="flex:1;background:#86efac;border-radius:6px;padding:.4rem .2rem;"><b>4</b><br>動いている<br><span style="font-size:1.1rem;">🚚</span></div>
+        </div>
+        <div style="text-align:center;font-size:.66rem;color:#64748b;margin-top:3px;">数字が大きいほど「すぐ運び出せる」状態</div>
+        <div style="margin-top:5px;background:#fffbeb;border-radius:6px;padding:.4rem .55rem;font-size:.74rem;color:#92400e;"><b>🎯 目的・なぜここ</b>：モノの<u>「次に動かしやすいか」</u>を0〜4で点数化し、<b>運搬のムダ（持ち上げ直し等）を見つけて改善</b>する指標。距離・交錯を減らすレイアウト改善とセットで使うため、分析ツールに並ぶ。</div>
+      </div>
+
+      <div class="note">運搬活性示数＝モノの動かしやすさ <b>0（バラ置き）〜4（動いている）</b>。レイアウト改善のねらい＝運搬距離・交錯を減らす。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：SLPの5要素（P-Q-R-S-T）</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>記号</th><th>意味</th></tr>
+          <tr><td>P</td><td><span class="blank">Product＝製品</span>（何を作るか）</td></tr>
+          <tr><td>Q</td><td><span class="blank">Quantity＝数量</span>（どれだけ）</td></tr>
+          <tr><td>R</td><td><span class="blank">Route＝経路</span>（生産工程・流れ）</td></tr>
+          <tr><td>S</td><td><span class="blank">Service＝補助</span>・付帯サービス（保全・倉庫等）</td></tr>
+          <tr><td>T</td><td><span class="blank">Time＝時間</span>（タイミング・期間）</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：SLPの手順（流れ）</div>
+      <div class="fill-body">
+        <table>
+          <tr><td>①</td><td><span class="blank">P-Q分析</span>（製品×数量 → 製品別か機能別か）</td></tr>
+          <tr><td>②</td><td><span class="blank">物の流れ分析</span>（単純工程分析／フロムツーチャート）</td></tr>
+          <tr><td>③</td><td><span class="blank">アクティビティ相互関係</span>分析（流れ以外の近接性 A〜X）</td></tr>
+          <tr><td>④⑤</td><td>面積相互関係ダイアグラム → レイアウト案の作成・評価</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3：分析ツール（A〜X・フロムツー・DI・活性示数）</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>ツール</th><th>内容・使いどころ</th></tr>
+          <tr><td><span class="blank">アクティビティ相互関係図表</span></td><td>部門間の近接の必要度を母音 A〜X で評価（手順③で作成）</td></tr>
+          <tr><td>近接度の記号</td><td>絶対必要＝<span class="blank">A</span>・特に重要＝<span class="blank">E</span>・重要＝I・普通＝O・不要＝U・近接不可（離す）＝<span class="blank">X</span></td></tr>
+          <tr><td><span class="blank">フロムツーチャート</span></td><td>経路が交錯する場合の流れ分析。SLP・DI分析<span class="blank">共通の基礎データ</span></td></tr>
+          <tr><td><span class="blank">DI分析</span></td><td>運搬の<span class="blank">距離(D)×物流量(I)</span>を図示。右上（遠くて多い）が改善対象</td></tr>
+          <tr><td>運搬活性示数</td><td>モノの動かしやすさ <span class="blank">0</span>（バラ置き）〜<span class="blank">4</span>（動いている）</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+    <div class="fill-section-title" style="color:#e65100;">📚 過去問チャレンジ（解いて確認）</div>
+
+    <div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">R02-3</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> SLP（系統的レイアウト計画）に関する記述として、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. 出発点は製品(P)と数量(Q)の分析（P-Q分析）であり、ここで製品別か機能別かの方針を決める。</li>
+        <li>イ. 最初にアクティビティ相互関係図表を作り、面積を最優先で決定する。</li>
+        <li>ウ. 物の流れ分析を行わず、近接の必要度だけでレイアウトを確定する。</li>
+        <li>エ. DI分析の結果のみを根拠に最終レイアウト案を一意に決定する。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#1565c0;">✅ 正解:ア</strong> &nbsp;<span style="color:#555;">SLP（マザー提唱）はP-Q分析が出発点。①P-Q→②物の流れ→③相互関係→④面積→⑤レイアウト案、の順で進む。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">イ ✗</strong>:相互関係図表は手順③で作るもの。面積はその後の④で加える要素で、最優先ではない。</li>
+          <li><strong style="color:#c62828;">ウ ✗</strong>:物の流れ分析（手順②）はSLPの中核。省略はできない。</li>
+          <li><strong style="color:#c62828;">エ ✗</strong>:DI分析は改善対象を発見する補助ツール。これだけでレイアウトは一意に決まらない。</li>
+        </ul>
+      </div></details>
+    </div>
+
+    <div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜DI分析・運搬活性示数</div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> DI分析（Distance×Intensity）に関する記述として、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. 運搬距離が近く運搬回数も少ないペアを最優先で改善する。</li>
+        <li>イ. 運搬距離が遠く運搬回数も多い（散布図の右上）ペアが最優先の改善対象となる。</li>
+        <li>ウ. 部門間の近接の必要度を母音A〜Xで評価する手法である。</li>
+        <li>エ. モノの動かしやすさを0〜4で点数化する指標である。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#065f46;">✅ 正解:イ</strong> &nbsp;<span style="color:#555;">DI分析は距離×物流量をプロットし、「遠いのによく運ぶ」右上のペアを発見。近くに移動させる改善の優先順位づけに使う。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">ア ✗</strong>:近くて少ないペアはムダが小さく問題なし。改善優先度は最も低い。</li>
+          <li><strong style="color:#c62828;">ウ ✗</strong>:A〜Xで評価するのはアクティビティ相互関係図表。DI分析ではない。</li>
+          <li><strong style="color:#c62828;">エ ✗</strong>:0〜4で点数化するのは運搬活性示数。DI分析とは別物。</li>
+        </ul>
+      </div></details>
+    </div>
+  </div>
+
+  <!-- TAB3 データ分析 -->
+  <div class="tab-panel">
+    <h2>図1：バスケット分析の3指標（数値例で固定）</h2>
+    <div class="fig">
+      <div class="note" style="text-align:left;margin-bottom:6px;">例）全取引<b>100件</b>。Aを含む<b>50件</b>／Bを含む<b>25件</b>／AとB両方<b>20件</b>。「A→B」のルールを評価すると…</div>
+      <div class="formula">支持度（サポート）＝ A∩B ÷ 全取引<span class="ex">＝20÷100＝20％（ルールの一般性・どれだけ多くの取引に現れるか）</span></div>
+      <div class="formula">確信度（コンフィデンス）＝ A∩B ÷ A<span class="ex">＝20÷50＝40％＝P(B|A)（Aを買った人のうちBも買う割合）</span></div>
+      <div class="formula">リフト値 ＝ 確信度 ÷ Bの支持度<span class="ex">＝40％÷25％＝1.6（&gt;1で正の関連／=1で独立／&lt;1で負）</span></div>
+      <!-- ベン図＋各指標がベン図のどこかを詳細解説 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🍎🍌 ベン図で考える：A＝りんご、B＝バナナ を買ったカゴ（全100カゴ）</div>
+
+        <!-- ベン図本体 -->
+        <div style="background:#fff;border-radius:8px;padding:.6rem;">
+          <div style="position:relative;width:280px;height:190px;margin:4px auto;border:2px dashed #94a3b8;border-radius:10px;background:#f8fafc;">
+            <div style="position:absolute;top:4px;left:8px;font-size:.66rem;color:#475569;font-weight:800;">全取引＝100カゴ</div>
+            <!-- 円A りんご -->
+            <div style="position:absolute;top:38px;left:18px;width:140px;height:140px;border-radius:50%;background:rgba(239,68,68,.30);border:2.5px solid #ef4444;"></div>
+            <!-- 円B バナナ -->
+            <div style="position:absolute;top:50px;left:120px;width:120px;height:120px;border-radius:50%;background:rgba(234,179,8,.32);border:2.5px solid #eab308;"></div>
+            <!-- ラベル -->
+            <div style="position:absolute;top:20px;left:34px;font-size:.68rem;font-weight:800;color:#b91c1c;">A=りんご(計50)</div>
+            <div style="position:absolute;top:30px;right:12px;font-size:.68rem;font-weight:800;color:#a16207;">B=バナナ(計25)</div>
+            <div style="position:absolute;top:96px;left:48px;text-align:center;font-size:.72rem;font-weight:800;color:#b91c1c;">🍎だけ<br>30</div>
+            <div style="position:absolute;top:96px;left:122px;text-align:center;font-size:.72rem;font-weight:800;color:#7e22ce;">両方<br>20</div>
+            <div style="position:absolute;top:100px;left:192px;text-align:center;font-size:.72rem;font-weight:800;color:#a16207;">🍌だけ<br>5</div>
+            <div style="position:absolute;bottom:6px;right:10px;text-align:right;font-size:.66rem;color:#64748b;">どちらも<br>買わない 45</div>
+          </div>
+          <div style="font-size:.68rem;color:#64748b;margin-top:4px;text-align:center;">🍎を買った＝30+20＝<b>50</b>／🍌を買った＝20+5＝<b>25</b>／重なり（両方）＝<b>20</b></div>
+        </div>
+
+        <!-- 各指標がベン図のどこを見ているか -->
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.7rem;font-size:.78rem;">
+
+          <div style="background:#eff6ff;border-radius:8px;padding:.55rem .65rem;">
+            <b style="color:#1e40af;">① 支持度（サポート）＝ 重なり20 ÷ 全体100 ＝ 20%</b>
+            <div style="display:flex;align-items:center;gap:.5rem;margin:.35rem 0;font-size:.72rem;">
+              <span style="background:#a855f7;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">分子＝両方の20カゴ</span>
+              <span>÷</span>
+              <span style="background:#cbd5e1;color:#334155;border-radius:5px;padding:2px 7px;font-weight:700;">分母＝全100カゴ</span>
+            </div>
+            <span style="color:#475569;">ベン図の<b>重なり</b>を<b>箱全体</b>で割る。「このセット買いが<u>世の中全体でどれだけ多いか（一般性）</u>」。低すぎると売場を変えるほどの価値はない。</span>
+          </div>
+
+          <div style="background:#f0fdf4;border-radius:8px;padding:.55rem .65rem;">
+            <b style="color:#166534;">② 確信度（コンフィデンス）＝ 重なり20 ÷ りんご50 ＝ 40%（＝P(B|A)）</b>
+            <div style="display:flex;align-items:center;gap:.5rem;margin:.35rem 0;font-size:.72rem;">
+              <span style="background:#a855f7;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">分子＝両方の20カゴ</span>
+              <span>÷</span>
+              <span style="background:#ef4444;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">分母＝円Aのりんご50カゴ</span>
+            </div>
+            <span style="color:#475569;">割る相手が<b>箱全体ではなく円A（りんご）だけ</b>に変わる。「<u>りんごを買った人の中で、バナナも買う割合</u>」＝A→Bルールの当たりやすさ。</span>
+          </div>
+
+          <div style="background:#fdf4ff;border-radius:8px;padding:.55rem .65rem;">
+            <b style="color:#7e22ce;">③ リフト値＝ 確信度40% ÷ バナナの全体率25% ＝ 1.6倍</b>
+            <div style="display:flex;align-items:center;gap:.5rem;margin:.35rem 0;font-size:.72rem;flex-wrap:wrap;">
+              <span style="background:#22c55e;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">りんご客のバナナ率 40%</span>
+              <span>÷</span>
+              <span style="background:#eab308;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">普通のバナナ率 25%（=25÷100）</span>
+            </div>
+            <span style="color:#475569;">バナナは<b>普通なら100人中25人＝25%</b>が買う。ところが<b>りんごを買った人は40%</b>も買う。<b>40÷25＝1.6倍</b>＝りんごを買うとバナナを<u>1.6倍 買いやすくなる</u>。</span>
+            <div style="margin-top:.4rem;display:flex;gap:4px;font-size:.68rem;text-align:center;">
+              <div style="flex:1;background:#fee2e2;border-radius:5px;padding:3px;color:#991b1b;font-weight:700;">&lt;1<br>負の関連</div>
+              <div style="flex:1;background:#fef9c3;border-radius:5px;padding:3px;color:#854d0e;font-weight:700;">=1<br>無関係(独立)</div>
+              <div style="flex:1;background:#dcfce7;border-radius:5px;padding:3px;color:#166534;font-weight:700;">&gt;1<br>正の関連(今回1.6)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trap"><b>急所（外したQ6）</b>：リフト値は<b>＝1で「無関係（独立）」</b>。1より大きいほど「Aを買うとBも買いやすい」。1超を独立と書く誤りに注意。</div>
+    </div>
+
+    <h2>図2：POS と ID-POS の違い</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--mut)"><b>POS</b>「いつ・何が・いくつ」売れたか（商品軸）
+          <div style="margin-top:6px;text-align:center;background:#f8fafc;border-radius:6px;padding:.4rem;font-size:.72rem;">🧾 レシートだけ<br><span style="color:#64748b;">「🍙×2・🥤×1 売れた」<br>＝買った人は分からない</span></div>
+        </div>
+        <div class="cell" style="border-color:var(--g)"><b>ID-POS</b>会員ID付き＝<b>「誰が」</b>買ったかが分かる → RFM・併売・One to One
+          <div style="margin-top:6px;text-align:center;background:#f0fdf4;border-radius:6px;padding:.4rem;font-size:.72rem;">💳👤 会員カード＋レシート<br><span style="color:#64748b;">「田中さんが🍙🥤を買った」<br>＝誰がリピートか分かる</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：バスケット分析の3指標</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>指標</th><th>計算式</th><th>例（全100件）</th></tr>
+          <tr><td>支持度（サポート）</td><td><span class="blank">A∩B ÷ 全取引</span></td><td>20÷100＝20%</td></tr>
+          <tr><td>確信度（コンフィデンス）</td><td><span class="blank">A∩B ÷ A</span>（＝P(B|A)）</td><td>20÷50＝40%</td></tr>
+          <tr><td>リフト値</td><td>確信度 ÷ Bの支持度</td><td>＝1で<span class="blank">独立</span>／&gt;1で正の関連</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：POS と ID-POS</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>種類</th><th>わかること</th></tr>
+          <tr><td>POS</td><td>いつ・何が・いくつ売れたか（<span class="blank">商品</span>軸）</td></tr>
+          <tr><td>ID-POS</td><td><span class="blank">会員ID</span>付き＝「<span class="blank">誰が</span>」買ったかが分かる → RFM・併売</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+    <div class="fill-section-title" style="color:#e65100;">📚 過去問チャレンジ（解いて確認）</div>
+
+    <div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">R07-40</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> アソシエーション分析（バスケット分析）のリフト値に関する記述として、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. リフト値が1より大きいほど、商品AとBは無関係（独立）である。</li>
+        <li>イ. リフト値は「A∩B ÷ 全取引」で求める支持度と同じ指標である。</li>
+        <li>ウ. リフト値が1のとき2商品は独立（無関係）で、1を超えるほど正の関連が強い。</li>
+        <li>エ. リフト値は確信度（コンフィデンス）と常に一致する。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#1565c0;">✅ 正解:ウ</strong> &nbsp;<span style="color:#555;">リフト値＝確信度÷Bの支持度。＝1で独立、＞1で正の関連（Aを買うとBも買いやすい）、＜1で負の関連。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">ア ✗</strong>:1超は「正の関連」。無関係（独立）はちょうど1のとき。逆に覚える誤り。</li>
+          <li><strong style="color:#c62828;">イ ✗</strong>:支持度は別指標（ルールの一般性）。リフト値とは計算も意味も異なる。</li>
+          <li><strong style="color:#c62828;">エ ✗</strong>:確信度はP(B|A)。リフト値はそれをBの全体率で割った値で、一致しない。</li>
+        </ul>
+      </div></details>
+    </div>
+
+    <div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜POS と ID-POS</div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> 通常のPOSデータとID-POSデータの違いとして、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. POSは「誰が」買ったかまで分かるが、ID-POSは商品軸の集計しかできない。</li>
+        <li>イ. どちらも会員IDを伴い、顧客単位のリピート分析が可能である。</li>
+        <li>ウ. POSは仕入原価のみを記録し、販売実績は記録しない。</li>
+        <li>エ. ID-POSは会員ID付きで「誰が」買ったかが分かり、RFM分析や併売分析に活用できる。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#065f46;">✅ 正解:エ</strong> &nbsp;<span style="color:#555;">POSは「いつ・何が・いくつ」（商品軸）。ID-POSは会員ID付きで「誰が」が分かり、RFM・併売・One to Oneに使える。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">ア ✗</strong>:説明が逆。「誰が」分かるのはID-POSの方。</li>
+          <li><strong style="color:#c62828;">イ ✗</strong>:通常POSは会員IDを持たず、顧客単位の追跡はできない。</li>
+          <li><strong style="color:#c62828;">ウ ✗</strong>:POSは販売時点で「何がいくつ売れたか」を記録する。仕入原価専用ではない。</li>
+        </ul>
+      </div></details>
+    </div>
+  </div>
+
+  <!-- TAB4 商品コード（未学習・インプット） -->
+  <div class="tab-panel">
+    <div class="weak">📘 <b>未学習（土台ゼロ）</b>。確認テスト前にここで読んで覚える。論点：JAN／GTIN／ITF／GS1事業者コード／ソース vs インストアマーキング。</div>
+    <span class="nosrc">※商品コードは専用qzノート未作成 → ここで新規に図解化（暗記対象）</span>
+
+    <div class="vz-supplement">
+      <div class="vz-label">🎯 まず何の話？</div>
+      <p>商品コード＝<b>商品につける「背番号」</b>。レジのバーコードで読み取る番号のルール。問われるのは主に①<b>JAN</b>（日本の標準）②<b>GTIN</b>（その国際版）③<b>ITF</b>（段ボール用）④誰が番号を付けるか（<b>ソース／インストア</b>）。</p>
+    </div>
+
+    <h2>図1：JANコード（標準13桁・短縮8桁）</h2>
+    <div class="fig">
+      <div class="formula">JAN13桁 ＝ GS1事業者コード ＋ 商品アイテムコード ＋ チェックデジット<span class="ex">先頭は国コード（日本＝45 または 49）／短縮版は8桁</span></div>
+
+      <!-- JANバーコードの桁構成図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🔖 バーコードの13ケタは3つのまとまりでできている</div>
+        <div style="background:#fff;border-radius:8px;padding:.6rem;">
+          <div style="font-family:monospace;letter-spacing:2px;font-size:1rem;text-align:center;color:#1e293b;font-weight:800;">｜｜∥｜∥∥｜∥｜｜∥｜</div>
+          <div style="display:flex;gap:3px;text-align:center;font-size:.68rem;margin-top:.4rem;">
+            <div style="flex:2;background:#dbeafe;border-radius:6px;padding:.45rem .2rem;"><b style="color:#1e40af;">GS1事業者コード</b><br><span style="color:#64748b;">どの会社か<br>（先頭は国45/49）</span></div>
+            <div style="flex:2;background:#dcfce7;border-radius:6px;padding:.45rem .2rem;"><b style="color:#166534;">商品アイテムコード</b><br><span style="color:#64748b;">どの商品か</span></div>
+            <div style="flex:1;background:#fef9c3;border-radius:6px;padding:.45rem .2rem;"><b style="color:#a16207;">チェック<br>デジット</b><br><span style="color:#64748b;">末尾1桁<br>読み間違い<br>チェック</span></div>
+          </div>
+          <div style="text-align:center;font-size:.72rem;color:#475569;margin-top:.5rem;">「<b>どの会社の・どの商品か</b>」＋「<b>正しく読めたか確認の1桁</b>」＝商品の背番号</div>
+        </div>
+      </div>
+      <div class="note">GS1事業者コード＝メーカー（事業者）を表す番号。チェックデジット＝読み取り誤りを検出する末尾1桁。</div>
+    </div>
+
+    <h2>図2：GTIN と ITF</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--b)"><b>GTIN</b>（国際取引商品番号）JAN/UPC/ITFを束ねた<b>国際標準の商品識別番号</b>（GTIN-13/8/14）</div>
+        <div class="cell" style="border-color:var(--o)"><b>ITF（集合包装用商品コード）</b>段ボールなど<b>外装</b>用＝14桁。物流の入出荷で使う</div>
+      </div>
+
+      <!-- GTIN=傘／ITF=段ボール の図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">☂️ GTINは「世界共通のまとめ役」、ITFは「段ボール用」</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div style="background:#fff;border:1.5px solid #60a5fa;border-radius:8px;padding:.55rem;text-align:center;font-size:.74rem;">
+            <div style="font-size:1.4rem;">☂️</div><b style="color:#1e40af;">GTIN</b><br>
+            <div style="display:flex;gap:3px;justify-content:center;margin:.3rem 0;font-size:.62rem;"><span style="background:#dbeafe;border-radius:4px;padding:1px 5px;">JAN</span><span style="background:#dbeafe;border-radius:4px;padding:1px 5px;">UPC</span><span style="background:#dbeafe;border-radius:4px;padding:1px 5px;">ITF</span></div>
+            <span style="color:#64748b;">いろんな国の商品番号を<br><u>1つの世界標準に束ねた傘</u></span>
+          </div>
+          <div style="background:#fff;border:1.5px solid #fb923c;border-radius:8px;padding:.55rem;text-align:center;font-size:.74rem;">
+            <div style="font-size:1.4rem;">📦</div><b style="color:#c2410c;">ITF（14桁）</b><br>
+            <span style="color:#64748b;">バラの商品ではなく<br><u>段ボール（外装）に貼る</u><br>物流の入出荷で使う</span>
+          </div>
+        </div>
+        <p style="text-align:center;margin:.5rem 0 0;font-size:.76rem;">商品1個＝JAN（13桁）／その箱（段ボール）＝ITF（14桁）。両方まとめた世界共通名＝GTIN。</p>
+      </div>
+    </div>
+
+    <h2>図3：ソースマーキング vs インストアマーキング</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--g)"><b>ソースマーキング</b>製造元（メーカー）が<b>製造段階で事前に印刷</b>（JANを商品に直接）。全国共通</div>
+        <div class="cell" style="border-color:var(--o)"><b>インストアマーキング</b>小売が<b>店内で値付け・印字</b>（生鮮・量り売りなど）。その店だけで通用（先頭20〜29等）</div>
+      </div>
+
+      <!-- どこで番号を付けるか の図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🏭🏪 「どこで」バーコードを付けるかの違い</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.74rem;text-align:center;">
+          <div style="background:#f0fdf4;border:1.5px solid #4ade80;border-radius:8px;padding:.55rem;">
+            <b style="color:#166534;">ソース＝Source（源）</b>
+            <div style="font-size:1.5rem;margin:.2rem 0;">🏭→🏷️→📦</div>
+            <span style="color:#475569;">メーカーが<u>工場で</u>あらかじめ印刷<br>→ 全国どの店でも同じ番号</span>
+          </div>
+          <div style="background:#fff7ed;border:1.5px solid #fb923c;border-radius:8px;padding:.55rem;">
+            <b style="color:#c2410c;">インストア＝In store（店内）</b>
+            <div style="font-size:1.5rem;margin:.2rem 0;">🏪→⚖️→🏷️</div>
+            <span style="color:#475569;">お店が<u>店内で</u>値付け印字（生鮮・量り売り）<br>→ その店だけで通用（先頭20〜29）</span>
+          </div>
+        </div>
+      </div>
+      <div class="trap"><b>覚え方</b>：ソース＝Source（源＝メーカーが元から付ける）／インストア＝In store（店の中で付ける）。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：JANコード（標準13桁）</div>
+      <div class="fill-body">
+        <table>
+          <tr><td>JAN 13桁の構成</td><td><span class="blank">GS1事業者コード</span>＋商品アイテムコード＋<span class="blank">チェックデジット</span></td></tr>
+          <tr><td>先頭（国コード）</td><td>日本＝<span class="blank">45 または 49</span>／短縮版は8桁</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：GTIN と ITF</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>コード</th><th>内容</th></tr>
+          <tr><td><span class="blank">GTIN</span>（国際取引商品番号）</td><td>JAN/UPC/ITFを束ねた国際標準の商品識別番号</td></tr>
+          <tr><td><span class="blank">ITF</span>（集合包装用商品コード）</td><td>段ボールなど<span class="blank">外装</span>用＝<span class="blank">14</span>桁。物流の入出荷で使う</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3：ソースマーキング vs インストアマーキング</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>種類</th><th>誰が・どこで付ける</th></tr>
+          <tr><td><span class="blank">ソースマーキング</span></td><td>製造元（メーカー）が製造段階で事前印刷。全国共通</td></tr>
+          <tr><td><span class="blank">インストアマーキング</span></td><td>小売が店内で値付け・印字（生鮮・量り売り）。その店だけで通用</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+    <div class="fill-section-title" style="color:#e65100;">📚 過去問チャレンジ（解いて確認）</div>
+
+    <div style="background:#fff3e0;border-left:5px solid #fb8c00;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#e65100;margin-bottom:.4rem;">📝 過去問エッセンス(<span style="background:#fb8c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">R07-38</span>) <span style="color:#888;font-size:.8rem;">(エッセンス)</span></div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> JANコード（標準タイプ13桁）の構成・性質として、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. GS1事業者コード＋商品アイテムコード＋チェックデジットで構成され、末尾1桁は読み取り誤りを検出する。</li>
+        <li>イ. 13桁すべてが各企業の自由設定で、先頭にも共通ルールはない。</li>
+        <li>ウ. 段ボールなど外装に貼る14桁の集合包装用コードである。</li>
+        <li>エ. 小売店が店内で値付けし、その店だけで通用する番号である。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#1565c0;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#1565c0;">✅ 正解:ア</strong> &nbsp;<span style="color:#555;">JAN13桁＝GS1事業者コード＋商品アイテムコード＋チェックデジット。先頭は国コード（日本＝45/49）、末尾1桁が読取誤り検出。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">イ ✗</strong>:先頭は国コード、続いてGS1事業者コードと共通ルールがある。全桁自由ではない。</li>
+          <li><strong style="color:#c62828;">ウ ✗</strong>:14桁・外装用はITF（集合包装用商品コード）。JANは商品1個に付ける13桁。</li>
+          <li><strong style="color:#c62828;">エ ✗</strong>:店内値付けで店だけ通用するのはインストアマーキング。JANは全国共通。</li>
+        </ul>
+      </div></details>
+    </div>
+
+    <div style="background:#f0fdf4;border-left:5px solid #059669;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;">
+      <div style="font-weight:700;color:#065f46;margin-bottom:.4rem;">✏️ 練習問題｜ソース／インストアマーキングとITF</div>
+      <p style="margin:.3rem 0;"><strong>Q.</strong> 商品コードのマーキング・種類に関する記述として、最も適切なものはどれか。</p>
+      <ul style="margin:.3rem 0 .3rem 1.2rem;padding:0;">
+        <li>ア. ソースマーキングは小売が店内で値付けし、その店だけで通用する。</li>
+        <li>イ. インストアマーキングは小売が店内で値付け・印字するもので、生鮮や量り売りに使われ、先頭は20〜29等でその店だけ通用する。</li>
+        <li>ウ. ITFは商品1個に直接貼る13桁のコードである。</li>
+        <li>エ. GTINは日本国内だけで通用する独自の商品識別番号である。</li>
+      </ul>
+      <details style="margin-top:.5rem;"><summary style="cursor:pointer;background:#065f46;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;display:inline-block;list-style:none;user-select:none;">👁 答えを見る</summary>
+      <div style="background:#fff;padding:.5rem .7rem;border-radius:4px;margin-top:.5rem;">
+        <strong style="color:#065f46;">✅ 正解:イ</strong> &nbsp;<span style="color:#555;">インストア＝In store。小売が店内で値付け印字（生鮮・量り売り）、先頭20〜29等でその店だけ通用。対するソースはメーカーが工場で事前印刷し全国共通。</span>
+        <ul style="margin:.5rem 0 .2rem 1.2rem;padding:0;font-size:.88rem;color:#666;">
+          <li><strong style="color:#c62828;">ア ✗</strong>:店内値付けはインストア。ソースはメーカーが製造段階で事前印刷し全国共通。</li>
+          <li><strong style="color:#c62828;">ウ ✗</strong>:ITFは段ボールなど外装用の14桁。商品1個（13桁）はJAN。</li>
+          <li><strong style="color:#c62828;">エ ✗</strong>:GTINはJAN/UPC/ITFを束ねた国際標準の商品識別番号。国内専用ではない。</li>
+        </ul>
+      </div></details>
+    </div>
+  </div>
+</div>
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+// 各タブ先頭に「予習」版の穴埋めを複製（約10%を事前表示・標準fill-cardのみ対象。.q04等は除外）
+(function(){
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var cards=[].slice.call(panel.querySelectorAll('.fill-card')).filter(function(c){
+      return c.querySelector('.fill-head')&&c.querySelector('.blank');
+    });
+    if(!cards.length) return;
+    var sec=document.createElement('div');
+    var t=document.createElement('div'); t.className='fill-section-title';
+    t.textContent='🔰 予習（先にざっと・一部ヒント済み）'; sec.appendChild(t);
+    cards.forEach(function(card){
+      var cl=card.cloneNode(true);
+      var h=cl.querySelector('.fill-head'); if(h) h.textContent='予習｜'+h.textContent;
+      var mb=cl.querySelector('.mz-btn'); if(mb) mb.remove(); cl.classList.remove('mz-done');
+      var bl=cl.querySelectorAll('.blank'), n=bl.length;
+      var show=Math.min(Math.max(1,Math.round(n*0.1)),Math.max(0,n-1));
+      for(var i=0;i<show;i++){ bl[i].classList.add('show'); }
+      sec.appendChild(cl);
+    });
+    var h2=panel.querySelector('h2');
+    if(h2){ panel.insertBefore(sec,h2); } else { panel.insertBefore(sec,panel.firstChild); }
+  });
+})();
+document.querySelectorAll('.blank').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('show')));
+function rev(btn){
+  var blanks=btn.closest('.fill-body').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+function revAll(btn){
+  var blanks=btn.closest('.tab-panel').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+// 覚えた→○ボタンで非表示（見出しベースの安定キーで保存）
+(function(){
+  var KEY='mz_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function keyFor(el){
+    if(el.classList.contains('fill-card')){
+      var h=el.querySelector('.fill-head');
+      return 'fc:'+(h?h.textContent.trim():'').slice(0,44);
+    }
+    var p=el.previousElementSibling, hd='';
+    while(p){ if(p.tagName==='H2'){hd=p.textContent.trim();break;} p=p.previousElementSibling; }
+    return 'b:'+hd.slice(0,18)+'|'+el.textContent.replace(/\s+/g,'').slice(0,26);
+  }
+  document.querySelectorAll('.fig,.fill-card,.vz-supplement').forEach(function(el){
+    var id=keyFor(el);
+    var btn=document.createElement('button');
+    btn.className='mz-btn'; btn.type='button';
+    function set(on){ el.classList.toggle('mz-done',on); btn.textContent=on?'✓':'○'; }
+    function save(on){ st[id]=on; localStorage.setItem(KEY,JSON.stringify(st)); }
+    set(!!st[id]);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); var on=!el.classList.contains('mz-done'); set(on); save(on); });
+    el.addEventListener('click',function(){ if(el.classList.contains('mz-done')){ set(false); save(false); } });
+    el.appendChild(btn);
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head'); return h&&h.textContent.trim().startsWith('予習｜'); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+})();
+</script>
+</body>
+</html>

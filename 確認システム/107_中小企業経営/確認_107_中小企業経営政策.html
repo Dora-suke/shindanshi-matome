@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>確認システム</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
+.card{background:#1e293b;border-radius:18px;max-width:860px;width:100%;padding:36px 40px;box-shadow:0 8px 40px rgba(0,0,0,.5);border:3px solid #ffffff;}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.topic{font-size:.95em;color:#fcd34d;font-weight:800;letter-spacing:.05em;}
+.prog{font-size:.95em;color:#94a3b8;}
+.bar{height:7px;background:#334155;border-radius:4px;margin:14px 0 28px;overflow:hidden;}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#f59e0b,#fbbf24);width:0;transition:width .3s;}
+.q{font-size:1.45em;line-height:1.85;margin-bottom:32px;min-height:3em;font-weight:600;}
+.qnum{color:#fbbf24;font-weight:800;margin-right:8px;}
+.btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.btns button{padding:22px 10px;font-size:1.3em;font-weight:800;border:none;border-radius:14px;cursor:pointer;font-family:inherit;transition:transform .1s;}
+.btns button:active{transform:scale(.96);}
+.b-o{background:#16a34a;color:#fff;}
+.b-x{background:#dc2626;color:#fff;}
+.b-d{background:#64748b;color:#fff;}
+.btns button:disabled{opacity:.4;cursor:default;}
+.result{margin-top:28px;padding:22px;border-radius:14px;display:none;}
+.result.show{display:block;animation:fade .3s;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.result.correct{background:#064e3b;border-left:4px solid #10b981;}
+.result.wrong{background:#4c1d1d;border-left:4px solid #ef4444;}
+.result .verdict{font-weight:800;font-size:1.3em;margin-bottom:10px;}
+.result .ans{font-size:1.05em;color:#cbd5e1;margin-bottom:12px;}
+.result .exp{font-size:1.12em;line-height:1.75;color:#e2e8f0;}
+.nav{display:flex;gap:12px;margin-top:24px;}
+.back{padding:18px 22px;font-size:1.05em;font-weight:800;background:#334155;color:#cbd5e1;border:none;border-radius:14px;cursor:pointer;font-family:inherit;}
+.back:disabled{opacity:.3;cursor:default;}
+.next{flex:1;padding:18px;font-size:1.25em;font-weight:800;background:#f59e0b;color:#0f172a;border:none;border-radius:14px;cursor:pointer;font-family:inherit;display:none;}
+.next.show{display:block;}
+.btns button.sel{outline:4px solid #fbbf24;outline-offset:2px;}
+.restart{margin-top:18px;padding:14px 24px;font-size:1.05em;font-weight:800;background:#334155;color:#e2e8f0;border:none;border-radius:12px;cursor:pointer;font-family:inherit;}
+.summary{text-align:center;}
+.summary h2{font-size:1.4em;margin-bottom:12px;}
+.score{font-size:2.6em;font-weight:800;color:#f59e0b;margin:10px 0;}
+.miss{text-align:left;background:#0f172a;border-radius:10px;padding:14px;margin:14px 0;font-size:.88em;line-height:1.7;}
+.code{background:#0f172a;border:1px dashed #475569;border-radius:8px;padding:12px;font-family:monospace;font-size:.9em;color:#fbbf24;margin:10px 0;word-break:break-all;}
+.copy{padding:12px 20px;background:#f59e0b;color:#0f172a;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;}
+.hint{font-size:.78em;color:#94a3b8;margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="head">
+    <span class="topic" id="topic">107 中小企業経営・政策 ｜ Sティア⑤ 支援機関（商工会議所・商工会・よろず支援拠点・中小機構）</span>
+    <span class="prog" id="prog"></span>
+  </div>
+  <div class="bar"><i id="barfill"></i></div>
+  <div id="quiz">
+    <div class="q" id="q"></div>
+    <div class="btns">
+      <button class="b-o" onclick="answer('正')">正しい</button>
+      <button class="b-x" onclick="answer('誤')">誤り</button>
+      <button class="b-d" onclick="answer('△')">△あいまい</button>
+    </div>
+    <div class="result" id="result">
+      <div class="verdict" id="verdict"></div>
+      <div class="ans" id="ans"></div>
+      <div class="exp" id="exp"></div>
+    </div>
+    <div class="nav">
+      <button class="back" id="backbtn" onclick="prev()">← 前へ</button>
+      <button class="next" id="nextbtn" onclick="next()">次の問題へ →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 論点ID（結果コード用）
+const SUBJECT = "107";
+const LOGIC = "支援機関";
+const TOPIC = "支援機関（商工会議所・商工会・よろず支援拠点・中小機構）";
+// 識別ポイント：q=設問, a=正解(正/誤), e=急所解説。暗記科目=28問・小カテゴリをインターリーブ。
+// カテゴリ順: A商工会議所の基本 → B商工会の基本 → C商工会議所vs商工会の比較 → Dマル経との関係 → Eよろず支援拠点 → F中小機構 → G共済制度
+const Q = [
+  // A: 商工会議所の基本
+  {q:"商工会議所は商工会議所法に基づいて設立される。", a:"正", e:"商工会議所法（昭和28年）が根拠法。商工会は別の「商工会法（昭和35年）」が根拠。法律名の区別がひっかけになる。"},
+  // B: 商工会の基本
+  {q:"商工会は商工会議所法に基づいて設立される。", a:"誤", e:"商工会の根拠法は商工会法（昭和35年）。商工会議所法に基づくのは商工会議所。両者は別の法律で設立される。"},
+  // C: 商工会議所 vs 商工会の比較
+  {q:"商工会議所は主に市部に設置され、商工会は主に市部以外の町・村等に設置される。", a:"正", e:"商工会議所＝市の区域。商工会＝商工会議所が設置されていない地域（主に町・村）。同一地域への重複設置は不可。"},
+  // D: 商工会議所・商工会の業務・サービス
+  {q:"商工会議所と商工会はいずれも「経営改善普及事業」として、小規模事業者への記帳指導・税務相談・経営指導などを実施している。", a:"正", e:"経営改善普及事業は両機関の基幹業務。記帳（青色申告支援）・税務・労務・金融相談・巡回指導が含まれる。費用は国が補助。"},
+  // E: よろず支援拠点
+  {q:"よろず支援拠点の相談は有料で、相談件数に応じて費用が発生する。", a:"誤", e:"よろず支援拠点の相談は無料。国（中小企業庁）が費用を負担する公的相談窓口。有料との混同に注意。"},
+  // F: 中小機構
+  {q:"中小企業基盤整備機構（中小機構）は独立行政法人である。", a:"正", e:"中小機構は独立行政法人（特殊法人・認可法人ではない）。信用保証協会は認可法人、中小機構は独立行政法人と区別する。"},
+  // G: 共済制度
+  {q:"小規模企業共済は個人事業主・小規模企業の役員が退職金として活用できる共済制度で、中小機構が運営する。", a:"正", e:"中小機構が運営する2大共済は①小規模企業共済（退職金積立）②経営セーフティ共済（倒産防止）。運営主体は両方とも中小機構。"},
+
+  // A: 商工会議所の基本（2巡目）
+  {q:"商工会議所の会員はサービス業者を除く商人・工業者のみが対象となる。", a:"誤", e:"商工会議所の会員はサービス業者も含む商工業者全般が対象。農業・林業・漁業等は原則対象外だがサービス業は含まれる。"},
+  // B: 商工会の基本（2巡目）
+  {q:"商工会の地区は原則として市の区域を単位とする。", a:"誤", e:"市の区域を単位とするのは商工会議所。商工会は商工会議所が設置されていない地域（主に町・村）に設置される。"},
+  // C: 商工会議所 vs 商工会の比較（2巡目）
+  {q:"商工会議所と商工会は、同一地域に重複して設置することができる。", a:"誤", e:"商工会議所がある地域には商工会を設置できない（区域の重複禁止）。どちらか一方のみ設置可能。"},
+  // D: 商工会議所・商工会の業務・サービス（2巡目）
+  {q:"商工会議所は商工会議所法に基づく特別の法人であり、一般社団法人や特殊法人とは異なる法人格を持つ。", a:"正", e:"商工会議所法が直接の設立根拠。一般社団法人（民法系）でも特殊法人（政府設立）でもない。商工会も商工会法に基づく同様の特別の法人。"},
+  // E: よろず支援拠点（2巡目）
+  {q:"よろず支援拠点は各都道府県に1か所設置されている。", a:"正", e:"47都道府県すべてに設置（各1か所以上）。国（中小企業庁）が設置・運営費用を負担する無料相談窓口。"},
+  // F: 中小機構（2巡目）
+  {q:"中小機構は特殊法人として設立されている。", a:"誤", e:"中小機構は独立行政法人（特殊法人ではない）。特殊法人は政府が直接設立するタイプで、NHK・日本道路公団等が例。"},
+  // G: 共済制度（2巡目）
+  {q:"経営セーフティ共済（中小企業倒産防止共済）は取引先の倒産による連鎖倒産を防ぐための共済制度で、中小機構が運営する。", a:"正", e:"取引先が倒産した際に無担保・無保証人で借入できる。掛金は損金算入可（節税効果あり）。中小機構が運営。"},
+
+  // A: 商工会議所の基本（3巡目）
+  {q:"商工会議所は政策提言機能を持ち、国や地方公共団体への建議・意見具申を行うことができる。", a:"正", e:"商工会議所の特徴の一つが政策提言機能。経済団体として国・行政への建議を行う。商工会との機能的な違いの一つ。"},
+  // B: 商工会の基本（3巡目）
+  {q:"商工会は主に大企業・中堅企業の経営支援を目的として設立された機関である。", a:"誤", e:"商工会の支援対象は主に小規模事業者。町・村等の小規模な地域に密着した経営改善指導が中心業務。"},
+  // C: 商工会議所 vs 商工会の比較（3巡目）
+  {q:"商工会議所が設置されている市の区域には、商工会を設置することはできない。", a:"正", e:"区域の重複は禁止。商工会議所がある市には商工会は設置できない。商工会は「商工会議所のない地域」が前提。"},
+  // D: 商工会議所・商工会の業務・サービス（3巡目）
+  {q:"商工会議所・商工会が実施する経営改善普及事業（記帳指導・相談等）の費用は、会員企業が全額負担する。", a:"誤", e:"経営改善普及事業の費用は国・都道府県が補助する。会員企業は低コストまたは無料で利用できる公的サポート。自己負担でないことが重要。"},
+  // E: よろず支援拠点（3巡目）
+  {q:"よろず支援拠点は国（中小企業庁）が都道府県ごとに設置した無料の経営相談窓口である。", a:"正", e:"国設置・無料・都道府県に1か所以上の3点が重要。資金繰り・販路開拓・IT活用・経営革新等、幅広い相談に対応。"},
+  // F: 中小機構（3巡目）
+  {q:"中小機構は小規模企業共済と経営セーフティ共済（中小企業倒産防止共済）の両方を運営している。", a:"正", e:"中小機構が運営する2大共済。①小規模企業共済=退職金積立、②経営セーフティ共済=取引先倒産への備え。"},
+  // G: 共済制度（3巡目）
+  {q:"小規模企業共済の掛金は所得控除の対象とならず、受取時に一括課税される。", a:"誤", e:"掛金は全額が小規模企業共済等掛金控除として所得控除対象（節税効果大）。受取時も退職所得として優遇。"},
+
+  // A: 商工会議所の基本（4巡目）
+  {q:"商工会議所への加入は強制であり、対象地域のすべての商工業者は会員となる義務がある。", a:"誤", e:"商工会議所の加入は任意。義務加入ではない。医師会等の強制加入とは異なる。会員数を増やすことが課題のひとつ。"},
+  // B: 商工会の基本（4巡目）
+  {q:"商工会の会員資格は小規模事業者のみに限られ、中規模企業は会員になれない。", a:"誤", e:"商工会の会員資格は小規模事業者に限定されない。中規模企業の商工業者も会員になれる（実態は小規模中心）。"},
+  // C: 商工会議所 vs 商工会の比較（4巡目）
+  {q:"商工会議所の全国組織は日本商工会議所であり、商工会の全国組織は全国商工会連合会である。", a:"正", e:"日本商工会議所（日商）は商工会議所の全国連合体、全国商工会連合会は商工会の全国連合体。それぞれ別組織。"},
+  // D: 商工会議所・商工会の業務・サービス（4巡目）
+  {q:"商工会議所はビジネスマッチング・展示会・検定試験の実施など、経営指導以外の幅広い事業も行う。", a:"正", e:"商工会議所の業務は①経営改善普及事業②情報提供③ビジネスマッチング④日商簿記等の検定⑤政策提言など多岐にわたる。商工会はより地域密着・指導中心。"},
+  // E: よろず支援拠点（4巡目）
+  {q:"よろず支援拠点は経営革新・販路開拓のみを支援し、資金繰りや資金調達の相談には対応していない。", a:"誤", e:"よろず支援拠点は資金繰り・財務相談にも対応する。経営全般の幅広いワンストップ相談窓口が設置趣旨。"},
+  // F: 中小機構（4巡目）
+  {q:"中小機構は独立行政法人として、共済制度の運営・経営支援・販路開拓支援など幅広い中小企業施策を実施する。", a:"正", e:"中小機構の主要業務：①共済運営②経営支援（BIZ等）③販路開拓④海外展開支援⑤高度化事業。独立行政法人として政府から独立して運営。"},
+  // G: 共済制度（4巡目）
+  {q:"経営セーフティ共済（中小企業倒産防止共済）の掛金は損金（法人の場合）または必要経費（個人事業主の場合）に算入できない。", a:"誤", e:"掛金は損金・必要経費として算入可能（節税効果あり）。ただし解約返戻金は益金算入される点にも注意。"}
+];
+
+let i = 0;
+const results = [];
+const QUIZ_HTML = document.getElementById('quiz').innerHTML;
+
+function btnFor(item, mark){
+  if(mark==='△') return '△';
+  return (mark==='○') ? item.a : (item.a==='正'?'誤':'正');
+}
+
+function render(){
+  const item = Q[i];
+  document.getElementById('q').innerHTML = '<span class="qnum">'+(i+1)+'.</span>'+item.q;
+  document.getElementById('prog').textContent = (i+1)+' / '+Q.length;
+  document.getElementById('backbtn').disabled = (i===0);
+  const r = document.getElementById('result');
+  const buttons = document.querySelectorAll('.btns button');
+  buttons.forEach(b=>{ b.disabled=false; b.classList.remove('sel'); });
+
+  const mark = results[i];
+  if(mark){
+    const correct = (mark==='○');
+    r.className = 'result show ' + (correct?'correct':'wrong');
+    document.getElementById('verdict').textContent = correct?'✅ 正解（絞れた）':(mark==='△'?'△ あいまい → 要再訪':'❌ 不正解');
+    document.getElementById('ans').textContent = '正解：'+item.a;
+    document.getElementById('exp').textContent = '急所：'+item.e;
+    const nb = document.getElementById('nextbtn');
+    nb.className = 'next show';
+    nb.textContent = (i+1<Q.length) ? '次の問題へ →' : '結果を見る →';
+    const chosen = btnFor(item, mark);
+    buttons.forEach(b=>{
+      if((chosen==='正'&&b.classList.contains('b-o')) ||
+         (chosen==='誤'&&b.classList.contains('b-x')) ||
+         (chosen==='△'&&b.classList.contains('b-d'))) b.classList.add('sel');
+    });
+    document.getElementById('barfill').style.width = ((i+1)/Q.length*100)+'%';
+  } else {
+    r.className = 'result';
+    document.getElementById('nextbtn').className = 'next';
+    document.getElementById('barfill').style.width = (i/Q.length*100)+'%';
+  }
+}
+
+function answer(choice){
+  const item = Q[i];
+  if(choice==='△'){ results[i]='△'; }
+  else if(choice===item.a){ results[i]='○'; }
+  else { results[i]='×'; }
+  render();
+}
+
+function prev(){
+  if(i>0){ i--; render(); }
+}
+
+function next(){
+  if(results[i]===undefined) return;
+  i++;
+  if(i < Q.length){ render(); }
+  else { summary(); }
+}
+
+function restart(){
+  i = 0;
+  results.length = 0;
+  document.getElementById('quiz').innerHTML = QUIZ_HTML;
+  render();
+}
+
+function summary(){
+  const o = results.filter(x=>x==='○').length;
+  const d = results.filter(x=>x==='△').length;
+  const x = results.filter(x=>x==='×').length;
+  const missList = [];
+  results.forEach((m,idx)=>{ if(m!=='○') missList.push((idx+1)+'('+m+')'); });
+  const seq = results.join('');
+  const code = LOGIC+" ["+seq+"] ○"+o+" △"+d+" ×"+x + (missList.length? " / 要再訪:"+missList.join(',') : " / 全問クリア");
+  const verdict = (x===0 && d<=1) ? "✅ クリア" : "🔁 要再訪";
+  const items = Q.map((it,idx)=>({q:it.q, a:it.a, mark:results[idx]}));
+  const base =
+    '<div class="summary">'+
+    '<h2>'+TOPIC+'</h2>'+
+    '<div class="score">○'+o+' △'+d+' ×'+x+'</div>'+
+    '<div style="font-size:1.1em;font-weight:700;margin-bottom:8px;">判定：'+verdict+'</div>'+
+    (missList.length?'<div class="miss"><b>復習ポイント：</b><br>'+missList.map(m=>'設問'+m).join('<br>')+'</div>':'<div class="miss">全問○。選択肢で戦えるレベル到達。</div>');
+  document.getElementById('quiz').innerHTML = base
+    + '<p id="savemsg" style="font-size:1em;color:#94a3b8;margin-top:14px;">記録中…</p>'
+    + '<button class="restart" onclick="restart()">🔄 最初からやり直す</button>'
+    + '</div>';
+  document.getElementById('prog').textContent = '完了';
+  document.getElementById('barfill').style.width = '100%';
+
+  fetch('/save', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({subject:SUBJECT, logic:LOGIC, topic:TOPIC, items:items})})
+    .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    .then(()=>{ document.getElementById('savemsg').innerHTML =
+        '<span style="color:#34d399;font-weight:800;">✅ 自動記録しました</span><br>'+
+        '<span style="font-size:.85em;">チャットで「次へ」と伝えれば次の論点に進みます。</span>'; })
+    .catch(()=>{ document.getElementById('savemsg').outerHTML =
+        '<p style="font-size:.85em;color:#fbbf24;margin:12px 0 6px;">⚠ サーバ未起動。下の1行をチャットに貼ってください</p>'+
+        '<div class="code" id="codebox">'+code+'</div>'+
+        '<button class="copy" onclick="copyCode()">📋 結果コードをコピー</button>'; });
+}
+
+function copyCode(){
+  const t = document.getElementById('codebox').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    document.querySelector('.copy').textContent='✓ コピーしました';
+  });
+}
+
+render();
+</script>
+</body>
+</html>

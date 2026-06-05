@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苦手復習 103-03 ｜ 構造設計・動機づけ・採用教育</title>
+<style>
+:root{--p:#7b1fa2;--pl:#f3e5f5;--b:#1a5276;--bl:#eaf2f8;--g:#1e8449;--gl:#eafaf1;--o:#b9770e;--ol:#fef9e7;--r:#c0392b;--rl:#fdedec;--ink:#1e293b;--mut:#64748b;--line:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:var(--ink);line-height:1.7;}
+.header{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;padding:22px 16px;text-align:center;}
+.header h1{font-size:1.25rem;}
+.header p{font-size:.82rem;opacity:.85;margin-top:4px;}
+.tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
+.tab-nav{display:flex;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
+.tab-btn{flex:1;padding:14px 6px;border:none;background:#fff;color:var(--mut);font-size:.92rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-btn.active[data-c=b]{color:var(--b);border-bottom-color:var(--b);background:var(--bl);}
+.tab-btn.active[data-c=o]{color:var(--o);border-bottom-color:var(--o);background:var(--ol);}
+.tab-btn.active[data-c=g]{color:var(--g);border-bottom-color:var(--g);background:var(--gl);}
+.tab-panel{display:none;background:#fff;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;animation:f .3s;}
+@keyframes f{from{opacity:0}to{opacity:1}}
+h2{font-size:1.05rem;margin:22px 0 10px;padding-left:10px;border-left:5px solid var(--b);}
+h2:first-of-type{margin-top:6px;}
+.weak{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;font-size:.86rem;margin-bottom:8px;}
+.weak b{color:#c2410c;}
+.fig{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfcfd;}
+.note{font-size:.8rem;text-align:center;color:var(--mut);margin-top:8px;}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.84rem;}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:center;vertical-align:middle;}
+th{background:var(--b);color:#fff;}
+tr:nth-child(even) td{background:#f8fafc;}
+td.l{text-align:left;}
+.yes{background:#dcfce7!important;color:#166534;font-weight:800;}
+.no{background:#fee2e2!important;color:#991b1b;font-weight:800;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cell{border:2px solid var(--line);border-radius:8px;padding:9px 11px;font-size:.81rem;}
+.cell b{display:block;color:var(--b);margin-bottom:2px;}
+.trap{background:var(--rl);border-left:4px solid var(--r);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.82rem;margin:10px 0;}
+.trap b{color:var(--r);}
+/* マズロー ピラミッド */
+.pyr{display:flex;flex-direction:column;align-items:center;gap:4px;margin:8px 0;}
+.pyr div{color:#7c2d12;font-weight:700;font-size:.8rem;text-align:center;padding:7px 4px;border-radius:6px;background:linear-gradient(135deg,#fdba74,#fff7ed);border:1.5px solid #f97316;}
+/* 機械的/有機的 */
+.mo{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mo .s{border-radius:8px;padding:10px 12px;font-size:.82rem;}
+.mo .mech{background:var(--bl);border:2px solid var(--b);}
+.mo .org{background:var(--gl);border:2px solid var(--g);}
+.mo h4{font-size:.9rem;margin-bottom:5px;}
+/* 元ノート抜粋ブロック */
+.src-note{background:#fffaf0;border:1px solid #fbcf8f;border-left:5px solid #f59e0b;border-radius:10px;padding:12px 16px;margin:12px 0;}
+.src-note .src-tag{display:inline-block;font-size:.7rem;font-weight:800;color:#fff;background:#f59e0b;border-radius:5px;padding:2px 9px;margin-bottom:8px;}
+.src-note h4{font-size:.9rem;color:#b45309;margin:10px 0 4px;}
+.src-note .ex{font-size:.84rem;color:#475569;margin:6px 0;line-height:1.8;}
+.src-note .ex b{color:#b45309;}
+.src-note .mnemo{display:block;background:#fef3c7;border:2px dashed #f59e0b;border-radius:8px;padding:7px 12px;font-weight:800;color:#92400e;font-size:.85rem;margin:8px 0;text-align:center;}
+.memo-img{max-width:340px;width:100%;border-radius:6px;border:1px solid #ddd;display:block;margin:8px auto 2px;}
+.memo-cap{font-size:.74rem;color:#94a3b8;text-align:center;}
+/* 穴埋め */
+.fill-section-title{margin:24px 0 6px;font-size:1rem;font-weight:800;color:#7b1fa2;}
+.revall-btn{width:100%;padding:13px;font-size:.98rem;font-weight:800;background:#7b1fa2;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;}
+.revall-btn:hover{background:#6a1b9a;}
+.fill-card{background:#faf5ff;border:2px solid var(--p);border-radius:12px;margin-top:12px;overflow:hidden;position:relative;}
+.fill-head{background:var(--p);color:#fff;padding:10px 16px;font-weight:800;font-size:.92rem;}
+.fill-body{padding:14px 18px;font-size:.9rem;line-height:2.2;}
+.fill-body table{margin:4px 0 6px;}
+.fill-body table .blank{min-width:84px;}
+.blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #a855f7;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:800;color:transparent;background:#f3e8ff;border-radius:4px;user-select:none;}
+.blank.show{color:#c2410c;background:#fff7ed;border-color:#c2410c;}
+.revbtn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;}
+.fig,.fill-card,.src-note,.src-fig,.vz-supplement{position:relative;}
+.mz-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:2px solid #16a34a;background:#fff;color:#16a34a;font-weight:800;cursor:pointer;z-index:5;font-size:.95rem;line-height:1;padding:0;}
+.mz-btn:hover{background:#dcfce7;}
+.mz-done>:not(.mz-btn){display:none!important;}
+.mz-done{background:#f0fdf4!important;border-color:#16a34a!important;padding:12px 16px!important;cursor:pointer;}
+.mz-done::after{content:"✓ 覚えた（タップで再表示）";color:#16a34a;font-weight:700;font-size:.82rem;}
+.mz-done .mz-btn{background:#16a34a;color:#fff;}
+@media(max-width:600px){.grid2,.mo{grid-template-columns:1fr}.tab-btn{font-size:.78rem}table{font-size:.76rem}}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>苦手復習 103-03</h1>
+  <p>企業経営理論 ティアAの🔁論点（構造設計・動機づけ・採用教育）／元ノート(qz_16/qz_17)の図解・手書きメモを流用＋ミラー穴埋め</p>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-c="b" onclick="sw(0)">🏢 構造設計</button>
+    <button class="tab-btn" data-c="o" onclick="sw(1)">🔥 動機づけ</button>
+    <button class="tab-btn" data-c="g" onclick="sw(2)">🎓 採用・教育</button>
+  </nav>
+
+  <!-- TAB0 構造設計 -->
+  <div class="tab-panel active">
+    <a href="../参照ノート_103/qz_17.組織構造まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;margin:2px 0 8px;">🔗 元ノート全文：組織構造まとめ（qz_17）↗</a>
+
+    <h2>図1：機械的組織 vs 有機的組織（バーンズ＆ストーカー）</h2>
+    <div style="text-align:center;width:120px;margin:4px auto 0;">
+      <div style="width:58px;height:58px;border-radius:50%;background:#eaf2f8;border:2px solid #1a5276;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.9rem;position:relative;">🧑‍🔧<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.05rem;background:#fff;border-radius:50%;">⚙️🌿</span></div>
+      <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:2px;">バーンズ&ストーカー<br><span style="font-weight:500;color:#64748b;">機械的⚙️/有機的🌿</span></div>
+    </div>
+    <div class="fig">
+      <div class="mo">
+        <div class="s mech"><h4 style="color:var(--b)">⚙ 機械的組織</h4>厳格なルール／集権・階層的／垂直命令<br><b>安定した環境</b>に適合</div>
+        <div class="s org"><h4 style="color:var(--g)">🌿 有機的組織</h4>柔軟な責任／分権・現場委譲／水平連携<br><b>不安定（変化の激しい）環境</b>に適合</div>
+      </div>
+      <div class="src-note">
+        <span class="src-tag">元ノート抜粋｜qz_17 組織構造</span>
+        <div class="ex">バーンズ＆ストーカー：<b>安定環境＝機械的／不安定環境＝有機的</b>。「<b>唯一最適は無い</b>」がコンティンジェンシー（条件適合）理論の核。</div>
+        <div class="trap" style="margin:4px 0 0;"><b>ひっかけ</b>：安定＝有機的／変動＝機械的、と逆にした選択肢が頻出。</div>
+      </div>
+    </div>
+
+    <h2>図2：4つの代表的な組織形態</h2>
+    <div class="fig">
+      <table>
+        <tr><th>形態</th><th>特徴</th><th>短所</th></tr>
+        <tr><td>機能別（職能別）</td><td class="l">職能で分業・専門性◎</td><td class="l">調整がトップ集中</td></tr>
+        <tr><td>事業部制</td><td class="l">製品/地域別・独立採算・利益責任</td><td class="l">資源・機能が重複</td></tr>
+        <tr><td>カンパニー制</td><td class="l">社内分社・擬似独立（社内資本金）</td><td class="l">全社最適が崩れやすい</td></tr>
+        <tr><td>マトリックス</td><td class="l">職能×事業の2軸・専門性＋機動性</td><td class="l">ツーボスで指揮混乱</td></tr>
+      </table>
+      <div class="note">独立性の序列：機能別 ＜ 事業部制 ＜ カンパニー制 ＜ 純粋持株会社。</div>
+    </div>
+
+    <h2>図3：管理の幅（スパン・オブ・コントロール）とライン＆スタッフ</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell"><b>管理の幅＝統制範囲</b>1人の上司が直接管理できる部下数。<b>広い→階層は少なくフラット</b>／狭い→階層が増え高い組織</div>
+        <div class="cell"><b>ライン＆スタッフ</b>ライン＝指揮命令の本流／スタッフ＝助言・支援（<b>直接の命令権は持たない</b>）</div>
+      </div>
+      <div class="src-note">
+        <span class="src-tag">元ノート抜粋｜qz_17 組織構造</span>
+        <div class="ex">統制範囲（スパン・オブ・コントロール）は、<b>超えると階層が増える</b>。チャンドラー「<b>組織は戦略に従う</b>」（多角化→事業部制）。</div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1ミラー：機械的 vs 有機的</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>環境</th><th>適合する組織</th></tr>
+          <tr><td>安定</td><td><span class="blank">機械的</span>（集権・階層的）</td></tr>
+          <tr><td>不安定（変動）</td><td><span class="blank">有機的</span>（分権・柔軟）</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2ミラー：組織形態</div>
+      <div class="fill-body">
+        <div>独立性：機能別 ＜ <span class="blank">事業部制</span> ＜ <span class="blank">カンパニー制</span> ＜ <span class="blank">純粋持株会社</span></div>
+        <div>事業部制の短所＝資源の<span class="blank">重複</span>／マトリックスの短所＝<span class="blank">命令一元化</span>に反しコンフリクト</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3ミラー：管理の幅・ライン＆スタッフ</div>
+      <div class="fill-body">
+        <div>管理の幅が広い→階層は<span class="blank">少ない</span>（フラット）／狭い→階層は<span class="blank">多い</span></div>
+        <div>スタッフは直接の<span class="blank">命令権</span>を持たない／「組織は<span class="blank">戦略</span>に従う」＝チャンドラー</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB1 動機づけ -->
+  <div class="tab-panel">
+    <a href="../参照ノート_103/qz_16.組織と人材まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;margin:2px 0 8px;">🔗 元ノート全文：組織と人材まとめ（qz_16）↗</a>
+
+    <h2>図1：ERG理論（アルダファ）＝マズローの「厳格な順序」を修正</h2>
+    <div style="text-align:center;width:100px;margin:4px auto 0;">
+      <div style="width:58px;height:58px;border-radius:50%;background:#fef3e2;border:2px solid #b9770e;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;">🧑‍🏫<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.05rem;background:#fff;border-radius:50%;">↕️</span></div>
+      <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:2px;">アルダファ<br><span style="font-weight:500;color:#64748b;">ERG・退行↕️</span></div>
+    </div>
+    <div class="fig">
+      <img class="memo-img" src="images/組織/IMG_2501.jpg" alt="アルダファーERG理論の手書きメモ">
+      <div class="memo-cap">元ノート手書きメモ（qz_16）</div>
+      <div class="src-note">
+        <span class="src-tag">元ノート抜粋｜qz_16 組織と人材</span>
+        <div class="ex">E＝<b>存在</b>(Existence)／R＝<b>関係</b>(Relatedness)／G＝<b>成長</b>(Growth)。マズローが「<b>厳格に一段階ずつ</b>」としたのに対し、ERGは<b>複数の欲求が同時に作用</b>し、上が満たされないと下へ<b>退行（逆戻り）</b>することも認める。</div>
+        <div class="trap" style="margin:4px 0 0;"><b>急所（あなたが外したQ9）</b>：「マズローは複数欲求が同時に生じず必ず一段階ずつ」＝マズローの限界。これを修正したのがERG。</div>
+        <span class="mnemo">🎵 語呂（元ノートqz_16）：「アルダファーは 行ったり来たりする（ERG）」＝退行（逆戻り）あり</span>
+      </div>
+    </div>
+
+    <h2>図2：ブルームの期待理論（E×I×V）・マクレランド・アンダーマイニング</h2>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:4px 0;">
+      <div style="text-align:center;width:88px;">
+        <div style="width:54px;height:54px;border-radius:50%;background:#eaf2f8;border:2px solid #1a5276;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.8rem;position:relative;">🧑‍🏫<span style="position:absolute;bottom:-4px;right:-4px;font-size:1rem;background:#fff;border-radius:50%;">✖️</span></div>
+        <div style="font-size:.72rem;font-weight:700;color:#334155;margin-top:2px;">ブルーム<br><span style="font-weight:500;color:#64748b;">期待理論(掛け算)</span></div>
+      </div>
+      <div style="text-align:center;width:88px;">
+        <div style="width:54px;height:54px;border-radius:50%;background:#fdecea;border:2px solid #c0392b;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.8rem;position:relative;">🧑‍💼<span style="position:absolute;bottom:-4px;right:-4px;font-size:1rem;background:#fff;border-radius:50%;">🎯</span></div>
+        <div style="font-size:.72rem;font-weight:700;color:#334155;margin-top:2px;">マクレランド<br><span style="font-weight:500;color:#64748b;">達成動機🎯</span></div>
+      </div>
+      <div style="text-align:center;width:88px;">
+        <div style="width:54px;height:54px;border-radius:50%;background:#eafaf1;border:2px solid #1e8449;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.8rem;position:relative;">🧑‍🔬<span style="position:absolute;bottom:-4px;right:-4px;font-size:1rem;background:#fff;border-radius:50%;">🔥</span></div>
+        <div style="font-size:.72rem;font-weight:700;color:#334155;margin-top:2px;">デシ<br><span style="font-weight:500;color:#64748b;">内発・アンダーマイニング🔥</span></div>
+      </div>
+    </div>
+    <div class="fig">
+      <div style="text-align:center;font-weight:800;color:var(--b);font-size:1.05rem;margin:4px 0;">やる気 ＝ E（期待）× I（道具性/手段性）× V（誘意性）</div>
+      <div class="note">1つでもゼロなら動機はゼロ（かけ算）。E＝頑張れば成果が出そうか／I＝成果が報酬につながるか／V＝<b>誘意性＝その報酬が自分にどれだけ魅力的か</b>。</div>
+      <img class="memo-img" src="images/組織/IMG_2506.jpg" alt="ブルーム期待理論・マクレランドの手書きメモ">
+      <div class="src-note">
+        <span class="src-tag">元ノート抜粋｜qz_16 組織と人材</span>
+        <div class="ex"><b>マクレランドの達成動機説</b>：達成・権力・親和の欲求。達成欲求が高い人ほど<b>中程度のリスク</b>を好む（自分の手で達成感を得られるから）。<b>アンダーマイニング効果</b>：金銭報酬が内発的動機を下げることがある（デシ）。</div>
+        <span class="mnemo">語呂：ブルーなローラ（ブルーム・ローラー）の逮捕（期待値×報酬）は、ランド（マクレランド）で達成</span>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1ミラー：ERG理論・マズローの限界</div>
+      <div class="fill-body">
+        <div>E＝<span class="blank">存在</span>／R＝<span class="blank">関係</span>／G＝<span class="blank">成長</span>（提唱＝<span class="blank">アルダファ</span>）</div>
+        <div>マズローの「厳格に一段階ずつ」を修正し、複数欲求が<span class="blank">同時</span>に作用し<span class="blank">退行</span>もある</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2ミラー：期待理論・マクレランド・アンダーマイニング</div>
+      <div class="fill-body">
+        <div>やる気＝<span class="blank">E（期待）</span>×<span class="blank">I（道具性）</span>×<span class="blank">V（誘意性）</span>。1つでも0なら動機0</div>
+        <div>誘意性＝報酬の<span class="blank">魅力の度合い</span></div>
+        <div>マクレランド＝<span class="blank">達成</span>動機（中程度のリスク）／報酬が内発を下げる＝<span class="blank">アンダーマイニング</span>効果</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB2 採用・教育 -->
+  <div class="tab-panel">
+    <a href="../参照ノート_103/qz_16.組織と人材まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;margin:2px 0 8px;">🔗 元ノート全文：組織と人材まとめ（qz_16）↗</a>
+
+    <h2>図1：OJT / Off-JT の「長所」だけ確認（取り違え注意）</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell"><b>OJTの長所</b>個々の能力・進度に合わせた<b>実践的・個別</b>指導</div>
+        <div class="cell"><b>Off-JTの長所</b><b>体系的・理論的</b>な知識をまとめて習得</div>
+      </div>
+      <div class="trap"><b>ひっかけ</b>：「OJT＝体系的」「Off-JT＝実践スキル直接」は逆。長所の入れ替えに注意。</div>
+    </div>
+
+    <h2>図2：CDP・自己啓発・コンピテンシー</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell"><b>CDP</b>（キャリア・ディベロップメント・プログラム）長期視点で計画的に配置・育成</div>
+        <div class="cell"><b>自己啓発（SD）</b>従業員が<b>自発的</b>に行う学習（企業は支援。一律研修ではない）</div>
+        <div class="cell"><b>コンピテンシー</b>高業績者に共通する<b>行動特性</b>（能力そのものでなく成果につながる行動）</div>
+      </div>
+    </div>
+
+    <h2>図3：出向 vs 転籍（雇用関係の違い）</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--b)"><b>在籍出向</b>元の会社との雇用関係を<b>維持</b>したまま出向先で働く</div>
+        <div class="cell" style="border-color:var(--r)"><b>転籍</b>元の会社との雇用関係を<b>終了</b>し、転籍先と新たに雇用契約</div>
+      </div>
+      <div class="trap"><b>ひっかけ</b>：「出向＝雇用関係を終了」は誤り。雇用を終えるのは転籍。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1ミラー：OJT / Off-JT</div>
+      <div class="fill-body">
+        <table>
+          <tr><th></th><th>長所</th></tr>
+          <tr><td>OJT</td><td><span class="blank">個別・実践的</span></td></tr>
+          <tr><td>Off-JT</td><td><span class="blank">体系的・理論的</span></td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2ミラー：育成・採用の用語</div>
+      <div class="fill-body">
+        <div>自発的な学習＝<span class="blank">自己啓発(SD)</span>／高業績者の行動特性＝<span class="blank">コンピテンシー</span></div>
+        <div>長期的・計画的な配置育成＝<span class="blank">CDP</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3ミラー：出向 / 転籍</div>
+      <div class="fill-body">
+        <div>雇用関係を維持＝<span class="blank">在籍出向</span>／雇用関係を終了＝<span class="blank">転籍</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+// 各タブ先頭に「予習」版の穴埋めを複製（約10%を事前表示・標準fill-cardのみ対象。.q04等は除外）
+(function(){
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var cards=[].slice.call(panel.querySelectorAll('.fill-card')).filter(function(c){
+      return c.querySelector('.fill-head')&&c.querySelector('.blank');
+    });
+    if(!cards.length) return;
+    var sec=document.createElement('div');
+    var t=document.createElement('div'); t.className='fill-section-title';
+    t.textContent='🔰 予習（先にざっと・一部ヒント済み）'; sec.appendChild(t);
+    cards.forEach(function(card){
+      var cl=card.cloneNode(true);
+      var h=cl.querySelector('.fill-head'); if(h) h.textContent='予習｜'+h.textContent;
+      var mb=cl.querySelector('.mz-btn'); if(mb) mb.remove(); cl.classList.remove('mz-done');
+      var bl=cl.querySelectorAll('.blank'), n=bl.length;
+      var show=Math.min(Math.max(1,Math.round(n*0.1)),Math.max(0,n-1));
+      for(var i=0;i<show;i++){ bl[i].classList.add('show'); }
+      sec.appendChild(cl);
+    });
+    var h2=panel.querySelector('h2');
+    if(h2){ panel.insertBefore(sec,h2); } else { panel.insertBefore(sec,panel.firstChild); }
+  });
+})();
+document.querySelectorAll('.blank').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('show')));
+function rev(btn){
+  var blanks=btn.closest('.fill-body').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+function revAll(btn){
+  var blanks=btn.closest('.tab-panel').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+// 覚えた→○ボタンで非表示（見出しベースの安定キーで保存）
+(function(){
+  var KEY='mz_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function keyFor(el){
+    if(el.classList.contains('fill-card')){
+      var h=el.querySelector('.fill-head');
+      return 'fc:'+(h?h.textContent.trim():'').slice(0,44);
+    }
+    var p=el.previousElementSibling, hd='';
+    while(p){ if(p.tagName==='H2'){hd=p.textContent.trim();break;} p=p.previousElementSibling; }
+    return 'b:'+hd.slice(0,18)+'|'+el.textContent.replace(/\s+/g,'').slice(0,26);
+  }
+  document.querySelectorAll('.fig,.fill-card,.src-note,.src-fig,.vz-supplement').forEach(function(el){
+    var id=keyFor(el);
+    var btn=document.createElement('button');
+    btn.className='mz-btn'; btn.type='button';
+    function set(on){ el.classList.toggle('mz-done',on); btn.textContent=on?'✓':'○'; }
+    function save(on){ st[id]=on; localStorage.setItem(KEY,JSON.stringify(st)); }
+    set(!!st[id]);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); var on=!el.classList.contains('mz-done'); set(on); save(on); });
+    el.addEventListener('click',function(){ if(el.classList.contains('mz-done')){ set(false); save(false); } });
+    el.appendChild(btn);
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head'); return h&&h.textContent.trim().startsWith('予習｜'); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+})();
+</script>
+</body>
+</html>

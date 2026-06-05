@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苦手復習 106-01 ｜ トランザクション・TCP/IP・機械学習・脅威対策・暗号認証</title>
+<style>
+:root{--p:#7b1fa2;--pl:#f3e5f5;--b:#1a5276;--bl:#eaf2f8;--g:#1e8449;--gl:#eafaf1;--o:#b9770e;--ol:#fef9e7;--r:#c0392b;--rl:#fdedec;--ink:#1e293b;--mut:#64748b;--line:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:var(--ink);line-height:1.7;}
+.header{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;padding:22px 16px;text-align:center;}
+.header h1{font-size:1.25rem;}
+.header p{font-size:.82rem;opacity:.85;margin-top:4px;}
+.tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
+.tab-nav{display:flex;flex-wrap:wrap;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
+.tab-btn{flex:1;min-width:88px;padding:14px 6px;border:none;background:#fff;color:var(--mut);font-size:.9rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-btn.active[data-c=b]{color:var(--b);border-bottom-color:var(--b);background:var(--bl);}
+.tab-btn.active[data-c=o]{color:var(--o);border-bottom-color:var(--o);background:var(--ol);}
+.tab-btn.active[data-c=g]{color:var(--g);border-bottom-color:var(--g);background:var(--gl);}
+.tab-btn.active[data-c=t]{color:#0f766e;border-bottom-color:#0f766e;background:#ccfbf1;}
+.tab-btn.active[data-c=p]{color:var(--p);border-bottom-color:var(--p);background:var(--pl);}
+.tab-panel{display:none;background:#fff;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;animation:f .3s;}
+@keyframes f{from{opacity:0}to{opacity:1}}
+h2{font-size:1.05rem;margin:22px 0 10px;padding-left:10px;border-left:5px solid var(--b);}
+h2:first-of-type{margin-top:6px;}
+.fig{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfcfd;}
+.note{font-size:.8rem;text-align:center;color:var(--mut);margin-top:8px;}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.84rem;}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:center;vertical-align:middle;}
+th{background:var(--b);color:#fff;}
+tr:nth-child(even) td{background:#f8fafc;}
+td.l{text-align:left;}
+.yes{background:#dcfce7!important;color:#166534;font-weight:800;}
+.no{background:#fee2e2!important;color:#991b1b;font-weight:800;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cell{border:2px solid var(--line);border-radius:8px;padding:9px 11px;font-size:.81rem;}
+.cell b{display:block;color:var(--b);margin-bottom:2px;}
+.trap{background:var(--rl);border-left:4px solid var(--r);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.82rem;margin:10px 0;}
+.trap b{color:var(--r);}
+.flow{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:8px 0;}
+.flow .box{background:#dbeafe;border-radius:6px;padding:.35rem .7rem;font-size:.82rem;font-weight:700;color:#1e40af;}
+.flow .box.g{background:#dcfce7;color:#166534;}
+.flow .box.o{background:#fef9c3;color:#854d0e;}
+.flow .arrow{color:#94a3b8;font-size:1.1rem;}
+.formula{text-align:center;font-weight:800;color:var(--b);font-size:1.02rem;margin:6px 0;background:#eef6fb;border:1.5px solid #b6d4e6;border-radius:8px;padding:9px 8px;}
+.formula .ex{display:block;font-size:.82rem;font-weight:700;color:var(--g);margin-top:4px;}
+.vz-supplement{background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;}
+.vz-label{font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;}
+.vz-supplement p{margin:0 0 .6rem;line-height:1.7;color:#334155;}
+.fill-section-title{margin:24px 0 6px;font-size:1rem;font-weight:800;color:#7b1fa2;}
+.revall-btn{width:100%;padding:13px;font-size:.98rem;font-weight:800;background:#7b1fa2;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;}
+.revall-btn:hover{background:#6a1b9a;}
+.fill-card{background:#faf5ff;border:2px solid var(--p);border-radius:12px;margin-top:12px;overflow:hidden;position:relative;}
+.fill-head{background:var(--p);color:#fff;padding:10px 16px;font-weight:800;font-size:.92rem;}
+.fill-body{padding:14px 18px;font-size:.9rem;line-height:2.2;}
+.fill-body table{margin:4px 0 6px;}
+.fill-body table .blank{min-width:84px;}
+.blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #a855f7;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:800;color:transparent;background:#f3e8ff;border-radius:4px;user-select:none;}
+.blank.show{color:#c2410c;background:#fff7ed;border-color:#c2410c;}
+.revbtn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;}
+.fig,.fill-card,.vz-supplement{position:relative;}
+.mz-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:2px solid #16a34a;background:#fff;color:#16a34a;font-weight:800;cursor:pointer;z-index:5;font-size:.95rem;line-height:1;padding:0;}
+.mz-btn:hover{background:#dcfce7;}
+.mz-done>:not(.mz-btn){display:none!important;}
+.mz-done{background:#f0fdf4!important;border-color:#16a34a!important;padding:12px 16px!important;cursor:pointer;}
+.mz-done::after{content:"✓ 覚えた（タップで再表示）";color:#16a34a;font-weight:700;font-size:.82rem;}
+.mz-done .mz-btn{background:#16a34a;color:#fff;}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.tab-btn{font-size:.74rem;min-width:70px}table{font-size:.76rem}}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>苦手復習 106-01</h1>
+  <p>経営情報 SティアS①〜⑤の🔁論点で <b>×・△だった観点だけ</b>に絞った図解＋穴埋め（○で絞れた所は載せていません）</p>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-c="t" onclick="sw(0)">💾 トランザクション</button>
+    <button class="tab-btn" data-c="b" onclick="sw(1)">🌐 TCP/IP</button>
+    <button class="tab-btn" data-c="g" onclick="sw(2)">🤖 機械学習</button>
+    <button class="tab-btn" data-c="o" onclick="sw(3)">🛡 脅威・対策</button>
+    <button class="tab-btn" data-c="p" onclick="sw(4)">🔐 暗号・認証</button>
+  </nav>
+
+  <!-- ================= TAB0 トランザクション ================= -->
+  <div class="tab-panel active">
+    <h2>図1：3つの読み取り異常 と 分離レベルの“梯子”</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>同じデータを同時に何人もが読み書きすると、読み取りで「おかしなこと」が起きます。それを<b>どこまで防ぐか</b>の段階が分離レベル。厳しくするほど安全だが遅くなります。</p>
+      </div>
+      <table>
+        <tr><th>異常</th><th>何が起きる？</th><th>覚え方</th></tr>
+        <tr><td>ダーティリード</td><td class="l">他人の<b>未コミット</b>（未確定）の値を読んでしまう</td><td>未確定を読む</td></tr>
+        <tr><td>反復不能読取</td><td class="l">同じ行を2回読むと<b>値</b>が変わっている</td><td class="yes">値が変わる</td></tr>
+        <tr><td>ファントムリード</td><td class="l">同じ条件で検索すると<b>件数（行数）</b>が変わる</td><td class="yes">件数が変わる</td></tr>
+      </table>
+      <table>
+        <tr><th>分離レベル（弱い→強い）</th><th>ダーティ</th><th>反復不能</th><th>ファントム</th></tr>
+        <tr><td class="l">READ UNCOMMITTED（最弱）</td><td class="no">許す</td><td class="no">許す</td><td class="no">許す</td></tr>
+        <tr><td class="l">READ COMMITTED</td><td class="yes">防ぐ</td><td class="no">許す</td><td class="no">許す</td></tr>
+        <tr><td class="l">REPEATABLE READ</td><td class="yes">防ぐ</td><td class="yes">防ぐ</td><td class="no">許す</td></tr>
+        <tr><td class="l">SERIALIZABLE（最強）</td><td class="yes">防ぐ</td><td class="yes">防ぐ</td><td class="yes">防ぐ</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：①<b>ファントム＝件数が変わる／反復不能＝値が変わる</b>（混同注意）。②<b>SERIALIZABLEは最強</b>（最弱はREAD UNCOMMITTED）。③REPEATABLE READでも<b>ファントムは残り得る</b>。</div>
+    </div>
+
+    <h2>図2：ロックと同時実行制御</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>同じデータを同時にいじると壊れるので「鍵」をかけて順番待ちさせます。読むだけならみんな同時にOK、書くときは1人だけ。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">👀</div><div style="font-size:.78rem;font-weight:700;color:#15803d;">共有ロックS（読む）</div><div style="font-size:.75rem;color:#14532d;">みんな同時にOK</div></div>
+          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">✍️</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">専有ロックX（書く）</div><div style="font-size:.75rem;color:#7f1d1d;">1人だけ・他は待つ</div></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--g)"><b>共有ロックS（読み）</b>複数が同時に取れる</div>
+        <div class="cell" style="border-color:var(--r)"><b>専有ロックX（書き）</b>1つだけ。Xの間は読みも書きも待つ</div>
+        <div class="cell" style="border-color:var(--b)"><b>2相ロック(2PL)</b>取得だけの成長相→解放だけの縮退相。直列化可能性を保証</div>
+        <div class="cell" style="border-color:var(--o)"><b>粒度</b>細かい(行)＝並行性↑・管理コスト↑／粗い(表)＝逆</div>
+        <div class="cell" style="border-color:var(--p)"><b>MVCC</b>読みはロックせず“古い版”を読む→読み書きの競合を減らす</div>
+        <div class="cell" style="border-color:#0f766e"><b>デッドロック</b>検出＝待ちグラフの閉路／予防＝ロック獲得順を統一</div>
+      </div>
+      <div class="trap"><b>急所</b>：粒度は<b>細かいほど並行性が上がる</b>（粗いと一度に広く締めるので下がる）。デッドロックは「順番を揃える」と起きにくい。</div>
+    </div>
+
+    <h2>図3：障害回復（どっちで戻す？）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>途中で停電しても大丈夫なように、変更の記録（ログ）を残しておきます。まだ確定していないものは取り消し、確定済みのものは再現します。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.2rem;">⏪</div><div style="font-size:.78rem;font-weight:700;color:#c2410c;">未確定 → before で取り消し</div><div style="font-size:.75rem;color:#7c2d12;">ロールバック</div></div>
+          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.2rem;">⏩</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">確定済 → after で再現</div><div style="font-size:.75rem;color:#1e3a8a;">ロールフォワード</div></div>
+        </div>
+      </div>
+      <div class="flow">
+        <span class="box">更新前ログ before</span><span class="arrow">→</span><span class="box o">ロールバック（取り消し）</span>
+        <span style="margin:0 8px;color:#cbd5e1">｜</span>
+        <span class="box g">更新後ログ after</span><span class="arrow">→</span><span class="box o">ロールフォワード（再現）</span>
+      </div>
+      <table>
+        <tr><th>用語</th><th>意味</th></tr>
+        <tr><td>WAL（ログ先行書き込み）</td><td class="l">データ更新を反映する<b>前</b>に必ずログを書く（後ではない）</td></tr>
+        <tr><td>チェックポイント</td><td class="l">バッファの更新をディスクへ反映＝復旧で見るログ範囲を狭める</td></tr>
+        <tr><td>2相コミット(2PC)</td><td class="l">①全サイトに可否を問う→②全員可ならコミット。1つでも不可なら全アボート</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：①<b>WALはログが先</b>。②<b>before→ロールバック／after→ロールフォワード</b>（逆に注意）。③2PCは<b>勝手にコミットできない</b>（全員の合意）。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">分離レベルが防ぐ異常</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>レベル</th><th>ダーティ</th><th>反復不能</th><th>ファントム</th></tr>
+          <tr><td>READ UNCOMMITTED</td><td><span class="blank">許す</span></td><td><span class="blank">許す</span></td><td><span class="blank">許す</span></td></tr>
+          <tr><td>READ COMMITTED</td><td><span class="blank">防ぐ</span></td><td>許す</td><td>許す</td></tr>
+          <tr><td>REPEATABLE READ</td><td>防ぐ</td><td><span class="blank">防ぐ</span></td><td><span class="blank">許す</span></td></tr>
+          <tr><td><span class="blank">SERIALIZABLE</span></td><td>防ぐ</td><td>防ぐ</td><td><span class="blank">防ぐ</span></td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">3つの異常の区別</div>
+      <div class="fill-body">
+        <div>未確定の値を読む＝<span class="blank">ダーティリード</span></div>
+        <div>同じ行で<b>値</b>が変わる＝<span class="blank">反復不能読取</span></div>
+        <div>同じ条件で<b>件数</b>が変わる＝<span class="blank">ファントムリード</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">ロックと回復</div>
+      <div class="fill-body">
+        <div>取得の成長相→解放の縮退相＝<span class="blank">2相ロック(2PL)</span>／読みは古い版を見る＝<span class="blank">MVCC</span></div>
+        <div>粒度を細かくすると並行性は<span class="blank">上がる</span>（管理コストは増える）</div>
+        <div>デッドロック検出＝<span class="blank">待ちグラフの閉路</span>／予防＝ロック<span class="blank">獲得順の統一</span></div>
+        <div>更新前(before)→<span class="blank">ロールバック</span>／更新後(after)→<span class="blank">ロールフォワード</span></div>
+        <div>更新の<b>前</b>にログを書く＝<span class="blank">WAL</span>／分散の全コミット一致＝<span class="blank">2相コミット</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB1 TCP/IP ================= -->
+  <div class="tab-panel">
+    <h2>図1：層と機器の対応（どの層で働く？）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>ネットワーク機器は「住所」の種類で見る層が違います。<b>MACアドレス（機器固有）で配るのが下の層、IPアドレス（場所）で配るのが上の層</b>。ルータは“別の町”へ送る係です。</p>
+      </div>
+      <table>
+        <tr><th>層</th><th>主な機器</th><th>何で宛先を見る？</th></tr>
+        <tr><td>物理層（最下位）</td><td class="l">ハブ・リピータ</td><td>信号を増幅し全ポートへ流すだけ</td></tr>
+        <tr><td>データリンク層</td><td class="l">L2スイッチ・ブリッジ</td><td class="yes">MACアドレス（宛先ポートだけに転送）</td></tr>
+        <tr><td>ネットワーク層</td><td class="l">ルータ</td><td class="yes">IPアドレス（別ネットワークへ転送）</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：①<b>ルータ＝ネットワーク層・IP</b>（MAC/データリンクはL2スイッチ）。②<b>デフォルトゲートウェイ＝外部ネットへの出口</b>（同一サブネット内は直接通信なので不要）。</div>
+    </div>
+
+    <h2>図2：TCP と UDP</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>TCPは「届いたか確認しながら送る丁寧な宅配便」、UDPは「確認しない速達ハガキ」。確実さのTCP、速さのUDP、とおさえます。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📦✅</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">TCP＝丁寧な宅配便</div><div style="font-size:.75rem;color:#1e3a8a;">届いたか確認・確実</div></div>
+          <div style="background:#fefce8;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📮💨</div><div style="font-size:.78rem;font-weight:700;color:#854d0e;">UDP＝速達ハガキ</div><div style="font-size:.75rem;color:#713f12;">確認なし・高速</div></div>
+        </div>
+      </div>
+      <table>
+        <tr><th></th><th>TCP</th><th>UDP</th></tr>
+        <tr><td>接続</td><td class="yes">コネクション型（3wayハンドシェイク）</td><td>コネクションレス</td></tr>
+        <tr><td>信頼性</td><td class="yes">高い（順序保証・再送・フロー制御）</td><td class="no">低い（確認・再送なし）</td></tr>
+        <tr><td>速さ／用途</td><td>やや重い／Web・メール</td><td class="yes">高速／動画・音声・DNS</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：<b>TCP＝コネクション型で信頼性が高い／UDP＝コネクションレスで高速だが信頼性は低い</b>。逆に覚えない。</div>
+    </div>
+
+    <h2>図3：IPアドレスとサブネット</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>IPアドレスは「ネット上の住所」。前半が町名（ネットワーク部）、後半が番地（ホスト部）で、その境目をサブネットマスクが決めます。</p>
+        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+          <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#1e40af;">ネットワーク部（町名）</div>
+          <span style="color:#94a3b8;font-weight:800;">｜</span>
+          <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#166534;">ホスト部（番地）</div>
+          <span style="color:#64748b;font-size:.74rem;">← 境目はマスクが決める（1＝町名/0＝番地）</span>
+        </div>
+      </div>
+      <div class="formula">IPv4 ＝ 32ビット（8ビット×4）　／　IPv6 ＝ 128ビット<span class="ex">アドレス枯渇に対応するのがIPv6</span></div>
+      <table>
+        <tr><th>項目</th><th>ポイント</th></tr>
+        <tr><td>サブネットマスク</td><td class="l">「1」＝<b>ネットワーク部</b>／「0」＝ホスト部。/24＝255.255.255.0</td></tr>
+        <tr><td>ネットワークアドレス</td><td class="l">ホスト部が<b>全0</b>（端末に割当不可）</td></tr>
+        <tr><td>ブロードキャストアドレス</td><td class="l">ホスト部が<b>全1</b>（端末に割当不可）</td></tr>
+        <tr><td>/24で使えるホスト数</td><td class="l">2⁸−2＝<b>254台</b>（全0と全1を除く）</td></tr>
+        <tr><td>プライベートIP</td><td class="l">10／172.16／192.168。組織内で自由（世界一意ではない）</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：マスクの<b>1がネットワーク部</b>・<b>ブロードキャスト＝全1</b>・<b>IPv6は128bit</b>。</div>
+    </div>
+
+    <h2>図4：アドレスの変換・解決とポート</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>家の中だけの住所（プライベートIP）のままでは外に出られないので、玄関（ルータ）で外向けの住所に変えます。ポート番号は「部屋番号」のイメージです。</p>
+        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+          <div style="background:#fef2f2;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#b91c1c;">プライベートIP（家の中）</div>
+          <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+          <div style="background:#ede9fe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#5b21b6;">NAPT（玄関で変換）</div>
+          <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+          <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#166534;">グローバルIP（外の住所）</div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--g)"><b>ARP</b>IP→MAC を解決（同一LANで宛先MACを知る）</div>
+        <div class="cell" style="border-color:var(--b)"><b>NAPT（IPマスカレード）</b>1つのグローバルIPをポートで使い分け複数端末で共有</div>
+        <div class="cell" style="border-color:var(--o)"><b>ポート番号</b>0〜65535。相手の“アプリ/サービス”を識別（PCはIPで識別）</div>
+        <div class="cell" style="border-color:var(--p)"><b>プライベートIP</b>そのままでは外部と通信不可→NATでグローバルに変換</div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">層と機器</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>機器</th><th>層</th><th>宛先の見方</th></tr>
+          <tr><td>ハブ／リピータ</td><td><span class="blank">物理層</span></td><td>増幅し全ポートへ</td></tr>
+          <tr><td>L2スイッチ</td><td><span class="blank">データリンク層</span></td><td><span class="blank">MAC</span>アドレス</td></tr>
+          <tr><td>ルータ</td><td><span class="blank">ネットワーク層</span></td><td><span class="blank">IP</span>アドレス</td></tr>
+        </table>
+        <div>外部ネットへの出口＝<span class="blank">デフォルトゲートウェイ</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">TCP / UDP とIPアドレス</div>
+      <div class="fill-body">
+        <div>接続を確立し信頼性が高い＝<span class="blank">TCP</span>／高速で信頼性が低い＝<span class="blank">UDP</span></div>
+        <div>IPv4＝<span class="blank">32</span>ビット／IPv6＝<span class="blank">128</span>ビット</div>
+        <div>マスクの「1」＝<span class="blank">ネットワーク部</span>／ブロードキャスト＝ホスト部が<span class="blank">全1</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">変換・解決・ポート</div>
+      <div class="fill-body">
+        <div>IP→MACの解決＝<span class="blank">ARP</span></div>
+        <div>1つのグローバルIPをポートで共有＝<span class="blank">NAPT</span></div>
+        <div>ポート番号の範囲＝0〜<span class="blank">65535</span>（識別するのは<span class="blank">アプリ／サービス</span>）</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB2 機械学習 ================= -->
+  <div class="tab-panel">
+    <h2>図1：評価指標の落とし穴 と SVM</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>「99%正解！」でも油断は禁物。99%が“陰性”のデータなら、全部「陰性」と答えるだけで99%になります。だから<b>偏った（不均衡）データでは正解率はあてにならない</b>。</p>
+      </div>
+      <table>
+        <tr><th>指標</th><th>意味</th></tr>
+        <tr><td>正解率(accuracy)</td><td class="l">全体の的中率。<b>不均衡データでは誤導される</b>→次の3つで見る</td></tr>
+        <tr><td>適合率(precision)</td><td class="l">「陽性と判定」したうち本当に陽性だった割合</td></tr>
+        <tr><td>再現率(recall)</td><td class="l">「本当に陽性」のうち拾えた割合（取りこぼしの少なさ）</td></tr>
+        <tr><td>F値</td><td class="l">適合率と再現率の<b>調和平均</b>（バランス）</td></tr>
+      </table>
+      <div class="formula">SVM ＝ クラスを分ける境界を「マージン（余白）最大」で引く</div>
+      <div class="trap"><b>△だったQ</b>：正解率が高くても<b>不均衡なら良いモデルとは限らない</b>。SVMは“境界とデータの距離（マージン）を最大化”。</div>
+    </div>
+
+    <h2>図2：CNN と RNN の使い分け</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>CNNは「写真を見るのが得意な目」、RNNは「順番に話を聞くのが得意な耳」。画像はCNN、時系列や言葉はRNN、と役割で分けます。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🖼👁</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">CNN＝目</div><div style="font-size:.75rem;color:#1e3a8a;">画像が得意</div></div>
+          <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🗣👂</div><div style="font-size:.78rem;font-weight:700;color:#15803d;">RNN＝耳</div><div style="font-size:.75rem;color:#14532d;">順番・言葉が得意</div></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--b)"><b>CNN（畳み込み）</b>🖼 <b>画像認識</b>が得意。空間的な特徴を捉える</div>
+        <div class="cell" style="border-color:var(--g)"><b>RNN（再帰型）</b>🗣 <b>時系列・自然言語</b>など順序のあるデータが得意</div>
+      </div>
+      <div class="trap"><b>△だったQ</b>：<b>CNN＝画像／RNN＝時系列・言語</b>。CNNを時系列用と取り違えない。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">評価指標・SVM・CNN/RNN</div>
+      <div class="fill-body">
+        <div>陽性/陰性が偏ると当てにならない指標＝<span class="blank">正解率(accuracy)</span></div>
+        <div>適合率と再現率のバランス＝<span class="blank">F値</span></div>
+        <div>境界をマージン最大で引く手法＝<span class="blank">SVM</span></div>
+        <div>画像認識が得意＝<span class="blank">CNN</span>／時系列・言語が得意＝<span class="blank">RNN</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB3 脅威・対策 ================= -->
+  <div class="tab-panel">
+    <h2>図1：CIA 3要素 と リスクの式</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>守りたいのは3つ。<b>機密性＝見せない／完全性＝正しいまま／可用性＝使いたいときに使える</b>。可用性と機密性を取り違えやすいので注意。</p>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--r)"><b>機密性 C</b>許可された人だけが見られる（＝<b>見せない</b>）</div>
+        <div class="cell" style="border-color:var(--g)"><b>完全性 I</b>改ざんされず正確・完全（＝<b>正しいまま</b>）</div>
+        <div class="cell" style="border-color:var(--b)"><b>可用性 A</b>必要なときにいつでも使える（＝<b>使える</b>）</div>
+        <div class="cell" style="border-color:var(--o)"><b>リスクの式</b>リスク＝脅威 × 脆弱性 ×（資産価値）</div>
+      </div>
+      <div class="trap"><b>外したQ</b>：①<b>可用性＝使える／機密性＝見せない</b>（取り違え注意）。②<b>脆弱性（穴）をなくせば、同じ脅威でもリスクは下がる</b>。</div>
+    </div>
+
+    <h2>図2：防御技術の役割分担（ここが最弱）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>守りの道具は役割分担。FW＝門番（通す/通さない）、IDS＝見張り（気づいて知らせるだけ）、IPS＝見張り＋自分で止める、です。</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem;">
+          <div style="background:#ede9fe;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">🚪</div><div style="font-size:.74rem;font-weight:600;color:#5b21b6;">FW＝門番<br>通す/通さない</div></div>
+          <div style="background:#fce7f3;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">👁</div><div style="font-size:.74rem;font-weight:600;color:#9d174d;">IDS＝見張り<br>気づいて知らせる</div></div>
+          <div style="background:#ecfdf5;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">✋</div><div style="font-size:.74rem;font-weight:600;color:#065f46;">IPS＝見張り<br>＋自分で止める</div></div>
+        </div>
+      </div>
+      <table>
+        <tr><th>技術</th><th>役割</th></tr>
+        <tr><td>ファイアウォール(FW)</td><td class="l">通信(パケット)の通過可否を制御する“関所”</td></tr>
+        <tr><td>アンチウイルス</td><td class="l">ウイルス本体の検知・駆除（←FWとは別）</td></tr>
+        <tr><td>IDS</td><td class="l">不正を<b>検知・通知</b>するだけ</td></tr>
+        <tr><td>IPS</td><td class="yes">検知＋<b>遮断</b>まで行う</td></tr>
+        <tr><td>WAF</td><td class="l">Webアプリ層の攻撃（SQLi・XSS）を防ぐ</td></tr>
+        <tr><td>VPN</td><td class="l">通信を<b>暗号化</b>し仮想専用線を作る</td></tr>
+        <tr><td>サンドボックス</td><td class="l">疑わしいプログラムを隔離環境で動かし挙動を分析</td></tr>
+        <tr><td>DMZ</td><td class="l">公開サーバを内部LANから隔離する緩衝地帯</td></tr>
+      </table>
+      <div class="trap"><b>外した／△Q</b>：<b>IDS＝検知のみ／IPS＝検知＋遮断</b>。<b>FW＝通信制御</b>（ウイルス駆除はアンチウイルス）。<b>サンドボックス＝隔離実行で分析</b>。</div>
+    </div>
+
+    <h2>図3：間違えた攻撃の中身</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>XSSは「他人のブラウザに悪い貼り紙をして実行させる」攻撃。ボットネットは「乗っ取った大勢のPCを遠隔操作する軍団」です。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📝💉</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">XSS</div><div style="font-size:.75rem;color:#7f1d1d;">他人のブラウザに悪い貼り紙</div></div>
+          <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🤖🕸</div><div style="font-size:.78rem;font-weight:700;color:#c2410c;">ボットネット</div><div style="font-size:.75rem;color:#7c2d12;">乗っ取った大勢のPC軍団</div></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--r)"><b>XSS（クロスサイトスクリプティング）</b>悪意あるスクリプトを<b>他の利用者のブラウザ</b>で実行させる（DB物理破壊ではない）</div>
+        <div class="cell" style="border-color:var(--o)"><b>ボットネット</b><b>多数の感染PC</b>を攻撃者が遠隔操作する網。指令(C&C)からDDoS等に悪用</div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">CIA と リスク</div>
+      <div class="fill-body">
+        <div>見せない＝<span class="blank">機密性</span>／正しいまま＝<span class="blank">完全性</span>／使える＝<span class="blank">可用性</span></div>
+        <div>リスク＝<span class="blank">脅威</span> × <span class="blank">脆弱性</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">防御技術の役割</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>技術</th><th>役割</th></tr>
+          <tr><td>FW</td><td><span class="blank">通信の通過可否を制御</span></td></tr>
+          <tr><td>IDS</td><td><span class="blank">検知・通知のみ</span></td></tr>
+          <tr><td>IPS</td><td><span class="blank">検知＋遮断</span></td></tr>
+          <tr><td>WAF</td><td><span class="blank">Webアプリ層の攻撃を防ぐ</span></td></tr>
+          <tr><td>VPN</td><td><span class="blank">通信を暗号化</span></td></tr>
+          <tr><td>サンドボックス</td><td><span class="blank">隔離環境で実行し分析</span></td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">攻撃の中身</div>
+      <div class="fill-body">
+        <div>他人のブラウザでスクリプト実行＝<span class="blank">XSS</span></div>
+        <div>多数の感染PCを遠隔操作する網＝<span class="blank">ボットネット</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB4 暗号・認証 ================= -->
+  <div class="tab-panel">
+    <h2>図1：暗号化と署名で“鍵の使い方が逆”（最重要）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>公開鍵暗号はペアの鍵。<b>秘密にしたい時は「相手の公開鍵」で施錠→相手が「自分の秘密鍵」で解錠</b>。<b>本人証明（署名）は逆に「自分の秘密鍵」で押印→相手が「あなたの公開鍵」で確認</b>。</p>
+      </div>
+      <table>
+        <tr><th>目的</th><th>作る側が使う鍵</th><th>受ける側が使う鍵</th></tr>
+        <tr><td class="l">秘匿（暗号化）</td><td class="yes">相手の公開鍵で暗号化</td><td>相手（自分）の秘密鍵で復号</td></tr>
+        <tr><td class="l">本人証明（署名）</td><td class="yes">自分の秘密鍵で署名</td><td>送信者の公開鍵で検証</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：ペアの鍵は<b>一方で暗号化したら対のもう一方でしか復号できない</b>。暗号化と署名で<b>使う鍵が逆</b>になる。</div>
+    </div>
+
+    <h2>図2：SSL/TLS は ハイブリッド方式</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>頑丈だけど遅い公開鍵で「合鍵」だけを安全に渡し、あとは速い共通鍵で本文をやりとりします。安全と速さのいいとこ取りです。</p>
+        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+          <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#1e40af;">🔑公開鍵で「合鍵」を安全に渡す</div>
+          <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+          <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#166534;">⚡共通鍵で本文を速くやりとり</div>
+        </div>
+      </div>
+      <div class="flow">
+        <span class="box">① 公開鍵暗号</span><span class="arrow">→</span><span class="box g">共通鍵を安全に配送</span><span class="arrow">→</span><span class="box o">② 共通鍵暗号で本文を高速に暗号化</span>
+      </div>
+      <div class="note">鍵配送は<b>公開鍵</b>（安全）・大量の本文は<b>共通鍵</b>（高速）＝両方の長所どり。これがHTTPSの中身。</div>
+      <div class="trap"><b>外したQ</b>：SSL/TLSは公開鍵だけでも共通鍵だけでもなく<b>ハイブリッド</b>。</div>
+    </div>
+
+    <h2>図3：ディジタル署名の中身 と PKI</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>署名は「本文を要約（ハッシュ）して、自分だけのハンコ（秘密鍵）を押す」こと。相手は照合用のハンコ（公開鍵）で本物か確かめます。</p>
+        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+          <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#1e40af;">本文を要約（ハッシュ）</div>
+          <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+          <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#854d0e;">自分のハンコ（秘密鍵）を押す＝署名</div>
+        </div>
+      </div>
+      <div class="flow">
+        <span class="box">本文</span><span class="arrow">→</span><span class="box g">ハッシュ値</span><span class="arrow">→</span><span class="box o">送信者の秘密鍵で暗号化＝署名</span>
+      </div>
+      <div class="note">受信側は本文のハッシュを計算し、署名を公開鍵で復号した値と照合→一致なら<b>改ざんなし＆本人</b>。</div>
+      <div class="formula">PKIの信頼の連鎖：ルートCA → 中間CA → サーバ証明書<span class="ex">上位の認証局が下位の正しさを保証していく階層構造</span></div>
+      <div class="trap"><b>△だったQ</b>：署名＝<b>本文のハッシュを秘密鍵で暗号化</b>。証明書の信頼は<b>上位CAが保証する階層（信頼の連鎖）</b>。</div>
+    </div>
+
+    <h2>図4：チャレンジレスポンス認証</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>パスワードを直接見せず、サーバが出す「お題（乱数）」に計算して答えることで本人だと示します。通信を盗み見されてもパスワードは漏れません。</p>
+        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+          <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#1e40af;">サーバがお題（乱数）</div>
+          <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+          <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#854d0e;">計算して応答</div>
+          <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+          <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#166534;">PWを見せず本人と証明</div>
+        </div>
+      </div>
+      <div class="note"><b>パスワードそのものを流さない</b>。サーバが送る乱数（チャレンジ）に計算して応答→盗聴されてもPWは漏れない。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">鍵の使い分け</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>目的</th><th>作る側</th><th>受ける側</th></tr>
+          <tr><td>暗号化</td><td>相手の<span class="blank">公開鍵</span></td><td>自分の<span class="blank">秘密鍵</span></td></tr>
+          <tr><td>署名</td><td>自分の<span class="blank">秘密鍵</span></td><td>送信者の<span class="blank">公開鍵</span></td></tr>
+        </table>
+        <div>一方で暗号化したら<span class="blank">対のもう一方</span>でしか復号できない</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">SSL/TLS・署名の中身・PKI</div>
+      <div class="fill-body">
+        <div>SSL/TLS＝公開鍵で共通鍵を配送し本文は共通鍵で暗号化＝<span class="blank">ハイブリッド</span>方式</div>
+        <div>署名＝本文の<span class="blank">ハッシュ値</span>を送信者の<span class="blank">秘密鍵</span>で暗号化</div>
+        <div>証明書の信頼＝<span class="blank">ルートCA</span>→中間CA→サーバ証明書の<span class="blank">信頼の連鎖</span></div>
+        <div>PWを流さず乱数に計算応答＝<span class="blank">チャレンジレスポンス</span>認証</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+// 各タブ先頭に「予習」版の穴埋めを複製（約10%を事前表示・標準fill-cardのみ対象）
+(function(){
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var cards=[].slice.call(panel.querySelectorAll('.fill-card')).filter(function(c){
+      return c.querySelector('.fill-head')&&c.querySelector('.blank');
+    });
+    if(!cards.length) return;
+    var sec=document.createElement('div');
+    var t=document.createElement('div'); t.className='fill-section-title';
+    t.textContent='🔰 予習（先にざっと・一部ヒント済み）'; sec.appendChild(t);
+    cards.forEach(function(card){
+      var cl=card.cloneNode(true);
+      var h=cl.querySelector('.fill-head'); if(h) h.textContent='予習｜'+h.textContent;
+      var mb=cl.querySelector('.mz-btn'); if(mb) mb.remove(); cl.classList.remove('mz-done');
+      var bl=cl.querySelectorAll('.blank'), n=bl.length;
+      var show=Math.min(Math.max(1,Math.round(n*0.1)),Math.max(0,n-1));
+      for(var i=0;i<show;i++){ bl[i].classList.add('show'); }
+      sec.appendChild(cl);
+    });
+    var h2=panel.querySelector('h2');
+    if(h2){ panel.insertBefore(sec,h2); } else { panel.insertBefore(sec,panel.firstChild); }
+  });
+})();
+document.querySelectorAll('.blank').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('show')));
+function rev(btn){
+  var blanks=btn.closest('.fill-body').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+function revAll(btn){
+  var blanks=btn.closest('.tab-panel').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+// 覚えた→○ボタンで非表示（見出しベースの安定キーで保存）
+(function(){
+  var KEY='mz_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function keyFor(el){
+    if(el.classList.contains('fill-card')){
+      var h=el.querySelector('.fill-head');
+      return 'fc:'+(h?h.textContent.trim():'').slice(0,44);
+    }
+    var p=el.previousElementSibling, hd='';
+    while(p){ if(p.tagName==='H2'){hd=p.textContent.trim();break;} p=p.previousElementSibling; }
+    return 'b:'+hd.slice(0,18)+'|'+el.textContent.replace(/\s+/g,'').slice(0,26);
+  }
+  document.querySelectorAll('.fig,.fill-card,.vz-supplement').forEach(function(el){
+    var id=keyFor(el);
+    var btn=document.createElement('button');
+    btn.className='mz-btn'; btn.type='button';
+    function set(on){ el.classList.toggle('mz-done',on); btn.textContent=on?'✓':'○'; }
+    function save(on){ st[id]=on; localStorage.setItem(KEY,JSON.stringify(st)); }
+    set(!!st[id]);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); var on=!el.classList.contains('mz-done'); set(on); save(on); });
+    el.addEventListener('click',function(){ if(el.classList.contains('mz-done')){ set(false); save(false); } });
+    el.appendChild(btn);
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head'); return h&&h.textContent.trim().startsWith('予習｜'); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+})();
+</script>
+</body>
+</html>

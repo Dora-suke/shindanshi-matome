@@ -140,6 +140,14 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
 .sec-hidden-label{color:#64748b;font-style:italic}
 .sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
 .sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -156,12 +164,119 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
   <button class="tab-btn" data-tab="tab4" data-color="purple">④先物<br>vs先渡</button>
   <button class="tab-btn" data-tab="tab5" data-color="teal">⑤為替予約</button>
   <button class="tab-btn" data-tab="tab6" data-color="blue">⑥スワップ</button>
-  <button class="tab-btn" data-tab="tab7" data-color="red">⑦リアルOP</button>
+  <button class="tab-btn" data-tab="tab7" data-color="red">⑦リアルOP（オプション）</button>
   <button class="tab-btn" data-tab="tab8" data-color="orange">⑧試験対策</button>
 </div>
 
 <!-- ===== タブ1: 全体像 ===== -->
 <div class="tab-panel active" id="tab1">
+<style>
+.dv1-wrap{max-width:100%;box-sizing:border-box;margin:14px auto;padding:18px 14px 20px;
+  font-family:system-ui,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  background:linear-gradient(135deg,#f3f8ff 0%,#fff6fb 100%);
+  border:2px solid #d6e6ff;border-radius:18px;color:#33405a}
+.dv1-title{font-size:1.12rem;font-weight:800;text-align:center;margin:0 0 4px;color:#3a5a9c}
+.dv1-sub{font-size:.82rem;text-align:center;color:#7a86a0;margin:0 0 16px}
+.dv1-stage{position:relative;display:flex;flex-direction:column;align-items:center}
+
+/* 中央の原資産 */
+.dv1-core{width:min(260px,92%);background:#fff;border:2px solid #ffd28a;
+  border-radius:16px;padding:12px 14px;box-shadow:0 4px 14px rgba(255,180,80,.25);
+  text-align:center;z-index:2}
+.dv1-core-lbl{font-weight:800;font-size:.95rem;color:#e08a1e}
+.dv1-core-cap{font-size:.74rem;color:#8a93a8;margin-top:2px}
+.dv1-bar-track{margin-top:9px;height:16px;background:#fff3df;border-radius:9px;overflow:hidden}
+.dv1-bar{height:100%;width:50%;border-radius:9px;
+  background:linear-gradient(90deg,#ffce7a,#ff9d4d);
+  animation:dv1-pump 3.2s ease-in-out infinite}
+.dv1-price{font-size:.74rem;color:#e08a1e;font-weight:700;margin-top:3px}
+
+/* 枝（SVG） */
+.dv1-branch-svg{width:min(360px,98%);height:42px;margin:-2px 0 -2px}
+.dv1-line{stroke:#bcd0f0;stroke-width:3;fill:none;stroke-dasharray:120;
+  stroke-dashoffset:120;animation:dv1-draw 3.2s ease-in-out infinite}
+.dv1-line.b2{animation-delay:.25s}
+.dv1-line.b3{animation-delay:.5s}
+
+/* 派生3商品 */
+.dv1-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%}
+.dv1-card{flex:1 1 140px;max-width:170px;background:#fff;border-radius:14px;
+  padding:11px 9px;text-align:center;border:2px solid #d8e6ff;
+  box-shadow:0 3px 10px rgba(120,150,210,.18)}
+.dv1-c1{animation:dv1-sway 3.2s ease-in-out infinite}
+.dv1-c2{animation:dv1-sway 3.2s ease-in-out infinite;animation-delay:.4s}
+.dv1-c3{animation:dv1-sway 3.2s ease-in-out infinite;animation-delay:.8s}
+.dv1-emoji{font-size:1.7rem;line-height:1}
+.dv1-name{font-weight:800;font-size:.9rem;margin-top:3px;color:#3a5a9c}
+.dv1-desc{font-size:.72rem;color:#6f7b95;margin-top:3px;line-height:1.35}
+
+.dv1-foot{margin-top:13px;background:#eef4ff;border-radius:10px;
+  padding:9px 11px;font-size:.78rem;color:#4a5a82;line-height:1.5;text-align:center}
+.dv1-key{color:#e0681e;font-weight:800}
+
+@keyframes dv1-pump{
+  0%,100%{width:46%}
+  50%{width:84%}
+}
+@keyframes dv1-draw{
+  0%{stroke-dashoffset:120}
+  40%,100%{stroke-dashoffset:0}
+}
+@keyframes dv1-sway{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-9px)}
+}
+</style>
+
+<div class="dv1-wrap">
+  <div class="dv1-title">🎬 ひとめでイメージ：デリバティブとは</div>
+  <div class="dv1-sub">「もと（原資産）」が動くと、そこから生まれた契約も連動して動く！</div>
+
+  <div class="dv1-stage">
+
+    <!-- 原資産 -->
+    <div class="dv1-core">
+      <div class="dv1-core-lbl">🍎 原資産（もとの商品）</div>
+      <div class="dv1-core-cap">株・為替・金利・原油など</div>
+      <div class="dv1-bar-track"><div class="dv1-bar"></div></div>
+      <div class="dv1-price">📈 価格がゆ〜らゆら動く</div>
+    </div>
+
+    <!-- 枝分かれ線 -->
+    <svg class="dv1-branch-svg" viewBox="0 0 360 42" preserveAspectRatio="none" aria-hidden="true">
+      <path class="dv1-line b1" d="M180 0 C180 20, 60 18, 60 42"/>
+      <path class="dv1-line b2" d="M180 0 C180 24, 180 24, 180 42"/>
+      <path class="dv1-line b3" d="M180 0 C180 20, 300 18, 300 42"/>
+    </svg>
+
+    <!-- 派生3商品 -->
+    <div class="dv1-row">
+      <div class="dv1-card dv1-c1">
+        <div class="dv1-emoji">🤝</div>
+        <div class="dv1-name">先物・先渡</div>
+        <div class="dv1-desc">「将来この値段で<br>売買する」約束</div>
+      </div>
+      <div class="dv1-card dv1-c2">
+        <div class="dv1-emoji">🎟️</div>
+        <div class="dv1-name">オプション</div>
+        <div class="dv1-desc">「買う／売る権利」<br>使うかは自由</div>
+      </div>
+      <div class="dv1-card dv1-c3">
+        <div class="dv1-emoji">🔄</div>
+        <div class="dv1-name">スワップ</div>
+        <div class="dv1-desc">「将来の支払い」を<br>お互いに交換</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dv1-foot">
+    💡 <span class="dv1-key">デリバティブ＝派生商品</span>。<br>
+    もと（原資産）の価格から「派生」して生まれた契約で、種類は<br>
+    <b>① 先物・先渡 ／ ② オプション ／ ③ スワップ</b> の3つ！
+  </div>
+</div>
+
   <h2 class="section-title st-blue">① デリバティブとは何か（全体像）</h2>
 
   <div class="card card-blue">
@@ -217,9 +332,9 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-blue">
         <tr><th>種類</th><th>性質</th><th>例</th></tr>
-        <tr><td>先物・先渡</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">義務</span></td><td>株価指数先物</td></tr>
-        <tr><td>オプション</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">権利（選択可）</span></td><td>コール・プット</td></tr>
-        <tr><td>スワップ</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">キャッシュフロー交換</span></td><td>金利スワップ</td></tr>
+        <tr><td>先物・先渡</td><td><span class="fill-blank">義務</span></td><td>株価指数先物</td></tr>
+        <tr><td>オプション</td><td><span class="fill-blank">権利（選択可）</span></td><td>コール・プット</td></tr>
+        <tr><td>スワップ</td><td><span class="fill-blank">キャッシュフロー交換</span></td><td>金利スワップ</td></tr>
       </table>
     </div>
   </div>
@@ -229,16 +344,99 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-blue">
         <tr><th>用途</th><th>内容</th></tr>
-        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">ヘッジ</span></td><td>価格変動による損失をデリバティブで相殺（リスク回避）</td></tr>
-        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">投機</span></td><td>少額の証拠金で大きなポジション（レバレッジ効果）</td></tr>
-        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">裁定（アービトラージ）</span></td><td>市場間の価格差を利用した無リスク利益獲得</td></tr>
+        <tr><td><span class="fill-blank">ヘッジ</span></td><td>価格変動による損失をデリバティブで相殺（リスク回避）</td></tr>
+        <tr><td><span class="fill-blank">投機</span></td><td>少額の証拠金で大きなポジション（レバレッジ効果）</td></tr>
+        <tr><td><span class="fill-blank">裁定（アービトラージ）</span></td><td>市場間の価格差を利用した無リスク利益獲得</td></tr>
       </table>
     </div>
   </div>
+
+<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:.8rem 1rem;margin:1.2rem 0 .4rem;"><div style="font-weight:800;color:#15803d;margin-bottom:.5rem;font-size:.95rem;">🌳 分類ツリー（穴埋め）<span style="font-size:.76rem;color:#64748b;font-weight:400;">　空欄クリックで答え</span></div><pre style="font-family:inherit;font-size:.9rem;line-height:1.95;white-space:pre-wrap;margin:0;color:#1e293b;">デリバティブ（金融派生商品）
+├ <span class="fill-blank">先物</span>・先渡
+├ <span class="fill-blank">オプション</span>（OP）
+└ <span class="fill-blank">スワップ</span></pre></div>
 </div>
 
 <!-- ===== タブ2: コール・プット基本 ===== -->
 <div class="tab-panel" id="tab2">
+<style>
+.dv2-wrap{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;max-width:100%;margin:0 auto;background:linear-gradient(135deg,#fef6fb 0%,#f0f8ff 100%);border:2px solid #ffd6e7;border-radius:18px;padding:18px 14px 22px;box-sizing:border-box;color:#3a3a4a}
+.dv2-head{font-size:1.15rem;font-weight:800;text-align:center;margin:0 0 4px;color:#d6336c}
+.dv2-sub{font-size:.82rem;text-align:center;color:#7a7a8c;margin:0 0 16px}
+.dv2-grid{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.dv2-card{flex:1 1 240px;min-width:240px;background:#fff;border-radius:14px;padding:14px 12px 16px;box-shadow:0 3px 10px rgba(180,160,200,.18);box-sizing:border-box}
+.dv2-call{border:2px solid #b2f2bb}
+.dv2-put{border:2px solid #bac8ff}
+.dv2-title{font-size:1rem;font-weight:800;text-align:center;margin:0 0 2px}
+.dv2-call .dv2-title{color:#2f9e44}
+.dv2-put .dv2-title{color:#4263eb}
+.dv2-tagline{font-size:.78rem;text-align:center;color:#868e96;margin:0 0 12px}
+.dv2-stage{position:relative;height:170px;background:linear-gradient(180deg,#f8fff9 0%,#fff7f7 100%);border-radius:10px;overflow:hidden}
+.dv2-put .dv2-stage{background:linear-gradient(180deg,#f7faff 0%,#fff7f9 100%)}
+/* 行使価格ライン（基準・中央固定） */
+.dv2-strike{position:absolute;left:0;right:0;top:50%;border-top:2px dashed #adb5bd;transform:translateY(-50%);z-index:1}
+.dv2-strikelbl{position:absolute;right:6px;top:calc(50% - 18px);font-size:.62rem;background:#495057;color:#fff;padding:1px 6px;border-radius:8px;z-index:3}
+/* 価格マーカー（風船）上下に動く */
+.dv2-balloon{position:absolute;left:14px;font-size:1.5rem;z-index:4}
+.dv2-call .dv2-balloon{animation:dv2-floatup 4s ease-in-out infinite}
+.dv2-put .dv2-balloon{animation:dv2-floatdown 4s ease-in-out infinite}
+@keyframes dv2-floatup{0%,100%{top:50%}25%{top:50%}55%{top:12px}85%{top:12px}}
+@keyframes dv2-floatdown{0%,100%{top:42%}25%{top:42%}55%{top:120px}85%{top:120px}}
+/* 利益バー */
+.dv2-bar{position:absolute;left:48%;width:34px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#69db7c,#37b24d);z-index:2}
+.dv2-call .dv2-bar{bottom:50%;animation:dv2-grow 4s ease-in-out infinite}
+.dv2-put .dv2-bar{top:50%;border-radius:0 0 6px 6px;background:linear-gradient(0deg,#69db7c,#37b24d);animation:dv2-grow 4s ease-in-out infinite}
+@keyframes dv2-grow{0%,25%{height:0;opacity:.3}55%,85%{height:60px;opacity:1}100%{height:0;opacity:.3}}
+.dv2-profit{position:absolute;left:46%;font-size:.95rem;z-index:5;opacity:0}
+.dv2-call .dv2-profit{top:34px;animation:dv2-pop 4s ease-in-out infinite}
+.dv2-put .dv2-profit{bottom:34px;animation:dv2-pop 4s ease-in-out infinite}
+@keyframes dv2-pop{0%,40%{opacity:0}60%,85%{opacity:1}100%{opacity:0}}
+.dv2-face{position:absolute;right:10px;bottom:8px;font-size:1.7rem;z-index:5;animation:dv2-smile 4s ease-in-out infinite}
+@keyframes dv2-smile{0%,40%{transform:scale(1);opacity:.5}65%,90%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:.5}}
+.dv2-note{font-size:.74rem;color:#555;margin:10px 2px 0;line-height:1.55}
+.dv2-note b.c{color:#2f9e44}
+.dv2-note b.p{color:#4263eb}
+.dv2-key{margin:16px auto 0;max-width:520px;background:#fffbe6;border:1px dashed #ffe066;border-radius:10px;padding:8px 12px;font-size:.78rem;color:#5c5226;text-align:center;line-height:1.6}
+</style>
+<div class="dv2-wrap">
+  <div class="dv2-head">🎬 ひとめでイメージ：コール（買う権利）・プット（売る権利）</div>
+  <div class="dv2-sub">🎫「決めた値段で取引できる予約券」だと思おう。点線＝行使価格（約束の値段）</div>
+  <div class="dv2-grid">
+
+    <!-- コール -->
+    <div class="dv2-card dv2-call">
+      <div class="dv2-title">📈 コール＝買う権利</div>
+      <div class="dv2-tagline">🎫「この値段で“買える”予約券」</div>
+      <div class="dv2-stage">
+        <div class="dv2-strike"></div>
+        <div class="dv2-strikelbl">行使価格</div>
+        <div class="dv2-balloon">🎈</div>
+        <div class="dv2-bar"></div>
+        <div class="dv2-profit">💰</div>
+        <div class="dv2-face">😄</div>
+      </div>
+      <div class="dv2-note">🎈価格が約束の値段より<b class="c">上がる</b>と、安く買えてトクするので<b class="c">利益バーが上に伸びる</b>👍</div>
+    </div>
+
+    <!-- プット -->
+    <div class="dv2-card dv2-put">
+      <div class="dv2-title">📉 プット＝売る権利</div>
+      <div class="dv2-tagline">🎫「この値段で“売れる”予約券」</div>
+      <div class="dv2-stage">
+        <div class="dv2-strike"></div>
+        <div class="dv2-strikelbl">行使価格</div>
+        <div class="dv2-balloon">🎈</div>
+        <div class="dv2-bar"></div>
+        <div class="dv2-profit">💰</div>
+        <div class="dv2-face">😄</div>
+      </div>
+      <div class="dv2-note">🎈価格が約束の値段より<b class="p">下がる</b>と、高く売れてトクするので<b class="p">利益バーが下に伸びる</b>👍</div>
+    </div>
+
+  </div>
+  <div class="dv2-key">🔑 おぼえ方：<b style="color:#2f9e44">コール＝上がってほしい人</b>（買う権利）／<b style="color:#4263eb">プット＝下がってほしい人</b>（売る権利）。どちらも「権利」なので、トクなときだけ使えばOK👌</div>
+</div>
+
   <h2 class="section-title st-green">② オプション（コール・プット）基本</h2>
 
   <div class="card card-green">
@@ -375,9 +573,9 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-green">
         <tr><th></th><th>コール</th><th>プット</th></tr>
-        <tr><td>権利内容</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">買う権利</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">売る権利</span></td></tr>
-        <tr><td>買い手の最大損失</td><td colspan="2"><span class="fill-blank" onclick="this.classList.toggle('show')">プレミアムのみ（有限）</span></td></tr>
-        <tr><td>売り手の最大損失（コール）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">無限大</span></td><td>大きな損失（有限）</td></tr>
+        <tr><td>権利内容</td><td><span class="fill-blank">買う権利</span></td><td><span class="fill-blank">売る権利</span></td></tr>
+        <tr><td>買い手の最大損失</td><td colspan="2"><span class="fill-blank">プレミアムのみ（有限）</span></td></tr>
+        <tr><td>売り手の最大損失（コール）</td><td><span class="fill-blank">無限大</span></td><td>大きな損失（有限）</td></tr>
       </table>
     </div>
   </div>
@@ -387,15 +585,88 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-green">
         <tr><th>種類</th><th>損益分岐点</th></tr>
-        <tr><td>コール買い（行使価格100・プレミアム10）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">110</span>（100+10）</td></tr>
-        <tr><td>プット買い（行使価格100・プレミアム10）</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">90</span>（100−10）</td></tr>
+        <tr><td>コール買い（行使価格100・プレミアム10）</td><td><span class="fill-blank">110</span>（100+10）</td></tr>
+        <tr><td>プット買い（行使価格100・プレミアム10）</td><td><span class="fill-blank">90</span>（100−10）</td></tr>
       </table>
     </div>
   </div>
+
+<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:.8rem 1rem;margin:1.2rem 0 .4rem;"><div style="font-weight:800;color:#15803d;margin-bottom:.5rem;font-size:.95rem;">🌳 分類ツリー（穴埋め）<span style="font-size:.76rem;color:#64748b;font-weight:400;">　空欄クリックで答え</span></div><pre style="font-family:inherit;font-size:.9rem;line-height:1.95;white-space:pre-wrap;margin:0;color:#1e293b;">オプション（OP）
+├ <span class="fill-blank">コール</span>：買う権利
+└ <span class="fill-blank">プット</span>：売る権利</pre></div>
 </div>
 
 <!-- ===== タブ3: オプション価格 ===== -->
 <div class="tab-panel" id="tab3">
+<style>
+@keyframes dv3-slide{
+  0%   {left:8%;}
+  18%  {left:8%;}
+  46%  {left:46%;}
+  64%  {left:46%;}
+  92%  {left:84%;}
+  100% {left:84%;}
+}
+@keyframes dv3-blinkOTM{ 0%,17%{opacity:1;transform:scale(1.05);} 18%,100%{opacity:.25;transform:scale(1);} }
+@keyframes dv3-blinkATM{ 0%,45%{opacity:.25;transform:scale(1);} 46%,63%{opacity:1;transform:scale(1.05);} 64%,100%{opacity:.25;transform:scale(1);} }
+@keyframes dv3-blinkITM{ 0%,91%{opacity:.25;transform:scale(1);} 92%,100%{opacity:1;transform:scale(1.05);} }
+@keyframes dv3-bob{ 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(-6px);} }
+.dv3-wrap{max-width:100%;box-sizing:border-box;font-family:-apple-system,"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:#f5f9ff;border:2px solid #cfe0f5;border-radius:16px;padding:18px 16px 20px;color:#33415c;}
+.dv3-h2{font-size:18px;font-weight:800;margin:0 0 4px;color:#2a5db0;}
+.dv3-sub{font-size:13px;margin:0 0 16px;color:#6b7a99;}
+.dv3-stage{position:relative;height:150px;background:linear-gradient(90deg,#ffe4e6 0%,#fff7d6 50%,#dcf5e3 100%);border-radius:14px;overflow:hidden;border:1px solid #e3ebf7;}
+.dv3-edge{position:absolute;top:8px;font-size:12px;font-weight:700;opacity:.7;}
+.dv3-line{position:absolute;top:0;bottom:0;left:50%;width:0;border-left:3px dashed #7a4fd6;}
+.dv3-linelbl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#7a4fd6;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.dv3-marker{position:absolute;bottom:14px;transform:translateX(-50%);text-align:center;animation:dv3-slide 8s ease-in-out infinite;}
+.dv3-cart{font-size:34px;display:block;animation:dv3-bob 1.4s ease-in-out infinite;}
+.dv3-mlbl{display:inline-block;margin-top:2px;font-size:11px;font-weight:700;background:#fff;border-radius:7px;padding:2px 6px;box-shadow:0 1px 3px rgba(0,0,0,.12);}
+.dv3-state{position:absolute;top:42px;font-size:13px;font-weight:800;padding:5px 9px;border-radius:9px;}
+.dv3-otm{left:6%;background:#ffd6da;color:#c0392b;animation:dv3-blinkOTM 8s ease-in-out infinite;}
+.dv3-atm{left:50%;transform:translateX(-50%);background:#fff0b8;color:#9a7b00;animation:dv3-blinkATM 8s ease-in-out infinite;}
+.dv3-itm{right:6%;background:#c8f0d4;color:#1e7a45;animation:dv3-blinkITM 8s ease-in-out infinite;}
+.dv3-cap{font-size:12px;color:#6b7a99;margin:10px 2px 14px;line-height:1.6;}
+.dv3-cap b{color:#7a4fd6;}
+.dv3-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.dv3-card{border-radius:11px;padding:10px 9px;text-align:center;font-size:12px;line-height:1.5;}
+.dv3-c1{background:#dcf5e3;border:1px solid #a9e2bd;}
+.dv3-c2{background:#fff7d6;border:1px solid #ecd98a;}
+.dv3-c3{background:#ffe4e6;border:1px solid #f4b8bf;}
+.dv3-ct{font-size:14px;font-weight:800;display:block;margin-bottom:3px;}
+</style>
+<div class="dv3-wrap">
+  <div class="dv3-h2">🎬 ひとめでイメージ：オプションの状態 ITM／ATM／OTM</div>
+  <p class="dv3-sub">🎟️「800円で買えるクーポン」を持つあなた。今の値段はどこ？（コール＝買う権利の例）</p>
+
+  <div class="dv3-stage">
+    <div class="dv3-edge" style="left:8px;">⬅ 値段が安い</div>
+    <div class="dv3-edge" style="right:8px;">値段が高い ➡</div>
+
+    <div class="dv3-line"></div>
+    <div class="dv3-linelbl">🎯 行使価格ライン 800円</div>
+
+    <span class="dv3-state dv3-otm">😢 OTM（不利）</span>
+    <span class="dv3-state dv3-atm">😐 ATM（同じ）</span>
+    <span class="dv3-state dv3-itm">😊 ITM（有利）</span>
+
+    <div class="dv3-marker">
+      <span class="dv3-cart">🛒</span>
+      <span class="dv3-mlbl">今の値段</span>
+    </div>
+  </div>
+
+  <p class="dv3-cap">🛒 が <b>行使価格ライン</b> を左右に横切るたびに状態が変わる！<br>
+  ライン<b>より右（高い）</b>＝クーポンで安く買えてお得 → <b>ITM</b>。<br>
+  ライン<b>ぴったり</b>＝同じ値段でうれしくない → <b>ATM</b>。<br>
+  ライン<b>より左（安い）</b>＝クーポン使う意味なし → <b>OTM</b>。</p>
+
+  <div class="dv3-table">
+    <div class="dv3-card dv3-c1"><span class="dv3-ct">😊 ITM</span>イン・ザ・マネー<br>行使すると<b>トク</b><br>(コール:今値>行使)</div>
+    <div class="dv3-card dv3-c2"><span class="dv3-ct">😐 ATM</span>アット・ザ・マネー<br><b>ちょうど同じ</b><br>(今値＝行使)</div>
+    <div class="dv3-card dv3-c3"><span class="dv3-ct">😢 OTM</span>アウト・オブ・ザ・マネー<br>行使すると<b>ソン</b><br>(コール:今値<行使)</div>
+  </div>
+</div>
+
   <h2 class="section-title st-orange">③ オプション価格の構成（本質的価値・時間価値）</h2>
 
   <div class="card card-orange">
@@ -414,9 +685,9 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <h4>今すぐ権利行使した場合に得られる価値</h4>
     <table class="tbl-orange">
       <tr><th>状態</th><th>呼び方</th><th>コールの本質的価値</th></tr>
-      <tr><td>原資産価格 ＞ 権利行使価格</td><td><strong>イン・ザ・マネー（ITM）</strong></td><td><strong>原資産価格 − 権利行使価格</strong></td></tr>
-      <tr><td>原資産価格 ＝ 権利行使価格</td><td><strong>アット・ザ・マネー（ATM）</strong></td><td>0</td></tr>
-      <tr><td>原資産価格 ＜ 権利行使価格</td><td><strong>アウト・オブ・ザ・マネー（OTM）</strong></td><td><strong>0（マイナスにはならない）</strong></td></tr>
+      <tr><td>原資産価格 ＞ 権利行使価格</td><td><strong>イン・ザ・マネー（ITM（イン・ザ・マネー））</strong></td><td><strong>原資産価格 − 権利行使価格</strong></td></tr>
+      <tr><td>原資産価格 ＝ 権利行使価格</td><td><strong>アット・ザ・マネー（ATM（アット・ザ・マネー））</strong></td><td>0</td></tr>
+      <tr><td>原資産価格 ＜ 権利行使価格</td><td><strong>アウト・オブ・ザ・マネー（OTM（アウト・オブ・ザ・マネー））</strong></td><td><strong>0（マイナスにはならない）</strong></td></tr>
     </table>
   </div>
 
@@ -471,9 +742,9 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-orange">
         <tr><th>状態</th><th>呼び方</th><th>コール本質的価値</th></tr>
-        <tr><td>原資産 ＞ 行使価格</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">イン・ザ・マネー（ITM）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">原資産価格−行使価格</span></td></tr>
-        <tr><td>原資産 ＝ 行使価格</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">アット・ザ・マネー（ATM）</span></td><td>0</td></tr>
-        <tr><td>原資産 ＜ 行使価格</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">アウト・オブ・ザ・マネー（OTM）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">0（マイナスなし）</span></td></tr>
+        <tr><td>原資産 ＞ 行使価格</td><td><span class="fill-blank">イン・ザ・マネー（ITM）</span></td><td><span class="fill-blank">原資産価格−行使価格</span></td></tr>
+        <tr><td>原資産 ＝ 行使価格</td><td><span class="fill-blank">アット・ザ・マネー（ATM）</span></td><td>0</td></tr>
+        <tr><td>原資産 ＜ 行使価格</td><td><span class="fill-blank">アウト・オブ・ザ・マネー（OTM）</span></td><td><span class="fill-blank">0（マイナスなし）</span></td></tr>
       </table>
     </div>
   </div>
@@ -483,16 +754,87 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-orange">
         <tr><th>要因</th><th>コール</th><th>プット</th></tr>
-        <tr><td>ボラティリティ↑</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td></tr>
-        <tr><td>残存期間↑</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td></tr>
-        <tr><td>原資産価格↑</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↑上昇</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">↓低下</span></td></tr>
+        <tr><td>ボラティリティ↑</td><td><span class="fill-blank">↑上昇</span></td><td><span class="fill-blank">↑上昇</span></td></tr>
+        <tr><td>残存期間↑</td><td><span class="fill-blank">↑上昇</span></td><td><span class="fill-blank">↑上昇</span></td></tr>
+        <tr><td>原資産価格↑</td><td><span class="fill-blank">↑上昇</span></td><td><span class="fill-blank">↓低下</span></td></tr>
       </table>
     </div>
   </div>
+
+<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:.8rem 1rem;margin:1.2rem 0 .4rem;"><div style="font-weight:800;color:#15803d;margin-bottom:.5rem;font-size:.95rem;">🌳 分類ツリー（穴埋め）<span style="font-size:.76rem;color:#64748b;font-weight:400;">　空欄クリックで答え</span></div><pre style="font-family:inherit;font-size:.9rem;line-height:1.95;white-space:pre-wrap;margin:0;color:#1e293b;">オプション
+├ 種類：<span class="fill-blank">コール</span>／<span class="fill-blank">プット</span>
+├ 立場：<span class="fill-blank">買い</span>（権利）／<span class="fill-blank">売り</span>（義務）
+├ 行使時期：ヨーロピアン／<span class="fill-blank">アメリカン</span>
+└ 状態：ITM／ATM／<span class="fill-blank">OTM</span></pre></div>
 </div>
 
 <!-- ===== タブ4: 先物vs先渡 ===== -->
 <div class="tab-panel" id="tab4">
+<style>
+.dv4-wrap{max-width:100%;box-sizing:border-box;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:linear-gradient(135deg,#f3f7ff 0%,#fef6f9 100%);border:2px solid #dbe6ff;border-radius:16px;padding:18px 16px 20px;margin:8px 0;color:#2d3a4a}
+.dv4-title{font-size:clamp(15px,4.5vw,19px);font-weight:800;text-align:center;margin:0 0 4px;color:#3a4a63}
+.dv4-sub{font-size:12px;text-align:center;color:#7a8aa0;margin:0 0 16px}
+.dv4-stage{position:relative;height:200px;background:#ffffff;border-radius:12px;border:1px dashed #cdd8ee;overflow:hidden}
+/* 約定価格＝水平に固定された線 */
+.dv4-fixline{position:absolute;left:0;right:0;top:50%;height:0;border-top:3px dashed #ff8aa6;transform:translateY(-50%)}
+.dv4-lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:30px;animation:dv4-lock-pulse 2.6s ease-in-out infinite;filter:drop-shadow(0 2px 3px rgba(255,138,166,.4))}
+.dv4-fixlabel{position:absolute;right:8px;top:calc(50% + 8px);font-size:11px;font-weight:700;color:#e35d80;background:#fff0f4;padding:2px 8px;border-radius:8px;border:1px solid #ffd0dc}
+/* 市場価格＝上下に揺れるマーカー */
+.dv4-mkt{position:absolute;left:50%;top:50%;transform:translateX(-50%);font-size:30px;animation:dv4-float 4s ease-in-out infinite;filter:drop-shadow(0 2px 4px rgba(80,200,160,.4))}
+.dv4-mktlabel{position:absolute;left:8px;top:10px;font-size:11px;font-weight:700;color:#27a07a;background:#e9fbf3;padding:2px 8px;border-radius:8px;border:1px solid #b9ecd6}
+/* ギャップ＝損益 */
+.dv4-gap{position:absolute;left:50%;top:50%;width:0;border-left:3px dotted #ffb648;transform:translate(-50%,0);animation:dv4-gap 4s ease-in-out infinite}
+.dv4-gaptag{position:absolute;left:calc(50% + 12px);top:50%;font-size:11px;font-weight:800;color:#d98200;background:#fff6e6;padding:2px 8px;border-radius:8px;border:1px solid #ffe0a8;white-space:nowrap;animation:dv4-gaptag 4s ease-in-out infinite}
+@keyframes dv4-float{
+ 0%,100%{top:50%}
+ 25%{top:18%}
+ 50%{top:52%}
+ 75%{top:80%}
+}
+@keyframes dv4-gap{
+ 0%,100%{height:0;top:50%}
+ 25%{height:32%;top:18%}
+ 50%{height:2%;top:50%}
+ 75%{height:30%;top:50%}
+}
+@keyframes dv4-gaptag{
+ 0%,100%{top:34%;opacity:.4}
+ 25%{top:30%;opacity:1}
+ 50%{top:48%;opacity:.4}
+ 75%{top:64%;opacity:1}
+}
+@keyframes dv4-lock-pulse{
+ 0%,100%{transform:translate(-50%,-50%) scale(1)}
+ 50%{transform:translate(-50%,-50%) scale(1.18)}
+}
+.dv4-legend{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.dv4-chip{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px}
+.dv4-c1{background:#e9fbf3;color:#27a07a;border:1px solid #b9ecd6}
+.dv4-c2{background:#fff0f4;color:#e35d80;border:1px solid #ffd0dc}
+.dv4-c3{background:#fff6e6;color:#d98200;border:1px solid #ffe0a8}
+.dv4-note{font-size:12px;text-align:center;color:#5a6a82;margin:12px 0 0;line-height:1.6}
+.dv4-note b{color:#3a4a63}
+</style>
+<div class="dv4-wrap">
+  <div class="dv4-title">🎬 ひとめでイメージ：先物・先渡</div>
+  <div class="dv4-sub">いま「将来の売買価格」を約束して固定する契約</div>
+  <div class="dv4-stage">
+    <span class="dv4-mktlabel">🎈 市場価格（動く）</span>
+    <span class="dv4-fixlabel">🔒 約定価格（動かない）</span>
+    <div class="dv4-fixline"></div>
+    <div class="dv4-lock">🔒</div>
+    <div class="dv4-mkt">🎈</div>
+    <div class="dv4-gap"></div>
+    <div class="dv4-gaptag">↕ この差＝損益</div>
+  </div>
+  <div class="dv4-legend">
+    <span class="dv4-chip dv4-c1">🎈 市場価格はゆれる</span>
+    <span class="dv4-chip dv4-c2">🔒 約束の値段は固定</span>
+    <span class="dv4-chip dv4-c3">↕ 差がトク／ソン</span>
+  </div>
+  <p class="dv4-note">市場価格が上下にゆれても、<b>約束した値段（約定価格）はずっと水平で固定</b>。<br>そのとき市場価格との<b>ズレがそのまま損益</b>になる、という契約です。</p>
+</div>
+
   <h2 class="section-title st-purple">④ 先物取引 vs 先渡取引</h2>
 
   <div class="card card-purple">
@@ -508,7 +850,7 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
   <h2 class="section-title st-purple">比較表（試験の核心）</h2>
   <table class="tbl-purple">
     <tr><th>比較軸</th><th>先物取引（Futures）</th><th>先渡取引（Forward）</th></tr>
-    <tr><td>取引場所</td><td><strong>取引所（上場）</strong></td><td><strong>相対（店頭・OTC）</strong></td></tr>
+    <tr><td>取引場所</td><td><strong>取引所（上場）</strong></td><td><strong>相対（店頭・OTC（店頭取引））</strong></td></tr>
     <tr><td>契約内容</td><td><strong>標準化</strong>（数量・期日固定）</td><td><strong>自由設計</strong>（オーダーメイド）</td></tr>
     <tr><td>決済方法</td><td><strong>差金決済</strong>が基本</td><td><strong>現物決済</strong>が多い</td></tr>
     <tr><td>信用リスク</td><td><strong>低い</strong>（清算機関が介在）</td><td><strong>高い</strong>（相手方リスク）</td></tr>
@@ -553,17 +895,64 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-purple">
         <tr><th>比較軸</th><th>先物（Futures）</th><th>先渡（Forward）</th></tr>
-        <tr><td>取引場所</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">取引所（上場）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">相対（OTC）</span></td></tr>
-        <tr><td>契約内容</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">標準化</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">自由設計</span></td></tr>
-        <tr><td>決済方法</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">差金決済</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">現物決済</span></td></tr>
-        <tr><td>信用リスク</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">低い（清算機関介在）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">高い（相手方リスク）</span></td></tr>
+        <tr><td>取引場所</td><td><span class="fill-blank">取引所（上場）</span></td><td><span class="fill-blank">相対（OTC）</span></td></tr>
+        <tr><td>契約内容</td><td><span class="fill-blank">標準化</span></td><td><span class="fill-blank">自由設計</span></td></tr>
+        <tr><td>決済方法</td><td><span class="fill-blank">差金決済</span></td><td><span class="fill-blank">現物決済</span></td></tr>
+        <tr><td>信用リスク</td><td><span class="fill-blank">低い（清算機関介在）</span></td><td><span class="fill-blank">高い（相手方リスク）</span></td></tr>
       </table>
     </div>
   </div>
+
+<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:.8rem 1rem;margin:1.2rem 0 .4rem;"><div style="font-weight:800;color:#15803d;margin-bottom:.5rem;font-size:.95rem;">🌳 分類ツリー（穴埋め）<span style="font-size:.76rem;color:#64748b;font-weight:400;">　空欄クリックで答え</span></div><pre style="font-family:inherit;font-size:.9rem;line-height:1.95;white-space:pre-wrap;margin:0;color:#1e293b;">先物・先渡
+├ <span class="fill-blank">先物</span>：取引所・標準化・差金決済
+└ <span class="fill-blank">先渡</span>：相対（OTC＝店頭取引）・カスタム</pre></div>
 </div>
 
 <!-- ===== タブ5: 為替予約 ===== -->
 <div class="tab-panel" id="tab5">
+<style>
+.dv5-wrap{max-width:100%;box-sizing:border-box;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:linear-gradient(135deg,#eef6ff,#f4fff0);border:2px solid #cfe3ff;border-radius:16px;padding:18px 16px;margin:8px 0;color:#2a3b4d}
+.dv5-h{font-size:1.15em;font-weight:800;margin:0 0 14px;text-align:center;color:#2f6fd0}
+.dv5-stage{position:relative;height:170px;background:#ffffff;border-radius:12px;border:1px dashed #bcd4f5;overflow:hidden}
+.dv5-axis{position:absolute;left:14px;right:14px;height:0;border-top:2px solid #dfe7ef}
+.dv5-axis.dv5-up{top:34px}
+.dv5-axis.dv5-mid{top:88px}
+.dv5-axis.dv5-dn{top:142px}
+.dv5-tag{position:absolute;font-size:.72em;color:#9aa7b4;left:16px;transform:translateY(-50%)}
+/* 予約レート＝固定線（動かない安心） */
+.dv5-fix{position:absolute;left:14px;right:14px;top:88px;height:0;border-top:4px solid #2bb673;border-radius:4px;box-shadow:0 0 0 1px #d6f3e3}
+.dv5-fixlbl{position:absolute;right:18px;top:70px;background:#2bb673;color:#fff;font-size:.74em;font-weight:700;padding:3px 8px;border-radius:8px;white-space:nowrap}
+/* 市場レート＝上下に揺れるマーカー */
+.dv5-mkt{position:absolute;left:50%;top:88px;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffd1d1,#ff8d8d);display:flex;align-items:center;justify-content:center;font-size:1.05em;box-shadow:0 4px 8px rgba(255,120,120,.4);animation:dv5-wave 3.2s ease-in-out infinite}
+.dv5-mktlbl{position:absolute;left:50%;top:6px;transform:translateX(-50%);background:#ff8d8d;color:#fff;font-size:.72em;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap}
+@keyframes dv5-wave{0%{top:88px}20%{top:38px}40%{top:120px}60%{top:50px}80%{top:138px}100%{top:88px}}
+.dv5-corp{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.dv5-card{flex:1;min-width:130px;background:#ffffff;border-radius:10px;padding:9px 11px;font-size:.82em;line-height:1.5;border:1px solid #e3ecf5}
+.dv5-card.dv5-safe{border-color:#bfe9d3;background:#f3fff8}
+.dv5-card b{color:#2bb673}
+.dv5-card.dv5-risk b{color:#ff7a7a}
+.dv5-note{text-align:center;font-size:.78em;color:#6b7a89;margin-top:10px;line-height:1.6}
+</style>
+<div class="dv5-wrap">
+  <div class="dv5-h">🎬 ひとめでイメージ：為替予約（レートを今ロック）</div>
+  <div class="dv5-stage">
+    <div class="dv5-axis dv5-up"></div>
+    <div class="dv5-axis dv5-mid"></div>
+    <div class="dv5-axis dv5-dn"></div>
+    <div class="dv5-tag" style="top:34px">円安⬆️</div>
+    <div class="dv5-tag" style="top:142px">円高⬇️</div>
+    <div class="dv5-mktlbl">😵 市場レートは揺れ続ける</div>
+    <div class="dv5-mkt">💹</div>
+    <div class="dv5-fix"></div>
+    <div class="dv5-fixlbl">🔒 予約レート＝固定</div>
+  </div>
+  <div class="dv5-corp">
+    <div class="dv5-card dv5-safe">🏢 <b>予約した企業</b><br>市場がどう動いても<br><b>固定レートで取引OK</b>😊</div>
+    <div class="dv5-card dv5-risk">🙅 <b>予約しないと</b><br>受取/支払額が<br><b>レート次第でブレる</b>😰</div>
+  </div>
+  <div class="dv5-note">💡 将来の為替レートを「今」予約して固定 → 円高・円安どちらに動いても影響を受けない（＝為替リスクをヘッジ）</div>
+</div>
+
   <h2 class="section-title st-teal">⑤ 為替予約</h2>
 
   <div class="card card-teal">
@@ -637,9 +1026,9 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-teal">
         <tr><th>比較軸</th><th>為替予約</th><th>通貨オプション</th></tr>
-        <tr><td>法的性質</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">義務</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">権利</span></td></tr>
-        <tr><td>コスト</td><td>スプレッドのみ</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">プレミアム支払い</span></td></tr>
-        <tr><td>有利な動きの享受</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">できない（固定）</span></td><td><span class="fill-blank" onclick="this.classList.toggle('show')">できる（権利放棄）</span></td></tr>
+        <tr><td>法的性質</td><td><span class="fill-blank">義務</span></td><td><span class="fill-blank">権利</span></td></tr>
+        <tr><td>コスト</td><td>スプレッドのみ</td><td><span class="fill-blank">プレミアム支払い</span></td></tr>
+        <tr><td>有利な動きの享受</td><td><span class="fill-blank">できない（固定）</span></td><td><span class="fill-blank">できる（権利放棄）</span></td></tr>
       </table>
     </div>
   </div>
@@ -647,14 +1036,75 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
   <div class="fill-card">
     <div class="fill-header bg-teal">② 直先差額 — 空欄を答えよ</div>
     <div class="fill-body">
-      <p style="font-size:.9rem;line-height:2;">直先差額（スワップポイント）＝ <span class="fill-blank" onclick="this.classList.toggle('show')">先物レート</span> − <span class="fill-blank" onclick="this.classList.toggle('show')">直物レート</span><br>
-      日本金利 ＜ 米国金利 のとき、先物は直物より <span class="fill-blank" onclick="this.classList.toggle('show')">円安</span> になる</p>
+      <p style="font-size:.9rem;line-height:2;">直先差額（スワップポイント）＝ <span class="fill-blank">先物レート</span> − <span class="fill-blank">直物レート</span><br>
+      日本金利 ＜ 米国金利 のとき、先物は直物より <span class="fill-blank">円安</span> になる</p>
     </div>
   </div>
+
+<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:.8rem 1rem;margin:1.2rem 0 .4rem;"><div style="font-weight:800;color:#15803d;margin-bottom:.5rem;font-size:.95rem;">🌳 分類ツリー（穴埋め）<span style="font-size:.76rem;color:#64748b;font-weight:400;">　空欄クリックで答え</span></div><pre style="font-family:inherit;font-size:.9rem;line-height:1.95;white-space:pre-wrap;margin:0;color:#1e293b;">為替予約（<span class="fill-blank">先渡</span>の一種）
+├ <span class="fill-blank">買い</span>予約：将来の支払いに備える（円安ヘッジ）
+└ <span class="fill-blank">売り</span>予約：将来の受取りに備える（円高ヘッジ）</pre></div>
 </div>
 
 <!-- ===== タブ6: スワップ ===== -->
 <div class="tab-panel" id="tab6">
+<style>
+.dv6-wrap{max-width:100%;box-sizing:border-box;margin:0 auto;padding:16px;background:linear-gradient(135deg,#f5f9ff,#fef6fb);border-radius:18px;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;color:#34406b;border:2px solid #e3ecff}
+.dv6-h{font-size:clamp(15px,4vw,19px);font-weight:800;text-align:center;margin:2px 0 14px;color:#3a4a8c}
+.dv6-stage{display:flex;align-items:stretch;justify-content:space-between;gap:8px}
+.dv6-party{flex:0 0 28%;min-width:88px;background:#fff;border-radius:14px;padding:12px 6px;text-align:center;box-shadow:0 3px 10px rgba(90,110,200,.12)}
+.dv6-pa{border:3px solid #8fd3c8}
+.dv6-pb{border:3px solid #f6b8c8}
+.dv6-face{font-size:clamp(26px,8vw,40px);line-height:1}
+.dv6-pname{font-weight:800;font-size:13px;margin-top:4px}
+.dv6-psub{font-size:11px;color:#7a86b0;margin-top:2px}
+.dv6-mid{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;position:relative;padding:4px 0}
+.dv6-flow{position:relative;height:34px;border-radius:18px;display:flex;align-items:center;padding:0 6px;overflow:hidden;font-size:11px;font-weight:800;white-space:nowrap}
+.dv6-f1{background:#dff5f0;color:#1f8a76;justify-content:flex-end}
+.dv6-f2{background:#fde3ec;color:#c4456e;justify-content:flex-start}
+.dv6-tok{position:absolute;top:50%;font-size:18px;transform:translateY(-50%)}
+.dv6-t1{animation:dv6moveR 2.6s ease-in-out infinite}
+.dv6-t2{animation:dv6moveL 2.6s ease-in-out infinite}
+@keyframes dv6moveR{0%{left:2%;opacity:.2}15%{opacity:1}85%{opacity:1}100%{left:88%;opacity:.2}}
+@keyframes dv6moveL{0%{right:2%;opacity:.2}15%{opacity:1}85%{opacity:1}100%{right:88%;opacity:.2}}
+.dv6-swap{text-align:center;font-size:11px;font-weight:800;color:#6b5fb0;margin-top:10px;background:#efe9ff;border-radius:10px;padding:5px}
+.dv6-note{margin-top:12px;background:#fff;border-radius:12px;padding:9px 12px;font-size:11.5px;line-height:1.6;border:1px dashed #c9d4f5}
+.dv6-note b{color:#3a4a8c}
+.dv6-cur{display:inline-block;animation:dv6pulse 2.6s ease-in-out infinite}
+@keyframes dv6pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+</style>
+<div class="dv6-wrap">
+  <div class="dv6-h">🎬 ひとめでイメージ：スワップ（将来のお金を交換）</div>
+  <div class="dv6-stage">
+    <div class="dv6-party dv6-pa">
+      <div class="dv6-face">🧑‍💼</div>
+      <div class="dv6-pname">当事者A</div>
+      <div class="dv6-psub">固定金利を払う</div>
+    </div>
+    <div class="dv6-mid">
+      <div class="dv6-flow dv6-f1">
+        <span class="dv6-tok dv6-t1">💵➡️</span>
+        固定金利（2%）→
+      </div>
+      <div class="dv6-flow dv6-f2">
+        ←変動金利（変わる）
+        <span class="dv6-tok dv6-t2">⬅️💴</span>
+      </div>
+      <div class="dv6-swap">🔁 行き来して交換し合う（スワップ＝交換）</div>
+    </div>
+    <div class="dv6-party dv6-pb">
+      <div class="dv6-face">👩‍💼</div>
+      <div class="dv6-pname">当事者B</div>
+      <div class="dv6-psub">変動金利を払う</div>
+    </div>
+  </div>
+  <div class="dv6-note">
+    💡 <b>金利スワップ</b>＝同じ通貨で「固定金利 ⇔ 変動金利」のキャッシュフローを交換。<br>
+    🌐 <b>通貨スワップ</b>＝ちがう通貨を交換 → <span class="dv6-cur">💴円</span> ⇔ <span class="dv6-cur">💵ドル</span>。<br>
+    ポイント：元手をまるごと渡すのではなく、<b>将来支払う利息（お金の流れ）だけ</b>をトレード。
+  </div>
+</div>
+
   <h2 class="section-title st-blue">⑥ スワップ取引（金利スワップ）</h2>
 
   <div class="card card-blue">
@@ -668,7 +1118,7 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
       <div class="flow-box">A社（変動金利借入）</div>
       <div style="text-align:center;font-size:.8rem;color:#666;">
         <div>←─ 固定金利5% ─→</div>
-        <div>─→ 変動金利LIBOR →─</div>
+        <div>─→ 変動金利LIBOR（ロンドン銀行間取引金利） →─</div>
       </div>
       <div class="flow-box green">B社（固定金利借入）</div>
     </div>
@@ -706,17 +1156,84 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-blue">
         <tr><th>項目</th><th>内容</th></tr>
-        <tr><td>交換するもの</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">固定金利と変動金利</span>のキャッシュフロー</td></tr>
-        <tr><td>元本交換</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">しない</span>（利息部分のみ）</td></tr>
-        <tr><td>変動金利借入のA社</td><td>スワップ後、実質<span class="fill-blank" onclick="this.classList.toggle('show')">固定金利</span>になる</td></tr>
-        <tr><td>固定金利借入のB社</td><td>スワップ後、実質<span class="fill-blank" onclick="this.classList.toggle('show')">変動金利</span>になる</td></tr>
+        <tr><td>交換するもの</td><td><span class="fill-blank">固定金利と変動金利</span>のキャッシュフロー</td></tr>
+        <tr><td>元本交換</td><td><span class="fill-blank">しない</span>（利息部分のみ）</td></tr>
+        <tr><td>変動金利借入のA社</td><td>スワップ後、実質<span class="fill-blank">固定金利</span>になる</td></tr>
+        <tr><td>固定金利借入のB社</td><td>スワップ後、実質<span class="fill-blank">変動金利</span>になる</td></tr>
       </table>
     </div>
   </div>
+
+<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:.8rem 1rem;margin:1.2rem 0 .4rem;"><div style="font-weight:800;color:#15803d;margin-bottom:.5rem;font-size:.95rem;">🌳 分類ツリー（穴埋め）<span style="font-size:.76rem;color:#64748b;font-weight:400;">　空欄クリックで答え</span></div><pre style="font-family:inherit;font-size:.9rem;line-height:1.95;white-space:pre-wrap;margin:0;color:#1e293b;">スワップ（交換）
+├ <span class="fill-blank">金利</span>スワップ：固定⇔変動の金利交換
+└ <span class="fill-blank">通貨</span>スワップ：異なる通貨の元利交換</pre></div>
 </div>
 
 <!-- ===== タブ7: リアルOP ===== -->
 <div class="tab-panel" id="tab7">
+<style>
+.dv7-wrap{max-width:100%;box-sizing:border-box;margin:0 auto;padding:18px 16px 20px;background:linear-gradient(135deg,#f3f8ff 0%,#fdf5ff 100%);border:2px solid #d6e4ff;border-radius:16px;font-family:system-ui,"Hiragino Sans","Yu Gothic",sans-serif;color:#33415c;}
+.dv7-ttl{font-size:1.05rem;font-weight:800;margin:0 0 4px;color:#2a4d8f;}
+.dv7-sub{font-size:.78rem;color:#7a8aa8;margin:0 0 16px;}
+.dv7-stage{position:relative;background:#ffffff;border-radius:14px;padding:16px 12px;box-shadow:inset 0 0 0 1px #eaf0fb;overflow:hidden;}
+.dv7-start{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.dv7-startbox{background:#cfe4ff;border:2px solid #8fb8f0;border-radius:10px;padding:6px 12px;font-size:.82rem;font-weight:700;color:#1f4e9c;white-space:nowrap;}
+.dv7-road{position:relative;flex:1;height:6px;background:repeating-linear-gradient(90deg,#bcd2f5 0 10px,transparent 10px 18px);border-radius:3px;}
+.dv7-walker{position:absolute;top:-6px;font-size:1rem;animation:dv7-walk 5s linear infinite;}
+@keyframes dv7-walk{0%{left:0%;opacity:0}5%{opacity:1}90%{left:92%;opacity:1}100%{left:96%;opacity:0}}
+.dv7-branches{display:flex;flex-direction:column;gap:10px;}
+.dv7-br{display:flex;align-items:center;gap:10px;opacity:0;transform:translateX(-12px);}
+.dv7-arrow{font-size:1.1rem;color:#9bb4e0;flex:0 0 auto;}
+.dv7-card{flex:1;display:flex;align-items:center;gap:8px;border-radius:10px;padding:8px 12px;font-size:.84rem;font-weight:700;border:2px solid;min-width:0;}
+.dv7-emoji{font-size:1.25rem;flex:0 0 auto;}
+.dv7-tag{font-size:.7rem;font-weight:600;color:#fff;border-radius:6px;padding:2px 7px;margin-left:auto;flex:0 0 auto;}
+.dv7-b1{background:#fff7e0;border-color:#f3d27a;color:#9a6b00;}
+.dv7-b1 .dv7-tag{background:#e8a92e;}
+.dv7-b2{background:#e3f8 ;background:#e4f8ec;border-color:#8ad9a8;color:#1f7a48;}
+.dv7-b2 .dv7-tag{background:#33a866;}
+.dv7-b3{background:#fde7ec;border-color:#f0a3b4;color:#a83352;}
+.dv7-b3 .dv7-tag{background:#d9486d;}
+.dv7-br1{animation:dv7-fadeBranch 5s ease-out infinite;animation-delay:1.2s;}
+.dv7-br2{animation:dv7-fadeBranch 5s ease-out infinite;animation-delay:2.0s;}
+.dv7-br3{animation:dv7-fadeBranch 5s ease-out infinite;animation-delay:2.8s;}
+@keyframes dv7-fadeBranch{0%,18%{opacity:0;transform:translateX(-12px)}30%{opacity:1;transform:translateX(0)}88%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(0)}}
+.dv7-br1 .dv7-card{animation:dv7-glow 5s ease-in-out infinite;animation-delay:1.2s;}
+.dv7-br2 .dv7-card{animation:dv7-glow 5s ease-in-out infinite;animation-delay:2.0s;}
+.dv7-br3 .dv7-card{animation:dv7-glow 5s ease-in-out infinite;animation-delay:2.8s;}
+@keyframes dv7-glow{0%,28%{box-shadow:0 0 0 rgba(0,0,0,0)}40%{box-shadow:0 0 12px rgba(120,160,255,.55)}55%{box-shadow:0 0 0 rgba(0,0,0,0)}}
+.dv7-pick{display:flex;align-items:center;gap:8px;margin-top:14px;background:#eef4ff;border:1px dashed #aac4f0;border-radius:10px;padding:8px 12px;font-size:.8rem;color:#33508f;font-weight:700;}
+.dv7-pick .dv7-flag{font-size:1rem;animation:dv7-blink 1.4s ease-in-out infinite;}
+@keyframes dv7-blink{0%,100%{opacity:1}50%{opacity:.25}}
+.dv7-note{font-size:.74rem;color:#8392ad;margin-top:10px;line-height:1.5;}
+.dv7-key{background:#fff3cd;border-radius:4px;padding:0 4px;font-weight:700;color:#8a6d00;}
+</style>
+<div class="dv7-wrap">
+  <p class="dv7-ttl">🎬 ひとめでイメージ：リアルオプション</p>
+  <p class="dv7-sub">いますぐ全部決めない。状況を見てから「選べる」こと自体が価値になる。</p>
+  <div class="dv7-stage">
+    <div class="dv7-start">
+      <span class="dv7-startbox">🏁 事業スタート</span>
+      <span class="dv7-road"><span class="dv7-walker">🚶</span></span>
+    </div>
+    <div class="dv7-branches">
+      <div class="dv7-br dv7-br1">
+        <span class="dv7-arrow">┗▶</span>
+        <span class="dv7-card dv7-b1"><span class="dv7-emoji">⏸️</span>延期する（様子見してから判断）<span class="dv7-tag">延期オプション</span></span>
+      </div>
+      <div class="dv7-br dv7-br2">
+        <span class="dv7-arrow">┗▶</span>
+        <span class="dv7-card dv7-b2"><span class="dv7-emoji">📈</span>うまくいったら拡大する<span class="dv7-tag">拡大オプション</span></span>
+      </div>
+      <div class="dv7-br dv7-br3">
+        <span class="dv7-arrow">┗▶</span>
+        <span class="dv7-card dv7-b3"><span class="dv7-emoji">🚪</span>ダメなら撤退する<span class="dv7-tag">撤退オプション</span></span>
+      </div>
+    </div>
+    <div class="dv7-pick"><span class="dv7-flag">🚩</span>状況を見て、いちばん良い道を後から選べる！</div>
+  </div>
+  <p class="dv7-note">道（分岐）が<span class="dv7-key">順に現れる</span>＝最初に1本道を決め打ちせず、状況次第で<span class="dv7-key">選択権</span>を持てる。この「選べる余地」がプラスの価値（リアルオプション価値）になり、不確実性が大きいほど価値も大きくなる。</p>
+</div>
+
   <h2 class="section-title st-red">⑦ リアルオプション（H25出題）</h2>
 
   <div class="card card-red">
@@ -753,7 +1270,7 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <ul>
       <li>❶ <strong>延期・拡張＝コール</strong>（プラス方向への選択権）、<strong>縮小・撤退＝プット</strong>（損失制限の選択権）</li>
       <li>❷ リアルオプション価値は<strong>不確実性（ボラティリティ）が高いほど大きい</strong></li>
-      <li>❸ NPV単独では捉えられない「<strong>経営の柔軟性（将来の選択肢）</strong>」の価値を上乗せ評価する</li>
+      <li>❸ NPV（正味現在価値）単独では捉えられない「<strong>経営の柔軟性（将来の選択肢）</strong>」の価値を上乗せ評価する</li>
     </ul>
   </div>
 
@@ -768,17 +1285,103 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-red">
         <tr><th>種類</th><th>内容</th><th>対応OP</th></tr>
-        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">延期オプション</span></td><td>投資を待って情報収集</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">コール</span></td></tr>
-        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">拡張オプション</span></td><td>成功したら規模拡大</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">コール</span></td></tr>
-        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">縮小オプション</span></td><td>不振なら規模縮小</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">プット</span></td></tr>
-        <tr><td><span class="fill-blank" onclick="this.classList.toggle('show')">撤退オプション</span></td><td>損失が大きければ撤退</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">プット</span></td></tr>
+        <tr><td><span class="fill-blank">延期オプション</span></td><td>投資を待って情報収集</td><td><span class="fill-blank">コール</span></td></tr>
+        <tr><td><span class="fill-blank">拡張オプション</span></td><td>成功したら規模拡大</td><td><span class="fill-blank">コール</span></td></tr>
+        <tr><td><span class="fill-blank">縮小オプション</span></td><td>不振なら規模縮小</td><td><span class="fill-blank">プット</span></td></tr>
+        <tr><td><span class="fill-blank">撤退オプション</span></td><td>損失が大きければ撤退</td><td><span class="fill-blank">プット</span></td></tr>
       </table>
     </div>
   </div>
+
+<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:.8rem 1rem;margin:1.2rem 0 .4rem;"><div style="font-weight:800;color:#15803d;margin-bottom:.5rem;font-size:.95rem;">🌳 分類ツリー（穴埋め）<span style="font-size:.76rem;color:#64748b;font-weight:400;">　空欄クリックで答え</span></div><pre style="font-family:inherit;font-size:.9rem;line-height:1.95;white-space:pre-wrap;margin:0;color:#1e293b;">リアルオプション（事業の選択権）
+├ <span class="fill-blank">延期</span>オプション
+├ <span class="fill-blank">拡張</span>オプション
+└ <span class="fill-blank">撤退</span>オプション</pre></div>
 </div>
 
 <!-- ===== タブ8: 試験対策 ===== -->
 <div class="tab-panel" id="tab8">
+<style>
+.dv8-wrap{max-width:100%;margin:0 auto;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;color:#334155;box-sizing:border-box}
+.dv8-wrap *{box-sizing:border-box}
+.dv8-title{font-size:clamp(15px,4vw,19px);font-weight:800;color:#5b21b6;margin:0 0 14px;text-align:center}
+.dv8-cards{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+.dv8-card{flex:1 1 150px;min-width:130px;max-width:220px;border-radius:16px;padding:14px 10px;text-align:center;background:#fff;border:2px solid #e2e8f0;box-shadow:0 3px 8px rgba(100,116,139,.12);position:relative;transition:none}
+.dv8-card .dv8-ico{font-size:34px;line-height:1;display:block;margin-bottom:6px}
+.dv8-card .dv8-name{font-weight:800;font-size:15px;margin-bottom:4px}
+.dv8-card .dv8-desc{font-size:12px;color:#64748b;line-height:1.45}
+/* 順番に点灯するスポットライト：合計9秒で3カードが順に主役になる */
+.dv8-c1{animation:dv8-glow 9s ease-in-out infinite}
+.dv8-c2{animation:dv8-glow 9s ease-in-out infinite;animation-delay:3s}
+.dv8-c3{animation:dv8-glow 9s ease-in-out infinite;animation-delay:6s}
+@keyframes dv8-glow{
+  0%,22%{transform:scale(1);border-color:#e2e8f0;box-shadow:0 3px 8px rgba(100,116,139,.12)}
+  6%,16%{transform:scale(1.06);border-color:#a78bfa;box-shadow:0 0 0 4px rgba(167,139,250,.35),0 8px 18px rgba(124,58,237,.28)}
+  33%,100%{transform:scale(1);border-color:#e2e8f0;box-shadow:0 3px 8px rgba(100,116,139,.12)}
+}
+.dv8-c1{background:linear-gradient(180deg,#eff6ff,#fff)}
+.dv8-c2{background:linear-gradient(180deg,#fef3f2,#fff)}
+.dv8-c3{background:linear-gradient(180deg,#ecfdf5,#fff)}
+.dv8-c1 .dv8-name{color:#2563eb}
+.dv8-c2 .dv8-name{color:#e11d48}
+.dv8-c3 .dv8-name{color:#059669}
+.dv8-arrow{text-align:center;font-size:13px;color:#94a3b8;margin:6px 0 12px;letter-spacing:2px}
+.dv8-goalhead{text-align:center;font-size:13px;font-weight:800;color:#475569;margin-bottom:8px}
+.dv8-goals{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.dv8-goal{flex:1 1 150px;min-width:130px;max-width:220px;border-radius:14px;padding:12px 10px;text-align:center;background:#f8fafc;border:1px dashed #cbd5e1}
+.dv8-goal .dv8-gico{font-size:26px;display:block;margin-bottom:5px}
+.dv8-goal .dv8-gname{font-weight:800;font-size:14px;margin-bottom:3px}
+.dv8-goal .dv8-gsub{font-size:11.5px;color:#64748b;line-height:1.4}
+.dv8-g1 .dv8-gname{color:#0d9488}
+.dv8-g2 .dv8-gname{color:#d97706}
+.dv8-g3 .dv8-gname{color:#7c3aed}
+.dv8-note{font-size:11px;color:#94a3b8;text-align:center;margin-top:12px}
+</style>
+<div class="dv8-wrap">
+  <div class="dv8-title">🎬 ひとめでイメージ：3種の使い分けとヘッジ/投機/裁定</div>
+
+  <div class="dv8-cards">
+    <div class="dv8-card dv8-c1">
+      <span class="dv8-ico">📅</span>
+      <div class="dv8-name">先物</div>
+      <div class="dv8-desc">将来の売買を<br>今「価格・量とも」約束<br>＝必ず実行</div>
+    </div>
+    <div class="dv8-card dv8-c2">
+      <span class="dv8-ico">🎟️</span>
+      <div class="dv8-name">オプション</div>
+      <div class="dv8-desc">「売買する権利」を購入<br>＝やめてもOK<br>不利なら捨てられる</div>
+    </div>
+    <div class="dv8-card dv8-c3">
+      <span class="dv8-ico">🔁</span>
+      <div class="dv8-name">スワップ</div>
+      <div class="dv8-desc">将来の支払いを<br>相手と「交換」<br>例：固定金利⇄変動金利</div>
+    </div>
+  </div>
+
+  <div class="dv8-arrow">▼ どれも「未来の取引」を今決める道具。使う目的は3つ ▼</div>
+
+  <div class="dv8-goalhead">🎯 何のために使う？</div>
+  <div class="dv8-goals">
+    <div class="dv8-goal dv8-g1">
+      <span class="dv8-gico">🛡️</span>
+      <div class="dv8-gname">ヘッジ</div>
+      <div class="dv8-gsub">リスク回避<br>値動きの損を<br>前もって防ぐ</div>
+    </div>
+    <div class="dv8-goal dv8-g2">
+      <span class="dv8-gico">🎲</span>
+      <div class="dv8-gname">投機</div>
+      <div class="dv8-gsub">利益狙い<br>値動きを予想して<br>もうけにいく</div>
+    </div>
+    <div class="dv8-goal dv8-g3">
+      <span class="dv8-gico">⚖️</span>
+      <div class="dv8-gname">裁定</div>
+      <div class="dv8-gsub">価格差取り<br>同じ物の値段差を<br>すかさず稼ぐ</div>
+    </div>
+  </div>
+
+  <div class="dv8-note">※ ライトが順に当たる3商品を見比べ → 同じ道具でも「目的」で使い方が変わる</div>
+</div>
+
   <h2 class="section-title st-orange">⑧ 試験対策 総括</h2>
 
   <h2 class="section-title st-orange">得点最大化の学習順序</h2>
@@ -831,14 +1434,20 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     <div class="fill-body">
       <table class="tbl-orange">
         <tr><th>誤り</th><th>正しい理解</th></tr>
-        <tr><td>オプション買い手は必ず権利行使する</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">不利なら権利放棄できる（義務なし）</span></td></tr>
-        <tr><td>ボラが高いとオプション価値は下がる</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">逆。ボラ↑→オプション価値↑</span></td></tr>
-        <tr><td>先物は現物受渡しが基本</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">差金決済が基本</span></td></tr>
-        <tr><td>為替予約は有利な動きも享受できる</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">できない（義務として固定）</span></td></tr>
-        <tr><td>OTMの本質的価値はマイナス</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">ゼロ（権利放棄するので負にならない）</span></td></tr>
+        <tr><td>オプション買い手は必ず権利行使する</td><td><span class="fill-blank">不利なら権利放棄できる（義務なし）</span></td></tr>
+        <tr><td>ボラが高いとオプション価値は下がる</td><td><span class="fill-blank">逆。ボラ↑→オプション価値↑</span></td></tr>
+        <tr><td>先物は現物受渡しが基本</td><td><span class="fill-blank">差金決済が基本</span></td></tr>
+        <tr><td>為替予約は有利な動きも享受できる</td><td><span class="fill-blank">できない（義務として固定）</span></td></tr>
+        <tr><td>OTMの本質的価値はマイナス</td><td><span class="fill-blank">ゼロ（権利放棄するので負にならない）</span></td></tr>
       </table>
     </div>
   </div>
+
+<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:.8rem 1rem;margin:1.2rem 0 .4rem;"><div style="font-weight:800;color:#15803d;margin-bottom:.5rem;font-size:.95rem;">🌳 分類ツリー（穴埋め）<span style="font-size:.76rem;color:#64748b;font-weight:400;">　空欄クリックで答え</span></div><pre style="font-family:inherit;font-size:.9rem;line-height:1.95;white-space:pre-wrap;margin:0;color:#1e293b;">デリバティブ（総まとめ）
+├ <span class="fill-blank">先物</span>・先渡（先渡＝OTC＝店頭取引）
+├ オプション：<span class="fill-blank">コール</span>／プット
+└ <span class="fill-blank">スワップ</span>：金利／通貨
+※ヘッジ／投機／<span class="fill-blank">裁定</span>（アービトラージ）</pre></div>
 </div>
 
 </div><!-- /container -->
@@ -944,6 +1553,110 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
     btn.addEventListener('click',function(){var label=getLabel();doHide(label);var obj=loadHidden();obj[id]=1;saveHidden(obj);});
     btnRow.appendChild(btn);wrap.appendChild(btnRow);
     if(hidden[id]) doHide(getLabel());
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head,.fill-header'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); return h&&(h.textContent.trim().startsWith('予習｜')||h.textContent.trim().startsWith('🔰')); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+})();
+
+// ▼ 追加：解説表（.tbl-* 等）の「行」単位の非表示ボタン（既存hideを補完・粒度UP・別localStorage）
+(function(){
+  var KEY='rowhk2_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  var tables=[].slice.call(document.querySelectorAll('table')).filter(function(t){return !t.closest('.fill-body')&&!t.closest('.fill-card');});
+  tables.forEach(function(tbl,ti){
+    [].slice.call(tbl.querySelectorAll('tr')).forEach(function(tr,ri){
+      if(!tr.querySelector('td')) return;
+      var key='t'+ti+'r'+ri, td=tr.cells[tr.cells.length-1]; if(!td) return;
+      td.style.position='relative';
+      function show(){tr.style.display='';var ph=tbl.querySelector('[data-rhk="'+key+'"]');if(ph)ph.remove();delete st[key];save();}
+      function hide(){tr.style.display='none';if(!tbl.querySelector('[data-rhk="'+key+'"]')){var ph=document.createElement('tr');ph.setAttribute('data-rhk',key);var p=document.createElement('td');p.colSpan=tr.children.length||1;p.style.cssText='text-align:center;background:#f8fafc;color:#94a3b8;font-size:.72rem;padding:2px;';var sb=document.createElement('button');sb.type='button';sb.textContent='👁 表示';sb.style.cssText='margin-left:6px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;color:#64748b;font-size:.7rem;cursor:pointer;padding:1px 7px;';sb.addEventListener('click',show);p.appendChild(document.createTextNode('—（非表示）'));p.appendChild(sb);ph.appendChild(p);tr.parentNode.insertBefore(ph,tr.nextSibling);}st[key]=1;save();}
+      var b=document.createElement('button');b.type='button';b.textContent='○';b.title='この行を隠す';
+      b.style.cssText='position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;border:1.5px solid #cbd5e1;background:rgba(255,255,255,.9);color:#94a3b8;font-size:.55rem;line-height:1;cursor:pointer;padding:0;opacity:.5;z-index:3;';
+      b.addEventListener('mouseover',function(){b.style.opacity='1';});
+      b.addEventListener('mouseout',function(){b.style.opacity='.5';});
+      b.addEventListener('click',function(e){e.stopPropagation();hide();});
+      td.appendChild(b);
+      if(st[key]) hide();
+    });
+  });
+})();
+
+// ▼ 追加2（改）：囲われているオブジェクト（枠線/背景のある箱）をすべて個別に非表示（ホバーで○出現・別localStorage）
+(function(){
+  var KEY='boxhk_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  var sty=document.createElement('style');
+  sty.textContent='.boxhk-host{position:relative;}'
+    +'.boxhk-btn{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;border:1px solid #cbd5e1;background:rgba(255,255,255,.92);color:#94a3b8;font-size:.55rem;line-height:1;cursor:pointer;padding:0;opacity:0;transition:opacity .12s;z-index:6;}'
+    +'.boxhk-host:hover>.boxhk-btn{opacity:.85;}'
+    +'.boxhk-ph{color:#aab2be;font-size:.74rem;cursor:pointer;background:#fafbfc;border:1px dashed #e2e8f0;border-radius:6px;padding:2px 8px;display:inline-block;margin:2px 0;}';
+  document.head.appendChild(sty);
+  function isBox(el){var cs=getComputedStyle(el);var b=['Top','Right','Bottom','Left'].some(function(s){return parseFloat(cs['border'+s+'Width'])>0&&cs['border'+s+'Style']!=='none';});var bg=cs.backgroundColor;var hb=bg&&bg!=='rgba(0, 0, 0, 0)'&&bg!=='transparent';return b||hb;}
+  var SK=['tab-panel','tab-container','tab-nav','header','sec-hide-wrap','sec-hide-btn-row','hide-block','hide-subblock','sec-hidden-ph','row-hidden-ph','tr-hidden-ph','boxhk-ph','boxhk-host'];
+  function skip(el){
+    if(el.classList){for(var i=0;i<SK.length;i++) if(el.classList.contains(SK[i])) return true;}
+    if(el.parentNode&&el.parentNode.classList&&el.parentNode.classList.contains('sec-hide-wrap')) return true;
+    if(el.querySelector&&el.querySelector(':scope > .sec-hide-btn-row, :scope > .row-hide-btn, :scope > .boxhk-btn')) return true;
+    if(el.hasAttribute&&(el.hasAttribute('data-bhk')||el.hasAttribute('data-rhk')||el.hasAttribute('data-ohk'))) return true;
+    if(el.closest('.fill-body')||el.closest('.fill-card')) return true;
+    return false;
+  }
+  var idx=0;
+  [].slice.call(document.querySelectorAll('div, ul, ol, blockquote, details')).forEach(function(el){
+    if(skip(el)) return;
+    if(!isBox(el)) return;
+    if((el.textContent||'').trim().length<3) return;
+    var key='x'+(idx++);
+    el.classList.add('boxhk-host');
+    function show(){el.style.display='';var ph=document.querySelector('[data-bhk="'+key+'"]');if(ph)ph.remove();delete st[key];save();}
+    function hide(){el.style.display='none';if(!document.querySelector('[data-bhk="'+key+'"]')){var ph=document.createElement('div');ph.setAttribute('data-bhk',key);var sp=document.createElement('span');sp.className='boxhk-ph';sp.textContent='— 非表示 👁';sp.addEventListener('click',show);ph.appendChild(sp);el.parentNode.insertBefore(ph,el.nextSibling);}st[key]=1;save();}
+    var b=document.createElement('button');b.className='boxhk-btn';b.type='button';b.textContent='○';b.title='この箱を隠す';
+    b.addEventListener('click',function(e){e.stopPropagation();hide();});
+    el.appendChild(b);
+    if(st[key]) hide();
   });
 })();
 </script>

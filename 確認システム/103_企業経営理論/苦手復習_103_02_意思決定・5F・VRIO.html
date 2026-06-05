@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苦手復習 103-02 ｜ 意思決定・ファイブフォース・VRIO</title>
+<style>
+:root{--p:#7b1fa2;--pl:#f3e5f5;--b:#1a5276;--bl:#eaf2f8;--g:#1e8449;--gl:#eafaf1;--o:#b9770e;--ol:#fef9e7;--r:#c0392b;--rl:#fdedec;--ink:#1e293b;--mut:#64748b;--line:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:var(--ink);line-height:1.7;}
+.header{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;padding:22px 16px;text-align:center;}
+.header h1{font-size:1.25rem;}
+.header p{font-size:.82rem;opacity:.85;margin-top:4px;}
+.tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
+.tab-nav{display:flex;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
+.tab-btn{flex:1;padding:14px 6px;border:none;background:#fff;color:var(--mut);font-size:.92rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-btn.active[data-c=g]{color:var(--g);border-bottom-color:var(--g);background:var(--gl);}
+.tab-btn.active[data-c=b]{color:var(--b);border-bottom-color:var(--b);background:var(--bl);}
+.tab-btn.active[data-c=p]{color:var(--p);border-bottom-color:var(--p);background:var(--pl);}
+.tab-panel{display:none;background:#fff;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;animation:f .3s;}
+@keyframes f{from{opacity:0}to{opacity:1}}
+h2{font-size:1.05rem;margin:22px 0 10px;padding-left:10px;border-left:5px solid var(--b);}
+h2:first-of-type{margin-top:6px;}
+.weak{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;font-size:.86rem;margin-bottom:8px;}
+.weak b{color:#c2410c;}
+.fig{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfcfd;}
+.fig svg{width:100%;height:auto;display:block;max-width:440px;margin:0 auto;}
+.note{font-size:.8rem;text-align:center;color:var(--mut);margin-top:8px;}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.84rem;}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:center;vertical-align:middle;}
+th{background:var(--b);color:#fff;}
+tr:nth-child(even) td{background:#f8fafc;}
+td.l{text-align:left;}
+.yes{background:#dcfce7!important;color:#166534;font-weight:800;}
+.no{background:#fee2e2!important;color:#991b1b;font-weight:800;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cell{border:2px solid var(--line);border-radius:8px;padding:9px 11px;font-size:.81rem;}
+.cell b{display:block;color:var(--b);margin-bottom:2px;}
+.trap{background:var(--rl);border-left:4px solid var(--r);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.82rem;margin:10px 0;}
+.trap b{color:var(--r);}
+.flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+.flow .box{background:var(--bl);border:2px solid var(--b);border-radius:8px;padding:9px 13px;font-weight:700;font-size:.82rem;text-align:center;}
+.flow .ar{font-size:1.25rem;color:var(--b);font-weight:800;}
+/* 5 forces grid */
+.forces{display:grid;grid-template-columns:1fr 1.1fr 1fr;grid-template-rows:auto auto auto;gap:8px;align-items:center;}
+.forces .ff{border:2px solid var(--b);border-radius:8px;padding:8px;text-align:center;font-size:.78rem;font-weight:700;background:#fff;}
+.forces .center{background:var(--b);color:#fff;border-color:#0f3a52;}
+.forces .top{grid-column:2;} .forces .bot{grid-column:2;}
+.vsclash{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;}
+.vsclash .s{border:2px solid var(--line);border-radius:8px;padding:9px;text-align:center;font-size:.8rem;}
+.vsclash .mid{font-weight:800;color:var(--r);}
+/* 注釈つき5Fマップ */
+.ffmap{max-width:560px;margin:4px auto;}
+.ffrow{display:grid;grid-template-columns:1fr auto 1.25fr auto 1fr;gap:5px;align-items:center;}
+.ffb{border:2px solid var(--b);border-radius:8px;background:#eaf2f8;padding:7px 8px;font-size:.78rem;font-weight:800;color:var(--b);text-align:center;}
+.ffb small{display:block;font-weight:500;color:#475569;font-size:.7rem;margin-top:3px;line-height:1.45;}
+.ffb.center{background:var(--b);color:#fff;border-color:#0f3a52;}
+.ffb.center small{color:#cfe2f3;}
+.ffb.center b{color:#fde047;}
+.ffar{color:var(--r);font-weight:800;font-size:1.25rem;text-align:center;}
+.ffmid{width:46%;margin:3px auto;}
+@media(max-width:600px){.ffrow{grid-template-columns:1fr auto 1.2fr auto 1fr;}.ffb{font-size:.66rem;padding:5px 4px;}.ffb small{font-size:.6rem;}.ffar{font-size:.95rem;}}
+.fill-card{background:#faf5ff;border:2px solid var(--p);border-radius:12px;margin-top:20px;overflow:hidden;}
+.fill-head{background:var(--p);color:#fff;padding:10px 16px;font-weight:800;font-size:.92rem;}
+.fill-body{padding:14px 18px;font-size:.9rem;line-height:2.2;}
+.fill-body .mtitle{font-weight:800;color:#7b1fa2;margin:12px 0 4px;font-size:.85rem;border-left:3px solid #a855f7;padding-left:8px;line-height:1.4;}
+.fill-body table{margin:4px 0 6px;}
+.fill-body table .blank{min-width:84px;}
+.fill-section-title{margin:24px 0 6px;font-size:1rem;font-weight:800;color:#7b1fa2;}
+.revall-btn{width:100%;padding:13px;font-size:.98rem;font-weight:800;background:#7b1fa2;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;}
+.revall-btn:hover{background:#6a1b9a;}
+.fill-card{margin-top:12px;}
+.blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #a855f7;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:800;color:transparent;background:#f3e8ff;border-radius:4px;user-select:none;}
+.blank.show{color:#c2410c;background:#fff7ed;border-color:#c2410c;}
+.revbtn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.tab-btn{font-size:.78rem}table{font-size:.76rem}}
+/* ===== 元ノート（科目別まとめ）抜粋・解説ブロック ===== */
+.src-note{background:#fffaf0;border:1px solid #fbcf8f;border-left:5px solid #f59e0b;border-radius:10px;padding:12px 16px;margin:14px 0;}
+.src-note .src-tag{display:inline-block;font-size:.7rem;font-weight:800;color:#fff;background:#f59e0b;border-radius:5px;padding:2px 9px;margin-bottom:8px;}
+.src-note h4{font-size:.9rem;color:#b45309;margin:10px 0 4px;}
+.src-note blockquote{margin:7px 0;padding:8px 12px;background:#fff;border-left:3px solid #fbbf24;border-radius:0 6px 6px 0;font-size:.85rem;color:#334155;white-space:pre-line;line-height:1.75;}
+.src-note .ex{font-size:.84rem;color:#475569;margin:6px 0;line-height:1.75;}
+.src-note .ex b{color:#b45309;}
+.src-note .mnemo{display:block;background:#fef3c7;border:2px dashed #f59e0b;border-radius:8px;padding:7px 12px;font-weight:800;color:#92400e;font-size:.86rem;margin:8px 0;text-align:center;}
+.src-note .mnemo small{display:block;font-weight:600;color:#b45309;font-size:.76rem;margin-top:3px;}
+.src-fig{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:#fff;}
+.src-fig svg{width:100%;height:auto;display:block;max-width:560px;margin:0 auto;}
+.flow .box small{display:block;font-weight:500;font-size:.7rem;color:#475569;margin-top:2px;}
+/* 覚えた→○ボタンで非表示（学習用・localStorage保存） */
+.fig,.fill-card,.src-note,.src-fig,.vz-supplement{position:relative;}
+.mz-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:2px solid #16a34a;background:#fff;color:#16a34a;font-weight:800;cursor:pointer;z-index:5;font-size:.95rem;line-height:1;padding:0;}
+.mz-btn:hover{background:#dcfce7;}
+.mz-done>:not(.mz-btn){display:none!important;}
+.mz-done{background:#f0fdf4!important;border-color:#16a34a!important;padding:12px 16px!important;cursor:pointer;}
+.mz-done::after{content:"✓ 覚えた（タップで再表示）";color:#16a34a;font-weight:700;font-size:.82rem;}
+.mz-done .mz-btn{background:#16a34a;color:#fff;}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>苦手復習 103-02</h1>
+  <p>企業経営理論 Sティアの🔁論点（意思決定・ファイブフォース・VRIO）／グラフ・図解＋ミラー穴埋め</p>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-c="g" onclick="sw(0)">🧠 意思決定</button>
+    <button class="tab-btn" data-c="b" onclick="sw(1)">🏰 ファイブフォース</button>
+    <button class="tab-btn" data-c="p" onclick="sw(2)">💎 VRIO</button>
+  </nav>
+
+  <!-- TAB0 意思決定 -->
+  <div class="tab-panel active">
+
+    <h2>図1：経済人 vs 経営人（最適化 vs 満足化）</h2>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.7rem .9rem;margin:.5rem 0 .8rem;font-size:.86rem;">
+      <div style="font-size:.72rem;font-weight:700;color:#0ea5e9;margin-bottom:.3rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .5rem;line-height:1.7;color:#334155;">人間は神様じゃないので、全部の選択肢を知って一番いいものを選ぶ（最適化）なんて無理。だから現実の人は「これで十分OK」という案が見つかったらそこで決める（満足化）。これがサイモンの考え。</p>
+      <div style="background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.45rem .8rem;font-size:.8rem;color:#713f12;font-weight:700;">🔑 現実の人＝満足化（最善ではなく“及第点”で決める）</div>
+    </div>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:#94a3b8;background:#f8fafc;"><b>経済人モデル</b>完全な情報＋完全な合理性。あらゆる案を比べて<b>最善（最適化）</b>を選ぶ＝理想論</div>
+        <div class="cell" style="border-color:#1e8449;background:#eafaf1;"><b>経営人モデル</b>情報も能力も限界あり（<b>限定合理性</b>）。及第点で決める＝<b>満足化</b>＝現実</div>
+      </div>
+      <div class="trap"><b>急所</b>：限定合理性のもとでは「最適化」ではなく<b>満足化（satisficing）</b>。最善を探し尽くさない。</div>
+    </div>
+
+    <h2>図2：満足化＝願望水準を超えた最初の案で打ち切り</h2>
+    <div class="fig">
+      <div class="flow">
+        <div class="box" style="background:#fee2e2;border-color:#c0392b;">案1<br><small>水準未満✗</small></div><div class="ar">→</div>
+        <div class="box" style="background:#fee2e2;border-color:#c0392b;">案2<br><small>水準未満✗</small></div><div class="ar">→</div>
+        <div class="box" style="background:#dcfce7;border-color:#1e8449;">案3<br><small>水準クリア✓</small></div><div class="ar">⏹</div>
+        <div class="box">探索ストップ<br><small>これに決定</small></div>
+      </div>
+      <div class="note">全部を比較しない。「これで十分」という願望水準を満たした時点で探索をやめる。</div>
+    </div>
+
+    <h2>図3：サイモンの意思決定プロセス（順番が大事）</h2>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.7rem .9rem;margin:.5rem 0 .8rem;font-size:.86rem;">
+      <div style="font-size:.72rem;font-weight:700;color:#0ea5e9;margin-bottom:.3rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .5rem;line-height:1.7;color:#334155;">まず「何が問題か」を調べ（情報）、次に「どうする案があるか」を考え（設計）、最後に「どれにするか」を選ぶ（選択）。料理でいえば、冷蔵庫を見る→メニューを考える→作るものを決める、の順。</p>
+      <div style="background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.45rem .8rem;font-size:.8rem;color:#713f12;font-weight:700;">🔑 情報→設計→選択（順番の入れ替えはひっかけ）</div>
+    </div>
+    <div class="fig">
+      <div class="flow">
+        <div class="box">①情報活動<br><small>intelligence<br>問題発見</small></div><div class="ar">→</div>
+        <div class="box">②設計活動<br><small>design<br>案を作る</small></div><div class="ar">→</div>
+        <div class="box">③選択活動<br><small>choice<br>案を選ぶ</small></div>
+      </div>
+      <div class="note">情報→設計→選択の順。「選択が最初」などの順番入れ替えはひっかけ。</div>
+    </div>
+
+    <h2>図4：ゴミ箱モデル（組織化された無秩序）</h2>
+    <div style="text-align:center;width:120px;margin:4px auto 0;">
+      <div style="width:58px;height:58px;border-radius:50%;background:#ede9fe;border:2px solid #7b1fa2;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.9rem;position:relative;">🧑‍🤝‍🧑<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.05rem;background:#fff;border-radius:50%;">🗑️</span></div>
+      <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:2px;">コーエン・マーチ・オルセン<br><span style="font-weight:500;color:#64748b;">ゴミ箱モデル</span></div>
+    </div>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.7rem .9rem;margin:.5rem 0 .8rem;font-size:.86rem;">
+      <div style="font-size:.72rem;font-weight:700;color:#0ea5e9;margin-bottom:.3rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .5rem;line-height:1.7;color:#334155;">本当は「問題→じっくり考えて→解決」と進みたいが、現実の会議では、問題・答え・人・タイミングがゴミ箱の中身みたいにバラバラに放り込まれ、たまたま噛み合った時に決定が起こる、という見方。</p>
+      <div style="background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.45rem .8rem;font-size:.8rem;color:#713f12;font-weight:700;">🔑 整然とではなく“偶然・なりゆき”で決まる</div>
+    </div>
+    <div class="fig">
+      <div class="flow">
+        <div class="box" style="background:#ede9fe;border-color:#7b1fa2;">問題</div>
+        <div class="box" style="background:#fce7f3;border-color:#be185d;">解</div>
+        <div class="box" style="background:#fef9c3;border-color:#b9770e;">参加者</div>
+        <div class="box" style="background:#dbeafe;border-color:#2563eb;">選択機会</div>
+        <div class="ar">🗑️</div>
+        <div class="box" style="background:#e2e8f0;">偶然<br>結びつく</div>
+      </div>
+      <div class="trap"><b>引っかけ</b>：4要素が「論理的・整然と」結びつくのではなく、ゴミ箱の中のように<b>偶然・無秩序</b>に結びついて決定が起こる。</div>
+    </div>
+
+    <h2>図5：提唱者の整理</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell"><b>限定合理性・満足化</b>＝サイモン</div>
+        <div class="cell"><b>ゴミ箱モデル</b>＝コーエン＝マーチ＝オルセン</div>
+      </div>
+    </div>
+
+    <h2>図6：意思決定の3階層（アンゾフ）― トップ/ミドル/現場</h2>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.7rem .9rem;margin:.5rem 0 .8rem;font-size:.86rem;">
+      <div style="font-size:.72rem;font-weight:700;color:#0ea5e9;margin-bottom:.3rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .5rem;line-height:1.7;color:#334155;">会社の「決めごと」は<b>立場（レベル）</b>で3層に分かれる。上の人ほど「会社をどっちへ進めるか」という<b>大きく・先の・めったにない</b>決定、下の人ほど「今日の段取り」という<b>細かく・短期・毎日くり返す</b>決定をする。アンゾフはこのうち<b>戦略的意思決定を最重要視</b>した（成長ベクトルもこの文脈）。</p>
+      <div style="background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.45rem .8rem;font-size:.8rem;color:#713f12;font-weight:700;">🔑 上＝戦略(長期・非定型)／中＝管理(資源配分)／下＝業務(日常・定型)</div>
+    </div>
+    <div class="fig">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;margin:6px 0 12px;">
+        <div style="width:48%;background:#1a5276;color:#fff;border-radius:7px;padding:9px 6px;text-align:center;font-weight:800;font-size:.85rem;">① 戦略的意思決定<br><small style="font-weight:500;opacity:.9;">トップ（経営層）</small></div>
+        <div style="width:70%;background:#2980b9;color:#fff;border-radius:7px;padding:9px 6px;text-align:center;font-weight:800;font-size:.85rem;">② 管理的意思決定<br><small style="font-weight:500;opacity:.9;">ミドル（管理層）</small></div>
+        <div style="width:92%;background:#5dade2;color:#fff;border-radius:7px;padding:9px 6px;text-align:center;font-weight:800;font-size:.85rem;">③ 業務的意思決定<br><small style="font-weight:500;opacity:.9;">現場（実務層）</small></div>
+      </div>
+      <table>
+        <tr><th>階層</th><th>誰が</th><th>決めること（例）</th><th>性質</th></tr>
+        <tr><td><b>戦略的</b></td><td>トップ</td><td class="l">多角化・新規参入・M&amp;A・全社方針</td><td>長期・非定型・低頻度</td></tr>
+        <tr><td><b>管理的</b></td><td>ミドル</td><td class="l">経営資源の調達・組織化（人員配置・予算配分・組織編成）</td><td>中期</td></tr>
+        <tr><td><b>業務的</b></td><td>現場</td><td class="l">日常業務の効率化（生産日程・在庫・受発注）</td><td>短期・定型・高頻度</td></tr>
+      </table>
+      <div class="trap"><b>区別（取り違え注意）</b>：サイモンの「<b>定型／非定型</b>」は“決め方”の軸、アンゾフの「<b>戦略的／管理的／業務的</b>」は“立場・レベル”の軸＝別物。なお<b>アンソニー</b>の3区分（戦略的計画／マネジメントコントロール／オペレーショナルコントロール）とも対応する。</div>
+    </div>
+
+    <h2>📖 元ノート（qz_16／qz_19）の解説 ― 満足化・プロセス・ゴミ箱を原文で🆕</h2>
+    <div style="margin:2px 0 8px;display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="../参照ノート_103/qz_19.組織行動_意思決定_補足まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;">🔗 元ノート全文：組織行動・意思決定（qz_19）↗</a>
+      <a href="../参照ノート_103/qz_16.組織と人材まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;">🔗 組織と人材（qz_16）↗</a>
+    </div>
+    <div class="src-note">
+      <span class="src-tag">📗 元ノート抜粋</span>
+      <blockquote>サイモンが言ったのはたった2つ：
+・人間の頭はすべての選択肢を比較し尽くす能力はない（＝限定合理性）
+・だから人は「ベスト」ではなく「これでいいか」と納得できた解で決める（＝満足化原理）</blockquote>
+      <blockquote>ゴミ缶モデル（コーエン・マーチ・オルセン）：問題・解決策・参加者・選択機会の4つの流れが偶然マッチしたとき意思決定が生まれる。解決策が問題より先に存在することもある（サイモンとの最大の違い）。</blockquote>
+    </div>
+    <div class="src-note">
+      <span class="src-tag">🍔 具体例：ランチの選び方（経済人 vs 経営人）</span>
+      <table>
+        <tr><th>考え方</th><th>行動</th></tr>
+        <tr><td class="l"><b>経済人</b><br>（完全合理）</td><td class="l">街中の全店舗を価格・味・距離で比較し、世界一コスパが高い店を選ぶ。<span style="color:#c0392b;font-weight:700;">→ 現実にはムリ</span></td></tr>
+        <tr><td class="l"><b>経営人</b><br>（限定合理）</td><td class="l">「近くて、1000円以下で、不味くない」を満たした店を見つけたらそこに決める。<span style="color:#1e8449;font-weight:700;">→ これが満足化</span></td></tr>
+      </table>
+    </div>
+    <div class="src-fig">
+      <div style="font-weight:800;font-size:.84rem;color:#1a5276;text-align:center;margin-bottom:8px;">サイモンの意思決定プロセス（元ノートは「実行活動」まで4段階）</div>
+      <div class="flow">
+        <div class="box" style="background:#eaf2f8;border-color:#2980b9;">🔍 情報活動<br><small>Intelligence／問題発見</small></div><div class="ar">→</div>
+        <div class="box" style="background:#fef3e2;border-color:#e67e22;">📝 設計活動<br><small>Design／代替案作成</small></div><div class="ar">→</div>
+        <div class="box" style="background:#eafaf1;border-color:#1e8449;">✅ 選択活動<br><small>Choice／満足解選択</small></div><div class="ar">→</div>
+        <div class="box" style="background:#f3e5f5;border-color:#7b1fa2;">💪 実行活動<br><small>Review／結果確認</small></div>
+      </div>
+      <div class="note">人間は限定合理性のため最適解でなく<b>満足解</b>を選ぶ。元ノートは選択の後に<b>④実行（Review）</b>まで描く。</div>
+    </div>
+    <div class="src-fig">
+      <div style="font-weight:800;font-size:.84rem;color:#d35400;text-align:center;margin-bottom:8px;">🗑️ ゴミ缶モデル ― 4つの流れが偶然マッチ</div>
+      <div class="flow">
+        <div class="box" style="background:#fef3c7;border-color:#f59e0b;">❓ 問題<br><small>Issues</small></div>
+        <div class="box" style="background:#d1fae5;border-color:#10b981;">💡 解決策<br><small>先にある場合も！</small></div>
+        <div class="box" style="background:#dbeafe;border-color:#3b82f6;">🧑‍💼 参加者<br><small>流動的</small></div>
+        <div class="box" style="background:#ede9fe;border-color:#8b5cf6;">📅 選択機会<br><small>決める場・タイミング</small></div>
+      </div>
+      <div class="note">4つが<b>バラバラに投げ込まれ</b>、偶然マッチしたとき決定が起こる（組織化された無秩序＝アナーキー）。</div>
+    </div>
+    <div class="src-note">
+      <span class="src-tag">💡 元ノートの語呂・具体例</span>
+      <div class="mnemo">「サイヤ人のみ限定・満足、公園はマジでゴミ箱だらけ」<small><b>サイヤ人＝サイモン</b>（限定合理性＋満足化）／<b>公園＝コーエン</b>・<b>マジ＝マーチ</b>（＋オルセン）＝<b>ゴミ箱モデル</b></small></div>
+      <div style="background:linear-gradient(#dff3ff,#eafaf1);border:2px dashed #f59e0b;border-radius:10px;padding:12px;margin:8px 0;text-align:center;overflow:hidden;">
+        <div style="font-size:.78rem;color:#b45309;font-weight:800;margin-bottom:6px;">🤪 変なイメージで丸暗記（※サイヤ人はオリジナル風イラスト）</div>
+        <div style="font-size:1.6rem;letter-spacing:1px;line-height:1.25;">🌳🗑️🗑️🌲🗑️🗑️🗑️🌳</div>
+        <div style="position:relative;display:inline-block;margin:1px 0;">
+          <svg width="96" height="104" viewBox="0 0 96 104" aria-label="サイヤ人風イメージ">
+            <ellipse cx="48" cy="58" rx="40" ry="46" fill="#fde047" opacity=".4"/>
+            <ellipse cx="48" cy="56" rx="30" ry="38" fill="#fef08a" opacity=".55"/>
+            <g fill="#f59e0b" stroke="#d97706" stroke-width="1">
+              <polygon points="48,0 38,34 58,34"/>
+              <polygon points="29,5 31,36 46,30"/>
+              <polygon points="67,5 65,36 50,30"/>
+              <polygon points="14,17 34,40 30,22"/>
+              <polygon points="82,17 62,40 66,22"/>
+              <polygon points="7,35 34,45 22,30"/>
+              <polygon points="89,35 62,45 74,30"/>
+            </g>
+            <circle cx="48" cy="40" r="14" fill="#ffe0bd" stroke="#d9a066" stroke-width="1.5"/>
+            <path d="M40,38 l6,2.5" stroke="#222" stroke-width="2" fill="none"/>
+            <path d="M56,38 l-6,2.5" stroke="#222" stroke-width="2" fill="none"/>
+            <path d="M43,48 q5,4 10,0" stroke="#a33" stroke-width="1.5" fill="none"/>
+            <rect x="36" y="54" width="24" height="26" rx="5" fill="#ea580c"/>
+            <rect x="41" y="54" width="14" height="26" fill="#2563eb"/>
+            <path d="M37,58 q-12,2 -10,17" stroke="#ffe0bd" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M59,58 q12,2 10,17" stroke="#ffe0bd" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <rect x="40" y="80" width="7" height="19" rx="3" fill="#1e3a8a"/>
+            <rect x="49" y="80" width="7" height="19" rx="3" fill="#1e3a8a"/>
+          </svg>
+          <div style="position:absolute;top:-4px;right:-72px;background:#fde047;border:1px solid #b45309;border-radius:10px;padding:2px 7px;font-size:.68rem;font-weight:800;color:#7c2d12;white-space:nowrap;">公園、マジでゴミ箱だらけ！</div>
+        </div>
+        <div style="font-size:1.6rem;letter-spacing:1px;line-height:1.25;">🗑️🗑️🌳🗑️🗑️🗑️🌲🗑️</div>
+        <div style="font-size:.8rem;color:#334155;margin-top:8px;line-height:1.7;"><b>サイヤ人</b>（＝サイモン：限定合理性で“<b>満足</b>”化）が、<b>公園(コーエン)はマジ(マーチ)でゴミ箱だらけ</b>と叫ぶ。<br>→ サイモン＝限定・満足／コーエン・マーチ＝<b>ゴミ箱モデル</b>、を1枚の絵で結びつけて覚える。</div>
+      </div>
+      <p class="ex"><b>満足化の例（新製品開発）</b>：「世界一儲かる新製品」には完全分析が必要だが情報は集まらない→集めた範囲で「売れそう・利益も出そう」と納得できる案でGO。これが満足化原理。</p>
+      <p class="ex"><b>提唱者の対応</b>：テイラー＝経済人モデル／メイヨー＝社会人モデル／サイモン＝経営人モデル。</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px;">
+        <div style="text-align:center;width:92px;">
+          <div style="width:60px;height:60px;border-radius:50%;background:#eaf2f8;border:2px solid #1a5276;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:2.1rem;position:relative;">🧑‍🔬<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.15rem;background:#fff;border-radius:50%;">⏱️</span></div>
+          <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:3px;">テイラー<br><span style="font-weight:500;color:#64748b;">経済人（科学的管理）</span></div>
+        </div>
+        <div style="text-align:center;width:92px;">
+          <div style="width:60px;height:60px;border-radius:50%;background:#fdecea;border:2px solid #c0392b;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:2.1rem;position:relative;">🧑‍🤝‍🧑<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.15rem;background:#fff;border-radius:50%;">❤️</span></div>
+          <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:3px;">メイヨー<br><span style="font-weight:500;color:#64748b;">社会人（人間関係）</span></div>
+        </div>
+        <div style="text-align:center;width:92px;">
+          <div style="width:60px;height:60px;border-radius:50%;background:#eafaf1;border:2px solid #1e8449;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:2.1rem;position:relative;">🧑‍💼<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.15rem;background:#fff;border-radius:50%;">🧠</span></div>
+          <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:3px;">サイモン<br><span style="font-weight:500;color:#64748b;">経営人（限定合理）</span></div>
+        </div>
+      </div>
+      <div style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:3px;">※人物は絵文字アイコン＋持ち物バッジ（実写・アニメ画像ではありません）</div>
+    </div>
+    <div class="trap"><b>元ノートの引っかけ</b>：①ゴミ箱モデルは「問題が解を探す」だけでなく「<b>解が問題を探す</b>」（解決策が先にある）。順序が崩れるのが核心。②決定の<b>型（定型/非定型）＝サイモン</b>。なお3階層は教材により<b>アンゾフ（戦略的/管理的/業務的）</b>とも<b>アンソニー（戦略的計画/マネジメントコントロール/オペレーショナルコントロール）</b>とも整理される――人名と切り口を取り違えない。</div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1ミラー：経済人 vs 経営人</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>モデル</th><th>前提</th><th>選び方</th></tr>
+          <tr><td>経済人</td><td>完全情報・完全合理</td><td><span class="blank">最適化</span></td></tr>
+          <tr><td>経営人</td><td><span class="blank">限定合理性</span></td><td><span class="blank">満足化</span></td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2ミラー：満足化</div>
+      <div class="fill-body">
+        <div><span class="blank">願望水準</span>を満たした最初の案で探索を打ち切る（全比較しない）</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3ミラー：意思決定プロセス</div>
+      <div class="fill-body">
+        <div><span class="blank">情報</span>活動 → <span class="blank">設計</span>活動 → <span class="blank">選択</span>活動（最初は情報）</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図4・5ミラー：ゴミ箱モデル・提唱者・3階層</div>
+      <div class="fill-body">
+        <div>ゴミ箱モデル＝4要素が<span class="blank">偶然</span>に結びつく（提唱＝<span class="blank">コーエン＝マーチ＝オルセン</span>／限定合理性＝<span class="blank">サイモン</span>）</div>
+        <div>アンゾフの意思決定3階層＝<span class="blank">戦略的</span>／<span class="blank">管理的</span>／<span class="blank">業務的</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB1 ファイブフォース -->
+  <div class="tab-panel">
+
+    <h2>図1：ファイブフォース（ポーター）― 5つの力マップ</h2>
+    <div style="text-align:center;width:96px;margin:4px auto 0;">
+      <div style="width:58px;height:58px;border-radius:50%;background:#eaf2f8;border:2px solid #1a5276;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;">🧑‍💼<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.05rem;background:#fff;border-radius:50%;">⚔️</span></div>
+      <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:2px;">ポーター<br><span style="font-weight:500;color:#64748b;">5F・基本戦略（外部）</span></div>
+    </div>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.7rem .9rem;margin:.5rem 0 .8rem;font-size:.86rem;">
+      <p style="margin:0 0 .5rem;line-height:1.7;color:#334155;">業界の儲けは、中央の競争に向かう<b>4方向の圧力</b>で決まる。各箱＝「強いとどうなるか」。</p>
+      <div style="background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.45rem .8rem;font-size:.8rem;color:#713f12;font-weight:700;">🔑 力が強い／競争が激しいほど → 収益性↓。5F・基本戦略・バリューチェーン＝<b>ポーター</b>（VRIO＝バーニーと別系統）</div>
+    </div>
+    <div class="fig">
+      <div class="ffmap">
+        <div class="ffb top">🔼 新規参入<small>参入障壁が<b>低い</b>と↑（障壁＝規模/ブランド/スイッチングC/経験曲線）</small></div>
+        <div class="ffar">↓</div>
+        <div class="ffrow">
+          <div class="ffb">🏭 売り手<small>強い→仕入コスト増→<span style="color:#c0392b">収益性↓</span></small></div>
+          <div class="ffar">→</div>
+          <div class="ffb center">⚔️ 業界内の競争<small>激しいほど<b>収益性↓</b>／壁＝移動障壁</small></div>
+          <div class="ffar">←</div>
+          <div class="ffb">🛒 買い手<small>強い→値下げ圧力→<span style="color:#c0392b">収益性↓</span>（スイッチングC高→買い手は弱まる）</small></div>
+        </div>
+        <div class="ffar">↑</div>
+        <div class="ffb bot">🔄 代替品<small>業界<b>外</b>の同じ用途：🚄⇄✈️　📖⇄📱　🏢⇄💻　☕⇄🥤</small></div>
+      </div>
+      <div class="trap"><b>原則</b>：力が強い＝奪われる＝<b>収益性↓</b>（「買い手が強い＝収益UP」は誤り）。魅力的な業界＝5つの力が<b>弱い</b>。代替品≠同業ライバル。</div>
+    </div>
+
+    <h2>図2：3つの基本戦略（ポーター）＝ 5Fへの「打ち手」</h2>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.7rem .9rem;margin:.5rem 0 .8rem;font-size:.86rem;">
+      <p style="margin:0 0 .4rem;line-height:1.7;color:#334155;">同じポーターの理論。<b>①5Fで圧力を分析（図1）→ ②基本戦略で戦い方を選ぶ（下表）</b>。各戦略は5つの力への“防御策”。</p>
+      <div style="background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.45rem .8rem;font-size:.8rem;color:#713f12;font-weight:700;">🔑 2軸＝武器（低コスト/差別化）×市場の幅（広い/狭い＝集中）</div>
+    </div>
+    <div class="fig">
+      <table>
+        <tr><th>戦略</th><th>どう勝つ</th><th>5つの力への効き方</th><th>例</th></tr>
+        <tr><td><b>コスト<br>リーダーシップ</b></td><td class="l">広い市場×低コスト＝「安さ」</td><td class="l">買い手の値下げ・代替品・価格競争に強い／低コスト＝参入障壁</td><td class="l">大量生産</td></tr>
+        <tr><td><b>差別化</b></td><td class="l">広い市場×独自価値＝「高くても選ばれる」</td><td class="l">ブランド・スイッチングCで買い手/代替品/新規参入を抑える</td><td class="l">高級ブランド</td></tr>
+        <tr><td><b>集中</b></td><td class="l">狭い市場に絞る（コスト集中／差別化集中）</td><td class="l">特定領域で上記を発揮／移動障壁で守る</td><td class="l">ニッチ専門店</td></tr>
+      </table>
+      <div class="trap"><b>stuck in the middle</b>：両取りは“どっちつかず”で負け。「安い店・特別な店は選ばれるが、普通の店は選ばれない」。</div>
+    </div>
+
+
+    <h2>📖 元ノート（qz_19 ポーター競争戦略）の解説 ― 各力の条件・基本戦略を原文で🆕</h2>
+    <div style="margin:2px 0 8px;">
+      <a href="../参照ノート_103/qz_19.ポーターの競争戦略まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;">🔗 元ノート全文：ポーターの競争戦略（qz_19）↗</a>
+    </div>
+    <div class="src-note">
+      <span class="src-tag">📗 元ノート抜粋</span>
+      <blockquote>ファイブフォースは、業界の収益性を規定する5つの競争要因。ポーターが提唱した外部環境分析ツール（自社の内部分析ではない）。</blockquote>
+      <blockquote>「業界の収益性はその構造（5フォース）で決まる」「競争優位は業界内のポジションで決まる」</blockquote>
+      <h4>▶ 各力が「強まる条件」（正誤問題の核心・元ノートの表）</h4>
+      <table>
+        <tr><th>5Fの力</th><th>強まる条件</th></tr>
+        <tr><td class="l"><b>🔼 新規参入</b></td><td class="l">参入障壁が<b>低い</b>・既存企業の報復が少ない・業界の収益性が高い</td></tr>
+        <tr><td class="l"><b>🏭 売り手</b></td><td class="l">売り手が<b>少数・集中</b>・代替仕入先なし・前方統合の可能性・スイッチングコスト高</td></tr>
+        <tr><td class="l"><b>🛒 買い手</b></td><td class="l">買い手が<b>少数・大口</b>・スイッチングコスト低い・後方統合の可能性・標準品で差別化なし</td></tr>
+        <tr><td class="l"><b>🔄 代替品</b></td><td class="l">代替品の価格が<b>低い</b>・乗り換えが容易・スイッチングコストが低い</td></tr>
+        <tr><td class="l"><b>⚔️ 既存競争</b></td><td class="l">競合が多い・同規模・業界成長が遅い・固定費高い・退出障壁高い・差別化なし</td></tr>
+      </table>
+    </div>
+    <div class="src-fig">
+      <div style="font-weight:800;font-size:.84rem;color:#7b1fa2;text-align:center;margin-bottom:6px;">スタックインザミドル（元ノートの散布図）</div>
+      <div style="position:relative;background:#f8f9fa;border-radius:12px;padding:20px;height:280px;overflow:hidden;">
+        <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.72rem;color:#666;writing-mode:vertical-rl;">← 差別化レベル高</div>
+        <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:.72rem;color:#666;">コスト優位度 →</div>
+        <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#1e40af,#818cf8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;text-align:center;line-height:1.3;border:3px solid #1e40af;">コスト<br>リーダー<br>★高収益</div>
+        <div style="position:absolute;left:30px;top:15px;width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#8e44ad,#9b59b6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;text-align:center;line-height:1.3;border:3px solid #6c3483;">差別化<br>★高収益</div>
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;text-align:center;line-height:1.3;border:3px solid #b71c1c;box-shadow:0 0 0 4px rgba(231,76,60,.2);">中途半端<br>❌最も危険<br>低収益</div>
+        <div style="position:absolute;right:30px;bottom:15px;width:65px;height:65px;border-radius:50%;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;text-align:center;line-height:1.3;border:3px solid #1e8449;">集中<br>★安定</div>
+        <div style="position:absolute;left:10%;top:0;bottom:25px;width:2px;background:#dee2e6"></div>
+        <div style="position:absolute;left:10%;right:0;bottom:25px;height:2px;background:#dee2e6"></div>
+      </div>
+      <div class="note">コストでも差別化でも徹底しない「中途半端な企業」が最も収益が低い。</div>
+    </div>
+    <div class="src-note">
+      <span class="src-tag">💡 元ノートの具体例（中華料理屋）</span>
+      <p class="ex"><b>コストリーダー</b>＝安さNo.1（大量仕入れ・薄利多売）／<b>差別化</b>＝有名シェフ・独自の味で高価格でも選ばれる／<b>中途半端</b>＝安くも高くもなく特別でもない店→お客が来ない。「安い店・美味しい店には行くが“なんとなく普通の中華料理屋”は選ばれない」＝スタックインザミドルそのもの。</p>
+    </div>
+    <div class="trap"><b>元ノートの引っかけ</b>：①「5フォースは内部分析ツール」は誤り＝<b>外部</b>分析（内部はVRIO/RBV）。②「スイッチングコストが高いと買い手は有利」は誤り＝乗り換えにくく<b>交渉力は弱まる</b>。③「業界の収益性は経営者の能力で決まる」は誤り＝<b>業界構造（5F）</b>で決まる。④「コストと差別化を同時追求すれば最強」は誤り＝<b>スタックインザミドル</b>に陥る。⑤覚え方＝「魅力的な業界＝5Fの各力が弱い状態」。</div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1ミラー：5つの力の配置</div>
+      <div class="fill-body">
+        <table>
+          <tr><td>上（参入）</td><td><span class="blank">新規参入</span>の脅威</td></tr>
+          <tr><td>中央</td><td><span class="blank">業界内の競争</span></td></tr>
+          <tr><td>下（代替）</td><td><span class="blank">代替品</span>の脅威</td></tr>
+          <tr><td>左</td><td><span class="blank">売り手</span>の交渉力</td></tr>
+          <tr><td>右</td><td><span class="blank">買い手</span>の交渉力</td></tr>
+        </table>
+        <div>各力が強い／競争が激しい→収益性は<span class="blank">下がる</span>。</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2ミラー：3つの基本戦略</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>ターゲット＼優位</th><th>低コスト</th><th>差別化</th></tr>
+          <tr><td>広い市場</td><td><span class="blank">コストリーダーシップ</span></td><td><span class="blank">差別化</span></td></tr>
+          <tr><td>狭い市場</td><td colspan="2"><span class="blank">集中</span>（コスト集中／差別化集中）</td></tr>
+        </table>
+        <div>中途半端な両取り＝<span class="blank">stuck in the middle</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図1補足ミラー：代替品・細かい論点（マップ内蔵）</div>
+      <div class="fill-body">
+        <div>代替品＝<span class="blank">業界外</span>の別手段／スイッチングコスト高→買い手の力は<span class="blank">弱まる</span>／コスト源泉＝<span class="blank">経験曲線</span>効果／戦略グループ間の壁＝<span class="blank">移動障壁</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB2 VRIO -->
+  <div class="tab-panel">
+
+    <h2>図1：4つの問いを順に通すと「優位の段階」が上がる</h2>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.7rem .9rem;margin:.5rem 0 .8rem;font-size:.86rem;">
+      <div style="font-size:.72rem;font-weight:700;color:#0ea5e9;margin-bottom:.3rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .5rem;line-height:1.7;color:#334155;">V→R→I→Oの質問を順にクリアするほど、強みのレベルが上がる。役立つだけなら人並み（競争均衡）、珍しければ一時的に勝てる、真似されにくく体制も整えば長く勝ち続けられる（持続的優位）。</p>
+      <div style="background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.45rem .8rem;font-size:.8rem;color:#713f12;font-weight:700;">🔑 価値だけ＝均衡 →＋希少＝一時 →＋模倣困難＋組織＝持続</div>
+    </div>
+    <div class="fig">
+      <table>
+        <tr><th>問い</th><th>Noなら…</th><th>Yesなら次へ</th></tr>
+        <tr><td><b>V</b> 経済価値ある?</td><td class="no">競争劣位</td><td>↓ R へ</td></tr>
+        <tr><td><b>R</b> 希少?</td><td>競争均衡</td><td>↓ I へ</td></tr>
+        <tr><td><b>I</b> 模倣困難?</td><td>一時的な競争優位</td><td>↓ O へ</td></tr>
+        <tr><td><b>O</b> 組織で活用?</td><td>優位を活かせない</td><td class="yes">持続的競争優位 ⭐</td></tr>
+      </table>
+      <div class="note">価値だけ→競争均衡、＋希少→一時的優位、＋模倣困難＋組織→持続的優位。段階で上がる。</div>
+    </div>
+
+    <h2>図2：RBV vs ポジショニング（ポーター）＋模倣困難性の要因</h2>
+    <div style="text-align:center;width:96px;margin:4px auto 0;">
+      <div style="width:58px;height:58px;border-radius:50%;background:#eafaf1;border:2px solid #1e8449;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;">🧑‍💼<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.05rem;background:#fff;border-radius:50%;">💎</span></div>
+      <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:2px;">バーニー<br><span style="font-weight:500;color:#64748b;">VRIO/RBV（内部資源）</span></div>
+    </div>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.7rem .9rem;margin:.5rem 0 .8rem;font-size:.86rem;">
+      <div style="font-size:.72rem;font-weight:700;color:#0ea5e9;margin-bottom:.3rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .5rem;line-height:1.7;color:#334155;">同じ「勝つ」でも強みの<b>出どころ</b>が2通り。<b>RBV＝自分の“腕前・持ち物”（内部の資源）で勝つ</b>／<b>ポジショニング＝“良い場所取り”（外部の業界での位置）で勝つ</b>。</p>
+      <div style="background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.45rem .8rem;font-size:.8rem;color:#713f12;font-weight:700;">🔑 中身（資源）で勝つ＝バーニー／場所取りで勝つ＝ポーター</div>
+    </div>
+    <div class="fig">
+      <div class="vsclash">
+        <div class="s" style="background:#eafaf1;border-color:#1e8449;"><b>RBV</b><br>強みは<b>内部の資源</b>から（VRIO・コアコンピタンス）</div>
+        <div class="mid">vs</div>
+        <div class="s" style="background:#eaf2f8;border-color:#1a5276;"><b>ポジショニング</b><br>強みは<b>外部の業界構造</b>から（ファイブフォース）</div>
+      </div>
+      <div class="note">コアコンピタンス＝他社が真似しにくい中核的な強み（プラハラード＆ハメル）。</div>
+    </div>
+
+    <h2>📖 元ノート（qz_18 VRIOまとめ）の解説 ― 4文字の意味と優位の段階を原文で🆕</h2>
+    <div style="margin:2px 0 8px;">
+      <a href="../参照ノート_103/qz_18.経営資源・VRIOまとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;">🔗 元ノート全文：経営資源・VRIO（qz_18）↗</a>
+    </div>
+    <div class="src-note">
+      <span class="src-tag">📗 元ノート抜粋（V と R を取り違えないために）</span>
+      <table>
+        <tr><th>記号</th><th>英語／意味</th><th>問い（判定軸）</th></tr>
+        <tr><td><b>V</b></td><td class="l">Value／<b>価値</b></td><td class="l">機会を活かす／脅威を無力化できるか。<b>収益向上・コスト削減に貢献</b>するか（例：トヨタのカイゼン文化）</td></tr>
+        <tr><td><b>R</b></td><td class="l">Rarity／<b>希少性</b></td><td class="l">その資源を持つ企業は<b>業界内で少数</b>か（例：免許・特殊立地・特殊技術者）</td></tr>
+        <tr><td><b>I</b></td><td class="l">Imitability／<b>模倣困難性</b></td><td class="l">真似するのが難しい／高コストか</td></tr>
+        <tr><td><b>O</b></td><td class="l">Organization／<b>組織</b></td><td class="l">資源を活かす組織体制（補完資産）があるか</td></tr>
+      </table>
+      <blockquote>4文字を「価値→希少→模倣困難→組織」の順で段階的に問う。前の質問にYesじゃないと次へ進めない積み上げ式。</blockquote>
+    </div>
+    <div class="src-note">
+      <span class="src-tag">📗 VRIO判定マトリクス（元ノート＝O＝Noの「未活用」行まで）</span>
+      <table>
+        <tr><th>V</th><th>R</th><th>I</th><th>O</th><th>競争状況</th><th>業績</th></tr>
+        <tr><td class="no">No</td><td>―</td><td>―</td><td>―</td><td><b>競争劣位</b></td><td>標準以下</td></tr>
+        <tr><td class="yes">Yes</td><td class="no">No</td><td>―</td><td>―</td><td><b>競争均衡</b></td><td>標準</td></tr>
+        <tr><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td>―</td><td><b>一時的優位</b></td><td>一時的に標準以上</td></tr>
+        <tr><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td><b>未活用</b></td><td>持続困難</td></tr>
+        <tr><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td><b>持続的競争優位</b></td><td>持続的に標準以上</td></tr>
+      </table>
+      <div class="note">VRIまでYesでも<b>O＝Noなら「未活用」</b>で持続的優位にならない――Oの役割がここで効く。</div>
+    </div>
+    <div class="src-note">
+      <span class="src-tag">📗 模倣困難性の4源泉（元ノート＝特許まで4つ）</span>
+      <div class="grid2">
+        <div class="cell"><b>①歴史的経路依存性</b>その時代・その場所でしか得られなかった資源</div>
+        <div class="cell"><b>②因果関係の不明性</b>成功要因が社内ですら説明不能</div>
+        <div class="cell"><b>③社会的複雑性</b>人間関係・信頼・文化など複雑に絡む</div>
+        <div class="cell"><b>④特許・法的保護</b>特許権・実用新案など法律で守られる</div>
+      </div>
+      <div class="mnemo">「ブリオッシュ」でVRIO／「レキ・イン・シャ・トク」で模倣困難4源泉<small>歴史・因果・社会・特許</small></div>
+    </div>
+    <div class="trap"><b>元ノートの引っかけ</b>：①<b>V＝価値</b>を「コスト削減のみ」で判断は誤り（<b>機会活用も含む</b>。VとRを混同しない）。②「希少なら必ず持続的優位」は誤り＝希少だけでは<b>一時的優位</b>まで。③模倣困難の源泉は「因果関係の<b>不明性</b>」（“明確性”は誤り）。<b>規模の経済はI源泉ではない</b>。④提唱者の入れ替え注意＝VRIO/RBVは<b>バーニー</b>、ファイブフォースは<b>ポーター</b>。</div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1ミラー：判定マトリクス（Noで打ち切り）</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>V</th><th>R</th><th>I</th><th>O</th><th>結果</th></tr>
+          <tr><td>No</td><td>―</td><td>―</td><td>―</td><td><span class="blank">競争劣位</span></td></tr>
+          <tr><td>Yes</td><td>No</td><td>―</td><td>―</td><td><span class="blank">競争均衡</span></td></tr>
+          <tr><td>Yes</td><td>Yes</td><td>No</td><td>―</td><td><span class="blank">一時的競争優位</span></td></tr>
+          <tr><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td><span class="blank">持続的競争優位</span></td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2ミラー：RBV vs ポジショニング・模倣困難の要因</div>
+      <div class="fill-body">
+        <div>RBV＝強みは<span class="blank">内部の資源</span>から／ポーター＝<span class="blank">外部の業界構造</span>から</div>
+        <div>模倣困難性の要因＝<span class="blank">経路依存性</span>・因果関係の曖昧性・社会的複雑性／中核的な強み＝<span class="blank">コアコンピタンス</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+// 各タブ先頭に「予習」版の穴埋めを複製（約10%を事前表示・標準fill-cardのみ対象。.q04等は除外）
+(function(){
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var cards=[].slice.call(panel.querySelectorAll('.fill-card')).filter(function(c){
+      return c.querySelector('.fill-head')&&c.querySelector('.blank');
+    });
+    if(!cards.length) return;
+    var sec=document.createElement('div');
+    var t=document.createElement('div'); t.className='fill-section-title';
+    t.textContent='🔰 予習（先にざっと・一部ヒント済み）'; sec.appendChild(t);
+    cards.forEach(function(card){
+      var cl=card.cloneNode(true);
+      var h=cl.querySelector('.fill-head'); if(h) h.textContent='予習｜'+h.textContent;
+      var mb=cl.querySelector('.mz-btn'); if(mb) mb.remove(); cl.classList.remove('mz-done');
+      var bl=cl.querySelectorAll('.blank'), n=bl.length;
+      var show=Math.min(Math.max(1,Math.round(n*0.1)),Math.max(0,n-1));
+      for(var i=0;i<show;i++){ bl[i].classList.add('show'); }
+      sec.appendChild(cl);
+    });
+    var h2=panel.querySelector('h2');
+    if(h2){ panel.insertBefore(sec,h2); } else { panel.insertBefore(sec,panel.firstChild); }
+  });
+})();
+document.querySelectorAll('.blank').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('show')));
+function rev(btn){
+  const blanks=btn.closest('.fill-body').querySelectorAll('.blank');
+  const anyHidden=[...blanks].some(b=>!b.classList.contains('show'));
+  blanks.forEach(b=>b.classList.toggle('show',anyHidden));
+}
+function revAll(btn){
+  const blanks=btn.closest('.tab-panel').querySelectorAll('.blank');
+  const anyHidden=[...blanks].some(b=>!b.classList.contains('show'));
+  blanks.forEach(b=>b.classList.toggle('show',anyHidden));
+}
+// 覚えた→○ボタンで非表示（localStorage保存）
+(function(){
+  var KEY='mz_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function keyFor(el){
+    if(el.classList.contains('fill-card')){
+      var h=el.querySelector('.fill-head');
+      return 'fc:'+(h?h.textContent.trim():'').slice(0,44);
+    }
+    var p=el.previousElementSibling, hd='';
+    while(p){ if(p.tagName==='H2'){hd=p.textContent.trim();break;} p=p.previousElementSibling; }
+    return 'b:'+hd.slice(0,18)+'|'+el.textContent.replace(/\s+/g,'').slice(0,26);
+  }
+  document.querySelectorAll('.fig,.fill-card,.src-note,.src-fig,.vz-supplement').forEach(function(el){
+    var id=keyFor(el);
+    var btn=document.createElement('button');
+    btn.className='mz-btn'; btn.type='button';
+    function set(on){ el.classList.toggle('mz-done',on); btn.textContent=on?'✓':'○'; }
+    function save(on){ st[id]=on; localStorage.setItem(KEY,JSON.stringify(st)); }
+    set(!!st[id]);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); var on=!el.classList.contains('mz-done'); set(on); save(on); });
+    el.addEventListener('click',function(){ if(el.classList.contains('mz-done')){ set(false); save(false); } });
+    el.appendChild(btn);
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head'); return h&&h.textContent.trim().startsWith('予習｜'); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苦手復習 106-02 ｜ 統計(推測・検定)・SQL・クラウド(未学習)</title>
+<style>
+:root{--p:#7b1fa2;--pl:#f3e5f5;--b:#1a5276;--bl:#eaf2f8;--g:#1e8449;--gl:#eafaf1;--o:#b9770e;--ol:#fef9e7;--r:#c0392b;--rl:#fdedec;--ink:#1e293b;--mut:#64748b;--line:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:var(--ink);line-height:1.7;}
+.header{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;padding:22px 16px;text-align:center;}
+.header h1{font-size:1.25rem;}
+.header p{font-size:.82rem;opacity:.85;margin-top:4px;}
+.tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
+.tab-nav{display:flex;flex-wrap:wrap;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
+.tab-btn{flex:1;min-width:88px;padding:14px 6px;border:none;background:#fff;color:var(--mut);font-size:.9rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-btn.active[data-c=b]{color:var(--b);border-bottom-color:var(--b);background:var(--bl);}
+.tab-btn.active[data-c=o]{color:var(--o);border-bottom-color:var(--o);background:var(--ol);}
+.tab-btn.active[data-c=g]{color:var(--g);border-bottom-color:var(--g);background:var(--gl);}
+.tab-btn.active[data-c=t]{color:#0f766e;border-bottom-color:#0f766e;background:#ccfbf1;}
+.tab-btn.active[data-c=p]{color:var(--p);border-bottom-color:var(--p);background:var(--pl);}
+.tab-panel{display:none;background:#fff;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;animation:f .3s;}
+@keyframes f{from{opacity:0}to{opacity:1}}
+h2{font-size:1.05rem;margin:22px 0 10px;padding-left:10px;border-left:5px solid var(--b);}
+h2:first-of-type{margin-top:6px;}
+.unlearned{background:#eff6ff;border:1px solid #93c5fd;border-left:5px solid #2563eb;border-radius:8px;padding:11px 15px;font-size:.88rem;margin:6px 0 12px;}
+.unlearned b{color:#1d4ed8;}
+.fig{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfcfd;}
+.note{font-size:.8rem;text-align:center;color:var(--mut);margin-top:8px;}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.84rem;}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:center;vertical-align:middle;}
+th{background:var(--b);color:#fff;}
+tr:nth-child(even) td{background:#f8fafc;}
+td.l{text-align:left;}
+.yes{background:#dcfce7!important;color:#166534;font-weight:800;}
+.no{background:#fee2e2!important;color:#991b1b;font-weight:800;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cell{border:2px solid var(--line);border-radius:8px;padding:9px 11px;font-size:.81rem;}
+.cell b{display:block;color:var(--b);margin-bottom:2px;}
+.trap{background:var(--rl);border-left:4px solid var(--r);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.82rem;margin:10px 0;}
+.trap b{color:var(--r);}
+.flow{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:8px 0;}
+.flow .box{background:#dbeafe;border-radius:6px;padding:.35rem .7rem;font-size:.82rem;font-weight:700;color:#1e40af;}
+.flow .box.g{background:#dcfce7;color:#166534;}
+.flow .box.o{background:#fef9c3;color:#854d0e;}
+.flow .arrow{color:#94a3b8;font-size:1.1rem;}
+.formula{text-align:center;font-weight:800;color:var(--b);font-size:1.02rem;margin:6px 0;background:#eef6fb;border:1.5px solid #b6d4e6;border-radius:8px;padding:9px 8px;}
+.formula .ex{display:block;font-size:.82rem;font-weight:700;color:var(--g);margin-top:4px;}
+.vz-supplement{background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;}
+.vz-label{font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;}
+.vz-supplement p{margin:0 0 .6rem;line-height:1.7;color:#334155;}
+.fill-section-title{margin:24px 0 6px;font-size:1rem;font-weight:800;color:#7b1fa2;}
+.revall-btn{width:100%;padding:13px;font-size:.98rem;font-weight:800;background:#7b1fa2;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;}
+.revall-btn:hover{background:#6a1b9a;}
+.fill-card{background:#faf5ff;border:2px solid var(--p);border-radius:12px;margin-top:12px;overflow:hidden;position:relative;}
+.fill-head{background:var(--p);color:#fff;padding:10px 16px;font-weight:800;font-size:.92rem;}
+.fill-body{padding:14px 18px;font-size:.9rem;line-height:2.2;}
+.fill-body table{margin:4px 0 6px;}
+.fill-body table .blank{min-width:84px;}
+.blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #a855f7;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:800;color:transparent;background:#f3e8ff;border-radius:4px;user-select:none;}
+.blank.show{color:#c2410c;background:#fff7ed;border-color:#c2410c;}
+.revbtn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;}
+.fig,.fill-card,.vz-supplement{position:relative;}
+.mz-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:2px solid #16a34a;background:#fff;color:#16a34a;font-weight:800;cursor:pointer;z-index:5;font-size:.95rem;line-height:1;padding:0;}
+.mz-btn:hover{background:#dcfce7;}
+.mz-done>:not(.mz-btn){display:none!important;}
+.mz-done{background:#f0fdf4!important;border-color:#16a34a!important;padding:12px 16px!important;cursor:pointer;}
+.mz-done::after{content:"✓ 覚えた（タップで再表示）";color:#16a34a;font-weight:700;font-size:.82rem;}
+.mz-done .mz-btn{background:#16a34a;color:#fff;}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.tab-btn{font-size:.78rem;min-width:80px}table{font-size:.76rem}}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>苦手復習 106-02</h1>
+  <p>⑦統計（推測・検定）と⑧SQLの <b>×・△だった観点</b>＋ ⑥クラウド（📘未学習＝読んで覚える）</p>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-c="g" onclick="sw(0)">📊 統計（推測・検定）</button>
+    <button class="tab-btn" data-c="b" onclick="sw(1)">🗄 SQL</button>
+    <button class="tab-btn" data-c="t" onclick="sw(2)">☁ クラウド（未学習）</button>
+  </nav>
+
+  <!-- ================= TAB0 統計（推測・検定） ================= -->
+  <div class="tab-panel active">
+    <h2>図1：検定の枠組み（仮説・有意水準・p値）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>検定は「<b>差はない</b>」と仮に決めて（帰無仮説）、データがその仮定では起こりにくいほど珍しいなら「やっぱり差はある」と判断する手続きです。まず否定したい側（差がない）を置くのがポイント。</p>
+      </div>
+      <table>
+        <tr><th>用語</th><th>意味</th></tr>
+        <tr><td>帰無仮説 H0</td><td class="l"><b>「差がない・効果がない」</b>とする仮説（これを棄却したい）</td></tr>
+        <tr><td>対立仮説 H1</td><td class="l"><b>「差がある・効果がある」</b>と主張したい仮説</td></tr>
+        <tr><td>有意水準 α</td><td class="l">棄却の基準（よく5%）。誤って棄却してよい確率の上限</td></tr>
+        <tr><td>p値</td><td class="l">p値＜αなら帰無仮説を<b>棄却</b>（＝対立仮説を採る）</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：<b>帰無仮説＝「差がない」</b>側（「差がある」と主張したいのは対立仮説）。p値が有意水準より<b>小さい</b>と棄却。</div>
+    </div>
+
+    <h2>図2：2種類の誤り（第1種・第2種）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>検査の間違いは2種類。「健康なのに病気と誤診（第1種・あわてんぼう）」と「病気なのに見逃す（第2種・ぼんやり）」です。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🏃💦</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">第1種（α）あわてんぼう</div><div style="font-size:.75rem;color:#7f1d1d;">健康なのに病気と誤診</div></div>
+          <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">😴</div><div style="font-size:.78rem;font-weight:700;color:#c2410c;">第2種（β）ぼんやり</div><div style="font-size:.75rem;color:#7c2d12;">病気なのに見逃す</div></div>
+        </div>
+      </div>
+      <table>
+        <tr><th>　</th><th>本当はH0が正しい<br>(差がない)</th><th>本当はH0が誤り<br>(差がある)</th></tr>
+        <tr><td class="l">H0を棄却（差ありと判定）</td><td class="no">第1種の誤り α</td><td class="yes">正しい</td></tr>
+        <tr><td class="l">H0を採択（差なしと判定）</td><td class="yes">正しい</td><td class="no">第2種の誤り β</td></tr>
+      </table>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--r)"><b>第1種の誤り（α）</b>差がないのに「差あり」と判定＝<b>あわてんぼう</b>（偽陽性）</div>
+        <div class="cell" style="border-color:var(--o)"><b>第2種の誤り（β）</b>差があるのに「差なし」と見逃す＝<b>ぼんやり</b>（偽陰性）</div>
+      </div>
+      <div class="trap"><b>外した／△Q</b>：有意水準を<b>厳しく</b>（5%→1%）すると棄却しにくくなる＝<b>第1種の誤りは下がる</b>（上がらない）。</div>
+    </div>
+
+    <h2>図3：推測統計の土台（数値はここだけ覚える）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>全部は調べられないので一部（標本）で全体（母集団）を推し量ります。だから少しのズレ（誤差）が出るのは当たり前です。</p>
+        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+          <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#1e40af;">母集団（全体）</div>
+          <span style="color:#94a3b8;font-size:.78rem;">→一部抜き出し→</span>
+          <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#166534;">標本（サンプル）</div>
+          <span style="color:#94a3b8;font-size:.78rem;">→推測→</span>
+          <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#854d0e;">少しの誤差はつきもの</div>
+        </div>
+      </div>
+      <div class="formula">正規分布：平均±1σ ≒ 68％／±2σ ≒ 95％／±3σ ≒ 99.7％</div>
+      <table>
+        <tr><th>項目</th><th>ポイント</th></tr>
+        <tr><td>中心極限定理</td><td class="l">母集団がどんな分布でも、<b>標本平均</b>は標本が大きいほど正規分布に近づく</td></tr>
+        <tr><td>標本誤差</td><td class="l">一部（標本）から全体（母集団）を推測する以上、誤差は生じうる</td></tr>
+        <tr><td>偏差値</td><td class="l">平均<b>50</b>・標準偏差<b>10</b>に変換した相対的な位置</td></tr>
+        <tr><td>変動係数(CV)</td><td class="l">標準偏差 ÷ 平均。単位や平均が違うデータのばらつき比較に</td></tr>
+      </table>
+      <div class="trap"><b>△だったQ</b>：偏差値＝<b>平均50/SD10</b>。変動係数＝<b>SD÷平均</b>。±1σに約<b>68%</b>。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">検定の用語</div>
+      <div class="fill-body">
+        <div>「差がない」とする仮説＝<span class="blank">帰無仮説</span>／「差がある」と主張＝<span class="blank">対立仮説</span></div>
+        <div>p値が有意水準αより<span class="blank">小さい</span>とき、帰無仮説を<span class="blank">棄却</span>する</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">2種類の誤り</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>判定＼真実</th><th>H0正しい</th><th>H0誤り</th></tr>
+          <tr><td>H0を棄却</td><td><span class="blank">第1種の誤り(α)</span></td><td>正しい</td></tr>
+          <tr><td>H0を採択</td><td>正しい</td><td><span class="blank">第2種の誤り(β)</span></td></tr>
+        </table>
+        <div>有意水準を厳しくすると、第1種の誤りは<span class="blank">下がる</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">推測統計の数値</div>
+      <div class="fill-body">
+        <div>標本平均が正規分布に近づく＝<span class="blank">中心極限定理</span></div>
+        <div>正規分布で平均±1σに約<span class="blank">68</span>%・±2σに約<span class="blank">95</span>%</div>
+        <div>偏差値＝平均<span class="blank">50</span>・標準偏差<span class="blank">10</span>／変動係数＝<span class="blank">標準偏差÷平均</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB1 SQL ================= -->
+  <div class="tab-panel">
+    <h2>図1：SQLの3分類（DML / DDL / DCL）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>SQLの命令は役割で3グループ。<b>中身のデータを操作（DML）／表の入れ物を作り変える（DDL）／使う権利を管理する（DCL）</b>。DELETEとDROPの違いはここで決まります。</p>
+      </div>
+      <table>
+        <tr><th>分類</th><th>命令</th><th>役割</th></tr>
+        <tr><td>DML（操作）</td><td class="l">SELECT・INSERT・UPDATE・<b>DELETE</b></td><td class="l">データ（行）の検索・追加・更新・削除</td></tr>
+        <tr><td>DDL（定義）</td><td class="l">CREATE・ALTER・<b>DROP</b></td><td class="l">表など入れ物の定義を作成・変更・削除</td></tr>
+        <tr><td>DCL（制御）</td><td class="l"><b>GRANT・REVOKE</b></td><td class="l">利用者への権限の付与・取消</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：<b>DELETE＝行を削除</b>（表は残る）／<b>DROP TABLE＝表を定義ごと削除</b>。<b>GRANT/REVOKE＝権限（DCL）</b>で、並べ替えではない。</div>
+    </div>
+
+    <h2>図2：NULL・並び順・範囲指定</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>NULLは「空っぽ＝値が無い」状態。中身が無いので「＝」では比べられず、専用の <b>IS NULL</b> を使います。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🚫</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">列 = NULL</div><div style="font-size:.75rem;color:#7f1d1d;">空っぽは=で比べられない</div></div>
+          <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">✅</div><div style="font-size:.78rem;font-weight:700;color:#15803d;">列 IS NULL</div><div style="font-size:.75rem;color:#14532d;">専用の書き方を使う</div></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--r)"><b>NULLの判定</b>「列 = NULL」は<b>不可</b>。<b>IS NULL / IS NOT NULL</b> を使う</div>
+        <div class="cell" style="border-color:var(--o)"><b>ORDER BY省略</b>並び順は<b>保証されない</b>（主キー順とは限らない）。順序が要るなら明示</div>
+        <div class="cell" style="border-color:var(--g)"><b>BETWEEN 10 AND 20</b><b>両端を含む</b>（10以上20以下）</div>
+        <div class="cell" style="border-color:var(--b)"><b>WHERE と HAVING</b>WHERE＝行を絞る／HAVING＝集計後を絞る（○で取れた所・再確認）</div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">SQLの3分類</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>分類</th><th>代表的な命令</th></tr>
+          <tr><td>DML（操作）</td><td>SELECT・INSERT・UPDATE・<span class="blank">DELETE</span></td></tr>
+          <tr><td>DDL（定義）</td><td>CREATE・ALTER・<span class="blank">DROP</span></td></tr>
+          <tr><td>DCL（制御）</td><td><span class="blank">GRANT</span>・<span class="blank">REVOKE</span></td></tr>
+        </table>
+        <div>行を削除＝<span class="blank">DELETE</span>／表を定義ごと削除＝<span class="blank">DROP</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">NULL・並び順・範囲</div>
+      <div class="fill-body">
+        <div>NULLの判定は「=」ではなく<span class="blank">IS NULL</span>を使う</div>
+        <div>ORDER BYを省略すると並び順は<span class="blank">保証されない</span></div>
+        <div>BETWEEN 10 AND 20 は<span class="blank">両端を含む</span>（10以上20以下）</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB2 クラウド（未学習） ================= -->
+  <div class="tab-panel">
+    <div class="unlearned"><b>📘 未学習（土台ゼロ）</b>。確認テスト前にここで読んで覚える。論点：IaaS／PaaS／SaaS・パブリック/プライベート/ハイブリッド・仮想化/コンテナ/K8s・クラウドの特徴。</div>
+
+    <h2>図1：サービスモデル（IaaS / PaaS / SaaS）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>クラウドは「どこまで用意してもらうか」で3段階。<b>土台だけ（IaaS）→開発環境まで（PaaS）→完成アプリまで（SaaS）</b>。上にいくほど自分の手間は減り、事業者が見る範囲が広がります。</p>
+      </div>
+      <table>
+        <tr><th>モデル</th><th>提供されるもの</th><th>利用者が管理</th><th>例</th></tr>
+        <tr><td>IaaS</td><td class="l">サーバ・ストレージ・NW（インフラ）</td><td class="l">OS・ミドル・アプリ</td><td>仮想サーバ貸し</td></tr>
+        <tr><td>PaaS</td><td class="l">OS・ミドル・実行環境まで</td><td class="l">アプリ・データ</td><td>開発プラットフォーム</td></tr>
+        <tr><td>SaaS</td><td class="l">完成したアプリ</td><td class="l">設定・データのみ</td><td>Webメール・オフィス</td></tr>
+      </table>
+      <div class="note">事業者の管理範囲は <b>IaaS ＜ PaaS ＜ SaaS</b> の順に広い（利用者の手間は逆に小さくなる）。</div>
+    </div>
+
+    <h2>図2：デプロイモデル（どこに置くか）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>クラウドの置き場所の違い。みんなで使う賃貸（パブリック）、自社専用の持ち家（プライベート）、両方を使い分け（ハイブリッド）です。</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem;">
+          <div style="background:#ede9fe;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">🏢</div><div style="font-size:.74rem;font-weight:600;color:#5b21b6;">パブリック<br>みんなで使う賃貸</div></div>
+          <div style="background:#fce7f3;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">🏠</div><div style="font-size:.74rem;font-weight:600;color:#9d174d;">プライベート<br>自社専用の持ち家</div></div>
+          <div style="background:#ecfdf5;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">🔀</div><div style="font-size:.74rem;font-weight:600;color:#065f46;">ハイブリッド<br>両方を使い分け</div></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--b)"><b>パブリッククラウド</b>不特定多数で共用。安価・拡張容易（AWS/Azure等）</div>
+        <div class="cell" style="border-color:var(--g)"><b>プライベートクラウド</b>自社専用。セキュリティ・自由度が高いがコストは自社負担</div>
+        <div class="cell" style="border-color:var(--o)"><b>ハイブリッドクラウド</b>パブリック＋プライベート（やオンプレ）を組み合わせ</div>
+        <div class="cell" style="border-color:var(--mut)"><b>オンプレミス</b>自社で設備を保有・運用する従来型（クラウドの対義）</div>
+      </div>
+    </div>
+
+    <h2>図3：仮想化とコンテナ</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>VMは「家ごと建てる（OSを丸ごと持つ）」、コンテナは「同じ建物に間借り（OSを共有）」。間借りのほうが軽くて起動が速いです。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🏗🏠</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">VM＝家ごと建てる</div><div style="font-size:.75rem;color:#7f1d1d;">OS丸ごと・重い</div></div>
+          <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🚪🏢</div><div style="font-size:.78rem;font-weight:700;color:#15803d;">コンテナ＝間借り</div><div style="font-size:.75rem;color:#14532d;">OS共有・軽い・速い</div></div>
+        </div>
+      </div>
+      <table>
+        <tr><th>　</th><th>仮想マシン(VM)</th><th>コンテナ</th></tr>
+        <tr><td>OS</td><td class="l">ゲストOSを丸ごと持つ</td><td class="yes">ホストOSのカーネルを共有</td></tr>
+        <tr><td>重さ・起動</td><td class="l">重い・起動が遅い</td><td class="yes">軽い・起動が速い</td></tr>
+        <tr><td>土台</td><td class="l">ハイパーバイザが管理</td><td class="l">Docker等。多数管理は<b>Kubernetes(K8s)</b></td></tr>
+      </table>
+      <div class="note">K8s＝多数のコンテナの配置・スケーリング・障害復旧を<b>自動化</b>するオーケストレーションツール。</div>
+    </div>
+
+    <h2>図4：クラウドの特徴（メリット）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>電気代と同じで「使った分だけ払う」。設備を自分で買わないので、最初にかかるお金（初期投資）が少なくて済みます。</p>
+        <div style="position:relative;background:#fefce8;border:2px solid #fde047;border-radius:8px;padding:.6rem .8rem;margin-top:.4rem;font-size:.82rem;color:#713f12;">
+          <span style="position:absolute;top:-10px;left:12px;background:#fde047;font-size:.68rem;font-weight:700;padding:.1rem .4rem;border-radius:4px;color:#713f12;">🔑 ポイント</span>
+          従量課金（使った分だけ）＋ 設備を持たない ＝ 初期投資が小さく、必要なときに増減できる。
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--g)"><b>従量課金</b>使った分だけ支払う（初期投資を抑えられる）</div>
+        <div class="cell" style="border-color:var(--b)"><b>スケーラビリティ（伸縮性）</b>需要に応じて資源を増減</div>
+        <div class="cell" style="border-color:var(--p)"><b>リソースプール</b>複数利用者で物理資源を共用し割り当て</div>
+        <div class="cell" style="border-color:var(--o)"><b>サーバレス（FaaS）</b>サーバ管理不要・実行時だけ課金</div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">IaaS / PaaS / SaaS</div>
+      <div class="fill-body">
+        <div>インフラだけ提供＝<span class="blank">IaaS</span>／開発・実行環境まで＝<span class="blank">PaaS</span>／完成アプリ＝<span class="blank">SaaS</span></div>
+        <div>事業者の管理範囲は IaaS＜PaaS＜<span class="blank">SaaS</span> の順に広い</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">仮想化・コンテナ・特徴</div>
+      <div class="fill-body">
+        <div>ゲストOSを丸ごと持つ＝<span class="blank">仮想マシン(VM)</span>／ホストOSのカーネル共有で軽量＝<span class="blank">コンテナ</span></div>
+        <div>多数のコンテナを自動管理＝<span class="blank">Kubernetes(K8s)</span></div>
+        <div>使った分だけ課金＝<span class="blank">従量課金</span>／需要に応じ資源を増減＝<span class="blank">スケーラビリティ</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+// 各タブ先頭に「予習」版の穴埋めを複製（約10%を事前表示・標準fill-cardのみ対象）
+(function(){
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var cards=[].slice.call(panel.querySelectorAll('.fill-card')).filter(function(c){
+      return c.querySelector('.fill-head')&&c.querySelector('.blank');
+    });
+    if(!cards.length) return;
+    var sec=document.createElement('div');
+    var t=document.createElement('div'); t.className='fill-section-title';
+    t.textContent='🔰 予習（先にざっと・一部ヒント済み）'; sec.appendChild(t);
+    cards.forEach(function(card){
+      var cl=card.cloneNode(true);
+      var h=cl.querySelector('.fill-head'); if(h) h.textContent='予習｜'+h.textContent;
+      var mb=cl.querySelector('.mz-btn'); if(mb) mb.remove(); cl.classList.remove('mz-done');
+      var bl=cl.querySelectorAll('.blank'), n=bl.length;
+      var show=Math.min(Math.max(1,Math.round(n*0.1)),Math.max(0,n-1));
+      for(var i=0;i<show;i++){ bl[i].classList.add('show'); }
+      sec.appendChild(cl);
+    });
+    var h2=panel.querySelector('h2');
+    if(h2){ panel.insertBefore(sec,h2); } else { panel.insertBefore(sec,panel.firstChild); }
+  });
+})();
+document.querySelectorAll('.blank').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('show')));
+function rev(btn){
+  var blanks=btn.closest('.fill-body').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+function revAll(btn){
+  var blanks=btn.closest('.tab-panel').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+// 覚えた→○ボタンで非表示（見出しベースの安定キーで保存）
+(function(){
+  var KEY='mz_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function keyFor(el){
+    if(el.classList.contains('fill-card')){
+      var h=el.querySelector('.fill-head');
+      return 'fc:'+(h?h.textContent.trim():'').slice(0,44);
+    }
+    var p=el.previousElementSibling, hd='';
+    while(p){ if(p.tagName==='H2'){hd=p.textContent.trim();break;} p=p.previousElementSibling; }
+    return 'b:'+hd.slice(0,18)+'|'+el.textContent.replace(/\s+/g,'').slice(0,26);
+  }
+  document.querySelectorAll('.fig,.fill-card,.vz-supplement').forEach(function(el){
+    var id=keyFor(el);
+    var btn=document.createElement('button');
+    btn.className='mz-btn'; btn.type='button';
+    function set(on){ el.classList.toggle('mz-done',on); btn.textContent=on?'✓':'○'; }
+    function save(on){ st[id]=on; localStorage.setItem(KEY,JSON.stringify(st)); }
+    set(!!st[id]);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); var on=!el.classList.contains('mz-done'); set(on); save(on); });
+    el.addEventListener('click',function(){ if(el.classList.contains('mz-done')){ set(false); save(false); } });
+    el.appendChild(btn);
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head'); return h&&h.textContent.trim().startsWith('予習｜'); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+})();
+</script>
+</body>
+</html>

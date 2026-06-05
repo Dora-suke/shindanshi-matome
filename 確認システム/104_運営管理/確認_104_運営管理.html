@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>確認システム</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
+.card{background:#1e293b;border-radius:18px;max-width:860px;width:100%;padding:36px 40px;box-shadow:0 8px 40px rgba(0,0,0,.5);border:3px solid #ffffff;}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.topic{font-size:.95em;color:#fcd34d;font-weight:800;letter-spacing:.05em;}
+.prog{font-size:.95em;color:#94a3b8;}
+.bar{height:7px;background:#334155;border-radius:4px;margin:14px 0 28px;overflow:hidden;}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#818cf8);width:0;transition:width .3s;}
+.q{font-size:1.45em;line-height:1.85;margin-bottom:32px;min-height:3em;font-weight:600;}
+.qnum{color:#fbbf24;font-weight:800;margin-right:8px;}
+.btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.btns button{padding:22px 10px;font-size:1.3em;font-weight:800;border:none;border-radius:14px;cursor:pointer;font-family:inherit;transition:transform .1s;}
+.btns button:active{transform:scale(.96);}
+.b-o{background:#16a34a;color:#fff;}
+.b-x{background:#dc2626;color:#fff;}
+.b-d{background:#64748b;color:#fff;}
+.btns button:disabled{opacity:.4;cursor:default;}
+.result{margin-top:28px;padding:22px;border-radius:14px;display:none;}
+.result.show{display:block;animation:fade .3s;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.result.correct{background:#064e3b;border-left:4px solid #10b981;}
+.result.wrong{background:#4c1d1d;border-left:4px solid #ef4444;}
+.result .verdict{font-weight:800;font-size:1.3em;margin-bottom:10px;}
+.result .ans{font-size:1.05em;color:#cbd5e1;margin-bottom:12px;}
+.result .exp{font-size:1.12em;line-height:1.75;color:#e2e8f0;}
+.nav{display:flex;gap:12px;margin-top:24px;}
+.back{padding:18px 22px;font-size:1.05em;font-weight:800;background:#334155;color:#cbd5e1;border:none;border-radius:14px;cursor:pointer;font-family:inherit;}
+.back:disabled{opacity:.3;cursor:default;}
+.next{flex:1;padding:18px;font-size:1.25em;font-weight:800;background:#38bdf8;color:#0f172a;border:none;border-radius:14px;cursor:pointer;font-family:inherit;display:none;}
+.next.show{display:block;}
+.btns button.sel{outline:4px solid #fbbf24;outline-offset:2px;}
+.restart{margin-top:18px;padding:14px 24px;font-size:1.05em;font-weight:800;background:#334155;color:#e2e8f0;border:none;border-radius:12px;cursor:pointer;font-family:inherit;}
+.summary{text-align:center;}
+.summary h2{font-size:1.4em;margin-bottom:12px;}
+.score{font-size:2.6em;font-weight:800;color:#38bdf8;margin:10px 0;}
+.miss{text-align:left;background:#0f172a;border-radius:10px;padding:14px;margin:14px 0;font-size:.88em;line-height:1.7;}
+.code{background:#0f172a;border:1px dashed #475569;border-radius:8px;padding:12px;font-family:monospace;font-size:.9em;color:#fbbf24;margin:10px 0;word-break:break-all;}
+.copy{padding:12px 20px;background:#818cf8;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;}
+.hint{font-size:.78em;color:#94a3b8;margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="head">
+    <span class="topic" id="topic">104 運営管理 ｜ Sティア⑨ レイアウト・SLP</span>
+    <span class="prog" id="prog"></span>
+  </div>
+  <div class="bar"><i id="barfill"></i></div>
+  <div id="quiz">
+    <div class="q" id="q"></div>
+    <div class="btns">
+      <button class="b-o" onclick="answer('正')">正しい</button>
+      <button class="b-x" onclick="answer('誤')">誤り</button>
+      <button class="b-d" onclick="answer('△')">△あいまい</button>
+    </div>
+    <div class="result" id="result">
+      <div class="verdict" id="verdict"></div>
+      <div class="ans" id="ans"></div>
+      <div class="exp" id="exp"></div>
+    </div>
+    <div class="nav">
+      <button class="back" id="backbtn" onclick="prev()">← 前へ</button>
+      <button class="next" id="nextbtn" onclick="next()">次の問題へ →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 論点ID（結果コード用）
+const SUBJECT = "104";
+const LOGIC = "レイアウトSLP";
+const TOPIC = "レイアウト・工場計画（SLP・P-Q分析・DI分析）";
+// 識別ポイント：q=設問, a=正解(正/誤), e=急所解説。計算問題は過程を文中に明示し正誤を一目で判定。
+const Q = [
+  {q:"SLP（体系的レイアウト計画）は、レイアウト計画を決まった手順で体系的に進める手法で、マザー（Muther）が提唱した。", a:"正", e:"Systematic Layout Planning。リチャード・マザー考案。"},
+  {q:"SLPの基礎をなす要素は、P（製品）・Q（数量）・R（経路＝生産工程）・S（補助サービス）・T（時間）の5つである。", a:"正", e:"P-Q-R-S-T。まずP（何を）とQ（どれだけ）を分析するのが出発点。"},
+  {q:"SLPの最初のステップは、製品（P）と生産量（Q）の関係を分析するP-Q分析である。", a:"正", e:"P-Q分析→物の流れ分析→アクティビティ相互関係分析→面積→レイアウト案、の順。"},
+  {q:"P-Q分析の結果、少品種多量の生産には製品別レイアウト（ライン）が、多品種少量には機能別（工程別）レイアウトが適すると判断される。", a:"正", e:"少品種多量＝製品別／多品種少量＝機能別（工程別）。"},
+  {q:"P-Q分析で「多品種少量」と判定された場合は、製品の流れに沿った製品別レイアウト（ライン）が最も適する。", a:"誤", e:"ひっかけ。多品種少量は機能別（工程別）レイアウト。製品別は少品種多量向き。"},
+  {q:"機能別（工程別）レイアウトは同種の機械・工程をまとめて配置する方式で、多品種少量生産に適し汎用性が高いが、運搬が複雑になりやすい。", a:"正", e:"ジョブショップ。汎用機を機能別に。柔軟だが運搬・仕掛が増えがち。"},
+  {q:"固定式レイアウト（プロジェクト型）は、製品（対象物）を動かさず、その周りに人・材料・設備を移動させて作業する方式で、船舶・航空機・建設などに用いられる。", a:"正", e:"大型・重量物向け。製品が動かないのが特徴。"},
+  {q:"SLPでは、P-Q分析の後に「物の流れ分析（基本流れ分析）」を行い、続いて「アクティビティ相互関係分析」へ進む。", a:"正", e:"モノの流れ＋流れ以外の関連（補助部門の近接性など）の両方を見る。"},
+  {q:"アクティビティ相互関係図表では、部門間の近接の必要度をA（絶対必要）・E（特に重要）・I（重要）・O（普通）・U（重要でない）・X（近接不可）で評価する。", a:"正", e:"母音(vowel)評価。A〜Uが近づける度合い、Xは離すべき関係。"},
+  {q:"物の流れが複雑で経路が交錯する多品種の場合の流れ分析には、フロムツーチャート（From-Toチャート）が有効である。", a:"正", e:"多品種・交錯＝フロムツーチャート。単純な流れは単純工程分析でよい。"},
+  {q:"DI分析（ディスタンス・インテンシティ分析）は、運搬の「距離」と「物流量（強度）」の関係を図示し、距離が長く量も多い非効率な運搬を見つける手法である。", a:"正", e:"距離×物流量。図の右上（遠くて多い）が改善対象。"},
+  {q:"運搬活性示数は、置かれたモノの「動かしやすさ」の程度を表し、バラ置き（0）から動いている状態（4）まで段階で示す。", a:"正", e:"活性示数0〜4。数値が高いほどすぐ動かせる（荷役の手間が少ない）。"},
+  {q:"レイアウト改善の基本的なねらいは、運搬距離や物の流れの交錯（逆行・交差）を減らし、流れをスムーズにすることである。", a:"正", e:"運搬・交錯の最小化。直線的でスムーズな流れが理想。"},
+  {q:"グループ別（GT）レイアウトは、形状や加工が似た部品をグループ化し、必要な機械をまとめてセル状に配置する方式で、多品種少量でも流れ生産に近い効率を狙う。", a:"正", e:"グループテクノロジー＋セル。中品種中量の効率化に有効。"}
+];
+
+let i = 0;
+const results = []; // '○' '×' '△'
+const QUIZ_HTML = document.getElementById('quiz').innerHTML; // 「最初からやり直す」用に初期状態を保持
+
+// 記録マーク(○/△/×)から、実際に押された選択肢(正/誤/△)を逆算（強調表示用）
+function btnFor(item, mark){
+  if(mark==='△') return '△';
+  return (mark==='○') ? item.a : (item.a==='正'?'誤':'正');
+}
+
+function render(){
+  const item = Q[i];
+  document.getElementById('q').innerHTML = '<span class="qnum">'+(i+1)+'.</span>'+item.q;
+  document.getElementById('prog').textContent = (i+1)+' / '+Q.length;
+  document.getElementById('backbtn').disabled = (i===0);
+  const r = document.getElementById('result');
+  const buttons = document.querySelectorAll('.btns button');
+  buttons.forEach(b=>{ b.disabled=false; b.classList.remove('sel'); });
+
+  const mark = results[i];
+  if(mark){
+    // 既に回答済み（＝戻ってきた／回答直後）：正解・急所を表示し、選び直しも可能
+    const correct = (mark==='○');
+    r.className = 'result show ' + (correct?'correct':'wrong');
+    document.getElementById('verdict').textContent = correct?'✅ 正解（絞れた）':(mark==='△'?'△ あいまい → 要再訪':'❌ 不正解');
+    document.getElementById('ans').textContent = '正解：'+item.a;
+    document.getElementById('exp').textContent = '急所：'+item.e;
+    const nb = document.getElementById('nextbtn');
+    nb.className = 'next show';
+    nb.textContent = (i+1<Q.length) ? '次の問題へ →' : '結果を見る →';
+    const chosen = btnFor(item, mark);
+    buttons.forEach(b=>{
+      if((chosen==='正'&&b.classList.contains('b-o')) ||
+         (chosen==='誤'&&b.classList.contains('b-x')) ||
+         (chosen==='△'&&b.classList.contains('b-d'))) b.classList.add('sel');
+    });
+    document.getElementById('barfill').style.width = ((i+1)/Q.length*100)+'%';
+  } else {
+    // 未回答
+    r.className = 'result';
+    document.getElementById('nextbtn').className = 'next';
+    document.getElementById('barfill').style.width = (i/Q.length*100)+'%';
+  }
+}
+
+function answer(choice){
+  const item = Q[i];
+  if(choice==='△'){ results[i]='△'; }
+  else if(choice===item.a){ results[i]='○'; }
+  else { results[i]='×'; }
+  render(); // 結果表示・選択肢の強調・次へボタンを一括反映（選び直しも同じ経路）
+}
+
+function prev(){
+  if(i>0){ i--; render(); }
+}
+
+function next(){
+  if(results[i]===undefined) return; // 未回答では進めない（nextは回答後のみ表示）
+  i++;
+  if(i < Q.length){ render(); }
+  else { summary(); }
+}
+
+function restart(){
+  i = 0;
+  results.length = 0;
+  document.getElementById('quiz').innerHTML = QUIZ_HTML; // 初期状態に復元（inline onclick はグローバル関数を参照するため維持される）
+  render();
+}
+
+function summary(){
+  const o = results.filter(x=>x==='○').length;
+  const d = results.filter(x=>x==='△').length;
+  const x = results.filter(x=>x==='×').length;
+  const missList = [];
+  results.forEach((m,idx)=>{ if(m!=='○') missList.push((idx+1)+'('+m+')'); });
+  const seq = results.join('');
+  const code = LOGIC+" ["+seq+"] ○"+o+" △"+d+" ×"+x + (missList.length? " / 要再訪:"+missList.join(',') : " / 全問クリア");
+  const verdict = (x===0 && d<=1) ? "✅ クリア" : "🔁 要再訪";
+  const items = Q.map((it,idx)=>({q:it.q, a:it.a, mark:results[idx]}));
+  const base =
+    '<div class="summary">'+
+    '<h2>'+TOPIC+'</h2>'+
+    '<div class="score">○'+o+' △'+d+' ×'+x+'</div>'+
+    '<div style="font-size:1.1em;font-weight:700;margin-bottom:8px;">判定：'+verdict+'</div>'+
+    (missList.length?'<div class="miss"><b>復習ポイント：</b><br>'+missList.map(m=>'設問'+m).join('<br>')+'</div>':'<div class="miss">全問○。選択肢で戦えるレベル到達。</div>');
+  document.getElementById('quiz').innerHTML = base
+    + '<p id="savemsg" style="font-size:1em;color:#94a3b8;margin-top:14px;">記録中…</p>'
+    + '<button class="restart" onclick="restart()">🔄 最初からやり直す</button>'
+    + '</div>';
+  document.getElementById('prog').textContent = '完了';
+  document.getElementById('barfill').style.width = '100%';
+
+  // サーバへ自動保存（http経由のとき）。失敗時はコピーコードにフォールバック
+  fetch('/save', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({subject:SUBJECT, logic:LOGIC, topic:TOPIC, items:items})})
+    .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    .then(()=>{ document.getElementById('savemsg').innerHTML =
+        '<span style="color:#34d399;font-weight:800;">✅ 自動記録しました</span><br>'+
+        '<span style="font-size:.85em;">チャットで「次へ」と伝えれば次の論点に進みます。</span>'; })
+    .catch(()=>{ document.getElementById('savemsg').outerHTML =
+        '<p style="font-size:.85em;color:#fbbf24;margin:12px 0 6px;">⚠ サーバ未起動。下の1行をチャットに貼ってください</p>'+
+        '<div class="code" id="codebox">'+code+'</div>'+
+        '<button class="copy" onclick="copyCode()">📋 結果コードをコピー</button>'; });
+}
+
+function copyCode(){
+  const t = document.getElementById('codebox').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    document.querySelector('.copy').textContent='✓ コピーしました';
+  });
+}
+
+render();
+</script>
+</body>
+</html>

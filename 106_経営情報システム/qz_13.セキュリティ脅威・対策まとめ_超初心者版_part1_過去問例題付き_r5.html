@@ -942,6 +942,37 @@ ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
       <span class="goro-chip">入力欄ならSQL／表示欄ならXSS（Cross-Site Scripting）<small>Web攻撃の使い分け</small></span>
       <span class="goro-chip">パスリスト＝使い回しの罰<small>使い回しNG</small></span>
     </div>
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+      <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">攻撃は5つのカテゴリに分けて覚えよう。「人を騙す」「パスワードを突破する」「Webの入力欄を悪用する」「通信を妨害する」「パッチ未公開の弱点を突く」の5種類。</p>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.3rem;">
+        <div style="background:#fce7f3;border-radius:6px;padding:.4rem .3rem;text-align:center;border-top:3px solid #db2777;">
+          <div style="font-size:.9rem;">🎭</div>
+          <div style="font-size:.65rem;font-weight:700;color:#9d174d;">人を騙す</div>
+          <div style="font-size:.6rem;color:#831843;">フィッシング<br>SE</div>
+        </div>
+        <div style="background:#fef9c3;border-radius:6px;padding:.4rem .3rem;text-align:center;border-top:3px solid #ca8a04;">
+          <div style="font-size:.9rem;">🔑</div>
+          <div style="font-size:.65rem;font-weight:700;color:#854d0e;">PW突破</div>
+          <div style="font-size:.6rem;color:#713f12;">総当たり<br>辞書・リスト</div>
+        </div>
+        <div style="background:#fef2f2;border-radius:6px;padding:.4rem .3rem;text-align:center;border-top:3px solid #ef4444;">
+          <div style="font-size:.9rem;">💉</div>
+          <div style="font-size:.65rem;font-weight:700;color:#b91c1c;">Web攻撃</div>
+          <div style="font-size:.6rem;color:#7f1d1d;">SQL/XSS<br>CSRF</div>
+        </div>
+        <div style="background:#ede9fe;border-radius:6px;padding:.4rem .3rem;text-align:center;border-top:3px solid #7c3aed;">
+          <div style="font-size:.9rem;">🌊</div>
+          <div style="font-size:.65rem;font-weight:700;color:#5b21b6;">通信妨害</div>
+          <div style="font-size:.6rem;color:#4c1d95;">DoS/DDoS<br>MITM</div>
+        </div>
+        <div style="background:#dcfce7;border-radius:6px;padding:.4rem .3rem;text-align:center;border-top:3px solid #16a34a;">
+          <div style="font-size:.9rem;">🔓</div>
+          <div style="font-size:.65rem;font-weight:700;color:#166534;">未知の穴</div>
+          <div style="font-size:.6rem;color:#14532d;">ゼロデイ<br>サプチェ</div>
+        </div>
+      </div>
+    </div>
 
 <div style="background:#e8f5e9;border-left:5px solid #43a047;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;color:#263238;text-align:left;">
   <div style="font-weight:700;color:#2e7d32;margin-bottom:.4rem;">📝 過去問(<span style="background:#43a047;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.85rem;">R06-第18問</span>) <span style="color:#388e3c;font-size:.8rem;">(実問題)</span></div>
@@ -3186,6 +3217,18 @@ window.LS_CONFIG = {
     if(hidden[id]) doHide(getLabel());
   });
 })();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head,.fill-header'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); return h&&(h.textContent.trim().startsWith('予習｜')||h.textContent.trim().startsWith('🔰')); }
+  function mkPh(e2,k2){ var ph=document.createElement('div'); ph.className='row-hidden-ph'; ph.innerHTML='— <button>表示</button>'; ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); }); return ph; }
+  function mkTrPh(r,k){ var cols=r.querySelectorAll('td,th').length; var phR=document.createElement('tr'); phR.className='tr-hidden-ph'; var phTd=document.createElement('td'); phTd.colSpan=cols; phTd.innerHTML='— <button>表示</button>'; phR.appendChild(phTd); phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); }); return phR; }
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){ if(isPreview(el)) return; var key='fg:'+cardHead(el)+'|'+i; var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○'; el.insertBefore(btn,el.firstChild); btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }); if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); } });
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){ if(isPreview(tr)) return; var key='tr:'+cardHead(tr)+'|'+i; var tds=tr.querySelectorAll('td'); if(!tds.length) return; var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px'; var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○'; last.appendChild(btn); btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }); if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); } });
+})();
 </script>
 
 <script src="../learning-system.js"></script>
@@ -3387,6 +3430,14 @@ window.LS_CONFIG = {
   .pk-compare td{padding:5px 8px;border:1px solid #ce93d8;vertical-align:top;}
   .pk-compare tr:nth-child(even) td{background:#f3e5f5;}
   .pk-badge-ok{display:inline-block;background:#2e7d32;color:#fff;border-radius:4px;padding:1px 7px;font-size:.78rem;margin-left:6px;}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
 </style>
 
 <div style="background:#f3e5f5;border-left:5px solid #4a148c;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.85;color:#263238;text-align:left;">

@@ -56,6 +56,14 @@ ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
 .sec-hidden-label{color:#64748b;font-style:italic}
 .sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
 .sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -330,6 +338,16 @@ ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
     </div>
     <p class="exam-warn">⚠️ <strong>【1次】引っかけ</strong>：「粒度を細かくすると性能は常に上がる」は誤り。ロック数増でオーバーヘッドが増え、逆効果になる場合がある（→<strong>ロックエスカレーション</strong>でテーブルロックに昇格させる機能をDBMSが持つ）。</p>
 
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+      <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">小さな鍵を1個ずつ大量に管理するのは大変。数が増えすぎると、DBが「いっそ部屋ごと1つの鍵にまとめよう」と<strong>大きな鍵に自動で切り替え</strong>ます。管理はラクになりますが、その部屋全体が使えなくなるので他の人の待ちは増えます。</p>
+      <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+        <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#1e40af;">行ロックが大量🔑🔑🔑</div>
+        <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+        <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:700;color:#854d0e;">テーブルロックに昇格🔒（管理ラク・待ち増）</div>
+      </div>
+    </div>
+
     <h2 class="section-title st-purple"><span class="st-icon">🌀</span> ステップ3：楽観的ロック vs 悲観的ロック</h2>
     <div class="bubble-wrap"><div class="bubble-avatar">📊</div><div class="bubble-body b-green"><div class="bubble-name">共有エクセルで例えると</div><strong>悲観的</strong>＝「絶対誰かと被る！」と思って<strong>開いた瞬間にロック</strong>。<strong>楽観的</strong>＝「たぶん被らないでしょ」と<strong>ロックせず編集→保存時にチェック</strong>。被ってたらやり直し。</div></div>
 
@@ -388,6 +406,23 @@ ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
   </div>
 </div>
     <div class="goro-row"><span class="goro-chip">悲観＝先取り<small>SELECT ... FOR UPDATE</small></span><span class="goro-chip">楽観＝後チェック<small>バージョン番号比較</small></span></div>
+
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+      <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">図書館の本でたとえると、<strong>悲観的</strong>は「先に予約して他人が触れないようにする」（ぶつかる前提）、<strong>楽観的</strong>は「自由に借りて、返すとき誰かに先を越されてないか確認する」（ぶつからない前提）。更新が多い業務は悲観、読むだけが多い業務は楽観が向きます。</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+        <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;">
+          <div style="font-size:1.4rem;">🔒</div>
+          <div style="font-size:.78rem;font-weight:700;color:#b91c1c;">悲観的＝先取り</div>
+          <div style="font-size:.75rem;color:#7f1d1d;margin-top:.2rem;">先に鍵／更新が多い場面</div>
+        </div>
+        <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;">
+          <div style="font-size:1.4rem;">😊</div>
+          <div style="font-size:.78rem;font-weight:700;color:#15803d;">楽観的＝後チェック</div>
+          <div style="font-size:.75rem;color:#14532d;margin-top:.2rem;">保存時に確認／読取が多い場面</div>
+        </div>
+      </div>
+    </div>
     <div class="support"><span class="support-icon">👨‍🏫</span><div class="support-body"><span class="support-name">先生からひとこと</span>試験では「読取が多い→楽観」「更新が多い→悲観」のキーワード対応で覚えれば十分。<strong>銀行の振込みは悲観／SNSのいいねは楽観</strong>って業務イメージで結びつけてね。</div></div>
 
     <div class="keepit">
@@ -438,6 +473,18 @@ ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
     <h2 class="section-title st-purple"><span class="st-icon">💀</span> ステップ1：デッドロックって何？</h2>
     <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">🔁 <strong>Part1入門タブのデッドロック</strong>を、絵で深掘り。</p>
     <div class="bubble-wrap"><div class="bubble-avatar">💀</div><div class="bubble-body b-green"><div class="bubble-name">ひとことで</div><strong>「2人が互いの持ち物を待ち続けて永遠に終わらない」</strong>状態。誰も譲らないので強制終了するしかない。</div></div>
+
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+      <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">狭い道で2台の車が向き合い、お互い「そっちが下がって」と譲らず動けない状態がデッドロック。AはBの持ち物を、BはAの持ち物を待ち続けて永遠に止まります。👉 対策は「取る順番を全員で統一する」こと。</p>
+      <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+        <div style="background:#fef2f2;border-radius:6px;padding:.4rem .6rem;font-size:.8rem;font-weight:600;color:#b91c1c;">A：Xを持ちYを待つ</div>
+        <span style="color:#94a3b8;font-size:1.1rem;">⇄</span>
+        <div style="background:#fef2f2;border-radius:6px;padding:.4rem .6rem;font-size:.8rem;font-weight:600;color:#b91c1c;">B：Yを持ちXを待つ</div>
+        <span style="color:#94a3b8;font-size:1.1rem;">＝</span>
+        <div style="background:#fde68a;border-radius:6px;padding:.4rem .6rem;font-size:.8rem;font-weight:700;color:#854d0e;">膠着😵</div>
+      </div>
+    </div>
 
     <div class="diagram"><div class="diagram-title">🖼️ イメージ：永遠の待ち合いループ</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;background:#fff;padding:1rem;border-radius:8px;border:2px dashed #e57373">
@@ -699,6 +746,18 @@ ul,ol{padding-left:1.4rem;margin:.5rem 0}li{margin:.4rem 0;font-size:.95rem}
 
     <h2 class="section-title st-purple"><span class="st-icon">🔁</span> ステップ4：レプリケーション（複製）＝WALログ転送</h2>
     <div class="bubble-wrap"><div class="bubble-avatar">📡</div><div class="bubble-body b-green"><div class="bubble-name">ログの一石二鳥</div>耐久性のために書いた<strong>WALログ</strong>をそのまま<strong>別サーバへ転送して再生</strong>すれば、自然に複製ができる。<strong>同じログで障害復旧も冗長化も両方できる</strong>のが賢いポイント。</div></div>
+
+    <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+      <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 かんたん解説</div>
+      <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">大事なノートの<strong>コピーを別の場所に作っておく</strong>のがレプリケーション。本物（マスタ）の変更メモ（WALログ）を控え（スレーブ）に送って同じ内容にします。👉 読む人を分担させて速くしたり、本物が壊れても控えで復旧できます。</p>
+      <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
+        <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#1e40af;">マスタ（本物）が更新</div>
+        <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+        <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:600;color:#166534;">WALログを送る</div>
+        <span style="color:#94a3b8;font-size:1.1rem;">→</span>
+        <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.82rem;font-weight:700;color:#854d0e;">スレーブ（控え）が同期</div>
+      </div>
+    </div>
 
     <div class="diagram"><div class="diagram-title">🖼️ イメージ：マスタDB→スレーブDBへログ転送</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap">
@@ -1323,6 +1382,18 @@ window.LS_CONFIG = {
     else wrap.appendChild(btnRow);
     if(hidden[id]) doHide(getLabel());
   });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head,.fill-header'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); return h&&(h.textContent.trim().startsWith('予習｜')||h.textContent.trim().startsWith('🔰')); }
+  function mkPh(e2,k2){ var ph=document.createElement('div'); ph.className='row-hidden-ph'; ph.innerHTML='— <button>表示</button>'; ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); }); return ph; }
+  function mkTrPh(r,k){ var cols=r.querySelectorAll('td,th').length; var phR=document.createElement('tr'); phR.className='tr-hidden-ph'; var phTd=document.createElement('td'); phTd.colSpan=cols; phTd.innerHTML='— <button>表示</button>'; phR.appendChild(phTd); phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); }); return phR; }
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){ if(isPreview(el)) return; var key='fg:'+cardHead(el)+'|'+i; var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○'; el.insertBefore(btn,el.firstChild); btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }); if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); } });
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){ if(isPreview(tr)) return; var key='tr:'+cardHead(tr)+'|'+i; var tds=tr.querySelectorAll('td'); if(!tds.length) return; var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px'; var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○'; last.appendChild(btn); btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }); if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); } });
 })();
 </script>
 
