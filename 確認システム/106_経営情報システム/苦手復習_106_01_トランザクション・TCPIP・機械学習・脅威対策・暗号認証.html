@@ -13,7 +13,8 @@ body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color
 .header p{font-size:.82rem;opacity:.85;margin-top:4px;}
 .tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
 .tab-nav{display:flex;flex-wrap:wrap;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
-.tab-btn{flex:1;min-width:88px;padding:14px 6px;border:none;background:#fff;color:var(--mut);font-size:.9rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-btn{flex:0 0 14.28%;min-width:0;padding:6px 2px;border:none;background:#fff;color:var(--mut);font-size:.64rem;font-weight:800;cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;white-space:nowrap;line-height:1.2;overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:560px){.tab-btn{flex-basis:25%;font-size:.6rem;}}
 .tab-btn.active[data-c=b]{color:var(--b);border-bottom-color:var(--b);background:var(--bl);}
 .tab-btn.active[data-c=o]{color:var(--o);border-bottom-color:var(--o);background:var(--ol);}
 .tab-btn.active[data-c=g]{color:var(--g);border-bottom-color:var(--g);background:var(--gl);}
@@ -85,15 +86,74 @@ td.l{text-align:left;}
 
 <div class="tab-container">
   <nav class="tab-nav">
-    <button class="tab-btn active" data-c="t" onclick="sw(0)">💾 トランザクション</button>
-    <button class="tab-btn" data-c="b" onclick="sw(1)">🌐 TCP/IP</button>
-    <button class="tab-btn" data-c="g" onclick="sw(2)">🤖 機械学習</button>
-    <button class="tab-btn" data-c="o" onclick="sw(3)">🛡 脅威・対策</button>
-    <button class="tab-btn" data-c="p" onclick="sw(4)">🔐 暗号・認証</button>
+    <button class="tab-btn active" data-c="t" onclick="sw(0)">💾 ①異常・分離</button>
+    <button class="tab-btn" data-c="t" onclick="sw(1)">🔒 ②ロック</button>
+    <button class="tab-btn" data-c="t" onclick="sw(2)">♻️ ③回復</button>
+    <button class="tab-btn" data-c="b" onclick="sw(3)">🌐 層/TCP</button>
+    <button class="tab-btn" data-c="b" onclick="sw(4)">🔢 IP/サブネット</button>
+    <button class="tab-btn" data-c="b" onclick="sw(5)">🔀 変換/ポート</button>
+    <button class="tab-btn" data-c="g" onclick="sw(6)">🤖 機械学習</button>
+    <button class="tab-btn" data-c="o" onclick="sw(7)">🛡 CIA/リスク</button>
+    <button class="tab-btn" data-c="o" onclick="sw(8)">🧱 防御技術</button>
+    <button class="tab-btn" data-c="o" onclick="sw(9)">💥 攻撃</button>
+    <button class="tab-btn" data-c="p" onclick="sw(10)">🔑 鍵の基本</button>
+    <button class="tab-btn" data-c="p" onclick="sw(11)">🔒 SSL/TLS</button>
+    <button class="tab-btn" data-c="p" onclick="sw(12)">📜 署名・認証</button>
   </nav>
 
   <!-- ================= TAB0 トランザクション ================= -->
   <div class="tab-panel active">
+
+    <!-- ▼▼ 全体マップ（カテゴリ整理）▼▼ -->
+    <h2 style="border-left-color:#0f766e;">🗺️ 全体マップ（まずここで“カテゴリ”をつかむ）</h2>
+    <div class="fig" style="background:#f0fdfa;border-color:#5eead4;">
+      <div class="vz-supplement" style="background:#fff;border-left-color:#0f766e;">
+        <div class="vz-label" style="color:#0f766e;">🧒 このタブは「4つのカテゴリ」でできています</div>
+        <p style="margin:0;">トランザクション＝<b>「ぜんぶ成功か、ぜんぶ取り消し」の作業のかたまり</b>。これを安全に動かすために、下の<b>4カテゴリ</b>を順に学びます。バラバラに見える用語も、<b>どのカテゴリの話か</b>がわかれば一気に整理できます。</p>
+      </div>
+
+      <div style="display:grid;gap:.6rem;">
+
+        <div style="background:#fff;border:2px solid #94a3b8;border-radius:10px;padding:.6rem .8rem;">
+          <div style="font-weight:800;color:#334155;font-size:.92rem;">⓪ 基本：トランザクションとは（ACID）</div>
+          <div style="font-size:.8rem;color:#475569;margin-top:.2rem;">「全部やるか・全部やめるか」のルール。確定＝<b>コミット</b>／取消＝<b>ロールバック</b>。性質の頭文字が<b>ACID</b>。</div>
+        </div>
+
+        <div style="background:#fff;border:2px solid #f59e0b;border-radius:10px;padding:.6rem .8rem;">
+          <div style="font-weight:800;color:#b45309;font-size:.92rem;">① 同時に使うと起きる「読み取り異常」 → 図1</div>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem;font-size:.76rem;">
+            <span style="background:#fef2f2;color:#b91c1c;border-radius:5px;padding:.2rem .5rem;font-weight:700;">ダーティリード</span>
+            <span style="background:#fff7ed;color:#c2410c;border-radius:5px;padding:.2rem .5rem;font-weight:700;">反復不能読取</span>
+            <span style="background:#eff6ff;color:#1d4ed8;border-radius:5px;padding:.2rem .5rem;font-weight:700;">ファントムリード</span>
+            <span style="background:#f3e8ff;color:#9333ea;border-radius:5px;padding:.2rem .5rem;font-weight:700;">分離レベル（防ぐ段階）</span>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:2px solid #22c55e;border-radius:10px;padding:.6rem .8rem;">
+          <div style="font-weight:800;color:#15803d;font-size:.92rem;">② 異常を防ぐしくみ「同時実行制御」 → 図2</div>
+          <div style="font-size:.78rem;color:#475569;margin-top:.3rem;display:grid;gap:.25rem;">
+            <div>🔑 <b>ロックの種類</b>：共有ロックS（読む）／専有ロックX（書く）</div>
+            <div>📏 <b>かけ方のルール</b>：2相ロック(2PL)</div>
+            <div>🔍 <b>ロックの粒度</b>：行（細かい）⇔ 表（粗い）</div>
+            <div>📸 <b>ロックを使わない方式</b>：MVCC</div>
+            <div>🔄 <b>ロックのトラブル</b>：デッドロック</div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:2px solid #3b82f6;border-radius:10px;padding:.6rem .8rem;">
+          <div style="font-weight:800;color:#1d4ed8;font-size:.92rem;">③ こわれても戻す「障害回復」 → 図3</div>
+          <div style="font-size:.78rem;color:#475569;margin-top:.3rem;display:grid;gap:.25rem;">
+            <div>⏪⏩ <b>戻し方</b>：ロールバック（未確定を取消）／ロールフォワード（確定を再現）</div>
+            <div>📝 <b>ログのしくみ</b>：WAL（ログが先）／チェックポイント</div>
+            <div>🤝 <b>分散の確定</b>：2相コミット(2PC)</div>
+          </div>
+        </div>
+
+      </div>
+      <p style="margin:.6rem 0 0;background:#ccfbf1;border-radius:6px;padding:.5rem .7rem;font-size:.82rem;color:#0f766e;">👉 以下の図1→図2→図3は、この①→②→③に対応しています。<b>用語が出てきたら「どのカテゴリ？」と自問</b>すると迷いません。</p>
+    </div>
+    <!-- ▲▲ 全体マップ ▲▲ -->
+
     <h2>図1：3つの読み取り異常 と 分離レベルの“梯子”</h2>
     <div class="fig">
       <div class="vz-supplement">
@@ -114,54 +174,194 @@ td.l{text-align:left;}
         <tr><td class="l">SERIALIZABLE（最強）</td><td class="yes">防ぐ</td><td class="yes">防ぐ</td><td class="yes">防ぐ</td></tr>
       </table>
       <div class="trap"><b>外したQ</b>：①<b>ファントム＝件数が変わる／反復不能＝値が変わる</b>（混同注意）。②<b>SERIALIZABLEは最強</b>（最弱はREAD UNCOMMITTED）。③REPEATABLE READでも<b>ファントムは残り得る</b>。</div>
-    </div>
 
-    <h2>図2：ロックと同時実行制御</h2>
-    <div class="fig">
-      <div class="vz-supplement">
-        <div class="vz-label">💡 かんたん解説</div>
-        <p>同じデータを同時にいじると壊れるので「鍵」をかけて順番待ちさせます。読むだけならみんな同時にOK、書くときは1人だけ。</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
-          <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">👀</div><div style="font-size:.78rem;font-weight:700;color:#15803d;">共有ロックS（読む）</div><div style="font-size:.75rem;color:#14532d;">みんな同時にOK</div></div>
-          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">✍️</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">専有ロックX（書く）</div><div style="font-size:.75rem;color:#7f1d1d;">1人だけ・他は待つ</div></div>
+      <!-- ▼▼ 小学生でもわかる補足 ▼▼ -->
+      <div class="vz-supplement" style="background:#fffbeb;border-left-color:#f59e0b;">
+        <div class="vz-label" style="color:#d97706;">🧒 まず大前提：トランザクションって何？</div>
+        <p>トランザクションは<b>「ぜんぶ成功か、ぜんぶ取り消しか」の作業のかたまり</b>です。たとえば<b>「Aさんの口座から1000円減らす → Bさんの口座に1000円足す」</b>。片方だけ起きたらお金が消える/増えるので、<b>2つで1セット</b>。最後に「OK！」と<b>確定する＝コミット</b>、「やっぱりナシ！」と<b>取り消す＝ロールバック</b>と言います。</p>
+        <p style="margin:0;background:#fef3c7;border-radius:6px;padding:.5rem .7rem;">⚠️ ここがカギ → <b>コミット前は「鉛筆書き（まだ消せる下書き）」</b>、コミット後は「ボールペン書き（確定）」。下書きを他人が読んでしまうとトラブルになります。</p>
+      </div>
+
+      <div class="vz-supplement" style="background:#f0fdf4;border-left-color:#22c55e;">
+        <div class="vz-label" style="color:#16a34a;">🧒 3つの異常を「お話」＋「時系列の図」で覚える</div>
+        <p style="font-size:.8rem;color:#475569;margin-bottom:.3rem;">図は<b>上から下へ時間が流れます</b>。左の人と右の人が、同じデータを同時にいじって何が起きるかを見てください。</p>
+
+        <div style="display:grid;gap:.9rem;margin-top:.3rem;">
+
+          <!-- ① ダーティリード -->
+          <div style="background:#fff;border:2px solid #fca5a5;border-radius:10px;padding:.7rem .9rem;">
+            <div style="font-weight:800;color:#b91c1c;font-size:.95rem;">① <span class="blank">ダーティリード（未確定を読む）</span></div>
+            <div style="font-size:.85rem;margin:.3rem 0;">🍫 <b>お話：</b>お母さんが「1万円あげる」と財布から出して<u>机に置いた途中</u>。あなたは「やった、もらえた！」と思った。でもお母さんは「やっぱりナシ」と財布に戻した。<b>あなたが見た1万円は“幻”</b>でした。</div>
+
+            <div style="display:grid;grid-template-columns:34px 1fr 1fr;gap:3px;font-size:.74rem;margin:.5rem 0;">
+              <div style="background:#475569;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">時間↓</div>
+              <div style="background:#1d4ed8;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">🅰️ Aさん（書く人）</div>
+              <div style="background:#b45309;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">🅲 Cさん（読む人）</div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">①</div>
+              <div style="background:#dbeafe;padding:.3rem .4rem;border-radius:4px;">✏️ B口座に <b>+5000円</b> と書く<br><small style="color:#64748b;">鉛筆書き＝まだコミットしてない</small></div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">②</div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+              <div style="background:#fef3c7;padding:.3rem .4rem;border-radius:4px;border:2px solid #f59e0b;">👁️ Bを見て<br><b>「5000円増えた！」</b>と読む<br><small style="color:#b45309;">⚠️ 下書きを読んでしまった</small></div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">③</div>
+              <div style="background:#fee2e2;padding:.3rem .4rem;border-radius:4px;">❌ <b>「やっぱりナシ」</b><br>取り消し（ロールバック）</div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+
+              <div style="grid-column:1/4;background:#fef2f2;border:2px dashed #ef4444;border-radius:6px;padding:.4rem;text-align:center;font-weight:700;color:#b91c1c;">😱 結果：実際は増えてないのに、Cが見た5000円は<b>“幻”</b>だった</div>
+            </div>
+            <div style="font-size:.82rem;background:#fef2f2;border-radius:6px;padding:.35rem .6rem;"><b>覚え方：未確定（下書き）を読む</b></div>
+          </div>
+
+          <!-- ② 反復不能読取 -->
+          <div style="background:#fff;border:2px solid #fdba74;border-radius:10px;padding:.7rem .9rem;">
+            <div style="font-weight:800;color:#c2410c;font-size:.95rem;">② <span class="blank">反復不能読取（同じ行の“値”が変わる）</span></div>
+            <div style="font-size:.85rem;margin:.3rem 0;">🏷️ <b>お話：</b>お店で同じおもちゃの<u>ねだん</u>を見たら「500円」。財布を出してもう一度見たら「800円」！　<b>同じ商品なのに、ねだん（値）が変わって</b>びっくり。</div>
+
+            <div style="display:grid;grid-template-columns:34px 1fr 1fr;gap:3px;font-size:.74rem;margin:.5rem 0;">
+              <div style="background:#475569;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">時間↓</div>
+              <div style="background:#15803d;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">😀 あなた（読む人）</div>
+              <div style="background:#b45309;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">🧑 別の人（書く人）</div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">①</div>
+              <div style="background:#dcfce7;padding:.3rem .4rem;border-radius:4px;">👁️ りんごの値段を読む<br>→ <b>500円</b>（1回目）</div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">②</div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+              <div style="background:#dbeafe;padding:.3rem .4rem;border-radius:4px;">✏️ 値段を <b>800円に変更</b><br>してコミット（確定）</div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">③</div>
+              <div style="background:#fef3c7;padding:.3rem .4rem;border-radius:4px;border:2px solid #f59e0b;">👁️ <u>同じりんご</u>をまた読む<br>→ <b>800円</b>（2回目）<br><small style="color:#b45309;">⚠️ 値が変わってる！</small></div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+
+              <div style="grid-column:1/4;background:#fff7ed;border:2px dashed #f97316;border-radius:6px;padding:.4rem;text-align:center;font-weight:700;color:#c2410c;">😱 結果：<b>同じ行</b>なのに値が 500円 → 800円 に<b>変わった</b></div>
+            </div>
+            <div style="font-size:.82rem;background:#fff7ed;border-radius:6px;padding:.35rem .6rem;"><b>覚え方：同じ行・値が変わる</b></div>
+          </div>
+
+          <!-- ③ ファントムリード -->
+          <div style="background:#fff;border:2px solid #93c5fd;border-radius:10px;padding:.7rem .9rem;">
+            <div style="font-weight:800;color:#1d4ed8;font-size:.95rem;">③ <span class="blank">ファントムリード（“件数”が変わる＝おばけ行）</span></div>
+            <div style="font-size:.85rem;margin:.3rem 0;">👻 <b>お話：</b>クラスの男子を数えたら<u>10人</u>。もう一度数えたら<u>11人</u>！　転校生が来て（行が1つ増えて）人数（件数）が変わった。さっきいなかった子が<b>“おばけ（ファントム）”みたいに現れる</b>。</div>
+
+            <div style="display:grid;grid-template-columns:34px 1fr 1fr;gap:3px;font-size:.74rem;margin:.5rem 0;">
+              <div style="background:#475569;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">時間↓</div>
+              <div style="background:#15803d;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">😀 あなた（数える人）</div>
+              <div style="background:#b45309;color:#fff;padding:.3rem;text-align:center;font-weight:700;border-radius:4px;">🧑 別の人（追加する人）</div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">①</div>
+              <div style="background:#dcfce7;padding:.3rem .4rem;border-radius:4px;">🔍「100円のお菓子」を検索<br>→ <b>3件</b>🍬🍬🍬（1回目）</div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">②</div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+              <div style="background:#dbeafe;padding:.3rem .4rem;border-radius:4px;">➕ 新しい100円お菓子を<br><b>1個 追加</b>してコミット🍬</div>
+
+              <div style="background:#f1f5f9;text-align:center;font-weight:700;padding:.3rem;border-radius:4px;">③</div>
+              <div style="background:#fef3c7;padding:.3rem .4rem;border-radius:4px;border:2px solid #f59e0b;">🔍 <u>同じ条件</u>でまた検索<br>→ <b>4件</b>🍬🍬🍬👻（2回目）<br><small style="color:#b45309;">⚠️ おばけ行が増えた！</small></div>
+              <div style="background:#f8fafc;border-radius:4px;"></div>
+
+              <div style="grid-column:1/4;background:#eff6ff;border:2px dashed #3b82f6;border-radius:6px;padding:.4rem;text-align:center;font-weight:700;color:#1d4ed8;">😱 結果：<b>同じ条件</b>なのに件数が 3件 → 4件 に<b>増えた</b>（おばけ行👻）</div>
+            </div>
+            <div style="font-size:.82rem;background:#eff6ff;border-radius:6px;padding:.35rem .6rem;"><b>覚え方：同じ条件・件数（行数）が変わる</b></div>
+          </div>
+
         </div>
+        <p style="margin:.7rem 0 0;background:#dcfce7;border-radius:6px;padding:.5rem .7rem;font-size:.84rem;">🎯 <b>見分けのコツ：</b>②と③はそっくり。<b>「値」が変わる＝反復不能</b>／<b>「件数（行数・おばけ）」が変わる＝ファントム</b>。“数字が変わる”のか“行が増える”のかで区別！</p>
       </div>
-      <div class="grid2">
-        <div class="cell" style="border-color:var(--g)"><b>共有ロックS（読み）</b>複数が同時に取れる</div>
-        <div class="cell" style="border-color:var(--r)"><b>専有ロックX（書き）</b>1つだけ。Xの間は読みも書きも待つ</div>
-        <div class="cell" style="border-color:var(--b)"><b>2相ロック(2PL)</b>取得だけの成長相→解放だけの縮退相。直列化可能性を保証</div>
-        <div class="cell" style="border-color:var(--o)"><b>粒度</b>細かい(行)＝並行性↑・管理コスト↑／粗い(表)＝逆</div>
-        <div class="cell" style="border-color:var(--p)"><b>MVCC</b>読みはロックせず“古い版”を読む→読み書きの競合を減らす</div>
-        <div class="cell" style="border-color:#0f766e"><b>デッドロック</b>検出＝待ちグラフの閉路／予防＝ロック獲得順を統一</div>
-      </div>
-      <div class="trap"><b>急所</b>：粒度は<b>細かいほど並行性が上がる</b>（粗いと一度に広く締めるので下がる）。デッドロックは「順番を揃える」と起きにくい。</div>
-    </div>
 
-    <h2>図3：障害回復（どっちで戻す？）</h2>
-    <div class="fig">
-      <div class="vz-supplement">
-        <div class="vz-label">💡 かんたん解説</div>
-        <p>途中で停電しても大丈夫なように、変更の記録（ログ）を残しておきます。まだ確定していないものは取り消し、確定済みのものは再現します。</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
-          <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.2rem;">⏪</div><div style="font-size:.78rem;font-weight:700;color:#c2410c;">未確定 → before で取り消し</div><div style="font-size:.75rem;color:#7c2d12;">ロールバック</div></div>
-          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.2rem;">⏩</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">確定済 → after で再現</div><div style="font-size:.75rem;color:#1e3a8a;">ロールフォワード</div></div>
+      <div class="vz-supplement" style="background:#faf5ff;border-left-color:#a855f7;">
+        <div class="vz-label" style="color:#9333ea;">🧒 分離レベルを「お風呂の鍵のかけ方」で覚える</div>
+        <p>分離レベル＝<b>「他人の作業をどこまで見えなくするか（＝鍵のきびしさ）」</b>の段階。<b>ゆるい＝速いけど危ない／きびしい＝安全だけど待たされて遅い</b>。下に行くほど鍵がきびしくなる“梯子”です。</p>
+
+        <p style="font-size:.78rem;color:#64748b;margin:.2rem 0 .4rem;">各カードの下の3マーク＝<b>🛡️防ぐ／⚠️許す</b>（左から ダーティ｜反復不能｜ファントム）。下に行くほど🛡️が増え、🐢遅くなる代わりに🔒安全になります。</p>
+        <div style="display:grid;gap:.5rem;margin-top:.3rem;">
+          <div style="background:#fff;border-left:5px solid #ef4444;border-radius:8px;padding:.55rem .8rem;font-size:.84rem;">
+            <b style="color:#b91c1c;">🔓 READ UNCOMMITTED（最弱）</b><br>鍵をかけない。<b>他人の下書き（未確定）まで丸見え</b>。一番速いけど一番危ない → 3つとも<span style="color:#b91c1c;font-weight:700;">許す（防げない）</span>
+            <div style="display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;margin-top:.4rem;">
+              <span style="background:#fee2e2;color:#b91c1c;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">⚠️ダーティ</span>
+              <span style="background:#fee2e2;color:#b91c1c;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">⚠️反復不能</span>
+              <span style="background:#fee2e2;color:#b91c1c;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">⚠️ファントム</span>
+              <span style="margin-left:auto;font-size:.72rem;color:#475569;">速さ🐇🐇🐇／安全🛡️</span>
+            </div>
+          </div>
+          <div style="background:#fff;border-left:5px solid #f59e0b;border-radius:8px;padding:.55rem .8rem;font-size:.84rem;">
+            <b style="color:#c2410c;">🔐 READ COMMITTED</b><br>「<b>確定したものだけ見せる</b>」。下書きはのぞけない → <span style="color:#16a34a;font-weight:700;">ダーティだけ防ぐ</span>（値・件数の変化はまだ許す）
+            <div style="display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;margin-top:.4rem;">
+              <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">🛡️ダーティ</span>
+              <span style="background:#fee2e2;color:#b91c1c;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">⚠️反復不能</span>
+              <span style="background:#fee2e2;color:#b91c1c;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">⚠️ファントム</span>
+              <span style="margin-left:auto;font-size:.72rem;color:#475569;">速さ🐇🐇／安全🛡️🛡️</span>
+            </div>
+          </div>
+          <div style="background:#fff;border-left:5px solid #3b82f6;border-radius:8px;padding:.55rem .8rem;font-size:.84rem;">
+            <b style="color:#1d4ed8;">🔒 REPEATABLE READ</b><br>「<b>自分が一度読んだ行は最後まで固定</b>」。同じ行の値は変わらない → <span style="color:#16a34a;font-weight:700;">ダーティ＋反復不能を防ぐ</span>。でも<b>新しい行（おばけ）は増えうる</b>＝ファントムは残る
+            <div style="display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;margin-top:.4rem;">
+              <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">🛡️ダーティ</span>
+              <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">🛡️反復不能</span>
+              <span style="background:#fee2e2;color:#b91c1c;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">⚠️ファントム</span>
+              <span style="margin-left:auto;font-size:.72rem;color:#475569;">速さ🐇／安全🛡️🛡️🛡️</span>
+            </div>
+          </div>
+          <div style="background:#fff;border-left:5px solid #16a34a;border-radius:8px;padding:.55rem .8rem;font-size:.84rem;">
+            <b style="color:#15803d;">🔒🔒 SERIALIZABLE（最強）</b><br>「<b>順番に1人ずつしか入れない</b>」（みんなが一列に並んで作業）。新しい行も割り込めない → <span style="color:#16a34a;font-weight:700;">3つとも防ぐ</span>。一番安全だが一番遅い
+            <div style="display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;margin-top:.4rem;">
+              <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">🛡️ダーティ</span>
+              <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">🛡️反復不能</span>
+              <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.15rem .4rem;font-weight:700;font-size:.72rem;">🛡️ファントム</span>
+              <span style="margin-left:auto;font-size:.72rem;color:#475569;">速さ🐢／安全🛡️🛡️🛡️🛡️</span>
+            </div>
+          </div>
         </div>
+
+        <!-- 防御マトリクス図解 -->
+        <div style="background:#fff;border-radius:8px;padding:.6rem .55rem;margin-top:.5rem;">
+          <div style="font-weight:800;color:#9333ea;font-size:.82rem;margin-bottom:.15rem;">🛡️ 図で見る：3匹の“敵”を、どのレベルが止める？</div>
+          <div style="font-size:.7rem;color:#64748b;margin-bottom:.4rem;">敵＝🫣ダーティ(未確定をのぞき見)／🔄反復不能(値がすり替わる)／👻ファントム(おばけ行が増える)。<b>🛡️＝止める／💥＝通ってしまう</b></div>
+
+          <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:3px;font-size:.7rem;text-align:center;">
+            <!-- header -->
+            <div style="background:#475569;color:#fff;border-radius:4px;padding:.3rem;font-weight:700;display:flex;align-items:center;justify-content:center;">レベル（弱→強）</div>
+            <div style="background:#7f1d1d;color:#fff;border-radius:4px;padding:.3rem;font-weight:700;">🫣<br>ダーティ</div>
+            <div style="background:#9a3412;color:#fff;border-radius:4px;padding:.3rem;font-weight:700;">🔄<br>反復不能</div>
+            <div style="background:#1e3a8a;color:#fff;border-radius:4px;padding:.3rem;font-weight:700;">👻<br>ファントム</div>
+
+            <!-- UNCOMMITTED -->
+            <div style="background:#fef2f2;color:#b91c1c;border-radius:4px;padding:.3rem;font-weight:700;display:flex;align-items:center;justify-content:center;">🔓 UNCOMMITTED</div>
+            <div style="background:#fee2e2;border-radius:4px;padding:.3rem;">💥🫣<br><small style="color:#b91c1c;">通る</small></div>
+            <div style="background:#fee2e2;border-radius:4px;padding:.3rem;">💥🔄<br><small style="color:#b91c1c;">通る</small></div>
+            <div style="background:#fee2e2;border-radius:4px;padding:.3rem;">💥👻<br><small style="color:#b91c1c;">通る</small></div>
+
+            <!-- COMMITTED -->
+            <div style="background:#fff7ed;color:#c2410c;border-radius:4px;padding:.3rem;font-weight:700;display:flex;align-items:center;justify-content:center;">🔐 COMMITTED</div>
+            <div style="background:#dcfce7;border-radius:4px;padding:.3rem;">🛡️<br><small style="color:#15803d;">止める</small></div>
+            <div style="background:#fee2e2;border-radius:4px;padding:.3rem;">💥🔄<br><small style="color:#b91c1c;">通る</small></div>
+            <div style="background:#fee2e2;border-radius:4px;padding:.3rem;">💥👻<br><small style="color:#b91c1c;">通る</small></div>
+
+            <!-- REPEATABLE -->
+            <div style="background:#eff6ff;color:#1d4ed8;border-radius:4px;padding:.3rem;font-weight:700;display:flex;align-items:center;justify-content:center;">🔒 REPEATABLE</div>
+            <div style="background:#dcfce7;border-radius:4px;padding:.3rem;">🛡️<br><small style="color:#15803d;">止める</small></div>
+            <div style="background:#dcfce7;border-radius:4px;padding:.3rem;">🛡️<br><small style="color:#15803d;">止める</small></div>
+            <div style="background:#fee2e2;border-radius:4px;padding:.3rem;">💥👻<br><small style="color:#b91c1c;">通る</small></div>
+
+            <!-- SERIALIZABLE -->
+            <div style="background:#f0fdf4;color:#15803d;border-radius:4px;padding:.3rem;font-weight:700;display:flex;align-items:center;justify-content:center;">🔒🔒 SERIALIZABLE</div>
+            <div style="background:#dcfce7;border-radius:4px;padding:.3rem;">🛡️<br><small style="color:#15803d;">止める</small></div>
+            <div style="background:#dcfce7;border-radius:4px;padding:.3rem;">🛡️<br><small style="color:#15803d;">止める</small></div>
+            <div style="background:#dcfce7;border-radius:4px;padding:.3rem;">🛡️<br><small style="color:#15803d;">止める</small></div>
+          </div>
+          <div style="font-size:.72rem;color:#64748b;margin-top:.35rem;">👀 <b>緑の🛡️が左上から“階段”のように増えていく</b>のがキモ。下のレベルほど壁が分厚くなり、最後（SERIALIZABLE）で3匹とも完全ブロック。</div>
+        </div>
+
+        <p style="margin:.6rem 0 0;background:#f3e8ff;border-radius:6px;padding:.5rem .7rem;font-size:.84rem;">🪜 <b>梯子で暗記：</b>上から「ダーティ→反復不能→ファントム」の順に<b>1段ずつ防げる数が増える</b>。表の「防ぐ」が<b>左上から階段状に増えていく</b>のがポイント！</p>
       </div>
-      <div class="flow">
-        <span class="box">更新前ログ before</span><span class="arrow">→</span><span class="box o">ロールバック（取り消し）</span>
-        <span style="margin:0 8px;color:#cbd5e1">｜</span>
-        <span class="box g">更新後ログ after</span><span class="arrow">→</span><span class="box o">ロールフォワード（再現）</span>
-      </div>
-      <table>
-        <tr><th>用語</th><th>意味</th></tr>
-        <tr><td>WAL（ログ先行書き込み）</td><td class="l">データ更新を反映する<b>前</b>に必ずログを書く（後ではない）</td></tr>
-        <tr><td>チェックポイント</td><td class="l">バッファの更新をディスクへ反映＝復旧で見るログ範囲を狭める</td></tr>
-        <tr><td>2相コミット(2PC)</td><td class="l">①全サイトに可否を問う→②全員可ならコミット。1つでも不可なら全アボート</td></tr>
-      </table>
-      <div class="trap"><b>外したQ</b>：①<b>WALはログが先</b>。②<b>before→ロールバック／after→ロールフォワード</b>（逆に注意）。③2PCは<b>勝手にコミットできない</b>（全員の合意）。</div>
+      <!-- ▲▲ 小学生でもわかる補足 ▲▲ -->
     </div>
 
-    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <div class="fill-section-title">✏️ 穴埋めチェック（異常・分離レベル）</div>
     <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
 
     <div class="fill-card">
@@ -187,13 +387,450 @@ td.l{text-align:left;}
         <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
       </div>
     </div>
+  </div>
+
+  <!-- ================= TAB ②ロック ================= -->
+  <div class="tab-panel">
+    <h2>図2：ロックと同時実行制御</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>同じデータを同時にいじると壊れるので「鍵」をかけて順番待ちさせます。読むだけならみんな同時にOK、書くときは1人だけ。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">👀</div><div style="font-size:.78rem;font-weight:700;color:#15803d;">共有ロックS（読む）</div><div style="font-size:.75rem;color:#14532d;">みんな同時にOK</div></div>
+          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">✍️</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">専有ロックX（書く）</div><div style="font-size:.75rem;color:#7f1d1d;">1人だけ・他は待つ</div></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--g)"><b>共有ロックS（読み）</b>複数が同時に取れる</div>
+        <div class="cell" style="border-color:var(--r)"><b>専有ロックX（書き）</b>1つだけ。Xの間は読みも書きも待つ</div>
+        <div class="cell" style="border-color:var(--b)"><b>2相ロック(2PL)</b>取得だけの成長相→解放だけの縮退相。直列化可能性を保証</div>
+        <div class="cell" style="border-color:var(--o)"><b>粒度</b>細かい(行)＝並行性↑・管理コスト↑／粗い(表)＝逆</div>
+        <div class="cell" style="border-color:var(--p)"><b>MVCC</b>読みはロックせず“古い版”を読む→読み書きの競合を減らす</div>
+        <div class="cell" style="border-color:#0f766e"><b>デッドロック</b>検出＝待ちグラフの閉路／予防＝ロック獲得順を統一</div>
+      </div>
+      <div class="trap"><b>急所</b>：粒度は<b>細かいほど並行性が上がる</b>（粗いと一度に広く締めるので下がる）。デッドロックは「順番を揃える」と起きにくい。</div>
+
+      <!-- ▼▼ 小学生でもわかる補足 ▼▼ -->
+      <div class="vz-supplement" style="background:#fffbeb;border-left-color:#f59e0b;">
+        <div class="vz-label" style="color:#d97706;">🧒 そもそもロックって何？</div>
+        <p>ロックは<b>「使用中の鍵（トイレの鍵みたいなもの）」</b>。同じデータを2人が同時にいじると中身がぐちゃぐちゃになるので、<b>使う前に鍵をかけて順番待ちさせる</b>しくみです。ポイントは<b>「読むだけ」と「書く」で鍵の強さが違う</b>こと。</p>
+      </div>
+
+      <div class="vz-supplement" style="background:#f0fdf4;border-left-color:#22c55e;">
+        <div class="vz-label" style="color:#16a34a;">🔑 カテゴリ：ロックの種類 ｜ 🧒 2種類の鍵を「図書館の本」で覚える</div>
+        <div style="display:grid;gap:.6rem;margin-top:.3rem;">
+          <div style="background:#fff;border:2px solid #86efac;border-radius:10px;padding:.7rem .9rem;">
+            <div style="font-weight:800;color:#15803d;font-size:.95rem;">👀 共有ロック S（読むだけ）</div>
+            <div style="font-size:.85rem;margin:.3rem 0 0;">📖 <b>お話：</b>掲示板のお知らせを<u>みんなで一緒に読む</u>のはOK。読むだけなら何人いても誰も困らない → <b>Sは複数人が同時に取れる</b>。</div>
+          </div>
+          <div style="background:#fff;border:2px solid #fca5a5;border-radius:10px;padding:.7rem .9rem;">
+            <div style="font-weight:800;color:#b91c1c;font-size:.95rem;">✍️ 専有ロック X（書きかえる）</div>
+            <div style="font-size:.85rem;margin:.3rem 0 0;">🖊️ <b>お話：</b>その掲示板に<u>書きこむ人は1人だけ</u>。2人が同時に書くとぐちゃぐちゃになるから。<b>Xの間は、他の人は読むのも書くのも待つ</b>（書きかけを読ませない）。</div>
+          </div>
+        </div>
+        <p style="margin:.6rem 0 0;background:#dcfce7;border-radius:6px;padding:.5rem .7rem;font-size:.84rem;">🎯 <b>合言葉：</b>「読みは仲良し（同時OK）／書きはワガママ（1人占め）」</p>
+      </div>
+
+      <div class="vz-supplement" style="background:#eff6ff;border-left-color:#3b82f6;">
+        <div class="vz-label" style="color:#2563eb;">🧒 残りのしくみを「カテゴリ別」に整理して図説</div>
+        <div style="display:grid;gap:.9rem;margin-top:.3rem;">
+
+          <!-- カテゴリ：かけ方のルール -->
+          <div style="background:#fff;border:2px solid #93c5fd;border-radius:10px;padding:.7rem .9rem;">
+            <div style="display:inline-block;background:#dbeafe;color:#1d4ed8;font-size:.72rem;font-weight:800;border-radius:5px;padding:.15rem .5rem;">📏 カテゴリ：ロックのかけ方ルール</div>
+            <div style="font-weight:800;color:#1d4ed8;font-size:.95rem;margin-top:.35rem;">🪜 2相ロック（2PL／Two-Phase Locking）</div>
+            <div style="font-size:.85rem;margin:.3rem 0;">🧸 <b>お話（おもちゃ遊び）：</b>遊ぶ前に<u>使うおもちゃを全部あつめる</u> → 全部そろったら遊ぶ → 遊び終わったら<u>かたづけるだけ</u>。<b>「あつめながらかたづけ」をしない</b>のがルール。これを守ると順番がきれいに保たれ、結果が壊れません（＝直列化可能性を保証）。<br><small style="color:#64748b;">※おもちゃ＝鍵（ロック）。あつめる＝鍵を取る／かたづける＝鍵を放す。</small></div>
+
+            <div style="background:#f8fafc;border-radius:8px;padding:.5rem .4rem;margin:.4rem 0;">
+              <div style="font-size:.74rem;font-weight:700;color:#475569;text-align:center;margin-bottom:.2rem;">📊 持っている鍵の数は「山が1つ」の形になる</div>
+              <svg viewBox="0 0 320 150" width="100%" style="max-width:320px;display:block;margin:0 auto;">
+                <!-- 軸 -->
+                <line x1="34" y1="14" x2="34" y2="118" stroke="#94a3b8" stroke-width="1.5"/>
+                <line x1="34" y1="118" x2="312" y2="118" stroke="#94a3b8" stroke-width="1.5"/>
+                <text x="6" y="20" font-size="8.5" fill="#475569">鍵の数</text>
+                <text x="270" y="133" font-size="8.5" fill="#475569">時間 →</text>
+                <!-- 目盛り -->
+                <line x1="31" y1="92" x2="34" y2="92" stroke="#94a3b8"/><text x="14" y="95" font-size="8" fill="#94a3b8">1</text>
+                <line x1="31" y1="66" x2="34" y2="66" stroke="#94a3b8"/><text x="14" y="69" font-size="8" fill="#94a3b8">2</text>
+                <line x1="31" y1="40" x2="34" y2="40" stroke="#94a3b8"/><text x="14" y="43" font-size="8" fill="#94a3b8">3</text>
+                <!-- 山型の線（階段状に上がってピークから下がる） -->
+                <polyline points="34,118 70,118 70,92 110,92 110,66 150,66 150,40 200,40 200,66 240,66 240,92 280,92 280,118 312,118" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+                <!-- 成長相エリア -->
+                <text x="95" y="135" font-size="9" fill="#15803d" font-weight="bold" text-anchor="middle">📈成長相</text>
+                <text x="95" y="146" font-size="7.5" fill="#15803d" text-anchor="middle">取るだけ</text>
+                <text x="175" y="32" font-size="9" fill="#854d0e" font-weight="bold" text-anchor="middle">🔝ピーク</text>
+                <text x="245" y="135" font-size="9" fill="#b91c1c" font-weight="bold" text-anchor="middle">📉縮退相</text>
+                <text x="245" y="146" font-size="7.5" fill="#b91c1c" text-anchor="middle">放すだけ</text>
+                <!-- ピークの縦点線 -->
+                <line x1="175" y1="40" x2="175" y2="118" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3"/>
+              </svg>
+              <div style="font-size:.72rem;color:#64748b;text-align:center;">左半分で<b>取るだけ</b>↗︎、右半分で<b>放すだけ</b>↘︎。<b>谷が2つにならない＝山は1つ</b>。</div>
+            </div>
+            <div style="font-size:.78rem;margin-top:.3rem;color:#b91c1c;">⚠️ 一度放し始めたら、もう新しい鍵は取らない（だから山が1つだけの形になる）。</div>
+
+            <div style="background:#eff6ff;border-radius:8px;padding:.55rem .7rem;margin-top:.5rem;font-size:.8rem;">
+              <div style="font-weight:800;color:#1d4ed8;margin-bottom:.3rem;">🔗 で、これがロックの話とどう繋がる？</div>
+
+              <!-- 鍵の基本ルール -->
+              <div style="background:#fff;border:1.5px solid #93c5fd;border-radius:8px;padding:.5rem .6rem;margin-bottom:.4rem;">
+                <div style="font-weight:800;color:#1d4ed8;font-size:.8rem;margin-bottom:.35rem;">🔑 そもそも鍵で何をする？（基本ルール）</div>
+                <div style="display:grid;gap:.3rem;font-size:.74rem;">
+                  <div style="display:flex;align-items:center;gap:.4rem;"><span style="background:#dbeafe;border-radius:5px;padding:.2rem .45rem;font-weight:700;color:#1e40af;flex-shrink:0;">①取る🔒</span> そのデータを使う前に<b>鍵を取る（ロック）</b>＝「今からここは私が使う」と立て札を立てる</div>
+                  <div style="display:flex;align-items:center;gap:.4rem;"><span style="background:#fef3c7;border-radius:5px;padding:.2rem .45rem;font-weight:700;color:#854d0e;flex-shrink:0;">②使う✏️</span> 鍵を<b>持っている間だけ</b>そのデータを読み書きできる。<b>他の人は同じ所にさわれず待つ⏳</b></div>
+                  <div style="display:flex;align-items:center;gap:.4rem;"><span style="background:#dcfce7;border-radius:5px;padding:.2rem .45rem;font-weight:700;color:#15803d;flex-shrink:0;">③放す🔓</span> 使い終わったら<b>鍵を放す（アンロック）</b>＝立て札を外す→次の人が取れる</div>
+                </div>
+                <div style="font-size:.7rem;color:#64748b;text-align:center;margin-top:.3rem;background:#f1f5f9;border-radius:5px;padding:.25rem;">つまり <b>🔒鍵あり＝その人の作業中で他人はさわれない／🔓鍵なし＝空きで誰でも取れる</b></div>
+              </div>
+
+              <p style="margin:0 0 .4rem;">だから<b>鍵を早く放すと、まだ作業中なのに他人が割り込んで</b>データを読んだり書きかえたりして、結果が壊れます。2PLの「全部取り終えるまで1つも放さない」は、<b>作業が終わるまで他人を割り込ませない</b>ためのルールなのです。</p>
+
+              <div style="font-size:.74rem;color:#475569;margin-bottom:.35rem;">📖 例：Aさんが「口座X −1000円 → 口座Y +1000円」を送金（合計は<b>ずっと1000円のはず</b>）。Bさんは途中で「X＋Yの合計」を見たい。🔒=鍵あり(さわれない)／🔓=鍵なし(さわれる)</div>
+
+              <!-- ❌ ケース（コマ送り図） -->
+              <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:6px;padding:.5rem .55rem;margin-bottom:.4rem;">
+                <b style="color:#b91c1c;font-size:.8rem;">❌ 鍵を早く放すと…（合計が合わない）</b>
+                <div style="display:flex;align-items:stretch;gap:.25rem;margin-top:.4rem;overflow-x:auto;">
+                  <!-- frame1 -->
+                  <div style="flex:1;min-width:96px;background:#fff;border-radius:6px;padding:.35rem;text-align:center;">
+                    <div style="font-size:.66rem;font-weight:800;color:#b91c1c;">①Aが引く→鍵を早く放す</div>
+                    <div style="display:flex;gap:.2rem;justify-content:center;margin-top:.25rem;">
+                      <div style="background:#f8fafc;border:1.5px solid #ef4444;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">口座X<br><b>0円</b><br><small style="color:#94a3b8;">1000→0</small><br>🔓放した</div>
+                      <div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">口座Y<br><b>0円</b><br><small style="color:#94a3b8;">まだ</small><br>🔓</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;color:#b91c1c;font-weight:800;">→</div>
+                  <!-- frame2 -->
+                  <div style="flex:1;min-width:96px;background:#fff;border-radius:6px;padding:.35rem;text-align:center;">
+                    <div style="font-size:.66rem;font-weight:800;color:#b91c1c;">②👤Bが割り込んで合計を読む</div>
+                    <div style="display:flex;gap:.2rem;justify-content:center;margin-top:.25rem;">
+                      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">X<br><b>0円</b></div>
+                      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">Y<br><b>0円</b></div>
+                    </div>
+                    <div style="background:#fee2e2;border-radius:5px;padding:.15rem;margin-top:.2rem;font-size:.62rem;color:#b91c1c;font-weight:800;">👤B「合計0円?!」💸</div>
+                  </div>
+                  <div style="display:flex;align-items:center;color:#b91c1c;font-weight:800;">→</div>
+                  <!-- frame3 -->
+                  <div style="flex:1;min-width:96px;background:#fff;border-radius:6px;padding:.35rem;text-align:center;">
+                    <div style="font-size:.66rem;font-weight:800;color:#b91c1c;">③Aが今ごろYに足す</div>
+                    <div style="display:flex;gap:.2rem;justify-content:center;margin-top:.25rem;">
+                      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">X<br><b>0円</b></div>
+                      <div style="background:#f8fafc;border:1.5px solid #22c55e;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">Y<br><b>1000円</b><br><small style="color:#94a3b8;">0→1000</small></div>
+                    </div>
+                    <div style="font-size:.6rem;color:#94a3b8;margin-top:.2rem;">もう遅い…</div>
+                  </div>
+                </div>
+                <div style="text-align:center;background:#fee2e2;border-radius:5px;padding:.25rem;margin-top:.35rem;font-size:.72rem;color:#b91c1c;font-weight:700;">😱 Bは“途中”を見た → 1000円が消えたように見える＝結果が壊れた</div>
+              </div>
+
+              <!-- ✅ ケース（コマ送り図） -->
+              <div style="background:#dcfce7;border:1.5px solid #86efac;border-radius:6px;padding:.5rem .55rem;">
+                <b style="color:#15803d;font-size:.8rem;">✅ 2PL（全部取り終えるまで放さない）なら</b>
+                <div style="display:flex;align-items:stretch;gap:.25rem;margin-top:.4rem;overflow-x:auto;">
+                  <!-- frame1 -->
+                  <div style="flex:1;min-width:96px;background:#fff;border-radius:6px;padding:.35rem;text-align:center;">
+                    <div style="font-size:.66rem;font-weight:800;color:#15803d;">①A が X・Y 両方ロック</div>
+                    <div style="display:flex;gap:.2rem;justify-content:center;margin-top:.25rem;">
+                      <div style="background:#f8fafc;border:1.5px solid #ef4444;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">X<br><b>1000円</b><br>🔒</div>
+                      <div style="background:#f8fafc;border:1.5px solid #ef4444;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">Y<br><b>0円</b><br>🔒</div>
+                    </div>
+                    <div style="font-size:.6rem;color:#c2410c;margin-top:.2rem;">👤B ⏳待ち</div>
+                  </div>
+                  <div style="display:flex;align-items:center;color:#16a34a;font-weight:800;">→</div>
+                  <!-- frame2 -->
+                  <div style="flex:1;min-width:96px;background:#fff;border-radius:6px;padding:.35rem;text-align:center;">
+                    <div style="font-size:.66rem;font-weight:800;color:#15803d;">②鍵を持ったまま仕上げ</div>
+                    <div style="display:flex;gap:.2rem;justify-content:center;margin-top:.25rem;">
+                      <div style="background:#f8fafc;border:1.5px solid #ef4444;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">X<br><b>0円</b><br>🔒</div>
+                      <div style="background:#f8fafc;border:1.5px solid #ef4444;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">Y<br><b>1000円</b><br>🔒</div>
+                    </div>
+                    <div style="font-size:.6rem;color:#c2410c;margin-top:.2rem;">👤B ⏳まだ待ち</div>
+                  </div>
+                  <div style="display:flex;align-items:center;color:#16a34a;font-weight:800;">→</div>
+                  <!-- frame3 -->
+                  <div style="flex:1;min-width:96px;background:#fff;border-radius:6px;padding:.35rem;text-align:center;">
+                    <div style="font-size:.66rem;font-weight:800;color:#15803d;">③放す→Bが読む</div>
+                    <div style="display:flex;gap:.2rem;justify-content:center;margin-top:.25rem;">
+                      <div style="background:#f8fafc;border:1.5px solid #22c55e;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">X<br><b>0円</b><br>🔓</div>
+                      <div style="background:#f8fafc;border:1.5px solid #22c55e;border-radius:5px;padding:.2rem .25rem;font-size:.62rem;">Y<br><b>1000円</b><br>🔓</div>
+                    </div>
+                    <div style="background:#dcfce7;border-radius:5px;padding:.15rem;margin-top:.2rem;font-size:.62rem;color:#15803d;font-weight:800;">👤B「合計1000円」✅</div>
+                  </div>
+                </div>
+                <div style="text-align:center;background:#dcfce7;border-radius:5px;padding:.25rem;margin-top:.35rem;font-size:.72rem;color:#15803d;font-weight:700;">😊 Bは“途中”を見ない＝Aがひとかたまりに見える＝合計は正しい</div>
+              </div>
+              <p style="margin:.35rem 0 0;font-size:.74rem;color:#475569;">🧸 おもちゃで言うと：使うおもちゃを全部そろえてから遊ぶ＝<b>遊んでる途中で誰かに横取りされない</b>。途中で1個返すと、その瞬間に弟が持っていって遊びが台無し、というのが「早く放す」です。</p>
+            </div>
+          </div>
+
+          <!-- カテゴリ：粒度 -->
+          <div style="background:#fff;border:2px solid #93c5fd;border-radius:10px;padding:.7rem .9rem;">
+            <div style="display:inline-block;background:#dbeafe;color:#1d4ed8;font-size:.72rem;font-weight:800;border-radius:5px;padding:.15rem .5rem;">🔍 カテゴリ：ロックの粒度（つぶの大きさ）</div>
+            <div style="font-weight:800;color:#1d4ed8;font-size:.95rem;margin-top:.35rem;">🚪 細かい（行）⇔ 粗い（表）</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.4rem 0;font-size:.78rem;">
+              <div style="background:#dcfce7;border-radius:6px;padding:.5rem;">
+                <b style="color:#15803d;">細かい＝行ロック</b><br>🔑「机1つ」だけ施錠<br>→ 隣の人は作業OK<br>✅ 並行性 <b>↑</b>（同時に動ける）<br>⚠️ 鍵が多く管理コスト↑
+              </div>
+              <div style="background:#fee2e2;border-radius:6px;padding:.5rem;">
+                <b style="color:#b91c1c;">粗い＝表ロック</b><br>🚪「部屋ごと」施錠<br>→ 1人入ると全員待ち<br>❌ 並行性 <b>↓</b><br>✅ 鍵が少なく管理ラク
+              </div>
+            </div>
+            <div style="font-size:.8rem;color:#b91c1c;">⚠️ ひっかけ：<b>細かいほど並行性は「上がる」</b>（逆に覚えがち！）</div>
+          </div>
+
+          <!-- カテゴリ：ロックを使わない方式 -->
+          <div style="background:#fff;border:2px solid #93c5fd;border-radius:10px;padding:.7rem .9rem;">
+            <div style="display:inline-block;background:#f3e8ff;color:#9333ea;font-size:.72rem;font-weight:800;border-radius:5px;padding:.15rem .5rem;">📸 カテゴリ：ロックを使わない方式</div>
+            <div style="font-weight:800;color:#9333ea;font-size:.95rem;margin-top:.35rem;">MVCC（多版同時実行制御／Multi-Version Concurrency Control）</div>
+            <div style="font-size:.85rem;margin:.3rem 0;">🖍️ <b>お話（黒板）：</b>先生が黒板に<u>新しい問題を書きかえている最中</u>でも、みんなは<u>「さっき写真にとった前の黒板（古い版）」を見て</u>答えられる。<b>先生が書き終わるのを待たなくていい</b>＝読む人と書く人がぶつからない。<br><small style="color:#64748b;">※「版（バージョン）」を新旧2枚持つから “多版（Multi-Version）”。読む人は確定済みの古い版を見る。</small></div>
+
+            <div style="background:#f8fafc;border-radius:8px;padding:.55rem .5rem;margin:.4rem 0;">
+              <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:.4rem;align-items:center;">
+                <!-- 書く人レーン -->
+                <div style="background:#dbeafe;border-radius:8px;padding:.5rem;text-align:center;">
+                  <div style="font-size:1.4rem;">✍️🧑‍🏫</div>
+                  <div style="font-size:.76rem;font-weight:800;color:#1e40af;">書く人</div>
+                  <div style="border:2px dashed #3b82f6;border-radius:6px;padding:.3rem;margin-top:.3rem;background:#fff;font-size:.72rem;color:#1d4ed8;">🆕 新しい版(v2)<br>を作成中…</div>
+                </div>
+                <!-- 中央：ぶつからない -->
+                <div style="text-align:center;">
+                  <div style="font-size:1.1rem;">🚧</div>
+                  <div style="font-size:.66rem;font-weight:700;color:#16a34a;writing-mode:horizontal-tb;">ぶつから<br>ない！</div>
+                </div>
+                <!-- 読む人レーン -->
+                <div style="background:#dcfce7;border-radius:8px;padding:.5rem;text-align:center;">
+                  <div style="font-size:1.4rem;">👁️📷</div>
+                  <div style="font-size:.76rem;font-weight:800;color:#15803d;">読む人</div>
+                  <div style="border:2px solid #22c55e;border-radius:6px;padding:.3rem;margin-top:.3rem;background:#fff;font-size:.72rem;color:#15803d;">📜 古い版(v1)<br>を読む（待たない）</div>
+                </div>
+              </div>
+              <div style="font-size:.72rem;color:#64748b;text-align:center;margin-top:.35rem;">書き終わったら、次に読む人から<b>新しい版(v2)</b>が見えるようになる。</div>
+            </div>
+          </div>
+
+          <!-- カテゴリ：トラブル -->
+          <div style="background:#fff;border:2px solid #93c5fd;border-radius:10px;padding:.7rem .9rem;">
+            <div style="display:inline-block;background:#fee2e2;color:#b91c1c;font-size:.72rem;font-weight:800;border-radius:5px;padding:.15rem .5rem;">🔄 カテゴリ：ロックのトラブル</div>
+            <div style="font-weight:800;color:#b91c1c;font-size:.95rem;margin-top:.35rem;">デッドロック（おたがい待ちぼうけ）</div>
+            <div style="font-size:.85rem;margin:.3rem 0;">🚶 <b>お話：</b>Aは「えんぴつ→消しゴム」、Bは「消しゴム→えんぴつ」の順で借りたい。Aがえんぴつ・Bが消しゴムを持つと、<u>おたがい相手が放すのを永遠に待つ</u>→ 永久に止まる。</div>
+            <div style="text-align:center;background:#f8fafc;border-radius:6px;padding:.5rem;font-size:.78rem;margin:.3rem 0;">
+              <div style="display:flex;align-items:center;justify-content:center;gap:.3rem;flex-wrap:wrap;">
+                <span style="background:#dbeafe;color:#1d4ed8;border-radius:5px;padding:.3rem .5rem;font-weight:700;">A（えんぴつ所持）</span>
+                <span style="color:#b91c1c;font-weight:700;">— 消しゴム待ち →</span>
+                <span style="background:#fef9c3;color:#854d0e;border-radius:5px;padding:.3rem .5rem;font-weight:700;">B（消しゴム所持）</span>
+              </div>
+              <div style="color:#b91c1c;font-weight:700;margin:.2rem 0;">↑　　　　　　　　　　　 ↓</div>
+              <div style="color:#b91c1c;font-weight:700;">←———— えんぴつ待ち ————</div>
+              <div style="margin-top:.3rem;color:#b91c1c;font-weight:800;">🔁 ぐるっと一周＝閉路 → これがデッドロック</div>
+            </div>
+            <div style="font-size:.8rem;display:grid;gap:.2rem;">
+              <div>🔎 <b>検出</b>：「AはBを待ち、BはAを待つ」の<b>一周（待ちグラフの閉路）</b>を探す</div>
+              <div>🛡️ <b>予防</b>：みんな<b>借りる順番をそろえる</b>（例：必ずえんぴつ→消しゴム）と輪ができず止まらない</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- ▲▲ 小学生でもわかる補足 ▲▲ -->
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック（ロック）</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
 
     <div class="fill-card">
-      <div class="fill-head">ロックと回復</div>
+      <div class="fill-head">ロックと同時実行制御</div>
       <div class="fill-body">
         <div>取得の成長相→解放の縮退相＝<span class="blank">2相ロック(2PL)</span>／読みは古い版を見る＝<span class="blank">MVCC</span></div>
         <div>粒度を細かくすると並行性は<span class="blank">上がる</span>（管理コストは増える）</div>
         <div>デッドロック検出＝<span class="blank">待ちグラフの閉路</span>／予防＝ロック<span class="blank">獲得順の統一</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB ③回復 ================= -->
+  <div class="tab-panel">
+    <h2>図3：障害回復（どっちで戻す？）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>途中で停電しても大丈夫なように、変更の記録（ログ）を残しておきます。まだ確定していないものは取り消し、確定済みのものは再現します。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.2rem;">⏪</div><div style="font-size:.78rem;font-weight:700;color:#c2410c;">未確定 → before で取り消し</div><div style="font-size:.75rem;color:#7c2d12;">ロールバック</div></div>
+          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.2rem;">⏩</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">確定済 → after で再現</div><div style="font-size:.75rem;color:#1e3a8a;">ロールフォワード</div></div>
+        </div>
+      </div>
+      <div class="flow">
+        <span class="box">更新前ログ before</span><span class="arrow">→</span><span class="box o">ロールバック（取り消し）</span>
+        <span style="margin:0 8px;color:#cbd5e1">｜</span>
+        <span class="box g">更新後ログ after</span><span class="arrow">→</span><span class="box o">ロールフォワード（再現）</span>
+      </div>
+      <table>
+        <tr><th>用語</th><th>意味</th></tr>
+        <tr><td>WAL（ログ先行書き込み）</td><td class="l">データ更新を反映する<b>前</b>に必ずログを書く（後ではない）</td></tr>
+        <tr><td>チェックポイント</td><td class="l">バッファの更新をディスクへ反映＝復旧で見るログ範囲を狭める</td></tr>
+        <tr><td>2相コミット(2PC)</td><td class="l">①全サイトに可否を問う→②全員可ならコミット。1つでも不可なら全アボート</td></tr>
+      </table>
+      <div class="trap"><b>外したQ</b>：①<b>WALはログが先</b>。②<b>before→ロールバック／after→ロールフォワード</b>（逆に注意）。③2PCは<b>勝手にコミットできない</b>（全員の合意）。</div>
+
+      <!-- ▼▼ 小学生でもわかる補足 ▼▼ -->
+      <div class="vz-supplement" style="background:#fffbeb;border-left-color:#f59e0b;">
+        <div class="vz-label" style="color:#d97706;">🧒 そもそも「障害回復」って何？</div>
+        <p>パソコンが作業の<u>とちゅう</u>で停電して止まっても、データを<b>正しい状態に戻す</b>しくみです。カギは<b>「やったことのメモ（ログ）」を必ず残しておく</b>こと。メモには<b>「変える前の値（before＝更新前ログ）」と「変えた後の値（after＝更新後ログ）」</b>の2種類があります。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">⏪</div><div style="font-size:.8rem;font-weight:800;color:#c2410c;">未確定なら「前」に戻す</div><div style="font-size:.75rem;color:#7c2d12;">before使用＝ロールバック<br>(取り消し)</div></div>
+          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">⏩</div><div style="font-size:.8rem;font-weight:800;color:#1d4ed8;">確定済なら「後」を再現</div><div style="font-size:.75rem;color:#1e3a8a;">after使用＝ロールフォワード<br>(やり直し)</div></div>
+        </div>
+
+        <!-- 貯金箱の具体例 -->
+        <div style="background:#fff;border-radius:8px;padding:.6rem .7rem;margin-top:.5rem;">
+          <div style="font-weight:800;color:#d97706;font-size:.83rem;margin-bottom:.3rem;">🐷 例で理解：貯金箱に「1000円 → +500円 → 1500円」の作業中に停電したら？</div>
+          <!-- 数直線：beforeとafter -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:0;font-size:.74rem;margin:.4rem 0;">
+            <span style="background:#fef3c7;border:2px solid #f59e0b;border-radius:6px 0 0 6px;padding:.35rem .55rem;font-weight:800;color:#92400e;">before<br>🐷1000円</span>
+            <span style="background:#fbbf24;height:3px;width:60px;"></span>
+            <span style="color:#92400e;font-weight:700;">+500</span>
+            <span style="background:#fbbf24;height:3px;width:60px;"></span>
+            <span style="background:#dbeafe;border:2px solid #3b82f6;border-radius:0 6px 6px 0;padding:.35rem .55rem;font-weight:800;color:#1e40af;">after<br>🐷1500円</span>
+          </div>
+
+          <!-- ケースA タイムライン -->
+          <div style="background:#fff7ed;border:1.5px solid #fb923c;border-radius:8px;padding:.5rem .55rem;margin-top:.4rem;">
+            <div style="font-weight:800;color:#c2410c;font-size:.78rem;margin-bottom:.35rem;">ケースA：入れてる“とちゅう”で⚡停電（まだ「できた！」と言ってない＝<u>未確定</u>）</div>
+            <div style="display:flex;align-items:center;gap:.25rem;flex-wrap:wrap;font-size:.7rem;justify-content:center;">
+              <span style="background:#fef3c7;border-radius:5px;padding:.3rem .45rem;font-weight:700;">🐷1000円<br>(開始)</span>
+              <span style="color:#94a3b8;">→</span>
+              <span style="background:#fff;border:1px dashed #f97316;border-radius:5px;padding:.3rem .45rem;">✏️入れてる途中<br>(まだ未確定)</span>
+              <span style="color:#94a3b8;">→</span>
+              <span style="background:#fee2e2;border-radius:5px;padding:.3rem .45rem;font-weight:700;color:#b91c1c;">⚡停電！<br>❓中途半端</span>
+              <span style="color:#c2410c;font-weight:800;font-size:.95rem;">⏪戻す</span>
+              <span style="background:#dcfce7;border-radius:5px;padding:.3rem .45rem;font-weight:800;color:#15803d;">🐷1000円<br>✅なかったこと</span>
+            </div>
+            <div style="text-align:center;font-size:.72rem;color:#c2410c;margin-top:.3rem;font-weight:700;">＝ before の1000円に戻す＝<b>ロールバック（取り消し）</b></div>
+          </div>
+
+          <!-- ケースB タイムライン -->
+          <div style="background:#eff6ff;border:1.5px solid #60a5fa;border-radius:8px;padding:.5rem .55rem;margin-top:.4rem;">
+            <div style="font-weight:800;color:#1d4ed8;font-size:.78rem;margin-bottom:.35rem;">ケースB：「1500円できた！」と<u>確定（コミット）</u>した直後に⚡停電（貯金箱にまだ反映前）</div>
+            <div style="display:flex;align-items:center;gap:.25rem;flex-wrap:wrap;font-size:.7rem;justify-content:center;">
+              <span style="background:#fef3c7;border-radius:5px;padding:.3rem .45rem;font-weight:700;">🐷1000円<br>(開始)</span>
+              <span style="color:#94a3b8;">→</span>
+              <span style="background:#fff;border:1px solid #3b82f6;border-radius:5px;padding:.3rem .45rem;font-weight:700;color:#1d4ed8;">✅「1500円<br>できた！」<br>確定</span>
+              <span style="color:#94a3b8;">→</span>
+              <span style="background:#fee2e2;border-radius:5px;padding:.3rem .45rem;font-weight:700;color:#b91c1c;">⚡停電！<br>(反映前)</span>
+              <span style="color:#1d4ed8;font-weight:800;font-size:.95rem;">⏩進める</span>
+              <span style="background:#dcfce7;border-radius:5px;padding:.3rem .45rem;font-weight:800;color:#15803d;">🐷1500円<br>✅仕上げる</span>
+            </div>
+            <div style="text-align:center;font-size:.72rem;color:#1d4ed8;margin-top:.3rem;font-weight:700;">＝ after の1500円を再現＝<b>ロールフォワード（やり直し）</b></div>
+          </div>
+
+          <div style="display:flex;justify-content:center;gap:.6rem;margin-top:.4rem;font-size:.72rem;">
+            <span style="background:#fff7ed;border-radius:5px;padding:.25rem .5rem;color:#c2410c;font-weight:700;">⏪ 確定前 → 前へ戻る</span>
+            <span style="background:#eff6ff;border-radius:5px;padding:.25rem .5rem;color:#1d4ed8;font-weight:700;">⏩ 確定後 → 後ろへ進む</span>
+          </div>
+          <div style="font-size:.74rem;color:#64748b;margin-top:.3rem;">🔑 見分け方：<b>コミット（できた！宣言）したかどうか</b>。していない→前へ戻す／した→後ろを再現。</div>
+        </div>
+      </div>
+
+      <div class="vz-supplement" style="background:#f0fdf4;border-left-color:#22c55e;">
+        <div class="vz-label" style="color:#16a34a;">🧒 3つの用語を「お話」と正式名称で覚える</div>
+        <div style="display:grid;gap:.6rem;margin-top:.3rem;">
+
+          <div style="background:#fff;border:2px solid #86efac;border-radius:10px;padding:.7rem .9rem;">
+            <div style="display:inline-block;background:#dcfce7;color:#15803d;font-size:.72rem;font-weight:800;border-radius:5px;padding:.15rem .5rem;">📝 カテゴリ：ログのしくみ</div>
+            <div style="font-weight:800;color:#15803d;font-size:.95rem;margin-top:.35rem;">📝 WAL（ログ先行書き込み）</div>
+            <div style="font-size:.78rem;color:#64748b;margin:.15rem 0;">正式名称：<b>Write Ahead Logging</b>（ライト・アヘッド・ロギング）＝「先に書くログ」</div>
+            <div style="font-size:.85rem;margin:.3rem 0 0;">✏️ <b>お話：</b>テストの答えを書く<u>前に</u>、まず計算用紙に下書きする感じ。<b>本物のデータを変える「前」に、必ずメモ（ログ）を先に書く</b>。そうすれば途中で止まっても「何をしようとしたか」がメモに残っていて復旧できる。</div>
+
+            <div style="background:#f8fafc;border-radius:8px;padding:.5rem .55rem;margin-top:.4rem;">
+              <div style="background:#dcfce7;border-radius:6px;padding:.4rem .5rem;margin-bottom:.35rem;">
+                <div style="font-size:.74rem;font-weight:800;color:#15803d;margin-bottom:.25rem;">✅ 正しい順番（WAL）</div>
+                <div style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;font-size:.72rem;">
+                  <span style="background:#fff;border:1px solid #22c55e;border-radius:5px;padding:.25rem .45rem;font-weight:700;">①📝 ログを書く<br><small>(下書き＝先)</small></span>
+                  <span style="color:#16a34a;font-weight:800;">→</span>
+                  <span style="background:#fff;border:1px solid #22c55e;border-radius:5px;padding:.25rem .45rem;font-weight:700;">②💾 データを変える<br><small>(本番＝後)</small></span>
+                  <span style="color:#16a34a;font-weight:800;">→</span>
+                  <span style="background:#fff;border-radius:5px;padding:.25rem .45rem;">⚡停電しても<br>📝メモで復旧OK😊</span>
+                </div>
+              </div>
+              <div style="background:#fee2e2;border-radius:6px;padding:.4rem .5rem;">
+                <div style="font-size:.74rem;font-weight:800;color:#b91c1c;margin-bottom:.25rem;">❌ 逆順だと…</div>
+                <div style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;font-size:.72rem;">
+                  <span style="background:#fff;border:1px solid #ef4444;border-radius:5px;padding:.25rem .45rem;font-weight:700;">①💾 データを変える</span>
+                  <span style="color:#b91c1c;font-weight:800;">→</span>
+                  <span style="background:#fff;border-radius:5px;padding:.25rem .45rem;">⚡ここで停電</span>
+                  <span style="color:#b91c1c;font-weight:800;">→</span>
+                  <span style="background:#fff;border-radius:5px;padding:.25rem .45rem;color:#b91c1c;font-weight:700;">📝メモまだ無い<br>→何をしたか不明😱</span>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:.78rem;margin-top:.3rem;color:#b91c1c;">⚠️ <b>ログが先・データが後</b>（逆だと、停電したとき何をしたか分からなくなる）</div>
+          </div>
+
+          <div style="background:#fff;border:2px solid #86efac;border-radius:10px;padding:.7rem .9rem;">
+            <div style="display:inline-block;background:#dcfce7;color:#15803d;font-size:.72rem;font-weight:800;border-radius:5px;padding:.15rem .5rem;">📝 カテゴリ：ログのしくみ</div>
+            <div style="font-weight:800;color:#15803d;font-size:.95rem;margin-top:.35rem;">🚩 チェックポイント</div>
+            <div style="font-size:.78rem;color:#64748b;margin:.15rem 0;">正式名称：<b>Checkpoint</b>（チェックポイント）＝「ここまで保存済みの目印」</div>
+            <div style="font-size:.85rem;margin:.3rem 0 0;">🎮 <b>お話：</b>ゲームの<u>セーブポイント</u>と同じ。ときどき「ここまでの作業（メモリ上の変更）をディスクに正式保存」しておく。そうすれば<b>復旧のときに見るログが「セーブ地点から後」だけで済む</b>＝戻す範囲が短くなって速い。</div>
+
+            <div style="background:#f8fafc;border-radius:8px;padding:.55rem .5rem;margin-top:.4rem;">
+              <div style="font-size:.74rem;font-weight:800;color:#15803d;text-align:center;margin-bottom:.35rem;">⏱️ 時間の流れ（🚩＝セーブ／⚡＝停電）</div>
+              <div style="display:flex;align-items:center;gap:0;font-size:.66rem;">
+                <span style="background:#e2e8f0;border-radius:5px 0 0 5px;padding:.3rem .25rem;text-align:center;color:#94a3b8;flex:1;">作業<br>…</span>
+                <span style="background:#16a34a;color:#fff;padding:.3rem .25rem;text-align:center;font-weight:700;flex:0 0 auto;">🚩<br>セーブ</span>
+                <span style="background:#fef9c3;padding:.3rem .25rem;text-align:center;color:#854d0e;font-weight:700;flex:2;">作業 作業 作業<br>(この区間だけ見ればOK)</span>
+                <span style="background:#fee2e2;color:#b91c1c;border-radius:0 5px 5px 0;padding:.3rem .25rem;text-align:center;font-weight:700;flex:0 0 auto;">⚡<br>停電</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:.3rem;margin-top:.35rem;font-size:.7rem;">
+                <span style="color:#94a3b8;">復旧で見るのは</span>
+                <span style="background:#dcfce7;border-radius:5px;padding:.2rem .5rem;color:#15803d;font-weight:800;">🚩セーブ地点 → ⚡停電 の間だけ</span>
+              </div>
+              <div style="font-size:.68rem;color:#64748b;text-align:center;margin-top:.25rem;">セーブより前は保存済みなので見なくてよい → <b>戻す範囲が短い＝復旧が速い</b></div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:2px solid #86efac;border-radius:10px;padding:.7rem .9rem;">
+            <div style="display:inline-block;background:#dbeafe;color:#1d4ed8;font-size:.72rem;font-weight:800;border-radius:5px;padding:.15rem .5rem;">🤝 カテゴリ：分散の確定（複数DBをそろえる）</div>
+            <div style="font-weight:800;color:#15803d;font-size:.95rem;margin-top:.35rem;">🤝 2相コミット（2PC）</div>
+            <div style="font-size:.78rem;color:#64748b;margin:.15rem 0;">正式名称：<b>Two-Phase Commit</b>（ツー・フェーズ・コミット）＝「2段階の確定」</div>
+            <div style="font-size:.85rem;margin:.3rem 0;">🍱 <b>お話：</b>クラスみんなで遠足の店を決めるとき、<u>①「この店でいい人？」と全員に聞く</u> → <u>②全員OKなら決定、1人でも反対なら全員ナシ</u>。複数のDBにまたがる更新を、バラバラにならず「全部成功／全部失敗」にそろえるしくみ。</div>
+            <div style="display:grid;gap:.3rem;font-size:.77rem;background:#f8fafc;border-radius:6px;padding:.5rem .6rem;margin:.3rem 0;">
+              <div style="font-weight:700;color:#1d4ed8;">第1相（投票）：調整役が全員に「コミットしていい？」と聞く</div>
+              <div style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;">
+                <span style="background:#dbeafe;color:#1d4ed8;border-radius:5px;padding:.2rem .45rem;font-weight:700;">調整役</span>
+                <span style="color:#94a3b8;">→ 問い合わせ →</span>
+                <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.2rem .45rem;font-weight:700;">DB1 ✅可</span>
+                <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.2rem .45rem;font-weight:700;">DB2 ✅可</span>
+                <span style="background:#dcfce7;color:#15803d;border-radius:5px;padding:.2rem .45rem;font-weight:700;">DB3 ✅可</span>
+              </div>
+              <div style="font-weight:700;color:#15803d;border-top:1px dashed #cbd5e1;padding-top:.3rem;">第2相（確定）：全員✅なら → <b>全員コミット</b>／1つでも❌なら → <b>全員アボート（全取消）</b></div>
+            </div>
+            <div style="font-size:.8rem;color:#b91c1c;">⚠️ <b>勝手に1人で決められない</b>（全員の合意が必要）。1サイトでも不可なら全部とりやめ。</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="vz-supplement" style="background:#eff6ff;border-left-color:#3b82f6;">
+        <div class="vz-label" style="color:#2563eb;">📌 ついでに：このタブで出る正式名称まとめ</div>
+        <table style="margin:.2rem 0 0;">
+          <tr><th>略語</th><th>正式名称（英語）</th><th>意味のひとこと</th></tr>
+          <tr><td>WAL</td><td class="l">Write Ahead Logging</td><td class="l">ログを先に書く</td></tr>
+          <tr><td>2PL</td><td class="l">Two-Phase Locking</td><td class="l">2相ロック（取る相→放す相）</td></tr>
+          <tr><td>2PC</td><td class="l">Two-Phase Commit</td><td class="l">2相コミット（聞く→確定）</td></tr>
+          <tr><td>MVCC</td><td class="l">Multi-Version Concurrency Control</td><td class="l">多版同時実行制御（古い版を読む）</td></tr>
+          <tr><td>ACID</td><td class="l">Atomicity / Consistency / Isolation / Durability</td><td class="l">原子性・一貫性・独立性・永続性</td></tr>
+        </table>
+      </div>
+      <!-- ▲▲ 小学生でもわかる補足 ▲▲ -->
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック（回復）</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">障害回復</div>
+      <div class="fill-body">
         <div>更新前(before)→<span class="blank">ロールバック</span>／更新後(after)→<span class="blank">ロールフォワード</span></div>
         <div>更新の<b>前</b>にログを書く＝<span class="blank">WAL</span>／分散の全コミット一致＝<span class="blank">2相コミット</span></div>
         <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
@@ -203,19 +840,218 @@ td.l{text-align:left;}
 
   <!-- ================= TAB1 TCP/IP ================= -->
   <div class="tab-panel">
-    <h2>図1：層と機器の対応（どの層で働く？）</h2>
+    <h2>図1：層の全体図（OSI 7階層 ↔ TCP/IP 4階層）と機器の位置</h2>
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>ネットワーク機器は「住所」の種類で見る層が違います。<b>MACアドレス（機器固有）で配るのが下の層、IPアドレス（場所）で配るのが上の層</b>。ルータは“別の町”へ送る係です。</p>
+        <p>通信は<b>「役割ごとの階段（層）」</b>に分かれています。世界共通の細かいモデルが<b>OSI 7階層</b>、実際のネットでよく使う簡略版が<b>TCP/IP 4階層</b>。下に行くほど“物理的な配線”に近く、上に行くほど“人が使うアプリ”に近づきます。<br><b>住所の種類で担当が変わる</b>のがポイント：<b>下＝MACアドレス（機器固有）で近所に配る／中＝IPアドレス（場所）で別の町へ送る／上＝ポート番号でアプリへ渡す</b>。</p>
       </div>
+
+      <p style="font-size:.82rem;background:#fef9c3;border-left:4px solid #f59e0b;border-radius:0 6px 6px 0;padding:.5rem .7rem;margin:.4rem 0;">⭐ <b>のマーク＝今回おさえる3層</b>（物理・データリンク・ネットワーク層）。全体のどこに当たるかを下の表で確認してください。</p>
+
       <table>
-        <tr><th>層</th><th>主な機器</th><th>何で宛先を見る？</th></tr>
-        <tr><td>物理層（最下位）</td><td class="l">ハブ・リピータ</td><td>信号を増幅し全ポートへ流すだけ</td></tr>
-        <tr><td>データリンク層</td><td class="l">L2スイッチ・ブリッジ</td><td class="yes">MACアドレス（宛先ポートだけに転送）</td></tr>
-        <tr><td>ネットワーク層</td><td class="l">ルータ</td><td class="yes">IPアドレス（別ネットワークへ転送）</td></tr>
+        <tr><th>OSI 7階層</th><th>TCP/IP 4階層</th><th>主な機器・プロトコル</th><th>何で宛先を見る／役割</th></tr>
+        <tr><td class="l">⑦ アプリケーション層</td><td rowspan="3" style="background:#eef2ff!important;font-weight:700;color:#4338ca;vertical-align:middle;">アプリケーション層<br><small style="font-weight:400;color:#6366f1;">（OSIの上3つをまとめたもの）</small></td><td class="l">HTTP・FTP・SMTP・DNS<br><small>※PC上のソフトが担当（専用機器なし）</small></td><td class="l">人が使うサービスを提供</td></tr>
+        <tr><td class="l">⑥ プレゼンテーション層</td><td class="l">―</td><td class="l">文字コード変換・暗号化</td></tr>
+        <tr><td class="l">⑤ セッション層</td><td class="l">―</td><td class="l">通信の開始〜終了を管理</td></tr>
+        <tr><td class="l">④ トランスポート層</td><td style="background:#ecfeff!important;font-weight:700;color:#0e7490;">トランスポート層</td><td class="l">TCP・UDP<br><small>※ソフトが担当（専用機器なし）</small></td><td class="yes"><span class="blank">ポート番号</span>（どのアプリ宛か）</td></tr>
+        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐③ ネットワーク層</td><td style="background:#fefce8!important;font-weight:700;color:#a16207;">インターネット層</td><td class="l" style="background:#fffbeb!important;"><span class="blank">ルータ</span></td><td class="yes">IPアドレス（別ネットワークへ転送）</td></tr>
+        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐② データリンク層</td><td rowspan="2" style="background:#f0fdf4!important;font-weight:700;color:#15803d;vertical-align:middle;">ネットワーク<br>インターフェース層<br><small style="font-weight:400;color:#22c55e;">（OSIの下2つをまとめたもの）</small></td><td class="l" style="background:#fffbeb!important;"><span class="blank">L2スイッチ・ブリッジ</span></td><td class="yes"><span class="blank">MACアドレス</span>（宛先の差込口だけに転送）</td></tr>
+        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐① 物理層（最下位）</td><td class="l" style="background:#fffbeb!important;"><span class="blank">ハブ・リピータ</span></td><td>信号を増幅し全ポートへ流すだけ</td></tr>
       </table>
-      <div class="trap"><b>外したQ</b>：①<b>ルータ＝ネットワーク層・IP</b>（MAC/データリンクはL2スイッチ）。②<b>デフォルトゲートウェイ＝外部ネットへの出口</b>（同一サブネット内は直接通信なので不要）。</div>
+      <p class="note">↑上＝人に近い（アプリ）／↓下＝配線に近い（物理）。TCP/IPの4階層は、OSIの7階層を実用的にまとめたもの。</p>
+
+      <div class="vz-supplement" style="background:#f5f3ff;border-left-color:#8b5cf6;margin-top:.8rem;">
+        <div class="vz-label" style="color:#7c3aed;">🗺️ いちばん大事：データは「どこから始まり、どこまで行く？」全体の流れ</div>
+        <p style="margin:0 0 .5rem;font-size:.85rem;">通信は<b>「あなたのPCのアプリ」から始まり、「相手のPCのアプリ」まで</b>届きます。途中で層を<b>下りながら“封筒”を重ね（カプセル化）</b>、相手側で<b>上りながら“封筒”をはがす（非カプセル化）</b>——これが全体像です。手紙を何重にも封筒へ入れて送り、相手が順にあける、とイメージしてください。</p>
+
+        <p style="margin:.2rem 0 .4rem;font-size:.8rem;color:#5b21b6;">下の図は<b>U字（Uの字）に読みます</b>：<b>左の送信側を上から下へ降りて（封筒を重ねる）→ 一番下のケーブルを旅して → 右の受信側を下から上へ昇る（封筒をはがす）</b>。同じ高さ＝同じ層です。</p>
+
+        <!-- U字（鏡型）図 -->
+        <div style="background:#fff;border-radius:8px;padding:.6rem .5rem;">
+          <!-- 見出し -->
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.74rem;font-weight:800;text-align:center;margin-bottom:.3rem;">
+            <div style="color:#b91c1c;background:#fef2f2;border-radius:5px;padding:.25rem;">📤 送信側PC<br><span style="font-size:.68rem;">⬇ 降りる＝重ねる</span></div>
+            <div style="color:#475569;">層</div>
+            <div style="color:#166534;background:#f0fdf4;border-radius:5px;padding:.25rem;">📥 受信側PC<br><span style="font-size:.68rem;">⬆ 昇る＝はがす</span></div>
+          </div>
+
+          <!-- ⑦アプリ -->
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.72rem;align-items:stretch;">
+            <div style="background:#dbeafe;color:#1e40af;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">📄 データを作る<br>「Webページ下さい」</div>
+            <div style="background:#eef2ff;color:#4338ca;border-radius:5px;padding:.3rem;text-align:center;font-weight:800;display:flex;align-items:center;justify-content:center;">⑦<br>アプリ</div>
+            <div style="background:#dbeafe;color:#1e40af;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">📄 データを読む🎉<br>「Webページ下さい」</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.66rem;text-align:center;color:#94a3b8;padding:.1rem 0;">
+            <div style="color:#dc2626;">⬇ ＋🔢ポートを付ける</div><div></div><div style="color:#16a34a;">⬆ 🔢ポートを外す</div>
+          </div>
+
+          <!-- ④トランスポート -->
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.72rem;align-items:stretch;">
+            <div style="background:#fff7ed;color:#c2410c;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">🔢ポート＋📄<br><small>どのアプリ宛か</small></div>
+            <div style="background:#ecfeff;color:#0e7490;border-radius:5px;padding:.3rem;text-align:center;font-weight:800;display:flex;align-items:center;justify-content:center;">④<br>トランス<br>ポート</div>
+            <div style="background:#fff7ed;color:#c2410c;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">🔢ポートを見て<br><small>アプリへ振り分け</small></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.66rem;text-align:center;color:#94a3b8;padding:.1rem 0;">
+            <div style="color:#dc2626;">⬇ ＋🏙️IPを付ける</div><div></div><div style="color:#16a34a;">⬆ 🏙️IPを外す</div>
+          </div>
+
+          <!-- ③ネットワーク -->
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.72rem;align-items:stretch;">
+            <div style="background:#fefce8;color:#a16207;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">🏙️IP＋🔢＋📄<br><small>どの町宛か</small></div>
+            <div style="background:#fefce8;color:#a16207;border-radius:5px;padding:.3rem;text-align:center;font-weight:800;display:flex;align-items:center;justify-content:center;">③<br>ネット<br>ワーク</div>
+            <div style="background:#fefce8;color:#a16207;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">🏙️IPを見て<br><small>自分宛か確認</small></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.66rem;text-align:center;color:#94a3b8;padding:.1rem 0;">
+            <div style="color:#dc2626;">⬇ ＋🏠MACを付ける</div><div></div><div style="color:#16a34a;">⬆ 🏠MACを外す</div>
+          </div>
+
+          <!-- ②データリンク -->
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.72rem;align-items:stretch;">
+            <div style="background:#dcfce7;color:#166534;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">🏠MAC＋🏙️＋🔢＋📄<br><small>次の差込口宛</small></div>
+            <div style="background:#dcfce7;color:#166534;border-radius:5px;padding:.3rem;text-align:center;font-weight:800;display:flex;align-items:center;justify-content:center;">②<br>データ<br>リンク</div>
+            <div style="background:#dcfce7;color:#166534;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">🏠MACを見て<br><small>自分宛か確認</small></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.66rem;text-align:center;color:#94a3b8;padding:.1rem 0;">
+            <div style="color:#dc2626;">⬇ 信号に変える</div><div></div><div style="color:#16a34a;">⬆ 信号を受け取る</div>
+          </div>
+
+          <!-- ①物理 -->
+          <div style="display:grid;grid-template-columns:1fr 54px 1fr;gap:.3rem;font-size:.72rem;align-items:stretch;">
+            <div style="background:#f1f5f9;color:#475569;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">⚡010110…<br>電気信号で送出</div>
+            <div style="background:#f1f5f9;color:#475569;border-radius:5px;padding:.3rem;text-align:center;font-weight:800;display:flex;align-items:center;justify-content:center;">①<br>物理</div>
+            <div style="background:#f1f5f9;color:#475569;border-radius:5px;padding:.3rem;text-align:center;font-weight:700;">⚡010110…<br>電気信号を受信</div>
+          </div>
+
+          <!-- 中継機器の「登る高さ」を表で -->
+          <div style="background:#0f172a;color:#fff;border-radius:6px;padding:.45rem .5rem;margin-top:.35rem;">
+            <div style="font-weight:800;margin-bottom:.25rem;text-align:center;font-size:.74rem;">⚡ 一番下（物理）でつながり、中継機器を通って相手へ ⚡</div>
+            <div style="font-size:.66rem;color:#cbd5e1;text-align:center;margin-bottom:.4rem;">❓なぜ層②③が出てくる？ → <b style="color:#fde68a;">機器ごとに「登る高さ（読む層）」が違うから</b>。各機器は自分の層まで登って判断し、また①物理に降ろして次へ送ります。</div>
+            <table style="font-size:.72rem;background:#fff;color:#1e293b;">
+              <tr><th style="background:#334155;">通る順</th><th style="background:#334155;">中継機器</th><th style="background:#334155;">登る高さ（読む層）</th><th style="background:#334155;">すること</th></tr>
+              <tr><td>①</td><td class="l">📢 ハブ</td><td><b>①物理</b> まで</td><td class="l">宛先を見ず<b>増幅して全ポートへ</b></td></tr>
+              <tr><td>②</td><td class="l">📮 L2スイッチ</td><td><b>①②データリンク</b> まで</td><td class="l"><b>MAC</b>を見て正しい差込口へ転送</td></tr>
+              <tr><td>③</td><td class="l">🚦 ルータ</td><td><b>①②③ネットワーク</b> まで</td><td class="l"><b>IP</b>を見て🏠MAC封筒を貼り替え次へ</td></tr>
+              <tr><td>…</td><td class="l">（②③をくり返し）</td><td>—</td><td class="l">目的地まで中継</td></tr>
+              <tr><td>着</td><td class="l">📥 相手PC</td><td class="yes"><b>①〜⑦アプリ</b> まで</td><td class="l">封筒を<b>全部はがして</b>データを読む🎉</td></tr>
+            </table>
+            <div style="font-size:.64rem;color:#cbd5e1;text-align:center;margin-top:.3rem;">「登る高さ」が上の階段図の層番号と対応。機器は自分の高さまで登ったら、また①物理に降りて次へ。</div>
+          </div>
+        </div>
+        <p style="margin:.4rem 0 0;font-size:.76rem;color:#475569;">💡 旅の途中：<b>ルータを通るたびに🏠MAC封筒（層②）は貼り替え</b>（次の機器宛に書き直す）。でも<b>🏙️IP封筒（層③）は最終目的地まで変わらない</b>。だから「IP＝最後まで届け先／MAC＝次の1区間だけ」。</p>
+
+        <!-- 通し手順（番号で呼べる） -->
+        <div style="background:#fff;border:1.5px solid #c4b5fd;border-radius:8px;padding:.55rem .65rem;margin-top:.5rem;">
+          <div style="font-weight:800;color:#7c3aed;font-size:.82rem;margin-bottom:.35rem;">📋 通し手順（STEP順）— この番号で「STEP◯」と呼べます</div>
+          <div style="display:grid;gap:.22rem;font-size:.74rem;">
+            <div style="font-weight:700;color:#b91c1c;">▼ 送信側PC（上→下・封筒を重ねる）</div>
+            <div><b>STEP1</b>（⑦アプリ）📄データ「Webページ下さい」を作る</div>
+            <div><b>STEP2</b>（④トランスポート）🔢ポートを付ける（どのアプリ宛か）</div>
+            <div><b>STEP3</b>（③ネットワーク）🏙️IPを付ける（どの町宛か）</div>
+            <div><b>STEP4</b>（②データリンク）🏠MACを付ける（次の差込口宛）</div>
+            <div><b>STEP5</b>（①物理）⚡電気信号に変えて送り出す</div>
+            <div style="font-weight:700;color:#0f766e;margin-top:.15rem;">▼ ケーブルを旅する（中継機器）</div>
+            <div><b>STEP6</b>📢ハブ＝層①まで（見ずに増幅して流す）</div>
+            <div><b>STEP7</b>📮L2スイッチ＝層②まで登る（MACを見て正しい差込口へ）</div>
+            <div><b>STEP8</b>🚦ルータ＝層③まで登る（IPを見て、🏠MAC封筒を次用に貼り替え）→ 必要なだけ繰り返し</div>
+            <div style="font-weight:700;color:#166534;margin-top:.15rem;">▼ 受信側PC（下→上・封筒をはがす）</div>
+            <div><b>STEP9</b>（①物理）⚡信号を受信</div>
+            <div><b>STEP10</b>（②データリンク）🏠MACをはがす（自分宛か確認）</div>
+            <div><b>STEP11</b>（③ネットワーク）🏙️IPをはがす（自分のIP宛か確認）</div>
+            <div><b>STEP12</b>（④トランスポート）🔢ポートをはがす（どのアプリへ渡すか振り分け）</div>
+            <div><b>STEP13</b>（⑦アプリ）📄データを読む！🎉</div>
+          </div>
+        </div>
+
+        <p style="margin:.5rem 0 0;font-size:.82rem;background:#ede9fe;border-radius:6px;padding:.45rem .65rem;color:#5b21b6;">🔑 <b>ひとことで：</b>左を<b>降りながら封筒を重ね</b>（データ→＋ポート→＋IP→＋MAC→信号）、右を<b>昇りながら同じ封筒を逆順ではがす</b>。<b>左右の同じ高さ＝同じ層</b>で、付けた封筒をそこで外す。<b>途中の機器は自分の層まで登って判断→また降りる</b>ので層②③が顔を出す、と覚えると迷いません。</p>
+      </div>
+
+      <div class="vz-supplement" style="background:#fef2f2;border-left-color:#ef4444;margin-top:.8rem;">
+        <div class="vz-label" style="color:#dc2626;">⚠️ まぎらわしい！「2つのポート」は別もの</div>
+        <p style="margin:0 0 .4rem;font-size:.83rem;">同じ「ポート」でも、層が違うと意味がまったく違います。混同注意！</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.8rem;">
+          <div style="background:#fff;border:2px solid #22c55e;border-radius:8px;padding:.5rem .6rem;">
+            <b style="color:#15803d;">🔌 ②データリンク層の「ポート」</b><br>＝スイッチの<b>差込口（物理的な穴）</b>。LANケーブルを挿す口のこと。<br><small style="color:#64748b;">「宛先のポートだけに転送」＝正しい差込口にだけ流す</small>
+          </div>
+          <div style="background:#fff;border:2px solid #0e7490;border-radius:8px;padding:.5rem .6rem;">
+            <b style="color:#0e7490;">🔢 ④トランスポート層の「ポート番号」</b><br>＝<b>アプリを区別する番号</b>（0〜65535）。物理的な穴ではなく“番号”。<br><small style="color:#64748b;">例：Web=80/443、メール=25。同じPC内のどのソフト宛か</small>
+          </div>
+        </div>
+        <p style="margin:.4rem 0 0;font-size:.8rem;background:#fee2e2;border-radius:6px;padding:.4rem .6rem;color:#b91c1c;">🎯 <b>ひとことで：</b>差込口（物理の穴）＝下の層／番号（アプリの宛先）＝上の層。</p>
+      </div>
+
+      <div class="vz-supplement" style="background:#fffbeb;border-left-color:#f59e0b;margin-top:.8rem;">
+        <div class="vz-label" style="color:#d97706;">🧒 ⭐の3層を「お手紙の配達」＋図で覚える</div>
+        <p style="margin:0 0 .3rem;font-size:.78rem;background:#fef3c7;border-radius:6px;padding:.4rem .6rem;color:#92400e;">🔗 これは上のU字図の<b>「旅」(STEP6〜8)で出てくる3機器の“中身”を1台ずつ拡大した図</b>です。ルータ＝層③／L2スイッチ＝層②／ハブ＝層①、と<b>登る層の高さ</b>に対応しています。</p>
+        <div style="display:grid;gap:.6rem;margin-top:.3rem;font-size:.83rem;">
+
+          <div style="background:#fff;border-left:4px solid #a16207;border-radius:6px;padding:.5rem .7rem;">
+            ⭐③ <b>ネットワーク層（ルータ）</b><br>🏙️ <u>別の町へ送る配達トラック</u>。IPアドレス（住所）を見て「どの町へ運ぶか」を決める。
+            <svg viewBox="0 0 360 92" width="100%" style="max-width:360px;display:block;margin:.4rem auto 0;">
+              <defs><marker id="arN" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#a16207"/></marker></defs>
+              <rect x="2" y="30" width="92" height="44" rx="7" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="48" y="50" font-size="11" text-anchor="middle" fill="#1e40af" font-weight="bold">🏙️ 町A</text>
+              <text x="48" y="65" font-size="8.5" text-anchor="middle" fill="#1e40af">192.168.1.x</text>
+              <rect x="134" y="26" width="92" height="52" rx="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="180" y="46" font-size="11" text-anchor="middle" fill="#a16207" font-weight="bold">🚦 ルータ</text>
+              <text x="180" y="61" font-size="8" text-anchor="middle" fill="#a16207">IPで「どの町」</text>
+              <text x="180" y="71" font-size="8" text-anchor="middle" fill="#a16207">か判断</text>
+              <rect x="266" y="30" width="92" height="44" rx="7" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+              <text x="312" y="50" font-size="11" text-anchor="middle" fill="#166534" font-weight="bold">🏙️ 町B</text>
+              <text x="312" y="65" font-size="8.5" text-anchor="middle" fill="#166534">10.0.0.x</text>
+              <text x="114" y="22" font-size="15" text-anchor="middle">🚚</text>
+              <line x1="94" y1="52" x2="132" y2="52" stroke="#a16207" stroke-width="2.5" marker-end="url(#arN)"/>
+              <line x1="226" y1="52" x2="264" y2="52" stroke="#a16207" stroke-width="2.5" marker-end="url(#arN)"/>
+            </svg>
+            <div style="background:#fffbeb;border:1px dashed #f59e0b;border-radius:6px;padding:.4rem .6rem;font-size:.76rem;color:#92400e;margin-top:.3rem;">📌 <b>自宅のWi-Fiルータとの違い：</b>役割は同じ「ルータ（IPで別NWへ転送）」ですが、家庭用は<b>1台に複数機能が同居</b>＝ルータ＋L2スイッチ（LANポート）＋無線AP（Wi-Fi）＋NAPT＋DHCPの<b>詰め合わせ</b>。試験の「ルータ」はそのうち<b>ルーティング部分だけ</b>を指します。</div>
+          </div>
+
+          <div style="background:#fff;border-left:4px solid #15803d;border-radius:6px;padding:.5rem .7rem;">
+            ⭐② <b>データリンク層（L2スイッチ）</b><br>🏠 <u>同じ町内の郵便屋さん</u>。MACアドレス（その家の表札）を見て、<b>宛先の家（差込口）だけ</b>に手紙を届ける。
+            <svg viewBox="0 0 360 116" width="100%" style="max-width:360px;display:block;margin:.4rem auto 0;">
+              <rect x="118" y="6" width="124" height="30" rx="7" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+              <text x="180" y="25" font-size="11" text-anchor="middle" fill="#166534" font-weight="bold">📮 L2スイッチ</text>
+              <line x1="150" y1="36" x2="48" y2="74" stroke="#cbd5e1" stroke-width="2"/>
+              <line x1="170" y1="36" x2="138" y2="74" stroke="#16a34a" stroke-width="3.5"/>
+              <line x1="200" y1="36" x2="232" y2="74" stroke="#cbd5e1" stroke-width="2"/>
+              <line x1="220" y1="36" x2="322" y2="74" stroke="#cbd5e1" stroke-width="2"/>
+              <text x="138" y="58" font-size="13" text-anchor="middle">✉️</text>
+              <text x="48" y="92" font-size="20" text-anchor="middle">🏠</text>
+              <text x="138" y="92" font-size="20" text-anchor="middle">🏠</text>
+              <text x="232" y="92" font-size="20" text-anchor="middle">🏠</text>
+              <text x="322" y="92" font-size="20" text-anchor="middle">🏠</text>
+              <text x="48" y="108" font-size="8" text-anchor="middle" fill="#94a3b8">他（届かない）</text>
+              <text x="138" y="108" font-size="8.5" text-anchor="middle" fill="#15803d" font-weight="bold">✅宛先MAC</text>
+              <text x="232" y="108" font-size="8" text-anchor="middle" fill="#94a3b8">他</text>
+              <text x="322" y="108" font-size="8" text-anchor="middle" fill="#94a3b8">他</text>
+            </svg>
+          </div>
+
+          <div style="background:#fff;border-left:4px solid #64748b;border-radius:6px;padding:.5rem .7rem;">
+            ⭐① <b>物理層（ハブ・リピータ）</b><br>📢 <u>拡声器</u>。宛先を見ずに、届いた信号を<b>全員に大声でそのまま流すだけ</b>（増幅）。
+            <svg viewBox="0 0 360 116" width="100%" style="max-width:360px;display:block;margin:.4rem auto 0;">
+              <rect x="128" y="6" width="104" height="30" rx="7" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+              <text x="180" y="25" font-size="11" text-anchor="middle" fill="#475569" font-weight="bold">📢 ハブ</text>
+              <line x1="150" y1="36" x2="48" y2="74" stroke="#f59e0b" stroke-width="3"/>
+              <line x1="168" y1="36" x2="138" y2="74" stroke="#f59e0b" stroke-width="3"/>
+              <line x1="192" y1="36" x2="232" y2="74" stroke="#f59e0b" stroke-width="3"/>
+              <line x1="210" y1="36" x2="322" y2="74" stroke="#f59e0b" stroke-width="3"/>
+              <text x="48" y="92" font-size="20" text-anchor="middle">🏠</text>
+              <text x="138" y="92" font-size="20" text-anchor="middle">🏠</text>
+              <text x="232" y="92" font-size="20" text-anchor="middle">🏠</text>
+              <text x="322" y="92" font-size="20" text-anchor="middle">🏠</text>
+              <text x="48" y="108" font-size="9" text-anchor="middle" fill="#c2410c" font-weight="bold">📨届く</text>
+              <text x="138" y="108" font-size="9" text-anchor="middle" fill="#c2410c" font-weight="bold">📨届く</text>
+              <text x="232" y="108" font-size="9" text-anchor="middle" fill="#c2410c" font-weight="bold">📨届く</text>
+              <text x="322" y="108" font-size="9" text-anchor="middle" fill="#c2410c" font-weight="bold">📨届く</text>
+            </svg>
+            <div style="text-align:center;font-size:.76rem;color:#c2410c;">↑ 宛先を見ないので<b>全員に届く</b>（むだ＆セキュリティ弱）</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="trap"><b>外したQ</b>：①<b>ルータ＝ネットワーク層・IP</b>（MAC/データリンクはL2スイッチ）。②<b>デフォルトゲートウェイ＝外部ネットへの出口</b>（同一サブネット内は直接通信なので不要）。③<b>TCP/UDP＝トランスポート層</b>／<b>IP＝ネットワーク（インターネット）層</b>（混同注意）。</div>
     </div>
 
     <h2>図2：TCP と UDP</h2>
@@ -224,19 +1060,52 @@ td.l{text-align:left;}
         <div class="vz-label">💡 かんたん解説</div>
         <p>TCPは「届いたか確認しながら送る丁寧な宅配便」、UDPは「確認しない速達ハガキ」。確実さのTCP、速さのUDP、とおさえます。</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
-          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📦✅</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">TCP＝丁寧な宅配便</div><div style="font-size:.75rem;color:#1e3a8a;">届いたか確認・確実</div></div>
-          <div style="background:#fefce8;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📮💨</div><div style="font-size:.78rem;font-weight:700;color:#854d0e;">UDP＝速達ハガキ</div><div style="font-size:.75rem;color:#713f12;">確認なし・高速</div></div>
+          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📦✅</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">TCP＝丁寧な宅配便</div><div style="font-size:.7rem;color:#3b82f6;font-weight:700;">Transmission Control Protocol</div><div style="font-size:.75rem;color:#1e3a8a;">届いたか確認・確実</div></div>
+          <div style="background:#fefce8;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📮💨</div><div style="font-size:.78rem;font-weight:700;color:#854d0e;">UDP＝速達ハガキ</div><div style="font-size:.7rem;color:#a16207;font-weight:700;">User Datagram Protocol</div><div style="font-size:.75rem;color:#713f12;">確認なし・高速</div></div>
         </div>
+        <div style="background:#dbeafe;border-radius:6px;padding:.5rem .7rem;margin-top:.5rem;font-size:.83rem;color:#1e40af;">🧒 <b>覚え方：「<u>T</u>akuhaibin（宅配便）の T ＝ <u>T</u>CP」</b>。宅配便は「届きました」とハンコをもらう（＝届いたか確認＝信頼性が高い）。残ったUDPが速いハガキの方、と消去法でOK。</div>
       </div>
       <table>
         <tr><th></th><th>TCP</th><th>UDP</th></tr>
-        <tr><td>接続</td><td class="yes">コネクション型（3wayハンドシェイク）</td><td>コネクションレス</td></tr>
-        <tr><td>信頼性</td><td class="yes">高い（順序保証・再送・フロー制御）</td><td class="no">低い（確認・再送なし）</td></tr>
-        <tr><td>速さ／用途</td><td>やや重い／Web・メール</td><td class="yes">高速／動画・音声・DNS</td></tr>
+        <tr><td>正式名称</td><td class="l">Transmission Control Protocol<br><small>（伝送制御プロトコル）</small></td><td class="l">User Datagram Protocol<br><small>（ユーザーデータグラム プロトコル）</small></td></tr>
+        <tr><td>接続</td><td class="yes">コネクション型（3wayハンドシェイク）<br><small>📞 送る前に「もしもし？／はい／よろしく」と3回あいさつして“電話をつなぐ”イメージ</small></td><td>コネクションレス<br><small>📭 あいさつ抜きでいきなり投げる（つなぎっぱなしにしない）</small></td></tr>
+        <tr><td>信頼性</td><td class="yes">高い（順序保証・再送・フロー制御）<br><small>📦 ①順番どおりに届く ②届かなければ送り直す ③相手の処理が追いつくよう速度調整</small></td><td class="no">低い（確認・再送なし）<br><small>📮 届いたか確かめず、消えても送り直さない（投げっぱなし）</small></td></tr>
+        <tr><td>速さ／用途</td><td>やや重い／Web・メール<br><small>🐢 あいさつ・確認の手間があるぶん少し遅い。確実さが大事なものに使う</small></td><td class="yes">高速／動画・音声・DNS<br><small>🐇 手間がないぶん速い。多少欠けてもOKな“今この瞬間”のものに使う</small></td></tr>
       </table>
       <div class="trap"><b>外したQ</b>：<b>TCP＝コネクション型で信頼性が高い／UDP＝コネクションレスで高速だが信頼性は低い</b>。逆に覚えない。</div>
     </div>
 
+    <div class="fill-section-title">✏️ 穴埋めチェック（層・TCP/UDP）</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">層と機器（OSI 7階層 ↔ TCP/IP 4階層）</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>機器</th><th>OSI層</th><th>TCP/IP 4階層</th><th>宛先の見方</th></tr>
+          <tr><td>ハブ／リピータ</td><td><span class="blank">物理層</span></td><td rowspan="2"><span class="blank">ネットワークインターフェース層</span></td><td>増幅し全ポートへ</td></tr>
+          <tr><td>L2スイッチ</td><td><span class="blank">データリンク層</span></td><td><span class="blank">MAC</span>アドレス</td></tr>
+          <tr><td>ルータ</td><td><span class="blank">ネットワーク層</span></td><td><span class="blank">インターネット層</span></td><td><span class="blank">IP</span>アドレス</td></tr>
+          <tr><td>（TCP・UDP）</td><td><span class="blank">トランスポート層</span></td><td><span class="blank">トランスポート層</span></td><td><span class="blank">ポート番号</span></td></tr>
+        </table>
+        <div>OSIは<span class="blank">7</span>階層／TCP/IPは<span class="blank">4</span>階層（TCP/IPはOSIを実用的にまとめたもの）</div>
+        <div>外部ネットへの出口＝<span class="blank">デフォルトゲートウェイ</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">TCP / UDP</div>
+      <div class="fill-body">
+        <div>接続を確立し信頼性が高い＝<span class="blank">TCP</span>（<span class="blank">Transmission Control Protocol</span>）／高速で信頼性が低い＝<span class="blank">UDP</span>（<span class="blank">User Datagram Protocol</span>）</div>
+        <div>覚え方：宅<span class="blank">配</span>便の「T」＝<span class="blank">TCP</span>（届いたか確認＝信頼性が高い）</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB ④IP/サブネット ================= -->
+  <div class="tab-panel">
     <h2>図3：IPアドレスとサブネット</h2>
     <div class="fig">
       <div class="vz-supplement">
@@ -261,18 +1130,88 @@ td.l{text-align:left;}
       <div class="trap"><b>外したQ</b>：マスクの<b>1がネットワーク部</b>・<b>ブロードキャスト＝全1</b>・<b>IPv6は128bit</b>。</div>
     </div>
 
+    <div class="fill-section-title">✏️ 穴埋めチェック（IP・サブネット）</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">IPアドレスとサブネット</div>
+      <div class="fill-body">
+        <div>IPv4＝<span class="blank">32</span>ビット／IPv6＝<span class="blank">128</span>ビット</div>
+        <div>マスクの「1」＝<span class="blank">ネットワーク部</span>／ブロードキャスト＝ホスト部が<span class="blank">全1</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB ⑤変換/ポート ================= -->
+  <div class="tab-panel">
     <h2>図4：アドレスの変換・解決とポート</h2>
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>家の中だけの住所（プライベートIP）のままでは外に出られないので、玄関（ルータ）で外向けの住所に変えます。ポート番号は「部屋番号」のイメージです。</p>
-        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
-          <div style="background:#fef2f2;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#b91c1c;">プライベートIP（家の中）</div>
-          <span style="color:#94a3b8;font-size:1.1rem;">→</span>
-          <div style="background:#ede9fe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#5b21b6;">NAPT（玄関で変換）</div>
-          <span style="color:#94a3b8;font-size:1.1rem;">→</span>
-          <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#166534;">グローバルIP（外の住所）</div>
+        <p>家の中だけの住所（プライベートIP）のままでは外に出られないので、玄関（ルータ）で外向けの住所に変えます。ポート番号は「部屋番号」のイメージ。<b>外へ送り出すまでの流れ</b>を順番に見てみましょう。</p>
+
+        <div style="background:#fff;border-radius:8px;padding:.6rem .7rem;margin-top:.4rem;font-size:.82rem;">
+          <div style="font-weight:800;color:#0f766e;margin-bottom:.4rem;">📨 自分のPCから外のサーバへ送るまでの流れ</div>
+
+          <!-- 空間マップ図 -->
+          <div style="border:1px solid #e2e8f0;border-radius:8px;padding:.5rem .4rem;margin-bottom:.5rem;background:#fcfcfd;">
+            <div style="display:flex;align-items:stretch;gap:.3rem;overflow-x:auto;">
+              <!-- 家（LAN） -->
+              <div style="flex:0 0 auto;border:2px dashed #f59e0b;border-radius:8px;padding:.4rem .35rem;background:#fffbeb;">
+                <div style="font-size:.66rem;font-weight:800;color:#b45309;text-align:center;margin-bottom:.3rem;">🏠 家の中（LAN・プライベートIP）</div>
+                <div style="display:flex;align-items:center;gap:.2rem;">
+                  <div style="background:#fff;border:1.5px solid #ef4444;border-radius:6px;padding:.3rem;text-align:center;font-size:.64rem;">💻<br>自分PC<br><small>192.168.1.5</small></div>
+                  <div style="text-align:center;font-size:.6rem;color:#0f766e;font-weight:700;">①荷物<br>→</div>
+                  <div style="background:#eafaf1;border:1.5px solid #22c55e;border-radius:6px;padding:.3rem;text-align:center;font-size:.64rem;">🔍<br><b>ARP</b><br><small>IP→MAC<br>を調べる</small></div>
+                  <div style="text-align:center;font-size:.6rem;color:#0f766e;font-weight:700;">②MAC<br>判明→</div>
+                  <div style="background:#ede9fe;border:1.5px solid #8b5cf6;border-radius:6px;padding:.3rem;text-align:center;font-size:.64rem;">🚪<br>ルータ<br><small>(玄関)</small></div>
+                </div>
+              </div>
+              <!-- 境界＝NAPT -->
+              <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                <div style="font-size:.6rem;font-weight:800;color:#5b21b6;text-align:center;">③NAPT<br>住所書換</div>
+                <div style="font-size:1.1rem;color:#94a3b8;">⇒</div>
+                <div style="font-size:.56rem;color:#64748b;text-align:center;">私IP→公IP</div>
+              </div>
+              <!-- インターネット -->
+              <div style="flex:0 0 auto;border:2px solid #3b82f6;border-radius:8px;padding:.4rem .35rem;background:#eff6ff;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-size:.66rem;font-weight:800;color:#1d4ed8;text-align:center;margin-bottom:.3rem;">🌐 インターネット<br>(グローバルIP)</div>
+                <div style="display:flex;align-items:center;gap:.2rem;justify-content:center;">
+                  <div style="text-align:center;font-size:.6rem;color:#1d4ed8;font-weight:700;">④<br>→</div>
+                  <div style="background:#fff;border:1.5px solid #3b82f6;border-radius:6px;padding:.3rem;text-align:center;font-size:.64rem;">🖥️<br>相手サーバ<br><small>到着🎉</small></div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:.64rem;color:#64748b;text-align:center;margin-top:.3rem;">家の中＝🔍ARPでMACを調べて玄関まで運ぶ／玄関＝🚪ルータで⇒NAPT住所書換／外＝🌐グローバルIPで相手へ</div>
+          </div>
+
+          <div style="display:grid;gap:.45rem;">
+            <div style="display:flex;gap:.5rem;align-items:flex-start;">
+              <span style="background:#0f766e;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.78rem;">1</span>
+              <div style="background:#fef2f2;border-radius:6px;padding:.35rem .6rem;flex:1;"><b style="color:#b91c1c;">🏠 自分のPC（プライベートIP）</b><br>相手の住所（IP）はDNSで分かった。でも、まず<b>家の玄関＝ルータ</b>に荷物を渡したい。</div>
+            </div>
+            <div style="text-align:center;color:#94a3b8;font-weight:800;line-height:.6;">↓</div>
+
+            <div style="display:flex;gap:.5rem;align-items:flex-start;">
+              <span style="background:#0f766e;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.78rem;">2</span>
+              <div style="background:#eafaf1;border-radius:6px;padding:.35rem .6rem;flex:1;border:1.5px solid #22c55e;"><b style="color:#15803d;">🔍 ARP でルータのMACを調べる</b><br>同じLAN内で渡すには<b>表札＝MACアドレス</b>が要る。「ルータのIP→MACは？」と聞いて宛先MACを知る。<br><small style="color:#16a34a;">★ここがARP（IP→MAC変換）。これがないとLAN内で荷物を渡せない</small></div>
+            </div>
+            <div style="text-align:center;color:#94a3b8;font-weight:800;line-height:.6;">↓</div>
+
+            <div style="display:flex;gap:.5rem;align-items:flex-start;">
+              <span style="background:#0f766e;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.78rem;">3</span>
+              <div style="background:#ede9fe;border-radius:6px;padding:.35rem .6rem;flex:1;"><b style="color:#5b21b6;">🚪 ルータで NAPT（住所の書き換え）</b><br>家の中の住所（プライベートIP）＋<b>部屋番号（ポート）</b>を、<b>外向けの住所（グローバルIP）＋ポート</b>に書き換える。<br><small style="color:#7c3aed;">ポートで「どの端末・どのアプリか」を見分け、1つのグローバルIPを家族で共有</small></div>
+            </div>
+            <div style="text-align:center;color:#94a3b8;font-weight:800;line-height:.6;">↓</div>
+
+            <div style="display:flex;gap:.5rem;align-items:flex-start;">
+              <span style="background:#0f766e;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.78rem;">4</span>
+              <div style="background:#dcfce7;border-radius:6px;padding:.35rem .6rem;flex:1;"><b style="color:#166534;">🌐 グローバルIPでインターネットへ出発</b><br>外で通じる住所になったので、相手のサーバまで届く。</div>
+            </div>
+          </div>
         </div>
+        <p style="margin:.5rem 0 0;font-size:.8rem;background:#ccfbf1;border-radius:6px;padding:.4rem .6rem;color:#0f766e;">🔑 <b>2つの「変換」を区別：</b>ARP＝<b>IP→MAC</b>（LAN内で“表札”を調べる）／NAPT＝<b>プライベートIP→グローバルIP</b>（玄関で“外向け住所”に直す）。</p>
       </div>
       <div class="grid2">
         <div class="cell" style="border-color:var(--g)"><b>ARP</b>IP→MAC を解決（同一LANで宛先MACを知る）</div>
@@ -282,32 +1221,8 @@ td.l{text-align:left;}
       </div>
     </div>
 
-    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <div class="fill-section-title">✏️ 穴埋めチェック（変換・ポート）</div>
     <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
-
-    <div class="fill-card">
-      <div class="fill-head">層と機器</div>
-      <div class="fill-body">
-        <table>
-          <tr><th>機器</th><th>層</th><th>宛先の見方</th></tr>
-          <tr><td>ハブ／リピータ</td><td><span class="blank">物理層</span></td><td>増幅し全ポートへ</td></tr>
-          <tr><td>L2スイッチ</td><td><span class="blank">データリンク層</span></td><td><span class="blank">MAC</span>アドレス</td></tr>
-          <tr><td>ルータ</td><td><span class="blank">ネットワーク層</span></td><td><span class="blank">IP</span>アドレス</td></tr>
-        </table>
-        <div>外部ネットへの出口＝<span class="blank">デフォルトゲートウェイ</span></div>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
-
-    <div class="fill-card">
-      <div class="fill-head">TCP / UDP とIPアドレス</div>
-      <div class="fill-body">
-        <div>接続を確立し信頼性が高い＝<span class="blank">TCP</span>／高速で信頼性が低い＝<span class="blank">UDP</span></div>
-        <div>IPv4＝<span class="blank">32</span>ビット／IPv6＝<span class="blank">128</span>ビット</div>
-        <div>マスクの「1」＝<span class="blank">ネットワーク部</span>／ブロードキャスト＝ホスト部が<span class="blank">全1</span></div>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
 
     <div class="fill-card">
       <div class="fill-head">変換・解決・ポート</div>
@@ -328,14 +1243,76 @@ td.l{text-align:left;}
         <div class="vz-label">💡 かんたん解説</div>
         <p>「99%正解！」でも油断は禁物。99%が“陰性”のデータなら、全部「陰性」と答えるだけで99%になります。だから<b>偏った（不均衡）データでは正解率はあてにならない</b>。</p>
       </div>
+      <div class="vz-supplement" style="background:#f0fdf4;border-left-color:#22c55e;">
+        <div class="vz-label" style="color:#16a34a;">🧪 共通の具体例：病気の検査（100人）で4指標を計算してみる</div>
+        <p style="margin:0 0 .4rem;font-size:.84rem;"><b>100人</b>を検査。<b>本当に病気＝10人</b>／<b>健康＝90人</b>。あるAIが「病気かどうか」を判定した結果が下の表（混同行列）。この数字を使って、各指標を実際に計算します。</p>
+
+        <table style="font-size:.76rem;">
+          <tr><th rowspan="2" colspan="2" style="background:#475569;">　</th><th colspan="2">本当はどうだった？（正解）</th><th rowspan="2" style="background:#7c3aed;">→ 行から分かる指標</th></tr>
+          <tr><th style="background:#b91c1c;">本当に病気（陽性10人）</th><th style="background:#1e40af;">本当は健康（陰性90人）</th></tr>
+          <tr><th rowspan="2" style="background:#334155;writing-mode:vertical-rl;">AIの<br>判定</th><th style="background:#7f1d1d;">病気と判定</th><td style="background:#dcfce7;font-weight:800;">✅TP＝8人<br><small>当たり(病気を病気)</small></td><td style="background:#fef2f2;font-weight:800;">❌FP＝12人<br><small>誤報(健康を病気)</small></td><td style="background:#f5f3ff;"><span class="blank">適合率(precision)</span><br><small>＝TP/(TP+FP)<br>=8/20=40%</small></td></tr>
+          <tr><th style="background:#1e3a8a;">健康と判定</th><td style="background:#fff7ed;font-weight:800;">❌FN＝2人<br><small>見逃し(病気を健康)</small></td><td style="background:#dcfce7;font-weight:800;">✅TN＝78人<br><small>当たり(健康を健康)</small></td><td style="background:#f8fafc;color:#94a3b8;">―</td></tr>
+          <tr><th colspan="2" style="background:#7c3aed;">↑ 列から分かる指標</th><td style="background:#f5f3ff;"><span class="blank">再現率(recall)</span><br><small>＝TP/(TP+FN)<br>=8/10=80%</small></td><td style="background:#f8fafc;color:#94a3b8;">―</td><td style="background:#eef2ff;"><span class="blank">正解率(accuracy)</span><br><small>＝(TP+TN)/全員<br>=86%</small></td></tr>
+        </table>
+        <p style="font-size:.74rem;color:#64748b;margin:.3rem 0 0;">T=当たり/F=外れ、P=病気と判定/N=健康と判定。例）FN＝「Falseで判定はNegative(健康)」＝病気なのに健康と誤判定＝<b>見逃し</b>。<br>📐 <b>適合率＝「病気と判定」の行</b>で計算／<b>再現率＝「本当に病気」の列</b>で計算／<b>正解率＝表全体</b>（当たりTP・TNの合計÷全員）。F値はこの適合率と再現率の調和平均。</p>
+      </div>
+
       <table>
-        <tr><th>指標</th><th>意味</th></tr>
-        <tr><td>正解率(accuracy)</td><td class="l">全体の的中率。<b>不均衡データでは誤導される</b>→次の3つで見る</td></tr>
-        <tr><td>適合率(precision)</td><td class="l">「陽性と判定」したうち本当に陽性だった割合</td></tr>
-        <tr><td>再現率(recall)</td><td class="l">「本当に陽性」のうち拾えた割合（取りこぼしの少なさ）</td></tr>
-        <tr><td>F値</td><td class="l">適合率と再現率の<b>調和平均</b>（バランス）</td></tr>
+        <tr><th>指標</th><th>意味（何を見る？）</th><th>計算（この例）</th><th>結果</th></tr>
+        <tr><td>正解率<br>(accuracy)</td><td class="l">全体の的中率。<b>不均衡データでは誤導される</b>→次の3つで見る</td><td class="l">当たり全部 ÷ 全員<br>(TP+TN)/100<br>=(8+78)/100</td><td class="yes">86%</td></tr>
+        <tr><td>適合率<br>(precision)</td><td class="l">「<b>陽性と判定</b>」したうち本当に陽性だった割合<br><small>＝“病気と言ったのは正しかった？”（誤報の少なさ）</small></td><td class="l">TP/(TP+FP)<br>=8/(8+12)<br>=8/20</td><td class="no">40%</td></tr>
+        <tr><td>再現率<br>(recall)</td><td class="l">「<b>本当に陽性</b>」のうち拾えた割合（取りこぼしの少なさ）<br><small>＝“本物の病気を何人見つけた？”（見逃しの少なさ）</small></td><td class="l">TP/(TP+FN)<br>=8/(8+2)<br>=8/10</td><td class="yes">80%</td></tr>
+        <tr><td>F値<br>(F1)</td><td class="l">適合率と再現率の<b>調和平均</b>（バランス）</td><td class="l">2×0.4×0.8<br>÷(0.4+0.8)<br>=0.64/1.2</td><td>約53%</td></tr>
       </table>
-      <div class="formula">SVM ＝ クラスを分ける境界を「マージン（余白）最大」で引く</div>
+      <div class="vz-supplement" style="background:#fffbeb;border-left-color:#f59e0b;margin-top:.6rem;">
+        <div class="vz-label" style="color:#d97706;">🧒 この例で何が読み取れる？</div>
+        <div style="font-size:.83rem;display:grid;gap:.3rem;">
+          <div>📊 <b>正解率86%</b>＝一見good。でも…</div>
+          <div>🎯 <b>適合率40%</b>＝「病気！」と言った20人中、本当の病気は8人だけ。<b>12人は健康なのに誤報</b>（オオカミ少年タイプ）。</div>
+          <div>🕸️ <b>再現率80%</b>＝本物の病気10人中8人は捕まえた。<b>2人は見逃し</b>。</div>
+          <div>⚖️ <b>F値53%</b>＝適合率と再現率の総合点。両方を一度に見たいときの1つの数字。</div>
+          <div style="background:#fef3c7;border-radius:6px;padding:.4rem .6rem;margin-top:.2rem;">💡 <b>使い分け：</b>「<b>見逃したくない</b>」（病気・不正検知）→<b>再現率</b>重視／「<b>誤報を減らしたい</b>」（迷惑メール判定など）→<b>適合率</b>重視。トレードオフの関係。</div>
+        </div>
+      </div>
+
+      <div class="vz-supplement" style="background:#eff6ff;border-left-color:#2563eb;margin-top:.6rem;">
+        <div class="vz-label" style="color:#1d4ed8;">🧭 体系的に：どの指標で「判定」すればいい？（迷ったらこの順）</div>
+
+        <div style="background:#fff;border-radius:8px;padding:.6rem .8rem;font-size:.84rem;">
+          <div style="font-weight:800;color:#1e3a8a;margin-bottom:.4rem;">STEP 1️⃣　データは偏ってる（不均衡）？</div>
+          <div style="display:grid;gap:.3rem;font-size:.8rem;">
+            <div style="background:#fef2f2;border-radius:6px;padding:.4rem .6rem;">▶ <b>偏っている</b>（例：99%が健康）→ <b>正解率(accuracy)は使わない</b>。全部「健康」と答えるだけで99%になってしまうから。STEP2へ。</div>
+            <div style="background:#f0fdf4;border-radius:6px;padding:.4rem .6rem;">▶ <b>半々くらい</b>→ 正解率でもだいたいOK。</div>
+          </div>
+
+          <div style="font-weight:800;color:#1e3a8a;margin:.6rem 0 .4rem;">STEP 2️⃣　2つのミスのうち「どっちが痛い」？</div>
+          <div style="display:grid;gap:.4rem;">
+            <div style="background:#fff7ed;border:1.5px solid #fb923c;border-radius:8px;padding:.5rem .7rem;font-size:.8rem;">
+              <b style="color:#c2410c;">😱 見逃し（FN）が痛い → 再現率(recall)を重視</b><br>「本物を逃したくない」場面。多少の誤報は我慢する。<br><small style="color:#9a3412;">例：がん検診🩺・不正/侵入検知🛡️・火災報知器🔥（鳴らし損ねる方がこわい）</small>
+            </div>
+            <div style="background:#eff6ff;border:1.5px solid #60a5fa;border-radius:8px;padding:.5rem .7rem;font-size:.8rem;">
+              <b style="color:#1d4ed8;">🐺 誤報（FP）が痛い → 適合率(precision)を重視</b><br>「陽性と言ったら確実であってほしい」場面。取りこぼしは我慢する。<br><small style="color:#1e40af;">例：迷惑メール判定📧（大事なメールを誤って捨てたくない）・おすすめ商品・逮捕/摘発</small>
+            </div>
+            <div style="background:#f3e8ff;border:1.5px solid #c084fc;border-radius:8px;padding:.5rem .7rem;font-size:.8rem;">
+              <b style="color:#7c3aed;">⚖️ どっちも同じくらい大事 → F値(F1)でバランスを見る</b><br>適合率と再現率の総合点（調和平均）。1つの数字で比べたいとき。
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fffbeb;border-radius:8px;padding:.6rem .8rem;margin-top:.5rem;font-size:.82rem;">
+          <div style="font-weight:800;color:#d97706;margin-bottom:.3rem;">⚠️ 大原則：適合率と再現率は「シーソー」（トレードオフ）</div>
+          <p style="margin:0 0 .4rem;">「陽性と判定する基準（しきい値）」をどう動かすかで、両者は逆に動きます。<b>両方を同時に100%にはできない</b>ので「どっち優先か」を先に決めるのが判定のコツ。</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+            <div style="background:#fff7ed;border-radius:6px;padding:.45rem .6rem;font-size:.78rem;">🔔 <b>基準をゆるめる</b>（少しでも怪しければ陽性）<br>→ 取りこぼし減＝<b>再現率↑</b>／誤報増＝<b>適合率↓</b></div>
+            <div style="background:#eff6ff;border-radius:6px;padding:.45rem .6rem;font-size:.78rem;">🔒 <b>基準をきびしく</b>（確実なときだけ陽性）<br>→ 誤報減＝<b>適合率↑</b>／見逃し増＝<b>再現率↓</b></div>
+          </div>
+          <p style="margin:.4rem 0 0;font-size:.78rem;color:#92400e;">🔥 <b>火災報知器でイメージ：</b>敏感にすると鳴らし損ねない（再現率↑）が誤報だらけ（適合率↓）。鈍感にすると誤報は減る（適合率↑）が本当の火事を見逃すリスク（再現率↓）。</p>
+        </div>
+
+        <p style="margin:.5rem 0 0;font-size:.83rem;background:#dbeafe;border-radius:6px;padding:.5rem .7rem;color:#1e40af;">🎯 <b>ひとことで判定：</b>①偏りデータなら正解率は捨てる →②「見逃しが怖い＝再現率／誤報が怖い＝適合率」→③両にらみなら F値。<b>“どっちの間違いが痛いか”で指標が決まる</b>。</p>
+      </div>
+
+      <div class="formula" style="margin-top:.8rem;">SVM ＝ クラスを分ける境界を「マージン（余白）最大」で引く</div>
       <div class="trap"><b>△だったQ</b>：正解率が高くても<b>不均衡なら良いモデルとは限らない</b>。SVMは“境界とデータの距離（マージン）を最大化”。</div>
     </div>
 
@@ -353,6 +1330,33 @@ td.l{text-align:left;}
         <div class="cell" style="border-color:var(--b)"><b>CNN（畳み込み）</b>🖼 <b>画像認識</b>が得意。空間的な特徴を捉える</div>
         <div class="cell" style="border-color:var(--g)"><b>RNN（再帰型）</b>🗣 <b>時系列・自然言語</b>など順序のあるデータが得意</div>
       </div>
+
+      <div class="vz-supplement" style="background:#fffbeb;border-left-color:#dc2626;">
+        <div class="vz-label" style="color:#dc2626;">📺 覚え方：CNN＝ニュース局の「CNN」だと思え！</div>
+        <p style="margin:0 0 .5rem;font-size:.84rem;">同じつづりの<b>ニュース局CNNが“映像（画像）”を流す</b>のと同じで、<b>CNN（畳み込み）は画像を見るのが得意</b>。テレビ画面を思い出せば一発です。</p>
+
+        <!-- ニュース放送画面風モックアップ -->
+        <div style="max-width:380px;margin:0 auto;border:5px solid #1e293b;border-radius:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.25);font-family:sans-serif;">
+          <!-- 映像エリア -->
+          <div style="position:relative;height:150px;background:linear-gradient(180deg,#7dd3fc 0%,#bae6fd 55%,#86efac 55%,#4ade80 100%);">
+            <!-- CNNロゴ -->
+            <div style="position:absolute;top:8px;right:8px;background:#dc2626;color:#fff;font-weight:900;font-size:1.1rem;letter-spacing:1px;padding:3px 8px;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.4);">CNN</div>
+            <!-- BREAKINGバナー -->
+            <div style="position:absolute;top:10px;left:8px;background:#b91c1c;color:#fff;font-weight:800;font-size:.66rem;padding:2px 7px;border-radius:3px;">🔴 BREAKING NEWS</div>
+            <!-- 風景＋キャスター -->
+            <div style="position:absolute;bottom:30px;left:18px;font-size:1.5rem;">🏙️ ☀️ 🌳</div>
+            <div style="position:absolute;bottom:6px;right:24px;font-size:2.6rem;">🧑‍💼</div>
+            <div style="position:absolute;bottom:8px;left:14px;font-size:.7rem;color:#1e293b;font-weight:700;background:rgba(255,255,255,.7);padding:1px 5px;border-radius:3px;">📷 現場からの映像</div>
+          </div>
+          <!-- 下部ニュースバー -->
+          <div style="background:#1e293b;color:#fff;padding:5px 0;">
+            <div style="background:#dc2626;display:inline-block;font-weight:800;font-size:.7rem;padding:2px 8px;margin-left:6px;border-radius:3px;">速報</div>
+            <span style="font-size:.74rem;margin-left:8px;">CNN（畳み込み）＝“画像（映像）を見る目”が得意なAI　／　RNNは“言葉・時系列を聞く耳”担当 …</span>
+          </div>
+        </div>
+        <p style="margin:.5rem 0 0;font-size:.8rem;text-align:center;color:#92400e;">🧠 <b>テレビのCNN＝映像（画像）</b> → だから <b>AIのCNN＝画像認識が得意</b>、と結びつけて記憶！</p>
+      </div>
+
       <div class="trap"><b>△だったQ</b>：<b>CNN＝画像／RNN＝時系列・言語</b>。CNNを時系列用と取り違えない。</div>
     </div>
 
@@ -378,6 +1382,56 @@ td.l{text-align:left;}
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
         <p>守りたいのは3つ。<b>機密性＝見せない／完全性＝正しいまま／可用性＝使いたいときに使える</b>。可用性と機密性を取り違えやすいので注意。</p>
+
+        <!-- CIA 3アイコン図解 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;margin-top:.5rem;">
+          <div style="background:#fff;border:2px solid #ef4444;border-radius:10px;padding:.5rem .4rem;text-align:center;">
+            <div style="font-size:1.8rem;">🔒</div>
+            <div style="font-weight:800;color:#b91c1c;font-size:.82rem;">機密性 C</div>
+            <div style="font-size:.66rem;color:#64748b;">Confidentiality</div>
+            <div style="font-size:.72rem;margin-top:.25rem;">許可した人だけ見られる<br><b>＝見せない</b></div>
+            <div style="background:#fee2e2;border-radius:5px;padding:.25rem;margin-top:.3rem;font-size:.66rem;color:#b91c1c;">💥やぶられると<br>情報ろうえい（盗み見）</div>
+          </div>
+          <div style="background:#fff;border:2px solid #22c55e;border-radius:10px;padding:.5rem .4rem;text-align:center;">
+            <div style="font-size:1.8rem;">✅📝</div>
+            <div style="font-weight:800;color:#15803d;font-size:.82rem;">完全性 I</div>
+            <div style="font-size:.66rem;color:#64748b;">Integrity</div>
+            <div style="font-size:.72rem;margin-top:.25rem;">中身が正しいまま<br><b>＝改ざんされない</b></div>
+            <div style="background:#dcfce7;border-radius:5px;padding:.25rem;margin-top:.3rem;font-size:.66rem;color:#15803d;">💥やぶられると<br>勝手に書き換え（改ざん）</div>
+          </div>
+          <div style="background:#fff;border:2px solid #3b82f6;border-radius:10px;padding:.5rem .4rem;text-align:center;">
+            <div style="font-size:1.8rem;">🟢⚡</div>
+            <div style="font-weight:800;color:#1d4ed8;font-size:.82rem;">可用性 A</div>
+            <div style="font-size:.66rem;color:#64748b;">Availability</div>
+            <div style="font-size:.72rem;margin-top:.25rem;">使いたい時に使える<br><b>＝止まらない</b></div>
+            <div style="background:#dbeafe;border-radius:5px;padding:.25rem;margin-top:.3rem;font-size:.66rem;color:#1d4ed8;">💥やぶられると<br>サイト停止（DDoS等）</div>
+          </div>
+        </div>
+
+        <!-- 具体例：1通のメール -->
+        <div style="background:#fff;border-radius:8px;padding:.5rem .6rem;margin-top:.45rem;font-size:.74rem;">
+          <div style="font-weight:800;color:#334155;margin-bottom:.25rem;">📧 「1通のメール」で3つの違いを体感</div>
+          <div style="display:grid;gap:.2rem;">
+            <div>🔒 <b>機密性</b>：他人に<u>中身を読まれない</u>（封をする）</div>
+            <div>✅ <b>完全性</b>：途中で<u>文章を書き換えられない</u>（封ろうで改ざん検知）</div>
+            <div>🟢 <b>可用性</b>：読みたい時に<u>ちゃんと届いて開ける</u>（サーバが生きてる）</div>
+          </div>
+        </div>
+
+        <!-- リスクの式 -->
+        <div style="background:#fff7ed;border-radius:8px;padding:.5rem .6rem;margin-top:.45rem;">
+          <div style="font-weight:800;color:#c2410c;font-size:.78rem;margin-bottom:.3rem;">⚖️ リスクの式（かけ算）</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:.3rem;flex-wrap:wrap;font-size:.74rem;">
+            <span style="background:#fee2e2;border-radius:6px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#b91c1c;">😈 脅威<br><small>攻撃・災害</small></span>
+            <span style="font-weight:800;">×</span>
+            <span style="background:#fef9c3;border-radius:6px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#854d0e;">🕳️ 脆弱性<br><small>守りの穴</small></span>
+            <span style="font-weight:800;">×</span>
+            <span style="background:#dbeafe;border-radius:6px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#1d4ed8;">💎 資産価値</span>
+            <span style="font-weight:800;">＝</span>
+            <span style="background:#fecaca;border-radius:6px;padding:.3rem .55rem;font-weight:800;color:#b91c1c;">⚠️ リスク</span>
+          </div>
+          <div style="font-size:.7rem;color:#92400e;text-align:center;margin-top:.3rem;">かけ算だから<b>どれか1つを0に近づければリスクは小さくなる</b>。普通は自分で減らせる<b>🕳️脆弱性（穴をふさぐ）</b>を対策する。</div>
+        </div>
       </div>
       <div class="grid2">
         <div class="cell" style="border-color:var(--r)"><b>機密性 C</b>許可された人だけが見られる（＝<b>見せない</b>）</div>
@@ -388,6 +1442,21 @@ td.l{text-align:left;}
       <div class="trap"><b>外したQ</b>：①<b>可用性＝使える／機密性＝見せない</b>（取り違え注意）。②<b>脆弱性（穴）をなくせば、同じ脅威でもリスクは下がる</b>。</div>
     </div>
 
+    <div class="fill-section-title">✏️ 穴埋めチェック（CIA・リスク）</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">CIA と リスク</div>
+      <div class="fill-body">
+        <div>見せない＝<span class="blank">機密性</span>／正しいまま＝<span class="blank">完全性</span>／使える＝<span class="blank">可用性</span></div>
+        <div>リスク＝<span class="blank">脅威</span> × <span class="blank">脆弱性</span></div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB ⑧防御技術 ================= -->
+  <div class="tab-panel">
     <h2>図2：防御技術の役割分担（ここが最弱）</h2>
     <div class="fig">
       <div class="vz-supplement">
@@ -399,6 +1468,61 @@ td.l{text-align:left;}
           <div style="background:#ecfdf5;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">✋</div><div style="font-size:.74rem;font-weight:600;color:#065f46;">IPS＝見張り<br>＋自分で止める</div></div>
         </div>
       </div>
+      <!-- 防御技術の配置マップ -->
+      <div style="background:#fcfcfd;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem .5rem;margin:.5rem 0;">
+        <div style="font-weight:800;color:#334155;font-size:.84rem;text-align:center;margin-bottom:.5rem;">🗺️ どこで何が守る？ 全体マップ（外 → 関所 → 社内 → PCの中）</div>
+
+        <div style="font-size:.66rem;color:#64748b;text-align:center;margin-bottom:.4rem;">外側の大きな枠から、関所を通って内側の枠へ。<b>枠の中の枠</b>で「どこを守る道具か」が分かります。</div>
+
+        <!-- ▼ 同心円の入れ子：外 → DMZ → 関所 → 社内LAN → PCの中 ▼ -->
+        <!-- ① 外（いちばん大きな枠）-->
+        <div style="border:2px solid #3b82f6;border-radius:14px;background:#eff6ff;padding:.55rem .5rem;">
+          <div style="font-weight:800;color:#1d4ed8;font-size:.76rem;margin-bottom:.4rem;">🌐 会社の外（インターネット・社会）</div>
+          <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;font-size:.66rem;margin-bottom:.45rem;">
+            <span style="background:#fff;border-radius:6px;padding:.3rem .5rem;">😈 攻撃者</span>
+            <span style="background:#fff;border-radius:6px;padding:.3rem .5rem;">🧑‍💼 リモート社員</span>
+            <span style="background:#dcfce7;border-radius:6px;padding:.3rem .5rem;color:#15803d;font-weight:700;">🔐 VPN＝外から中へ“暗号トンネル”で安全に入る道</span>
+          </div>
+
+          <!-- ② DMZ（外と中の“間”：この中に関所→社内がある）-->
+          <div style="border:2px dashed #f59e0b;border-radius:12px;background:#fffbeb;padding:.5rem .5rem;">
+            <div style="font-weight:800;color:#b45309;font-size:.72rem;margin-bottom:.35rem;">🟧 DMZ（外と中の“間”の緩衝地帯）</div>
+            <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;font-size:.64rem;margin-bottom:.45rem;">
+              <span style="background:#fff;border-radius:6px;padding:.3rem .5rem;">🌐🖥️ 公開Webサーバ<br><small>（外に見せる用。社内とは分けて置く）</small></span>
+              <span style="background:#fee2e2;border-radius:6px;padding:.3rem .5rem;color:#b91c1c;font-weight:700;">🛡️ WAF＝公開サーバの前で<br>Webアプリ攻撃(SQLi/XSS)を防ぐ盾</span>
+            </div>
+
+            <!-- ③ 関所（FW/IDS/IPS）：この壁の中に社内LANがある -->
+            <div style="border:2px solid #8b5cf6;border-radius:12px;background:#f5f3ff;padding:.5rem .5rem;">
+              <div style="font-weight:800;color:#6d28d9;font-size:.72rem;text-align:center;margin-bottom:.3rem;">🚪 関所（ここを通らないと中に入れない壁）</div>
+              <div style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;justify-content:center;font-size:.62rem;margin-bottom:.45rem;">
+                <span style="background:#ede9fe;border-radius:6px;padding:.3rem .45rem;color:#5b21b6;font-weight:700;">🚪 FW（門番）<br>通す/通さない</span>
+                <span style="background:#fce7f3;border-radius:6px;padding:.3rem .45rem;color:#9d174d;font-weight:700;">👁 IDS（見張り）<br>知らせるだけ</span>
+                <span style="background:#ecfdf5;border-radius:6px;padding:.3rem .45rem;color:#065f46;font-weight:700;">✋ IPS<br>見張り＋止める</span>
+              </div>
+
+              <!-- ④ 社内LAN（関所の内側）：この中にPCがある -->
+              <div style="border:2px solid #22c55e;border-radius:12px;background:#f0fdf4;padding:.5rem .5rem;">
+                <div style="font-weight:800;color:#15803d;font-size:.72rem;margin-bottom:.35rem;">🏢 会社の中（社内LAN）＝関所の内側</div>
+                <div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:stretch;">
+                  <!-- ⑤ PCの中（いちばん奥の枠）-->
+                  <div style="flex:1;min-width:170px;border:2px solid #94a3b8;border-radius:10px;background:#fff;padding:.45rem .5rem;">
+                    <div style="font-weight:800;color:#334155;font-size:.7rem;margin-bottom:.3rem;">💻 1台のPCの中（いちばん奥）</div>
+                    <div style="display:flex;gap:.35rem;flex-wrap:wrap;font-size:.64rem;">
+                      <span style="background:#fef2f2;border-radius:6px;padding:.3rem .45rem;color:#b91c1c;font-weight:700;">🦠 アンチウイルス<br>ウイルス本体を検知/駆除</span>
+                      <span style="background:#eff6ff;border-radius:6px;padding:.3rem .45rem;color:#1d4ed8;font-weight:700;">📦 サンドボックス<br>あやしい物を“隔離部屋”で<br>動かして安全か分析</span>
+                    </div>
+                  </div>
+                  <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:.62rem;color:#15803d;text-align:center;">💻💻<br>他PCも<br>同様</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:.62rem;color:#64748b;text-align:center;margin-top:.45rem;">外→<b>DMZ</b>→<b>関所(FW/IDS/IPS)</b>→<b>社内LAN</b>→<b>PCの中</b>と<b>枠の中の枠</b>。奥へ行くほど何重もの壁で守られる（多層防御）。VPN＝外から入る道／WAF＝公開サーバの前。</div>
+      </div>
+
       <table>
         <tr><th>技術</th><th>役割</th></tr>
         <tr><td>ファイアウォール(FW)</td><td class="l">通信(パケット)の通過可否を制御する“関所”</td></tr>
@@ -413,33 +1537,8 @@ td.l{text-align:left;}
       <div class="trap"><b>外した／△Q</b>：<b>IDS＝検知のみ／IPS＝検知＋遮断</b>。<b>FW＝通信制御</b>（ウイルス駆除はアンチウイルス）。<b>サンドボックス＝隔離実行で分析</b>。</div>
     </div>
 
-    <h2>図3：間違えた攻撃の中身</h2>
-    <div class="fig">
-      <div class="vz-supplement">
-        <div class="vz-label">💡 かんたん解説</div>
-        <p>XSSは「他人のブラウザに悪い貼り紙をして実行させる」攻撃。ボットネットは「乗っ取った大勢のPCを遠隔操作する軍団」です。</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
-          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📝💉</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">XSS</div><div style="font-size:.75rem;color:#7f1d1d;">他人のブラウザに悪い貼り紙</div></div>
-          <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🤖🕸</div><div style="font-size:.78rem;font-weight:700;color:#c2410c;">ボットネット</div><div style="font-size:.75rem;color:#7c2d12;">乗っ取った大勢のPC軍団</div></div>
-        </div>
-      </div>
-      <div class="grid2">
-        <div class="cell" style="border-color:var(--r)"><b>XSS（クロスサイトスクリプティング）</b>悪意あるスクリプトを<b>他の利用者のブラウザ</b>で実行させる（DB物理破壊ではない）</div>
-        <div class="cell" style="border-color:var(--o)"><b>ボットネット</b><b>多数の感染PC</b>を攻撃者が遠隔操作する網。指令(C&C)からDDoS等に悪用</div>
-      </div>
-    </div>
-
-    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <div class="fill-section-title">✏️ 穴埋めチェック（防御技術）</div>
     <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
-
-    <div class="fill-card">
-      <div class="fill-head">CIA と リスク</div>
-      <div class="fill-body">
-        <div>見せない＝<span class="blank">機密性</span>／正しいまま＝<span class="blank">完全性</span>／使える＝<span class="blank">可用性</span></div>
-        <div>リスク＝<span class="blank">脅威</span> × <span class="blank">脆弱性</span></div>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
 
     <div class="fill-card">
       <div class="fill-head">防御技術の役割</div>
@@ -456,6 +1555,60 @@ td.l{text-align:left;}
         <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
       </div>
     </div>
+  </div>
+
+  <!-- ================= TAB ⑨攻撃 ================= -->
+  <div class="tab-panel">
+    <h2>図3：間違えた攻撃の中身</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p>XSSは「他人のブラウザに悪い貼り紙をして実行させる」攻撃。ボットネットは「乗っ取った大勢のPCを遠隔操作する軍団」です。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
+          <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📝💉</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">XSS</div><div style="font-size:.75rem;color:#7f1d1d;">他人のブラウザに悪い貼り紙</div></div>
+          <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🤖🕸</div><div style="font-size:.78rem;font-weight:700;color:#c2410c;">ボットネット</div><div style="font-size:.75rem;color:#7c2d12;">乗っ取った大勢のPC軍団</div></div>
+        </div>
+
+        <!-- XSS 攻撃の流れ -->
+        <div style="background:#fff;border:1.5px solid #fca5a5;border-radius:8px;padding:.5rem .55rem;margin-top:.5rem;">
+          <div style="font-weight:800;color:#b91c1c;font-size:.8rem;margin-bottom:.35rem;">📝💉 XSSの流れ（“悪い貼り紙”作戦）</div>
+          <div style="display:flex;align-items:center;gap:.2rem;flex-wrap:wrap;font-size:.68rem;justify-content:center;">
+            <span style="background:#fee2e2;border-radius:5px;padding:.3rem .4rem;text-align:center;font-weight:700;color:#b91c1c;">😈攻撃者</span>
+            <span style="color:#b91c1c;">①悪いスクリプトを<br>掲示板に貼る→</span>
+            <span style="background:#f1f5f9;border-radius:5px;padding:.3rem .4rem;text-align:center;font-weight:700;">🌐サイト<br>(掲示板)</span>
+            <span style="color:#b91c1c;">②被害者が<br>ページを開く→</span>
+            <span style="background:#fff7ed;border-radius:5px;padding:.3rem .4rem;text-align:center;font-weight:700;color:#c2410c;">🧑‍💻被害者の<br>ブラウザ</span>
+            <span style="color:#b91c1c;">③そこで実行<br>→</span>
+            <span style="background:#fee2e2;border-radius:5px;padding:.3rem .4rem;text-align:center;font-weight:700;color:#b91c1c;">🍪Cookie等<br>を盗まれる</span>
+          </div>
+          <div style="font-size:.66rem;color:#64748b;text-align:center;margin-top:.25rem;">※動くのは<b>他の利用者のブラウザ</b>（サーバDBを物理破壊する攻撃ではない）</div>
+        </div>
+
+        <!-- ボットネット の流れ -->
+        <div style="background:#fff;border:1.5px solid #fdba74;border-radius:8px;padding:.5rem .55rem;margin-top:.4rem;">
+          <div style="font-weight:800;color:#c2410c;font-size:.8rem;margin-bottom:.35rem;">🤖🕸 ボットネットの流れ（乗っ取り軍団）</div>
+          <div style="display:flex;align-items:center;gap:.25rem;flex-wrap:wrap;justify-content:center;font-size:.68rem;">
+            <span style="background:#fef2f2;border-radius:5px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#b91c1c;">😈攻撃者<br><small>C&amp;C(司令塔)</small></span>
+            <span style="color:#c2410c;font-weight:700;">①遠隔命令↓</span>
+            <span style="display:inline-flex;gap:.15rem;">
+              <span style="background:#fff7ed;border-radius:5px;padding:.25rem .35rem;text-align:center;">🤖<br><small>感染PC</small></span>
+              <span style="background:#fff7ed;border-radius:5px;padding:.25rem .35rem;text-align:center;">🤖<br><small>感染PC</small></span>
+              <span style="background:#fff7ed;border-radius:5px;padding:.25rem .35rem;text-align:center;">🤖<br><small>感染PC</small></span>
+            </span>
+            <span style="color:#c2410c;font-weight:700;">②一斉攻撃→</span>
+            <span style="background:#fee2e2;border-radius:5px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#b91c1c;">🎯標的サーバ<br><small>DDoSで停止</small></span>
+          </div>
+          <div style="font-size:.66rem;color:#64748b;text-align:center;margin-top:.25rem;">※多数の感染PC（ゾンビ）を司令塔から操り、まとめて攻撃に悪用</div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--r)"><b>XSS（クロスサイトスクリプティング）</b>悪意あるスクリプトを<b>他の利用者のブラウザ</b>で実行させる（DB物理破壊ではない）</div>
+        <div class="cell" style="border-color:var(--o)"><b>ボットネット</b><b>多数の感染PC</b>を攻撃者が遠隔操作する網。指令(C&C)からDDoS等に悪用</div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋めチェック（攻撃）</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
 
     <div class="fill-card">
       <div class="fill-head">攻撃の中身</div>
@@ -483,6 +1636,25 @@ td.l{text-align:left;}
       <div class="trap"><b>外したQ</b>：ペアの鍵は<b>一方で暗号化したら対のもう一方でしか復号できない</b>。暗号化と署名で<b>使う鍵が逆</b>になる。</div>
     </div>
 
+    <div class="fill-section-title">✏️ 穴埋めチェック（鍵の基本）</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">鍵の使い分け</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>目的</th><th>作る側</th><th>受ける側</th></tr>
+          <tr><td>暗号化</td><td>相手の<span class="blank">公開鍵</span></td><td>自分の<span class="blank">秘密鍵</span></td></tr>
+          <tr><td>署名</td><td>自分の<span class="blank">秘密鍵</span></td><td>送信者の<span class="blank">公開鍵</span></td></tr>
+        </table>
+        <div>一方で暗号化したら<span class="blank">対のもう一方</span>でしか復号できない</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB ⑪SSL/TLS ================= -->
+  <div class="tab-panel">
     <h2>図2：SSL/TLS は ハイブリッド方式</h2>
     <div class="fig">
       <div class="vz-supplement">
@@ -494,13 +1666,97 @@ td.l{text-align:left;}
           <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#166534;">⚡共通鍵で本文を速くやりとり</div>
         </div>
       </div>
-      <div class="flow">
-        <span class="box">① 公開鍵暗号</span><span class="arrow">→</span><span class="box g">共通鍵を安全に配送</span><span class="arrow">→</span><span class="box o">② 共通鍵暗号で本文を高速に暗号化</span>
+      <!-- なぜハイブリッド？2方式の長所短所 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.4rem 0;">
+        <div style="background:#fff7ed;border:1.5px solid #fb923c;border-radius:8px;padding:.5rem;text-align:center;font-size:.76rem;">
+          <div style="font-size:1.3rem;">⚡🗝️</div><b style="color:#c2410c;">共通鍵</b><br>速い◎ ／ <span style="color:#b91c1c;">鍵を渡すのが難✕</span>
+        </div>
+        <div style="background:#eff6ff;border:1.5px solid #60a5fa;border-radius:8px;padding:.5rem;text-align:center;font-size:.76rem;">
+          <div style="font-size:1.3rem;">🐢🔓</div><b style="color:#1d4ed8;">公開鍵</b><br>鍵渡し楽◎ ／ <span style="color:#b91c1c;">遅い✕</span>
+        </div>
       </div>
-      <div class="note">鍵配送は<b>公開鍵</b>（安全）・大量の本文は<b>共通鍵</b>（高速）＝両方の長所どり。これがHTTPSの中身。</div>
-      <div class="trap"><b>外したQ</b>：SSL/TLSは公開鍵だけでも共通鍵だけでもなく<b>ハイブリッド</b>。</div>
+      <div style="text-align:center;font-size:.76rem;color:#5b21b6;font-weight:700;margin:.2rem 0 .5rem;">→ <b>鍵渡しは公開鍵／本通信は共通鍵</b>と組み合わせ＝ハイブリッド（弱点を打ち消し合う）</div>
+
+      <!-- ハンドシェイクの手順図 -->
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem .5rem;">
+        <div style="font-weight:800;color:#0f766e;font-size:.82rem;text-align:center;margin-bottom:.2rem;">🤝 つなぐ手順（左＝🧑‍💻ブラウザ／右＝🏦サーバ）</div>
+        <div style="font-size:.66rem;color:#64748b;text-align:center;margin-bottom:.45rem;">矢印の向き＝モノが動く向き。中央の😈は盗聴者。</div>
+
+        <div style="display:grid;gap:.45rem;font-size:.72rem;">
+
+          <!-- STEP1 -->
+          <div style="border:1.5px solid #93c5fd;border-radius:8px;padding:.4rem .5rem;">
+            <div style="font-weight:800;color:#1d4ed8;margin-bottom:.3rem;"><span style="background:#1d4ed8;color:#fff;border-radius:4px;padding:0 .35rem;">STEP1</span> サーバが📜証明書（中に🔑公開鍵）を渡す</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:.3rem;">
+              <span style="background:#fff7ed;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#c2410c;flex-shrink:0;">🧑‍💻<br>受取</span>
+              <span style="flex:1;text-align:center;color:#1d4ed8;font-weight:700;">◀━━━ 📜🔑 ━━━</span>
+              <span style="background:#eff6ff;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#1d4ed8;flex-shrink:0;">🏦<br>発行</span>
+            </div>
+          </div>
+
+          <!-- STEP2 -->
+          <div style="border:1.5px solid #fdba74;border-radius:8px;padding:.4rem .5rem;">
+            <div style="font-weight:800;color:#c2410c;margin-bottom:.3rem;"><span style="background:#c2410c;color:#fff;border-radius:4px;padding:0 .35rem;">STEP2</span> ブラウザが本通信用の🗝️共通鍵を1個つくる</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:.3rem;">
+              <span style="background:#fff7ed;border:2px solid #fb923c;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#c2410c;">🧑‍💻 手元で<br>🗝️共通鍵を作成✨</span>
+              <span style="flex:1;text-align:center;color:#cbd5e1;">（まだ送らない）</span>
+              <span style="background:#f8fafc;border-radius:6px;padding:.3rem .45rem;color:#94a3b8;flex-shrink:0;">🏦<br>待機</span>
+            </div>
+          </div>
+
+          <!-- STEP3 -->
+          <div style="border:1.5px solid #c4b5fd;border-radius:8px;padding:.4rem .5rem;">
+            <div style="font-weight:800;color:#6d28d9;margin-bottom:.3rem;"><span style="background:#6d28d9;color:#fff;border-radius:4px;padding:0 .35rem;">STEP3</span> その共通鍵を🔑公開鍵で包んで送る（＝鍵配送）</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:.3rem;">
+              <span style="background:#fff7ed;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#c2410c;flex-shrink:0;">🧑‍💻<br>包んで送る</span>
+              <span style="flex:1;text-align:center;color:#6d28d9;font-weight:700;">━━ 🔒[🗝️] ━━▶<br><small style="color:#b91c1c;">😈見ても開けない❌</small></span>
+              <span style="background:#eff6ff;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#1d4ed8;flex-shrink:0;">🏦<br>受取</span>
+            </div>
+          </div>
+
+          <!-- STEP4 -->
+          <div style="border:1.5px solid #93c5fd;border-radius:8px;padding:.4rem .5rem;">
+            <div style="font-weight:800;color:#1d4ed8;margin-bottom:.3rem;"><span style="background:#1d4ed8;color:#fff;border-radius:4px;padding:0 .35rem;">STEP4</span> サーバが🗝️秘密鍵で開けて共通鍵を取り出す</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:.3rem;">
+              <span style="background:#f8fafc;border-radius:6px;padding:.3rem .45rem;color:#94a3b8;flex-shrink:0;">🧑‍💻<br>待機</span>
+              <span style="flex:1;text-align:center;color:#cbd5e1;">（鍵が届いた）</span>
+              <span style="background:#eff6ff;border:2px solid #3b82f6;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#1d4ed8;">🏦 🗝️秘密鍵で開封<br>→共通鍵GET</span>
+            </div>
+          </div>
+
+          <!-- 合流 -->
+          <div style="background:#dcfce7;border-radius:6px;padding:.4rem;text-align:center;font-weight:800;color:#15803d;">✅ これで二人だけが<b>同じ🗝️共通鍵</b>を持った（鍵交換おわり）</div>
+
+          <!-- STEP5 -->
+          <div style="border:2px solid #22c55e;border-radius:8px;padding:.4rem .5rem;background:#f0fdf4;">
+            <div style="font-weight:800;color:#15803d;margin-bottom:.3rem;"><span style="background:#15803d;color:#fff;border-radius:4px;padding:0 .35rem;">STEP5</span> 以降は⚡共通鍵で本文を高速にやりとり（＝HTTPS🎉）</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:.3rem;">
+              <span style="background:#dcfce7;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#15803d;flex-shrink:0;">🧑‍💻<br>🗝️暗号/復号</span>
+              <span style="flex:1;text-align:center;color:#15803d;font-weight:700;">◀━ ⚡🔒本文 ━▶</span>
+              <span style="background:#dcfce7;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#15803d;flex-shrink:0;">🏦<br>🗝️暗号/復号</span>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:.68rem;color:#64748b;text-align:center;margin-top:.45rem;"><b>STEP1〜4＝鍵を渡すまで（公開鍵）／STEP5＝本通信（共通鍵）</b>。重い公開鍵は“鍵渡し1回だけ”に使う。</div>
+      </div>
+      <div class="trap"><b>外したQ</b>：SSL/TLSは公開鍵だけでも共通鍵だけでもなく<b>ハイブリッド</b>（鍵交換＝公開鍵／本通信＝共通鍵）。「公開鍵は速い」は引っかけ（公開鍵は遅いので本データには使わない）。</div>
     </div>
 
+    <div class="fill-section-title">✏️ 穴埋めチェック（SSL/TLS）</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">SSL/TLS</div>
+      <div class="fill-body">
+        <div>SSL/TLS＝公開鍵で共通鍵を配送し本文は共通鍵で暗号化＝<span class="blank">ハイブリッド</span>方式</div>
+        <div>鍵交換＝<span class="blank">公開鍵</span>方式／本通信＝<span class="blank">共通鍵</span>方式（「公開鍵は速い」は誤り＝<span class="blank">遅い</span>）</div>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB ⑫署名・認証 ================= -->
+  <div class="tab-panel">
     <h2>図3：ディジタル署名の中身 と PKI</h2>
     <div class="fig">
       <div class="vz-supplement">
@@ -512,12 +1768,63 @@ td.l{text-align:left;}
           <div style="background:#fef9c3;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#854d0e;">自分のハンコ（秘密鍵）を押す＝署名</div>
         </div>
       </div>
-      <div class="flow">
-        <span class="box">本文</span><span class="arrow">→</span><span class="box g">ハッシュ値</span><span class="arrow">→</span><span class="box o">送信者の秘密鍵で暗号化＝署名</span>
+      <!-- 署名を作る側 -->
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem .5rem;">
+        <div style="font-weight:800;color:#854d0e;font-size:.8rem;text-align:center;margin-bottom:.4rem;">✍️ 送る人（A）が「署名」を作る</div>
+        <div style="display:flex;align-items:center;gap:.25rem;justify-content:center;flex-wrap:wrap;font-size:.72rem;">
+          <span style="background:#dbeafe;border-radius:6px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#1e40af;">📄本文<br>"会議は3時"</span>
+          <span style="color:#94a3b8;font-weight:700;">①要約→</span>
+          <span style="background:#f1f5f9;border-radius:6px;padding:.3rem .45rem;text-align:center;font-weight:700;">🔢ハッシュ値<br><small>(短い要約)</small></span>
+          <span style="color:#94a3b8;font-weight:700;">②押印→</span>
+          <span style="background:#fef9c3;border-radius:6px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#854d0e;">🖋️Aの<b>秘密鍵</b>で<br>暗号化＝<b>署名</b></span>
+        </div>
+        <div style="font-size:.68rem;color:#64748b;text-align:center;margin-top:.3rem;">本文＋この署名をセットで相手に送る📤</div>
       </div>
-      <div class="note">受信側は本文のハッシュを計算し、署名を公開鍵で復号した値と照合→一致なら<b>改ざんなし＆本人</b>。</div>
-      <div class="formula">PKIの信頼の連鎖：ルートCA → 中間CA → サーバ証明書<span class="ex">上位の認証局が下位の正しさを保証していく階層構造</span></div>
-      <div class="trap"><b>△だったQ</b>：署名＝<b>本文のハッシュを秘密鍵で暗号化</b>。証明書の信頼は<b>上位CAが保証する階層（信頼の連鎖）</b>。</div>
+
+      <!-- 検証する側（㋐と㋑を突き合わせる） -->
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem .5rem;margin-top:.4rem;">
+        <div style="font-weight:800;color:#15803d;font-size:.8rem;text-align:center;margin-bottom:.45rem;">🔍 受け取る人（B）が「本物か」確かめる＝2つを突き合わせる</div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:.4rem;align-items:center;font-size:.72rem;">
+          <!-- 左：2つの計算ルート -->
+          <div style="display:grid;gap:.35rem;">
+            <div style="display:flex;align-items:center;gap:.25rem;flex-wrap:wrap;">
+              <span style="background:#dbeafe;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#1e40af;">📄届いた本文</span>
+              <span style="color:#94a3b8;font-weight:700;">─計算→</span>
+              <span style="background:#f1f5f9;border:1.5px solid #64748b;border-radius:6px;padding:.3rem .45rem;font-weight:700;">🔢ハッシュ <b>㋐</b></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:.25rem;flex-wrap:wrap;">
+              <span style="background:#fef9c3;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#854d0e;">🖋️署名</span>
+              <span style="color:#94a3b8;font-weight:700;">─🔑Aの公開鍵で復号→</span>
+              <span style="background:#ede9fe;border:1.5px solid #8b5cf6;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#5b21b6;">値 <b>㋑</b></span>
+            </div>
+          </div>
+          <!-- 右：照合 -->
+          <div style="text-align:center;background:#f8fafc;border-radius:8px;padding:.4rem .5rem;">
+            <div style="font-size:1.3rem;">⚖️</div>
+            <div style="font-weight:800;color:#334155;">㋐ ＝ ㋑ ？</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:.4rem;margin-top:.4rem;font-size:.7rem;">
+          <div style="flex:1;background:#dcfce7;border-radius:6px;padding:.35rem;text-align:center;color:#15803d;font-weight:800;">✅ 一致<br>＝改ざんなし＆本人</div>
+          <div style="flex:1;background:#fee2e2;border-radius:6px;padding:.35rem;text-align:center;color:#b91c1c;font-weight:800;">❌ 不一致<br>＝ニセモノ・改ざん</div>
+        </div>
+      </div>
+      <div class="note">㋐自分で計算したハッシュ と ㋑署名を公開鍵で開いた値 が<b>一致すれば、改ざんなし＆送信者本人</b>と分かる。</div>
+
+      <!-- PKI 信頼の連鎖 -->
+      <div style="background:#f5f3ff;border-radius:10px;padding:.6rem .5rem;margin-top:.4rem;">
+        <div style="font-weight:800;color:#6d28d9;font-size:.8rem;text-align:center;margin-bottom:.1rem;">🏛️ PKI＝「公開鍵が本物」を保証する仕組み（信頼の連鎖）</div>
+        <div style="font-size:.68rem;color:#64748b;text-align:center;margin-bottom:.4rem;">「その公開鍵、本当にAのもの？」を上位の認証局(CA)が保証していく親子関係</div>
+        <div style="display:flex;align-items:center;gap:.25rem;justify-content:center;flex-wrap:wrap;font-size:.72rem;">
+          <span style="background:#ede9fe;border:1.5px solid #8b5cf6;border-radius:6px;padding:.35rem .5rem;text-align:center;font-weight:700;color:#5b21b6;">👑ルートCA<br><small>最上位・自分で証明</small></span>
+          <span style="color:#7c3aed;font-weight:800;">が保証→</span>
+          <span style="background:#ede9fe;border-radius:6px;padding:.35rem .5rem;text-align:center;font-weight:700;color:#5b21b6;">🏢中間CA</span>
+          <span style="color:#7c3aed;font-weight:800;">が保証→</span>
+          <span style="background:#dbeafe;border-radius:6px;padding:.35rem .5rem;text-align:center;font-weight:700;color:#1e40af;">📜サーバ証明書<br><small>(そのサイトの公開鍵)</small></span>
+        </div>
+        <div style="font-size:.68rem;color:#6d28d9;text-align:center;margin-top:.3rem;">上位が下位の正しさを保証する<b>階層構造</b>。だから🔒鍵マークのサイトは「本物」と信じられる。</div>
+      </div>
+      <div class="trap"><b>△だったQ</b>：署名＝<b>本文のハッシュを「秘密鍵」で暗号化</b>（暗号化の機密性とは鍵が逆）。証明書の信頼は<b>上位CAが保証する階層（信頼の連鎖）</b>。</div>
     </div>
 
     <h2>図4：チャレンジレスポンス認証</h2>
@@ -533,29 +1840,36 @@ td.l{text-align:left;}
           <div style="background:#dcfce7;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#166534;">PWを見せず本人と証明</div>
         </div>
       </div>
+      <!-- チャレンジレスポンスの手順図 -->
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.6rem .5rem;">
+        <div style="font-weight:800;color:#0f766e;font-size:.82rem;text-align:center;margin-bottom:.45rem;">🔑 PWを流さずに本人だと示す手順（🧑‍💻あなた ↔ 🏦サーバ）</div>
+        <div style="display:grid;gap:.4rem;font-size:.74rem;">
+          <div style="display:flex;gap:.45rem;align-items:flex-start;">
+            <span style="background:#0f766e;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.72rem;">1</span>
+            <div style="flex:1;background:#eff6ff;border-radius:6px;padding:.35rem .55rem;">🏦サーバ →「<b>このお題（🎲乱数チャレンジ）</b>を計算して」とあなたに送る</div>
+          </div>
+          <div style="text-align:center;color:#cbd5e1;line-height:.4;">↓</div>
+          <div style="display:flex;gap:.45rem;align-items:flex-start;">
+            <span style="background:#0f766e;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.72rem;">2</span>
+            <div style="flex:1;background:#fff7ed;border-radius:6px;padding:.35rem .55rem;">🧑‍💻あなた →「<b>お題＋自分のPW</b>」を混ぜて計算（ハッシュ）し、<b>計算結果だけ</b>返す（＝レスポンス）<br><span style="color:#b91c1c;">😈盗聴者が結果を見ても、PWは混ざって消えていて取り出せない</span></div>
+          </div>
+          <div style="text-align:center;color:#cbd5e1;line-height:.4;">↓</div>
+          <div style="display:flex;gap:.45rem;align-items:flex-start;">
+            <span style="background:#16a34a;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.72rem;">3</span>
+            <div style="flex:1;background:#dcfce7;border-radius:6px;padding:.35rem .55rem;border:1.5px solid #22c55e;">🏦サーバも同じ計算をして<b>結果を照合 → 一致なら本人と認める</b>✅（PWは一度も流れていない）</div>
+          </div>
+        </div>
+        <div style="font-size:.7rem;color:#64748b;text-align:center;margin-top:.4rem;">お題（乱数）は毎回変わる → 盗んだ応答を後で使い回す“なりすまし”も防げる。</div>
+      </div>
       <div class="note"><b>パスワードそのものを流さない</b>。サーバが送る乱数（チャレンジ）に計算して応答→盗聴されてもPWは漏れない。</div>
     </div>
 
-    <div class="fill-section-title">✏️ 穴埋めチェック</div>
+    <div class="fill-section-title">✏️ 穴埋めチェック（署名・認証）</div>
     <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
 
     <div class="fill-card">
-      <div class="fill-head">鍵の使い分け</div>
+      <div class="fill-head">署名の中身・PKI・認証</div>
       <div class="fill-body">
-        <table>
-          <tr><th>目的</th><th>作る側</th><th>受ける側</th></tr>
-          <tr><td>暗号化</td><td>相手の<span class="blank">公開鍵</span></td><td>自分の<span class="blank">秘密鍵</span></td></tr>
-          <tr><td>署名</td><td>自分の<span class="blank">秘密鍵</span></td><td>送信者の<span class="blank">公開鍵</span></td></tr>
-        </table>
-        <div>一方で暗号化したら<span class="blank">対のもう一方</span>でしか復号できない</div>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
-
-    <div class="fill-card">
-      <div class="fill-head">SSL/TLS・署名の中身・PKI</div>
-      <div class="fill-body">
-        <div>SSL/TLS＝公開鍵で共通鍵を配送し本文は共通鍵で暗号化＝<span class="blank">ハイブリッド</span>方式</div>
         <div>署名＝本文の<span class="blank">ハッシュ値</span>を送信者の<span class="blank">秘密鍵</span>で暗号化</div>
         <div>証明書の信頼＝<span class="blank">ルートCA</span>→中間CA→サーバ証明書の<span class="blank">信頼の連鎖</span></div>
         <div>PWを流さず乱数に計算応答＝<span class="blank">チャレンジレスポンス</span>認証</div>
@@ -662,16 +1976,75 @@ function revAll(btn){
     btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
     if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
   });
-  // tbody tr 行
-  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+  // 図・解説ボックスの見出し（h2）をたどってラベルを作る
+  function sectionHead(node){
+    var c=node.closest('.fill-card'); if(c){ var hh=c.querySelector('.fill-head'); if(hh) return hh.textContent.trim().slice(0,24); }
+    var box=node.closest('.fig,.vz-supplement')||node, p=box;
+    while(p){ var pv=p.previousElementSibling; while(pv){ if(pv.tagName==='H2') return pv.textContent.trim().slice(0,16); pv=pv.previousElementSibling; } p=p.parentElement; if(p&&p.classList&&p.classList.contains('tab-panel')) break; }
+    return '';
+  }
+  // tbody tr 行（fill-card＋図・解説の“すべての表”が対象。セル結合のある表は崩れ防止でスキップ）
+  document.querySelectorAll('table tbody tr').forEach(function(tr,i){
     if(isPreview(tr)) return;
-    var key='tr:'+cardHead(tr)+'|'+i;
+    if(tr.querySelector('.row-hide-btn')) return;
+    var tbl=tr.closest('table');
+    if(tbl && tbl.querySelector('[rowspan],[colspan]')) return; // 結合セルのある表は行非表示しない
     var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var key='tr:'+sectionHead(tr)+'|'+i;
     var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
     var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
     last.appendChild(btn);
     btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
     if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+  // 穴埋めカード内の各「行（div）」も個別に非表示
+  document.querySelectorAll('.fill-body > div').forEach(function(el,i){
+    if(isPreview(el)) return;
+    if(el.querySelector('table')||el.classList.contains('row-hidden-ph')) return;
+    if(!el.textContent.trim()) return;
+    var key='fd:'+sectionHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+})();
+// 超細かい粒度：図・解説ボックス内の「最小まとまり（各カード・各行・各セル）」を個別に非表示
+(function(){
+  var KEY='mz_fine_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function isLeaf(el){ return !el.querySelector('div,table,ul,ol,svg,button,input'); } // 子に箱を含まない＝最小単位
+  function isSep(t){ return t.length<2 || /^[\s↓↑→←↗↘・｜|—…⋯]+$/.test(t); }
+  function mkPh(el,key){
+    var p=document.createElement('span'); p.className='fine-ph';
+    p.style.cssText='display:inline-block;font-size:.64rem;color:#cbd5e1;border:1px dashed #e2e8f0;border-radius:4px;padding:0 6px;margin:1px;cursor:pointer;';
+    p.textContent='⋯表示'; p.title='再表示';
+    p.addEventListener('click',function(){ el.style.display=''; p.remove(); st[key]=0; save(); });
+    return p;
+  }
+  var idx=0;
+  document.querySelectorAll('.vz-supplement, .fig').forEach(function(box){
+    box.querySelectorAll('div,p,li').forEach(function(el){
+      if(el.classList.contains('vz-label')||el.classList.contains('fine-ph')) return;
+      if(el.closest('svg')) return;
+      if(el.closest('.fill-card')) return;            // 穴埋めカードは別系統で対応済み
+      if(el.querySelector('.fine-hide-btn')) return;  // 二重付与防止
+      if(el.dataset.fineDone) return;
+      if(!isLeaf(el)) return;                          // 最小単位だけ
+      var t=(el.textContent||'').trim();
+      if(isSep(t)) return;                             // 矢印・記号だけのものは除外
+      el.dataset.fineDone='1';
+      var key='fn:'+(idx++);
+      var cs=getComputedStyle(el);
+      if(cs.position==='static') el.style.position='relative';
+      var btn=document.createElement('button');
+      btn.className='fine-hide-btn'; btn.type='button'; btn.textContent='○'; btn.title='この部分だけ非表示';
+      btn.style.cssText='position:absolute;top:0;right:0;width:14px;height:14px;font-size:.52rem;line-height:1;padding:0;border:1px solid #cbd5e1;border-radius:50%;background:rgba(255,255,255,.9);color:#94a3b8;cursor:pointer;z-index:6;';
+      btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+      el.appendChild(btn);
+      if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+    });
   });
 })();
 </script>

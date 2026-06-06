@@ -1698,9 +1698,9 @@ mark.sz-ul:hover,mark.sz-hl:hover,mark.sz-cm:hover{filter:brightness(.88)}
 .sz-hl-sw{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2.5px solid rgba(255,255,255,.25);flex-shrink:0;transition:transform .12s,border-color .12s}
 .sz-hl-sw:hover{transform:scale(1.22);border-color:#fff}
 /* 注釈スタイルを非表示（テキストは残す） */
-body.sz-annot-off mark.sz-ul{border-bottom:none}
-body.sz-annot-off mark.sz-hl{background:none}
-body.sz-annot-off mark.sz-cm{background:none}
+body.sz-annot-off mark.sz-ul{border-bottom:none !important}
+body.sz-annot-off mark.sz-hl,body.sz-annot-off mark[data-hlc]{background:none !important}
+body.sz-annot-off mark.sz-cm{background:none !important}
 body.sz-annot-off .sz-cm-icon{display:none}
 body.sz-annot-off mark[data-aid]:hover{filter:none;outline:none}
 .sz-toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:6px 15px;border-radius:20px;font-size:.78rem;z-index:99999;pointer-events:none;opacity:0;animation:szFI .25s forwards}
@@ -1723,7 +1723,7 @@ body.sz-annot-off mark[data-aid]:hover{filter:none;outline:none}
 #sz-show-all:hover,.sz-show-all-skin:hover{background:#2a4a7f !important}
 #sz-show-all{font-size:1rem}
 .sz-show-all-skin{font-size:0 !important}
-.sz-show-all-skin::before{content:"👁";font-size:1rem;line-height:1}
+.sz-show-all-skin::before{content:"⚙️";font-size:1rem;line-height:1}
 /* ---- 検索ドロワー（タブ横断） ---- */
 #sz-search{position:fixed;top:0;right:0;width:340px;max-width:92vw;height:100%;background:#fff;box-shadow:-3px 0 20px rgba(0,0,0,.2);z-index:10050;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s}
 #sz-search.on{transform:translateX(0)}
@@ -1796,7 +1796,7 @@ body.sz-annot-off .sz-note{display:none !important}
   <button type="button" class="sz-d-del" onclick="szDelAnnot()">🗑 削除</button>
 </div>
 
-<button id="sz-toggle" title="注釈を表示/隠す（✏️）" onclick="szToggleAnnot()">✏️</button>
+<button id="sz-toggle" class="active" title="✏️ メモ機能 ON/OFF（OFFにすると選択してもポップアップが出ない・読むだけ）" onclick="szToggleAnnot()">✏️</button>
 
 <div id="sz-cmt-tip">
   <span class="sz-tip-label">💬 コメント</span>
@@ -1926,6 +1926,7 @@ body.sz-annot-off .sz-note{display:none !important}
   function hideTipNow(){clearTimeout(tipTimer);tip.classList.remove('on');tipTargetAid=null;}
 
   document.addEventListener('mouseover',function(e){
+    if(document.body.classList.contains('sz-annot-off')) return; // メモOFF：ホバー説明も出さない
     var mark=e.target.closest?e.target.closest('mark.sz-cm'):null;
     if(!mark||!mark.dataset.comment) return;
     showTip(mark);
@@ -1953,7 +1954,8 @@ body.sz-annot-off .sz-note{display:none !important}
 
   /* ---- mouseup: 選択検知 ---- */
   document.addEventListener('mouseup',function(e){
-    if(e.target.closest('#sz-bar,#sz-cmt-pop,#sz-del-pop,#sz-toggle,#sz-cmt-tip,#sz-hl-picker')) return;
+    if(document.body.classList.contains('sz-annot-off')) return; // メモOFF：選択してもツールバーを出さない（読むだけモード）
+    if(e.target.closest('#sz-bar,#sz-cmt-pop,#sz-del-pop,#sz-toggle,#sz-cmt-tip,#sz-hl-picker,#sz-toolbar,#sz-show-all,.sz-show-all-skin,#sz-hide-tools')) return;
     szHideHlPicker();
     var sel=window.getSelection();
     if(!sel||sel.isCollapsed||!sel.toString().trim()){
@@ -2138,8 +2140,8 @@ body.sz-annot-off .sz-note{display:none !important}
     annotShown=!annotShown;
     document.body.classList.toggle('sz-annot-off',!annotShown);
     var btn=document.getElementById('sz-toggle');
-    btn.classList.toggle('active',!annotShown);
-    btn.title=annotShown?'注釈を隠す':'注釈を表示';
+    btn.classList.toggle('active',annotShown);
+    btn.title=annotShown?'✏️ メモON（選択でハイライト/コメント可）→ タップでOFF':'✏️ メモOFF（読むだけ・ポップアップなし）→ タップでON';
   };
 
   /* ---- Escで閉じ / Ctrl+Enterで保存 ---- */
@@ -2395,7 +2397,7 @@ body.sz-annot-off .sz-note{display:none !important}
     // 無ければ自前の👁ボタンを作成：穴埋め(.fill-blank)を全タブ一括表示
     if(document.getElementById('sz-show-all')) return;
     var btn=document.createElement('button');
-    btn.id='sz-show-all'; btn.type='button'; btn.textContent='👁';
+    btn.id='sz-show-all'; btn.type='button'; btn.textContent='⚙️';
     btn.title='全表示（穴埋めを全て表示）';
     btn.addEventListener('click',function(){
       document.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show');});
@@ -2434,7 +2436,7 @@ body.sz-tools-hidden .sz-show-all-skin{display:none !important}
     if(btn){
       btn.classList.toggle('off',hidden);
       btn.textContent='⋮';
-      btn.title=hidden?'右下のツールボタンを表示する':'右下のツールボタン（👁✏️🔍🎨📝）をまとめて隠す';
+      btn.title=hidden?'右下のツールボタンを表示する':'右下のツールボタン（⚙️✏️🔍🎨📝）をまとめて隠す';
     }
     if(hidden){
       // 開きっぱなしのパネルも一緒に閉じる
@@ -2457,7 +2459,7 @@ body.sz-tools-hidden .sz-show-all-skin{display:none !important}
       btn.classList.add('sz-ht-fixed');
       document.body.appendChild(btn);
     }
-    var hidden=false; try{hidden=localStorage.getItem(HKEY)==='1';}catch(e){}
+    var hidden=true; // 既定は常に折りたたみ（⋮ボタンのみ）で開始（前回の展開状態は復元しない）
     btn.addEventListener('click',function(){
       hidden=!hidden;
       try{localStorage.setItem(HKEY,hidden?'1':'0');}catch(e){}
@@ -2467,6 +2469,37 @@ body.sz-tools-hidden .sz-show-all-skin{display:none !important}
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,0);});
   else setTimeout(init,0);
+})();
+</script>
+<!-- ▼ メモツールボタンをタブバー右上に常時表示（sticky追従） ▼ -->
+<style>
+/* タブバーには予約スペースも背景も足さない（元のまま）。⋮は独立した固定の丸ボタンにする */
+/* 折りたたみ時：ツールバー枠は当たり判定なし→⋮の丸の中だけ反応 */
+#sz-toolbar{position:fixed;top:6px;right:8px;display:flex;flex-wrap:wrap;justify-content:flex-end;align-content:flex-start;gap:5px;width:92px;box-sizing:border-box;z-index:300;pointer-events:none}
+/* 展開時も白いパネルは出さない。ボタンの丸だけが並ぶ（枠の透明部分はクリックを透過しタブを邪魔しない） */
+#sz-toolbar>*{position:static!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;margin:0!important;width:23px!important;height:23px!important;min-width:0!important;border-radius:50%!important;flex:0 0 auto!important;padding:0!important;display:flex!important;align-items:center;justify-content:center;pointer-events:auto!important;box-shadow:0 1px 4px rgba(0,0,0,.25)!important}
+#sz-toolbar #sz-show-all,#sz-toolbar .sz-show-all-skin,#sz-toolbar #sz-hide-tools{background:#94a3b8!important;color:#fff!important}
+#sz-toolbar #sz-show-all:hover,#sz-toolbar .sz-show-all-skin:hover,#sz-toolbar #sz-hide-tools:hover{background:#64748b!important}
+/* 折りたたみ時は⋮以外を確実に隠す（id詳細度の display:flex に勝たせる） */
+body.sz-tools-hidden #sz-toolbar>*{display:none!important}
+body.sz-tools-hidden #sz-toolbar>#sz-hide-tools{display:flex!important}
+</style>
+<script>
+(function(){
+  var IDS=['sz-toggle','sz-btn-search','sz-btn-filter','sz-btn-note'];
+  function dock(){
+    var nav=document.querySelector('.tab-nav'); if(!nav) return;
+    var bar=document.getElementById('sz-toolbar');
+    if(!bar){bar=document.createElement('div');bar.id='sz-toolbar';}
+    if(bar.parentNode!==nav) nav.appendChild(bar);
+    IDS.forEach(function(id){var b=document.getElementById(id);if(b&&b.parentNode!==bar)bar.appendChild(b);});
+    var sa=document.getElementById('sz-show-all')||document.querySelector('.sz-show-all-skin');
+    if(sa&&sa.parentNode!==bar)bar.appendChild(sa);
+    var ht=document.getElementById('sz-hide-tools');
+    if(ht&&ht.parentNode!==bar)bar.appendChild(ht);
+  }
+  function run(){dock();setTimeout(dock,80);setTimeout(dock,300);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
 })();
 </script>
 </body>

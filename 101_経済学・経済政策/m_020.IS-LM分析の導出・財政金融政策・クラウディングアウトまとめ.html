@@ -27,6 +27,11 @@
 /* タブ高さを各セルの約0.7倍に縮小 */
 .tab-btn{padding-top:.45rem!important;padding-bottom:.45rem!important;line-height:1.2}
 @media(max-width:600px){.tab-btn{padding-top:.38rem!important;padding-bottom:.38rem!important}}
+/* タブを等幅グリッドで2行に整列（16タブ＝8列×2行）。長いラベルはセル内で折り返し */
+.tab-nav{display:grid !important;grid-template-columns:repeat(8,1fr) !important;gap:2px;overflow-x:visible !important;flex-wrap:nowrap !important}
+.tab-nav .tab-btn{flex:none !important;width:auto !important;min-width:0 !important;max-width:none !important;display:flex !important;flex-direction:column;align-items:center;justify-content:center;white-space:normal !important;text-align:center;line-height:1.15;font-size:.58rem !important;padding:.45rem .15rem !important;word-break:break-word;overflow-wrap:anywhere}
+.tab-nav .tab-btn .badge-count{display:inline-block;margin:2px 0 0;font-size:.54rem;white-space:nowrap}
+@media(max-width:600px){.tab-nav .tab-btn{font-size:.5rem !important;padding:.35rem .1rem !important}}
 /* 選択中タブをはっきり表示 */
 .tab-btn.active{background:linear-gradient(180deg,#6366f1,#4f46e5)!important;color:#fff!important;border-bottom:4px solid #312e81!important;font-weight:800;box-shadow:0 2px 6px rgba(79,70,229,.35)}
 .tab-btn.active .badge-count{background:#fff;color:#4f46e5}
@@ -45,6 +50,7 @@
   <button class="tab-btn active" data-target="tab_zero" onclick="switchTab('tab_zero')">🐣 ゼロから</button>
   <button class="tab-btn" data-target="tab_is" onclick="switchTab('tab_is')">📉 IS導出</button>
   <button class="tab-btn" data-target="tab_lm" onclick="switchTab('tab_lm')">🏦 LM導出</button>
+  <button class="tab-btn" data-target="tab_slope" onclick="switchTab('tab_slope')">📐 傾きと弾力性</button>
   <button class="tab-btn" data-target="tab_fiscal" onclick="switchTab('tab_fiscal')">🏛️ 財政政策</button>
   <button class="tab-btn" data-target="tab_money" onclick="switchTab('tab_money')">💴 金融政策</button>
   <button class="tab-btn" data-target="tab_trap" onclick="switchTab('tab_trap')">🪜 流動性のわな</button>
@@ -414,10 +420,13 @@
     <text x="280" y="455" font-size="11" font-weight="700" fill="#9c27b0">④貯蓄関数 S=−C₀+sY</text>
     <!-- ② 投資関数（右下がり） -->
     <line x1="225" y1="60" x2="70" y2="225" stroke="#e53935" stroke-width="2.5"/>
+    <text x="84" y="118" font-size="10.5" font-weight="700" fill="#e53935">I=I(r)</text>
     <!-- ③ 45度線 -->
     <line x1="240" y1="240" x2="60" y2="420" stroke="#2e7d32" stroke-width="2.5"/>
+    <text x="70" y="348" font-size="10.5" font-weight="700" fill="#2e7d32">I=S（45°）</text>
     <!-- ④ 貯蓄関数 -->
     <line x1="255" y1="250" x2="425" y2="415" stroke="#9c27b0" stroke-width="2.5"/>
+    <text x="335" y="368" font-size="10.5" font-weight="700" fill="#9c27b0">S=−C₀+sY</text>
     <!-- ① IS曲線 -->
     <line x1="255" y1="70" x2="430" y2="200" stroke="#1976d2" stroke-width="3"/>
     <text x="400" y="194" font-size="12" font-weight="700" fill="#1976d2">IS</text>
@@ -687,10 +696,13 @@
     <text x="280" y="455" font-size="11" font-weight="700" fill="#9c27b0">④取引需要 L₁=L₁(Y)</text>
     <!-- ② 投機的需要（右下がり） -->
     <line x1="225" y1="60" x2="70" y2="225" stroke="#e65100" stroke-width="2.5"/>
+    <text x="80" y="118" font-size="10.5" font-weight="700" fill="#e65100">L₂=L₂(r)</text>
     <!-- ③ 配分制約（右下がり L1+L2=Ms） -->
     <line x1="240" y1="420" x2="60" y2="240" stroke="#00897b" stroke-width="2.5"/>
+    <text x="72" y="322" font-size="10.5" font-weight="700" fill="#00897b">L₁+L₂=Mˢ</text>
     <!-- ④ 取引需要（右上がり 下向き） -->
     <line x1="255" y1="250" x2="420" y2="415" stroke="#9c27b0" stroke-width="2.5"/>
+    <text x="330" y="372" font-size="10.5" font-weight="700" fill="#9c27b0">L₁=L₁(Y)</text>
     <!-- ① LM曲線（右上がり） -->
     <line x1="255" y1="205" x2="420" y2="61" stroke="#1976d2" stroke-width="3"/>
     <text x="404" y="76" font-size="12" font-weight="700" fill="#1976d2">LM</text>
@@ -818,6 +830,263 @@
         <tr><td>因果</td><td>Y↑→L₁<span class="fill-blank" onclick="this.classList.toggle('show')">↑</span>→r↑（右上がり）</td></tr>
       </table></div>
 
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: 傾きと弾力性 -->
+<!-- ============================================================ -->
+<div class="tab-panel theme-blue" id="tab_slope">
+  <h2 class="section-title st-blue">📐 曲線の傾きと弾力性の関係</h2>
+  <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">🔁 <strong>IS・LMの「傾き」が、何の弾力性で決まるかを整理</strong>。特殊ケース（流動性のわな・古典派など）の土台になる超重要テーマ。</p>
+
+  <h3 class="section-title st-blue">⓪ そもそも「傾き」は何を表す？（まず前提）</h3>
+  <div class="vz-supplement" style="background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;">
+    <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;">💡 まずグラフの軸を確認</div>
+    <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">IS-LMのグラフは <strong>たて軸＝利子率 r（金利）</strong>、<strong>よこ軸＝所得 Y（国民所得＝景気の大きさ）</strong>。だから曲線の傾きは「<strong>金利と所得（景気）が、どれくらい連動して動くか</strong>」を表しています。</p>
+    <svg class="svg-graph" viewBox="0 0 320 215" xmlns="http://www.w3.org/2000/svg" style="max-width:360px;">
+      <defs><marker id="ax_zero" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#333"/></marker></defs>
+      <line x1="45" y1="178" x2="305" y2="178" stroke="#333" stroke-width="1.6" marker-end="url(#ax_zero)"/>
+      <line x1="45" y1="178" x2="45" y2="22" stroke="#333" stroke-width="1.6" marker-end="url(#ax_zero)"/>
+      <text x="252" y="196" font-size="11" font-weight="700">Y（所得・景気）</text>
+      <text x="20" y="30" font-size="11" font-weight="700">r（金利）</text>
+      <!-- IS 右下がり -->
+      <line x1="70" y1="50" x2="250" y2="165" stroke="#c62828" stroke-width="2.6"/>
+      <text x="248" y="158" fill="#c62828" font-size="11" font-weight="700">IS（右下がり）</text>
+      <!-- LM 右上がり -->
+      <line x1="70" y1="165" x2="250" y2="50" stroke="#1565c0" stroke-width="2.6"/>
+      <text x="216" y="48" fill="#1565c0" font-size="11" font-weight="700">LM（右上がり）</text>
+      <circle cx="160" cy="107" r="5" fill="#333"/>
+      <text x="166" y="103" font-size="10" fill="#333">均衡</text>
+    </svg>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.6rem;margin:.4rem 0 1rem;">
+    <div class="card card-red"><div class="card-body" style="padding:.9rem;">
+      <h4 style="margin:0 0 .4rem;color:#c62828;">📉 IS曲線の傾きが表すもの</h4>
+      <p style="margin:0 0 .5rem;line-height:1.7;font-size:.86rem;"><strong>「金利が動いたとき、所得（景気）がどれだけ反応するか」</strong>の度合い。</p>
+      <ul style="margin:0;padding-left:1.1rem;font-size:.84rem;line-height:1.7;">
+        <li><strong>急（立つ）</strong>＝金利を大きく動かしても所得はちょっとしか動かない（<strong>鈍い</strong>）</li>
+        <li><strong>ゆるやか（寝る）</strong>＝金利が少し動くだけで所得が大きく動く（<strong>敏感</strong>）</li>
+      </ul>
+    </div></div>
+    <div class="card card-blue"><div class="card-body" style="padding:.9rem;">
+      <h4 style="margin:0 0 .4rem;color:#1565c0;">📈 LM曲線の傾きが表すもの</h4>
+      <p style="margin:0 0 .5rem;line-height:1.7;font-size:.86rem;"><strong>「所得（景気）が増えたとき、金利がどれだけ上がるか」</strong>の度合い。</p>
+      <ul style="margin:0;padding-left:1.1rem;font-size:.84rem;line-height:1.7;">
+        <li><strong>急（立つ）</strong>＝所得が少し増えただけで金利が大きく上がる</li>
+        <li><strong>ゆるやか（寝る）</strong>＝所得が大きく増えても金利は少ししか上がらない</li>
+      </ul>
+    </div></div>
+  </div>
+
+  <p style="font-size:.85rem;margin:.3rem 0 1rem;line-height:1.7;background:#fffbeb;border:1.5px dashed #f59e0b;border-radius:6px;padding:.5rem .8rem;color:#92400e;">🔑 ひとことで言うと、<strong>傾き＝「金利と景気の連動の急さ」</strong>。<strong>急＝相手を動かすのに大きな変化が要る／ゆるやか＝少しの変化で相手が大きく動く</strong>。この「連動の急さ」を裏で決めているのが、次に出てくる<strong>弾力性</strong>です。</p>
+
+  <h3 class="section-title st-blue">① どの曲線が、どの弾力性で決まる？</h3>
+  <div class="point-box pb-blue">
+    <h4>傾きを決めるのは「関係する弾力性」</h4>
+    <ul>
+      <li><strong>IS曲線</strong>（財市場・モノ）← <strong>投資の利子弾力性</strong>　＋　<strong>限界消費性向（乗数）</strong></li>
+      <li><strong>LM曲線</strong>（貨幣市場・カネ）← <strong>貨幣需要の利子弾力性</strong></li>
+    </ul>
+    <p style="margin-top:.5rem">まず「<strong>IS＝投資、LM＝貨幣需要</strong>」の対応を固定するのが第一歩。</p>
+  </div>
+  <div class="goro-chip">ISは投資、LMは貨幣<small>傾きの主役を取り違えない</small></div>
+
+  <h3 class="section-title st-blue">② 弾力性・性向 ↑ → 傾きは小さくなる（共通ルール）</h3>
+  <table class="tbl-blue">
+    <tr><th>曲線</th><th>関係する要素</th><th>要素 ↑</th><th>傾き</th></tr>
+    <tr><td><strong>IS</strong></td><td>投資の利子弾力性</td><td>大きくなる</td><td style="color:#1565c0;font-weight:700">→ 小さくなる（ゆるやか）</td></tr>
+    <tr><td><strong>IS</strong></td><td>限界消費性向（乗数）</td><td>大きくなる</td><td style="color:#1565c0;font-weight:700">→ 小さくなる（ゆるやか）</td></tr>
+    <tr><td><strong>LM</strong></td><td>貨幣需要の利子弾力性</td><td>大きくなる</td><td style="color:#1565c0;font-weight:700">→ 小さくなる（ゆるやか）</td></tr>
+  </table>
+  <div class="goro-chip">弾力性アップで 傾きダウン<small>大きい→ゆるやか／小さい→急（3つ共通）</small></div>
+  <p style="font-size:.82rem;margin-top:.3rem;color:#1565c0;background:#e3f2fd;padding:.35rem .6rem;border-radius:6px;">📝 <strong>覚え方</strong>：3要素とも「大きい→ゆるやか（最大で水平＝傾きゼロ）／小さい→急（最大で垂直＝傾き無限大）」で<strong>向きが揃っている</strong>。だから覚えるのはこの一本だけ。</p>
+
+  <h3 class="section-title st-blue">③ なぜそうなる？（小学生でもわかる理由）</h3>
+  <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">キーワードは全部「<strong>ちょっとのきっかけで世の中のお金が大きく動く → 線がゆるやか</strong>」。</p>
+
+  <div class="card card-blue"><div class="card-body" style="padding:1rem;">
+    <h4 style="margin:0 0 .4rem;color:#1565c0;">🏭 ① 投資の利子弾力性が大きい → ISがゆるやか</h4>
+    <p style="margin:0;line-height:1.7;">金利は「お金を借りるときの<strong>料金</strong>」。料金がちょっと安くなっただけで「よし、工場つくろ！」とすぐ飛びつく会社が多い（＝弾力性大）と、<strong>ほんの少しの値下げで投資がドカンと増える</strong>。投資が増える＝世の中のお金が大きく動く → 横（所得Y）にびよーんと伸びる → <strong>線がゆるやか</strong>。</p>
+    <svg class="svg-graph" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" style="max-width:340px;margin-top:.6rem;">
+      <defs><marker id="ax_iie" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#333"/></marker></defs>
+      <line x1="40" y1="170" x2="288" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#ax_iie)"/>
+      <line x1="40" y1="170" x2="40" y2="22" stroke="#333" stroke-width="1.5" marker-end="url(#ax_iie)"/>
+      <text x="280" y="186" font-size="11" font-weight="700">Y</text><text x="24" y="30" font-size="11" font-weight="700">r</text>
+      <!-- 急＝弾力性小 -->
+      <line x1="135" y1="35" x2="180" y2="162" stroke="#c62828" stroke-width="2.5"/>
+      <text x="144" y="32" fill="#c62828" font-size="10" font-weight="700">IS（急）</text>
+      <!-- ゆるやか＝弾力性大 -->
+      <line x1="58" y1="82" x2="262" y2="128" stroke="#e57373" stroke-width="2.5" stroke-dasharray="6,4"/>
+      <text x="196" y="120" fill="#e57373" font-size="10" font-weight="700">IS（ゆるやか）</text>
+    </svg>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:.78rem;margin-top:.2rem;">
+      <span style="color:#c62828;font-weight:700;">━ 急：投資の利子弾力性 小</span>
+      <span style="color:#e57373;font-weight:700;">┅ ゆるやか：投資の利子弾力性 大</span>
+    </div>
+  </div></div>
+
+  <div class="card card-blue"><div class="card-body" style="padding:1rem;">
+    <h4 style="margin:0 0 .4rem;color:#1565c0;">🛍️ ② 限界消費性向が大きい → ISがゆるやか</h4>
+    <p style="margin:0;line-height:1.7;">お小遣いをもらったとき、<strong>たくさん使う子</strong>（＝消費性向大）だと、お店の人がそのお金をもらってまた使って…と<strong>お金が町中をぐるぐる回る</strong>（これが乗数）。最初のひと押しが大きくふくらむ → 横に大きく動く → <strong>線がゆるやか</strong>。</p>
+    <svg class="svg-graph" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" style="max-width:340px;margin-top:.6rem;">
+      <defs><marker id="ax_mpc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#333"/></marker></defs>
+      <line x1="40" y1="170" x2="288" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#ax_mpc)"/>
+      <line x1="40" y1="170" x2="40" y2="22" stroke="#333" stroke-width="1.5" marker-end="url(#ax_mpc)"/>
+      <text x="280" y="186" font-size="11" font-weight="700">Y</text><text x="24" y="30" font-size="11" font-weight="700">r</text>
+      <!-- 急＝乗数小 -->
+      <line x1="135" y1="35" x2="180" y2="162" stroke="#c62828" stroke-width="2.5"/>
+      <text x="144" y="32" fill="#c62828" font-size="10" font-weight="700">IS（急）</text>
+      <!-- ゆるやか＝乗数大 -->
+      <line x1="58" y1="82" x2="262" y2="128" stroke="#e57373" stroke-width="2.5" stroke-dasharray="6,4"/>
+      <text x="196" y="120" fill="#e57373" font-size="10" font-weight="700">IS（ゆるやか）</text>
+    </svg>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:.78rem;margin-top:.2rem;">
+      <span style="color:#c62828;font-weight:700;">━ 急：限界消費性向 小（乗数小）</span>
+      <span style="color:#e57373;font-weight:700;">┅ ゆるやか：限界消費性向 大（乗数大）</span>
+    </div>
+  </div></div>
+
+  <div class="card card-blue"><div class="card-body" style="padding:1rem;">
+    <h4 style="margin:0 0 .4rem;color:#1565c0;">🐷 ③ 貨幣需要の利子弾力性が大きい → LMがゆるやか</h4>
+    <p style="margin:0;line-height:1.7;">お金には2つの居場所がある＝「<strong>買い物用</strong>」と「<strong>タンス預金（念のため手元）</strong>」。景気が良くなると買い物用が足りなくなる。そこで金利が上がると「タンスに置くと損だ」とみんながお金を出す。<strong>金利にすごく敏感な人</strong>（＝弾力性大）だと、<strong>ちょっと金利が上がっただけでドバッとお金を出してくれる</strong> → 金利はほんの少し上がるだけで足りる → <strong>線がゆるやか（あまり立ち上がらない）</strong>。</p>
+    <svg class="svg-graph" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" style="max-width:340px;margin-top:.6rem;">
+      <defs><marker id="ax_mde" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#333"/></marker></defs>
+      <line x1="40" y1="170" x2="288" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#ax_mde)"/>
+      <line x1="40" y1="170" x2="40" y2="22" stroke="#333" stroke-width="1.5" marker-end="url(#ax_mde)"/>
+      <text x="280" y="186" font-size="11" font-weight="700">Y</text><text x="24" y="30" font-size="11" font-weight="700">r</text>
+      <!-- 急＝弾力性小（LM立つ） -->
+      <line x1="135" y1="162" x2="180" y2="35" stroke="#1565c0" stroke-width="2.5"/>
+      <text x="142" y="32" fill="#1565c0" font-size="10" font-weight="700">LM（急）</text>
+      <!-- ゆるやか＝弾力性大（LM寝る） -->
+      <line x1="58" y1="118" x2="262" y2="72" stroke="#64b5f6" stroke-width="2.5" stroke-dasharray="6,4"/>
+      <text x="190" y="66" fill="#64b5f6" font-size="10" font-weight="700">LM（ゆるやか）</text>
+    </svg>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:.78rem;margin-top:.2rem;">
+      <span style="color:#1565c0;font-weight:700;">━ 急：貨幣需要の利子弾力性 小（→垂直＝古典派）</span>
+      <span style="color:#64b5f6;font-weight:700;">┅ ゆるやか：貨幣需要の利子弾力性 大（→水平＝わな）</span>
+    </div>
+  </div></div>
+
+  <div class="support">
+    <span class="support-icon">👨‍🏫</span>
+    <div class="support-body">
+      <span class="support-name">先生からひとこと</span>
+      ぜんぶ共通のひとこと＝<strong>「敏感な人が多い → 小さなきっかけでお金が大きく動く → 線がゆるやか」</strong>。逆に「にぶい人ばかり → 動かすのに無理が必要 → 線が急」。敏感＝ゆるやか、にぶい＝急、これ一本で3つとも説明できる。
+    </div>
+  </div>
+
+  <h3 class="section-title st-blue">④ 混同注意：同じ「利子弾力性が大きい」でも結論が真逆</h3>
+  <div class="alert-box alert-exam">【1次】最大の落とし穴：<strong>「投資の利子弾力性が大きい」と「貨幣需要の利子弾力性が大きい」は政策の結論が正反対</strong>。「弾力性が大きいから両方とも財政有効」のように混ぜると一発で誤答。</div>
+  <table class="tbl-purple">
+    <tr><th>弾力性の大小</th><th>投資の利子弾力性（IS）</th><th>貨幣需要の利子弾力性（LM）</th></tr>
+    <tr><td><strong>大きい（∞）</strong></td><td>IS<strong>水平</strong> → <span style="color:#c62828;font-weight:700">金融有効</span>・財政無効</td><td>LM<strong>水平</strong>（わな）→ <span style="color:#1565c0;font-weight:700">財政有効</span>・金融無効</td></tr>
+    <tr><td><strong>小さい（0）</strong></td><td>IS<strong>垂直</strong> → <span style="color:#1565c0;font-weight:700">財政有効</span>・金融無効</td><td>LM<strong>垂直</strong>（古典派）→ <span style="color:#c62828;font-weight:700">金融有効</span>・財政無効</td></tr>
+  </table>
+  <p style="font-size:.85rem;margin:.6rem 0 0;line-height:1.7;">👉 「弾力性が大きい」の<strong>主語が投資か貨幣需要か</strong>で、効く政策がひっくり返る。混同しないための質問は3つ：<strong>①どの市場（財＝IS／貨幣＝LM）？ ②大きいの主語は投資か貨幣需要か？ ③傾きの話か乗数（インパクト）の話か？</strong></p>
+
+  <div class="keepit">
+    <div class="keepit-title">⭐ 今日のこれだけ覚えて（傾きと弾力性）</div>
+    <ul>
+      <li>❶ <strong>IS＝投資の利子弾力性＆限界消費性向</strong>／<strong>LM＝貨幣需要の利子弾力性</strong></li>
+      <li>❷ どれも<strong>大きい→ゆるやか（傾き小）／小さい→急（傾き大）</strong>（向きは3つ共通）</li>
+      <li>❸ 「弾力性が大きい」でも<strong>主語（投資 or 貨幣需要）で政策の結論は真逆</strong></li>
+    </ul>
+  </div>
+
+  <h3 class="section-title st-blue">⑤ 傾き目線で見る「流動性のわな」と「古典派」（両極端）</h3>
+  <p style="font-size:.88rem;color:var(--gray-mid);margin:.3rem 0 .6rem;">🔁 <strong>⓪の「傾き＝金利と所得の連動の急さ」の、両端のケース</strong>。LMが完全に寝た／立ったときの世界。</p>
+
+  <div class="graph-title">📊 LMの傾きスペクトル（水平＝わな ←→ 垂直＝古典派）</div>
+  <svg class="svg-graph" viewBox="0 0 320 215" xmlns="http://www.w3.org/2000/svg" style="max-width:360px;">
+    <defs><marker id="ax_spec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#333"/></marker></defs>
+    <line x1="45" y1="178" x2="305" y2="178" stroke="#333" stroke-width="1.6" marker-end="url(#ax_spec)"/>
+    <line x1="45" y1="178" x2="45" y2="22" stroke="#333" stroke-width="1.6" marker-end="url(#ax_spec)"/>
+    <text x="270" y="196" font-size="11" font-weight="700">Y（所得）</text>
+    <text x="20" y="30" font-size="11" font-weight="700">r（金利）</text>
+    <!-- 流動性のわな：L字（左が水平→右で立ち上がる） -->
+    <line x1="52" y1="120" x2="150" y2="120" stroke="#1565c0" stroke-width="6" opacity="0.18"/>
+    <path d="M52,120 L150,120 C175,120 183,95 205,52" fill="none" stroke="#1565c0" stroke-width="2.8"/>
+    <text x="40" y="112" fill="#1565c0" font-size="9.5" font-weight="700">水平部＝流動性のわな（傾き0）</text>
+    <!-- 古典派：垂直 -->
+    <line x1="262" y1="172" x2="262" y2="42" stroke="#9c27b0" stroke-width="2.8"/>
+    <text x="196" y="38" fill="#9c27b0" font-size="10" font-weight="700">古典派（垂直・傾き∞）</text>
+  </svg>
+  <div class="tutor-comment">💡 流動性のわなのLMは<strong>L字（左が水平→右で立ち上がる）</strong>。左の水平部では所得が増えても金利が動かない（傾き0）＝ここが「わな」。反対の<strong>古典派は垂直（傾き∞）</strong>で、所得が少し動くだけで金利が跳ね上がる。</div>
+
+  <table class="tbl-blue">
+    <tr><th>ケース</th><th>傾き</th><th>傾き目線の意味</th><th>財政</th><th>金融</th></tr>
+    <tr><td><strong>流動性のわな</strong></td><td>LM水平（傾き0）</td><td>所得が増えても<strong>金利が上がらない</strong></td><td style="color:#1565c0;font-weight:700">最大有効</td><td style="color:#c62828;font-weight:700">無効</td></tr>
+    <tr><td><strong>古典派</strong></td><td>LM垂直（傾き∞）</td><td>所得が少し動くだけで<strong>金利が跳ね上がる</strong></td><td style="color:#c62828;font-weight:700">無効</td><td style="color:#1565c0;font-weight:700">最大有効</td></tr>
+  </table>
+
+  <div class="graph-title">📊 財政政策（IS右シフト）の効き方の対比</div>
+  <svg class="svg-graph" viewBox="0 0 520 235" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="ax_pol_g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#2e7d32"/></marker>
+    <marker id="ax_pol_r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#c62828"/></marker>
+    <marker id="ax_pol_k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#333"/></marker></defs>
+
+    <!-- 左：流動性のわな（財政有効） -->
+    <text x="140" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="#2e7d32">流動性のわな → 財政有効</text>
+    <line x1="45" y1="195" x2="250" y2="195" stroke="#333" stroke-width="1.5" marker-end="url(#ax_pol_k)"/>
+    <line x1="45" y1="195" x2="45" y2="30" stroke="#333" stroke-width="1.5" marker-end="url(#ax_pol_k)"/>
+    <text x="243" y="210" font-size="10">Y</text><text x="31" y="33" font-size="10">r</text>
+    <!-- LM：L字（水平部＝わな→右で立ち上がる） -->
+    <line x1="45" y1="120" x2="185" y2="120" stroke="#1565c0" stroke-width="5" opacity="0.18"/>
+    <path d="M45,120 L185,120 C205,120 213,95 233,55" fill="none" stroke="#1565c0" stroke-width="2.5"/>
+    <text x="108" y="114" fill="#1565c0" font-size="10" font-weight="700">LM（L字・水平部）</text>
+    <!-- IS と IS' -->
+    <line x1="60" y1="55" x2="155" y2="185" stroke="#e53935" stroke-width="2"/>
+    <line x1="110" y1="55" x2="205" y2="185" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="58" y="50" fill="#e53935" font-size="10">IS</text><text x="170" y="180" fill="#e53935" font-size="10">IS'</text>
+    <circle cx="108" cy="120" r="4" fill="#333"/><circle cx="158" cy="120" r="4" fill="#333"/>
+    <line x1="108" y1="120" x2="108" y2="195" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="158" y1="120" x2="158" y2="195" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="108" y1="186" x2="158" y2="186" stroke="#2e7d32" stroke-width="2.5" marker-end="url(#ax_pol_g)"/>
+    <text x="98" y="222" fill="#2e7d32" font-size="10" font-weight="700">Y大きく増（r不変）</text>
+
+    <!-- 右：古典派（財政無効） -->
+    <text x="395" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="#c62828">古典派 → 財政無効</text>
+    <line x1="300" y1="195" x2="505" y2="195" stroke="#333" stroke-width="1.5" marker-end="url(#ax_pol_k)"/>
+    <line x1="300" y1="195" x2="300" y2="30" stroke="#333" stroke-width="1.5" marker-end="url(#ax_pol_k)"/>
+    <text x="498" y="210" font-size="10">Y</text><text x="286" y="33" font-size="10">r</text>
+    <!-- LM垂直 -->
+    <line x1="395" y1="190" x2="395" y2="40" stroke="#9c27b0" stroke-width="2.5"/>
+    <text x="400" y="48" fill="#9c27b0" font-size="10" font-weight="700">LM（垂直）</text>
+    <!-- IS と IS' -->
+    <line x1="320" y1="70" x2="445" y2="190" stroke="#e53935" stroke-width="2"/>
+    <line x1="365" y1="55" x2="490" y2="175" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="318" y="65" fill="#e53935" font-size="10">IS</text><text x="455" y="70" fill="#e53935" font-size="10">IS'</text>
+    <circle cx="395" cy="143" r="4" fill="#333"/><circle cx="395" cy="86" r="4" fill="#333"/>
+    <line x1="395" y1="143" x2="395" y2="92" stroke="#c62828" stroke-width="2.5" marker-end="url(#ax_pol_r)"/>
+    <text x="345" y="222" fill="#c62828" font-size="10" font-weight="700">Y不変・r↑だけ（C/O）</text>
+  </svg>
+  <div class="tutor-comment">💡 左＝<strong>わな（LMのL字・水平部）</strong>：ISが水平部の上で右に動くと金利が上がらず所得Yだけ大きく増える＝<strong>財政有効</strong>。右＝<strong>古典派（LM垂直）</strong>：ISが右に動いても所得は変わらず金利rだけ上がる（完全クラウディングアウト）＝<strong>財政無効</strong>。<br>※<strong>金融政策は真逆</strong>：わな＝金融無効／古典派＝金融有効（LMを右に動かせるかどうかで効く・効かないが決まる）。</div>
+
+  <div class="card card-blue"><div class="card-body" style="padding:1rem;">
+    <h4 style="margin:0 0 .4rem;color:#1565c0;">なぜ流動性のわなで金利が動かない？</h4>
+    <p style="margin:0;line-height:1.7;font-size:.86rem;">金利がもう<strong>最低水準</strong>。「これ以上下がらない＝債券を買っても損」とみんな思い、増えたお金を全部タンスにためる（投機的需要＝∞が吸収）。景気が良くなってお金が要っても<strong>タンスからいくらでも出てくる</strong>ので金利を上げる必要がない。だから<strong>財政はクラウディングアウトなしで最大有効／金融はもう金利を動かせず無効</strong>。</p>
+  </div></div>
+
+  <p style="font-size:.85rem;margin:.3rem 0 1rem;line-height:1.7;background:#fffbeb;border:1.5px dashed #f59e0b;border-radius:6px;padding:.5rem .8rem;color:#92400e;">🔑 <strong>流動性のわな＝LMの傾きゼロ（水平）の世界</strong>。所得が増えても金利が上がらない → 財政が金利を押し上げず最大有効・金融は金利を動かせず無効。反対の極端が<strong>古典派（傾き∞・垂直）</strong>で、財政無効・金融有効と真逆になる。</p>
+
+  <!-- 穴埋め -->
+  <h3 class="section-title st-blue">✏️ このタブの穴埋めチェック</h3>
+  <div class="card" style="border:3px solid #1565c0;">
+    <div class="card-head" style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;padding:.6rem 1rem;border-radius:6px 6px 0 0;font-weight:700;">✏️ このタブの穴埋めチェック</div>
+    <div class="card-body" style="padding:1rem;">
+      <div style="text-align:center;margin:0 0 1rem;">
+        <button class="fill-reveal-btn" onclick="revealAllFillIn('tab_slope')" style="background:#1565c0;margin-right:.5rem;">🔍 全て表示</button>
+        <button class="fill-reveal-btn" onclick="resetAllFillIn('tab_slope')" style="background:#64748b;">🔄 リセット</button>
+      </div>
+      <div class="tbl-wrap"><table class="tbl-teal">
+        <tr><th>曲線</th><th>傾きを決める要素</th></tr>
+        <tr><td>IS</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">投資の利子弾力性</span>＋<span class="fill-blank" onclick="this.classList.toggle('show')">限界消費性向</span></td></tr>
+        <tr><td>LM</td><td><span class="fill-blank" onclick="this.classList.toggle('show')">貨幣需要の利子弾力性</span></td></tr>
+      </table></div>
+      <p style="font-size:.85rem;margin:.6rem 0 0;">3要素とも、大きくなると傾きは<span class="fill-blank" onclick="this.classList.toggle('show')">小さく（ゆるやかに）</span>なる。最大まで大きいと<span class="fill-blank" onclick="this.classList.toggle('show')">水平</span>、ゼロだと<span class="fill-blank" onclick="this.classList.toggle('show')">垂直</span>。</p>
     </div>
   </div>
 </div>
@@ -1040,6 +1309,54 @@
     </div>
     <p style="margin-top:.5rem">金利がこれ以上下がらない（債券価格がこれ以上上がらない）状況。お金を増やしても誰も債券を買わず手元に貯め込むので、金利が動かず投資も増えない＝<strong>金融政策は無効</strong>。一方、財政政策は金利を押し上げないため<strong>クラウディングアウトが起きず最大有効</strong>。</p>
   </div>
+
+  <div class="graph-title">📊 流動性のわなのグラフ ─ LMの「左端が水平」がカギ</div>
+  <svg class="svg-graph" viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="ztrap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#2e7d32"/></marker>
+    <marker id="ztrap2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#333"/></marker></defs>
+
+    <!-- 左：財政政策（有効） -->
+    <text x="140" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="#2e7d32">財政政策 → 有効</text>
+    <line x1="45" y1="205" x2="250" y2="205" stroke="#333" stroke-width="1.5" marker-end="url(#ztrap2)"/>
+    <line x1="45" y1="205" x2="45" y2="35" stroke="#333" stroke-width="1.5" marker-end="url(#ztrap2)"/>
+    <text x="243" y="220" font-size="10">Y</text><text x="31" y="38" font-size="10">r</text>
+    <!-- LM：左が水平→途中から右上がり -->
+    <path d="M45,150 L150,150 C180,150 190,120 215,55" fill="none" stroke="#1976d2" stroke-width="2.5"/>
+    <text x="178" y="80" fill="#1976d2" font-size="11" font-weight="700">LM</text>
+    <line x1="45" y1="150" x2="150" y2="150" stroke="#1976d2" stroke-width="4" opacity="0.25"/>
+    <text x="58" y="166" fill="#1976d2" font-size="9">水平部＝流動性のわな（r₀）</text>
+    <!-- IS と IS'（水平部の中でシフト） -->
+    <line x1="60" y1="90" x2="150" y2="200" stroke="#e53935" stroke-width="2"/>
+    <line x1="105" y1="90" x2="195" y2="200" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="55" y="86" fill="#e53935" font-size="10">IS</text>
+    <text x="172" y="120" fill="#e53935" font-size="10">IS'</text>
+    <!-- 均衡点（両方とも水平部の上） -->
+    <circle cx="105" cy="150" r="4" fill="#333"/><circle cx="150" cy="150" r="4" fill="#333"/>
+    <line x1="105" y1="150" x2="105" y2="205" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="150" y1="150" x2="150" y2="205" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="105" y1="195" x2="150" y2="195" stroke="#2e7d32" stroke-width="2.5" marker-end="url(#ztrap)"/>
+    <text x="98" y="232" fill="#2e7d32" font-size="10" font-weight="700">Y増（r₀のまま不変）</text>
+
+    <!-- 右：金融政策（無効） -->
+    <text x="390" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="#c62828">金融政策 → 無効</text>
+    <line x1="295" y1="205" x2="500" y2="205" stroke="#333" stroke-width="1.5" marker-end="url(#ztrap2)"/>
+    <line x1="295" y1="205" x2="295" y2="35" stroke="#333" stroke-width="1.5" marker-end="url(#ztrap2)"/>
+    <text x="493" y="220" font-size="10">Y</text><text x="281" y="38" font-size="10">r</text>
+    <!-- LM と LM'（M↑で右シフトだが水平部が延びるだけ） -->
+    <path d="M295,150 L400,150 C430,150 440,120 465,55" fill="none" stroke="#1976d2" stroke-width="2.5"/>
+    <path d="M295,150 L445,150 C470,150 478,120 495,60" fill="none" stroke="#1976d2" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="378" y="80" fill="#1976d2" font-size="11" font-weight="700">LM</text>
+    <text x="455" y="95" fill="#1976d2" font-size="10">LM'</text>
+    <line x1="295" y1="150" x2="445" y2="150" stroke="#1976d2" stroke-width="4" opacity="0.25"/>
+    <!-- IS 固定（水平部の上で交わる） -->
+    <line x1="315" y1="90" x2="405" y2="200" stroke="#e53935" stroke-width="2"/>
+    <text x="310" y="86" fill="#e53935" font-size="10">IS</text>
+    <circle cx="360" cy="150" r="4" fill="#333"/>
+    <text x="330" y="175" fill="#c62828" font-size="10" font-weight="700">M↑</text>
+    <text x="350" y="175" fill="#c62828" font-size="10">→ 水平部が延びるだけ</text>
+    <text x="320" y="192" fill="#c62828" font-size="10" font-weight="700">均衡点は動かず Y・r 不変</text>
+  </svg>
+  <div class="tutor-comment">💡 ポイントは<strong>LM曲線の左端が水平（＝流動性のわなの領域）</strong>になっていること。<br>左＝<strong>財政</strong>：ISが水平部の上で右へ動く→利子率はr₀のまま上がらず、所得Yだけ増える（クラウディングアウトなし＝最大有効）。<br>右＝<strong>金融</strong>：M↑でLMは右へシフトするが、それは<strong>水平部が延びるだけ</strong>。IS交点はもとの水平部の上にあるので均衡が動かず、Y・rとも不変＝効果ゼロ。</div>
   <div class="support">
     <span class="support-icon">👨‍🏫</span>
     <div class="support-body">
@@ -1611,8 +1928,11 @@
     <text x="54" y="455" font-size="11" font-weight="700" fill="#2e7d32">③45°線 I=S</text>
     <text x="280" y="455" font-size="11" font-weight="700" fill="#9c27b0">④貯蓄関数 S=−C₀+sY</text>
     <line x1="225" y1="60" x2="70" y2="225" stroke="#e53935" stroke-width="2.5"/>
+    <text x="84" y="118" font-size="10.5" font-weight="700" fill="#e53935">I=I(r)</text>
     <line x1="240" y1="240" x2="60" y2="420" stroke="#2e7d32" stroke-width="2.5"/>
+    <text x="70" y="348" font-size="10.5" font-weight="700" fill="#2e7d32">I=S（45°）</text>
     <line x1="255" y1="250" x2="425" y2="415" stroke="#9c27b0" stroke-width="2.5"/>
+    <text x="335" y="368" font-size="10.5" font-weight="700" fill="#9c27b0">S=−C₀+sY</text>
     <line x1="255" y1="70" x2="430" y2="200" stroke="#1976d2" stroke-width="3"/>
     <text x="400" y="194" font-size="12" font-weight="700" fill="#1976d2">IS</text>
     <line x1="240" y1="110" x2="178" y2="110" stroke="#0ea5e9" stroke-width="1.6" stroke-dasharray="5,3" marker-end="url(#zisd)"/>
@@ -1645,8 +1965,11 @@
     <text x="40" y="455" font-size="11" font-weight="700" fill="#00897b">③配分 L₁+L₂=Mˢ</text>
     <text x="280" y="455" font-size="11" font-weight="700" fill="#9c27b0">④取引需要 L₁=L₁(Y)</text>
     <line x1="225" y1="60" x2="70" y2="225" stroke="#e65100" stroke-width="2.5"/>
+    <text x="80" y="118" font-size="10.5" font-weight="700" fill="#e65100">L₂=L₂(r)</text>
     <line x1="240" y1="420" x2="60" y2="240" stroke="#00897b" stroke-width="2.5"/>
+    <text x="72" y="322" font-size="10.5" font-weight="700" fill="#00897b">L₁+L₂=Mˢ</text>
     <line x1="255" y1="250" x2="420" y2="415" stroke="#9c27b0" stroke-width="2.5"/>
+    <text x="330" y="372" font-size="10.5" font-weight="700" fill="#9c27b0">L₁=L₁(Y)</text>
     <line x1="255" y1="205" x2="420" y2="61" stroke="#1976d2" stroke-width="3"/>
     <text x="404" y="76" font-size="12" font-weight="700" fill="#1976d2">LM</text>
     <line x1="240" y1="115" x2="173" y2="115" stroke="#0ea5e9" stroke-width="1.6" stroke-dasharray="5,3" marker-end="url(#zlmd)"/>

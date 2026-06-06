@@ -3510,6 +3510,190 @@ window.LS_CONFIG = {
     if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkLiPh(el,key),el.nextSibling); }
   });
 })();
+// === 最細粒度 非表示（全タブの表行・リスト項目・試験ポイント）・localStorage保存 ===
+(function(){
+  var KEY='mz_fine_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); var t=h?h.textContent.trim():''; return t.indexOf('予習')===0||t.indexOf('🔰')===0; }
+  function mkPh(e2,k2,tag){
+    var ph=document.createElement(tag); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length||1;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // (1) 全タブの表データ行（fill-body以外も対象・ヘッダ行は除外）
+  document.querySelectorAll('.tab-panel table tbody tr').forEach(function(tr,i){
+    if(tr.classList.contains('tr-hidden-ph')) return;
+    if(isPreview(tr)) return;
+    if(tr.querySelector('.row-hide-btn')) return;            // 既存パスで処理済み
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return; // ヘッダ専用行は除外
+    var key='ftr:'+i+'|'+(tr.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var last=tds[tds.length-1]; last.style.position='relative';
+    if(!/padding-right/.test(last.getAttribute('style')||'')) last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この行を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+  // (2) 全タブのリスト項目（keepit等の既処理liは除外）
+  document.querySelectorAll('.tab-panel li').forEach(function(li,i){
+    if(li.classList.contains('row-hidden-ph')||li.closest('.row-hidden-ph')) return;
+    if(li.querySelector(':scope > .row-hide-btn')) return;     // keepit等 既存ボタン有
+    if(isPreview(li)) return;
+    if((li.textContent||'').trim().length<2) return;
+    var key='fli:'+i+'|'+(li.textContent||'').replace(/\s+/g,'').slice(0,28);
+    li.style.position='relative'; li.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:.15rem;right:2px;float:none;margin:0;';
+    li.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); li.style.display='none'; st[key]=1; save(); li.parentNode.insertBefore(mkPh(li,key,'li'),li.nextSibling); });
+    if(st[key]){ li.style.display='none'; li.parentNode.insertBefore(mkPh(li,key,'li'),li.nextSibling); }
+  });
+  // (3) 試験ポイント（.exam-pt 各ブロック）
+  document.querySelectorAll('.tab-panel .exam-pt').forEach(function(el,i){
+    if(el.querySelector(':scope > .row-hide-btn')) return;
+    var key='fep:'+i+'|'+(el.textContent||'').replace(/\s+/g,'').slice(0,28);
+    el.style.position='relative'; el.style.paddingRight='30px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この試験ポイントを非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:50%;right:6px;transform:translateY(-50%);float:none;margin:0;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,'div'),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,'div'),el.nextSibling); }
+  });
+})();
+// === 最細粒度プラス v2：個別カード（factor/vs/goro）＋本文段落 単位の非表示 ===
+(function(){
+  var KEY='mz_fine2_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function inAnim(el){ return !!el.closest('.sa,.hosho-anim,.goro-scene'); }
+  function handled(el){
+    if(el.querySelector(':scope > .row-hide-btn')) return true;          // 既にボタン有
+    var p=el.parentNode;
+    if(p&&p.classList&&p.classList.contains('sec-hide-wrap')) return true; // section-hide ○ 対象
+    if(el.closest('.row-hidden-ph')) return true;
+    return false;
+  }
+  function mkPh(el,key,tag){
+    var ph=document.createElement(tag||'div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ el.style.display=''; ph.remove(); st[key]=0; save(); });
+    return ph;
+  }
+  function bind(el,key,phTag){
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:4px;right:4px;float:none;margin:0;z-index:3;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); }
+  }
+  // (1) 個別カード：factor-card / vs-card / goro-card
+  document.querySelectorAll('.tab-panel .factor-card, .tab-panel .vs-card, .tab-panel .goro-card').forEach(function(el,i){
+    if(handled(el)||inAnim(el)) return;
+    var key='c2:'+i+'|'+(el.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var cs=window.getComputedStyle(el); if(cs.position==='static') el.style.position='relative';
+    el.style.paddingRight=(parseInt(cs.paddingRight,10)||10)+18+'px';
+    bind(el,key,'div');
+  });
+  // (2) 本文段落：tab-panel 内の <p>（アニメ・カード内既処理・表内・短文は除外）
+  document.querySelectorAll('.tab-panel p').forEach(function(p,i){
+    if(inAnim(p)) return;
+    if(p.classList.contains('row-hidden-ph')||p.closest('.row-hidden-ph')) return;
+    if(p.querySelector(':scope > .row-hide-btn')) return;
+    if(p.closest('.factor-card,.vs-card,.goro-card,.sec-hidden-ph')) return; // カード本体側で対応済み
+    if(p.closest('td,th,li')) return;                                        // 行単位で対応済み
+    if((p.textContent||'').trim().length<25) return;
+    var key='p2:'+i+'|'+(p.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var cs=window.getComputedStyle(p); if(cs.position==='static') p.style.position='relative';
+    p.style.paddingRight=(parseInt(cs.paddingRight,10)||0)+20+'px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この段落を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:2px;right:2px;float:none;margin:0;';
+    p.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); p.style.display='none'; st[key]=1; save(); p.parentNode.insertBefore(mkPh(p,key,'p'),p.nextSibling); });
+    if(st[key]){ p.style.display='none'; p.parentNode.insertBefore(mkPh(p,key,'p'),p.nextSibling); }
+  });
+})();
+// === 最細粒度プラス v3：クラスレスのインライン視覚ボックス & <br>区切り箇条書きも非表示対象に ===
+(function(){
+  var KEY='mz_fine3_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function inAnim(el){ return !!el.closest('.sa,.hosho-anim,.goro-scene'); }
+  function inPh(el){ return !!el.closest('.row-hidden-ph,.sec-hidden-ph,.tr-hidden-ph'); }
+  function hasBtn(el){ return !!el.querySelector(':scope > .row-hide-btn'); }
+  function wrappedBySec(el){ var p=el.parentNode; return !!(p&&p.classList&&p.classList.contains('sec-hide-wrap')); }
+  function mkPh(el,key,tag){
+    var ph=document.createElement(tag||'div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ el.style.display=''; ph.remove(); st[key]=0; save(); });
+    return ph;
+  }
+  function addBtn(el,key,phTag,style){
+    var cs=window.getComputedStyle(el);
+    if(cs.position==='static') el.style.position='relative';
+    var pr=parseInt(cs.paddingRight,10)||0; if(pr<20) el.style.paddingRight=(pr+20)+'px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText=style||'position:absolute;top:4px;right:4px;float:none;margin:0;z-index:3;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); }
+  }
+  // (A) <br>区切りの箇条書きを行ごとに分割し、各行へ非表示ボタンを付与
+  //     対象：.hl ハイライト or 「・」箇条書きを含む視覚ボックス
+  function splitBrLines(box,baseKey){
+    if(box.getAttribute('data-brsplit')) return false;
+    var nodes=Array.from(box.childNodes);
+    if(!nodes.some(function(n){return n.nodeName==='BR';})) return false;
+    var lines=[],cur=[];
+    nodes.forEach(function(n){ if(n.nodeName==='BR'){ lines.push(cur); cur=[]; } else cur.push(n); });
+    lines.push(cur);
+    var meaningful=lines.filter(function(l){ return l.some(function(n){return (n.textContent||'').trim().length>0;}); });
+    if(meaningful.length<2) return false;
+    box.setAttribute('data-brsplit','1');
+    box.textContent='';
+    lines.forEach(function(l,idx){
+      var hasText=l.some(function(n){return (n.textContent||'').trim().length>0;});
+      var line=document.createElement('div'); line.className='hb-line'; line.style.cssText='position:relative;padding-right:22px;';
+      l.forEach(function(n){ line.appendChild(n); });
+      box.appendChild(line);
+      if(!hasText) return;
+      var key='brl:'+baseKey+':'+idx+'|'+(line.textContent||'').replace(/\s+/g,'').slice(0,22);
+      var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この行を非表示'; btn.textContent='○';
+      btn.style.cssText='position:absolute;top:1px;right:0;float:none;margin:0;';
+      line.appendChild(btn);
+      btn.addEventListener('click',function(e){ e.stopPropagation(); line.style.display='none'; st[key]=1; save(); line.parentNode.insertBefore(mkPh(line,key,'div'),line.nextSibling); });
+      if(st[key]){ line.style.display='none'; line.parentNode.insertBefore(mkPh(line,key,'div'),line.nextSibling); }
+    });
+    return true;
+  }
+  // (B) tab-panel 内の div / .hl を走査。視覚ボックス（inline border/background）or .hl を対象化
+  var idx=0;
+  document.querySelectorAll('.tab-panel div, .tab-panel .hl').forEach(function(el){
+    if(inAnim(el)||inPh(el)||hasBtn(el)||wrappedBySec(el)) return;
+    if(el.classList.contains('hb-line')||el.classList.contains('row-hide-btn')||el.classList.contains('sec-hide-btn-row')) return;
+    var isHl=el.classList.contains('hl');
+    var sty=el.getAttribute('style')||'';
+    var isBox=/border|background/.test(sty);
+    if(!isHl&&!isBox) return;
+    var txt=(el.textContent||'').trim();
+    if(txt.length<6) return;
+    var key=(isHl?'hlb:':'box:')+(idx++)+'|'+txt.replace(/\s+/g,'').slice(0,26);
+    // 箇条書き（・ を含む or .hl）は行分割を試みる
+    if((isHl||txt.indexOf('・')>=0)&&splitBrLines(el,key)) return; // 行ごとに付与したので箱全体ボタンは省略
+    addBtn(el,key,'div');
+  });
+})();
 </script>
 
 <!-- 右下の評定パネル（◯△✗）を非表示（このファイルのみ） -->
