@@ -1,0 +1,3046 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苦手復習 104-02 ｜ 品種量×型・生産合理化・SLP・データ分析・商品コード</title>
+<style>
+:root{--p:#7b1fa2;--pl:#f3e5f5;--b:#1a5276;--bl:#eaf2f8;--g:#1e8449;--gl:#eafaf1;--o:#b9770e;--ol:#fef9e7;--r:#c0392b;--rl:#fdedec;--ink:#1e293b;--mut:#64748b;--line:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:var(--ink);line-height:1.7;}
+.header{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;padding:22px 16px;text-align:center;}
+.header h1{font-size:1.25rem;}
+.header p{font-size:.82rem;opacity:.85;margin-top:4px;}
+.tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
+.tab-nav{display:flex;flex-wrap:wrap;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
+.tab-btn{flex:1;min-width:88px;padding:14px 6px;border:none;background:#fff;color:var(--mut);font-size:.9rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-btn.active[data-c=b]{color:var(--b);border-bottom-color:var(--b);background:var(--bl);}
+.tab-btn.active[data-c=o]{color:var(--o);border-bottom-color:var(--o);background:var(--ol);}
+.tab-btn.active[data-c=g]{color:var(--g);border-bottom-color:var(--g);background:var(--gl);}
+.tab-btn.active[data-c=t]{color:#0f766e;border-bottom-color:#0f766e;background:#ccfbf1;}
+.tab-btn.active[data-c=p]{color:var(--p);border-bottom-color:var(--p);background:var(--pl);}
+.tab-panel{display:none;background:#fff;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;animation:f .3s;}
+@keyframes f{from{opacity:0}to{opacity:1}}
+h2{font-size:1.05rem;margin:22px 0 10px;padding-left:10px;border-left:5px solid var(--b);}
+h2:first-of-type{margin-top:6px;}
+.weak{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;font-size:.86rem;margin-bottom:8px;}
+.weak b{color:#c2410c;}
+.weak small{color:#64748b;}
+.fig{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfcfd;}
+.note{font-size:.8rem;text-align:center;color:var(--mut);margin-top:8px;}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.84rem;}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:center;vertical-align:middle;}
+th{background:var(--b);color:#fff;}
+tr:nth-child(even) td{background:#f8fafc;}
+td.l{text-align:left;}
+.yes{background:#dcfce7!important;color:#166534;font-weight:800;}
+.no{background:#fee2e2!important;color:#991b1b;font-weight:800;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cell{border:2px solid var(--line);border-radius:8px;padding:9px 11px;font-size:.81rem;}
+.cell b{display:block;color:var(--b);margin-bottom:2px;}
+.trap{background:var(--rl);border-left:4px solid var(--r);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.82rem;margin:10px 0;}
+.trap b{color:var(--r);}
+.formula{text-align:center;font-weight:800;color:var(--b);font-size:1.02rem;margin:6px 0;background:#eef6fb;border:1.5px solid #b6d4e6;border-radius:8px;padding:9px 8px;}
+.formula .ex{display:block;font-size:.82rem;font-weight:700;color:var(--g);margin-top:4px;}
+.nosrc{display:inline-block;background:#475569;color:#fff;font-size:.74rem;font-weight:700;padding:5px 11px;border-radius:6px;margin:2px 0 8px;}
+.vz-supplement{background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;}
+.vz-label{font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;}
+.vz-supplement p{margin:0 0 .6rem;line-height:1.7;color:#334155;}
+.fill-section-title{margin:24px 0 6px;font-size:1rem;font-weight:800;color:#7b1fa2;}
+.revall-btn{width:100%;padding:13px;font-size:.98rem;font-weight:800;background:#7b1fa2;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;}
+.revall-btn:hover{background:#6a1b9a;}
+.fill-card{background:#faf5ff;border:2px solid var(--p);border-radius:12px;margin-top:12px;overflow:hidden;position:relative;}
+.fill-head{background:var(--p);color:#fff;padding:10px 16px;font-weight:800;font-size:.92rem;}
+.fill-body{padding:14px 18px;font-size:.9rem;line-height:2.2;}
+.fill-body table{margin:4px 0 6px;}
+.fill-body table .blank{min-width:84px;}
+.blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #a855f7;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:800;color:transparent;background:#f3e8ff;border-radius:4px;user-select:none;}
+.blank.show{color:#c2410c;background:#fff7ed;border-color:#c2410c;}
+.revbtn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;}
+.fig,.fill-card,.vz-supplement{position:relative;}
+.mz-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:2px solid #16a34a;background:#fff;color:#16a34a;font-weight:800;cursor:pointer;z-index:5;font-size:.95rem;line-height:1;padding:0;}
+.mz-btn:hover{background:#dcfce7;}
+.mz-done>:not(.mz-btn){display:none!important;}
+.mz-done{background:#f0fdf4!important;border-color:#16a34a!important;padding:12px 16px!important;cursor:pointer;}
+.mz-done::after{content:"✓ 覚えた（タップで再表示）";color:#16a34a;font-weight:700;font-size:.82rem;}
+.mz-done .mz-btn{background:#16a34a;color:#fff;}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.tab-btn{font-size:.76rem;min-width:74px}table{font-size:.76rem}}
+/* ===== 行単位 非表示ボタン ===== */
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+/* ===== 細かい粒度の小ボックス非表示（商品コードタブ） ===== */
+.box-hide-btn{position:absolute;top:6px;width:20px;height:20px;border-radius:50%;border:1.5px solid #cbd5e1;background:#fff;color:#94a3b8;font-size:.6rem;line-height:1;cursor:pointer;z-index:6;padding:0;}
+.box-hide-btn:hover{border-color:#ef4444;color:#ef4444;background:#fef2f2;}
+.box-hidden-ph{color:#94a3b8;font-size:.74rem;padding:4px 9px;margin:6px 0;background:#f8fafc;border-radius:6px;border:1px dashed #e2e8f0;display:flex;align-items:center;gap:8px;}
+.box-hidden-ph span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.box-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 8px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;flex:none;}
+.box-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+/* 略称の英語フル名（インライン補足） */
+.abbr-en{font-weight:400;color:#64748b;font-size:.84em;}
+/* ===== 元ノート(qz_03)から移植：U字ライン配置図 ===== */
+.ucell-container{display:flex;justify-content:center;padding:1rem 0;}
+.ucell{position:relative;width:300px;height:220px;}
+.ucell-station{position:absolute;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;width:60px;height:60px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:.74rem;box-shadow:0 3px 8px rgba(39,174,96,.3);z-index:2;}
+.ucell-station span{font-size:.6rem;font-weight:400;}
+.ucell-path{position:absolute;border:3px dashed #e67e22;border-radius:0 0 34px 34px;top:30px;left:30px;width:240px;height:160px;border-top:none;z-index:1;}
+.ucell-worker{position:absolute;top:82px;left:118px;width:64px;height:64px;background:linear-gradient(135deg,#e67e22,#f39c12);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.68rem;font-weight:700;box-shadow:0 4px 12px rgba(230,126,34,.4);z-index:3;text-align:center;line-height:1.1;}
+@media(max-width:600px){.ucell{width:260px;height:190px;}.ucell-station{width:50px;height:50px;font-size:.66rem;}.ucell-worker{top:68px;left:103px;width:54px;height:54px;}.ucell-path{left:25px;top:25px;width:210px;height:140px;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>苦手復習 104-02</h1>
+  <p>運営管理 Sティア後半の🔁論点（生産方式/合理化/SLP/データ分析）＋📘未学習(商品コード)の <b>×・△観点だけ</b>に絞った図解＋ミラー穴埋め</p>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-c="t" onclick="sw(0)">🏭 品種量×型</button>
+    <button class="tab-btn" data-c="o" onclick="sw(1)">🔧 生産合理化</button>
+    <button class="tab-btn" data-c="b" onclick="sw(2)">🏗 SLP</button>
+    <button class="tab-btn" data-c="g" onclick="sw(3)">📊 データ分析</button>
+    <button class="tab-btn" data-c="p" onclick="sw(4)">🔖 商品コード</button>
+  </nav>
+
+  <!-- TAB0 品種量×型 -->
+  <div class="tab-panel active">
+    <h2>図1：品種×量 → 生産方式・レイアウトの対応（マスター表）</h2>
+    <div class="fig">
+      <table>
+        <tr><th>品種×量</th><th>生産方式</th><th>レイアウト（形のイメージ）</th><th>例</th></tr>
+        <tr>
+          <td class="yes">少品種・多量</td>
+          <td class="l">連続生産（ライン）</td>
+          <td class="l">製品別レイアウト<div style="margin-top:4px;display:flex;align-items:center;gap:3px;flex-wrap:wrap;font-size:.72rem;"><span style="background:#3b82f6;color:#fff;border-radius:4px;padding:1px 5px;">工程A</span>→<span style="background:#3b82f6;color:#fff;border-radius:4px;padding:1px 5px;">B</span>→<span style="background:#3b82f6;color:#fff;border-radius:4px;padding:1px 5px;">C</span>→🚚<br><span style="color:#64748b;">工程順に一直線で流す</span></div></td>
+          <td>🚗🥤<br>自動車・飲料</td>
+        </tr>
+        <tr>
+          <td>中品種・中量</td>
+          <td class="l">ロット生産</td>
+          <td class="l">グループ別(GT)・セル<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;font-size:.72rem;"><span style="background:#a855f7;color:#fff;border-radius:6px;padding:1px 6px;">⬡セル1</span><span style="background:#a855f7;color:#fff;border-radius:6px;padding:1px 6px;">⬡セル2</span><br><span style="color:#64748b;">似た部品ごとに小集団</span></div></td>
+          <td>🔩<br>部品加工</td>
+        </tr>
+        <tr>
+          <td class="no">多品種・少量</td>
+          <td class="l">個別生産（ジョブショップ）・セル</td>
+          <td class="l">機能別（工程別）レイアウト<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;font-size:.72rem;"><span style="background:#22c55e;color:#fff;border-radius:4px;padding:1px 5px;">旋盤▦▦</span><span style="background:#22c55e;color:#fff;border-radius:4px;padding:1px 5px;">溶接▦▦</span><br><span style="color:#64748b;">同じ機械を一カ所にまとめる</span></div></td>
+          <td>🛠️<br>受注品・試作</td>
+        </tr>
+      </table>
+      <div class="trap"><b>急所（外したQ）</b>：「多品種少量に<b>製品別（ライン）</b>が最適」は<b>誤り</b>。多品種少量＝<b>機能別/セル</b>。覚え方＝<b>量が多い＝流す（ライン・製品別）／種類が多い＝まとめる（機能別）</b>。</div>
+
+      <!-- 覚え方：量と種類で決まる軸図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">💡 覚え方：量と種類のどちらが多いかで決まる</div>
+        <div style="background:#fff;border-radius:8px;padding:.6rem .5rem;">
+          <div style="display:flex;align-items:stretch;gap:.4rem;text-align:center;">
+            <div style="flex:1;background:#dcfce7;border:1.5px solid #22c55e;border-radius:8px;padding:.5rem;">
+              <div style="font-size:1.4rem;">📦📦📦</div>
+              <b style="color:#166534;">種類が多い</b><br><span style="font-size:.78rem;">→ <u>まとめる</u><br>機能別／セル</span>
+            </div>
+            <div style="align-self:center;font-size:1.3rem;color:#94a3b8;">↔</div>
+            <div style="flex:1;background:#dbeafe;border:1.5px solid #3b82f6;border-radius:8px;padding:.5rem;">
+              <div style="font-size:1.4rem;">🌊➡️➡️</div>
+              <b style="color:#1e40af;">量が多い</b><br><span style="font-size:.78rem;">→ <u>流す</u><br>ライン／製品別</span>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:.78rem;color:#475569;margin-top:.5rem;font-weight:700;">同じ物を大量＝コンベアで流す／いろいろ少しずつ＝似た物をまとめて作る</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>図2：レイアウトの4類型</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--b)"><b>製品別（ライン）</b>流れに沿って配置。少品種多量。効率◎・柔軟性✕
+          <div style="margin-top:6px;display:flex;align-items:center;gap:3px;justify-content:center;font-size:.72rem;flex-wrap:wrap;"><span style="background:#dbeafe;border:1px solid #3b82f6;border-radius:4px;padding:2px 6px;">A</span>→<span style="background:#dbeafe;border:1px solid #3b82f6;border-radius:4px;padding:2px 6px;">B</span>→<span style="background:#dbeafe;border:1px solid #3b82f6;border-radius:4px;padding:2px 6px;">C</span>→🚚</div>
+          <div style="text-align:center;font-size:.67rem;color:#64748b;margin-top:2px;">製品が一直線に流れる</div>
+        </div>
+        <div class="cell" style="border-color:var(--g)"><b>機能別（工程別/ジョブショップ）</b>同種機械をまとめる。多品種少量。柔軟◎・運搬が複雑
+          <div style="margin-top:6px;display:flex;gap:4px;justify-content:center;font-size:.66rem;flex-wrap:wrap;"><span style="background:#dcfce7;border:1px solid #22c55e;border-radius:5px;padding:2px 6px;">旋盤▦▦</span><span style="background:#dcfce7;border:1px solid #22c55e;border-radius:5px;padding:2px 6px;">溶接▦▦</span><span style="background:#dcfce7;border:1px solid #22c55e;border-radius:5px;padding:2px 6px;">塗装▦▦</span></div>
+          <div style="text-align:center;font-size:.67rem;color:#64748b;margin-top:2px;">製品が機械を渡り歩く（運搬↑）</div>
+        </div>
+        <div class="cell" style="border-color:var(--o)"><b>固定式（プロジェクト）</b>製品が動かず人・設備が動く。船・航空機・建設
+          <div style="margin-top:6px;text-align:center;font-size:.72rem;">👷🔧 →<span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:2px 8px;margin:0 4px;">🚢 製品<br>(動かない)</span>← 🏗️👷</div>
+          <div style="text-align:center;font-size:.67rem;color:#64748b;margin-top:2px;">人・設備のほうが集まる</div>
+        </div>
+        <div class="cell" style="border-color:var(--p)"><b>グループ別（GT/セル）</b>似た部品をまとめ流れに近づける。中品種中量
+          <div style="margin-top:6px;display:flex;gap:5px;justify-content:center;font-size:.68rem;flex-wrap:wrap;"><span style="background:#f3e8ff;border:1px solid #a855f7;border-radius:8px;padding:3px 7px;text-align:center;">⬡セル1<br><span style="font-size:.6rem;">旋+溶+塗</span></span><span style="background:#f3e8ff;border:1px solid #a855f7;border-radius:8px;padding:3px 7px;text-align:center;">⬡セル2<br><span style="font-size:.6rem;">旋+溶+塗</span></span></div>
+          <div style="text-align:center;font-size:.67rem;color:#64748b;margin-top:2px;">小さな製品別ラインの集まり</div>
+        </div>
+      </div>
+      <!-- ★元ノート(qz_03)の図解そのまま移植：機能別(ジョブショップ) vs 製品別(フローショップ) -->
+      <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0;">
+        <div style="text-align:center;font-weight:700;font-size:.95rem;color:#d35400;margin-bottom:12px;padding-bottom:6px;border-bottom:2px dashed #fde0c4;">機能別と製品別の「モノの流れ」を図で比較</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div style="text-align:center;">
+            <div style="font-weight:700;font-size:.92rem;color:#2980b9;margin-bottom:8px;">機能別（ジョブショップ型）</div>
+            <svg viewBox="0 0 240 180" style="width:100%;max-width:320px;" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+              <text x="45" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">旋盤</text>
+              <text x="45" y="44" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+              <rect x="160" y="10" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+              <text x="195" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">フライス</text>
+              <text x="195" y="44" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+              <rect x="10" y="120" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+              <text x="45" y="140" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">溶接</text>
+              <text x="45" y="154" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+              <rect x="160" y="120" width="70" height="50" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+              <text x="195" y="140" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">検査</text>
+              <text x="195" y="154" text-anchor="middle" font-size="8" fill="#5d6d7e">エリア</text>
+              <defs>
+                <marker id="arrRed" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#e53935"/></marker>
+                <marker id="arrGreen2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#43a047"/></marker>
+              </defs>
+              <polyline points="45,60 45,80 195,80 195,120" fill="none" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrRed)"/>
+              <text x="85" y="74" font-size="8" font-weight="700" fill="#e53935">製品A</text>
+              <polyline points="195,60 195,90 45,90 45,120" fill="none" stroke="#43a047" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrGreen2)"/>
+              <text x="135" y="100" font-size="8" font-weight="700" fill="#43a047">製品B</text>
+            </svg>
+            <div style="font-size:.76rem;color:#64748b;margin-top:4px;">製品ごとに経路が異なる（運搬↑）</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:700;font-size:.92rem;color:#d35400;margin-bottom:8px;">製品別（フローショップ型）</div>
+            <svg viewBox="0 0 240 180" style="width:100%;max-width:320px;" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="arrOrange" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#e67e22"/></marker>
+              </defs>
+              <rect x="10" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+              <text x="35" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程1</text>
+              <text x="35" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">旋盤</text>
+              <line x1="60" y1="90" x2="72" y2="90" stroke="#e67e22" stroke-width="2" marker-end="url(#arrOrange)"/>
+              <rect x="75" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+              <text x="100" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程2</text>
+              <text x="100" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">溶接</text>
+              <line x1="125" y1="90" x2="137" y2="90" stroke="#e67e22" stroke-width="2" marker-end="url(#arrOrange)"/>
+              <rect x="140" y="65" width="50" height="50" rx="6" fill="#fdebd0" stroke="#e67e22" stroke-width="1.5"/>
+              <text x="165" y="86" text-anchor="middle" font-size="9" font-weight="700" fill="#d35400">工程3</text>
+              <text x="165" y="100" text-anchor="middle" font-size="7" fill="#5d6d7e">検査</text>
+              <text x="15" y="55" font-size="8" font-weight="700" fill="#e53935">製品A →</text>
+              <text x="15" y="140" font-size="8" font-weight="700" fill="#43a047">製品B →</text>
+              <line x1="55" y1="138" x2="165" y2="118" stroke="#43a047" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <line x1="55" y1="53" x2="165" y2="68" stroke="#e53935" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <text x="60" y="160" font-size="8" fill="#5d6d7e">全製品が同じ方向に流れる</text>
+            </svg>
+            <div style="font-size:.76rem;color:#64748b;margin-top:4px;">全製品が同じ経路を一方向に流れる</div>
+          </div>
+        </div>
+      </div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説：4つのレイアウト型の覚え方マトリクス</div>
+        <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">「<b>何をどれだけ</b>作るか」によって最適なレイアウトが決まる。品種（種類の多さ）と量（個数の多さ）の2軸で考えると混乱しない。<b>固定式</b>だけは"製品が動かない"点が特殊で必ず問われる。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.4rem;font-size:.75rem;text-align:center;">
+          <div style="background:#dbeafe;border:2px solid #3b82f6;border-radius:8px;padding:.5rem;">
+            <div style="font-size:1.2rem;">🌊</div>
+            <b style="color:#1e40af;">製品別（ライン）</b>
+            <div style="color:#475569;margin-top:.2rem;">少品種・多量<br>効率◎ 柔軟✕</div>
+          </div>
+          <div style="background:#dcfce7;border:2px solid #22c55e;border-radius:8px;padding:.5rem;">
+            <div style="font-size:1.2rem;">🔧</div>
+            <b style="color:#166534;">機能別（ジョブショップ）</b>
+            <div style="color:#475569;margin-top:.2rem;">多品種・少量<br>柔軟◎ 運搬✕</div>
+          </div>
+          <div style="background:#fff7ed;border:2px solid #f59e0b;border-radius:8px;padding:.5rem;">
+            <div style="font-size:1.2rem;">🚢</div>
+            <b style="color:#92400e;">固定式（プロジェクト）</b>
+            <div style="color:#475569;margin-top:.2rem;">製品が動かない<br>船・ビル・航空機</div>
+          </div>
+          <div style="background:#fae8ff;border:2px solid #a855f7;border-radius:8px;padding:.5rem;">
+            <div style="font-size:1.2rem;">⬡</div>
+            <b style="color:#7e22ce;">グループ別（GT/セル）</b>
+            <div style="color:#475569;margin-top:.2rem;">中品種・中量<br>似た部品を小集団</div>
+          </div>
+        </div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「固定式は<u>製品が動く</u>」「機能別レイアウトは<u>少品種多量</u>に最適」のように特徴を入れ替えた誤り問題（→固定式＝製品が<b>動かない</b>・機能別＝<b>多品種少量</b>向け）。
+        </div>
+      </div>
+      <div class="trap"><b>急所</b>：固定式は「製品（対象物）が動かない」のが特徴。機能別は柔軟だが<b>運搬・仕掛が増える</b>。</div>
+    </div>
+
+    <h2>図3：セル生産の利点（⑤の残り弱点）</h2>
+    <div class="fig">
+      <div class="formula">セル生産＝少人数が複数工程を担当（U字・屋台／多能工が前提）</div>
+
+      <!-- ★元ノート(qz_03)の図解そのまま移植：U字ライン配置図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🔧 U字ライン＝多能工が入口→出口をぐるっと担当（元ノートの図）</div>
+        <div style="background:#fff;border-radius:8px;padding:.4rem 0;">
+          <div class="ucell-container">
+            <div class="ucell">
+              <div class="ucell-station" style="top:0;left:0;">工程1<span>投入</span></div>
+              <div class="ucell-station" style="top:0;right:0;">工程2</div>
+              <div class="ucell-station" style="top:50%;right:0;transform:translateY(-50%);">工程3</div>
+              <div class="ucell-station" style="bottom:0;right:0;">工程4</div>
+              <div class="ucell-station" style="bottom:0;left:0;">工程5<span>完成</span></div>
+              <div class="ucell-path"></div>
+              <div class="ucell-worker">多能工<br>1人</div>
+            </div>
+          </div>
+          <p style="text-align:center;margin:0;font-size:.8rem;color:#334155;">入口と出口が近いU字型。1人（多能工）が複数工程をこなすので<b>手待ち・仕掛品が少ない</b>。</p>
+        </div>
+      </div>
+
+      <!-- 利点・欠点の図 -->
+      <div class="grid2">
+        <div class="cell" style="border-color:#16a34a;background:#f0fdf4;"><b style="color:#166534;">○ 利点（少人数で完結するから）</b>
+          <div style="font-size:.78rem;line-height:1.9;">📉 仕掛品の削減<br>⏱️ リードタイム短縮<br>🔀 需要変動への柔軟対応<br>😊 モチベーション向上</div>
+        </div>
+        <div class="cell" style="border-color:#ea580c;background:#fff7ed;"><b style="color:#c2410c;">△ 欠点</b>
+          <div style="font-size:.78rem;line-height:1.9;">📚 <b>多能工の育成負担</b><br><span style="color:#64748b;">＝複数工程をこなせる人を育てるのが大変</span></div>
+        </div>
+      </div>
+      <div class="note">利点＝<b>仕掛品の削減・リードタイム短縮・需要変動への柔軟対応・モチベーション向上</b>（少人数で完結するから）。欠点＝<b>多能工の育成負担</b>。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：品種×量 → 生産方式・レイアウト</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>品種×量</th><th>生産方式</th><th>レイアウト</th><th>例</th></tr>
+          <tr><td>少品種・多量</td><td><span class="blank">連続生産（ライン）</span></td><td><span class="blank">製品別</span></td><td>自動車・飲料</td></tr>
+          <tr><td>中品種・中量</td><td><span class="blank">ロット生産</span></td><td><span class="blank">グループ別(GT)・セル</span></td><td>部品加工</td></tr>
+          <tr><td>多品種・少量</td><td><span class="blank">個別生産（ジョブショップ）・セル</span></td><td><span class="blank">機能別（工程別）</span></td><td>受注品・試作</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：レイアウトの4類型</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>レイアウト型</th><th>特徴</th></tr>
+          <tr><td><span class="blank">製品別（ライン）</span></td><td>流れに沿って配置。少品種多量。効率◎・柔軟性✕</td></tr>
+          <tr><td><span class="blank">機能別（工程別）</span></td><td>同種機械をまとめる。多品種少量。柔軟◎・運搬が複雑</td></tr>
+          <tr><td><span class="blank">固定式（プロジェクト）</span></td><td>製品が動かず人・設備が動く。船・航空機・建設</td></tr>
+          <tr><td><span class="blank">グループ別（GT/セル）</span></td><td>似た部品をまとめ流れに近づける。中品種中量</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3：セル生産の利点</div>
+      <div class="fill-body">
+        <table>
+          <tr><td>定義</td><td>少人数が複数工程を担当（U字・屋台／<span class="blank">多能工</span>が前提）</td></tr>
+          <tr><td>利点</td><td><span class="blank">仕掛品</span>の削減・<span class="blank">リードタイム</span>短縮・需要変動への柔軟対応・モチベ向上</td></tr>
+          <tr><td>欠点</td><td><span class="blank">多能工</span>の育成負担</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB1 生産合理化 -->
+  <div class="tab-panel">
+    <h2>図1：平準化＝小ロット・混流（“ならす”）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説</div>
+        <p><b>平準化＝でこぼこをならすこと</b>。1日に「Aだけ100個」とドカ作りすると前後が忙しさの波だらけ。代わりに<b>A・B・Cを少しずつ混ぜて毎日同じペースで作る</b>（小ロット・混流）と、波が消えて後工程も部品供給も安定する。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div style="background:#fef2f2;border:1.5px solid #f87171;border-radius:8px;padding:.5rem;text-align:center;font-size:.78rem;"><b style="color:#b91c1c;">✕ 大ロットまとめ</b><br>AAAA…BBBB…CCCC<br>
+            <div style="display:flex;align-items:flex-end;justify-content:center;gap:2px;height:42px;margin:5px 0;">
+              <div style="width:12px;height:40px;background:#f87171;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:8px;background:#fca5a5;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:38px;background:#f87171;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:6px;background:#fca5a5;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:40px;background:#f87171;border-radius:2px 2px 0 0;"></div>
+            </div>
+            <span style="color:#7f1d1d;">忙しさの波が大きい📈📉</span></div>
+          <div style="background:#f0fdf4;border:1.5px solid #4ade80;border-radius:8px;padding:.5rem;text-align:center;font-size:.78rem;"><b style="color:#166534;">○ 平準化（混流）</b><br>ABCABCABC…<br>
+            <div style="display:flex;align-items:flex-end;justify-content:center;gap:2px;height:42px;margin:5px 0;">
+              <div style="width:12px;height:22px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:23px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:22px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:23px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+              <div style="width:12px;height:22px;background:#4ade80;border-radius:2px 2px 0 0;"></div>
+            </div>
+            <span style="color:#14532d;">毎日ほぼ同じ＝平ら➖</span></div>
+        </div>
+        <div style="text-align:center;font-size:.74rem;color:#475569;margin-top:.5rem;">↑ 棒の高さ＝その日の忙しさ（生産量）。<b>でこぼこ→平ら</b>にするのが平準化。</div>
+      </div>
+      <div class="trap"><b>急所（外したQ6）</b>：「平準化＝同じ製品を大ロットでまとめて連続生産」は<b>逆</b>。平準化は<b>小ロット・混流</b>で量と種類の波を消すこと。</div>
+    </div>
+
+    <h2>図2：7つのムダ（根源＝作りすぎ）</h2>
+    <div class="fig">
+      <table>
+        <tr><th>7つのムダ</th></tr>
+        <tr><td class="no l"><b>① 作りすぎのムダ（最悪・根源）</b>…在庫・運搬・手待ちを誘発し問題を隠す</td></tr>
+        <tr><td class="l">② 手待ち　③ 運搬　④ 加工そのもの　⑤ 在庫　⑥ 動作　⑦ 不良をつくる</td></tr>
+      </table>
+      <!-- 作りすぎが根源＝他のムダを生む図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🌳 「作りすぎ」が根っこ＝他のムダを次々に生む</div>
+        <div style="background:#fff;border-radius:8px;padding:.7rem .5rem;text-align:center;">
+          <div style="display:inline-block;background:#fee2e2;border:2px solid #ef4444;border-radius:10px;padding:.5rem .9rem;font-weight:800;color:#991b1b;font-size:.9rem;">① 作りすぎのムダ<br><span style="font-size:.72rem;">（最悪・根源）</span></div>
+          <div style="font-size:1.2rem;color:#94a3b8;margin:.2rem 0;">⬇ 誘発する ⬇</div>
+          <div style="display:flex;gap:.35rem;justify-content:center;flex-wrap:wrap;font-size:.74rem;">
+            <span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:3px 8px;">📦 在庫が増える</span>
+            <span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:3px 8px;">🚚 運搬が増える</span>
+            <span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:3px 8px;">⏳ 手待ち</span>
+            <span style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:3px 8px;">🔍 不良の発見が遅れる</span>
+          </div>
+          <div style="font-size:.74rem;color:#475569;margin-top:.5rem;">余分に作る → 置き場・運ぶ手間・問題が在庫に隠れる、と<b>連鎖</b>する</div>
+        </div>
+      </div>
+      <div class="note">「作りすぎ」が一番悪い＝余分に作ると在庫が増え、運搬・手待ち・不良の発見遅れを生む。</div>
+    </div>
+
+    <h2>図3：自働化（にんべん）・ポカヨケ・アンドン</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--b)"><b>自働化（にんべん付き）</b>異常が起きたら機械が<b>自動で止まる</b>→不良を作り続けない・人を呼ぶ。1人で多台持ち可能。<span style="color:var(--r)">※単なる自動運転ではない</span></div>
+        <div class="cell" style="border-color:var(--g)"><b>ポカヨケ</b>うっかりミス（ポカ）を<b>防止・検知</b>するしかけ（治具・センサ）</div>
+      </div>
+
+      <!-- 自働化 vs ただの自動化 の対比図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🤖 ここが急所：「自働化（にんべん）」と「ただの自動化」のちがい</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div style="background:#f0fdf4;border:1.5px solid #4ade80;border-radius:8px;padding:.55rem;text-align:center;font-size:.76rem;">
+            <b style="color:#166534;">○ 自働化（にんべん付き）</b>
+            <div style="font-size:1.5rem;margin:.2rem 0;">⚙️→⚠️→🛑</div>
+            異常が出たら<b>機械が自分で止まる</b><br>→ 不良を作り続けない・人を呼ぶ<br><span style="color:#15803d;">1人で何台も見られる</span>
+          </div>
+          <div style="background:#fef2f2;border:1.5px solid #f87171;border-radius:8px;padding:.55rem;text-align:center;font-size:.76rem;">
+            <b style="color:#b91c1c;">✕ ただの自動化</b>
+            <div style="font-size:1.5rem;margin:.2rem 0;">⚙️→⚠️→⚙️⚙️</div>
+            異常が出ても<b>止まらず動き続ける</b><br>→ <span style="color:#991b1b;">不良を大量に作ってしまう</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:.5rem;margin-top:.5rem;font-size:.74rem;">
+          <div style="flex:1;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:.45rem;text-align:center;">🚧 <b>ポカヨケ</b><br>センサ・治具がミスを<u>その場で弾く</u><br><span style="color:#64748b;">例：向き違いだと挿さらない治具</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:.45rem;text-align:center;">🚨 <b>アンドン</b><br>異常をランプ／表示板で<u>みんなに知らせる</u><br><span style="color:#64748b;">例：赤ランプ点灯で応援</span></div>
+        </div>
+      </div>
+      <div class="note">アンドン＝異常を<b>表示して知らせる</b>ランプ／表示板。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：平準化</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>やり方</th><th>イメージ</th></tr>
+          <tr><td>✕ 大ロットまとめ</td><td>AAAA…BBBB…CCCC（波が大きい）</td></tr>
+          <tr><td>○ 平準化＝<span class="blank">小ロット</span>・<span class="blank">混流</span></td><td>ABCABCABC…（毎日ならす）</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：7つのムダ</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>7つのムダ</th></tr>
+          <tr><td>① <span class="blank">作りすぎ</span>のムダ（最悪・根源）…在庫・運搬・手待ちを誘発し問題を隠す</td></tr>
+          <tr><td>② 手待ち　③ 運搬　④ 加工そのもの　⑤ <span class="blank">在庫</span>　⑥ 動作　⑦ <span class="blank">不良</span>をつくる</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3：自働化・ポカヨケ・アンドン</div>
+      <div class="fill-body">
+        <table>
+          <tr><td><span class="blank">自働化</span>（にんべん付き）</td><td>異常が起きたら機械が<span class="blank">自動で止まる</span>→不良を作り続けない（単なる自動運転ではない）</td></tr>
+          <tr><td><span class="blank">ポカヨケ</span></td><td>うっかりミスを防止・検知するしかけ（治具・センサ）</td></tr>
+          <tr><td><span class="blank">アンドン</span></td><td>異常を表示して知らせるランプ／表示板</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB2 SLP -->
+  <div class="tab-panel">
+    <h2>図1：SLPの基礎をなす5要素 — P-Q-R-S-T</h2>
+    <div class="fig">
+      <table>
+        <tr><th>記号</th><th>意味</th></tr>
+        <tr><td><b>P</b></td><td class="l">Product＝製品（何を作るか）</td></tr>
+        <tr><td><b>Q</b></td><td class="l">Quantity＝数量（どれだけ）</td></tr>
+        <tr><td><b>R</b></td><td class="l">Route＝経路（生産工程・流れ）</td></tr>
+        <tr><td><b>S</b></td><td class="l">Service＝補助・付帯サービス（保全・倉庫等）</td></tr>
+        <tr><td><b>T</b></td><td class="l">Time＝時間（タイミング・期間）</td></tr>
+      </table>
+      <!-- 5要素のアイコン図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🔤 P-Q-R-S-T を絵で（「何を・どれだけ・どう流す・何で支える・いつ」）</div>
+        <div style="display:flex;gap:.3rem;text-align:center;font-size:.72rem;">
+          <div style="flex:1;background:#dbeafe;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">📦</div><b style="color:#1e40af;">P</b><br>製品<br><span style="color:#64748b;">何を</span></div>
+          <div style="flex:1;background:#dbeafe;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">🔢</div><b style="color:#1e40af;">Q</b><br>数量<br><span style="color:#64748b;">どれだけ</span></div>
+          <div style="flex:1;background:#dcfce7;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">🔀</div><b style="color:#166534;">R</b><br>経路<br><span style="color:#64748b;">どう流す</span></div>
+          <div style="flex:1;background:#fef9c3;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">🛠️</div><b style="color:#a16207;">S</b><br>補助<br><span style="color:#64748b;">何で支える</span></div>
+          <div style="flex:1;background:#fae8ff;border-radius:8px;padding:.5rem .3rem;"><div style="font-size:1.5rem;">⏱️</div><b style="color:#7e22ce;">T</b><br>時間<br><span style="color:#64748b;">いつ</span></div>
+        </div>
+        <p style="text-align:center;margin:.5rem 0 0;font-size:.78rem;">まず<b>P（製品）とQ（数量）</b>から出発（＝P-Q分析）。残りR・S・Tはその後の検討材料。</p>
+      </div>
+      <div class="note">マザー(Muther)が提唱。出発点は<b>P と Q の分析（P-Q分析）</b>。</div>
+    </div>
+
+    <h2>図2：SLPの手順（流れ）</h2>
+    <div class="fig">
+      <!-- 各ステップに「成果物のミニ図」を付けた視覚フロー -->
+      <div style="display:flex;flex-direction:column;gap:.3rem;font-size:.82rem;">
+
+        <!-- ① P-Q分析 -->
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <div style="flex:1.5;background:#dbeafe;border-radius:8px;padding:.5rem .7rem;display:flex;flex-direction:column;justify-content:center;"><b>① P-Q分析</b><span style="font-size:.72rem;color:#475569;">製品×数量で「製品別か機能別か」の方針決め</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #93c5fd;border-radius:8px;padding:.4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div style="display:flex;align-items:flex-end;gap:2px;height:32px;">
+              <div style="width:9px;height:30px;background:#3b82f6;border-radius:1px;"></div>
+              <div style="width:9px;height:22px;background:#60a5fa;border-radius:1px;"></div>
+              <div style="width:9px;height:14px;background:#93c5fd;border-radius:1px;"></div>
+              <div style="width:9px;height:8px;background:#bfdbfe;border-radius:1px;"></div>
+              <div style="width:9px;height:5px;background:#dbeafe;border-radius:1px;"></div>
+            </div>
+            <div style="font-size:.6rem;color:#64748b;margin-top:2px;">パレート図(量の多い順)</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:#94a3b8;">▼</div>
+
+        <!-- ② 物の流れ分析 -->
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <div style="flex:1.5;background:#dcfce7;border-radius:8px;padding:.5rem .7rem;display:flex;flex-direction:column;justify-content:center;"><b>② 物の流れ分析</b><span style="font-size:.72rem;color:#475569;">単純工程分析／フロムツーチャートで「どこへ何回」</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #86efac;border-radius:8px;padding:.4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.66rem;">
+            <div style="display:flex;align-items:center;gap:2px;"><span style="background:#bbf7d0;border-radius:3px;padding:2px 4px;">A</span>→<span style="background:#bbf7d0;border-radius:3px;padding:2px 4px;">B</span>→<span style="background:#bbf7d0;border-radius:3px;padding:2px 4px;">C</span></div>
+            <div style="font-size:.6rem;color:#64748b;margin-top:3px;">どこから→どこへ</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:#94a3b8;">▼</div>
+
+        <!-- ③ アクティビティ相互関係分析（AEIOUXダイヤモンド） -->
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <div style="flex:1.5;background:#fef9c3;border-radius:8px;padding:.5rem .7rem;display:flex;flex-direction:column;justify-content:center;"><b>③ アクティビティ相互関係分析</b><span style="font-size:.72rem;color:#475569;">流れ以外も含め近接度を A〜X で評価（相互関係図表）</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #fde047;border-radius:8px;padding:.45rem .3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.62rem;">
+            <div style="display:flex;align-items:center;gap:3px;">倉庫<span style="display:inline-block;width:18px;height:18px;background:#16a34a;color:#fff;font-weight:800;transform:rotate(45deg);text-align:center;line-height:18px;border-radius:3px;"><span style="display:inline-block;transform:rotate(-45deg);">A</span></span>加工<span style="display:inline-block;width:18px;height:18px;background:#4ade80;color:#14532d;font-weight:800;transform:rotate(45deg);text-align:center;line-height:18px;border-radius:3px;"><span style="display:inline-block;transform:rotate(-45deg);">E</span></span>出荷</div>
+            <div style="margin-top:5px;">倉庫⇔出荷＝<span style="display:inline-block;width:18px;height:18px;background:#ef4444;color:#fff;font-weight:800;transform:rotate(45deg);text-align:center;line-height:18px;border-radius:3px;vertical-align:middle;"><span style="display:inline-block;transform:rotate(-45deg);">X</span></span></div>
+            <div style="font-size:.58rem;color:#64748b;margin-top:3px;">近さを記号で評価</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:#94a3b8;">▼</div>
+
+        <!-- ④⑤ 面積→レイアウト案 -->
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <div style="flex:1.5;background:#fae8ff;border-radius:8px;padding:.5rem .7rem;display:flex;flex-direction:column;justify-content:center;"><b>④ 面積相互関係ダイアグラム → ⑤ レイアウト案</b><span style="font-size:.72rem;color:#475569;">近さに「広さ」を足して実際の区画図に</span></div>
+          <div style="flex:1;background:#fff;border:1px solid #e9d5ff;border-radius:8px;padding:.4rem;display:flex;align-items:center;justify-content:center;">
+            <div style="display:grid;grid-template-columns:24px 18px;grid-template-rows:18px 16px;gap:2px;">
+              <div style="background:#c4b5fd;border-radius:2px;"></div>
+              <div style="background:#ddd6fe;border-radius:2px;"></div>
+              <div style="background:#ddd6fe;border-radius:2px;"></div>
+              <div style="background:#c4b5fd;border-radius:2px;"></div>
+            </div>
+            <div style="font-size:.58rem;color:#64748b;margin-left:4px;">区画<br>レイアウト</div>
+          </div>
+        </div>
+      </div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説：SLP手順の「順序」と出発点</div>
+        <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">SLPは<b>①P-Q分析から始まって⑤レイアウト案</b>で終わる5ステップの流れ。出発点は必ず<b>P（製品）とQ（数量）の分析</b>から。「何を・どれだけ作るか」がわからないと、工場の間取りを決める土台がない。</p>
+        <div style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin-top:.4rem;font-size:.74rem;text-align:center;">
+          <div style="background:#dbeafe;border-radius:6px;padding:.35rem .5rem;font-weight:700;color:#1e40af;">① P-Q分析<br><span style="font-weight:400;color:#475569;font-size:.68rem;">製品×数量</span></div>
+          <span style="color:#94a3b8;font-size:1.1rem;">▶</span>
+          <div style="background:#dcfce7;border-radius:6px;padding:.35rem .5rem;font-weight:700;color:#166534;">② 流れ分析<br><span style="font-weight:400;color:#475569;font-size:.68rem;">フロムツー等</span></div>
+          <span style="color:#94a3b8;font-size:1.1rem;">▶</span>
+          <div style="background:#fef9c3;border-radius:6px;padding:.35rem .5rem;font-weight:700;color:#a16207;">③ 相互関係<br><span style="font-weight:400;color:#475569;font-size:.68rem;">A〜X評価</span></div>
+          <span style="color:#94a3b8;font-size:1.1rem;">▶</span>
+          <div style="background:#fae8ff;border-radius:6px;padding:.35rem .5rem;font-weight:700;color:#7e22ce;">④⑤ 面積→<br>レイアウト案</div>
+        </div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「SLPの最初の手順はアクティビティ相互関係分析」「P-Qより先に物の流れを分析する」など手順の順序を入れ替えた誤り問題（→最初は必ず<b>①P-Q分析</b>から。手順の番号と内容をセットで覚える）。
+        </div>
+      </div>
+    </div>
+
+    <h2>図3：分析ツール（A〜X・フロムツー・DI・活性示数）</h2>
+    <div class="fig">
+      <div class="vz-supplement" style="margin-top:0;">
+        <div class="vz-label">🧭 なぜこのパートに「道具」が並ぶ？</div>
+        <p style="margin:0;font-size:.82rem;">図2のSLP手順を実際にやるには<b>「測る・記録する道具」</b>が要る。ここはその<b>道具箱</b>。各ツールが手順のどこで・何のために使われるかをセットで覚えると混乱しない。</p>
+      </div>
+
+      <div class="cell" style="margin-bottom:8px;"><b>アクティビティ相互関係図表</b>部門間の近接の必要度を母音で評価：<b>A</b>絶対必要・<b>E</b>特に重要・<b>I</b>重要・<b>O</b>普通・<b>U</b>不要・<b>X</b>近接不可（離す）
+        <div style="margin-top:5px;background:#f0fdfa;border-radius:6px;padding:.4rem .55rem;font-size:.74rem;color:#134e4a;"><b>🎯 目的・使いどころ</b>：SLP手順<b>③（アクティビティ相互関係分析）</b>で作る図表。流れの量だけでなく「騒音・動線・情報共有」など<u>数値にできない近さの理由</u>も含めて配置の根拠にする。<b>評価するのは近さだけで面積ではない</b>（面積は④で加える）。</div>
+      </div>
+
+      <!-- AEIOUX：くっつける↔離す の段階図 -->
+      <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:.55rem;margin-bottom:8px;">
+        <div style="text-align:center;font-size:.74rem;font-weight:700;color:#475569;margin-bottom:.4rem;">🔗 どれだけ近くに置くべきか（AEIOU）↔ 離すべき（X）</div>
+        <div style="display:flex;gap:2px;align-items:stretch;text-align:center;font-size:.7rem;font-weight:700;">
+          <div style="flex:1;background:#16a34a;color:#fff;border-radius:6px 0 0 6px;padding:.4rem .2rem;">A<br><span style="font-size:.6rem;font-weight:400;">絶対必要</span></div>
+          <div style="flex:1;background:#4ade80;color:#14532d;padding:.4rem .2rem;">E<br><span style="font-size:.6rem;font-weight:400;">特に重要</span></div>
+          <div style="flex:1;background:#bbf7d0;color:#14532d;padding:.4rem .2rem;">I<br><span style="font-size:.6rem;font-weight:400;">重要</span></div>
+          <div style="flex:1;background:#fde68a;color:#78350f;padding:.4rem .2rem;">O<br><span style="font-size:.6rem;font-weight:400;">普通</span></div>
+          <div style="flex:1;background:#e2e8f0;color:#475569;padding:.4rem .2rem;">U<br><span style="font-size:.6rem;font-weight:400;">不要</span></div>
+          <div style="flex:1;background:#ef4444;color:#fff;border-radius:0 6px 6px 0;padding:.4rem .2rem;">X<br><span style="font-size:.6rem;font-weight:400;">離す</span></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.66rem;color:#64748b;margin-top:3px;"><span>◀ くっつける</span><span>離す ▶</span></div>
+      </div>
+
+      <div class="grid2">
+        <div class="cell"><b>フロムツーチャート</b>多品種で経路が<b>交錯</b>する場合の流れ分析（単純な流れは単純工程分析）
+          <div style="margin-top:5px;background:#f0fdf4;border-radius:6px;padding:.4rem .55rem;font-size:.74rem;color:#14532d;"><b>🎯 目的・なぜここ</b>：「<u>どこからどこへ何回運んだか</u>」を記録する<b>基礎データ表</b>。手順②（物の流れ分析）の入力になり、<b>SLPにもDI分析にも使う共通データ</b>。だから流れ分析の道具としてこのパートに置かれる（単純な一方向の流れなら単純工程分析でよい）。</div>
+        </div>
+        <div class="cell"><b>DI分析</b>運搬の<b>距離(D)×物流量(I)</b>を図示。右上（遠くて多い）が改善対象
+          <div style="margin-top:5px;background:#fef2f2;border-radius:6px;padding:.4rem .55rem;font-size:.74rem;color:#7f1d1d;"><b>🎯 目的・なぜここ</b>：フロムツーで集めたデータを<u>距離×回数でプロット</u>し、<b>「遠いのによく運ぶ」ムダなペアを発見</b>する道具。レイアウト<b>改善の優先順位づけ</b>に使うため、分析ツールのパートに入る。</div>
+        </div>
+      </div>
+
+      <!-- ★元ノート(qz_11)の図解そのまま移植：DI分析の散布図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">📊 DI分析の散布図（元ノートの図）＝「遠い×よく運ぶ」を見つける</div>
+        <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:16px 16px 38px;margin:6px 0">
+          <div style="font-weight:800;color:#1e40af;text-align:center;font-size:.9rem;margin-bottom:4px">DI分析 ＝ Distance（距離）× Intensity（運搬回数）</div>
+          <div style="text-align:center;font-size:.8rem;color:#64748b;margin-bottom:18px">2軸にプロットするだけ ──「遠いのにしょっちゅう運ぶ」ペアが一目で分かる</div>
+          <div style="position:relative;width:calc(100% - 70px);max-width:420px;margin:10px auto 0;height:260px;border-left:3px solid #475569;border-bottom:3px solid #475569">
+            <div style="position:absolute;left:-62px;top:50%;transform:translateY(-50%) rotate(-90deg);font-size:.76rem;font-weight:800;color:#475569;white-space:nowrap">↑ 運搬距離 D（遠い）</div>
+            <div style="position:absolute;bottom:-30px;right:0;font-size:.76rem;font-weight:800;color:#475569">運搬回数 I（多い） →</div>
+            <div style="position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #e2e8f0"></div>
+            <div style="position:absolute;top:50%;left:0;right:0;border-top:1px dashed #e2e8f0"></div>
+            <div style="position:absolute;top:6px;right:6px;background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:5px 8px;font-size:.74rem;font-weight:800;color:#dc2626;line-height:1.4">🔴 右上<br>遠い＋多い<br>→ 最優先改善！</div>
+            <div style="position:absolute;top:6px;left:6px;background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:5px 8px;font-size:.71rem;color:#92400e;line-height:1.4">🟡 左上<br>遠い＋少ない<br>→ 低優先</div>
+            <div style="position:absolute;bottom:34px;right:6px;background:#ecfdf5;border:1px solid #4ade80;border-radius:8px;padding:5px 8px;font-size:.71rem;color:#166534;line-height:1.4">🟢 右下<br>近い＋多い<br>→ 問題なし◎</div>
+            <div style="position:absolute;bottom:34px;left:6px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:5px 8px;font-size:.71rem;color:#64748b;line-height:1.4">⚪ 左下<br>近い＋少ない<br>→ 問題なし</div>
+            <div style="position:absolute;top:16%;right:20%;width:18px;height:18px;background:#dc2626;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #dc2626" title="部品倉庫→加工A"></div>
+            <div style="position:absolute;top:13%;right:16%;font-size:.68rem;color:#dc2626;font-weight:700;white-space:nowrap">倉庫→加工A</div>
+            <div style="position:absolute;top:30%;right:12%;width:16px;height:16px;background:#dc2626;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #dc2626"></div>
+            <div style="position:absolute;top:27%;right:13%;font-size:.68rem;color:#dc2626;font-weight:700;white-space:nowrap">検査→出荷</div>
+            <div style="position:absolute;top:62%;right:25%;width:15px;height:15px;background:#16a34a;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #16a34a"></div>
+            <div style="position:absolute;top:70%;right:20%;font-size:.68rem;color:#16a34a;font-weight:700">加工A→加工B</div>
+            <div style="position:absolute;top:72%;left:28%;width:12px;height:12px;background:#94a3b8;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #94a3b8"></div>
+            <div style="position:absolute;top:63%;left:20%;font-size:.68rem;color:#64748b;font-weight:700">事務所→駐車場</div>
+          </div>
+        </div>
+        <p style="text-align:center;margin:.5rem 0 0;font-size:.78rem;"><b>右上（遠い＋よく運ぶ）</b>のペア（倉庫→加工A）＝ムダ最大→「近くに移動」が改善案。</p>
+      </div>
+
+      <!-- 運搬活性示数 0〜4 -->
+      <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:.55rem;margin-top:8px;">
+        <div style="text-align:center;font-size:.74rem;font-weight:700;color:#475569;margin-bottom:.4rem;">🚜 運搬活性示数＝次に動かしやすい状態か（0＝バラ置き → 4＝動いている）</div>
+        <div style="display:flex;gap:3px;text-align:center;font-size:.66rem;">
+          <div style="flex:1;background:#fee2e2;border-radius:6px;padding:.4rem .2rem;"><b>0</b><br>バラ置き<br><span style="font-size:1.1rem;">🪨</span></div>
+          <div style="flex:1;background:#fed7aa;border-radius:6px;padding:.4rem .2rem;"><b>1</b><br>箱に<br><span style="font-size:1.1rem;">📦</span></div>
+          <div style="flex:1;background:#fef08a;border-radius:6px;padding:.4rem .2rem;"><b>2</b><br>パレット<br><span style="font-size:1.1rem;">🟫</span></div>
+          <div style="flex:1;background:#bbf7d0;border-radius:6px;padding:.4rem .2rem;"><b>3</b><br>台車に<br><span style="font-size:1.1rem;">🛒</span></div>
+          <div style="flex:1;background:#86efac;border-radius:6px;padding:.4rem .2rem;"><b>4</b><br>動いている<br><span style="font-size:1.1rem;">🚚</span></div>
+        </div>
+        <div style="text-align:center;font-size:.66rem;color:#64748b;margin-top:3px;">数字が大きいほど「すぐ運び出せる」状態</div>
+        <div style="margin-top:5px;background:#fffbeb;border-radius:6px;padding:.4rem .55rem;font-size:.74rem;color:#92400e;"><b>🎯 目的・なぜここ</b>：モノの<u>「次に動かしやすいか」</u>を0〜4で点数化し、<b>運搬のムダ（持ち上げ直し等）を見つけて改善</b>する指標。距離・交錯を減らすレイアウト改善とセットで使うため、分析ツールに並ぶ。</div>
+      </div>
+
+      <div class="note">運搬活性示数＝モノの動かしやすさ <b>0（バラ置き）〜4（動いている）</b>。レイアウト改善のねらい＝運搬距離・交錯を減らす。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：SLPの5要素（P-Q-R-S-T）</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>記号</th><th>意味</th></tr>
+          <tr><td>P</td><td><span class="blank">Product＝製品</span>（何を作るか）</td></tr>
+          <tr><td>Q</td><td><span class="blank">Quantity＝数量</span>（どれだけ）</td></tr>
+          <tr><td>R</td><td><span class="blank">Route＝経路</span>（生産工程・流れ）</td></tr>
+          <tr><td>S</td><td><span class="blank">Service＝補助</span>・付帯サービス（保全・倉庫等）</td></tr>
+          <tr><td>T</td><td><span class="blank">Time＝時間</span>（タイミング・期間）</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：SLPの手順（流れ）</div>
+      <div class="fill-body">
+        <table>
+          <tr><td>①</td><td><span class="blank">P-Q分析</span>（製品×数量 → 製品別か機能別か）</td></tr>
+          <tr><td>②</td><td><span class="blank">物の流れ分析</span>（単純工程分析／フロムツーチャート）</td></tr>
+          <tr><td>③</td><td><span class="blank">アクティビティ相互関係</span>分析（流れ以外の近接性 A〜X）</td></tr>
+          <tr><td>④⑤</td><td>面積相互関係ダイアグラム → レイアウト案の作成・評価</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3：分析ツール（A〜X・フロムツー・DI・活性示数）</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>ツール</th><th>内容・使いどころ</th></tr>
+          <tr><td><span class="blank">アクティビティ相互関係図表</span></td><td>部門間の近接の必要度を母音 A〜X で評価（手順③で作成）</td></tr>
+          <tr><td>近接度の記号</td><td>絶対必要＝<span class="blank">A</span>・特に重要＝<span class="blank">E</span>・重要＝I・普通＝O・不要＝U・近接不可（離す）＝<span class="blank">X</span></td></tr>
+          <tr><td><span class="blank">フロムツーチャート</span></td><td>経路が交錯する場合の流れ分析。SLP・DI分析<span class="blank">共通の基礎データ</span></td></tr>
+          <tr><td><span class="blank">DI分析</span></td><td>運搬の<span class="blank">距離(D)×物流量(I)</span>を図示。右上（遠くて多い）が改善対象</td></tr>
+          <tr><td>運搬活性示数</td><td>モノの動かしやすさ <span class="blank">0</span>（バラ置き）〜<span class="blank">4</span>（動いている）</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB3 データ分析 -->
+  <div class="tab-panel">
+    <h2>図1：バスケット分析の3指標（数値例で固定）</h2>
+    <div class="fig">
+      <div class="note" style="text-align:left;margin-bottom:6px;">例）全取引<b>100件</b>。Aを含む<b>50件</b>／Bを含む<b>25件</b>／AとB両方<b>20件</b>。「A→B」のルールを評価すると…</div>
+      <div class="formula">支持度（サポート）＝ A∩B ÷ 全取引<span class="ex">＝20÷100＝20％（ルールの一般性・どれだけ多くの取引に現れるか）</span></div>
+      <div class="formula">確信度（コンフィデンス）＝ A∩B ÷ A<span class="ex">＝20÷50＝40％＝P(B|A)（Aを買った人のうちBも買う割合）</span></div>
+      <div class="formula">リフト値 ＝ 確信度 ÷ Bの支持度<span class="ex">＝40％÷25％＝1.6（&gt;1で正の関連／=1で独立／&lt;1で負）</span></div>
+      <!-- ベン図＋各指標がベン図のどこかを詳細解説 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🍎🍌 ベン図で考える：A＝りんご、B＝バナナ を買ったカゴ（全100カゴ）</div>
+
+        <!-- ベン図本体 -->
+        <div style="background:#fff;border-radius:8px;padding:.6rem;">
+          <div style="position:relative;width:280px;height:190px;margin:4px auto;border:2px dashed #94a3b8;border-radius:10px;background:#f8fafc;">
+            <div style="position:absolute;top:4px;left:8px;font-size:.66rem;color:#475569;font-weight:800;">全取引＝100カゴ</div>
+            <!-- 円A りんご -->
+            <div style="position:absolute;top:38px;left:18px;width:140px;height:140px;border-radius:50%;background:rgba(239,68,68,.30);border:2.5px solid #ef4444;"></div>
+            <!-- 円B バナナ -->
+            <div style="position:absolute;top:50px;left:120px;width:120px;height:120px;border-radius:50%;background:rgba(234,179,8,.32);border:2.5px solid #eab308;"></div>
+            <!-- ラベル -->
+            <div style="position:absolute;top:20px;left:34px;font-size:.68rem;font-weight:800;color:#b91c1c;">A=りんご(計50)</div>
+            <div style="position:absolute;top:30px;right:12px;font-size:.68rem;font-weight:800;color:#a16207;">B=バナナ(計25)</div>
+            <div style="position:absolute;top:96px;left:48px;text-align:center;font-size:.72rem;font-weight:800;color:#b91c1c;">🍎だけ<br>30</div>
+            <div style="position:absolute;top:96px;left:122px;text-align:center;font-size:.72rem;font-weight:800;color:#7e22ce;">両方<br>20</div>
+            <div style="position:absolute;top:100px;left:192px;text-align:center;font-size:.72rem;font-weight:800;color:#a16207;">🍌だけ<br>5</div>
+            <div style="position:absolute;bottom:6px;right:10px;text-align:right;font-size:.66rem;color:#64748b;">どちらも<br>買わない 45</div>
+          </div>
+          <!-- 100になる確認 -->
+          <div style="margin-top:8px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:.5rem .6rem;font-size:.74rem;color:#14532d;">
+            <b>✅ ちゃんと100カゴになる（カゴを4グループに分けただけ）</b>
+            <div style="display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;margin:.4rem 0;font-weight:700;font-size:.72rem;">
+              <span style="background:#fecaca;border-radius:5px;padding:2px 7px;">🍎だけ 30</span><span>＋</span>
+              <span style="background:#e9d5ff;border-radius:5px;padding:2px 7px;">両方 20</span><span>＋</span>
+              <span style="background:#fef08a;border-radius:5px;padding:2px 7px;">🍌だけ 5</span><span>＋</span>
+              <span style="background:#e2e8f0;border-radius:5px;padding:2px 7px;">どちらも無し 45</span><span>＝</span>
+              <span style="background:#22c55e;color:#fff;border-radius:5px;padding:2px 8px;">100</span>
+            </div>
+            <div style="line-height:1.7;">
+              ・<b>「どちらも買わない45」＝りんごもバナナも入っていないカゴ</b>（＝<u>パンや牛乳など他の商品だけ</u>を買ったカゴ）。これも100カゴの一部。<br>
+              ・<b>注意：りんご50＋バナナ25＝75ではない。</b>両方買った20カゴを<u>二重に数えている</u>ため。<br>
+              　→ りんご<b>または</b>バナナを買ったカゴ＝50＋25−<b>20</b>＝<b>55</b>。これに「どちらも無し45」を足して 55＋45＝<b>100</b>。
+            </div>
+          </div>
+          <div style="font-size:.68rem;color:#64748b;margin-top:4px;text-align:center;">🍎を買った＝30+20＝<b>50</b>／🍌を買った＝20+5＝<b>25</b>／重なり（両方）＝<b>20</b></div>
+        </div>
+
+        <!-- 各指標がベン図のどこを見ているか -->
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.7rem;font-size:.78rem;">
+
+          <div style="background:#eff6ff;border-radius:8px;padding:.55rem .65rem;">
+            <b style="color:#1e40af;">① 支持度（サポート）＝ 重なり20 ÷ 全体100 ＝ 20%</b>
+            <div style="display:flex;align-items:center;gap:.5rem;margin:.35rem 0;font-size:.72rem;">
+              <span style="background:#a855f7;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">分子＝両方の20カゴ</span>
+              <span>÷</span>
+              <span style="background:#cbd5e1;color:#334155;border-radius:5px;padding:2px 7px;font-weight:700;">分母＝全100カゴ</span>
+            </div>
+            <span style="color:#475569;">ベン図の<b>重なり</b>を<b>箱全体</b>で割る。「このセット買いが<u>世の中全体でどれだけ多いか（一般性）</u>」。低すぎると売場を変えるほどの価値はない。</span>
+          </div>
+
+          <div style="background:#f0fdf4;border-radius:8px;padding:.55rem .65rem;">
+            <b style="color:#166534;">② 確信度（コンフィデンス）＝ 重なり20 ÷ りんご50 ＝ 40%（＝P(B|A)）</b>
+            <div style="display:flex;align-items:center;gap:.5rem;margin:.35rem 0;font-size:.72rem;">
+              <span style="background:#a855f7;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">分子＝両方の20カゴ</span>
+              <span>÷</span>
+              <span style="background:#ef4444;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">分母＝円Aのりんご50カゴ</span>
+            </div>
+            <span style="color:#475569;">割る相手が<b>箱全体ではなく円A（りんご）だけ</b>に変わる。「<u>りんごを買った人の中で、バナナも買う割合</u>」＝A→Bルールの当たりやすさ。</span>
+          </div>
+
+          <div style="background:#fdf4ff;border-radius:8px;padding:.55rem .65rem;">
+            <b style="color:#7e22ce;">③ リフト値＝ 確信度40% ÷ バナナの全体率25% ＝ 1.6倍</b>
+            <div style="display:flex;align-items:center;gap:.5rem;margin:.35rem 0;font-size:.72rem;flex-wrap:wrap;">
+              <span style="background:#22c55e;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">りんご客のバナナ率 40%</span>
+              <span>÷</span>
+              <span style="background:#eab308;color:#fff;border-radius:5px;padding:2px 7px;font-weight:700;">普通のバナナ率 25%（=25÷100）</span>
+            </div>
+            <span style="color:#475569;">バナナは<b>普通なら100人中25人＝25%</b>が買う。ところが<b>りんごを買った人は40%</b>も買う。<b>40÷25＝1.6倍</b>＝りんごを買うとバナナを<u>1.6倍 買いやすくなる</u>。</span>
+            <div style="margin-top:.4rem;display:flex;gap:4px;font-size:.68rem;text-align:center;">
+              <div style="flex:1;background:#fee2e2;border-radius:5px;padding:3px;color:#991b1b;font-weight:700;">&lt;1<br>負の関連</div>
+              <div style="flex:1;background:#fef9c3;border-radius:5px;padding:3px;color:#854d0e;font-weight:700;">=1<br>無関係(独立)</div>
+              <div style="flex:1;background:#dcfce7;border-radius:5px;padding:3px;color:#166534;font-weight:700;">&gt;1<br>正の関連(今回1.6)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trap"><b>急所（外したQ6）</b>：リフト値は<b>＝1で「無関係（独立）」</b>。1より大きいほど「Aを買うとBも買いやすい」。1超を独立と書く誤りに注意。</div>
+    </div>
+
+    <h2>図2：POS と ID-POS の違い</h2>
+    <div class="fig">
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--mut)"><b>POS</b>「いつ・何が・いくつ」売れたか（商品軸）
+          <div style="margin-top:6px;text-align:center;background:#f8fafc;border-radius:6px;padding:.4rem;font-size:.72rem;">🧾 レシートだけ<br><span style="color:#64748b;">「🍙×2・🥤×1 売れた」<br>＝買った人は分からない</span></div>
+        </div>
+        <div class="cell" style="border-color:var(--g)"><b>ID-POS</b>会員ID付き＝<b>「誰が」</b>買ったかが分かる → RFM・併売・One to One
+          <div style="margin-top:6px;text-align:center;background:#f0fdf4;border-radius:6px;padding:.4rem;font-size:.72rem;">💳👤 会員カード＋レシート<br><span style="color:#64748b;">「田中さんが🍙🥤を買った」<br>＝誰がリピートか分かる</span></div>
+        </div>
+      </div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 かんたん解説：POSとID-POSの「誰が」の違い</div>
+        <p style="margin:0 0 .6rem;line-height:1.7;color:#334155;">どちらも「何が売れたか」はわかる。<b>ID-POSだけが「誰が」買ったかをわかる</b>（会員カードのIDが紐づいているから）。「誰が」がわかるとRFM分析・One to Oneマーケティングができる。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;font-size:.78rem;text-align:center;">
+          <div style="background:#f8fafc;border:2px solid #94a3b8;border-radius:8px;padding:.6rem;">
+            <div style="font-size:1.4rem;">🧾</div>
+            <b style="color:#475569;">POS</b>
+            <div style="margin-top:.3rem;color:#334155;">いつ・何が・いくつ<br>（商品軸）</div>
+            <div style="margin-top:.3rem;color:#dc2626;font-size:.74rem;">「誰が」は ❌ わからない</div>
+          </div>
+          <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:8px;padding:.6rem;">
+            <div style="font-size:1.4rem;">💳👤</div>
+            <b style="color:#166534;">ID-POS</b>
+            <div style="margin-top:.3rem;color:#334155;">いつ・何が・いくつ<br>＋ <b>誰が</b>（顧客軸）</div>
+            <div style="margin-top:.3rem;color:#15803d;font-size:.74rem;">「誰が」も ✅ わかる！</div>
+          </div>
+        </div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「ID-POSでは<u>購買した顧客を特定することはできない</u>」→誤り。ID-POSは<b>会員IDで顧客を特定できる</b>のが最大の特徴。RFMや併売分析が可能になる。
+        </div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：バスケット分析の3指標</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>指標</th><th>計算式</th><th>例（全100件）</th></tr>
+          <tr><td>支持度（サポート）</td><td><span class="blank">A∩B ÷ 全取引</span></td><td>20÷100＝20%</td></tr>
+          <tr><td>確信度（コンフィデンス）</td><td><span class="blank">A∩B ÷ A</span>（＝P(B|A)）</td><td>20÷50＝40%</td></tr>
+          <tr><td>リフト値</td><td>確信度 ÷ Bの支持度</td><td>＝1で<span class="blank">独立</span>／&gt;1で正の関連</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：POS と ID-POS</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>種類</th><th>わかること</th></tr>
+          <tr><td>POS</td><td>いつ・何が・いくつ売れたか（<span class="blank">商品</span>軸）</td></tr>
+          <tr><td>ID-POS</td><td><span class="blank">会員ID</span>付き＝「<span class="blank">誰が</span>」買ったかが分かる → RFM・併売</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB4 商品コード（未学習・インプット） -->
+  <div class="tab-panel">
+    <div class="weak">📘 <b>未学習（土台ゼロ）</b>。確認テスト前にここで読んで覚える。論点：JAN／GTIN／ITF／GS1事業者コード／ソース vs インストアマーキング。</div>
+    <span class="nosrc">※商品コードは専用qzノート未作成 → ここで新規に図解化（暗記対象）</span>
+
+    <div class="vz-supplement" style="background:#fffbeb;border-left:4px solid #f59e0b;">
+      <div class="vz-label" style="color:#b45309;">🔤 略称の正式名称（英語フル）— 先にまとめて</div>
+      <table style="font-size:.8rem;">
+        <tr><th>略称</th><th>正式英語名称（読み）</th><th>日本語の意味</th></tr>
+        <tr><td><b>JAN</b></td><td><b>Japanese Article Number</b><br>（ジャパニーズ・アーティクル・ナンバー）</td><td>日本の共通商品コード（標準13桁／短縮8桁）</td></tr>
+        <tr><td><b>GTIN</b></td><td><b>Global Trade Item Number</b><br>（グローバル・トレード・アイテム・ナンバー）</td><td>国際取引商品番号。JAN/UPC/ITFを束ねた国際標準</td></tr>
+        <tr><td><b>ITF</b></td><td><b>Interleaved Two of Five</b><br>（インターリーブド・トゥー・オブ・ファイブ）</td><td>集合包装用商品コード＝段ボール（外装）用14桁</td></tr>
+        <tr><td><b>UPC</b></td><td><b>Universal Product Code</b><br>（ユニバーサル・プロダクト・コード）</td><td>米国・カナダの共通商品コード</td></tr>
+        <tr><td><b>GS1</b></td><td><b>GS1</b>（ジーエスワン＝国際標準化団体）<br>GS1事業者コード＝<b>GS1 Company Prefix</b></td><td>誰が（どの会社が）番号を付けたかを表す事業者識別コード</td></tr>
+      </table>
+    </div>
+
+    <div class="vz-supplement">
+      <div class="vz-label">🎯 まず何の話？</div>
+      <p>商品コード＝<b>商品につける「背番号」</b>。レジのバーコードで読み取る番号のルール。問われるのは主に①<b>JAN</b>（日本の標準）②<b>GTIN</b>（その国際版）③<b>ITF</b>（段ボール用）④誰が番号を付けるか（<b>ソース／インストア</b>）。</p>
+    </div>
+
+    <h2>図1：JANコード <span class="abbr-en">(JAN＝Japanese Article Number)</span>（標準13桁・短縮8桁）</h2>
+    <div class="fig">
+
+      <!-- 🎯 まず何の話？ -->
+      <div class="vz-supplement" style="background:#ecfeff;border-left:4px solid #06b6d4;border-radius:8px;padding:.8rem 1rem;margin:0 0 .8rem;font-size:.88rem;">
+        <div class="vz-label" style="font-size:.72rem;font-weight:700;color:#0891b2;letter-spacing:.05em;margin-bottom:.4rem;">🎯 まず何の話？</div>
+        <p style="margin:0 0 .5rem;line-height:1.8;color:#334155;">お店のレジで「ピッ」と読むあの<b>シマシマ模様（バーコード）</b>の話です。あのシマシマは、じつは<b>数字を機械で読めるようにした“絵”</b>。その数字が <b>JANコード</b>です。</p>
+        <div style="background:#cffafe;border-radius:8px;padding:.55rem .65rem;font-size:.84rem;color:#0e7490;line-height:1.7;font-weight:700;text-align:center;">
+          🛒 バーコード＝商品の「名札（なふだ）」／「背番号（せばんごう）」<br>
+          <span style="font-weight:400;font-size:.78rem;color:#155e75;">どの商品も、自分だけの番号を1つ持っている</span>
+        </div>
+        <p style="margin:.55rem 0 0;line-height:1.8;color:#334155;font-size:.82rem;">サッカー選手が背番号で見分けられるように、商品も<b>番号で見分ける</b>。だからレジは、シマシマを読むだけで「これは○○です、お値段は△△円」と一瞬でわかるのです。</p>
+      </div>
+
+      <!-- 💬 ことばの意味 -->
+      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:.6rem .7rem;margin-bottom:.8rem;font-size:.78rem;color:#334155;line-height:1.8;">
+        💬 <b>ことばの意味</b><br>
+        ・<b>JANコード</b>（ジャンコード／正式英語名 <b>Japanese Article Number</b>）＝日本でつかう、商品の<u>標準のバーコード番号</u>。「これは何という商品か」を表す世界でただ1つの番号。<br>
+        ・<b>桁（けた）</b>＝数字の<u>個数</u>のこと。13桁＝数字が13個ならんでいる、という意味。<br>
+        ・ふつうは <b>13桁（標準）</b>。せまくて13桁が入らない小さい商品（ガムやアメなど）は、みじかい <b>8桁（短縮）</b>を使う。
+      </div>
+
+      <div class="formula">JAN（13桁）＝ GS1事業者コード ＋ 商品アイテムコード ＋ チェックデジット<span class="ex">JAN＝Japanese Article Number／GS1事業者コード＝GS1 Company Prefix／先頭2桁は国コード（日本＝45 または 49）／小さい商品は短縮8桁</span></div>
+
+      <!-- 🔖 13桁は3つのまとまり：たとえ＝名前 -->
+      <div class="vz-supplement" style="margin-top:.4rem;">
+        <div class="vz-label">🔖 13ケタは「3つのまとまり」でできている</div>
+
+        <div style="background:#fff;border-radius:8px;padding:.6rem;">
+          <div style="font-family:monospace;letter-spacing:2px;font-size:1.1rem;text-align:center;color:#1e293b;font-weight:800;">｜｜∥｜∥∥｜∥｜｜∥｜</div>
+          <div style="text-align:center;font-size:.68rem;color:#94a3b8;margin:.15rem 0 .5rem;">↑ このシマシマを数字になおすと…</div>
+          <div style="display:flex;gap:4px;text-align:center;font-size:.68rem;flex-wrap:wrap;">
+            <div style="flex:2;min-width:90px;background:#dbeafe;border-radius:6px;padding:.5rem .25rem;">
+              <div style="font-size:1.1rem;">🏢</div>
+              <b style="color:#1e40af;">①GS1事業者コード</b><br>
+              <span class="abbr-en">(GS1 Company Prefix)</span><br>
+              <span style="color:#475569;">どの<u>会社</u>か<br>（先頭2桁＝国 45/49）</span>
+            </div>
+            <div style="flex:2;min-width:90px;background:#dcfce7;border-radius:6px;padding:.5rem .25rem;">
+              <div style="font-size:1.1rem;">📦</div>
+              <b style="color:#166534;">②商品アイテムコード</b><br>
+              <span style="color:#475569;">どの<u>商品</u>か</span>
+            </div>
+            <div style="flex:1;min-width:74px;background:#fef9c3;border-radius:6px;padding:.5rem .25rem;">
+              <div style="font-size:1.1rem;">✅</div>
+              <b style="color:#a16207;">③チェック<br>デジット</b><br>
+              <span style="color:#475569;">末尾<u>1桁</u><br>読み間違い<br>チェック</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:.3rem;flex-wrap:wrap;font-size:.74rem;margin-top:.5rem;color:#334155;">
+            <span style="background:#dbeafe;border-radius:5px;padding:.2rem .45rem;font-weight:700;color:#1e40af;">どの会社の</span>
+            <span style="color:#64748b;font-weight:800;">＋</span>
+            <span style="background:#dcfce7;border-radius:5px;padding:.2rem .45rem;font-weight:700;color:#166534;">どの商品か</span>
+            <span style="color:#64748b;font-weight:800;">＋</span>
+            <span style="background:#fef9c3;border-radius:5px;padding:.2rem .45rem;font-weight:700;color:#a16207;">正しく読めた？の確認</span>
+          </div>
+        </div>
+
+        <div style="margin-top:.6rem;background:#fff;border:1.5px solid #93c5fd;border-radius:10px;padding:.55rem .65rem;">
+          <div style="font-size:.8rem;font-weight:800;color:#1e40af;margin-bottom:.5rem;">🧒 たとえ：人の「名前」とそっくり</div>
+          <div style="display:flex;align-items:stretch;justify-content:center;gap:.3rem;flex-wrap:wrap;font-size:.74rem;text-align:center;">
+            <div style="background:#dbeafe;border:1px solid #60a5fa;border-radius:8px;padding:.45rem .5rem;min-width:84px;">
+              <b style="color:#1e40af;">姓（みょうじ）</b><br><span style="color:#475569;">山田家＝<br>どの<u>家族</u>か</span></div>
+            <div style="align-self:center;color:#94a3b8;font-weight:800;">＋</div>
+            <div style="background:#dcfce7;border:1px solid #4ade80;border-radius:8px;padding:.45rem .5rem;min-width:84px;">
+              <b style="color:#166534;">名（なまえ）</b><br><span style="color:#475569;">太郎＝<br>その中の<u>だれ</u>か</span></div>
+            <div style="align-self:center;color:#94a3b8;font-weight:800;">＋</div>
+            <div style="background:#fef9c3;border:1px solid #eab308;border-radius:8px;padding:.45rem .5rem;min-width:84px;">
+              <b style="color:#a16207;">読みかくにん</b><br><span style="color:#475569;">「やまだ<br>たろう君?」と<u>聞き返す</u></span></div>
+          </div>
+          <div style="margin-top:.45rem;font-size:.74rem;color:#334155;line-height:1.7;">
+            会社＝<b>姓</b>（①GS1事業者コード）、商品＝<b>名</b>（②商品アイテムコード）。だから先に「どの会社か」、次に「その会社のどの商品か」の順で番号が並びます。最後の<b>確認の1桁</b>（③）は、名前を聞き返して間違いを防ぐのと同じはたらきです。
+          </div>
+        </div>
+
+        <div style="margin-top:.55rem;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:.5rem .6rem;font-size:.76rem;color:#92400e;line-height:1.8;">
+          ✅ <b>チェックデジット＝「読み間違い防止の合言葉」</b><br>
+          前の12桁を決まった計算式に入れると、最後の1桁の数字が自動で決まります。レジが読んだ番号でその計算をやり直し、<u>最後の1桁が合えば「正しく読めた」</u>、合わなければ「読み間違い！」とわかる、という<b>見はり役</b>の数字です。だから、わざと数字を1つ間違えても機械が気づけます。
+        </div>
+
+        <div style="margin-top:.5rem;background:#cffafe;border-radius:6px;padding:.45rem;font-size:.78rem;color:#0e7490;font-weight:800;text-align:center;line-height:1.6;">🔑 13桁＝「どの会社🏢」＋「どの商品📦」＋「正しく読めた？の1桁✅」</div>
+      </div>
+
+      <div class="trap" style="margin-top:.6rem;font-size:.78rem;line-height:1.7;">📝 <b>過去問の問われ方</b>：「JAN（Japanese Article Number）の標準は<u>○桁</u>」「チェックデジットは<u>先頭</u>にある」など桁数や位置を入れかえて正誤を問う（→<b>標準13桁・短縮8桁／チェックデジットは末尾1桁</b>。位置・桁数を取り違えると誤り）。だから<b>13桁＝事業者＋商品＋末尾チェック1桁</b>の並び順を言い切れることが重要。</div>
+    </div>
+
+    <h2>図2：GTIN <span class="abbr-en">(Global Trade Item Number)</span> と ITF <span class="abbr-en">(Interleaved Two of Five)</span></h2>
+    <div class="fig">
+
+      <!-- 🎯 まず何の話？ -->
+      <div class="vz-supplement" style="background:#ecfeff;border-left:4px solid #06b6d4;">
+        <div class="vz-label" style="color:#0891b2;">🎯 まず何の話？</div>
+        <p style="margin:0;line-height:1.8;color:#334155;font-size:.86rem;">商品には<b>「番号の名札（バーコード）」</b>が付いています。問われるのは次の3つ。<br>① 商品<b>1個</b>に付ける名札＝<b>JAN（13桁）</b>／② その商品を詰めた<b>段ボール箱</b>に付ける名札＝<b>ITF（14桁）</b>／③ 世界中のバラバラな名札を<b>「同じルールで呼ぶ世界共通の呼び名」</b>＝<b>GTIN</b>。この3つの関係と<b>桁数</b>を押さえれば戦えます。</p>
+      </div>
+
+      <!-- 💬 ことばの意味 -->
+      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:.55rem .65rem;margin:.6rem 0;font-size:.76rem;color:#334155;line-height:1.8;">
+        💬 <b>ことばの意味（先に確認）</b><br>
+        ・<b>JAN（ジャン／Japanese Article Number）</b>＝日本の商品1個ごとに付ける番号。レジで「ピッ」と読む、あの<u>13桁</u>のバーコード。<br>
+        ・<b>ITF（アイティーエフ／Interleaved Two of Five／集合包装用商品コード）</b>＝商品をまとめて詰めた<u>段ボール（外装）に貼る14桁</u>。倉庫の入出荷で読む。<br>
+        ・<b>GTIN（ジーティン／Global Trade Item Number／国際取引商品番号）</b>＝JAN（Japanese Article Number）・UPC（Universal Product Code）・ITF（Interleaved Two of Five）など世界各国の商品番号を<u>1つの国際ルールにまとめた呼び名</u>。桁数別にGTIN-8/12/13/14がある。
+      </div>
+
+      <!-- たとえ -->
+      <div class="vz-supplement" style="background:#fffbeb;border-left:4px solid #f59e0b;">
+        <div class="vz-label" style="color:#d97706;">🏫 たとえ：「1人の名札」と「箱のラベル」と「世界共通の呼び方」</div>
+        <p style="margin:0 0 .5rem;font-size:.8rem;color:#334155;line-height:1.7;">学校で考えると…</p>
+        <div style="display:flex;flex-direction:column;gap:.45rem;font-size:.78rem;">
+          <div style="background:#fff;border:1px solid #93c5fd;border-radius:8px;padding:.5rem .6rem;line-height:1.7;">🧒 <b style="color:#1e40af;">JAN（13桁）＝生徒1人の名札</b> <span class="abbr-en">(Japanese Article Number)</span><br>お菓子<u>1個</u>ずつに付く名札。「これはAという商品です」と1個を見分ける。</div>
+          <div style="background:#fff;border:1px solid #fb923c;border-radius:8px;padding:.5rem .6rem;line-height:1.7;">📦 <b style="color:#c2410c;">ITF（14桁）＝「30人ぶん入った箱」のラベル</b> <span class="abbr-en">(Interleaved Two of Five)</span><br>お菓子を<u>たくさん詰めた段ボール</u>に貼るラベル。中身を1個ずつ読まなくても、箱ごとパッと数えられる＝<u>物流（入出荷）でラク</u>。だから1桁多い14桁。</div>
+          <div style="background:#fff;border:1px solid #a78bfa;border-radius:8px;padding:.5rem .6rem;line-height:1.7;">🌏 <b style="color:#6d28d9;">GTIN＝世界共通の「呼び方ルール」（パスポートのようなまとめ役）</b> <span class="abbr-en">(Global Trade Item Number)</span><br>日本のJAN、アメリカのUPC、箱のITF…と国や用途でバラバラな番号を、世界のどこでも通じる<u>1つのルールでまとめて呼ぶ</u>のがGTIN。新しい番号ではなく<u>「束ねる呼び名」</u>。</div>
+        </div>
+      </div>
+
+      <!-- 階層図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🗂️ 関係を1枚で：GTINが上から束ねる</div>
+        <div style="text-align:center;">
+          <div style="display:inline-block;background:#ede9fe;border:2px solid #8b5cf6;border-radius:10px;padding:.45rem .9rem;font-size:.82rem;font-weight:800;color:#6d28d9;">🌏 GTIN（国際標準の商品識別番号）<br><span class="abbr-en">Global Trade Item Number</span></div>
+          <div style="font-size:1rem;color:#8b5cf6;font-weight:800;line-height:1;margin:.15rem 0;">▽ 束ねる ▽</div>
+          <div style="display:flex;gap:.45rem;justify-content:center;flex-wrap:wrap;font-size:.74rem;">
+            <span style="background:#dbeafe;border:1.5px solid #60a5fa;border-radius:8px;padding:.4rem .55rem;color:#1e40af;">🇯🇵 <b>JAN</b><br>日本の商品番号<br><span class="abbr-en">Japanese Article Number</span></span>
+            <span style="background:#dbeafe;border:1.5px solid #60a5fa;border-radius:8px;padding:.4rem .55rem;color:#1e40af;">🇺🇸 <b>UPC</b><br>米国の商品番号<br><span class="abbr-en">Universal Product Code</span></span>
+            <span style="background:#ffedd5;border:1.5px solid #fb923c;border-radius:8px;padding:.4rem .55rem;color:#c2410c;">📦 <b>ITF</b><br>外装（箱）の番号<br><span class="abbr-en">Interleaved Two of Five</span></span>
+          </div>
+        </div>
+        <p class="note">GTINは「新しい番号」ではなく、これらを<b>同じルールで呼ぶための世界共通の枠組み</b>。</p>
+      </div>
+
+      <!-- JAN vs ITF 対比 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🔍 まちがえやすい対比：JAN（バラ商品）vs ITF（箱）</div>
+        <div class="grid2">
+          <div class="cell" style="border-color:var(--b);text-align:center;">
+            <div style="font-size:1.5rem;">🍬</div>
+            <b style="color:#1e40af;">JAN ＝ 13桁</b>
+            <div class="abbr-en">Japanese Article Number</div>
+            <div style="font-size:.74rem;color:#475569;margin-top:.25rem;line-height:1.7;">対象＝<b>バラの商品1個</b><br>レジで読む</div>
+          </div>
+          <div class="cell" style="border-color:var(--o);text-align:center;">
+            <div style="font-size:1.5rem;">📦</div>
+            <b style="color:#c2410c;">ITF ＝ 14桁</b>
+            <div class="abbr-en">Interleaved Two of Five</div>
+            <div style="font-size:.74rem;color:#475569;margin-top:.25rem;line-height:1.7;">対象＝<b>外装（段ボール箱）</b><br>物流の入出荷で読む</div>
+          </div>
+        </div>
+        <div class="formula" style="margin-top:.5rem;">商品1個＝JAN（13桁）　／　その箱＝ITF（14桁）　／　世界共通の呼び名＝GTIN<span class="ex">JAN＝Japanese Article Number／ITF＝Interleaved Two of Five／GTIN＝Global Trade Item Number</span></div>
+      </div>
+
+      <div style="margin-top:.5rem;background:#cffafe;border-radius:8px;padding:.5rem;font-size:.8rem;color:#0e7490;font-weight:800;text-align:center;line-height:1.7;">🔑 GTIN（Global Trade Item Number）＝世界共通の<u>まとめ役</u>（束ねる呼び名）／ITF（Interleaved Two of Five）＝<u>段ボール（外装）の14桁</u>。「1個＝JAN（Japanese Article Number）13桁」「箱＝ITF14桁」とセットで覚える。</div>
+
+      <div class="trap">📝 <b>過去問の問われ方</b>：「ITF（Interleaved Two of Five）は複数の商品番号を束ねた<u>国際標準</u>」「GTIN（Global Trade Item Number）は<u>段ボール用の14桁</u>」のように<b>ITFとGTINを取り違えて</b>正誤を問う（→誤り）。だから<b>ITF＝外装用14桁／GTIN＝各国番号を束ねた国際標準</b>と役割を逆にしないことが重要。</div>
+    </div>
+
+    <h2>図3：ソースマーキング vs インストアマーキング</h2>
+    <div class="fig">
+
+      <!-- 🎯 まず何の話？ -->
+      <div class="vz-supplement" style="background:#ecfeff;border-left:4px solid #06b6d4;">
+        <div class="vz-label" style="color:#0891b2;">🎯 まず何の話？</div>
+        <p style="margin:0;line-height:1.7;color:#334155;font-size:.86rem;">商品のバーコード（JAN）を<b>「だれが・どこで・いつ」つけるか</b>の話です。つけ方は2通り。<br>① 工場であらかじめ印刷しておく＝<b>ソースマーキング</b>／② お店の中でその場で印字する＝<b>インストアマーキング</b>。<br>この「つける場所」のちがいだけ分かれば大丈夫です。</p>
+      </div>
+
+      <!-- 💬 ことばの意味 -->
+      <div class="vz-supplement" style="background:#fffbeb;border-left:4px solid #f59e0b;">
+        <div class="vz-label" style="color:#b45309;">💬 ことばの意味</div>
+        <div style="display:flex;flex-direction:column;gap:.35rem;font-size:.78rem;line-height:1.6;">
+          <div style="background:#fff;border-left:4px solid #22c55e;border-radius:5px;padding:.35rem .5rem;"><b style="color:#166534;">ソース（source）</b>＝「みなもと（おおもと）」。商品を<u>作るおおもと＝メーカー（工場）</u>がバーコードをつける、という意味。</div>
+          <div style="background:#fff;border-left:4px solid #fb923c;border-radius:5px;padding:.35rem .5rem;"><b style="color:#c2410c;">インストア（in store）</b>＝「お店の中」。<u>売るお店</u>がその場でバーコードをつける、という意味。</div>
+          <div style="background:#fff;border-left:4px solid #3b82f6;border-radius:5px;padding:.35rem .5rem;"><b style="color:#1e40af;">マーキング（marking）</b>＝印（バーコード）を<u>つけること</u>。</div>
+        </div>
+      </div>
+
+      <!-- たとえ -->
+      <div class="vz-supplement" style="background:#f5f3ff;border-left:4px solid #8b5cf6;">
+        <div class="vz-label" style="color:#7c3aed;">🧸 たとえ：名札のつけ方</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.74rem;">
+          <div style="background:#fff;border:1.5px solid #4ade80;border-radius:8px;padding:.5rem;text-align:center;">
+            <div style="font-size:1.6rem;">🏭🏷️</div>
+            <b style="color:#166534;">ソース＝工場で名札</b><br>
+            <span style="color:#475569;">出荷する前に工場で名札をつけて全国へ送る。どの学校（お店）に届いても同じ名札。</span>
+          </div>
+          <div style="background:#fff;border:1.5px solid #fb923c;border-radius:8px;padding:.5rem;text-align:center;">
+            <div style="font-size:1.6rem;">🏪🏷️</div>
+            <b style="color:#c2410c;">インストア＝お店でシール</b><br>
+            <span style="color:#475569;">お店に来てから、その場で値札シールをペタッ。そのお店だけの名札。</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- だれが・どこで の流れ図 -->
+      <div class="vz-supplement">
+        <div class="vz-label">🏭🏪 「だれが・どこで」つけるかを流れで見る</div>
+
+        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:.5rem;margin-bottom:.45rem;">
+          <div style="font-size:.78rem;font-weight:800;color:#166534;margin-bottom:.4rem;">🏭 ソースマーキング（Source＝おおもと＝メーカー）</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:.3rem;flex-wrap:wrap;font-size:.74rem;">
+            <span style="background:#fff;border:1px solid #86efac;border-radius:6px;padding:.3rem .45rem;">🏭<br>工場で<br>製造</span>
+            <span style="color:#16a34a;font-weight:800;">▶</span>
+            <span style="background:#bbf7d0;border:1px solid #22c55e;border-radius:6px;padding:.3rem .5rem;font-weight:700;color:#14532d;">🏷️<br>作るときに<br>JANを印刷</span>
+            <span style="color:#16a34a;font-weight:800;">▶</span>
+            <span style="background:#fff;border:1px solid #86efac;border-radius:6px;padding:.3rem .45rem;">🚚<br>全国の<br>お店へ</span>
+            <span style="color:#16a34a;font-weight:800;">▶</span>
+            <span style="background:#fff;border:1px solid #86efac;border-radius:6px;padding:.3rem .45rem;">🏪🏪🏪<br>どの店でも<br>同じ番号</span>
+          </div>
+          <div style="text-align:center;font-size:.72rem;color:#15803d;margin-top:.35rem;font-weight:700;">→ つける人＝<u>メーカー</u>／つける時＝<u>製造段階（事前）</u>／通用範囲＝<u>全国共通</u></div>
+        </div>
+
+        <div style="background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:.5rem;">
+          <div style="font-size:.78rem;font-weight:800;color:#c2410c;margin-bottom:.4rem;">🏪 インストアマーキング（In store＝お店の中）</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:.3rem;flex-wrap:wrap;font-size:.74rem;">
+            <span style="background:#fff;border:1px solid #fdba74;border-radius:6px;padding:.3rem .45rem;">🐟🥩<br>生鮮・<br>量り売り</span>
+            <span style="color:#ea580c;font-weight:800;">▶</span>
+            <span style="background:#fff;border:1px solid #fdba74;border-radius:6px;padding:.3rem .45rem;">⚖️<br>お店で<br>重さを量る</span>
+            <span style="color:#ea580c;font-weight:800;">▶</span>
+            <span style="background:#fed7aa;border:1px solid #fb923c;border-radius:6px;padding:.3rem .5rem;font-weight:700;color:#7c2d12;">🏷️<br>その場で<br>値付け印字</span>
+            <span style="color:#ea580c;font-weight:800;">▶</span>
+            <span style="background:#fff;border:1px solid #fdba74;border-radius:6px;padding:.3rem .45rem;">🏪<br>その店<br>だけで通用</span>
+          </div>
+          <div style="text-align:center;font-size:.72rem;color:#9a3412;margin-top:.35rem;font-weight:700;">→ つける人＝<u>お店（小売）</u>／つける時＝<u>店内で売るとき</u>／通用範囲＝<u>その店だけ</u>（先頭20〜29等）</div>
+        </div>
+      </div>
+
+      <!-- なぜ生鮮はインストア？ -->
+      <div class="vz-supplement" style="background:#fef2f2;border-left:4px solid #f87171;">
+        <div class="vz-label" style="color:#b91c1c;">🤔 なぜ生鮮（おさかな・お肉など）はインストアなの？</div>
+        <p style="margin:0;line-height:1.7;color:#334155;font-size:.82rem;">お魚やお肉は<b>重さで値段が変わる</b>もの。1パックずつ重さがちがうので、<u>メーカーが工場で「いくら」と決められません</u>。だから、お店でその場で量って値段を決め、シールを貼ります。＝<b>インストアマーキング</b>になります。</p>
+      </div>
+
+      <!-- 4観点まとめ表 -->
+      <div class="grid2">
+        <div class="cell" style="border-color:var(--g)"><b>🏭 ソースマーキング</b>つける人＝<b>メーカー</b>／いつ＝<b>製造段階で事前印刷</b>（JANを商品に直接）／対象＝加工食品など型番が決まった商品／通用＝<b>全国共通</b></div>
+        <div class="cell" style="border-color:var(--o)"><b>🏪 インストアマーキング</b>つける人＝<b>小売店</b>／いつ＝<b>店内で値付け・印字</b>／対象＝生鮮・量り売り・惣菜など／通用＝<b>その店だけ</b>（先頭20〜29等）</div>
+      </div>
+
+      <div class="trap"><b>🔑 覚え方</b>：ソース＝Source（源＝メーカーが<u>おおもと</u>で付ける）／インストア＝In store（<u>店の中</u>で付ける）。「だれが・どこで付けるか」で見分ける。</div>
+
+      <div style="margin-top:.4rem;border:1px dashed #f59e0b;background:#fffbeb;border-radius:6px;padding:.4rem .5rem;font-size:.74rem;color:#92400e;line-height:1.6;">📝 <b>過去問の問われ方</b>：「<u>生鮮食品はソースマーキング</u>」「<u>インストアマーキングは全国共通</u>」のように主体・範囲を入れ替えて誤りにする（→どちらも逆で誤り）。だから<b>ソース＝メーカーが事前・全国共通／インストア＝お店が店内で・その店だけ</b>の対応を取り違えないことが重要。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">図1：JANコード（標準13桁）</div>
+      <div class="fill-body">
+        <table>
+          <tr><td>JAN（Japanese Article Number）13桁の構成</td><td><span class="blank">GS1事業者コード</span>（GS1 Company Prefix）＋商品アイテムコード＋<span class="blank">チェックデジット</span></td></tr>
+          <tr><td>先頭（国コード）</td><td>日本＝<span class="blank">45 または 49</span>／短縮版は8桁</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図2：GTIN と ITF</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>コード</th><th>内容</th></tr>
+          <tr><td><span class="blank">GTIN</span>（国際取引商品番号）</td><td>JAN/UPC/ITFを束ねた国際標準の商品識別番号<br><span class="abbr-en">GTIN＝Global Trade Item Number</span></td></tr>
+          <tr><td><span class="blank">ITF</span>（集合包装用商品コード）</td><td>段ボールなど<span class="blank">外装</span>用＝<span class="blank">14</span>桁。物流の入出荷で使う<br><span class="abbr-en">ITF＝Interleaved Two of Five</span></td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">図3：ソースマーキング vs インストアマーキング</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>種類</th><th>誰が・どこで付ける</th></tr>
+          <tr><td><span class="blank">ソースマーキング</span></td><td>製造元（メーカー）が製造段階で事前印刷。全国共通</td></tr>
+          <tr><td><span class="blank">インストアマーキング</span></td><td>小売が店内で値付け・印字（生鮮・量り売り）。その店だけで通用</td></tr>
+        </table>
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+// 各タブ先頭に「予習」版の穴埋めを複製（約10%を事前表示・標準fill-cardのみ対象。.q04等は除外）
+(function(){
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var cards=[].slice.call(panel.querySelectorAll('.fill-card')).filter(function(c){
+      return c.querySelector('.fill-head')&&c.querySelector('.blank');
+    });
+    if(!cards.length) return;
+    var sec=document.createElement('div');
+    var t=document.createElement('div'); t.className='fill-section-title';
+    t.textContent='🔰 予習（先にざっと・一部ヒント済み）'; sec.appendChild(t);
+    cards.forEach(function(card){
+      var cl=card.cloneNode(true);
+      var h=cl.querySelector('.fill-head'); if(h) h.textContent='予習｜'+h.textContent;
+      var mb=cl.querySelector('.mz-btn'); if(mb) mb.remove(); cl.classList.remove('mz-done');
+      var bl=cl.querySelectorAll('.blank'), n=bl.length;
+      var show=Math.min(Math.max(1,Math.round(n*0.1)),Math.max(0,n-1));
+      for(var i=0;i<show;i++){ bl[i].classList.add('show'); }
+      sec.appendChild(cl);
+    });
+    var h2=panel.querySelector('h2');
+    if(h2){ panel.insertBefore(sec,h2); } else { panel.insertBefore(sec,panel.firstChild); }
+  });
+})();
+document.querySelectorAll('.blank').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('show')));
+function rev(btn){
+  var blanks=btn.closest('.fill-body').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+function revAll(btn){
+  var blanks=btn.closest('.tab-panel').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+// 覚えた→○ボタンで非表示（見出しベースの安定キーで保存）
+(function(){
+  var KEY='mz_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function keyFor(el){
+    if(el.classList.contains('fill-card')){
+      var h=el.querySelector('.fill-head');
+      return 'fc:'+(h?h.textContent.trim():'').slice(0,44);
+    }
+    var p=el.previousElementSibling, hd='';
+    while(p){ if(p.tagName==='H2'){hd=p.textContent.trim();break;} p=p.previousElementSibling; }
+    return 'b:'+hd.slice(0,18)+'|'+el.textContent.replace(/\s+/g,'').slice(0,26);
+  }
+  document.querySelectorAll('.fig,.fill-card,.vz-supplement').forEach(function(el){
+    var id=keyFor(el);
+    var btn=document.createElement('button');
+    btn.className='mz-btn'; btn.type='button';
+    function set(on){ el.classList.toggle('mz-done',on); btn.textContent=on?'✓':'○'; }
+    function save(on){ st[id]=on; localStorage.setItem(KEY,JSON.stringify(st)); }
+    set(!!st[id]);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); var on=!el.classList.contains('mz-done'); set(on); save(on); });
+    el.addEventListener('click',function(){ if(el.classList.contains('mz-done')){ set(false); save(false); } });
+    el.appendChild(btn);
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head'); return h&&h.textContent.trim().startsWith('予習｜'); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+})();
+// 商品コードタブ：図の中の各小ボックス単位で非表示（細かい粒度・localStorage保存・既存○ボタンと併存）
+(function(){
+  var panel=document.querySelectorAll('.tab-panel')[4]; // 🔖 商品コード
+  if(!panel) return;
+  var KEY='mz_box_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function figHead(fig){
+    var p=fig.previousElementSibling,hd='';
+    while(p){ if(p.tagName==='H2'){hd=p.textContent.trim();break;} p=p.previousElementSibling; }
+    return hd.slice(0,16);
+  }
+  function label(el){
+    var l=el.querySelector('.vz-label');
+    var t=(l?l.textContent:el.textContent).replace(/\s+/g,' ').trim();
+    return t.slice(0,24)||'ブロック';
+  }
+  function mkPh(el,key){
+    var ph=document.createElement('div'); ph.className='box-hidden-ph';
+    ph.innerHTML='🙈 <span></span> <button>表示</button>';
+    ph.querySelector('span').textContent=label(el)+'…';
+    ph.querySelector('button').addEventListener('click',function(){ el.style.display=''; ph.remove(); st[key]=0; save(); });
+    return ph;
+  }
+  [].forEach.call(panel.querySelectorAll('.fig'),function(fig){
+    var fh=figHead(fig),idx=0;
+    [].slice.call(fig.children).forEach(function(el){
+      if(el.tagName==='BUTTON'||el.classList.contains('box-hidden-ph')) return; // mz-btn等を除外
+      idx++;
+      var key='bx:'+fh+'|'+idx;
+      el.style.position='relative';
+      var hasMz=!!el.querySelector(':scope > .mz-btn');
+      var btn=document.createElement('button');
+      btn.className='box-hide-btn'; btn.type='button'; btn.title='このブロックを非表示'; btn.textContent='🙈';
+      btn.style.right=hasMz?'40px':'8px';
+      el.appendChild(btn);
+      btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+      if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+    });
+  });
+})();
+</script>
+<!-- ===== ✏️ 注釈機能 ===== -->
+<style>
+#sz-bar{position:fixed;display:none;align-items:center;gap:2px;background:#1e293b;border-radius:9px;padding:4px;box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9999;transform:translateX(-50%)}
+#sz-bar.on{display:flex}
+#sz-bar button{background:none;border:none;color:#fff;cursor:pointer;padding:5px 10px;border-radius:6px;font-size:.85rem;font-weight:700;font-family:inherit;white-space:nowrap;line-height:1.2}
+#sz-bar button:hover{background:rgba(255,255,255,.18)}
+#sz-bar .sz-sep{width:1px;height:18px;background:rgba(255,255,255,.22);margin:0 1px;flex-shrink:0}
+mark.sz-ul{background:none;color:inherit;border-bottom:2.5px solid #ef4444;padding-bottom:1px;cursor:pointer}
+mark.sz-hl{background:#fef08a;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
+mark.sz-cm{background:#bfdbfe;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
+/* 選択 → 穴埋め化（クリックで答え表示／再クリックで隠す・トグル） */
+mark.sz-blank{background:#e0e7ff;color:transparent;border-bottom:2px dashed #6366f1;border-radius:3px;padding:0 3px;cursor:pointer;user-select:none}
+mark.sz-blank.show{color:#4338ca;background:#eef2ff;border-bottom-style:solid}
+/* 既存の空欄を長押しで「空欄解除」した状態：普通の文章として表示 */
+.fill-blank.sz-unblanked,.blank.sz-unblanked{background:none !important;color:inherit !important;border:none !important;border-bottom:none !important;cursor:auto !important;user-select:auto !important;padding:0 !important;font-weight:inherit !important}
+/* 消去（文字を背景色と同化させ削除したように見せる・クリックで復元） */
+mark.sz-erase{background:transparent;color:transparent;border:none;padding:0;cursor:pointer;user-select:none}
+mark.sz-erase.show{color:inherit;background:rgba(239,68,68,.07);border-radius:2px;}
+mark.sz-ul:hover,mark.sz-hl:hover,mark.sz-cm:hover,mark.sz-blank:hover{filter:brightness(.88)}
+.sz-cm-icon{font-style:normal;font-size:.65rem;color:#1d4ed8;margin-left:1px;vertical-align:super;cursor:pointer;user-select:none}
+#sz-cmt-pop{position:fixed;display:none;flex-direction:column;gap:7px;background:#fff;border:1.5px solid #3b82f6;border-radius:10px;padding:11px 13px;width:236px;box-shadow:0 4px 22px rgba(0,0,0,.18);z-index:10000;font-size:.82rem}
+#sz-cmt-pop.on{display:flex}
+#sz-cmt-pop .sz-pop-head{font-weight:700;color:#1d4ed8;font-size:.79rem}
+#sz-cmt-pop textarea{border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:.82rem;resize:vertical;min-height:72px;font-family:inherit;line-height:1.55;outline:none}
+#sz-cmt-pop textarea:focus{border-color:#3b82f6}
+#sz-cmt-pop .sz-pop-row{display:flex;gap:5px;justify-content:flex-end}
+#sz-cmt-pop .sz-pop-row button{border:none;border-radius:6px;padding:4px 12px;font-size:.79rem;font-weight:700;cursor:pointer;font-family:inherit}
+.sz-sv{background:#3b82f6;color:#fff}.sz-sv:hover{background:#2563eb}
+.sz-cl{background:#f1f5f9;color:#475569}.sz-cl:hover{background:#e2e8f0}
+#sz-del-pop{position:fixed;display:none;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:5px 6px;z-index:10000;gap:4px;align-items:center;box-shadow:0 8px 24px rgba(15,23,42,.16)}
+#sz-del-pop.on{display:flex}
+#sz-del-pop button{background:none;border:none;cursor:pointer;padding:5px 12px;border-radius:8px;font-size:.79rem;font-weight:700;font-family:inherit;white-space:nowrap;transition:background .12s,color .12s}
+#sz-del-pop .sz-d-edit{color:#4f46e5}
+#sz-del-pop .sz-d-edit:hover{background:#eef2ff}
+#sz-del-pop .sz-d-del{color:#4338ca}
+#sz-del-pop .sz-d-del:hover{background:#eef2ff;color:#3730a3}
+#sz-del-pop .sz-sep{width:1px;height:16px;background:#e2e8f0;margin:0 1px}
+#sz-toggle{position:fixed;right:12px;bottom:56px;background:#475569;color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.28);z-index:201;display:flex;align-items:center;justify-content:center;transition:background .2s;padding:0}
+#sz-toggle:hover{background:#1e293b}
+#sz-toggle.active{background:#3b82f6}
+/* ---- 蛍光カラーピッカー ---- */
+#sz-hl-picker{position:fixed;display:none;background:#1e293b;border-radius:9px;padding:7px;gap:5px;z-index:10002;box-shadow:0 4px 16px rgba(0,0,0,.38);flex-wrap:wrap;width:112px}
+#sz-hl-picker.on{display:flex}
+.sz-hl-sw{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2.5px solid rgba(255,255,255,.25);flex-shrink:0;transition:transform .12s,border-color .12s}
+.sz-hl-sw:hover{transform:scale(1.22);border-color:#fff}
+/* 注釈スタイルを非表示（テキストは残す） */
+body.sz-annot-off mark.sz-ul{border-bottom:none !important}
+body.sz-annot-off mark.sz-hl,body.sz-annot-off mark[data-hlc]{background:none !important}
+body.sz-annot-off mark.sz-cm{background:none !important}
+body.sz-annot-off mark.sz-blank{color:inherit !important;background:none !important;border-bottom:none !important}
+body.sz-annot-off mark.sz-erase{color:inherit !important;background:none !important}
+body.sz-annot-off .sz-cm-icon{display:none}
+body.sz-annot-off mark[data-aid]:hover{filter:none;outline:none}
+.sz-toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:6px 15px;border-radius:20px;font-size:.78rem;z-index:99999;pointer-events:none;opacity:0;animation:szFI .25s forwards}
+@keyframes szFI{from{opacity:0;transform:translate(-50%,-5px)}to{opacity:1;transform:translateX(-50%)}}
+/* ---- コメントツールチップ ---- */
+#sz-cmt-tip{position:fixed;display:none;background:#1e293b;color:#e2e8f0;padding:8px 12px;border-radius:9px;max-width:260px;font-size:.83rem;line-height:1.6;z-index:10001;box-shadow:0 4px 18px rgba(0,0,0,.32);pointer-events:auto;word-break:break-all}
+#sz-cmt-tip.on{display:block}
+#sz-cmt-tip .sz-tip-label{font-size:.7rem;color:#94a3b8;margin-bottom:4px;display:block}
+#sz-cmt-tip .sz-tip-edit{display:block;margin-top:7px;background:rgba(255,255,255,.1);border:none;color:#bfdbfe;border-radius:5px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;width:100%;text-align:left}
+#sz-cmt-tip .sz-tip-edit:hover{background:rgba(255,255,255,.18)}
+/* ---- 右サイドツールボタン ---- */
+.sz-tool-btn{position:fixed;right:12px;background:#475569;color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.28);z-index:201;display:flex;align-items:center;justify-content:center;transition:background .2s;padding:0}
+.sz-tool-btn:hover{background:#1e293b}
+.sz-tool-btn.active{background:#3b82f6}
+#sz-btn-search{bottom:100px}
+#sz-btn-filter{bottom:144px}
+#sz-btn-note{bottom:188px}
+/* ---- 検索ドロワー（タブ横断） ---- */
+#sz-search{position:fixed;top:0;right:0;width:340px;max-width:92vw;height:100%;background:#fff;box-shadow:-3px 0 20px rgba(0,0,0,.2);z-index:10050;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s}
+#sz-search.on{transform:translateX(0)}
+#sz-search .sz-s-head{display:flex;gap:6px;align-items:center;padding:11px 12px;border-bottom:1px solid #e2e8f0}
+#sz-search input{flex:1;border:1.5px solid #cbd5e1;border-radius:7px;padding:7px 10px;font-size:.9rem;font-family:inherit;outline:none}
+#sz-search input:focus{border-color:#3b82f6}
+#sz-search .sz-s-close{background:none;border:none;font-size:1.15rem;cursor:pointer;color:#64748b;padding:4px 6px}
+#sz-s-count{font-size:.74rem;color:#64748b;padding:6px 12px 2px}
+#sz-s-results{flex:1;overflow-y:auto;padding:0 9px 16px}
+.sz-s-item{border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;margin:7px 0;cursor:pointer;transition:background .15s,border-color .15s}
+.sz-s-item:hover{background:#eff6ff;border-color:#93c5fd}
+.sz-s-item .sz-s-tab{font-size:.7rem;font-weight:700;color:#1d4ed8;margin-bottom:3px}
+.sz-s-item .sz-s-snip{font-size:.8rem;color:#334155;line-height:1.55;word-break:break-all}
+.sz-s-item .sz-s-snip b{background:#fde047;color:#1e293b;border-radius:2px;padding:0 1px}
+mark.sz-search-hit{background:#facc15;color:#1e293b;border-radius:2px}
+@keyframes szPulse{0%,45%{box-shadow:0 0 0 4px rgba(250,204,21,.75)}100%{box-shadow:0 0 0 0 rgba(250,204,21,0)}}
+mark.sz-search-hit.pulse{animation:szPulse 1.7s ease-out}
+/* ---- 色フィルタパネル ---- */
+#sz-filter{position:fixed;right:58px;bottom:130px;background:#1e293b;border-radius:11px;padding:11px 13px;z-index:10040;box-shadow:0 6px 22px rgba(0,0,0,.34);display:none;width:188px}
+#sz-filter.on{display:block}
+#sz-filter .sz-f-title{color:#e2e8f0;font-size:.76rem;font-weight:700;margin-bottom:8px}
+#sz-filter label{display:flex;align-items:center;gap:8px;color:#e2e8f0;font-size:.8rem;padding:4px 2px;cursor:pointer}
+#sz-filter label:hover{color:#fff}
+#sz-filter .sz-f-chip{width:18px;height:18px;border-radius:4px;flex-shrink:0;border:1px solid rgba(255,255,255,.3)}
+#sz-filter input[type=checkbox]{accent-color:#3b82f6;width:15px;height:15px;cursor:pointer;flex-shrink:0}
+/* ---- 付箋（スティッキーメモ） ---- */
+.sz-note{position:absolute;width:204px;background:#fef9c3;border:1px solid rgba(0,0,0,.18);border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.22);z-index:40}
+.sz-note .sz-n-head{height:25px;background:rgba(0,0,0,.08);cursor:move;display:flex;align-items:center;gap:2px;padding:0 5px;border-radius:8px 8px 0 0;touch-action:none}
+.sz-note .sz-n-color{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.25);cursor:pointer;margin-right:auto}
+.sz-note .sz-n-head button{background:none;border:none;cursor:pointer;font-size:.78rem;color:#78350f;padding:0 4px;line-height:1}
+.sz-note .sz-n-head button:hover{color:#000}
+.sz-note textarea{display:block;width:100%;border:none;background:none;resize:vertical;padding:7px 9px;font-size:.82rem;font-family:inherit;line-height:1.55;outline:none;color:#422006;min-height:66px}
+.sz-note.sz-n-min{width:auto;min-width:150px}
+.sz-note.sz-n-min textarea{display:none}
+.sz-note.sz-n-min .sz-n-head{border-radius:8px}
+.sz-note .sz-n-preview{display:none;font-size:.76rem;color:#78350f;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:6px}
+.sz-note.sz-n-min .sz-n-preview{display:block}
+body.sz-annot-off .sz-note{display:none !important}
+</style>
+
+<div id="sz-bar">
+  <button type="button" title="赤アンダーライン" onclick="szAnnot('ul')"><span style="text-decoration:underline;text-decoration-color:#ef4444;text-underline-offset:2px">A</span> 赤線</button>
+  <button type="button" title="蛍光ハイライト（色選択）" onclick="szShowHlPicker(this)">🌟 蛍光</button>
+  <button type="button" title="コメントを追加" onclick="szAnnot('cm')">💬 メモ</button>
+  <button type="button" title="選択範囲を穴埋め問題にする（クリックで答え表示・長押しで元に戻す）" onclick="szAnnot('blank')">❓ 穴埋め</button>
+  <button type="button" title="文字を消去（削除したように見せる・クリックで復元）" onclick="szAnnot('erase')">✂️ 消去</button>
+  <button type="button" title="選択範囲内の既存の穴埋をまとめて解除／再選択で復活" onclick="szUnblankSelection()">🚫 穴埋解除</button>
+  <div class="sz-sep"></div>
+  <button type="button" onclick="szHideBar()" style="color:#94a3b8;font-size:.72rem;padding:4px 7px">✕</button>
+</div>
+
+<div id="sz-cmt-pop">
+  <div class="sz-pop-head" id="sz-cmt-head">💬 コメントを追加</div>
+  <textarea id="sz-cmt-txt" placeholder="メモを入力… (Ctrl+Enter で保存)"></textarea>
+  <div class="sz-pop-row">
+    <button type="button" class="sz-cl" onclick="szHideCmt()">キャンセル</button>
+    <button type="button" class="sz-sv" onclick="szSaveCmt()">保存</button>
+  </div>
+</div>
+
+<div id="sz-hl-picker">
+  <div class="sz-hl-sw" style="background:#fef08a" title="黄" data-hlc="#fef08a" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#bbf7d0" title="緑" data-hlc="#bbf7d0" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#fecdd3" title="ピンク" data-hlc="#fecdd3" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#bfdbfe" title="水色" data-hlc="#bfdbfe" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#fed7aa" title="橙" data-hlc="#fed7aa" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#e9d5ff" title="紫" data-hlc="#e9d5ff" onclick="szApplyHl(this.dataset.hlc)"></div>
+</div>
+
+<div id="sz-del-pop">
+  <button type="button" class="sz-d-edit" id="sz-del-edit-btn">✏️ 編集</button>
+  <div class="sz-sep"></div>
+  <button type="button" class="sz-d-del" onclick="szDelAnnot()">↩ 元に戻す</button>
+</div>
+
+<button id="sz-toggle" class="active" title="✏️ メモ機能 ON/OFF（OFFにすると選択してもポップアップが出ない・読むだけ）" onclick="szToggleAnnot()">✏️</button>
+
+<div id="sz-cmt-tip">
+  <span class="sz-tip-label">💬 コメント</span>
+  <span id="sz-tip-body"></span>
+  <button type="button" class="sz-tip-edit" id="sz-tip-edit-btn">✏️ 編集する</button>
+</div>
+
+<!-- 右サイドツール -->
+<button id="sz-btn-search" class="sz-tool-btn" title="検索（タブ横断）">🔍</button>
+<button id="sz-btn-filter" class="sz-tool-btn" title="色フィルタ">🎨</button>
+<button id="sz-btn-note" class="sz-tool-btn" title="付箋メモを追加">📝</button>
+
+<!-- 検索ドロワー -->
+<div id="sz-search">
+  <div class="sz-s-head">
+    <input type="text" id="sz-s-input" placeholder="このファイル全体を検索…">
+    <button type="button" class="sz-s-close" id="sz-s-close" title="閉じる">✕</button>
+  </div>
+  <div id="sz-s-count"></div>
+  <div id="sz-s-results"></div>
+</div>
+
+<!-- 色フィルタパネル -->
+<div id="sz-filter">
+  <div class="sz-f-title">表示する注釈</div>
+  <label><input type="checkbox" data-f="ul" checked><span class="sz-f-chip" style="background:#fff;border-bottom:3px solid #ef4444"></span>赤線</label>
+  <label><input type="checkbox" data-f="cm" checked><span class="sz-f-chip" style="background:#bfdbfe"></span>💬 メモ</label>
+  <label><input type="checkbox" data-f="hl:#fef08a" checked><span class="sz-f-chip" style="background:#fef08a"></span>蛍光 黄</label>
+  <label><input type="checkbox" data-f="hl:#bbf7d0" checked><span class="sz-f-chip" style="background:#bbf7d0"></span>蛍光 緑</label>
+  <label><input type="checkbox" data-f="hl:#fecdd3" checked><span class="sz-f-chip" style="background:#fecdd3"></span>蛍光 ピンク</label>
+  <label><input type="checkbox" data-f="hl:#bfdbfe" checked><span class="sz-f-chip" style="background:#bfdbfe"></span>蛍光 水色</label>
+  <label><input type="checkbox" data-f="hl:#fed7aa" checked><span class="sz-f-chip" style="background:#fed7aa"></span>蛍光 橙</label>
+  <label><input type="checkbox" data-f="hl:#e9d5ff" checked><span class="sz-f-chip" style="background:#e9d5ff"></span>蛍光 紫</label>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function szFileKey(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);}
+  var KEY='szA_'+szFileKey();
+  var db=[];
+  try{db=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}}
+
+  var bar=document.getElementById('sz-bar');
+  var cmtPop=document.getElementById('sz-cmt-pop');
+  var cmtTxt=document.getElementById('sz-cmt-txt');
+  var cmtHead=document.getElementById('sz-cmt-head');
+  var delPop=document.getElementById('sz-del-pop');
+  var delEditBtn=document.getElementById('sz-del-edit-btn');
+  var tip=document.getElementById('sz-cmt-tip');
+  var tipBody=document.getElementById('sz-tip-body');
+  var tipEditBtn=document.getElementById('sz-tip-edit-btn');
+  var hlPicker=document.getElementById('sz-hl-picker');
+  var savedRange=null, cmtCtx=null, tipTimer=null, tipTargetAid=null, delTarget=null;
+
+  /* ---- 既存の.fill-blank「空欄解除」状態の保存・復元 ---- */
+  var FBKEY='szFB_'+szFileKey();
+  var fbUn={}; try{fbUn=JSON.parse(localStorage.getItem(FBKEY)||'{}');}catch(e){}
+  function fbSave(){try{localStorage.setItem(FBKEY,JSON.stringify(fbUn));}catch(e){}}
+  function fbInit(){
+    [].slice.call(document.querySelectorAll('.fill-blank,.blank')).filter(function(el){return !(el.closest&&el.closest('[id^="pre_"]'));}).forEach(function(el,i){
+      el.setAttribute('data-fbidx',i);
+      if(fbUn[i]) el.classList.add('sz-unblanked');
+    });
+  }
+  // 既存の.fill-blankのクリック（答え表示トグル）を、長押し直後／空欄解除中は抑止する（元ノートのリスナーを編集せずキャプチャ段で割り込む）
+  document.addEventListener('click',function(e){
+    var fb=e.target.closest?e.target.closest('.fill-blank,.blank'):null;
+    if(!fb) return;
+    if(window.szSuppressFbClick){window.szSuppressFbClick=false;e.stopImmediatePropagation();e.preventDefault();return;}
+    if(fb.classList.contains('sz-unblanked')){e.stopImmediatePropagation();e.preventDefault();}
+  },true);
+
+  function uid(){return 'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+
+  function panelOf(el){
+    var p=el.closest?el.closest('.tab-panel,.tab-content'):null;
+    return p&&p.id?p.id:'body';
+  }
+
+  /* ---- 出現位置（occurrence index）で復元先を一意化 ----
+     同一フレーズが複数あると「文脈付き検索」でも別の箇所に復元され得る。
+     root配下のテキストを文書順に連結（marks内の文字も含め、sz-cm-icon と pre_ 配下は除外）
+     し「root内で何番目の出現か」を保存・復元する。marks の有無で連結文字列は変わらないため
+     復元順に依存せず安定する。 */
+  function szTextStream(root){
+    var nodes=[],full='';
+    var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(n){
+        if(n.parentElement&&n.parentElement.closest('.sz-cm-icon')) return NodeFilter.FILTER_REJECT;
+        if(n.parentElement&&n.parentElement.closest('[id^="pre_"]')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var n; while((n=w.nextNode())){ nodes.push({node:n,start:full.length}); full+=n.nodeValue; }
+    return {nodes:nodes,full:full};
+  }
+  function szLocate(stream,gpos){
+    for(var i=0;i<stream.nodes.length;i++){
+      var s=stream.nodes[i],len=s.node.nodeValue.length;
+      if(gpos>=s.start&&gpos<=s.start+len) return {node:s.node,offset:gpos-s.start};
+    }
+    return null;
+  }
+  function szOccOf(root,node,offset,selText){
+    if(!selText) return 0;
+    var stream=szTextStream(root),gstart=-1;
+    for(var i=0;i<stream.nodes.length;i++){ if(stream.nodes[i].node===node){ gstart=stream.nodes[i].start+offset; break; } }
+    if(gstart<0) return 0;
+    var occ=0,from=0,idx;
+    while((idx=stream.full.indexOf(selText,from))!==-1){
+      if(idx===gstart) break;
+      if(idx<gstart) occ++;
+      from=idx+selText.length;
+    }
+    return occ;
+  }
+  function szFindByOcc(root,selText,occ){
+    if(!selText) return null;
+    var stream=szTextStream(root),seen=0,from=0,idx;
+    while((idx=stream.full.indexOf(selText,from))!==-1){
+      if(seen===occ){
+        var a=szLocate(stream,idx),b=szLocate(stream,idx+selText.length);
+        if(a&&b&&a.node===b.node) return {node:a.node,offset:a.offset,end:b.offset};
+        return null;
+      }
+      seen++; from=idx+selText.length;
+    }
+    return null;
+  }
+  function szFindByContext(root,ann,scoped){
+    var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(n){
+        if(n.parentElement&&n.parentElement.closest('.sz-cm-icon')) return NodeFilter.FILTER_REJECT;
+        if(n.parentElement&&n.parentElement.closest('[id^="pre_"]')) return NodeFilter.FILTER_REJECT;
+        if(!scoped&&n.parentElement&&n.parentElement.closest('mark[data-aid]')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var node;
+    while((node=walker.nextNode())){
+      var txt=node.nodeValue,idx=-1;
+      if(ann.ctxBefore||ann.ctxAfter){ var fi=txt.indexOf(ann.ctxBefore+ann.selText+ann.ctxAfter); if(fi!==-1) idx=fi+ann.ctxBefore.length; }
+      if(idx===-1) idx=txt.indexOf(ann.selText);
+      if(idx===-1) continue;
+      return {node:node,offset:idx,end:idx+ann.selText.length};
+    }
+    return null;
+  }
+
+  /* ---- ツールバー位置 ---- */
+  function showBar(rect){
+    var cx=(rect.left+rect.right)/2;
+    bar.style.left=Math.max(80,Math.min(cx,window.innerWidth-80))+'px';
+    bar.style.top=Math.max(6,rect.top-52)+'px';
+    bar.classList.add('on');
+  }
+  window.szHideBar=function(){bar.classList.remove('on');};
+
+  /* ---- コメントポップ ---- */
+  function showCmtPop(rect){
+    var left=Math.max(4,Math.min(rect.left,window.innerWidth-244));
+    cmtPop.style.left=left+'px';
+    cmtPop.style.top=Math.min(rect.bottom+8, window.innerHeight-200)+'px';
+    cmtPop.classList.add('on');
+    setTimeout(function(){cmtTxt.focus();},60);
+  }
+  window.szHideCmt=function(){cmtPop.classList.remove('on');cmtCtx=null;};
+
+  /* ---- 削除ポップ ---- */
+  function showDelPop(target,e){
+    delTarget=target;
+    var delBtn=delPop.querySelector('.sz-d-del');
+    if(target.classList.contains('fill-blank')||target.classList.contains('blank')){
+      // 既存の空欄：解除/復活トグル
+      delPop.dataset.aid='';
+      delEditBtn.style.display='none';
+      if(delBtn) delBtn.textContent=target.classList.contains('sz-unblanked')?'↩ 空欄に戻す':'🚫 空欄をやめる';
+    } else {
+      delPop.dataset.aid=target.dataset.aid||'';
+      delEditBtn.style.display=target.classList.contains('sz-cm')?'':'none';
+      if(delBtn) delBtn.textContent='↩ 元に戻す';
+    }
+    delPop.style.left=Math.max(4,e.clientX-18)+'px';
+    delPop.style.top=Math.max(4,e.clientY-48)+'px';
+    delPop.classList.add('on');
+  }
+  window.szHideDel=function(){delPop.classList.remove('on');};
+  function szHideHlPicker(){hlPicker.classList.remove('on');}
+
+  /* ---- 蛍光カラーピッカー ---- */
+  window.szShowHlPicker=function(btn){
+    if(hlPicker.classList.contains('on')){szHideHlPicker();return;}
+    var rect=btn.getBoundingClientRect();
+    hlPicker.style.left=rect.left+'px';
+    hlPicker.style.top=(rect.bottom+6)+'px';
+    hlPicker.classList.add('on');
+  };
+  window.szApplyHl=function(color){
+    szHideHlPicker();szHideBar();
+    if(!savedRange) return;
+    applyAnnot(savedRange,'hl','',uid(),color);
+    window.getSelection().removeAllRanges();
+  };
+
+  /* ---- コメントツールチップ（ホバー表示） ---- */
+  function showTip(mark){
+    var comment=mark.dataset.comment;
+    if(!comment) return;
+    clearTimeout(tipTimer);
+    tipTargetAid=mark.dataset.aid;
+    tipBody.textContent=comment;
+    var rect=mark.getBoundingClientRect();
+    var left=Math.max(4,Math.min(rect.left,window.innerWidth-268));
+    var top=rect.bottom+6;
+    if(top+120>window.innerHeight) top=rect.top-110;
+    tip.style.left=left+'px';
+    tip.style.top=Math.max(4,top)+'px';
+    tip.classList.add('on');
+  }
+  function hideTipDelayed(){
+    tipTimer=setTimeout(function(){tip.classList.remove('on');tipTargetAid=null;},180);
+  }
+  function hideTipNow(){clearTimeout(tipTimer);tip.classList.remove('on');tipTargetAid=null;}
+
+  document.addEventListener('mouseover',function(e){
+    if(document.body.classList.contains('sz-annot-off')) return; // メモOFF：ホバー説明も出さない
+    var mark=e.target.closest?e.target.closest('mark.sz-cm'):null;
+    if(!mark||!mark.dataset.comment) return;
+    showTip(mark);
+  });
+  document.addEventListener('mouseout',function(e){
+    var mark=e.target.closest?e.target.closest('mark.sz-cm'):null;
+    if(!mark) return;
+    var rel=e.relatedTarget;
+    if(rel&&(rel===tip||tip.contains(rel))) return; // ツールチップへ移動中は消さない
+    hideTipDelayed();
+  });
+  tip.addEventListener('mouseenter',function(){clearTimeout(tipTimer);});
+  tip.addEventListener('mouseleave',function(){hideTipDelayed();});
+
+  /* ---- ツールチップの「編集する」ボタン ---- */
+  tipEditBtn.addEventListener('click',function(){
+    var mark=tipTargetAid?document.querySelector('mark[data-aid="'+tipTargetAid+'"]'):null;
+    hideTipNow();
+    if(!mark) return;
+    cmtHead.textContent='💬 コメントを編集';
+    cmtTxt.value=mark.dataset.comment||'';
+    cmtCtx={action:'edit',aid:tipTargetAid};
+    showCmtPop(mark.getBoundingClientRect());
+  });
+
+  /* ---- 穴埋めの長押し → 「元に戻す／空欄をやめる」メニュー ---- */
+  var szLP=null, szLPfired=false, szLPx=0, szLPy=0;
+  document.addEventListener('pointerdown',function(e){
+    if(document.body.classList.contains('sz-annot-off')) return;
+    window.szSuppressFbClick=false;
+    var bl=e.target.closest?e.target.closest('mark.sz-blank,.fill-blank,.blank'):null;
+    if(!bl) return;
+    szLPfired=false;
+    szLPx=e.clientX; szLPy=e.clientY;
+    szLPcancel(); // 念のため既存タイマーを掃除
+    szLP=setTimeout(function(){
+      szLP=null; szLPfired=true;
+      window.szSuppressFbClick=true; // 既存空欄の長押し直後クリックを抑止
+      szHideBar();szHideCmt();hideTipNow();
+      // 空欄の少し右上に離して表示
+      showDelPop(bl,{clientX:szLPx+46,clientY:szLPy-14});
+    },450);
+  });
+  function szLPcancel(){ if(szLP){clearTimeout(szLP);szLP=null;} }
+  // 微動ではキャンセルしない：10px超の移動でのみ中断（タッチ/トラックパッドの揺れ対策）
+  document.addEventListener('pointermove',function(e){
+    if(!szLP) return;
+    if(Math.abs(e.clientX-szLPx)>10||Math.abs(e.clientY-szLPy)>10) szLPcancel();
+  });
+  document.addEventListener('pointerup',szLPcancel);
+  document.addEventListener('pointercancel',szLPcancel);
+
+  /* ---- mouseup: 選択検知 ---- */
+  document.addEventListener('mouseup',function(e){
+    if(document.body.classList.contains('sz-annot-off')) return; // メモOFF：選択してもツールバーを出さない（読むだけモード）
+    if(e.target.closest('#sz-bar,#sz-cmt-pop,#sz-del-pop,#sz-toggle,#sz-cmt-tip,#sz-hl-picker,#sz-toolbar,#sz-hide-tools')) return;
+    szHideHlPicker();
+    var sel=window.getSelection();
+    if(!sel||sel.isCollapsed||!sel.toString().trim()){
+      if(szLPfired){szLPfired=false;return;} // 長押し直後：メニューを閉じない・トグルしない
+      var ann=e.target.closest?e.target.closest('mark[data-aid]'):null;
+      if(ann&&(ann.classList.contains('sz-blank')||ann.classList.contains('sz-erase'))){
+        // 穴埋め／消去：クリックで表示⇔非表示をトグル（長押しで「元に戻す」メニュー）
+        szHideBar();szHideCmt();hideTipNow();szHideDel();
+        ann.classList.toggle('show');
+      } else if(ann){
+        szHideBar();szHideCmt();hideTipNow();
+        showDelPop(ann,e);
+      } else if(!e.target.closest('#sz-del-pop')){
+        szHideBar();szHideCmt();szHideDel();
+      }
+      return;
+    }
+    szHideDel();szHideCmt();
+    savedRange=sel.getRangeAt(0).cloneRange();
+    showBar(savedRange.getBoundingClientRect());
+  });
+
+  /* ---- 編集ボタン（削除ポップから） ---- */
+  delEditBtn.addEventListener('click',function(){
+    var aid=delPop.dataset.aid;
+    var mark=document.querySelector('mark[data-aid="'+aid+'"]');
+    szHideDel();
+    if(!mark) return;
+    cmtHead.textContent='💬 コメントを編集';
+    cmtTxt.value=mark.dataset.comment||'';
+    cmtCtx={action:'edit',aid:aid};
+    showCmtPop(mark.getBoundingClientRect());
+  });
+
+  /* ---- 注釈ボタン実行 ---- */
+  window.szAnnot=function(type){
+    if(!savedRange) return;
+    szHideBar();
+    if(type==='cm'){
+      cmtHead.textContent='💬 コメントを追加';
+      cmtTxt.value='';
+      cmtCtx={action:'new',range:savedRange,type:type};
+      showCmtPop(savedRange.getBoundingClientRect());
+    } else {
+      applyAnnot(savedRange,type,'',uid());
+    }
+    window.getSelection().removeAllRanges();
+  };
+
+  /* ---- 選択範囲内の既存穴埋を一括解除／復活 ---- */
+  window.szUnblankSelection=function(){
+    if(!savedRange) return;
+    szHideBar();
+    var range=savedRange;
+    var blanks=Array.prototype.slice.call(document.querySelectorAll('.fill-blank,.blank')).filter(function(el){return !(el.closest&&el.closest('[id^="pre_"]'));});
+    var hit=blanks.filter(function(el){ try{return range.intersectsNode(el);}catch(e){return false;} });
+    if(!hit.length){ showToast('選択範囲に穴埋がありません'); window.getSelection().removeAllRanges(); return; }
+    var anyBlanked=hit.some(function(el){return !el.classList.contains('sz-unblanked');});
+    hit.forEach(function(el){
+      var idx=el.getAttribute('data-fbidx');
+      if(anyBlanked){
+        el.classList.add('sz-unblanked'); el.classList.remove('show');
+        if(idx!=null) fbUn[idx]=1;
+      } else {
+        el.classList.remove('sz-unblanked');
+        if(idx!=null) delete fbUn[idx];
+      }
+    });
+    fbSave();
+    showToast(anyBlanked?('🚫 '+hit.length+'個の穴埋を解除'):('↩ '+hit.length+'個を穴埋に戻す'));
+    window.getSelection().removeAllRanges();
+  };
+
+  /* ---- コメント保存 ---- */
+  window.szSaveCmt=function(){
+    var txt=cmtTxt.value.trim();
+    if(!txt){szHideCmt();return;}
+    if(cmtCtx&&cmtCtx.action==='new'){
+      applyAnnot(cmtCtx.range,'cm',txt,uid());
+      window.getSelection().removeAllRanges();
+    } else if(cmtCtx&&cmtCtx.action==='edit'){
+      var aid=cmtCtx.aid;
+      var mark=document.querySelector('mark[data-aid="'+aid+'"]');
+      if(mark){
+        mark.dataset.comment=txt;
+        var icon=mark.querySelector('.sz-cm-icon');
+        if(icon) icon.title=txt;
+      }
+      var rec=db.find(function(a){return a.uid===aid;});
+      if(rec){rec.comment=txt;save();}
+    }
+    szHideCmt();
+  };
+
+  /* ---- 削除 ---- */
+  window.szDelAnnot=function(){
+    // 既存の.fill-blank：空欄解除⇔空欄に戻すをトグル（保存）
+    if(delTarget&&(delTarget.classList.contains('fill-blank')||delTarget.classList.contains('blank'))){
+      var idx=delTarget.getAttribute('data-fbidx');
+      if(delTarget.classList.contains('sz-unblanked')){
+        delTarget.classList.remove('sz-unblanked');
+        if(idx!=null) delete fbUn[idx];
+      } else {
+        delTarget.classList.add('sz-unblanked');
+        delTarget.classList.remove('show');
+        if(idx!=null) fbUn[idx]=1;
+      }
+      fbSave(); szHideDel(); delTarget=null; return;
+    }
+    var aid=delPop.dataset.aid;
+    if(!aid) return;
+    var mark=document.querySelector('mark[data-aid="'+aid+'"]');
+    if(mark){
+      var parent=mark.parentNode;
+      Array.from(mark.childNodes).forEach(function(n){
+        if(n.classList&&n.classList.contains('sz-cm-icon')) return;
+        parent.insertBefore(n,mark);
+      });
+      parent.removeChild(mark);
+      parent.normalize();
+    }
+    db=db.filter(function(a){return a.uid!==aid;});
+    save();szHideDel();
+  };
+
+  /* ---- DOM適用 ---- */
+  function applyAnnot(range,type,comment,id,color){
+    var startNode=range.startContainer;
+    var encEl=startNode.nodeType===3?startNode.parentElement:startNode;
+    var encMark=encEl&&encEl.closest?encEl.closest('mark[data-aid]'):null;
+    var parentAid=encMark?encMark.dataset.aid:'';
+    var ctxBefore='',ctxAfter='';
+    if(startNode.nodeType===3)
+      ctxBefore=startNode.nodeValue.slice(Math.max(0,range.startOffset-30),range.startOffset);
+    var endNode=range.endContainer;
+    if(endNode.nodeType===3)
+      ctxAfter=endNode.nodeValue.slice(range.endOffset,range.endOffset+30);
+    var selText=range.toString();
+    var panelId=panelOf(range.commonAncestorContainer.nodeType===1
+      ?range.commonAncestorContainer
+      :range.commonAncestorContainer.parentElement);
+    // 出現位置インデックス（root内で何番目の selText か）を記録 → 復元先を一意化
+    var occRoot=encMark?encMark:(panelId==='body'?document.body:(document.getElementById(panelId)||document.body));
+    var occ=szOccOf(occRoot,range.startContainer,range.startOffset,selText);
+
+    var mark=document.createElement('mark');
+    mark.className='sz-'+type;
+    mark.dataset.aid=id;
+    if(comment) mark.dataset.comment=comment;
+    if(color){ mark.style.background=color; mark.dataset.hlc=color; }
+
+    var ok=false;
+    try{range.surroundContents(mark);ok=true;}
+    catch(e1){
+      try{
+        var r2=document.createRange();
+        r2.setStart(range.startContainer,range.startOffset);
+        var eo=range.startContainer.nodeType===3
+          ?range.startContainer.nodeValue.length:range.startOffset;
+        r2.setEnd(range.startContainer,eo);
+        var trunc=r2.toString();
+        var truncOcc=trunc?szOccOf(occRoot,range.startContainer,range.startOffset,trunc):0;
+        r2.surroundContents(mark);ok=true;
+        selText=trunc;occ=truncOcc;ctxAfter='';
+      }catch(e2){showToast('⚠ タグをまたぐ選択には使えません');return;}
+    }
+    if(!ok) return;
+
+    if(type==='cm'&&comment) addCmtIcon(mark,comment);
+    db.push({uid:id,panelId:panelId,parentAid:parentAid,selText:selText,ctxBefore:ctxBefore,ctxAfter:ctxAfter,occ:occ,type:type,comment:comment,color:color||''});
+    save();
+  }
+
+  function addCmtIcon(mark,comment){
+    var icon=document.createElement('span');
+    icon.className='sz-cm-icon';icon.textContent='💬';icon.title=comment;
+    mark.appendChild(icon);
+  }
+
+  /* ---- 復元 ---- */
+  function restoreAll(){
+    db.forEach(function(ann){restoreOne(ann);});
+  }
+  function restoreOne(ann){
+    var root=null,scoped=false;
+    if(ann.parentAid){
+      var pm=document.querySelector('mark[data-aid="'+ann.parentAid+'"]');
+      if(pm){root=pm;scoped=true;}
+    }
+    if(!root) root=ann.panelId==='body'?document.body:document.getElementById(ann.panelId);
+    if(!root) return false;
+    // ① 出現位置インデックスで一意に特定（新方式）。無ければ ② 文脈付き検索（旧データ用）。
+    var loc=null;
+    if(typeof ann.occ==='number') loc=szFindByOcc(root,ann.selText,ann.occ);
+    if(!loc) loc=szFindByContext(root,ann,scoped);
+    if(!loc) return false;
+    var range=document.createRange();
+    range.setStart(loc.node,loc.offset);
+    range.setEnd(loc.node,loc.end);
+    var mark=document.createElement('mark');
+    mark.className='sz-'+ann.type;
+    mark.dataset.aid=ann.uid;
+    if(ann.comment) mark.dataset.comment=ann.comment;
+    if(ann.color){ mark.style.background=ann.color; mark.dataset.hlc=ann.color; }
+    try{
+      range.surroundContents(mark);
+      if(ann.type==='cm'&&ann.comment) addCmtIcon(mark,ann.comment);
+      return true;
+    }catch(e){return false;}
+  }
+
+  /* ---- 注釈の表示/非表示トグル（テキストはそのまま） ---- */
+  var annotShown=true;
+  window.szToggleAnnot=function(){
+    annotShown=!annotShown;
+    document.body.classList.toggle('sz-annot-off',!annotShown);
+    var btn=document.getElementById('sz-toggle');
+    btn.classList.toggle('active',annotShown);
+    btn.title=annotShown?'✏️ メモON（選択でハイライト/コメント可）→ タップでOFF':'✏️ メモOFF（読むだけ・ポップアップなし）→ タップでON';
+  };
+
+  /* ---- Escで閉じ / Ctrl+Enterで保存 ---- */
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){szHideBar();szHideCmt();szHideDel();hideTipNow();szHideHlPicker();}
+    if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&cmtPop.classList.contains('on')) szSaveCmt();
+  });
+
+  /* ---- トースト ---- */
+  function showToast(msg){
+    var t=document.createElement('div');
+    t.className='sz-toast';t.textContent=msg;
+    document.body.appendChild(t);
+    setTimeout(function(){t.remove();},2400);
+  }
+
+  /* ---- タブパネルに安定 id を付与 ----
+     .tab-panel / .tab-content に id が無いと panelOf() が 'body' に落ち、注釈がタブに紐づかない。
+     その結果、同一語句が複数タブに出るノートでは、復元が別タブの最初の一致へ吸われ
+     「作ったタブで空欄が消える」。連番 id を振ってタブ単位に紐づける（既存 id は尊重）。 */
+  (function(){
+    var ps=document.querySelectorAll('.tab-panel');
+    if(!ps.length) ps=document.querySelectorAll('.tab-content');
+    [].slice.call(ps).forEach(function(p,i){ if(!p.id) p.id='szpanel'+i; });
+  })();
+
+  /* ---- 予習（複製プレビュー）カードを自動で pre_ 扱いに ----
+     確認システム苦手復習ノート等は読込時に各タブ先頭へ全 .fill-card を cloneNode で複製し
+     「予習｜…」見出しを付ける。id が無いと同一テキストが2か所に出現し、自作穴埋め等が
+     リロード時に複製側へ復元されて本物が消えて見える。複製側に pre_ id を付与して
+     既存の [id^="pre_"] 除外（fbInit / restore / szUnblankSelection）を効かせる。 */
+  (function(){
+    var seq=0;
+    [].slice.call(document.querySelectorAll('.fill-card')).forEach(function(c){
+      var h=c.querySelector('.fill-head');
+      if(!h) return;
+      if(!/^予習\s*[｜|]/.test((h.textContent||'').trim())) return;
+      if(c.closest('[id^="pre_"]')) return;          // 既に pre_ 配下なら不要
+      if(c.id && c.id.indexOf('pre_')===0) return;   // 既に pre_ id
+      c.id='pre_yoshu_'+(seq++);
+    });
+  })();
+
+  fbInit();
+  restoreAll();
+})();
+</script>
+
+<!-- ===== 検索（タブ横断）／色フィルタ／付箋メモ ===== -->
+<script>
+(function(){
+  'use strict';
+  var fileKey=(function(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);})();
+  var panels=Array.prototype.slice.call(document.querySelectorAll('.tab-panel'));
+  if(!panels.length) panels=Array.prototype.slice.call(document.querySelectorAll('.tab-content'));
+  var tabBtns=Array.prototype.slice.call(document.querySelectorAll('.tab-nav .tab-btn'));
+  if(!tabBtns.length) tabBtns=Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+  var hasTabs=panels.length>0;
+  if(!hasTabs) panels=[document.body];
+  function tabName(i){var b=tabBtns[i];return b?b.textContent.replace(/\s+/g,' ').trim():('タブ'+(i+1));}
+  function currentTab(){for(var i=0;i<panels.length;i++)if(panels[i].classList.contains('active'))return i;return 0;}
+  function uid(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  /* テキストノード走査（UI部品・script/styleは除外） */
+  function walkText(root,cb){
+    var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(n){
+        if(!n.nodeValue||!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var p=n.parentElement;
+        if(!p) return NodeFilter.FILTER_REJECT;
+        if(p.closest('#sz-search,#sz-filter,.sz-note,script,style')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var n; while((n=w.nextNode())) cb(n);
+  }
+
+  /* ============ ① タブ切替（タブボタンを実クリック・付箋表示を同期） ============ */
+  function gotoTab(i){ if(hasTabs && tabBtns[i]) tabBtns[i].click(); }
+  tabBtns.forEach(function(b){ b.addEventListener('click',function(){ setTimeout(syncNotes,0); }); });
+
+  /* ============ ② 検索（タブ横断） ============ */
+  var sBox=document.getElementById('sz-search');
+  var sInput=document.getElementById('sz-s-input');
+  var sCount=document.getElementById('sz-s-count');
+  var sResults=document.getElementById('sz-s-results');
+  var sBtn=document.getElementById('sz-btn-search');
+
+  function clearHits(){
+    document.querySelectorAll('mark.sz-search-hit').forEach(function(m){
+      var p=m.parentNode; if(!p) return;
+      while(m.firstChild) p.insertBefore(m.firstChild,m);
+      p.removeChild(m); p.normalize();
+    });
+  }
+  function buildSnip(txt,idx,len){
+    var s=Math.max(0,idx-24), e=Math.min(txt.length,idx+len+30);
+    return (s>0?'…':'')+esc(txt.slice(s,idx))+'<b>'+esc(txt.slice(idx,idx+len))+'</b>'+esc(txt.slice(idx+len,e))+(e<txt.length?'…':'');
+  }
+  function doSearch(q){
+    clearHits();
+    sResults.innerHTML='';
+    q=(q||'').trim();
+    if(q.length<1){sCount.textContent='';return;}
+    var ql=q.toLowerCase(), total=0, CAP=80;
+    var frag=document.createDocumentFragment();
+    panels.forEach(function(panel,pi){
+      var occ=0;
+      walkText(panel,function(node){
+        var low=node.nodeValue.toLowerCase(), from=0, idx;
+        while((idx=low.indexOf(ql,from))!==-1){
+          if(total<CAP){
+            var item=document.createElement('div');
+            item.className='sz-s-item';
+            item.innerHTML='<div class="sz-s-tab">'+esc(tabName(pi))+'</div><div class="sz-s-snip">'+buildSnip(node.nodeValue,idx,q.length)+'</div>';
+            (function(p,o){item.addEventListener('click',function(){jumpTo(p,o,q);});})(pi,occ);
+            frag.appendChild(item);
+          }
+          total++; occ++; from=idx+q.length;
+        }
+      });
+    });
+    sResults.appendChild(frag);
+    sCount.textContent=total?(total+'件'+(total>CAP?'（先頭'+CAP+'件を表示）':'')):'該当なし';
+  }
+  function jumpTo(pi,occ,q){
+    gotoTab(pi);
+    setTimeout(function(){
+      clearHits();
+      var ql=q.toLowerCase(), count=0, done=false;
+      walkText(panels[pi],function(node){
+        if(done) return;
+        var low=node.nodeValue.toLowerCase(), from=0, idx;
+        while((idx=low.indexOf(ql,from))!==-1){
+          if(count===occ){
+            try{
+              var r=document.createRange();
+              r.setStart(node,idx); r.setEnd(node,idx+q.length);
+              var m=document.createElement('mark'); m.className='sz-search-hit pulse';
+              r.surroundContents(m);
+              m.scrollIntoView({block:'center',behavior:'smooth'});
+            }catch(e){}
+            done=true; return;
+          }
+          count++; from=idx+q.length;
+        }
+      });
+    },70);
+  }
+  function toggleSearch(){
+    var on=sBox.classList.toggle('on');
+    sBtn.classList.toggle('active',on);
+    if(on){ setTimeout(function(){sInput.focus();},80); }
+    else { clearHits(); }
+  }
+  sBtn.addEventListener('click',toggleSearch);
+  document.getElementById('sz-s-close').addEventListener('click',toggleSearch);
+  var sTimer=null;
+  sInput.addEventListener('input',function(){clearTimeout(sTimer);sTimer=setTimeout(function(){doSearch(sInput.value);},180);});
+  sInput.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){ var first=sResults.querySelector('.sz-s-item'); if(first) first.click(); }
+    if(e.key==='Escape'){ toggleSearch(); }
+  });
+
+  /* ============ ③ 色フィルタ ============ */
+  var fPanel=document.getElementById('sz-filter');
+  var fBtn=document.getElementById('sz-btn-filter');
+  var fStyle=document.createElement('style'); document.head.appendChild(fStyle);
+  var FKEY='szF_'+fileKey;
+  var off={}; try{off=JSON.parse(localStorage.getItem(FKEY)||'{}');}catch(e){}
+  function applyFilter(){
+    var css='';
+    if(off['ul']) css+='mark.sz-ul{border-bottom:none !important}';
+    if(off['cm']) css+='mark.sz-cm{background:none !important}mark.sz-cm .sz-cm-icon{display:none !important}';
+    Object.keys(off).forEach(function(k){
+      if(k.indexOf('hl:')===0 && off[k]) css+='mark[data-hlc="'+k.slice(3)+'"]{background:none !important}';
+    });
+    fStyle.textContent=css;
+    try{localStorage.setItem(FKEY,JSON.stringify(off));}catch(e){}
+  }
+  fPanel.querySelectorAll('input[type=checkbox]').forEach(function(cb){
+    var key=cb.dataset.f;
+    if(off[key]) cb.checked=false;       // 保存済みで非表示なら反映
+    cb.addEventListener('change',function(){
+      off[key]=!cb.checked;              // チェック外す＝非表示
+      applyFilter();
+    });
+  });
+  applyFilter();
+  fBtn.addEventListener('click',function(){
+    var on=fPanel.classList.toggle('on');
+    fBtn.classList.toggle('active',on);
+  });
+
+  /* ============ ④ 付箋メモ ============ */
+  var NKEY='szN_'+fileKey;
+  var notes=[]; try{notes=JSON.parse(localStorage.getItem(NKEY)||'[]');}catch(e){}
+  var noteEls={};
+  var NOTE_COLORS=['#fef9c3','#fecdd3','#bfdbfe','#bbf7d0','#e9d5ff','#fed7aa'];
+  function saveNotes(){try{localStorage.setItem(NKEY,JSON.stringify(notes));}catch(e){}}
+  function syncNotes(){
+    var t=currentTab();
+    notes.forEach(function(n){ var el=noteEls[n.id]; if(el) el.style.display=(n.tab===t)?'':'none'; });
+  }
+  function buildNote(n){
+    var el=document.createElement('div');
+    el.className='sz-note';
+    el.style.left=(n.x||120)+'px'; el.style.top=(n.y||120)+'px';
+    el.style.background=n.color||'#fef9c3';
+    var head=document.createElement('div'); head.className='sz-n-head';
+    var dot=document.createElement('div'); dot.className='sz-n-color'; dot.style.background=n.color||'#fef9c3'; dot.title='色を変える';
+    var preview=document.createElement('span'); preview.className='sz-n-preview';
+    var min=document.createElement('button'); min.type='button'; min.title='最小化／展開';
+    var del=document.createElement('button'); del.type='button'; del.textContent='🗑'; del.title='削除';
+    head.appendChild(dot); head.appendChild(preview); head.appendChild(min); head.appendChild(del);
+    var ta=document.createElement('textarea'); ta.value=n.text||''; ta.placeholder='メモ…';
+    if(n.h) ta.style.height=n.h+'px';
+    el.appendChild(head); el.appendChild(ta);
+    document.body.appendChild(el);
+    noteEls[n.id]=el;
+
+    function syncMin(){
+      el.classList.toggle('sz-n-min',!!n.min);
+      min.textContent=n.min?'➕':'➖';
+      preview.textContent=n.min?((n.text||'メモ').replace(/\s+/g,' ').trim()||'メモ'):'';
+    }
+    syncMin();
+    min.addEventListener('click',function(){ n.min=!n.min; saveNotes(); syncMin(); });
+
+    ta.addEventListener('input',function(){n.text=ta.value;saveNotes();});
+    ta.addEventListener('mouseup',function(){var h=ta.offsetHeight;if(h&&h!==n.h){n.h=h;saveNotes();}});
+    del.addEventListener('click',function(){
+      el.remove(); delete noteEls[n.id];
+      notes=notes.filter(function(x){return x.id!==n.id;}); saveNotes();
+    });
+    dot.addEventListener('click',function(){
+      var i=NOTE_COLORS.indexOf(n.color); n.color=NOTE_COLORS[(i+1)%NOTE_COLORS.length];
+      el.style.background=n.color; dot.style.background=n.color; saveNotes();
+    });
+    /* ドラッグ */
+    head.addEventListener('pointerdown',function(e){
+      if(e.target===del||e.target===dot) return;
+      e.preventDefault();
+      var sx=e.clientX, sy=e.clientY, ox=parseInt(el.style.left)||0, oy=parseInt(el.style.top)||0;
+      function mv(ev){ el.style.left=Math.max(0,ox+ev.clientX-sx)+'px'; el.style.top=Math.max(0,oy+ev.clientY-sy)+'px'; }
+      function up(){ document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); n.x=parseInt(el.style.left)||0; n.y=parseInt(el.style.top)||0; saveNotes(); }
+      document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+    });
+  }
+  notes.forEach(buildNote);
+  syncNotes();
+  document.getElementById('sz-btn-note').addEventListener('click',function(){
+    var cnt=notes.filter(function(x){return x.tab===currentTab();}).length;
+    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
+    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
+    var n={id:uid(),tab:currentTab(),x:sx+90+(cnt%4)*22,y:sy+110+(cnt%4)*22,h:0,text:'',color:'#fef9c3'};
+    notes.push(n); saveNotes(); buildNote(n);
+    var el=noteEls[n.id]; if(el) el.querySelector('textarea').focus();
+  });
+})();
+</script>
+
+<!-- ===== 🛠 右下ツール一括 表示/非表示（ヘッダー右端トグル） ===== -->
+<style>
+/* 右下フローティングボタン群（✏️ / 🔍 / 🎨 / 📝）をまとめて隠す */
+body.sz-tools-hidden #sz-toggle,
+body.sz-tools-hidden #sz-btn-search,
+body.sz-tools-hidden #sz-btn-filter,
+body.sz-tools-hidden #sz-btn-note{display:none !important}
+/* ヘッダー右1/3を透明クリック領域にしたトグル（⋮アイコンのみ右端表示） */
+#sz-hide-tools{position:absolute;top:0;right:0;width:33.333%;height:100%;z-index:60;background:transparent;border:none;cursor:pointer;padding:4px 12px 0 0;display:flex;align-items:flex-start;justify-content:flex-end;font-size:1.25rem;font-weight:700;line-height:1;color:#94a3b8;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:color .15s}
+#sz-hide-tools:hover{color:#475569}
+#sz-hide-tools.off{color:#3b82f6}
+#sz-hide-tools.sz-ht-fixed{position:fixed;top:0;right:0;width:33vw;height:52px}
+</style>
+<script>
+(function(){
+  'use strict';
+  function fileKey(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);}
+  var HKEY='szH_'+fileKey();
+  function apply(hidden){
+    document.body.classList.toggle('sz-tools-hidden',hidden);
+    var btn=document.getElementById('sz-hide-tools');
+    if(btn){
+      btn.classList.toggle('off',hidden);
+      btn.textContent='⋮';
+      btn.title=hidden?'ツールを開く（✏️🔍🎨📝）':'ツール（✏️🔍🎨📝）を閉じて⋮だけにする';
+    }
+    if(hidden){
+      // 開きっぱなしのパネルも一緒に閉じる
+      var s=document.getElementById('sz-search'); if(s) s.classList.remove('on');
+      var f=document.getElementById('sz-filter'); if(f) f.classList.remove('on');
+    }
+  }
+  function init(){
+    if(document.getElementById('sz-hide-tools')) return;
+    var btn=document.createElement('button');
+    btn.id='sz-hide-tools'; btn.type='button';
+    // ヘッダー（またはタブナビ）の右端に配置。無ければ画面右上に固定
+    var mount=document.querySelector('.page-header')
+            ||document.querySelector('.tab-nav-wrapper')
+            ||document.querySelector('.tab-nav');
+    if(mount){
+      if(getComputedStyle(mount).position==='static') mount.style.position='relative';
+      mount.appendChild(btn);
+    } else {
+      btn.classList.add('sz-ht-fixed');
+      document.body.appendChild(btn);
+    }
+    var hidden=true; // 既定は常に折りたたみ（⋮ボタンのみ）で開始（前回の展開状態は復元しない）
+    btn.addEventListener('click',function(){
+      hidden=!hidden;
+      try{localStorage.setItem(HKEY,hidden?'1':'0');}catch(e){}
+      apply(hidden);
+    });
+    apply(hidden);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,0);});
+  else setTimeout(init,0);
+})();
+</script>
+
+<!-- ▼ メモツールボタンを右上の「⋮」に集約（既定で折りたたみ・タップで展開・独立した固定の丸） ▼ -->
+<style>
+/* ⋮ほかツールは独立した固定の丸ボタン。タブバーには予約スペースも背景も足さない（タブ非変形・白い箱なし） */
+#sz-toolbar{position:fixed;top:6px;right:8px;display:flex;flex-wrap:wrap;justify-content:flex-end;align-content:flex-start;gap:5px;width:92px;box-sizing:border-box;z-index:300;pointer-events:none}
+/* 枠の透明部分は当たり判定なし→丸の中だけ反応。各ボタンは23pxの丸に統一 */
+#sz-toolbar>*{position:static!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;margin:0!important;width:23px!important;height:23px!important;min-width:0!important;border-radius:50%!important;flex:0 0 auto!important;padding:0!important;display:flex!important;align-items:center;justify-content:center;pointer-events:auto!important;box-shadow:0 1px 4px rgba(0,0,0,.25)!important}
+/* ⋮トグルは薄いスレートで統一 */
+#sz-toolbar #sz-hide-tools{background:#94a3b8!important;color:#fff!important}
+#sz-toolbar #sz-hide-tools:hover{background:#64748b!important}
+/* 折りたたみ時は⋮以外を確実に隠す（id詳細度の display:flex に勝たせる） */
+body.sz-tools-hidden #sz-toolbar>*{display:none!important}
+body.sz-tools-hidden #sz-toolbar>#sz-hide-tools{display:flex!important}
+</style>
+<script>
+(function(){
+  // 既存の右下フローティングボタン（✏️🔍🎨📝⋮）を1つの固定ツールバーに集約する
+  var IDS=['sz-toggle','sz-btn-search','sz-btn-filter','sz-btn-note'];
+  function dock(){
+    var host=document.querySelector('.tab-nav')||document.querySelector('.tab-content')||document.body;
+    var bar=document.getElementById('sz-toolbar');
+    if(!bar){bar=document.createElement('div');bar.id='sz-toolbar';}
+    if(bar.parentNode!==host) host.appendChild(bar); // #sz-toolbar は fixed なので親はどこでも可
+    IDS.forEach(function(id){var b=document.getElementById(id);if(b&&b.parentNode!==bar)bar.appendChild(b);});
+    var ht=document.getElementById('sz-hide-tools');
+    if(ht&&ht.parentNode!==bar)bar.appendChild(ht);
+  }
+  function run(){dock();setTimeout(dock,80);setTimeout(dock,300);} // 他scriptが後生成するボタンも取り込む
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
+</script>
+
+<!-- ===== 🖊 ペン（自由描画）機能 ===== -->
+<style>
+/* 描画レイヤー：ページ全体を覆う。既定は pointer-events なし（下の本文を邪魔しない） */
+#szp-layer{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:45;overflow:visible}
+#szp-layer.szp-on{pointer-events:auto;cursor:crosshair;touch-action:none}
+body.szp-hide #szp-layer{display:none}
+/* ペンのパレット（色・太さ・消しゴム・取消・全消し） */
+#szp-pal{position:fixed;top:38px;right:8px;background:#1e293b;border-radius:11px;padding:9px 10px;z-index:310;box-shadow:0 6px 22px rgba(0,0,0,.36);display:none;width:150px}
+#szp-pal.on{display:block}
+#szp-pal .szp-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+#szp-pal .szp-row:last-child{margin-bottom:0}
+#szp-pal .szp-c{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2.5px solid rgba(255,255,255,.2);transition:transform .12s,border-color .12s}
+#szp-pal .szp-c:hover{transform:scale(1.15)}
+#szp-pal .szp-c.sel{border-color:#fff;transform:scale(1.12)}
+#szp-pal .szp-w{width:30px;height:24px;border-radius:6px;background:#334155;cursor:pointer;display:flex;align-items:center;justify-content:center;border:2px solid transparent}
+#szp-pal .szp-w.sel{border-color:#fff;background:#475569}
+#szp-pal .szp-w span{display:block;background:#fff;border-radius:99px}
+#szp-pal .szp-act{flex:1;min-width:0;background:#334155;color:#e2e8f0;border:none;border-radius:6px;padding:5px 4px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit}
+#szp-pal .szp-act:hover{background:#475569}
+#szp-pal .szp-act.on{background:#dc2626;color:#fff}
+#szp-pal .szp-lbl{color:#94a3b8;font-size:.66rem;margin-bottom:4px;font-weight:700}
+</style>
+
+<div id="szp-pal">
+  <div class="szp-lbl">ペンの色</div>
+  <div class="szp-row" id="szp-colors"></div>
+  <div class="szp-lbl">太さ</div>
+  <div class="szp-row" id="szp-widths"></div>
+  <div class="szp-row">
+    <button type="button" class="szp-act" id="szp-eraser">🧹 消しゴム</button>
+  </div>
+  <div class="szp-row">
+    <button type="button" class="szp-act" id="szp-undo">↩ 取消</button>
+    <button type="button" class="szp-act" id="szp-clear">🗑 全消し</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var SVGNS='http://www.w3.org/2000/svg';
+  function fileKey(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);}
+  var PKEY='szP_'+fileKey();
+
+  /* タブ検知（inject と同じ流儀） */
+  var panels=[].slice.call(document.querySelectorAll('.tab-panel'));
+  if(!panels.length) panels=[].slice.call(document.querySelectorAll('.tab-content'));
+  var tabBtns=[].slice.call(document.querySelectorAll('.tab-nav .tab-btn'));
+  if(!tabBtns.length) tabBtns=[].slice.call(document.querySelectorAll('.tab-btn'));
+  var hasTabs=panels.length>0;
+  function currentTab(){if(!hasTabs)return 0;for(var i=0;i<panels.length;i++)if(panels[i].classList.contains('active'))return i;return 0;}
+
+  /* データ：{ tabIndex: [ {c:color,w:width,pts:[[x,y],...]} ] } */
+  var data={}; try{data=JSON.parse(localStorage.getItem(PKEY)||'{}');}catch(e){}
+  function strokesFor(t){ if(!data[t]) data[t]=[]; return data[t]; }
+  function save(){try{localStorage.setItem(PKEY,JSON.stringify(data));}catch(e){}}
+
+  /* 描画レイヤー（SVG） */
+  var layer=document.createElementNS(SVGNS,'svg');
+  layer.id='szp-layer';
+  document.body.appendChild(layer);
+  function sizeLayer(){
+    var h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight,document.documentElement.offsetHeight);
+    layer.setAttribute('height',h);
+    layer.style.height=h+'px';
+  }
+  window.addEventListener('resize',sizeLayer);
+
+  function pathD(pts){
+    if(!pts.length) return '';
+    if(pts.length===1){var p=pts[0];return 'M'+p[0]+' '+p[1]+' L'+(p[0]+0.1)+' '+p[1];}
+    var d='M'+pts[0][0]+' '+pts[0][1];
+    for(var i=1;i<pts.length;i++) d+=' L'+pts[i][0]+' '+pts[i][1];
+    return d;
+  }
+  function drawStroke(s){
+    var el=document.createElementNS(SVGNS,'path');
+    el.setAttribute('d',pathD(s.pts));
+    el.setAttribute('fill','none');
+    el.setAttribute('stroke',s.c);
+    el.setAttribute('stroke-width',s.w);
+    el.setAttribute('stroke-linecap','round');
+    el.setAttribute('stroke-linejoin','round');
+    layer.appendChild(el);
+    return el;
+  }
+  function render(){
+    while(layer.firstChild) layer.removeChild(layer.firstChild);
+    strokesFor(currentTab()).forEach(drawStroke);
+    sizeLayer();
+  }
+
+  /* タブ切替で再描画 */
+  tabBtns.forEach(function(b){ b.addEventListener('click',function(){ setTimeout(render,0); }); });
+
+  /* ---- 描画状態 ---- */
+  var penOn=false, eraseOn=false, curColor='#ef4444', curWidth=4;
+  var drawing=false, curPts=null, curEl=null;
+
+  function pagePt(e){
+    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
+    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
+    return [Math.round(e.clientX+sx),Math.round(e.clientY+sy)];
+  }
+  function eraseAt(pt){
+    var arr=strokesFor(currentTab()), th=Math.max(12,curWidth*2.2), removed=false;
+    for(var i=arr.length-1;i>=0;i--){
+      var pts=arr[i].pts;
+      for(var j=0;j<pts.length;j++){
+        var dx=pts[j][0]-pt[0], dy=pts[j][1]-pt[1];
+        if(dx*dx+dy*dy<=th*th){ arr.splice(i,1); removed=true; break; }
+      }
+    }
+    if(removed){ save(); render(); }
+  }
+
+  layer.addEventListener('pointerdown',function(e){
+    if(!penOn) return;
+    e.preventDefault();
+    layer.setPointerCapture&&layer.setPointerCapture(e.pointerId);
+    if(eraseOn){ drawing=true; eraseAt(pagePt(e)); return; }
+    drawing=true;
+    curPts=[pagePt(e)];
+    curEl=drawStroke({c:curColor,w:curWidth,pts:curPts});
+  });
+  layer.addEventListener('pointermove',function(e){
+    if(!penOn||!drawing) return;
+    e.preventDefault();
+    var pt=pagePt(e);
+    if(eraseOn){ eraseAt(pt); return; }
+    curPts.push(pt);
+    curEl.setAttribute('d',pathD(curPts));
+  });
+  function endStroke(){
+    if(!drawing) return;
+    drawing=false;
+    if(!eraseOn && curPts && curPts.length){
+      strokesFor(currentTab()).push({c:curColor,w:curWidth,pts:curPts});
+      save();
+    }
+    curPts=null; curEl=null;
+  }
+  layer.addEventListener('pointerup',endStroke);
+  layer.addEventListener('pointercancel',endStroke);
+  layer.addEventListener('pointerleave',endStroke);
+
+  /* ---- パレットUI ---- */
+  var pal=document.getElementById('szp-pal');
+  var COLORS=['#ef4444','#2563eb','#16a34a','#111827','#f59e0b','#db2777'];
+  var WIDTHS=[2,4,7];
+  var colWrap=document.getElementById('szp-colors');
+  COLORS.forEach(function(c){
+    var d=document.createElement('div'); d.className='szp-c'+(c===curColor?' sel':''); d.style.background=c; d.dataset.c=c;
+    d.addEventListener('click',function(){curColor=c;eraseOn=false;syncEraser();colWrap.querySelectorAll('.szp-c').forEach(function(x){x.classList.toggle('sel',x.dataset.c===c);});});
+    colWrap.appendChild(d);
+  });
+  var wWrap=document.getElementById('szp-widths');
+  WIDTHS.forEach(function(w){
+    var d=document.createElement('div'); d.className='szp-w'+(w===curWidth?' sel':''); d.dataset.w=w;
+    var bar=document.createElement('span'); bar.style.width='16px'; bar.style.height=w+'px'; d.appendChild(bar);
+    d.addEventListener('click',function(){curWidth=w;wWrap.querySelectorAll('.szp-w').forEach(function(x){x.classList.toggle('sel',+x.dataset.w===w);});});
+    wWrap.appendChild(d);
+  });
+  var eraserBtn=document.getElementById('szp-eraser');
+  function syncEraser(){ eraserBtn.classList.toggle('on',eraseOn); eraserBtn.textContent=eraseOn?'🧹 消しゴム ON':'🧹 消しゴム'; }
+  eraserBtn.addEventListener('click',function(){ eraseOn=!eraseOn; syncEraser(); });
+  document.getElementById('szp-undo').addEventListener('click',function(){
+    var arr=strokesFor(currentTab()); if(arr.length){ arr.pop(); save(); render(); }
+  });
+  document.getElementById('szp-clear').addEventListener('click',function(){
+    var arr=strokesFor(currentTab()); if(!arr.length) return;
+    if(confirm('このタブの落書きを全て消しますか？')){ data[currentTab()]=[]; save(); render(); }
+  });
+
+  /* ---- 🖊 トグルボタン（⋮ツールバーに同居） ---- */
+  function setPen(on){
+    penOn=on;
+    layer.classList.toggle('szp-on',on);
+    pal.classList.toggle('on',on);
+    var btn=document.getElementById('szp-btn');
+    if(btn) btn.classList.toggle('active',on);
+    if(on){ render(); }
+  }
+  function ensureBtn(){
+    var btn=document.getElementById('szp-btn');
+    if(!btn){
+      btn=document.createElement('button');
+      btn.id='szp-btn'; btn.type='button'; btn.className='sz-tool-btn'; btn.title='🖊 ペン（自由描画）ON/OFF';
+      btn.textContent='🖊';
+      btn.addEventListener('click',function(){ setPen(!penOn); });
+      btn.style.position='fixed'; btn.style.right='12px'; btn.style.bottom='232px'; btn.style.zIndex='201';
+      document.body.appendChild(btn);
+    }
+    // ⋮ツールバーが（後から）生成されたら、その中へ移動して同居させる
+    var bar=document.getElementById('sz-toolbar');
+    if(bar && btn.parentNode!==bar){
+      btn.style.position=''; btn.style.right=''; btn.style.bottom=''; btn.style.zIndex='';
+      bar.insertBefore(btn, bar.firstChild);
+    }
+  }
+  function boot(){ sizeLayer(); render(); ensureBtn(); setTimeout(ensureBtn,120); setTimeout(ensureBtn,400); setTimeout(function(){ensureBtn();sizeLayer();},800); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,0);});
+  else setTimeout(boot,0);
+})();
+</script>
+
+<!-- ===== qz hide-buttons v4 (full coverage: class-less inline boxes + <br> lines) =====
+     v4.1 追加: カード単位「まとめて隠す/出す」一括トグル＋中粒度「まとまり」(.fig/.vz-supplement内グループ)。
+     マーカー(__QZ_HIDE_V4__)は据置のため、既存ファイルは grep→置換で更新可。 -->
+<style>
+/* 非表示ボタン関連CSS（既存ファイルに定義があれば重複しても無害） */
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.84rem;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
+.fill-reveal-btn:hover{opacity:.85}
+.sec-hide-wrap{position:relative}
+.sec-hide-btn-row{text-align:right;margin:-2px 0 6px}
+.sec-hide-btn-row button{background:none;border:2px solid #cbd5e1;border-radius:50%;width:26px;height:26px;font-size:.85rem;cursor:pointer;color:#94a3b8;line-height:1;transition:all .18s;vertical-align:middle}
+.sec-hide-btn-row button:hover{border-color:#64748b;color:#475569;background:#f1f5f9}
+.sec-hidden-ph{text-align:right;padding:3px 0;font-size:.78rem;color:#94a3b8}
+.sec-hidden-label{color:#64748b;font-style:italic}
+.sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
+.sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+.hb-line{position:relative}
+/* v4.1: カード単位「まとめて隠す/出す」（カード見出しに同居） */
+.card-hide-all-btn{margin-left:8px;background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:7px;font-size:.72rem;font-weight:700;padding:3px 9px;cursor:pointer;font-family:inherit;line-height:1.2;white-space:nowrap;vertical-align:middle;}
+.card-hide-all-btn:hover{background:rgba(255,255,255,.38);}
+/* v4.1: 中粒度「まとまり」（図・解説ボックス内のグループ箱を一括非表示） */
+.group-hide-btn{position:absolute;top:0;right:22px;width:18px;height:18px;font-size:.62rem;line-height:1;padding:0;border:1.5px solid #c7d2fe;border-radius:5px;background:#eef2ff;color:#6366f1;cursor:pointer;z-index:7;}
+.group-hide-btn:hover{background:#e0e7ff;}
+.group-ph{display:inline-block;font-size:.68rem;color:#6366f1;border:1px dashed #c7d2fe;border-radius:5px;padding:1px 8px;margin:2px;cursor:pointer;background:#eef2ff;}
+</style>
+<script>
+/* qz-hide-buttons-v4 : 多重適用ガード（このブロックが既に走っていたら全パスを中止） */
+if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
+/* === qz-lock: card-reveal button auto-injection === */
+(function(){
+  function injectCardReveal(){
+    document.querySelectorAll('.fill-card').forEach(function(card){
+      var header=card.querySelector('.fill-header');
+      if(!header) return;
+      if(header.querySelector('.ls-card-reveal')) return;
+      if(card.querySelectorAll('.fill-blank').length===0) return;
+      var btn=document.createElement('button');
+      btn.className='ls-card-reveal fill-reveal-btn';
+      btn.textContent='👁 ここだけ表示';
+      btn.style.cssText='font-size:.7rem;padding:.2rem .6rem;margin:0 0 0 auto;background:rgba(255,255,255,.25);color:#fff;border:1px solid rgba(255,255,255,.5);';
+      btn.addEventListener('click',function(ev){
+        ev.stopPropagation();
+        var blanks=card.querySelectorAll('.fill-blank');
+        var allShown=Array.prototype.every.call(blanks,function(b){return b.classList.contains('show');});
+        blanks.forEach(function(b){if(allShown) b.classList.remove('show'); else b.classList.add('show');});
+        btn.textContent=allShown?'👁 ここだけ表示':'🙈 隠す';
+      });
+      header.appendChild(btn);
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',injectCardReveal);
+  else injectCardReveal();
+  window.addEventListener('load', injectCardReveal);
+})();
+
+/* === qz-lock: section-hide v3 (STEP A2 + FINE_SEL, no lowContrast) === */
+(function(){
+  // STEP A: h2.section-title 区切りで .hide-block 自動ラップ
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var children=Array.from(panel.children);
+    var sections=[];
+    var start=-1;
+    for(var i=0;i<children.length;i++){
+      var c=children[i];
+      if(c.matches&&c.matches('h2.section-title')){
+        if(start!==-1) sections.push([start,i-1]);
+        start=i;
+      }
+    }
+    if(start!==-1) sections.push([start,children.length-1]);
+    sections.forEach(function(sec){
+      var first=children[sec[0]];
+      if(!first||first.parentNode!==panel) return;
+      var wrap=document.createElement('div');
+      wrap.className='hide-block';
+      first.parentNode.insertBefore(wrap,first);
+      for(var j=sec[0];j<=sec[1];j++){
+        if(children[j]&&children[j].parentNode===panel) wrap.appendChild(children[j]);
+      }
+    });
+  });
+  // STEP A2: .card-body / .fill-body 内の <h3> 区切りで .hide-subblock 自動ラップ
+  document.querySelectorAll('.card-body, .fill-body').forEach(function(body){
+    var kids=Array.from(body.children);
+    var groups=[];var s=-1;
+    for(var i=0;i<kids.length;i++){
+      if(kids[i].tagName==='H3'){
+        if(s!==-1) groups.push([s,i-1]);
+        s=i;
+      }
+    }
+    if(s!==-1) groups.push([s,kids.length-1]);
+    groups.forEach(function(g){
+      var first=kids[g[0]];
+      if(!first||first.parentNode!==body) return;
+      var w=document.createElement('div');
+      w.className='hide-subblock';
+      first.parentNode.insertBefore(w,first);
+      for(var j=g[0];j<=g[1];j++){
+        if(kids[j]&&kids[j].parentNode===body) w.appendChild(kids[j]);
+      }
+    });
+  });
+  // STEP B: ○ボタン付与対象を収集
+  var FINE_SEL=['.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.factor-card','.vs-card','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
+  var MEDIUM_SEL=['.hide-block','.card','.diagram','.alert-tip','.alert-exam','.alert-danger',
+    '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet',
+    '.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.factor-card','.vs-card','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card',
+    '.vz-supplement','.goro-chip','.zu'].join(',');
+  var LS_KEY='sec-hide:'+(location.pathname.split('/').pop()||'page')+':v3';
+  function loadHidden(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(e){return{};}}
+  function saveHidden(obj){try{localStorage.setItem(LS_KEY,JSON.stringify(obj));}catch(e){}}
+  var targets=[];
+  var seen=new Set();
+  function addTarget(el){if(!seen.has(el)){seen.add(el);targets.push(el);}}
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    panel.querySelectorAll(MEDIUM_SEL).forEach(function(el){
+      if(el.parentNode&&el.parentNode.classList&&el.parentNode.classList.contains('sec-hide-wrap')) return;
+      if(el.closest('.card')&&!el.classList.contains('card')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.fill-card')&&!el.classList.contains('fill-card')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.keepit')&&!el.classList.contains('keepit')) return;
+      if(el.closest('.hide-subblock')&&!el.classList.contains('hide-subblock')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.flash-deck')&&!el.classList.contains('flash-deck')&&!el.classList.contains('flash-card')) return;
+      if(el.closest('.icon-deck')&&!el.classList.contains('icon-deck')) return;
+      if(el.closest('.chart-set')&&!el.classList.contains('chart-set')&&!el.matches('.chart-wrap,.chart-set-banner')) return;
+      if(el.closest('.table-wrap')&&!el.classList.contains('table-wrap')) return;
+      if(el.closest('.chart-wrap')&&!el.classList.contains('chart-wrap')) return;
+      if((el.classList.contains('vs-card')||el.classList.contains('factor-card'))&&el.closest('.fill-card')) return;
+      if(el.classList.contains('hide-subblock')){
+        var kids2=Array.from(el.children);
+        var nonFineSig=false;
+        for(var k=0;k<kids2.length;k++){
+          var ch=kids2[k];
+          if(ch.tagName==='H3') continue;
+          if(ch.matches&&ch.matches(FINE_SEL)) continue;
+          var t=(ch.textContent||'').trim();
+          if(t.length>0||(ch.querySelector&&ch.querySelector('table,img,svg'))){nonFineSig=true;break;}
+        }
+        var fineCount=el.querySelectorAll(FINE_SEL).length;
+        if(!nonFineSig && fineCount>=1) return;
+      }
+      addTarget(el);
+    });
+  });
+  document.querySelectorAll('.hide-block').forEach(function(block){
+    Array.from(block.children).forEach(function(child){
+      var tag=child.tagName;
+      if(tag==='H1'||tag==='H2'||tag==='H3'||tag==='H4'||tag==='H5') return;
+      if(child.matches&&child.matches(MEDIUM_SEL)) return;
+      if(child.closest('.card')&&!child.classList.contains('card')) return;
+      if(child.closest('.keepit')&&!child.classList.contains('keepit')) return;
+      if(tag==='P'&&(child.textContent||'').trim().length<40) return;
+      if(tag!=='DIV'&&tag!=='TABLE'&&tag!=='P'&&tag!=='UL'&&tag!=='OL') return;
+      addTarget(child);
+    });
+  });
+  function stableId(el,fallback){
+    var h2=el.querySelector('h2.section-title');
+    var h3=el.querySelector(':scope > h3');
+    if(h3) return (el.classList[0]||'')+':h3:'+(h3.textContent||'').replace(/\s+/g,'').slice(0,40)+':'+fallback;
+    var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
+    var qNum=el.querySelector('.quiz-num');
+    var fh=el.querySelector('.fill-header, .card-header');
+    var tag=el.classList[0]||el.tagName.toLowerCase();
+    var txt='';
+    if(h2&&el.classList.contains('hide-block')) txt=h2.textContent;
+    else if(qNum){var qq=el.querySelector('.quiz-question');txt='q'+qNum.textContent+(qq?qq.textContent:'');}
+    else if(fh) txt=fh.textContent;
+    else if(h4) txt=h4.textContent;
+    else if(dt) txt=dt.textContent;
+    else txt=el.textContent;
+    txt=(txt||'').replace(/\s+/g,'').slice(0,40);
+    return tag+':'+txt+':'+fallback;
+  }
+  var hidden=loadHidden();
+  targets.forEach(function(el,idx){
+    var id=stableId(el,idx);
+    var wrap=document.createElement('div');
+    wrap.className='sec-hide-wrap';
+    el.parentNode.insertBefore(wrap,el);
+    wrap.appendChild(el);
+    var btnRow=document.createElement('div');
+    btnRow.className='sec-hide-btn-row';
+    var btn=document.createElement('button');
+    btn.textContent='○';
+    btn.title='この項目を非表示にする';
+    function getLabel(){
+      var qNum=el.querySelector('.quiz-num'),qQ=el.querySelector('.quiz-question');
+      var h2=el.querySelector('h2.section-title');
+      var h3=el.querySelector(':scope > h3');
+      var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
+      var fh=el.querySelector('.fill-header, .card-header');
+      var fc=el.querySelector(':scope > .fc-num');
+      if(h3) return h3.textContent.trim().slice(0,40);
+      if(qNum&&qQ) return qNum.textContent.trim()+' '+qQ.textContent.trim().slice(0,30)+'…';
+      if(h2&&el.classList.contains('hide-block')) return h2.textContent.trim().slice(0,40);
+      if(fh) return fh.textContent.trim().slice(0,30);
+      if(h4) return h4.textContent.trim().slice(0,30);
+      if(el.classList.contains('factor-card')&&fc) return fc.textContent.trim().slice(0,30);
+      if(dt) return dt.textContent.trim().slice(0,30);
+      return el.textContent.trim().slice(0,30)+'…';
+    }
+    function doHide(label){
+      el.style.display='none';btnRow.style.display='none';
+      var ph=document.createElement('div');
+      ph.className='sec-hidden-ph';
+      ph.innerHTML='（非表示：<span class="sec-hidden-label"></span>） <button>再表示 ○</button>';
+      ph.querySelector('.sec-hidden-label').textContent=label;
+      ph.querySelector('button').addEventListener('click',function(){
+        el.style.display='';btnRow.style.display='';ph.remove();
+        var obj=loadHidden();delete obj[id];saveHidden(obj);
+      });
+      wrap.appendChild(ph);
+    }
+    btn.addEventListener('click',function(){
+      var label=getLabel();
+      doHide(label);
+      var obj=loadHidden();obj[id]=1;saveHidden(obj);
+    });
+    btnRow.appendChild(btn);
+    wrap.appendChild(btnRow);
+    if(hidden[id]) doHide(getLabel());
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head,.fill-header'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); return h&&(h.textContent.trim().startsWith('予習｜')||h.textContent.trim().startsWith('🔰')); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    if(tr.querySelector('.row-hide-btn')) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+  // keepit li 行単位
+  document.querySelectorAll('.keepit li').forEach(function(el,i){
+    var key='kl:'+(el.textContent||'').replace(/\s+/g,'').slice(0,30)+'|'+i;
+    el.style.position='relative'; el.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:2px;transform:translateY(-50%);float:none;margin:0;'; btn.title='この項目を非表示'; btn.textContent='○';
+    el.appendChild(btn);
+    function mkLiPh(e2,k2){
+      var ph=document.createElement('li'); ph.className='row-hidden-ph';
+      ph.innerHTML='— <button>表示</button>';
+      ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+      return ph;
+    }
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkLiPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkLiPh(el,key),el.nextSibling); }
+  });
+})();
+// === 最細粒度 非表示（全タブの表行・リスト項目・試験ポイント）・localStorage保存 ===
+(function(){
+  var KEY='mz_fine_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); var t=h?h.textContent.trim():''; return t.indexOf('予習')===0||t.indexOf('🔰')===0; }
+  function mkPh(e2,k2,tag){
+    var ph=document.createElement(tag); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length||1;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // (1) 全タブの表データ行（fill-body以外も対象・ヘッダ行は除外）
+  document.querySelectorAll('.tab-panel table tbody tr').forEach(function(tr,i){
+    if(tr.classList.contains('tr-hidden-ph')) return;
+    if(isPreview(tr)) return;
+    if(tr.querySelector('.row-hide-btn')) return;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var key='ftr:'+i+'|'+(tr.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var last=tds[tds.length-1]; last.style.position='relative';
+    if(!/padding-right/.test(last.getAttribute('style')||'')) last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この行を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+  // (2) 全タブのリスト項目（keepit等の既処理liは除外）
+  document.querySelectorAll('.tab-panel li').forEach(function(li,i){
+    if(li.classList.contains('row-hidden-ph')||li.closest('.row-hidden-ph')) return;
+    if(li.querySelector(':scope > .row-hide-btn')) return;
+    if(isPreview(li)) return;
+    if((li.textContent||'').trim().length<2) return;
+    var key='fli:'+i+'|'+(li.textContent||'').replace(/\s+/g,'').slice(0,28);
+    li.style.position='relative'; li.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:.15rem;right:2px;float:none;margin:0;';
+    li.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); li.style.display='none'; st[key]=1; save(); li.parentNode.insertBefore(mkPh(li,key,'li'),li.nextSibling); });
+    if(st[key]){ li.style.display='none'; li.parentNode.insertBefore(mkPh(li,key,'li'),li.nextSibling); }
+  });
+  // (3) 試験ポイント・引っかけポイント（.exam-pt / .trap-pt 各ブロック）
+  document.querySelectorAll('.tab-panel .exam-pt, .tab-panel .trap-pt').forEach(function(el,i){
+    if(el.querySelector(':scope > .row-hide-btn')) return;
+    var key='fep:'+i+'|'+(el.textContent||'').replace(/\s+/g,'').slice(0,28);
+    el.style.position='relative'; el.style.paddingRight='30px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この試験ポイントを非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:50%;right:6px;transform:translateY(-50%);float:none;margin:0;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,'div'),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,'div'),el.nextSibling); }
+  });
+})();
+// === 最細粒度プラス v2：個別カード（factor/vs/goro）＋本文段落 単位の非表示 ===
+(function(){
+  var KEY='mz_fine2_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function inAnim(el){ return !!el.closest('.sa,.hosho-anim,.goro-scene'); }
+  function handled(el){
+    if(el.querySelector(':scope > .row-hide-btn')) return true;
+    var p=el.parentNode;
+    if(p&&p.classList&&p.classList.contains('sec-hide-wrap')) return true;
+    if(el.closest('.row-hidden-ph')) return true;
+    return false;
+  }
+  function mkPh(el,key,tag){
+    var ph=document.createElement(tag||'div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ el.style.display=''; ph.remove(); st[key]=0; save(); });
+    return ph;
+  }
+  function bind(el,key,phTag){
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:4px;right:4px;float:none;margin:0;z-index:3;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); }
+  }
+  // (1) 個別カード：factor-card / vs-card / goro-card
+  document.querySelectorAll('.tab-panel .factor-card, .tab-panel .vs-card, .tab-panel .goro-card').forEach(function(el,i){
+    if(handled(el)||inAnim(el)) return;
+    var key='c2:'+i+'|'+(el.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var cs=window.getComputedStyle(el); if(cs.position==='static') el.style.position='relative';
+    el.style.paddingRight=(parseInt(cs.paddingRight,10)||10)+18+'px';
+    bind(el,key,'div');
+  });
+  // (2) 本文段落：tab-panel 内の <p>（アニメ・カード内既処理・表内・短文は除外）
+  document.querySelectorAll('.tab-panel p').forEach(function(p,i){
+    if(inAnim(p)) return;
+    if(p.classList.contains('row-hidden-ph')||p.closest('.row-hidden-ph')) return;
+    if(p.querySelector(':scope > .row-hide-btn')) return;
+    if(p.closest('.factor-card,.vs-card,.goro-card,.sec-hidden-ph')) return;
+    if(p.closest('td,th,li')) return;
+    if((p.textContent||'').trim().length<25) return;
+    var key='p2:'+i+'|'+(p.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var cs=window.getComputedStyle(p); if(cs.position==='static') p.style.position='relative';
+    p.style.paddingRight=(parseInt(cs.paddingRight,10)||0)+20+'px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この段落を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:2px;right:2px;float:none;margin:0;';
+    p.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); p.style.display='none'; st[key]=1; save(); p.parentNode.insertBefore(mkPh(p,key,'p'),p.nextSibling); });
+    if(st[key]){ p.style.display='none'; p.parentNode.insertBefore(mkPh(p,key,'p'),p.nextSibling); }
+  });
+})();
+// === 最細粒度プラス v3：クラスレスのインライン視覚ボックス & <br>区切り箇条書きも非表示対象に ===
+(function(){
+  var KEY='mz_fine3_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function inAnim(el){ return !!el.closest('.sa,.hosho-anim,.goro-scene'); }
+  function inPh(el){ return !!el.closest('.row-hidden-ph,.sec-hidden-ph,.tr-hidden-ph'); }
+  function hasBtn(el){ return !!el.querySelector(':scope > .row-hide-btn'); }
+  function wrappedBySec(el){ var p=el.parentNode; return !!(p&&p.classList&&p.classList.contains('sec-hide-wrap')); }
+  function mkPh(el,key,tag){
+    var ph=document.createElement(tag||'div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ el.style.display=''; ph.remove(); st[key]=0; save(); });
+    return ph;
+  }
+  function addBtn(el,key,phTag,style){
+    var cs=window.getComputedStyle(el);
+    if(cs.position==='static') el.style.position='relative';
+    var pr=parseInt(cs.paddingRight,10)||0; if(pr<20) el.style.paddingRight=(pr+20)+'px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText=style||'position:absolute;top:4px;right:4px;float:none;margin:0;z-index:3;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); }
+  }
+  // (A) <br>区切りの箇条書きを行ごとに分割し、各行へ非表示ボタンを付与
+  function splitBrLines(box,baseKey){
+    if(box.getAttribute('data-brsplit')) return false;
+    var nodes=Array.from(box.childNodes);
+    if(!nodes.some(function(n){return n.nodeName==='BR';})) return false;
+    var lines=[],cur=[];
+    nodes.forEach(function(n){ if(n.nodeName==='BR'){ lines.push(cur); cur=[]; } else cur.push(n); });
+    lines.push(cur);
+    var meaningful=lines.filter(function(l){ return l.some(function(n){return (n.textContent||'').trim().length>0;}); });
+    if(meaningful.length<2) return false;
+    box.setAttribute('data-brsplit','1');
+    box.textContent='';
+    lines.forEach(function(l,idx){
+      var hasText=l.some(function(n){return (n.textContent||'').trim().length>0;});
+      var line=document.createElement('div'); line.className='hb-line'; line.style.cssText='position:relative;padding-right:22px;';
+      l.forEach(function(n){ line.appendChild(n); });
+      box.appendChild(line);
+      if(!hasText) return;
+      var key='brl:'+baseKey+':'+idx+'|'+(line.textContent||'').replace(/\s+/g,'').slice(0,22);
+      var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この行を非表示'; btn.textContent='○';
+      btn.style.cssText='position:absolute;top:1px;right:0;float:none;margin:0;';
+      line.appendChild(btn);
+      btn.addEventListener('click',function(e){ e.stopPropagation(); line.style.display='none'; st[key]=1; save(); line.parentNode.insertBefore(mkPh(line,key,'div'),line.nextSibling); });
+      if(st[key]){ line.style.display='none'; line.parentNode.insertBefore(mkPh(line,key,'div'),line.nextSibling); }
+    });
+    return true;
+  }
+  // (B) tab-panel 内の div / .hl を走査。視覚ボックス（inline border/background）or .hl を対象化
+  var idx=0;
+  document.querySelectorAll('.tab-panel div, .tab-panel .hl').forEach(function(el){
+    if(inAnim(el)||inPh(el)||hasBtn(el)||wrappedBySec(el)) return;
+    if(el.classList.contains('hb-line')||el.classList.contains('row-hide-btn')||el.classList.contains('sec-hide-btn-row')) return;
+    var isHl=el.classList.contains('hl');
+    var sty=el.getAttribute('style')||'';
+    var isBox=/border|background/.test(sty);
+    if(!isHl&&!isBox) return;
+    var txt=(el.textContent||'').trim();
+    if(txt.length<6) return;
+    var key=(isHl?'hlb:':'box:')+(idx++)+'|'+txt.replace(/\s+/g,'').slice(0,26);
+    if((isHl||txt.indexOf('・')>=0)&&splitBrLines(el,key)) return;
+    addBtn(el,key,'div');
+  });
+})();
+// === v4.1 中粒度「まとまり」：図・解説ボックス(.fig/.vz-supplement)内のグループ箱を非表示（細かい○の一段上） ===
+(function(){
+  var KEY='mz_group_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function mkPh(el,key){
+    var p=document.createElement('span'); p.className='group-ph';
+    p.textContent='▢ まとまりを表示'; p.title='再表示';
+    p.addEventListener('click',function(){ el.style.display=''; p.remove(); st[key]=0; save(); });
+    return p;
+  }
+  var idx=0;
+  document.querySelectorAll('.fig, .vz-supplement').forEach(function(box){
+    [].slice.call(box.children).forEach(function(el){
+      if(el.nodeType!==1) return;
+      var tn=el.tagName;
+      if(tn==='BUTTON'||tn==='SCRIPT'||tn==='STYLE'||tn==='TABLE') return;
+      if(el.classList.contains('vz-label')||el.classList.contains('group-ph')||el.classList.contains('row-hidden-ph')||el.classList.contains('tr-hidden-ph')||el.classList.contains('sec-hidden-ph')||el.classList.contains('sec-hide-btn-row')) return;
+      if(el.classList.contains('sec-hide-wrap')||el.classList.contains('hide-block')||el.classList.contains('hide-subblock')) return;
+      if(el.matches('.fig,.vz-supplement,.fill-card')) return;
+      if(el.querySelector(':scope > .row-hide-btn')||el.querySelector(':scope > .group-hide-btn')) return;
+      if(!el.querySelector(':scope > div, :scope > ul, :scope > ol')) return;
+      if(!(el.textContent||'').trim()) return;
+      if(el.dataset.groupDone) return;
+      el.dataset.groupDone='1';
+      var key='gp:'+(idx++);
+      var cs=window.getComputedStyle(el); if(cs.position==='static') el.style.position='relative';
+      var btn=document.createElement('button');
+      btn.className='group-hide-btn'; btn.type='button'; btn.textContent='▢'; btn.title='このまとまりを非表示';
+      btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+      el.appendChild(btn);
+      if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+    });
+  });
+})();
+// === v4.1 カード単位「まとめて隠す/出す」：カード内の行ボタンを一括操作（最後に実行＝行ボタン生成後） ===
+(function(){
+  function visible(el){ return el.getClientRects().length>0; }
+  function isPreview(card){ var h=card.querySelector('.fill-head,.fill-header'); var t=h?h.textContent.trim():''; return t.indexOf('予習')===0||t.indexOf('🔰')===0; }
+  function sync(card,btn){
+    var rowBtns=[].slice.call(card.querySelectorAll('.row-hide-btn'));
+    btn.textContent=rowBtns.some(visible)?'👁 まとめて隠す':'👁 まとめて出す';
+  }
+  document.querySelectorAll('.fill-card').forEach(function(card){
+    if(card.closest('[id^="pre_"]')) return;
+    if(isPreview(card)) return;
+    var head=card.querySelector('.fill-head,.fill-header'); if(!head) return;
+    if(head.querySelector('.card-hide-all-btn')) return;
+    if(!card.querySelector('.row-hide-btn')) return;
+    var btn=document.createElement('button');
+    btn.type='button'; btn.className='card-hide-all-btn';
+    head.appendChild(btn);
+    sync(card,btn);
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var vis=[].slice.call(card.querySelectorAll('.row-hide-btn')).filter(visible);
+      if(vis.length){ vis.forEach(function(b){ b.click(); }); }
+      else { [].slice.call(card.querySelectorAll('.row-hidden-ph button,.tr-hidden-ph button')).forEach(function(b){ b.click(); }); }
+      sync(card,btn);
+    });
+  });
+})();
+} /* end __QZ_HIDE_V4__ guard */
+</script>
+
+</body>
+</html>

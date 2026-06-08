@@ -1670,6 +1670,9 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
 mark.sz-ul{background:none;color:inherit;border-bottom:2.5px solid #ef4444;padding-bottom:1px;cursor:pointer}
 mark.sz-hl{background:#fef08a;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
 mark.sz-cm{background:#bfdbfe;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
+/* 消去（文字を背景色と同化させ削除したように見せる・クリックで復元） */
+mark.sz-erase{background:transparent;color:transparent;border:none;padding:0;cursor:pointer;user-select:none}
+mark.sz-erase.show{color:inherit;background:rgba(239,68,68,.07);border-radius:2px;}
 mark.sz-ul:hover,mark.sz-hl:hover,mark.sz-cm:hover{filter:brightness(.88)}
 .sz-cm-icon{font-style:normal;font-size:.65rem;color:#1d4ed8;margin-left:1px;vertical-align:super;cursor:pointer;user-select:none}
 #sz-cmt-pop{position:fixed;display:none;flex-direction:column;gap:7px;background:#fff;border:1.5px solid #3b82f6;border-radius:10px;padding:11px 13px;width:236px;box-shadow:0 4px 22px rgba(0,0,0,.18);z-index:10000;font-size:.82rem}
@@ -1701,6 +1704,7 @@ mark.sz-ul:hover,mark.sz-hl:hover,mark.sz-cm:hover{filter:brightness(.88)}
 body.sz-annot-off mark.sz-ul{border-bottom:none !important}
 body.sz-annot-off mark.sz-hl,body.sz-annot-off mark[data-hlc]{background:none !important}
 body.sz-annot-off mark.sz-cm{background:none !important}
+body.sz-annot-off mark.sz-erase{color:inherit !important;background:none !important}
 body.sz-annot-off .sz-cm-icon{display:none}
 body.sz-annot-off mark[data-aid]:hover{filter:none;outline:none}
 .sz-toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:6px 15px;border-radius:20px;font-size:.78rem;z-index:99999;pointer-events:none;opacity:0;animation:szFI .25s forwards}
@@ -1768,6 +1772,7 @@ body.sz-annot-off .sz-note{display:none !important}
   <button type="button" title="赤アンダーライン" onclick="szAnnot('ul')"><span style="text-decoration:underline;text-decoration-color:#ef4444;text-underline-offset:2px">A</span> 赤線</button>
   <button type="button" title="蛍光ハイライト（色選択）" onclick="szShowHlPicker(this)">🌟 蛍光</button>
   <button type="button" title="コメントを追加" onclick="szAnnot('cm')">💬 メモ</button>
+  <button type="button" title="文字を消去（削除したように見せる・クリックで復元）" onclick="szAnnot('erase')">✂️ 消去</button>
   <div class="sz-sep"></div>
   <button type="button" onclick="szHideBar()" style="color:#94a3b8;font-size:.72rem;padding:4px 7px">✕</button>
 </div>
@@ -1960,7 +1965,10 @@ body.sz-annot-off .sz-note{display:none !important}
     var sel=window.getSelection();
     if(!sel||sel.isCollapsed||!sel.toString().trim()){
       var ann=e.target.closest?e.target.closest('mark[data-aid]'):null;
-      if(ann){
+      if(ann&&ann.classList.contains('sz-erase')){
+        szHideBar();szHideCmt();hideTipNow();szHideDel();
+        ann.classList.toggle('show');
+      } else if(ann){
         szHideBar();szHideCmt();hideTipNow();
         showDelPop(ann,e);
       } else if(!e.target.closest('#sz-del-pop')){
@@ -2071,8 +2079,10 @@ body.sz-annot-off .sz-note{display:none !important}
         var eo=range.startContainer.nodeType===3
           ?range.startContainer.nodeValue.length:range.startOffset;
         r2.setEnd(range.startContainer,eo);
+        var trunc=r2.toString();
+        var truncOcc=trunc?szOccOf(occRoot,range.startContainer,range.startOffset,trunc):0;
         r2.surroundContents(mark);ok=true;
-        selText=r2.toString();ctxAfter='';
+        selText=trunc;occ=truncOcc;ctxAfter='';
       }catch(e2){showToast('⚠ タグをまたぐ選択には使えません');return;}
     }
     if(!ok) return;
