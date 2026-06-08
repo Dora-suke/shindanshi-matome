@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<script>
+(function(){
+  var cur='hk_'+location.pathname;
+  if(!localStorage.getItem(cur)){
+    var orig='hk_'+location.pathname.replace(/_m\.html$/,'.html');
+    var d=localStorage.getItem(orig);
+    if(d) localStorage.setItem(cur,d);
+  }
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>デリバティブまとめ - 中小企業診断士まとめ</title>
@@ -1670,10 +1680,15 @@ th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid #eee;vertical
 mark.sz-ul{background:none;color:inherit;border-bottom:2.5px solid #ef4444;padding-bottom:1px;cursor:pointer}
 mark.sz-hl{background:#fef08a;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
 mark.sz-cm{background:#bfdbfe;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
+/* 選択 → 穴埋め化（クリックで答え表示／再クリックで隠す・トグル） */
+mark.sz-blank{background:#e0e7ff;color:transparent;border-bottom:2px dashed #6366f1;border-radius:3px;padding:0 3px;cursor:pointer;user-select:none}
+mark.sz-blank.show{color:#4338ca;background:#eef2ff;border-bottom-style:solid}
+/* 既存の空欄を長押しで「空欄解除」した状態：普通の文章として表示 */
+.fill-blank.sz-unblanked,.blank.sz-unblanked{background:none !important;color:inherit !important;border:none !important;border-bottom:none !important;cursor:auto !important;user-select:auto !important;padding:0 !important;font-weight:inherit !important}
 /* 消去（文字を背景色と同化させ削除したように見せる・クリックで復元） */
 mark.sz-erase{background:transparent;color:transparent;border:none;padding:0;cursor:pointer;user-select:none}
 mark.sz-erase.show{color:inherit;background:rgba(239,68,68,.07);border-radius:2px;}
-mark.sz-ul:hover,mark.sz-hl:hover,mark.sz-cm:hover{filter:brightness(.88)}
+mark.sz-ul:hover,mark.sz-hl:hover,mark.sz-cm:hover,mark.sz-blank:hover{filter:brightness(.88)}
 .sz-cm-icon{font-style:normal;font-size:.65rem;color:#1d4ed8;margin-left:1px;vertical-align:super;cursor:pointer;user-select:none}
 #sz-cmt-pop{position:fixed;display:none;flex-direction:column;gap:7px;background:#fff;border:1.5px solid #3b82f6;border-radius:10px;padding:11px 13px;width:236px;box-shadow:0 4px 22px rgba(0,0,0,.18);z-index:10000;font-size:.82rem}
 #sz-cmt-pop.on{display:flex}
@@ -1684,14 +1699,14 @@ mark.sz-ul:hover,mark.sz-hl:hover,mark.sz-cm:hover{filter:brightness(.88)}
 #sz-cmt-pop .sz-pop-row button{border:none;border-radius:6px;padding:4px 12px;font-size:.79rem;font-weight:700;cursor:pointer;font-family:inherit}
 .sz-sv{background:#3b82f6;color:#fff}.sz-sv:hover{background:#2563eb}
 .sz-cl{background:#f1f5f9;color:#475569}.sz-cl:hover{background:#e2e8f0}
-#sz-del-pop{position:fixed;display:none;background:#1e293b;border-radius:8px;padding:4px 5px;z-index:10000;gap:3px;align-items:center;box-shadow:0 3px 14px rgba(0,0,0,.3)}
+#sz-del-pop{position:fixed;display:none;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:5px 6px;z-index:10000;gap:4px;align-items:center;box-shadow:0 8px 24px rgba(15,23,42,.16)}
 #sz-del-pop.on{display:flex}
-#sz-del-pop button{background:none;border:none;cursor:pointer;padding:4px 9px;border-radius:5px;font-size:.79rem;font-weight:700;font-family:inherit;white-space:nowrap}
-#sz-del-pop .sz-d-edit{color:#93c5fd}
-#sz-del-pop .sz-d-edit:hover{background:rgba(255,255,255,.12)}
-#sz-del-pop .sz-d-del{color:#fca5a5}
-#sz-del-pop .sz-d-del:hover{background:rgba(255,255,255,.12)}
-#sz-del-pop .sz-sep{width:1px;height:16px;background:rgba(255,255,255,.2);margin:0 1px}
+#sz-del-pop button{background:none;border:none;cursor:pointer;padding:5px 12px;border-radius:8px;font-size:.79rem;font-weight:700;font-family:inherit;white-space:nowrap;transition:background .12s,color .12s}
+#sz-del-pop .sz-d-edit{color:#4f46e5}
+#sz-del-pop .sz-d-edit:hover{background:#eef2ff}
+#sz-del-pop .sz-d-del{color:#4338ca}
+#sz-del-pop .sz-d-del:hover{background:#eef2ff;color:#3730a3}
+#sz-del-pop .sz-sep{width:1px;height:16px;background:#e2e8f0;margin:0 1px}
 #sz-toggle{position:fixed;right:12px;bottom:56px;background:#475569;color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.28);z-index:201;display:flex;align-items:center;justify-content:center;transition:background .2s;padding:0}
 #sz-toggle:hover{background:#1e293b}
 #sz-toggle.active{background:#3b82f6}
@@ -1704,6 +1719,7 @@ mark.sz-ul:hover,mark.sz-hl:hover,mark.sz-cm:hover{filter:brightness(.88)}
 body.sz-annot-off mark.sz-ul{border-bottom:none !important}
 body.sz-annot-off mark.sz-hl,body.sz-annot-off mark[data-hlc]{background:none !important}
 body.sz-annot-off mark.sz-cm{background:none !important}
+body.sz-annot-off mark.sz-blank{color:inherit !important;background:none !important;border-bottom:none !important}
 body.sz-annot-off mark.sz-erase{color:inherit !important;background:none !important}
 body.sz-annot-off .sz-cm-icon{display:none}
 body.sz-annot-off mark[data-aid]:hover{filter:none;outline:none}
@@ -1722,12 +1738,6 @@ body.sz-annot-off mark[data-aid]:hover{filter:none;outline:none}
 #sz-btn-search{bottom:100px}
 #sz-btn-filter{bottom:144px}
 #sz-btn-note{bottom:188px}
-/* ---- 👁 全表示（最下段・右下）。既存の全表示ボタンがあればそれをアイコン化して流用 ---- */
-#sz-show-all,.sz-show-all-skin{position:fixed !important;right:12px !important;left:auto !important;bottom:12px !important;z-index:201 !important;width:38px !important;height:38px !important;min-width:0 !important;border-radius:50% !important;padding:0 !important;background:#1a365d !important;color:#fff !important;border:none !important;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);display:flex !important;align-items:center;justify-content:center;font-family:inherit}
-#sz-show-all:hover,.sz-show-all-skin:hover{background:#2a4a7f !important}
-#sz-show-all{font-size:1rem}
-.sz-show-all-skin{font-size:0 !important}
-.sz-show-all-skin::before{content:"⚙️";font-size:1rem;line-height:1}
 /* ---- 検索ドロワー（タブ横断） ---- */
 #sz-search{position:fixed;top:0;right:0;width:340px;max-width:92vw;height:100%;background:#fff;box-shadow:-3px 0 20px rgba(0,0,0,.2);z-index:10050;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s}
 #sz-search.on{transform:translateX(0)}
@@ -1772,7 +1782,9 @@ body.sz-annot-off .sz-note{display:none !important}
   <button type="button" title="赤アンダーライン" onclick="szAnnot('ul')"><span style="text-decoration:underline;text-decoration-color:#ef4444;text-underline-offset:2px">A</span> 赤線</button>
   <button type="button" title="蛍光ハイライト（色選択）" onclick="szShowHlPicker(this)">🌟 蛍光</button>
   <button type="button" title="コメントを追加" onclick="szAnnot('cm')">💬 メモ</button>
+  <button type="button" title="選択範囲を穴埋め問題にする（クリックで答え表示・長押しで元に戻す）" onclick="szAnnot('blank')">❓ 穴埋め</button>
   <button type="button" title="文字を消去（削除したように見せる・クリックで復元）" onclick="szAnnot('erase')">✂️ 消去</button>
+  <button type="button" title="選択範囲内の既存の穴埋をまとめて解除／再選択で復活" onclick="szUnblankSelection()">🚫 穴埋解除</button>
   <div class="sz-sep"></div>
   <button type="button" onclick="szHideBar()" style="color:#94a3b8;font-size:.72rem;padding:4px 7px">✕</button>
 </div>
@@ -1798,7 +1810,7 @@ body.sz-annot-off .sz-note{display:none !important}
 <div id="sz-del-pop">
   <button type="button" class="sz-d-edit" id="sz-del-edit-btn">✏️ 編集</button>
   <div class="sz-sep"></div>
-  <button type="button" class="sz-d-del" onclick="szDelAnnot()">🗑 削除</button>
+  <button type="button" class="sz-d-del" onclick="szDelAnnot()">↩ 元に戻す</button>
 </div>
 
 <button id="sz-toggle" class="active" title="✏️ メモ機能 ON/OFF（OFFにすると選択してもポップアップが出ない・読むだけ）" onclick="szToggleAnnot()">✏️</button>
@@ -1856,13 +1868,103 @@ body.sz-annot-off .sz-note{display:none !important}
   var tipBody=document.getElementById('sz-tip-body');
   var tipEditBtn=document.getElementById('sz-tip-edit-btn');
   var hlPicker=document.getElementById('sz-hl-picker');
-  var savedRange=null, cmtCtx=null, tipTimer=null, tipTargetAid=null;
+  var savedRange=null, cmtCtx=null, tipTimer=null, tipTargetAid=null, delTarget=null;
+  /* モバイル：バーのボタンタップで選択が消えないよう mousedown をキャンセル */
+  bar.addEventListener('mousedown',function(e){e.preventDefault();});
+
+  /* ---- 既存の.fill-blank「空欄解除」状態の保存・復元 ---- */
+  var FBKEY='szFB_'+szFileKey();
+  var fbUn={}; try{fbUn=JSON.parse(localStorage.getItem(FBKEY)||'{}');}catch(e){}
+  function fbSave(){try{localStorage.setItem(FBKEY,JSON.stringify(fbUn));}catch(e){}}
+  function fbInit(){
+    [].slice.call(document.querySelectorAll('.fill-blank,.blank')).filter(function(el){return !(el.closest&&el.closest('[id^="pre_"]'));}).forEach(function(el,i){
+      el.setAttribute('data-fbidx',i);
+      if(fbUn[i]) el.classList.add('sz-unblanked');
+    });
+  }
+  // 既存の.fill-blankのクリック（答え表示トグル）を、長押し直後／空欄解除中は抑止する（元ノートのリスナーを編集せずキャプチャ段で割り込む）
+  document.addEventListener('click',function(e){
+    var fb=e.target.closest?e.target.closest('.fill-blank,.blank'):null;
+    if(!fb) return;
+    if(window.szSuppressFbClick){window.szSuppressFbClick=false;e.stopImmediatePropagation();e.preventDefault();return;}
+    if(fb.classList.contains('sz-unblanked')){e.stopImmediatePropagation();e.preventDefault();}
+  },true);
 
   function uid(){return 'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
 
   function panelOf(el){
     var p=el.closest?el.closest('.tab-panel,.tab-content'):null;
     return p&&p.id?p.id:'body';
+  }
+
+  /* ---- 出現位置（occurrence index）で復元先を一意化 ----
+     同一フレーズが複数あると「文脈付き検索」でも別の箇所に復元され得る。
+     root配下のテキストを文書順に連結（marks内の文字も含め、sz-cm-icon と pre_ 配下は除外）
+     し「root内で何番目の出現か」を保存・復元する。marks の有無で連結文字列は変わらないため
+     復元順に依存せず安定する。 */
+  function szTextStream(root){
+    var nodes=[],full='';
+    var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(n){
+        if(n.parentElement&&n.parentElement.closest('.sz-cm-icon')) return NodeFilter.FILTER_REJECT;
+        if(n.parentElement&&n.parentElement.closest('[id^="pre_"]')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var n; while((n=w.nextNode())){ nodes.push({node:n,start:full.length}); full+=n.nodeValue; }
+    return {nodes:nodes,full:full};
+  }
+  function szLocate(stream,gpos){
+    for(var i=0;i<stream.nodes.length;i++){
+      var s=stream.nodes[i],len=s.node.nodeValue.length;
+      if(gpos>=s.start&&gpos<=s.start+len) return {node:s.node,offset:gpos-s.start};
+    }
+    return null;
+  }
+  function szOccOf(root,node,offset,selText){
+    if(!selText) return 0;
+    var stream=szTextStream(root),gstart=-1;
+    for(var i=0;i<stream.nodes.length;i++){ if(stream.nodes[i].node===node){ gstart=stream.nodes[i].start+offset; break; } }
+    if(gstart<0) return 0;
+    var occ=0,from=0,idx;
+    while((idx=stream.full.indexOf(selText,from))!==-1){
+      if(idx===gstart) break;
+      if(idx<gstart) occ++;
+      from=idx+selText.length;
+    }
+    return occ;
+  }
+  function szFindByOcc(root,selText,occ){
+    if(!selText) return null;
+    var stream=szTextStream(root),seen=0,from=0,idx;
+    while((idx=stream.full.indexOf(selText,from))!==-1){
+      if(seen===occ){
+        var a=szLocate(stream,idx),b=szLocate(stream,idx+selText.length);
+        if(a&&b&&a.node===b.node) return {node:a.node,offset:a.offset,end:b.offset};
+        return null;
+      }
+      seen++; from=idx+selText.length;
+    }
+    return null;
+  }
+  function szFindByContext(root,ann,scoped){
+    var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(n){
+        if(n.parentElement&&n.parentElement.closest('.sz-cm-icon')) return NodeFilter.FILTER_REJECT;
+        if(n.parentElement&&n.parentElement.closest('[id^="pre_"]')) return NodeFilter.FILTER_REJECT;
+        if(!scoped&&n.parentElement&&n.parentElement.closest('mark[data-aid]')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var node;
+    while((node=walker.nextNode())){
+      var txt=node.nodeValue,idx=-1;
+      if(ann.ctxBefore||ann.ctxAfter){ var fi=txt.indexOf(ann.ctxBefore+ann.selText+ann.ctxAfter); if(fi!==-1) idx=fi+ann.ctxBefore.length; }
+      if(idx===-1) idx=txt.indexOf(ann.selText);
+      if(idx===-1) continue;
+      return {node:node,offset:idx,end:idx+ann.selText.length};
+    }
+    return null;
   }
 
   /* ---- ツールバー位置 ---- */
@@ -1885,11 +1987,21 @@ body.sz-annot-off .sz-note{display:none !important}
   window.szHideCmt=function(){cmtPop.classList.remove('on');cmtCtx=null;};
 
   /* ---- 削除ポップ ---- */
-  function showDelPop(mark,e){
-    delPop.dataset.aid=mark.dataset.aid;
+  function showDelPop(target,e){
+    delTarget=target;
+    var delBtn=delPop.querySelector('.sz-d-del');
+    if(target.classList.contains('fill-blank')||target.classList.contains('blank')){
+      // 既存の空欄：解除/復活トグル
+      delPop.dataset.aid='';
+      delEditBtn.style.display='none';
+      if(delBtn) delBtn.textContent=target.classList.contains('sz-unblanked')?'↩ 空欄に戻す':'🚫 空欄をやめる';
+    } else {
+      delPop.dataset.aid=target.dataset.aid||'';
+      delEditBtn.style.display=target.classList.contains('sz-cm')?'':'none';
+      if(delBtn) delBtn.textContent='↩ 元に戻す';
+    }
     delPop.style.left=Math.max(4,e.clientX-18)+'px';
     delPop.style.top=Math.max(4,e.clientY-48)+'px';
-    delEditBtn.style.display=mark.classList.contains('sz-cm')?'':'none';
     delPop.classList.add('on');
   }
   window.szHideDel=function(){delPop.classList.remove('on');};
@@ -1957,15 +2069,44 @@ body.sz-annot-off .sz-note{display:none !important}
     showCmtPop(mark.getBoundingClientRect());
   });
 
+  /* ---- 穴埋めの長押し → 「元に戻す／空欄をやめる」メニュー ---- */
+  var szLP=null, szLPfired=false, szLPx=0, szLPy=0;
+  document.addEventListener('pointerdown',function(e){
+    if(document.body.classList.contains('sz-annot-off')) return;
+    window.szSuppressFbClick=false;
+    var bl=e.target.closest?e.target.closest('mark.sz-blank,.fill-blank,.blank'):null;
+    if(!bl) return;
+    szLPfired=false;
+    szLPx=e.clientX; szLPy=e.clientY;
+    szLPcancel(); // 念のため既存タイマーを掃除
+    szLP=setTimeout(function(){
+      szLP=null; szLPfired=true;
+      window.szSuppressFbClick=true; // 既存空欄の長押し直後クリックを抑止
+      szHideBar();szHideCmt();hideTipNow();
+      // 空欄の少し右上に離して表示
+      showDelPop(bl,{clientX:szLPx+46,clientY:szLPy-14});
+    },450);
+  });
+  function szLPcancel(){ if(szLP){clearTimeout(szLP);szLP=null;} }
+  // 微動ではキャンセルしない：10px超の移動でのみ中断（タッチ/トラックパッドの揺れ対策）
+  document.addEventListener('pointermove',function(e){
+    if(!szLP) return;
+    if(Math.abs(e.clientX-szLPx)>10||Math.abs(e.clientY-szLPy)>10) szLPcancel();
+  });
+  document.addEventListener('pointerup',szLPcancel);
+  document.addEventListener('pointercancel',szLPcancel);
+
   /* ---- mouseup: 選択検知 ---- */
   document.addEventListener('mouseup',function(e){
     if(document.body.classList.contains('sz-annot-off')) return; // メモOFF：選択してもツールバーを出さない（読むだけモード）
-    if(e.target.closest('#sz-bar,#sz-cmt-pop,#sz-del-pop,#sz-toggle,#sz-cmt-tip,#sz-hl-picker,#sz-toolbar,#sz-show-all,.sz-show-all-skin,#sz-hide-tools')) return;
+    if(e.target.closest('#sz-bar,#sz-cmt-pop,#sz-del-pop,#sz-toggle,#sz-cmt-tip,#sz-hl-picker,#sz-toolbar,#sz-hide-tools')) return;
     szHideHlPicker();
     var sel=window.getSelection();
     if(!sel||sel.isCollapsed||!sel.toString().trim()){
+      if(szLPfired){szLPfired=false;return;} // 長押し直後：メニューを閉じない・トグルしない
       var ann=e.target.closest?e.target.closest('mark[data-aid]'):null;
-      if(ann&&ann.classList.contains('sz-erase')){
+      if(ann&&(ann.classList.contains('sz-blank')||ann.classList.contains('sz-erase'))){
+        // 穴埋め／消去：クリックで表示⇔非表示をトグル（長押しで「元に戻す」メニュー）
         szHideBar();szHideCmt();hideTipNow();szHideDel();
         ann.classList.toggle('show');
       } else if(ann){
@@ -1979,6 +2120,23 @@ body.sz-annot-off .sz-note{display:none !important}
     szHideDel();szHideCmt();
     savedRange=sel.getRangeAt(0).cloneRange();
     showBar(savedRange.getBoundingClientRect());
+  });
+
+  /* ---- touchend: モバイル選択検知（mouseup はタッチデバイスで発火しないため） ---- */
+  document.addEventListener('touchend',function(e){
+    if(document.body.classList.contains('sz-annot-off')) return;
+    if(e.target.closest('#sz-bar,#sz-cmt-pop,#sz-del-pop,#sz-toggle,#sz-cmt-tip,#sz-hl-picker,#sz-toolbar,#sz-hide-tools')) return;
+    setTimeout(function(){
+      var sel=window.getSelection();
+      if(!sel||sel.isCollapsed||!sel.toString().trim()){
+        if(!szLPfired){szHideBar();szHideCmt();szHideDel();}
+        szLPfired=false;
+        return;
+      }
+      szHideDel();szHideCmt();
+      savedRange=sel.getRangeAt(0).cloneRange();
+      showBar(savedRange.getBoundingClientRect());
+    },80);
   });
 
   /* ---- 編集ボタン（削除ポップから） ---- */
@@ -2008,6 +2166,30 @@ body.sz-annot-off .sz-note{display:none !important}
     window.getSelection().removeAllRanges();
   };
 
+  /* ---- 選択範囲内の既存穴埋を一括解除／復活 ---- */
+  window.szUnblankSelection=function(){
+    if(!savedRange) return;
+    szHideBar();
+    var range=savedRange;
+    var blanks=Array.prototype.slice.call(document.querySelectorAll('.fill-blank,.blank')).filter(function(el){return !(el.closest&&el.closest('[id^="pre_"]'));});
+    var hit=blanks.filter(function(el){ try{return range.intersectsNode(el);}catch(e){return false;} });
+    if(!hit.length){ showToast('選択範囲に穴埋がありません'); window.getSelection().removeAllRanges(); return; }
+    var anyBlanked=hit.some(function(el){return !el.classList.contains('sz-unblanked');});
+    hit.forEach(function(el){
+      var idx=el.getAttribute('data-fbidx');
+      if(anyBlanked){
+        el.classList.add('sz-unblanked'); el.classList.remove('show');
+        if(idx!=null) fbUn[idx]=1;
+      } else {
+        el.classList.remove('sz-unblanked');
+        if(idx!=null) delete fbUn[idx];
+      }
+    });
+    fbSave();
+    showToast(anyBlanked?('🚫 '+hit.length+'個の穴埋を解除'):('↩ '+hit.length+'個を穴埋に戻す'));
+    window.getSelection().removeAllRanges();
+  };
+
   /* ---- コメント保存 ---- */
   window.szSaveCmt=function(){
     var txt=cmtTxt.value.trim();
@@ -2031,6 +2213,19 @@ body.sz-annot-off .sz-note{display:none !important}
 
   /* ---- 削除 ---- */
   window.szDelAnnot=function(){
+    // 既存の.fill-blank：空欄解除⇔空欄に戻すをトグル（保存）
+    if(delTarget&&(delTarget.classList.contains('fill-blank')||delTarget.classList.contains('blank'))){
+      var idx=delTarget.getAttribute('data-fbidx');
+      if(delTarget.classList.contains('sz-unblanked')){
+        delTarget.classList.remove('sz-unblanked');
+        if(idx!=null) delete fbUn[idx];
+      } else {
+        delTarget.classList.add('sz-unblanked');
+        delTarget.classList.remove('show');
+        if(idx!=null) fbUn[idx]=1;
+      }
+      fbSave(); szHideDel(); delTarget=null; return;
+    }
     var aid=delPop.dataset.aid;
     if(!aid) return;
     var mark=document.querySelector('mark[data-aid="'+aid+'"]');
@@ -2063,6 +2258,9 @@ body.sz-annot-off .sz-note{display:none !important}
     var panelId=panelOf(range.commonAncestorContainer.nodeType===1
       ?range.commonAncestorContainer
       :range.commonAncestorContainer.parentElement);
+    // 出現位置インデックス（root内で何番目の selText か）を記録 → 復元先を一意化
+    var occRoot=encMark?encMark:(panelId==='body'?document.body:(document.getElementById(panelId)||document.body));
+    var occ=szOccOf(occRoot,range.startContainer,range.startOffset,selText);
 
     var mark=document.createElement('mark');
     mark.className='sz-'+type;
@@ -2088,7 +2286,7 @@ body.sz-annot-off .sz-note{display:none !important}
     if(!ok) return;
 
     if(type==='cm'&&comment) addCmtIcon(mark,comment);
-    db.push({uid:id,panelId:panelId,parentAid:parentAid,selText:selText,ctxBefore:ctxBefore,ctxAfter:ctxAfter,type:type,comment:comment,color:color||''});
+    db.push({uid:id,panelId:panelId,parentAid:parentAid,selText:selText,ctxBefore:ctxBefore,ctxAfter:ctxAfter,occ:occ,type:type,comment:comment,color:color||''});
     save();
   }
 
@@ -2110,38 +2308,24 @@ body.sz-annot-off .sz-note{display:none !important}
     }
     if(!root) root=ann.panelId==='body'?document.body:document.getElementById(ann.panelId);
     if(!root) return false;
-    var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
-      acceptNode:function(n){
-        if(n.parentElement&&n.parentElement.closest('.sz-cm-icon')) return NodeFilter.FILTER_REJECT;
-        if(!scoped&&n.parentElement&&n.parentElement.closest('mark[data-aid]')) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-    var node;
-    while((node=walker.nextNode())){
-      var txt=node.nodeValue;
-      var idx=-1;
-      if(ann.ctxBefore||ann.ctxAfter){
-        var fi=txt.indexOf(ann.ctxBefore+ann.selText+ann.ctxAfter);
-        if(fi!==-1) idx=fi+ann.ctxBefore.length;
-      }
-      if(idx===-1) idx=txt.indexOf(ann.selText);
-      if(idx===-1) continue;
-      var range=document.createRange();
-      range.setStart(node,idx);
-      range.setEnd(node,idx+ann.selText.length);
-      var mark=document.createElement('mark');
-      mark.className='sz-'+ann.type;
-      mark.dataset.aid=ann.uid;
-      if(ann.comment) mark.dataset.comment=ann.comment;
-      if(ann.color){ mark.style.background=ann.color; mark.dataset.hlc=ann.color; }
-      try{
-        range.surroundContents(mark);
-        if(ann.type==='cm'&&ann.comment) addCmtIcon(mark,ann.comment);
-        return true;
-      }catch(e){continue;}
-    }
-    return false;
+    // ① 出現位置インデックスで一意に特定（新方式）。無ければ ② 文脈付き検索（旧データ用）。
+    var loc=null;
+    if(typeof ann.occ==='number') loc=szFindByOcc(root,ann.selText,ann.occ);
+    if(!loc) loc=szFindByContext(root,ann,scoped);
+    if(!loc) return false;
+    var range=document.createRange();
+    range.setStart(loc.node,loc.offset);
+    range.setEnd(loc.node,loc.end);
+    var mark=document.createElement('mark');
+    mark.className='sz-'+ann.type;
+    mark.dataset.aid=ann.uid;
+    if(ann.comment) mark.dataset.comment=ann.comment;
+    if(ann.color){ mark.style.background=ann.color; mark.dataset.hlc=ann.color; }
+    try{
+      range.surroundContents(mark);
+      if(ann.type==='cm'&&ann.comment) addCmtIcon(mark,ann.comment);
+      return true;
+    }catch(e){return false;}
   }
 
   /* ---- 注釈の表示/非表示トグル（テキストはそのまま） ---- */
@@ -2168,6 +2352,34 @@ body.sz-annot-off .sz-note{display:none !important}
     setTimeout(function(){t.remove();},2400);
   }
 
+  /* ---- タブパネルに安定 id を付与 ----
+     .tab-panel / .tab-content に id が無いと panelOf() が 'body' に落ち、注釈がタブに紐づかない。
+     その結果、同一語句が複数タブに出るノートでは、復元が別タブの最初の一致へ吸われ
+     「作ったタブで空欄が消える」。連番 id を振ってタブ単位に紐づける（既存 id は尊重）。 */
+  (function(){
+    var ps=document.querySelectorAll('.tab-panel');
+    if(!ps.length) ps=document.querySelectorAll('.tab-content');
+    [].slice.call(ps).forEach(function(p,i){ if(!p.id) p.id='szpanel'+i; });
+  })();
+
+  /* ---- 予習（複製プレビュー）カードを自動で pre_ 扱いに ----
+     確認システム苦手復習ノート等は読込時に各タブ先頭へ全 .fill-card を cloneNode で複製し
+     「予習｜…」見出しを付ける。id が無いと同一テキストが2か所に出現し、自作穴埋め等が
+     リロード時に複製側へ復元されて本物が消えて見える。複製側に pre_ id を付与して
+     既存の [id^="pre_"] 除外（fbInit / restore / szUnblankSelection）を効かせる。 */
+  (function(){
+    var seq=0;
+    [].slice.call(document.querySelectorAll('.fill-card')).forEach(function(c){
+      var h=c.querySelector('.fill-head');
+      if(!h) return;
+      if(!/^予習\s*[｜|]/.test((h.textContent||'').trim())) return;
+      if(c.closest('[id^="pre_"]')) return;          // 既に pre_ 配下なら不要
+      if(c.id && c.id.indexOf('pre_')===0) return;   // 既に pre_ id
+      c.id='pre_yoshu_'+(seq++);
+    });
+  })();
+
+  fbInit();
   restoreAll();
 })();
 </script>
@@ -2387,48 +2599,13 @@ body.sz-annot-off .sz-note{display:none !important}
 })();
 </script>
 
-<!-- ===== 👁 全表示（最下段・右下／全ファイル共通） ===== -->
-<script>
-(function(){
-  'use strict';
-  function init(){
-    // 既存の「全表示」系ボタン（qz-lock の .obj-reset 等）があれば、アイコン化して流用する
-    var existing=document.querySelector('.obj-reset');
-    if(!existing){
-      existing=Array.prototype.slice.call(document.querySelectorAll('button')).filter(function(b){
-        return /全表示/.test(b.textContent||'');   // 「全て表示」(=てを含む) は対象外
-      })[0]||null;
-    }
-    if(existing){
-      existing.classList.add('sz-show-all-skin');
-      if(!existing.title) existing.title='全表示';
-      return;
-    }
-    // 無ければ自前の👁ボタンを作成：穴埋め(.fill-blank)を全タブ一括表示
-    if(document.getElementById('sz-show-all')) return;
-    var btn=document.createElement('button');
-    btn.id='sz-show-all'; btn.type='button'; btn.textContent='⚙️';
-    btn.title='全表示（穴埋めを全て表示）';
-    btn.addEventListener('click',function(){
-      document.querySelectorAll('.fill-blank').forEach(function(el){el.classList.add('show');});
-    });
-    document.body.appendChild(btn);
-  }
-  // 他スクリプトが DOMContentLoaded でボタンを生成する場合に備え、マクロタスクで後追い実行
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,0);});
-  else setTimeout(init,0);
-})();
-</script>
-
 <!-- ===== 🛠 右下ツール一括 表示/非表示（ヘッダー右端トグル） ===== -->
 <style>
-/* 右下フローティングボタン群（👁 / ✏️ / 🔍 / 🎨 / 📝）をまとめて隠す */
+/* 右下フローティングボタン群（✏️ / 🔍 / 🎨 / 📝）をまとめて隠す */
 body.sz-tools-hidden #sz-toggle,
 body.sz-tools-hidden #sz-btn-search,
 body.sz-tools-hidden #sz-btn-filter,
-body.sz-tools-hidden #sz-btn-note,
-body.sz-tools-hidden #sz-show-all,
-body.sz-tools-hidden .sz-show-all-skin{display:none !important}
+body.sz-tools-hidden #sz-btn-note{display:none !important}
 /* ヘッダー右1/3を透明クリック領域にしたトグル（⋮アイコンのみ右端表示） */
 #sz-hide-tools{position:absolute;top:0;right:0;width:33.333%;height:100%;z-index:60;background:transparent;border:none;cursor:pointer;padding:4px 12px 0 0;display:flex;align-items:flex-start;justify-content:flex-end;font-size:1.25rem;font-weight:700;line-height:1;color:#94a3b8;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:color .15s}
 #sz-hide-tools:hover{color:#475569}
@@ -2446,7 +2623,7 @@ body.sz-tools-hidden .sz-show-all-skin{display:none !important}
     if(btn){
       btn.classList.toggle('off',hidden);
       btn.textContent='⋮';
-      btn.title=hidden?'右下のツールボタンを表示する':'右下のツールボタン（⚙️✏️🔍🎨📝）をまとめて隠す';
+      btn.title=hidden?'ツールを開く（✏️🔍🎨📝）':'ツール（✏️🔍🎨📝）を閉じて⋮だけにする';
     }
     if(hidden){
       // 開きっぱなしのパネルも一緒に閉じる
@@ -2481,36 +2658,250 @@ body.sz-tools-hidden .sz-show-all-skin{display:none !important}
   else setTimeout(init,0);
 })();
 </script>
-<!-- ▼ メモツールボタンをタブバー右上に常時表示（sticky追従） ▼ -->
+
+<!-- ▼ メモツールボタンを右上の「⋮」に集約（既定で折りたたみ・タップで展開・独立した固定の丸） ▼ -->
 <style>
-/* タブバーには予約スペースも背景も足さない（元のまま）。⋮は独立した固定の丸ボタンにする */
-/* 折りたたみ時：ツールバー枠は当たり判定なし→⋮の丸の中だけ反応 */
+/* ⋮ほかツールは独立した固定の丸ボタン。タブバーには予約スペースも背景も足さない（タブ非変形・白い箱なし） */
 #sz-toolbar{position:fixed;top:6px;right:8px;display:flex;flex-wrap:wrap;justify-content:flex-end;align-content:flex-start;gap:5px;width:92px;box-sizing:border-box;z-index:300;pointer-events:none}
-/* 展開時も白いパネルは出さない。ボタンの丸だけが並ぶ（枠の透明部分はクリックを透過しタブを邪魔しない） */
+/* 枠の透明部分は当たり判定なし→丸の中だけ反応。各ボタンは23pxの丸に統一 */
 #sz-toolbar>*{position:static!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;margin:0!important;width:23px!important;height:23px!important;min-width:0!important;border-radius:50%!important;flex:0 0 auto!important;padding:0!important;display:flex!important;align-items:center;justify-content:center;pointer-events:auto!important;box-shadow:0 1px 4px rgba(0,0,0,.25)!important}
-#sz-toolbar #sz-show-all,#sz-toolbar .sz-show-all-skin,#sz-toolbar #sz-hide-tools{background:#94a3b8!important;color:#fff!important}
-#sz-toolbar #sz-show-all:hover,#sz-toolbar .sz-show-all-skin:hover,#sz-toolbar #sz-hide-tools:hover{background:#64748b!important}
+/* ⋮トグルは薄いスレートで統一 */
+#sz-toolbar #sz-hide-tools{background:#94a3b8!important;color:#fff!important}
+#sz-toolbar #sz-hide-tools:hover{background:#64748b!important}
 /* 折りたたみ時は⋮以外を確実に隠す（id詳細度の display:flex に勝たせる） */
 body.sz-tools-hidden #sz-toolbar>*{display:none!important}
 body.sz-tools-hidden #sz-toolbar>#sz-hide-tools{display:flex!important}
 </style>
 <script>
 (function(){
+  // 既存の右下フローティングボタン（✏️🔍🎨📝⋮）を1つの固定ツールバーに集約する
   var IDS=['sz-toggle','sz-btn-search','sz-btn-filter','sz-btn-note'];
   function dock(){
-    var nav=document.querySelector('.tab-nav'); if(!nav) return;
+    var host=document.querySelector('.tab-nav')||document.querySelector('.tab-content')||document.body;
     var bar=document.getElementById('sz-toolbar');
     if(!bar){bar=document.createElement('div');bar.id='sz-toolbar';}
-    if(bar.parentNode!==nav) nav.appendChild(bar);
+    if(bar.parentNode!==host) host.appendChild(bar); // #sz-toolbar は fixed なので親はどこでも可
     IDS.forEach(function(id){var b=document.getElementById(id);if(b&&b.parentNode!==bar)bar.appendChild(b);});
-    var sa=document.getElementById('sz-show-all')||document.querySelector('.sz-show-all-skin');
-    if(sa&&sa.parentNode!==bar)bar.appendChild(sa);
     var ht=document.getElementById('sz-hide-tools');
     if(ht&&ht.parentNode!==bar)bar.appendChild(ht);
   }
-  function run(){dock();setTimeout(dock,80);setTimeout(dock,300);}
+  function run(){dock();setTimeout(dock,80);setTimeout(dock,300);} // 他scriptが後生成するボタンも取り込む
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
 })();
 </script>
+
+<!-- ===== 🖊 ペン（自由描画）機能 ===== -->
+<style>
+/* 描画レイヤー：ページ全体を覆う。既定は pointer-events なし（下の本文を邪魔しない） */
+#szp-layer{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:45;overflow:visible}
+#szp-layer.szp-on{pointer-events:auto;cursor:crosshair;touch-action:none}
+body.szp-hide #szp-layer{display:none}
+/* ペンのパレット（色・太さ・消しゴム・取消・全消し） */
+#szp-pal{position:fixed;top:38px;right:8px;background:#1e293b;border-radius:11px;padding:9px 10px;z-index:310;box-shadow:0 6px 22px rgba(0,0,0,.36);display:none;width:150px}
+#szp-pal.on{display:block}
+#szp-pal .szp-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+#szp-pal .szp-row:last-child{margin-bottom:0}
+#szp-pal .szp-c{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2.5px solid rgba(255,255,255,.2);transition:transform .12s,border-color .12s}
+#szp-pal .szp-c:hover{transform:scale(1.15)}
+#szp-pal .szp-c.sel{border-color:#fff;transform:scale(1.12)}
+#szp-pal .szp-w{width:30px;height:24px;border-radius:6px;background:#334155;cursor:pointer;display:flex;align-items:center;justify-content:center;border:2px solid transparent}
+#szp-pal .szp-w.sel{border-color:#fff;background:#475569}
+#szp-pal .szp-w span{display:block;background:#fff;border-radius:99px}
+#szp-pal .szp-act{flex:1;min-width:0;background:#334155;color:#e2e8f0;border:none;border-radius:6px;padding:5px 4px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit}
+#szp-pal .szp-act:hover{background:#475569}
+#szp-pal .szp-act.on{background:#dc2626;color:#fff}
+#szp-pal .szp-lbl{color:#94a3b8;font-size:.66rem;margin-bottom:4px;font-weight:700}
+</style>
+
+<div id="szp-pal">
+  <div class="szp-lbl">ペンの色</div>
+  <div class="szp-row" id="szp-colors"></div>
+  <div class="szp-lbl">太さ</div>
+  <div class="szp-row" id="szp-widths"></div>
+  <div class="szp-row">
+    <button type="button" class="szp-act" id="szp-eraser">🧹 消しゴム</button>
+  </div>
+  <div class="szp-row">
+    <button type="button" class="szp-act" id="szp-undo">↩ 取消</button>
+    <button type="button" class="szp-act" id="szp-clear">🗑 全消し</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var SVGNS='http://www.w3.org/2000/svg';
+  function fileKey(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);}
+  var PKEY='szP_'+fileKey();
+
+  /* タブ検知（inject と同じ流儀） */
+  var panels=[].slice.call(document.querySelectorAll('.tab-panel'));
+  if(!panels.length) panels=[].slice.call(document.querySelectorAll('.tab-content'));
+  var tabBtns=[].slice.call(document.querySelectorAll('.tab-nav .tab-btn'));
+  if(!tabBtns.length) tabBtns=[].slice.call(document.querySelectorAll('.tab-btn'));
+  var hasTabs=panels.length>0;
+  function currentTab(){if(!hasTabs)return 0;for(var i=0;i<panels.length;i++)if(panels[i].classList.contains('active'))return i;return 0;}
+
+  /* データ：{ tabIndex: [ {c:color,w:width,pts:[[x,y],...]} ] } */
+  var data={}; try{data=JSON.parse(localStorage.getItem(PKEY)||'{}');}catch(e){}
+  function strokesFor(t){ if(!data[t]) data[t]=[]; return data[t]; }
+  function save(){try{localStorage.setItem(PKEY,JSON.stringify(data));}catch(e){}}
+
+  /* 描画レイヤー（SVG） */
+  var layer=document.createElementNS(SVGNS,'svg');
+  layer.id='szp-layer';
+  document.body.appendChild(layer);
+  function sizeLayer(){
+    var h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight,document.documentElement.offsetHeight);
+    layer.setAttribute('height',h);
+    layer.style.height=h+'px';
+  }
+  window.addEventListener('resize',sizeLayer);
+
+  function pathD(pts){
+    if(!pts.length) return '';
+    if(pts.length===1){var p=pts[0];return 'M'+p[0]+' '+p[1]+' L'+(p[0]+0.1)+' '+p[1];}
+    var d='M'+pts[0][0]+' '+pts[0][1];
+    for(var i=1;i<pts.length;i++) d+=' L'+pts[i][0]+' '+pts[i][1];
+    return d;
+  }
+  function drawStroke(s){
+    var el=document.createElementNS(SVGNS,'path');
+    el.setAttribute('d',pathD(s.pts));
+    el.setAttribute('fill','none');
+    el.setAttribute('stroke',s.c);
+    el.setAttribute('stroke-width',s.w);
+    el.setAttribute('stroke-linecap','round');
+    el.setAttribute('stroke-linejoin','round');
+    layer.appendChild(el);
+    return el;
+  }
+  function render(){
+    while(layer.firstChild) layer.removeChild(layer.firstChild);
+    strokesFor(currentTab()).forEach(drawStroke);
+    sizeLayer();
+  }
+
+  /* タブ切替で再描画 */
+  tabBtns.forEach(function(b){ b.addEventListener('click',function(){ setTimeout(render,0); }); });
+
+  /* ---- 描画状態 ---- */
+  var penOn=false, eraseOn=false, curColor='#ef4444', curWidth=4;
+  var drawing=false, curPts=null, curEl=null;
+
+  function pagePt(e){
+    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
+    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
+    return [Math.round(e.clientX+sx),Math.round(e.clientY+sy)];
+  }
+  function eraseAt(pt){
+    var arr=strokesFor(currentTab()), th=Math.max(12,curWidth*2.2), removed=false;
+    for(var i=arr.length-1;i>=0;i--){
+      var pts=arr[i].pts;
+      for(var j=0;j<pts.length;j++){
+        var dx=pts[j][0]-pt[0], dy=pts[j][1]-pt[1];
+        if(dx*dx+dy*dy<=th*th){ arr.splice(i,1); removed=true; break; }
+      }
+    }
+    if(removed){ save(); render(); }
+  }
+
+  layer.addEventListener('pointerdown',function(e){
+    if(!penOn) return;
+    e.preventDefault();
+    layer.setPointerCapture&&layer.setPointerCapture(e.pointerId);
+    if(eraseOn){ drawing=true; eraseAt(pagePt(e)); return; }
+    drawing=true;
+    curPts=[pagePt(e)];
+    curEl=drawStroke({c:curColor,w:curWidth,pts:curPts});
+  });
+  layer.addEventListener('pointermove',function(e){
+    if(!penOn||!drawing) return;
+    e.preventDefault();
+    var pt=pagePt(e);
+    if(eraseOn){ eraseAt(pt); return; }
+    curPts.push(pt);
+    curEl.setAttribute('d',pathD(curPts));
+  });
+  function endStroke(){
+    if(!drawing) return;
+    drawing=false;
+    if(!eraseOn && curPts && curPts.length){
+      strokesFor(currentTab()).push({c:curColor,w:curWidth,pts:curPts});
+      save();
+    }
+    curPts=null; curEl=null;
+  }
+  layer.addEventListener('pointerup',endStroke);
+  layer.addEventListener('pointercancel',endStroke);
+  layer.addEventListener('pointerleave',endStroke);
+
+  /* ---- パレットUI ---- */
+  var pal=document.getElementById('szp-pal');
+  var COLORS=['#ef4444','#2563eb','#16a34a','#111827','#f59e0b','#db2777'];
+  var WIDTHS=[2,4,7];
+  var colWrap=document.getElementById('szp-colors');
+  COLORS.forEach(function(c){
+    var d=document.createElement('div'); d.className='szp-c'+(c===curColor?' sel':''); d.style.background=c; d.dataset.c=c;
+    d.addEventListener('click',function(){curColor=c;eraseOn=false;syncEraser();colWrap.querySelectorAll('.szp-c').forEach(function(x){x.classList.toggle('sel',x.dataset.c===c);});});
+    colWrap.appendChild(d);
+  });
+  var wWrap=document.getElementById('szp-widths');
+  WIDTHS.forEach(function(w){
+    var d=document.createElement('div'); d.className='szp-w'+(w===curWidth?' sel':''); d.dataset.w=w;
+    var bar=document.createElement('span'); bar.style.width='16px'; bar.style.height=w+'px'; d.appendChild(bar);
+    d.addEventListener('click',function(){curWidth=w;wWrap.querySelectorAll('.szp-w').forEach(function(x){x.classList.toggle('sel',+x.dataset.w===w);});});
+    wWrap.appendChild(d);
+  });
+  var eraserBtn=document.getElementById('szp-eraser');
+  function syncEraser(){ eraserBtn.classList.toggle('on',eraseOn); eraserBtn.textContent=eraseOn?'🧹 消しゴム ON':'🧹 消しゴム'; }
+  eraserBtn.addEventListener('click',function(){ eraseOn=!eraseOn; syncEraser(); });
+  document.getElementById('szp-undo').addEventListener('click',function(){
+    var arr=strokesFor(currentTab()); if(arr.length){ arr.pop(); save(); render(); }
+  });
+  document.getElementById('szp-clear').addEventListener('click',function(){
+    var arr=strokesFor(currentTab()); if(!arr.length) return;
+    if(confirm('このタブの落書きを全て消しますか？')){ data[currentTab()]=[]; save(); render(); }
+  });
+
+  /* ---- 🖊 トグルボタン（⋮ツールバーに同居） ---- */
+  /* ペンON中は touchmove を {passive:false} でキャプチャしてスクロールを防止 */
+  function szpPreventScroll(e){ if(penOn) e.preventDefault(); }
+  function setPen(on){
+    penOn=on;
+    layer.classList.toggle('szp-on',on);
+    pal.classList.toggle('on',on);
+    var btn=document.getElementById('szp-btn');
+    if(btn) btn.classList.toggle('active',on);
+    if(on){
+      render();
+      document.addEventListener('touchmove',szpPreventScroll,{passive:false});
+    } else {
+      document.removeEventListener('touchmove',szpPreventScroll,{passive:false});
+    }
+  }
+  function ensureBtn(){
+    var btn=document.getElementById('szp-btn');
+    if(!btn){
+      btn=document.createElement('button');
+      btn.id='szp-btn'; btn.type='button'; btn.className='sz-tool-btn'; btn.title='🖊 ペン（自由描画）ON/OFF';
+      btn.textContent='🖊';
+      btn.addEventListener('click',function(){ setPen(!penOn); });
+      btn.style.position='fixed'; btn.style.right='12px'; btn.style.bottom='232px'; btn.style.zIndex='201';
+      document.body.appendChild(btn);
+    }
+    // ⋮ツールバーが（後から）生成されたら、その中へ移動して同居させる
+    var bar=document.getElementById('sz-toolbar');
+    if(bar && btn.parentNode!==bar){
+      btn.style.position=''; btn.style.right=''; btn.style.bottom=''; btn.style.zIndex='';
+      bar.insertBefore(btn, bar.firstChild);
+    }
+  }
+  function boot(){ sizeLayer(); render(); ensureBtn(); setTimeout(ensureBtn,120); setTimeout(ensureBtn,400); setTimeout(function(){ensureBtn();sizeLayer();},800); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,0);});
+  else setTimeout(boot,0);
+})();
+</script>
+
 </body>
 </html>
