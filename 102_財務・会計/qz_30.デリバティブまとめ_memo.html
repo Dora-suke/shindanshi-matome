@@ -2758,29 +2758,56 @@ body.szp-hide #szp-layer{display:none}
   }
   window.addEventListener('resize',sizeLayer);
 
-  function scaleX(s){ return (s.vw&&s.vw!==window.innerWidth)?window.innerWidth/s.vw:1; }
-  function pathD(pts,sx){
-    sx=sx||1;
+  /* ---- 要素相対座標アンカーシステム ---- */
+  var ANCHOR_SEL='p,h1,h2,h3,h4,h5,h6,li,td,th,dt,dd';
+  function scrollXY(){return [window.pageXOffset||document.documentElement.scrollLeft||0,window.pageYOffset||document.documentElement.scrollTop||0];}
+  function getContentEls(tabIdx){
+    var panel=(panels&&panels[tabIdx]!=null)?panels[tabIdx]:document.body;
+    return [].slice.call(panel.querySelectorAll(ANCHOR_SEL));
+  }
+  function findAnchor(pt,tabIdx){
+    var els=getContentEls(tabIdx),s=scrollXY(),bestIdx=-1,bestDist=Infinity;
+    for(var i=0;i<els.length;i++){
+      var r=els[i].getBoundingClientRect(),ey=r.top+s[1],eh=Math.max(r.height,1);
+      var inY=(pt[1]>=ey-4&&pt[1]<=ey+eh+4);
+      var dist=inY?Math.abs(pt[1]-(ey+eh/2)):Math.abs(pt[1]-ey)+10000;
+      if(dist<bestDist){bestDist=dist;bestIdx=i;}
+    }
+    if(bestIdx<0) return null;
+    var r=els[bestIdx].getBoundingClientRect(),s2=scrollXY();
+    return {idx:bestIdx,ax:r.left+s2[0],ay:r.top+s2[1]};
+  }
+  function anchorOff(anchor,tabIdx){
+    if(!anchor) return {ox:0,oy:0};
+    var els=getContentEls(tabIdx!=null?tabIdx:currentTab());
+    var el=els[anchor.idx];
+    if(!el) return {ox:0,oy:0};
+    var r=el.getBoundingClientRect(),s=scrollXY();
+    return {ox:r.left+s[0],oy:r.top+s[1]};
+  }
+  function pathD(pts,ox,oy,sx){
+    ox=ox||0;oy=oy||0;sx=sx||1;
     if(!pts.length) return '';
-    if(pts.length===1){var p=pts[0];return 'M'+(p[0]*sx)+' '+p[1]+' L'+(p[0]*sx+0.1)+' '+p[1];}
-    var d='M'+(pts[0][0]*sx)+' '+pts[0][1];
-    for(var i=1;i<pts.length;i++) d+=' L'+(pts[i][0]*sx)+' '+pts[i][1];
+    if(pts.length===1){var p=pts[0];return 'M'+(p[0]*sx+ox)+' '+(p[1]+oy)+' L'+(p[0]*sx+ox+0.1)+' '+(p[1]+oy);}
+    var d='M'+(pts[0][0]*sx+ox)+' '+(pts[0][1]+oy);
+    for(var i=1;i<pts.length;i++) d+=' L'+(pts[i][0]*sx+ox)+' '+(pts[i][1]+oy);
     return d;
   }
-  function drawStroke(s){
+  function drawStroke(s,tabIdx){
+    var ox=0,oy=0,sx=1;
+    if(s.anchor){var off=anchorOff(s.anchor,tabIdx!=null?tabIdx:currentTab());ox=off.ox;oy=off.oy;}
+    else if(s.vw&&s.vw!==window.innerWidth){sx=window.innerWidth/s.vw;}
     var el=document.createElementNS(SVGNS,'path');
-    el.setAttribute('d',pathD(s.pts,scaleX(s)));
-    el.setAttribute('fill','none');
-    el.setAttribute('stroke',s.c);
-    el.setAttribute('stroke-width',s.w);
-    el.setAttribute('stroke-linecap','round');
+    el.setAttribute('d',pathD(s.pts,ox,oy,sx));
+    el.setAttribute('fill','none');el.setAttribute('stroke',s.c);
+    el.setAttribute('stroke-width',s.w);el.setAttribute('stroke-linecap','round');
     el.setAttribute('stroke-linejoin','round');
-    layer.appendChild(el);
-    return el;
+    layer.appendChild(el);return el;
   }
   function render(){
+    var ti=currentTab();
     while(layer.firstChild) layer.removeChild(layer.firstChild);
-    strokesFor(currentTab()).forEach(drawStroke);
+    strokesFor(ti).forEach(function(s){drawStroke(s,ti);});
     sizeLayer();
   }
 
@@ -2792,28 +2819,30 @@ body.szp-hide #szp-layer{display:none}
   var drawing=false, curPts=null, curEl=null;
 
   function pagePt(e){
-    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
-    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
-    return [Math.round(e.clientX+sx),Math.round(e.clientY+sy)];
+    var s=scrollXY();
+    return [Math.round(e.clientX+s[0]),Math.round(e.clientY+s[1])];
   }
   function eraseAt(pt){
-    var arr=strokesFor(currentTab()), th=Math.max(12,curWidth*2.2), removed=false;
+    var ti=currentTab(),arr=strokesFor(ti),th=Math.max(12,curWidth*2.2),removed=false;
     for(var i=arr.length-1;i>=0;i--){
-      var s=arr[i], invSx=(s.vw&&s.vw!==window.innerWidth)?s.vw/window.innerWidth:1;
+      var s=arr[i],ox=0,oy=0,sx=1;
+      if(s.anchor){var off=anchorOff(s.anchor,ti);ox=off.ox;oy=off.oy;}
+      else if(s.vw&&s.vw!==window.innerWidth){sx=window.innerWidth/s.vw;}
       var pts=s.pts;
       for(var j=0;j<pts.length;j++){
-        var dx=pts[j][0]-pt[0]*invSx, dy=pts[j][1]-pt[1];
-        if(dx*dx+dy*dy<=th*th){ arr.splice(i,1); removed=true; break; }
+        var rpx=(pt[0]-ox)/sx,rpy=pt[1]-oy;
+        var dx=pts[j][0]-rpx,dy=pts[j][1]-rpy;
+        if(dx*dx+dy*dy<=th*th){arr.splice(i,1);removed=true;break;}
       }
     }
-    if(removed){ save(); render(); }
+    if(removed){save();render();}
   }
 
   layer.addEventListener('pointerdown',function(e){
     if(!penOn) return;
     e.preventDefault();
     layer.setPointerCapture&&layer.setPointerCapture(e.pointerId);
-    if(eraseOn){ drawing=true; eraseAt(pagePt(e)); return; }
+    if(eraseOn){drawing=true;eraseAt(pagePt(e));return;}
     drawing=true;
     curPts=[pagePt(e)];
     curEl=drawStroke({c:curColor,w:curWidth,pts:curPts});
@@ -2822,18 +2851,25 @@ body.szp-hide #szp-layer{display:none}
     if(!penOn||!drawing) return;
     e.preventDefault();
     var pt=pagePt(e);
-    if(eraseOn){ eraseAt(pt); return; }
+    if(eraseOn){eraseAt(pt);return;}
     curPts.push(pt);
     curEl.setAttribute('d',pathD(curPts));
   });
   function endStroke(){
     if(!drawing) return;
     drawing=false;
-    if(!eraseOn && curPts && curPts.length){
-      strokesFor(currentTab()).push({c:curColor,w:curWidth,pts:curPts,vw:window.innerWidth});
+    if(!eraseOn&&curPts&&curPts.length){
+      var ti=currentTab(),anch=findAnchor(curPts[0],ti),stroke;
+      if(anch){
+        var rel=curPts.map(function(p){return [p[0]-anch.ax,p[1]-anch.ay];});
+        stroke={c:curColor,w:curWidth,pts:rel,anchor:{idx:anch.idx}};
+      } else {
+        stroke={c:curColor,w:curWidth,pts:curPts,vw:window.innerWidth};
+      }
+      strokesFor(ti).push(stroke);
       save();
     }
-    curPts=null; curEl=null;
+    curPts=null;curEl=null;
   }
   layer.addEventListener('pointerup',endStroke);
   layer.addEventListener('pointercancel',endStroke);
