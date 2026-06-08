@@ -2762,5 +2762,53 @@ body.szp-hide #szp-layer{display:none}
 })();
 </script>
 
+<!-- ===== ⋮ ツールバー長押しドラッグ移動 ===== -->
+<script>
+(function(){
+  'use strict';
+  function szTbKey(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);}
+  var POSKEY='szTPos_'+szTbKey();
+  var tb=null, lp=null, drag=false, suppress=false;
+  var sx=0,sy=0,sl=0,st=0;
+  function restorePos(){
+    try{var p=JSON.parse(localStorage.getItem(POSKEY)||'null');if(p&&typeof p.l==='number'){tb.style.right='auto';tb.style.left=Math.max(0,Math.min(window.innerWidth-30,p.l))+'px';tb.style.top=Math.max(0,Math.min(window.innerHeight-30,p.t))+'px';}}catch(e){}
+  }
+  function init(){
+    tb=document.getElementById('sz-toolbar');
+    if(!tb) return;
+    restorePos();
+    document.addEventListener('pointerdown',function(e){
+      if(!e.target.closest('#sz-hide-tools')) return;
+      var tgt=e.target,pid=e.pointerId;
+      sx=e.clientX;sy=e.clientY;suppress=false;
+      lp=setTimeout(function(){
+        lp=null;drag=true;
+        var r=tb.getBoundingClientRect();sl=r.left;st=r.top;
+        tb.style.right='auto';tb.style.left=sl+'px';tb.style.top=st+'px';tb.style.opacity='0.7';
+        try{tgt.setPointerCapture(pid);}catch(ex){}
+      },450);
+    });
+    document.addEventListener('pointermove',function(e){
+      if(!drag) return;
+      tb.style.left=Math.max(0,Math.min(window.innerWidth-96,sl+e.clientX-sx))+'px';
+      tb.style.top=Math.max(0,Math.min(window.innerHeight-30,st+e.clientY-sy))+'px';
+      suppress=true;
+    });
+    document.addEventListener('pointerup',function(){
+      if(lp){clearTimeout(lp);lp=null;}
+      if(!drag) return;
+      drag=false;tb.style.opacity='';
+      var r=tb.getBoundingClientRect();
+      try{localStorage.setItem(POSKEY,JSON.stringify({l:r.left,t:r.top}));}catch(ex){}
+    });
+    document.addEventListener('pointercancel',function(){if(lp){clearTimeout(lp);lp=null;}drag=false;tb.style.opacity='';});
+    document.addEventListener('click',function(e){if(suppress&&e.target.closest('#sz-hide-tools')){suppress=false;e.stopImmediatePropagation();e.preventDefault();}},true);
+    window.addEventListener('resize',function(){if(!tb||!tb.style.left||tb.style.left==='auto') return;tb.style.left=Math.max(0,Math.min(window.innerWidth-96,parseInt(tb.style.left)||0))+'px';tb.style.top=Math.max(0,Math.min(window.innerHeight-30,parseInt(tb.style.top)||0))+'px';});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,150);});
+  else setTimeout(init,150);
+})();
+</script>
+
 </body>
 </html>
