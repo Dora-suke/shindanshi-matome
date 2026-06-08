@@ -2617,16 +2617,18 @@ body.szp-hide #szp-layer{display:none}
   }
   window.addEventListener('resize',sizeLayer);
 
-  function pathD(pts){
+  function scaleX(s){ return (s.vw&&s.vw!==window.innerWidth)?window.innerWidth/s.vw:1; }
+  function pathD(pts,sx){
+    sx=sx||1;
     if(!pts.length) return '';
-    if(pts.length===1){var p=pts[0];return 'M'+p[0]+' '+p[1]+' L'+(p[0]+0.1)+' '+p[1];}
-    var d='M'+pts[0][0]+' '+pts[0][1];
-    for(var i=1;i<pts.length;i++) d+=' L'+pts[i][0]+' '+pts[i][1];
+    if(pts.length===1){var p=pts[0];return 'M'+(p[0]*sx)+' '+p[1]+' L'+(p[0]*sx+0.1)+' '+p[1];}
+    var d='M'+(pts[0][0]*sx)+' '+pts[0][1];
+    for(var i=1;i<pts.length;i++) d+=' L'+(pts[i][0]*sx)+' '+pts[i][1];
     return d;
   }
   function drawStroke(s){
     var el=document.createElementNS(SVGNS,'path');
-    el.setAttribute('d',pathD(s.pts));
+    el.setAttribute('d',pathD(s.pts,scaleX(s)));
     el.setAttribute('fill','none');
     el.setAttribute('stroke',s.c);
     el.setAttribute('stroke-width',s.w);
@@ -2656,9 +2658,10 @@ body.szp-hide #szp-layer{display:none}
   function eraseAt(pt){
     var arr=strokesFor(currentTab()), th=Math.max(12,curWidth*2.2), removed=false;
     for(var i=arr.length-1;i>=0;i--){
-      var pts=arr[i].pts;
+      var s=arr[i], invSx=(s.vw&&s.vw!==window.innerWidth)?s.vw/window.innerWidth:1;
+      var pts=s.pts;
       for(var j=0;j<pts.length;j++){
-        var dx=pts[j][0]-pt[0], dy=pts[j][1]-pt[1];
+        var dx=pts[j][0]-pt[0]*invSx, dy=pts[j][1]-pt[1];
         if(dx*dx+dy*dy<=th*th){ arr.splice(i,1); removed=true; break; }
       }
     }
@@ -2686,7 +2689,7 @@ body.szp-hide #szp-layer{display:none}
     if(!drawing) return;
     drawing=false;
     if(!eraseOn && curPts && curPts.length){
-      strokesFor(currentTab()).push({c:curColor,w:curWidth,pts:curPts});
+      strokesFor(currentTab()).push({c:curColor,w:curWidth,pts:curPts,vw:window.innerWidth});
       save();
     }
     curPts=null; curEl=null;
