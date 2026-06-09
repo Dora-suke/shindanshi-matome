@@ -3840,6 +3840,7 @@ body.sz-annot-off .sz-note{display:none !important}
     var fb=e.target.closest?e.target.closest('.fill-blank,.blank'):null;
     if(!fb) return;
     if(window.szSuppressFbClick){window.szSuppressFbClick=false;e.stopImmediatePropagation();e.preventDefault();return;}
+    if(_isMobile){e.stopImmediatePropagation();e.preventDefault();szShowBarForFb(fb);return;}
     if(fb.classList.contains('sz-unblanked')){e.stopImmediatePropagation();e.preventDefault();}
   },true);
   document.addEventListener('contextmenu',function(e){
@@ -4084,6 +4085,7 @@ body.sz-annot-off .sz-note{display:none !important}
     window.szSuppressFbClick=false;
     var bl=e.target.closest?e.target.closest('mark.sz-blank,.fill-blank,.blank'):null;
     if(!bl) return;
+    if(_isMobile&&(bl.classList.contains('fill-blank')||bl.classList.contains('blank'))) return;
     szLPfired=false;
     szLPx=e.clientX; szLPy=e.clientY;
     szLPcancel(); // 念のため既存タイマーを掃除
@@ -4180,11 +4182,14 @@ body.sz-annot-off .sz-note{display:none !important}
 
   /* ---- 選択範囲内の既存穴埋を一括解除／復活 ---- */
   window.szUnblankSelection=function(){
-    if(!savedRange) return;
     szHideBar();
-    var range=savedRange;
-    var blanks=Array.prototype.slice.call(document.querySelectorAll('.fill-blank,.blank')).filter(function(el){return !(el.closest&&el.closest('[id^="pre_"]'));});
-    var hit=blanks.filter(function(el){ try{return range.intersectsNode(el);}catch(e){return false;} });
+    var hit=[];
+    if(savedRange){
+      var range=savedRange;
+      var blanks=Array.prototype.slice.call(document.querySelectorAll('.fill-blank,.blank')).filter(function(el){return !(el.closest&&el.closest('[id^="pre_"]'));});
+      hit=blanks.filter(function(el){ try{return range.intersectsNode(el);}catch(e){return false;} });
+    }
+    if(!hit.length&&fbBarTarget) hit=[fbBarTarget];
     if(!hit.length){ showToast('選択範囲に穴埋がありません'); window.getSelection().removeAllRanges(); return; }
     var anyBlanked=hit.some(function(el){return !el.classList.contains('sz-unblanked');});
     hit.forEach(function(el){
