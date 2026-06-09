@@ -1806,11 +1806,10 @@ function hideAll(btn){
 </script>
 <!-- ===== ✏️ 注釈機能 ===== -->
 <style>
-#sz-bar{position:fixed;display:none;align-items:center;gap:2px;background:#1e293b;border-radius:9px;padding:4px;box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9999;transform:translateX(-50%)}
-#sz-bar.on{display:flex}
+#sz-bar{position:fixed;display:none;background:#1e293b;border-radius:9px;padding:4px;box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9999;transform:translateX(-50%);overflow-x:auto;max-width:90vw}
+#sz-bar.on{display:flex;align-items:center;gap:2px}
 #sz-bar button{background:none;border:none;color:#fff;cursor:pointer;padding:5px 10px;border-radius:6px;font-size:.85rem;font-weight:700;font-family:inherit;white-space:nowrap;line-height:1.2}
 #sz-bar button:hover{background:rgba(255,255,255,.18)}
-#sz-bar .sz-sep{width:1px;height:18px;background:rgba(255,255,255,.22);margin:0 1px;flex-shrink:0}
 mark.sz-ul{background:none;color:inherit;border-bottom:2.5px solid #ef4444;padding-bottom:1px;cursor:pointer}
 mark.sz-hl{background:#fef08a;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
 mark.sz-cm{background:#bfdbfe;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
@@ -1913,13 +1912,13 @@ body.sz-annot-off .sz-note{display:none !important}
 </style>
 
 <div id="sz-bar">
-  <button type="button" title="赤アンダーライン" onclick="szAnnot('ul')"><span style="text-decoration:underline;text-decoration-color:#ef4444;text-underline-offset:2px">A</span> 赤線</button>
-  <button type="button" title="蛍光ハイライト（色選択）" onclick="szShowHlPicker(this)">🌟 蛍光</button>
-  <button type="button" title="コメントを追加" onclick="szAnnot('cm')">💬 メモ</button>
-  <button type="button" title="選択範囲を穴埋め問題にする（クリックで答え表示・長押しで元に戻す）" onclick="szAnnot('blank')">❓ 穴埋め</button>
-  <button type="button" title="文字を消去（削除したように見せる・クリックで復元）" onclick="szAnnot('erase')">✂️ 消去</button>
-  <button type="button" title="選択範囲内の既存の穴埋をまとめて解除／再選択で復活" onclick="szUnblankSelection()">🚫 穴埋解除</button>
-  <div class="sz-sep"></div>
+  <button type="button" onclick="szAnnot('ul')">赤線</button>
+  <button type="button" onclick="szShowHlPicker(this)">蛍光</button>
+  <button type="button" onclick="szAnnot('cm')">メモ</button>
+  <button type="button" onclick="szAnnot('blank')">穴埋め</button>
+  <button type="button" onclick="szAnnot('erase')">消去</button>
+  <button type="button" onclick="szUnblankSelection()">穴埋解除</button>
+  <button type="button" id="sz-bar-fb-btn" onclick="szToggleFbFromBar()" style="display:none;color:#c4b5fd">空欄やめる</button>
   <button type="button" onclick="szHideBar()" style="color:#94a3b8;font-size:.72rem;padding:4px 7px">✕</button>
 </div>
 
@@ -2002,7 +2001,8 @@ body.sz-annot-off .sz-note{display:none !important}
   var tipBody=document.getElementById('sz-tip-body');
   var tipEditBtn=document.getElementById('sz-tip-edit-btn');
   var hlPicker=document.getElementById('sz-hl-picker');
-  var savedRange=null, cmtCtx=null, tipTimer=null, tipTargetAid=null, delTarget=null;
+  var savedRange=null, cmtCtx=null, tipTimer=null, tipTargetAid=null, delTarget=null, fbBarTarget=null;
+  var fbBtn=document.getElementById('sz-bar-fb-btn');
   /* モバイル：バーのボタンタップで選択が消えないよう mousedown をキャンセル */
   bar.addEventListener('mousedown',function(e){e.preventDefault();});
 
@@ -2021,7 +2021,8 @@ body.sz-annot-off .sz-note{display:none !important}
     var fb=e.target.closest?e.target.closest('.fill-blank,.blank'):null;
     if(!fb) return;
     if(window.szSuppressFbClick){window.szSuppressFbClick=false;e.stopImmediatePropagation();e.preventDefault();return;}
-    if(fb.classList.contains('sz-unblanked')){e.stopImmediatePropagation();e.preventDefault();}
+    if(fb.classList.contains('sz-unblanked')){e.stopImmediatePropagation();e.preventDefault();return;}
+    szShowBarForFb(fb);
   },true);
 
   function uid(){return 'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
@@ -2103,7 +2104,8 @@ body.sz-annot-off .sz-note{display:none !important}
 
   /* ---- ツールバー位置 ---- */
   var _isMobile=('ontouchstart' in window)||navigator.maxTouchPoints>0;
-  function showBar(rect){
+  function showBar(rect,forFb){
+    if(!forFb){fbBarTarget=null;if(fbBtn)fbBtn.style.display='none';}
     var cx=(rect.left+rect.right)/2;
     bar.style.left=Math.max(80,Math.min(cx,window.innerWidth-80))+'px';
     if(_isMobile){
@@ -2120,7 +2122,32 @@ body.sz-annot-off .sz-note{display:none !important}
     }
     bar.classList.add('on');
   }
-  window.szHideBar=function(){bar.classList.remove('on');};
+  window.szHideBar=function(){bar.classList.remove('on');bar.style.bottom='';fbBarTarget=null;if(fbBtn)fbBtn.style.display='none';};
+  function szShowBarForFb(fb){
+    if(document.body.classList.contains('sz-annot-off')) return;
+    fbBarTarget=fb;
+    if(fbBtn){fbBtn.textContent=fb.classList.contains('sz-unblanked')?'空欄に戻す':'空欄やめる';fbBtn.style.display='';}
+    // 答えを覆わないよう画面下端に固定
+    bar.style.top='';
+    bar.style.bottom='8px';
+    bar.style.left='50%';
+    bar.classList.add('on');
+  }
+  window.szToggleFbFromBar=function(){
+    if(!fbBarTarget) return;
+    var fb=fbBarTarget;
+    var idx=fb.getAttribute('data-fbidx');
+    if(fb.classList.contains('sz-unblanked')){
+      fb.classList.remove('sz-unblanked');
+      if(idx!=null) delete fbUn[idx];
+    } else {
+      fb.classList.add('sz-unblanked');
+      fb.classList.remove('show');
+      if(idx!=null) fbUn[idx]=1;
+    }
+    fbSave();
+    szHideBar();
+  };
 
   /* ---- コメントポップ ---- */
   function showCmtPop(rect){
@@ -2276,7 +2303,10 @@ body.sz-annot-off .sz-note{display:none !important}
     setTimeout(function(){
       var sel=window.getSelection();
       if(!sel||sel.isCollapsed||!sel.toString().trim()){
-        if(!szLPfired){szHideBar();szHideCmt();szHideDel();}
+        if(!szLPfired){
+          if(!fbBarTarget) szHideBar(); // fill-blank bar表示中は隠さない
+          szHideCmt();szHideDel();
+        }
         szLPfired=false;
         return;
       }
