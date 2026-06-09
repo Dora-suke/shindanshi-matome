@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<script>
+(function(){
+  var cur='hk_'+location.pathname;
+  if(!localStorage.getItem(cur)){
+    var orig='hk_'+location.pathname.replace(/_m\.html$/,'.html');
+    var d=localStorage.getItem(orig);
+    if(d) localStorage.setItem(cur,d);
+  }
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苦手復習 102-04 ｜ CVP分析・直接原価計算（6/9）</title>
+<style>
+:root{--p:#7b1fa2;--pl:#f3e5f5;--b:#1a5276;--bl:#eaf2f8;--g:#1e8449;--gl:#eafaf1;--o:#b9770e;--ol:#fef9e7;--r:#c0392b;--rl:#fdedec;--t:#0f766e;--tl:#ccfbf1;--ink:#1e293b;--mut:#64748b;--line:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:var(--ink);line-height:1.7;}
+.header{background:linear-gradient(135deg,#1a0505,#3a1a1a);color:#fff;padding:22px 16px;text-align:center;}
+.header h1{font-size:1.25rem;}
+.header p{font-size:.82rem;opacity:.85;margin-top:4px;}
+.tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
+.tab-nav{display:flex;flex-wrap:wrap;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
+.tab-btn{flex:1;min-width:80px;padding:12px 5px;border:none;background:#fff;color:var(--mut);font-size:.85rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-btn.active[data-c=r]{color:var(--r);border-bottom-color:var(--r);background:var(--rl);}
+.tab-btn.active[data-c=o]{color:var(--o);border-bottom-color:var(--o);background:var(--ol);}
+.tab-btn.active[data-c=t]{color:var(--t);border-bottom-color:var(--t);background:var(--tl);}
+.tab-panel{display:none;background:#fff;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-radius:0 0 12px 12px;}
+.tab-panel.active{display:block;animation:f .3s;}
+@keyframes f{from{opacity:0}to{opacity:1}}
+h2{font-size:1.06rem;font-weight:800;margin:34px 0 12px;padding:11px 14px 11px 16px;border:1px solid var(--line);border-left:8px solid var(--r);border-radius:10px;background:linear-gradient(90deg,var(--rl),#fff9f9);box-shadow:0 2px 6px rgba(0,0,0,.07);color:#5a0f0f;position:relative;}
+h2:first-of-type{margin-top:8px;}
+.cat-r h2{border-left-color:var(--r);background:linear-gradient(90deg,var(--rl),#fff9f9);color:#5a0f0f;}
+.cat-o h2{border-left-color:var(--o);background:linear-gradient(90deg,var(--ol),#fffef6);color:#4a2c00;}
+.cat-t h2{border-left-color:var(--t);background:linear-gradient(90deg,var(--tl),#f0fdfb);color:#063a34;}
+.cat-r h2::before,.cat-o h2::before,.cat-t h2::before{display:inline-block;font-size:.64rem;font-weight:800;color:#fff;border-radius:5px;padding:2px 8px;margin-right:9px;letter-spacing:.04em;vertical-align:middle;}
+.cat-r h2::before{content:"🔴 BEP計算";background:var(--r);}
+.cat-o h2::before{content:"🟡 原価計算";background:var(--o);}
+.cat-t h2::before{content:"🔵 感度分析";background:var(--t);}
+.fig{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfcfd;}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.84rem;}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:center;vertical-align:middle;}
+th{background:var(--r);color:#fff;}
+.cat-o th{background:var(--o);}
+.cat-t th{background:var(--t);}
+tr:nth-child(even) td{background:#f8fafc;}
+td.l{text-align:left;}
+.yes{background:#dcfce7!important;color:#166534;font-weight:800;}
+.no{background:#fee2e2!important;color:#991b1b;font-weight:800;}
+.trap{background:var(--rl);border-left:4px solid var(--r);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.82rem;margin:10px 0;}
+.trap b{color:var(--r);}
+.flow{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:8px 0;}
+.flow .box{background:#dbeafe;border-radius:6px;padding:.35rem .7rem;font-size:.82rem;font-weight:700;color:#1e40af;}
+.flow .box.r{background:#fee2e2;color:#991b1b;}
+.flow .box.o{background:var(--ol);color:#713f12;}
+.flow .box.t{background:var(--tl);color:#063a34;}
+.flow .box.g{background:#dcfce7;color:#166534;}
+.flow .arrow{color:#94a3b8;font-size:1.1rem;}
+.formula{text-align:center;font-weight:800;color:var(--b);font-size:1.02rem;margin:6px 0;background:#eef6fb;border:1.5px solid #b6d4e6;border-radius:8px;padding:9px 8px;}
+.formula .ex{display:block;font-size:.82rem;font-weight:700;color:#1e8449;margin-top:4px;}
+.fill-section-title{margin:36px 0 10px;font-size:1rem;font-weight:800;color:#fff;background:linear-gradient(90deg,var(--r),#e74c3c);border-radius:9px;padding:10px 15px;box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.cat-o .fill-section-title{background:linear-gradient(90deg,var(--o),#d4a017);}
+.cat-t .fill-section-title{background:linear-gradient(90deg,var(--t),#0e9488);}
+.revall-btn{width:100%;padding:13px;font-size:.98rem;font-weight:800;background:var(--r);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;}
+.cat-o .revall-btn{background:var(--o);}
+.cat-t .revall-btn{background:var(--t);}
+.revall-btn:hover{opacity:.88;}
+.fill-card{background:#fff8f8;border:2px solid var(--r);border-radius:12px;margin-top:12px;overflow:hidden;position:relative;}
+.cat-o .fill-card{background:#fffdf4;border-color:var(--o);}
+.cat-t .fill-card{background:#f0fdfb;border-color:var(--t);}
+.fill-head{background:var(--r);color:#fff;padding:10px 16px;font-weight:800;font-size:.92rem;}
+.cat-o .fill-head{background:var(--o);}
+.cat-t .fill-head{background:var(--t);}
+.fill-body{padding:14px 18px;font-size:.9rem;line-height:2.2;}
+.fill-body table{margin:4px 0 6px;}
+.fill-body table .blank{min-width:84px;}
+.blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #e87;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:800;color:transparent;background:#feecec;border-radius:4px;user-select:none;}
+.cat-o .blank{border-bottom-color:#c8841e;background:#fff3cd;}
+.cat-t .blank{border-bottom-color:#0f766e;background:#ccfbf1;}
+.blank.show{color:#c2410c;background:#fff7ed;border-color:#c2410c;}
+.revbtn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;}
+.fig,.fill-card,.fig>div,.fig>table{position:relative;}
+.mz-btn{position:absolute;top:4px;right:4px;width:21px;height:21px;border-radius:50%;border:1.5px solid #86efac;background:rgba(255,255,255,.92);color:#16a34a;font-weight:800;cursor:pointer;z-index:5;font-size:.7rem;line-height:1;padding:0;opacity:.55;transition:opacity .15s;}
+.mz-btn:hover{background:#dcfce7;opacity:1;}
+.mz-done>:not(.mz-btn){display:none!important;}
+.mz-done{background:#f0fdf4!important;border:1px dashed #16a34a!important;padding:8px 12px!important;cursor:pointer;min-height:0!important;}
+.mz-done::after{content:"✓ 覚えた（タップで表示）";color:#16a34a;font-weight:700;font-size:.78rem;}
+.mz-done .mz-btn{background:#16a34a;color:#fff;opacity:1;}
+.row-hk-btn{position:absolute;top:3px;right:3px;width:17px;height:17px;border-radius:50%;border:1.5px solid #cbd5e1;background:rgba(255,255,255,.92);color:#94a3b8;font-size:.58rem;line-height:1;cursor:pointer;padding:0;z-index:4;opacity:.5;}
+.row-hk-btn:hover{border-color:#16a34a;color:#16a34a;opacity:1;}
+.row-show-btn{margin-left:6px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;color:#64748b;font-size:.7rem;cursor:pointer;padding:1px 7px;font-family:inherit;}
+.mz-all-btn{background:#0f766e;color:#fff;border:none;border-radius:8px;padding:6px 13px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.mz-all-btn:hover{background:#0d5e57;}
+@media(max-width:600px){.tab-btn{font-size:.74rem;min-width:60px}table{font-size:.76rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>苦手復習 102-04</h1>
+  <p>財務・会計 ティアS⑧CVP分析（2026-06-09）で <b>×・△だった観点だけ</b>に絞った図解＋穴埋め</p>
+</div>
+
+<div class="tab-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-c="r" onclick="sw(0)">📉 BEP計算式・安全余裕率</button>
+    <button class="tab-btn" data-c="o" onclick="sw(1)">📊 直接原価 vs 全部原価</button>
+    <button class="tab-btn" data-c="t" onclick="sw(2)">🔧 感度分析・DOL・関連範囲</button>
+  </nav>
+
+<!-- ===== TAB 1: BEP計算式・安全余裕率 ===== -->
+<div class="tab-panel active cat-r">
+
+  <h2>BEP計算式 ― 3つの式を確実に</h2>
+  <div class="fig">
+    <div style="font-size:.82rem;font-weight:800;color:#5a0f0f;background:var(--rl);border:1px solid #fca5a5;border-radius:8px;padding:.5rem .8rem;margin-bottom:8px;">🎯 ねらい：BEP・安全余裕率・目標利益売上高の3式を「なぜこの形か」まで理解して確実に再現できるようにする。</div>
+    <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:8px;padding:5px 12px;margin-bottom:12px;font-size:.78rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="font-weight:800;color:#c2410c;">🔗 関連シミュレーター</span>
+      <span style="color:#334155;">投資案件の判断（NPV・期待値 CF）→</span>
+      <a href="苦手復習_102_01b_減損・棚卸評価・投資評価.html" style="color:#166534;font-weight:800;text-decoration:underline;">💰 期待値 CF シミュレーター（01b_減損・Tab3）</a>
+      <span style="color:#334155;">　DOL・感度分析は →</span>
+      <a href="#" onclick="document.querySelector('[onclick=\'sw(2)\']').click();return false;" style="color:#0f766e;font-weight:800;text-decoration:underline;">🔧 感度分析・DOLタブ</a>
+    </div>
+
+    <!-- BEP の導き方 -->
+    <div style="background:#fff;border:1px solid #fca5a5;border-radius:10px;padding:12px 14px;margin-bottom:10px;">
+      <div style="font-size:.88rem;font-weight:800;color:#5a0f0f;margin-bottom:8px;">📐 BEP（損益分岐点売上高）の考え方</div>
+      <div style="font-size:.84rem;color:#5a0f0f;line-height:2;margin-bottom:10px;">
+        BEP ＝「売上高が限界利益で固定費をちょうど回収できる点」<br>
+        → 限界利益（＝売上高−変動費）＝ 固定費 のとき 営業利益 ＝ 0
+      </div>
+
+      <div class="formula">
+        BEP売上高 ＝ <b style="color:var(--r);">固定費 ÷ 限界利益率</b>
+        <span class="ex">限界利益率 ＝ 1 − 変動費率　（変動費率 ＝ 変動費 ÷ 売上高）</span>
+      </div>
+
+      <!-- BEP の直感的図解 -->
+      <div style="background:#fff8f8;border:1px solid #fca5a5;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:.84rem;color:#5a0f0f;line-height:2;">
+        <b>例）固定費 1,000万円、変動費率 40%（限界利益率 60%）</b><br>
+        BEP ＝ 1,000万 ÷ <b>0.6</b> ＝ <b>1,667万円</b><br>
+        → 売上が 1,667万円に達してはじめて黒字
+      </div>
+    </div>
+
+    <!-- BEP グラフ（インタラクティブ） -->
+    <div style="background:#fff;border:1px solid #fca5a5;border-radius:10px;padding:12px 14px;margin:10px 0;">
+      <div style="font-size:.84rem;font-weight:800;color:#5a0f0f;margin-bottom:10px;">📈 損益分岐点シミュレーター（スライダーで動かせる）</div>
+      <div style="font-size:.82rem;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <label style="min-width:68px;color:#5a0f0f;font-weight:700;">固定費</label>
+          <input type="range" id="bep_fc" min="200" max="3000" step="50" value="1000" style="flex:1;accent-color:#c2410c;" oninput="bepSim()">
+          <span id="bep_fc_v" style="min-width:65px;font-weight:800;color:#c2410c;text-align:right;">1,000万</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <label style="min-width:68px;color:#5a0f0f;font-weight:700;">変動費率</label>
+          <input type="range" id="bep_vcr" min="10" max="80" step="5" value="40" style="flex:1;accent-color:#c2410c;" oninput="bepSim()">
+          <span id="bep_vcr_v" style="min-width:65px;font-weight:800;color:#c2410c;text-align:right;">40%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label style="min-width:68px;color:#5a0f0f;font-weight:700;">現在売上</label>
+          <input type="range" id="bep_sale" min="300" max="5000" step="100" value="2000" style="flex:1;accent-color:#1d4ed8;" oninput="bepSim()">
+          <span id="bep_sale_v" style="min-width:65px;font-weight:800;color:#1d4ed8;text-align:right;">2,000万</span>
+        </div>
+      </div>
+      <div id="bep_res" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;font-size:.82rem;"></div>
+      <svg id="bep_svg" viewBox="0 0 380 205" style="width:100%;max-width:460px;display:block;margin:0 auto;overflow:visible;"></svg>
+      <div style="font-size:.74rem;color:#334155;text-align:center;margin-top:4px;line-height:1.8;">
+        <span style="color:#c2410c;font-weight:800;">総費用線</span>：固定費から出発して変動費率で傾く　／　<span style="color:#166534;font-weight:800;">売上高線</span>：原点から<br>
+        <span style="color:#7c3aed;font-weight:800;">●BEP</span>：2本の線の交点　／　スライダーを動かしてBEPと安全余裕率の変化を確認
+      </div>
+    </div>
+    <script>
+    (function(){
+      function bepSim(){
+        var fc=+document.getElementById('bep_fc').value;
+        var vcr=+document.getElementById('bep_vcr').value/100;
+        var sale=+document.getElementById('bep_sale').value;
+        document.getElementById('bep_fc_v').textContent=fc.toLocaleString()+'万';
+        document.getElementById('bep_vcr_v').textContent=Math.round(vcr*100)+'%';
+        document.getElementById('bep_sale_v').textContent=sale.toLocaleString()+'万';
+        var cmr=1-vcr;
+        var bep=cmr>0.01?fc/cmr:9999999;
+        var sm=sale>bep?((sale-bep)/sale*100).toFixed(1)+' %':'─（赤字）';
+        var op=Math.round(sale*cmr-fc);
+        document.getElementById('bep_res').innerHTML=
+          '<div style="background:#fff1f2;border:1.5px solid #fca5a5;border-radius:6px;padding:4px 10px;">'+
+          '<div style="font-size:.7rem;color:#64748b;">BEP</div>'+
+          '<div style="font-weight:800;color:#c2410c;">'+Math.round(bep).toLocaleString()+'万円</div></div>'+
+          '<div style="background:#f5f3ff;border:1.5px solid #c4b5fd;border-radius:6px;padding:4px 10px;">'+
+          '<div style="font-size:.7rem;color:#64748b;">安全余裕率</div>'+
+          '<div style="font-weight:800;color:#7c3aed;">'+sm+'</div></div>'+
+          '<div style="background:'+(op>=0?'#dcfce7':'#fee2e2')+';border:1.5px solid '+(op>=0?'#22c55e':'#fca5a5')+';border-radius:6px;padding:4px 10px;">'+
+          '<div style="font-size:.7rem;color:#64748b;">営業利益</div>'+
+          '<div style="font-weight:800;color:'+(op>=0?'#166534':'#991b1b')+';">'+(op>=0?'+':'')+op.toLocaleString()+'万</div></div>';
+        var maxX=Math.max(sale*1.3,bep<9999?bep*1.5:sale*2,1500);
+        var maxY=maxX;
+        var PL=48,PR=58,PT=16,PB=28,W=380,H=205;
+        var cw=W-PL-PR,ch=H-PT-PB;
+        function cpx(x){return PL+(x/maxX)*cw;}
+        function cpy(y){return H-PB-(Math.min(y,maxY)/maxY)*ch;}
+        var s='';
+        var bpx=cpx(Math.min(bep,maxX));
+        var bpy=cpy(Math.min(bep,maxX));
+        // zones
+        s+='<polygon points="'+PL+','+cpy(fc)+' '+bpx+','+bpy+' '+PL+','+(H-PB)+'" fill="#fee2e2" opacity="0.45"/>';
+        s+='<polygon points="'+bpx+','+bpy+' '+cpx(maxX)+','+cpy(maxX*vcr+fc)+' '+cpx(maxX)+','+cpy(maxX)+'" fill="#dcfce7" opacity="0.45"/>';
+        // fixed cost dashed
+        s+='<line x1="'+PL+'" y1="'+cpy(fc)+'" x2="'+cpx(maxX)+'" y2="'+cpy(fc)+'" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4"/>';
+        // total cost
+        s+='<line x1="'+PL+'" y1="'+cpy(fc)+'" x2="'+cpx(maxX)+'" y2="'+cpy(maxX*vcr+fc)+'" stroke="#c2410c" stroke-width="2.5"/>';
+        // revenue
+        s+='<line x1="'+PL+'" y1="'+(H-PB)+'" x2="'+cpx(maxX)+'" y2="'+cpy(maxX)+'" stroke="#166534" stroke-width="2.5"/>';
+        // axes
+        s+='<line x1="'+PL+'" y1="'+PT+'" x2="'+PL+'" y2="'+(H-PB)+'" stroke="#334155" stroke-width="1.5"/>';
+        s+='<line x1="'+(PL-5)+'" y1="'+(H-PB)+'" x2="'+(W-PR+22)+'" y2="'+(H-PB)+'" stroke="#334155" stroke-width="1.5"/>';
+        // BEP
+        if(bep<maxX){
+          s+='<line x1="'+bpx+'" y1="'+bpy+'" x2="'+bpx+'" y2="'+(H-PB)+'" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4,3"/>';
+          s+='<circle cx="'+bpx+'" cy="'+bpy+'" r="5" fill="#7c3aed"/>';
+          s+='<text x="'+(bpx+5)+'" y="'+(bpy-4)+'" font-size="9" fill="#7c3aed" font-weight="bold">BEP</text>';
+        }
+        // current sales
+        var spx2=cpx(Math.min(sale,maxX));
+        s+='<circle cx="'+spx2+'" cy="'+(H-PB)+'" r="4" fill="#1d4ed8"/>';
+        s+='<text x="'+spx2+'" y="'+(H-PB+14)+'" font-size="8" fill="#1d4ed8" text-anchor="middle">現在売上</text>';
+        // safety margin bracket
+        if(bep<sale&&bep<maxX&&sale<=maxX){
+          s+='<line x1="'+bpx+'" y1="'+(H-PB-14)+'" x2="'+spx2+'" y2="'+(H-PB-14)+'" stroke="#7c3aed" stroke-width="2"/>';
+          s+='<line x1="'+bpx+'" y1="'+(H-PB-19)+'" x2="'+bpx+'" y2="'+(H-PB-9)+'" stroke="#7c3aed" stroke-width="2"/>';
+          s+='<line x1="'+spx2+'" y1="'+(H-PB-19)+'" x2="'+spx2+'" y2="'+(H-PB-9)+'" stroke="#7c3aed" stroke-width="2"/>';
+          s+='<text x="'+((bpx+spx2)/2)+'" y="'+(H-PB-22)+'" font-size="8" fill="#7c3aed" text-anchor="middle">安全余裕率</text>';
+        }
+        // labels
+        s+='<text x="'+(W-PR+3)+'" y="'+Math.max(cpy(maxX),PT+8)+'" font-size="9" fill="#166534" font-weight="bold">売上高</text>';
+        s+='<text x="'+(W-PR+3)+'" y="'+cpy(maxX*vcr+fc)+'" font-size="9" fill="#c2410c" font-weight="bold">総費用</text>';
+        s+='<text x="'+(W-PR+3)+'" y="'+(cpy(fc)+4)+'" font-size="9" fill="#94a3b8">固定費</text>';
+        s+='<line x1="'+(PL-4)+'" y1="'+cpy(fc)+'" x2="'+(PL+4)+'" y2="'+cpy(fc)+'" stroke="#94a3b8" stroke-width="1.5"/>';
+        s+='<text x="'+(PL+cw/2)+'" y="'+(H-2)+'" font-size="9" fill="#334155" text-anchor="middle">売上高 →</text>';
+        s+='<text x="14" y="'+(PT+ch/2)+'" font-size="9" fill="#334155" text-anchor="middle" transform="rotate(-90,14,'+(PT+ch/2)+')">金額</text>';
+        document.getElementById('bep_svg').innerHTML=s;
+      }
+      window.bepSim=bepSim;
+      bepSim();
+    })();
+    </script>
+
+    <!-- 3つの式まとめ -->
+    <div style="font-size:.88rem;font-weight:800;color:#5a0f0f;margin:10px 0 6px;">📋 CVP の3公式</div>
+    <table>
+      <tr><th>公式</th><th>計算式</th><th>ポイント</th></tr>
+      <tr>
+        <td class="l"><b>①BEP売上高</b></td>
+        <td><b>固定費 ÷ 限界利益率</b></td>
+        <td class="l">限界利益率 ＝ 1 − 変動費率</td>
+      </tr>
+      <tr>
+        <td class="l"><b>②安全余裕率</b></td>
+        <td><b>（売上高 − BEP売上高）÷ 売上高</b></td>
+        <td class="l">「現在の売上が BEP を何%上回っているか」</td>
+      </tr>
+      <tr>
+        <td class="l"><b>③目標利益売上高</b></td>
+        <td><b>（固定費 ＋ 目標利益）÷ 限界利益率</b></td>
+        <td class="l">BEP 式の分子に「目標利益」を追加するだけ</td>
+      </tr>
+    </table>
+
+    <div class="trap"><b>あなたが外した所</b>（BEP計算式）：<br>
+    ・BEP ＝ <b>固定費 ÷ 限界利益率</b>（「変動費÷」や「÷固定費」に注意）。<br>
+    ・安全余裕率 ＝ <b>（売上高 − BEP売上高）÷ 売上高</b>（BEP が分子ではなく差に注意）。<br>
+    ・目標利益売上高 ＝ <b>（固定費 ＋ 目標利益）÷ 限界利益率</b>（BEP 式の分子に目標利益を追加）。</div>
+  </div>
+
+  <!-- 安全余裕率の意味 -->
+  <div class="fig">
+    <div style="font-size:.88rem;font-weight:800;color:#5a0f0f;margin-bottom:8px;">🛡️ 安全余裕率の意味とポイント</div>
+
+    <div style="background:#fff;border:1px solid #fca5a5;border-radius:10px;padding:10px 14px;margin-bottom:8px;">
+      <div style="font-size:.84rem;color:#5a0f0f;line-height:2;">
+        安全余裕率 ＝ 「今の売上が BEP より何%高いか ＝ 売上が何%落ちたら赤字になるか」
+      </div>
+      <div style="background:#fff8f8;border:1px solid #fca5a5;border-radius:8px;padding:8px 10px;margin:6px 0;font-size:.84rem;">
+        <b>例）売上高 2,000万円、BEP 1,667万円</b><br>
+        安全余裕率 ＝ （2,000 − 1,667）÷ 2,000 ＝ <b>16.7%</b><br>
+        ＝ 売上が 16.7% 以上落ちると赤字になる
+      </div>
+      <div style="font-size:.84rem;color:#7f1d1d;font-weight:700;margin-top:4px;">
+        安全余裕率 高い ＝ 損益分岐点が低い ＝ <b>安全性が高い（赤字になりにくい）</b>
+      </div>
+    </div>
+
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-left:5px solid #f59e0b;border-radius:8px;padding:.55rem .8rem;margin:10px 0;font-size:.82rem;color:#713f12;line-height:1.9;">
+      <b style="color:#b45309;">📌 過去問で問われるポイント</b><br>
+      ・「BEP ＝ 変動費 ÷ 限界利益率」→ <b>誤り</b>（固定費÷）。<br>
+      ・「安全余裕率 ＝ BEP売上高 ÷ 売上高」→ <b>誤り</b>（差を売上高で割る）。<br>
+      ・「安全余裕率が高いほど財務リスクが高い」→ <b>誤り</b>（高いほど安全）。<br>
+      ・目標利益売上高 ＝ BEP 式の分子に<b>目標利益を加算</b>するだけ。
+    </div>
+  </div>
+
+  <div style="background:#fffdf7;border:1px solid #fde68a;border-radius:8px;padding:.45rem .7rem;margin:12px 0 4px;font-size:.77rem;color:#7c5a32;line-height:1.8;"><span style="font-weight:700;color:#b45309;font-size:.73rem;">🎵 ゴロ（補助）</span> 📉 <b>BEP＝「固定費をコ（固）ツ（÷）コ（限界利益率）ツ割る」</b>（固定費÷限界利益率）。<br>🛡️ <b>安全余裕率＝「今とBEPの差÷今」</b>（今の売上から BEP を引いて今で割る）。</div>
+
+  <div class="fill-section-title">✏️ 穴埋めチェック</div>
+  <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+  <div class="fill-card">
+    <div class="fill-head">BEP・安全余裕率・目標利益売上高</div>
+    <div class="fill-body">
+      <div>BEP売上高 ＝ <span class="blank">固定費</span> ÷ <span class="blank">限界利益率</span></div>
+      <div>限界利益率 ＝ 1 − <span class="blank">変動費率</span>（変動費率 ＝ 変動費 ÷ 売上高）</div>
+      <div>安全余裕率 ＝ （<span class="blank">売上高 − BEP売上高</span>） ÷ <span class="blank">売上高</span></div>
+      <div>目標利益売上高 ＝ （<span class="blank">固定費 ＋ 目標利益</span>） ÷ <span class="blank">限界利益率</span></div>
+      <div>安全余裕率が<span class="blank">高い</span>ほど赤字になりにくい（安全性が高い）。</div>
+      <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== TAB 2: 直接原価計算 vs 全部原価計算 ===== -->
+<div class="tab-panel cat-o">
+
+  <h2>直接原価計算 ― 固定費の扱いが全部原価計算と違う</h2>
+  <div class="fig">
+    <div style="font-size:.82rem;font-weight:800;color:#4a2c00;background:var(--ol);border:1px solid #fcd34d;border-radius:8px;padding:.5rem .8rem;margin-bottom:14px;">🎯 ねらい：固定費を「製品原価」に含めるか「期間原価」にするかの違いが利益の大小に直結する。生産量と販売量の大小で使い分ける。</div>
+
+    <!-- 会話劇 -->
+    <div style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:14px 12px;margin-bottom:14px;">
+      <div style="display:flex;align-items:flex-start;justify-content:flex-end;gap:8px;margin:0 0 14px;">
+        <div style="position:relative;max-width:80%;background:#dbeafe;border:1px solid #93c5fd;border-radius:14px 14px 2px 14px;padding:.6rem .85rem;font-size:.9rem;color:#1e3a8a;line-height:1.8;">
+          直接原価計算と全部原価計算って利益はどっちが大きいの？生産量が多い方が全部原価の利益が大きい？
+          <span style="position:absolute;right:-7px;top:14px;width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:8px solid #dbeafe;"></span>
+        </div>
+        <div style="font-size:1.9rem;line-height:1;flex-shrink:0;">🧑‍💼</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:8px;margin:0;">
+        <div style="font-size:1.9rem;line-height:1;flex-shrink:0;">👩‍🏫</div>
+        <div style="position:relative;max-width:80%;background:#fef9c3;border:1px solid #fde047;border-radius:14px 14px 14px 2px;padding:.6rem .85rem;font-size:.9rem;color:#713f12;line-height:1.8;">
+          正解！全部原価計算では固定費を製品に配賦するから、<b>生産量 ＞ 販売量</b>（在庫が増える）のとき、在庫に固定費の一部が残って P/L に計上されない → 利益が大きく見える。<br>
+          直接原価計算は固定費を<b>全額その期に費用計上</b>するから、在庫の増減に関わらず一定額が費用になる。
+          <span style="position:absolute;left:-7px;top:14px;width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-right:8px solid #fef9c3;"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2方式の違い -->
+    <table>
+      <tr><th style="background:var(--o);">比較</th><th style="background:var(--o);">直接原価計算</th><th style="background:var(--o);">全部原価計算</th></tr>
+      <tr>
+        <td class="l"><b>固定費の扱い</b></td>
+        <td class="l">全額を<b>期間原価</b>として P/L に計上</td>
+        <td class="l">固定費を製品に配賦 → <b>製品原価</b>に含める</td>
+      </tr>
+      <tr>
+        <td class="l"><b>在庫への影響</b></td>
+        <td class="l">固定費は在庫に残ら<b>ない</b></td>
+        <td class="l">在庫に固定費の一部が残る（BS に計上）</td>
+      </tr>
+      <tr>
+        <td class="l"><b>CVP 分析との相性</b></td>
+        <td class="yes">◎ 相性が良い（限界利益が明確）</td>
+        <td class="no">△ 固定費配賦で CVP が複雑になる</td>
+      </tr>
+      <tr>
+        <td class="l"><b>外部報告（財務会計）</b></td>
+        <td class="no">△ 認められない（管理会計のみ）</td>
+        <td class="yes">◎ 認められる（税法・GAAP）</td>
+      </tr>
+    </table>
+
+    <!-- 固定費の行き先 シミュレーター（インタラクティブ） -->
+    <div style="background:#fff;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;margin:12px 0;">
+      <div style="font-size:.84rem;font-weight:800;color:#4a2c00;margin-bottom:8px;">🔀 固定費ルーティングシミュレーター（生産量 vs 販売量）</div>
+      <div style="font-size:.8rem;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <label style="min-width:72px;font-weight:700;color:#4a2c00;">固定費総額</label>
+          <input type="range" id="fc_fc" min="100" max="1000" step="50" value="500" style="flex:1;accent-color:#b45309;" oninput="fcSim()">
+          <span id="fc_fc_disp" style="min-width:48px;font-weight:800;color:#b45309;text-align:right;">500万</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <label style="min-width:72px;font-weight:700;color:#4a2c00;">生産量</label>
+          <input type="range" id="fc_prod" min="50" max="200" step="10" value="100" style="flex:1;accent-color:#c2410c;" oninput="fcSim()">
+          <span id="fc_prod_disp" style="min-width:48px;font-weight:800;color:#c2410c;text-align:right;">100個</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <label style="min-width:72px;font-weight:700;color:#4a2c00;">販売量</label>
+          <input type="range" id="fc_sell" min="50" max="200" step="10" value="80" style="flex:1;accent-color:#1d4ed8;" oninput="fcSim()">
+          <span id="fc_sell_disp" style="min-width:48px;font-weight:800;color:#1d4ed8;text-align:right;">80個</span>
+        </div>
+      </div>
+      <!-- 結果 -->
+      <div id="fc_routing" style="font-size:.8rem;margin-bottom:6px;"></div>
+      <div id="fc_verdict" style="font-size:.82rem;"></div>
+    </div>
+    <script>
+    (function(){
+      function fcSim(){
+        var fc=+document.getElementById('fc_fc').value;
+        var prod=+document.getElementById('fc_prod').value;
+        var sell=+document.getElementById('fc_sell').value;
+        document.getElementById('fc_fc_disp').textContent=fc+'万';
+        document.getElementById('fc_prod_disp').textContent=prod+'個';
+        document.getElementById('fc_sell_disp').textContent=sell+'個';
+        // 直接原価: 固定費全額P/L
+        var dirPL=fc;
+        // 全部原価: 固定費 × (sell/prod) → P/L, 残りBS
+        var fcPerUnit=fc/prod;
+        var absoPL=Math.round(fcPerUnit*sell);
+        var absoBS=Math.round(fcPerUnit*(prod-sell));
+        var diff=absoPL-dirPL; // 全部PL - 直接PL → negative means 全部 costs less → profit higher
+        var profitDiff=-diff; // 全部利益 - 直接利益
+        var caseLabel=prod>sell?'生産 ＞ 販売（在庫↑）':prod<sell?'生産 ＜ 販売（在庫↓）':'生産 ＝ 販売（在庫変動なし）';
+        var profitStr=profitDiff>0?'全部原価の利益 ＞ 直接原価の利益':profitDiff<0?'全部原価の利益 ＜ 直接原価の利益':'両方の利益 ＝ 同じ';
+        var profitColor=profitDiff>0?'#b45309':profitDiff<0?'#991b1b':'#166534';
+        // Bar width
+        var maxFC=Math.max(dirPL,fc,1);
+        var dirW=100, asPLW=Math.round(absoPL/maxFC*100), asBSW=Math.round(absoBS/maxFC*100);
+        document.getElementById('fc_routing').innerHTML=
+          '<div style="margin-bottom:5px;"><b style="color:#b45309;">直接原価計算</b>　全額 P/L 計上</div>'+
+          '<div style="display:flex;border-radius:6px;overflow:hidden;height:20px;width:100%;border:1.5px solid #fca5a5;margin-bottom:8px;">'+
+          '<div style="width:100%;background:#fca5a5;display:flex;align-items:center;justify-content:center;">'+
+          '<span style="font-size:.7rem;color:#991b1b;font-weight:800;">P/L費用 '+fc+'万（全額）</span></div></div>'+
+          '<div style="margin-bottom:5px;"><b style="color:#c2410c;">全部原価計算</b>　製品に配賦（販売分→P/L、在庫分→BS）</div>'+
+          '<div style="display:flex;border-radius:6px;overflow:hidden;height:20px;width:100%;border:1.5px solid #fb923c;margin-bottom:4px;">'+
+          (asPLW>0?'<div style="width:'+asPLW+'%;background:#fca5a5;display:flex;align-items:center;justify-content:center;transition:width .3s;">'+
+          (asPLW>12?'<span style="font-size:.7rem;color:#991b1b;font-weight:800;">P/L '+absoPL+'万</span>':'')+'</div>':'')+
+          (asBSW>0?'<div style="width:'+asBSW+'%;background:#93c5fd;display:flex;align-items:center;justify-content:center;transition:width .3s;">'+
+          (asBSW>12?'<span style="font-size:.7rem;color:#1e3a8a;font-weight:800;">BS在庫 '+absoBS+'万</span>':'')+'</div>':'')+
+          '</div>'+
+          (asBSW>0?'<div style="font-size:.72rem;color:#1e3a8a;margin-bottom:2px;">BS在庫に繰り越し：'+absoBS+'万（来期に P/L へ）</div>':'');
+        document.getElementById('fc_verdict').innerHTML=
+          '<div style="background:#fffef0;border:1.5px solid #fcd34d;border-radius:8px;padding:5px 10px;">'+
+          '<b>'+caseLabel+'</b><br>'+
+          '<b style="color:'+profitColor+';">→ '+profitStr+'</b>　差額：<b>|'+Math.abs(profitDiff)+'万|</b>'+
+          (absoBS!==0?'<br><span style="font-size:.74rem;color:#64748b;">全部原価でBSに残った固定費 '+Math.abs(absoBS)+'万 が利益差の原因</span>':'')+'</div>';
+      }
+      window.fcSim=fcSim;
+      fcSim();
+    })();
+    </script>
+
+    <!-- 利益の大小関係 -->
+    <div style="font-size:.88rem;font-weight:800;color:#4a2c00;margin:14px 0 6px;">⚖️ 利益の大小関係（生産量 vs 販売量）</div>
+    <div style="background:#fffef4;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;font-size:.84rem;color:#4a2c00;line-height:2;">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="background:#fff3cd;border:1.5px solid #fcd34d;border-radius:8px;padding:8px 14px;flex:1;min-width:180px;">
+          <div style="font-weight:800;font-size:.9rem;">生産量 ＞ 販売量（在庫↑）</div>
+          <div>全部原価計算の利益 <b style="color:#b45309;font-size:1.1rem;">＞</b> 直接原価計算の利益</div>
+          <div style="font-size:.76rem;color:#713f12;">理由：固定費の一部が在庫（BS）に残り、P/L費用が少ない</div>
+        </div>
+        <div style="background:#fef9e7;border:1.5px solid #fcd34d;border-radius:8px;padding:8px 14px;flex:1;min-width:180px;">
+          <div style="font-weight:800;font-size:.9rem;">生産量 ＜ 販売量（在庫↓）</div>
+          <div>全部原価計算の利益 <b style="color:#b45309;font-size:1.1rem;">＜</b> 直接原価計算の利益</div>
+          <div style="font-size:.76rem;color:#713f12;">理由：前期在庫の固定費も P/L 費用に上乗せされる</div>
+        </div>
+        <div style="background:#fff8e1;border:1.5px solid #fde68a;border-radius:8px;padding:8px 14px;flex:1;min-width:180px;">
+          <div style="font-weight:800;font-size:.9rem;">生産量 ＝ 販売量（在庫変動なし）</div>
+          <div>全部原価計算の利益 <b style="color:#b45309;font-size:1.1rem;">＝</b> 直接原価計算の利益</div>
+          <div style="font-size:.76rem;color:#713f12;">在庫変動がないので固定費の差なし</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trap"><b>あなたが外した所</b>（直接原価 vs 全部原価）：<br>
+    ・直接原価計算：固定費を<b>期間原価として全額 P/L 計上</b>（在庫に残らない）。<br>
+    ・生産量 ＞ 販売量 → 全部原価計算の利益の方が<b>大きい</b>（在庫に固定費が残るから）。<br>
+    ・直接原価計算は CVP 分析に<b>適している</b>が、財務会計では<b>認められない</b>。</div>
+
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-left:5px solid #f59e0b;border-radius:8px;padding:.55rem .8rem;margin:10px 0;font-size:.82rem;color:#713f12;line-height:1.9;">
+      <b style="color:#b45309;">📌 過去問で問われるポイント</b><br>
+      ・「直接原価計算は財務会計（外部報告）に使える」→ <b>誤り</b>（管理会計のみ）。<br>
+      ・「生産量＞販売量のとき、直接原価計算の方が利益が大きい」→ <b>誤り</b>（全部原価計算の方が大きい）。<br>
+      ・「直接原価計算は CVP 分析と相性が良い」→ <b>正しい</b>（限界利益が明確）。
+    </div>
+  </div>
+
+  <div style="background:#fffdf7;border:1px solid #fde68a;border-radius:8px;padding:.45rem .7rem;margin:12px 0 4px;font-size:.77rem;color:#7c5a32;line-height:1.8;"><span style="font-weight:700;color:#b45309;font-size:.73rem;">🎵 ゴロ（補助）</span> 📦 <b>全部原価「在庫に固定費を押し込める→利益多め」</b>。<br>🧮 <b>直接原価「固定費を全額即払い→利益少なめ（生産多い場合）」</b>。</div>
+
+  <div class="fill-section-title">✏️ 穴埋めチェック</div>
+  <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+  <div class="fill-card">
+    <div class="fill-head">直接原価計算 vs 全部原価計算</div>
+    <div class="fill-body">
+      <div>直接原価計算：固定費を<span class="blank">期間原価</span>として全額 P/L 計上（在庫に含め<span class="blank">ない</span>）。</div>
+      <div>全部原価計算：固定費を<span class="blank">製品原価</span>に含める（在庫に一部が残りBS計上）。</div>
+      <div>生産量 ＞ 販売量 → <span class="blank">全部原価計算</span> の利益の方が大きい（固定費が在庫に残るから）。</div>
+      <div>生産量 ＝ 販売量 → 2方式の利益は<span class="blank">等しい</span>。</div>
+      <div>直接原価計算は <span class="blank">CVP分析</span> に適しているが、<span class="blank">財務会計（外部報告）</span>には使えない。</div>
+      <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== TAB 3: 感度分析・DOL・関連範囲 ===== -->
+<div class="tab-panel cat-t">
+
+  <h2>感度分析 ― 単価引下げで BEP は「必ずしも」上昇しない</h2>
+  <div class="fig">
+    <div style="font-size:.82rem;font-weight:800;color:#063a34;background:var(--tl);border:1px solid #5eead4;border-radius:8px;padding:.5rem .8rem;margin-bottom:14px;">🎯 ねらい：単価変更→BEPへの影響（変動費との組み合わせ）・DOL（固定費比率と利益感応度）・関連範囲の3点を整理。</div>
+
+    <!-- 単価引下げとBEP -->
+    <div style="background:#fff;border:1px solid #5eead4;border-radius:10px;padding:12px 14px;margin-bottom:10px;">
+      <div style="font-size:.88rem;font-weight:800;color:#063a34;margin-bottom:8px;">💡 単価引下げ → BEP は必ず上昇するか？</div>
+
+      <div style="background:var(--tl);border-radius:8px;padding:10px 12px;font-size:.84rem;color:#063a34;line-height:2;margin-bottom:8px;">
+        BEP ＝ 固定費 ÷ 限界利益率　（限界利益率 ＝ 1 − 変動費率）<br>
+        単価↓ で変動費が<b>変わらない</b>場合：変動費率（変動費÷単価）↑ → 限界利益率↓ → BEP↑<br>
+        単価↓ と同時に変動費も<b>同率で↓</b>場合：変動費率は<b>変わらず</b> → 限界利益率も変わらず → BEP は変わらない
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.84rem;margin-bottom:6px;">
+        <div style="background:#fee2e2;border-radius:8px;padding:8px 12px;flex:1;min-width:150px;border:1.5px solid #fca5a5;">
+          <div style="font-weight:800;color:#991b1b;">単価↓、変動費変わらず</div>
+          <div>変動費率↑ → 限界利益率↓</div>
+          <div style="font-weight:800;">→ BEP <b>上昇</b>（典型パターン）</div>
+        </div>
+        <div style="background:var(--tl);border-radius:8px;padding:8px 12px;flex:1;min-width:150px;border:1.5px solid #5eead4;">
+          <div style="font-weight:800;color:#063a34;">単価↓、変動費も同率↓</div>
+          <div>変動費率変わらず → 限界利益率変わらず</div>
+          <div style="font-weight:800;">→ BEP <b>変化なし</b>（例外ケース）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 感度分析シミュレーター -->
+    <div style="background:#fff;border:1px solid #5eead4;border-radius:10px;padding:12px 14px;margin:10px 0;">
+      <div style="font-size:.84rem;font-weight:800;color:#063a34;margin-bottom:8px;">📊 感度分析シミュレーター（単価・変動費を動かす）</div>
+      <div style="font-size:.8rem;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <label style="min-width:72px;font-weight:700;color:#063a34;">固定費</label>
+          <input type="range" id="sa_fc" min="100" max="2000" step="100" value="600" style="flex:1;accent-color:#c2410c;" oninput="saSim()">
+          <span id="sa_fc_disp" style="min-width:48px;font-weight:800;color:#c2410c;text-align:right;">600万</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <label style="min-width:72px;font-weight:700;color:#063a34;">単価</label>
+          <input type="range" id="sa_p" min="100" max="1000" step="50" value="500" style="flex:1;accent-color:#0f766e;" oninput="saSim()">
+          <span id="sa_p_disp" style="min-width:48px;font-weight:800;color:#0f766e;text-align:right;">500円</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <label style="min-width:72px;font-weight:700;color:#063a34;">変動費<br>（1単位）</label>
+          <input type="range" id="sa_vc" min="50" max="800" step="50" value="200" style="flex:1;accent-color:#1d4ed8;" oninput="saSim()">
+          <span id="sa_vc_disp" style="min-width:48px;font-weight:800;color:#1d4ed8;text-align:right;">200円</span>
+        </div>
+      </div>
+      <div id="sa_res" style="font-size:.82rem;margin-bottom:5px;"></div>
+      <svg id="sa_svg" viewBox="0 0 360 160" style="width:100%;max-width:420px;display:block;margin:0 auto;"></svg>
+    </div>
+    <script>
+    (function(){
+      function saSim(){
+        var fc=+document.getElementById('sa_fc').value;
+        var p=+document.getElementById('sa_p').value;
+        var vc=+document.getElementById('sa_vc').value;
+        document.getElementById('sa_fc_disp').textContent=fc+'万';
+        document.getElementById('sa_p_disp').textContent=p+'円';
+        document.getElementById('sa_vc_disp').textContent=vc+'円';
+        if(p<=vc){
+          document.getElementById('sa_res').innerHTML='<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:5px 10px;color:#991b1b;font-weight:700;">⚠ 単価≤変動費：限界利益がゼロ以下でBEP計算不能</div>';
+          document.getElementById('sa_svg').innerHTML='';
+          return;
+        }
+        var cm=p-vc; // 限界利益（1単位）
+        var cmr=cm/p; // 限界利益率
+        var bep=Math.round(fc/cmr); // BEP売上高
+        var bepQ=Math.round(fc/cm); // BEP数量
+        document.getElementById('sa_res').innerHTML=
+          '<div style="background:#f0fdfa;border:1.5px solid #5eead4;border-radius:8px;padding:5px 10px;">'+
+          '限界利益率 ＝ ('+p+'−'+vc+')÷'+p+' ＝ <b>'+Math.round(cmr*100)+'%</b>　　'+
+          'BEP ＝ '+fc+'万 ÷ '+Math.round(cmr*100)+'% ＝ <b style="font-size:.95rem;color:#c2410c;">'+bep+'万円</b>　（'+bepQ+'個）</div>';
+        // SVG chart - same style as BEP simulator
+        var PL=40,PR=340,PT=15,PB=140;
+        var maxX=Math.max(bep*1.5,600);
+        var maxY=Math.max(fc*2,bep*cmr*1.5,500);
+        function cx(x){ return PL+(x/maxX)*(PR-PL); }
+        function cy(y){ return PB-Math.min(y,maxY)/maxY*(PB-PT); }
+        var s='';
+        // Axes
+        s+='<line x1="'+PL+'" y1="'+PT+'" x2="'+PL+'" y2="'+PB+'" stroke="#334155" stroke-width="1.5"/>';
+        s+='<line x1="'+PL+'" y1="'+PB+'" x2="'+PR+'" y2="'+PB+'" stroke="#334155" stroke-width="1.5"/>';
+        // FC line
+        var fcY=cy(fc*1); // fc in 万, y-axis in 万
+        s+='<line x1="'+PL+'" y1="'+fcY.toFixed(1)+'" x2="'+PR+'" y2="'+fcY.toFixed(1)+'" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="5,3"/>';
+        s+='<text x="'+(PL+2)+'" y="'+(fcY-3).toFixed(1)+'" font-size="8" fill="#c2410c">固定費 '+fc+'万</text>';
+        // Total cost line: at x=0, y=fc; at x=maxX, y=fc+vc*maxX/p*maxY/maxX...
+        // Actually in 売上高 x-axis terms: total cost = fc + vc/p * x
+        var tcY0=fcY; // at x=0, TC=FC
+        var tcY1=cy(fc+vc/p*maxX); // at x=maxX
+        s+='<line x1="'+PL+'" y1="'+tcY0.toFixed(1)+'" x2="'+PR+'" y2="'+tcY1.toFixed(1)+'" stroke="#f59e0b" stroke-width="2"/>';
+        // Revenue line: y=x, so at x=maxX, y=maxX
+        var revY1=cy(maxX);
+        s+='<line x1="'+PL+'" y1="'+PB+'" x2="'+PR+'" y2="'+revY1.toFixed(1)+'" stroke="#0f766e" stroke-width="2"/>';
+        // BEP point
+        if(bep<=maxX){
+          var bX=cx(bep); var bY=cy(bep);
+          s+='<circle cx="'+bX.toFixed(1)+'" cy="'+bY.toFixed(1)+'" r="5" fill="#c2410c" stroke="#fff" stroke-width="1.5"/>';
+          s+='<line x1="'+bX.toFixed(1)+'" y1="'+bY.toFixed(1)+'" x2="'+bX.toFixed(1)+'" y2="'+PB+'" stroke="#c2410c" stroke-width="1" stroke-dasharray="3,2"/>';
+          s+='<text x="'+bX.toFixed(1)+'" y="'+(PB+12)+'" font-size="8.5" fill="#c2410c" text-anchor="middle" font-weight="bold">BEP '+bep+'万</text>';
+        }
+        // Labels
+        s+='<text x="'+(PR-2)+'" y="'+(revY1+12).toFixed(1)+'" font-size="8" fill="#0f766e" text-anchor="end">売上高</text>';
+        s+='<text x="'+(PR-2)+'" y="'+(tcY1+12).toFixed(1)+'" font-size="8" fill="#f59e0b" text-anchor="end">総費用</text>';
+        s+='<text x="'+(PL+3)+'" y="20" font-size="8" fill="#334155">金額(万)↑</text>';
+        s+='<text x="'+(PR-5)+'" y="'+(PB+8)+'" font-size="8" fill="#334155">売上高→</text>';
+        document.getElementById('sa_svg').innerHTML=s;
+      }
+      window.saSim=saSim;
+      saSim();
+    })();
+    </script>
+
+    <div class="trap"><b>あなたが外した所</b>（感度分析）：<br>
+    ・「単価を引き下げると BEP は<b>必ず</b>上昇する」→ <b>誤り</b>（変動費も同率低下すれば BEP は変わらない）。<br>
+    ・単価↓（変動費固定）の<b>一般的ケース</b>は BEP 上昇が多いが「必ず」という絶対表現が誤り。</div>
+  </div>
+
+  <!-- DOL -->
+  <div class="fig">
+    <div style="font-size:.88rem;font-weight:800;color:#063a34;margin-bottom:8px;">📈 DOL（営業レバレッジ）</div>
+
+    <div class="formula" style="border-color:#5eead4;background:#f0fdfb;">
+      DOL ＝ <b style="color:var(--t);">限界利益 ÷ 営業利益</b>
+      <span class="ex" style="color:#065f46;">＝ 売上高変化率1%に対して営業利益が何%変化するかの倍率</span>
+    </div>
+
+    <div style="background:var(--tl);border:1px solid #5eead4;border-radius:8px;padding:.6rem .8rem;margin:8px 0;font-size:.84rem;color:#063a34;line-height:1.9;">
+      <b>固定費が高い企業ほど DOL が高い</b>：<br>
+      固定費↑ → 限界利益と営業利益の差が大きい → DOL↑<br>
+      → 売上増加時に利益が<b>大きく増える</b>（売上減少時も大きく落ちる）。<br>
+      DOL ＝ 1 は固定費ゼロ（変動費のみの企業）。
+    </div>
+
+    <!-- DOL の数値例 -->
+    <div style="background:#fff;border:1px solid #5eead4;border-radius:8px;padding:8px 12px;font-size:.84rem;color:#063a34;line-height:1.9;margin-top:6px;">
+      <b>例）限界利益 1,000万円、営業利益 250万円</b><br>
+      DOL ＝ 1,000 ÷ 250 ＝ <b>4倍</b><br>
+      → 売上高が 10% 増えると営業利益は <b>40% 増える</b>（10% × 4倍）
+    </div>
+
+    <!-- DOL レバレッジ効果 シミュレーター（インタラクティブ） -->
+    <div style="background:var(--tl);border:1px solid #5eead4;border-radius:10px;padding:12px 14px;margin:10px 0;">
+      <div style="font-size:.84rem;font-weight:800;color:#063a34;margin-bottom:10px;">⚙️ DOL レバレッジシミュレーター（スライダーで動かせる）</div>
+      <div style="font-size:.82rem;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <label style="min-width:68px;color:#063a34;font-weight:700;">DOL 値</label>
+          <input type="range" id="dol_v" min="10" max="100" step="5" value="40" style="flex:1;accent-color:#0f766e;" oninput="dolSim()">
+          <span id="dol_v_disp" style="min-width:40px;font-weight:800;color:#0f766e;text-align:right;">4.0倍</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label style="min-width:68px;color:#063a34;font-weight:700;">売上変化率</label>
+          <input type="range" id="dol_sc" min="-20" max="20" step="1" value="10" style="flex:1;accent-color:#1d4ed8;" oninput="dolSim()">
+          <span id="dol_sc_disp" style="min-width:52px;font-weight:800;color:#1d4ed8;text-align:right;">+10%</span>
+        </div>
+      </div>
+      <!-- 結果表示 -->
+      <div id="dol_res" style="margin-bottom:8px;font-size:.88rem;"></div>
+      <!-- 売上変化バー -->
+      <div id="dol_bars" style="margin-bottom:6px;"></div>
+      <div style="font-size:.74rem;color:#7f1d1d;font-weight:700;background:#fee2e2;border-radius:6px;padding:4px 8px;">
+        ⚠ 諸刃の剣：売上↑ならDOL倍率で利益↑、売上↓ならDOL倍率で利益↓
+      </div>
+    </div>
+    <script>
+    (function(){
+      function dolSim(){
+        var dolRaw=+document.getElementById('dol_v').value;
+        var dol=dolRaw/10;
+        var sc=+document.getElementById('dol_sc').value;
+        document.getElementById('dol_v_disp').textContent=dol.toFixed(1)+'倍';
+        document.getElementById('dol_sc_disp').textContent=(sc>=0?'+':'')+sc+'%';
+        var pc=Math.round(sc*dol*10)/10;
+        var pcStr=(pc>=0?'+':'')+pc+'%';
+        var isUp=sc>=0;
+        var isGood=(sc>0)?true:false;
+        document.getElementById('dol_res').innerHTML=
+          '<div style="background:'+(isGood?'#f0fdfa':'#fff1f2')+';border:2px solid '+(isGood?'#5eead4':'#fca5a5')+';border-radius:8px;padding:6px 12px;display:flex;gap:10px;align-items:center;">'+
+          '<div style="text-align:center;"><div style="font-size:.72rem;color:#64748b;">売上変化</div>'+
+          '<div style="font-weight:800;font-size:1.1rem;color:'+(sc>=0?'#166534':'#991b1b')+';">'+(sc>=0?'+':'')+sc+'%</div></div>'+
+          '<div style="font-size:1.2rem;color:#0f766e;font-weight:800;">× DOL '+dol.toFixed(1)+'倍</div>'+
+          '<div style="text-align:center;"><div style="font-size:.72rem;color:#64748b;">営業利益変化</div>'+
+          '<div style="font-weight:800;font-size:1.3rem;color:'+(pc>=0?'#166534':'#991b1b')+';">'+pcStr+'</div></div></div>';
+        // Bars
+        var maxPct=Math.max(Math.abs(sc),Math.abs(pc),10);
+        var scPct=Math.min(Math.abs(sc)/maxPct*100,100);
+        var pcPct=Math.min(Math.abs(pc)/maxPct*100,100);
+        document.getElementById('dol_bars').innerHTML=
+          '<div style="margin-bottom:4px;"><div style="font-size:.74rem;font-weight:700;color:#64748b;margin-bottom:2px;">売上変化率</div>'+
+          '<div style="background:#f1f5f9;border-radius:4px;height:16px;overflow:hidden;border:1px solid #e2e8f0;max-width:300px;">'+
+          '<div style="width:'+scPct+'%;height:100%;background:'+(sc>=0?'#1d4ed8':'#94a3b8')+';transition:width .25s;display:flex;align-items:center;padding-left:4px;">'+
+          '<span style="font-size:.7rem;color:#fff;font-weight:700;">'+(sc>=0?'+':'')+sc+'%</span></div></div></div>'+
+          '<div><div style="font-size:.74rem;font-weight:800;color:'+(pc>=0?'#0f766e':'#991b1b')+';margin-bottom:2px;">営業利益変化率（DOL倍率で増幅）</div>'+
+          '<div style="background:'+(pc>=0?'#f0fdfa':'#fff1f2')+';border-radius:4px;height:20px;overflow:hidden;border:1.5px solid '+(pc>=0?'#5eead4':'#fca5a5')+';max-width:300px;">'+
+          '<div style="width:'+pcPct+'%;height:100%;background:'+(pc>=0?'#0f766e':'#c2410c')+';transition:width .25s;display:flex;align-items:center;padding-left:4px;">'+
+          '<span style="font-size:.72rem;color:#fff;font-weight:800;">'+pcStr+'</span></div></div></div>';
+      }
+      window.dolSim=dolSim;
+      dolSim();
+    })();
+    </script>
+
+    <div class="trap"><b>あなたが外した所</b>（DOL）：<br>
+    ・DOL ＝ <b>限界利益 ÷ 営業利益</b>（「売上高÷」や「固定費÷」ではない）。<br>
+    ・DOL が高い ＝ 固定費比率が高い ＝ レバレッジが高い ＝ 売上変動に対して利益が<b>大きく振れる</b>。<br>
+    ・「DOL が高いほど財務的に安定している」→ <b>誤り</b>（好況時は有利、不況時はリスク大）。</div>
+  </div>
+
+  <!-- 関連範囲 -->
+  <div class="fig">
+    <div style="font-size:.88rem;font-weight:800;color:#063a34;margin-bottom:8px;">📐 関連範囲（Relevant Range）</div>
+    <div style="background:var(--tl);border:1px solid #5eead4;border-radius:8px;padding:.6rem .8rem;font-size:.84rem;color:#063a34;line-height:1.9;">
+      CVP 分析の前提：<b>固定費は一定・変動費は売上に比例</b><br>
+      → この前提が成り立つのは<b>一定の操業範囲（関連範囲）内のみ</b>。<br><br>
+      <b>関連範囲外</b>では：<br>
+      ・固定費がステップ状に増加する（設備増設など）<br>
+      ・変動費が非線形になることがある（規模の経済・規模の不経済）
+    </div>
+    <div style="background:#fff;border:1px solid #5eead4;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:.84rem;color:#063a34;line-height:1.9;">
+      ▶ 「固定費は売上に関わらず一定」は<b>関連範囲内での話</b>（関連範囲外では変わりえる）。
+    </div>
+
+    <!-- 関連範囲 ステップ関数グラフ（インタラクティブ） -->
+    <div style="background:#fff;border:1px solid #5eead4;border-radius:10px;padding:12px 14px;margin:8px 0;">
+      <div style="font-size:.84rem;font-weight:800;color:#063a34;margin-bottom:8px;">📊 関連範囲シミュレーター（操業度を動かす）</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.82rem;">
+        <label style="min-width:72px;font-weight:700;color:#063a34;">現在の<br>操業度</label>
+        <input type="range" id="rr_lev" min="0" max="100" step="1" value="50" style="flex:1;accent-color:#0f766e;" oninput="rrSim()">
+        <span id="rr_lev_disp" style="min-width:40px;font-weight:800;color:#0f766e;text-align:right;">50%</span>
+      </div>
+      <div id="rr_status" style="margin-bottom:6px;font-size:.82rem;"></div>
+      <svg id="rr_svg" viewBox="0 0 340 155" style="width:100%;max-width:400px;display:block;margin:0 auto;"></svg>
+      <div style="font-size:.74rem;color:#334155;text-align:center;margin-top:4px;">
+        <span style="color:#0f766e;font-weight:800;">緑帯（関連範囲）</span>：固定費一定→CVP成立　<span style="color:#c2410c;font-weight:800;">設備増設点</span>でジャンプ
+      </div>
+    </div>
+    <script>
+    (function(){
+      // Steps: lev 0..33%=step1(FC=低), 33..66%=step2(FC=中), 66..100%=step3(FC=高)
+      // Relevant range is step2 (33-66%)
+      var steps=[
+        {from:0, to:33, fc:100, label:'ステップ1（低操業）', color:'#c2410c'},
+        {from:33, to:66, fc:76, label:'ステップ2（関連範囲・通常操業）', color:'#0f766e'},
+        {from:66, to:100, fc:52, label:'ステップ3（高操業・設備増設後）', color:'#c2410c'}
+      ];
+      // SVG coordinates: x: 40+(lev/100)*290, y: lev*0+fc (fc in svg coords)
+      function rrSim(){
+        var lev=+document.getElementById('rr_lev').value;
+        document.getElementById('rr_lev_disp').textContent=lev+'%';
+        var cur=lev<33?steps[0]:lev<66?steps[1]:steps[2];
+        var inRange=lev>=33&&lev<66;
+        document.getElementById('rr_status').innerHTML=
+          '<div style="background:'+(inRange?'#f0fdfa':'#fff1f2')+';border:1.5px solid '+(inRange?'#5eead4':'#fca5a5')+';border-radius:8px;padding:5px 10px;">'+
+          '<b style="color:'+(inRange?'#0f766e':'#c2410c')+';">'+(inRange?'関連範囲内 ✓':'関連範囲外 ⚠')+'</b>　'+
+          '<span style="color:#334155;">'+cur.label+'</span><br>'+
+          '<span style="color:#334155;font-size:.78rem;">固定費レベル：<b style="color:'+(inRange?'#0f766e':'#c2410c')+';font-size:.9rem;">'+(cur.fc===76?'中（一定）':cur.fc===100?'低（別設備）':'高（増設済）')+'</b>　CVP分析：<b>'+(inRange?'成立':'⚠ 成立しない')+'</b></span></div>';
+        // Build SVG
+        var W=340, PL=40, PR=330, PT=12, PB=125;
+        function rx(l){ return PL+(l/100)*(PR-PL); }
+        var dotX=rx(lev);
+        var dotY=cur.fc;
+        var s='';
+        // Axes
+        s+='<line x1="40" y1="10" x2="40" y2="130" stroke="#334155" stroke-width="1.5"/>';
+        s+='<line x1="35" y1="125" x2="335" y2="125" stroke="#334155" stroke-width="1.5"/>';
+        // Relevant range highlight
+        s+='<rect x="'+rx(33).toFixed(1)+'" y="10" width="'+(rx(66)-rx(33)).toFixed(1)+'" height="118" fill="#f0fdfa" opacity="0.8"/>';
+        // Step segments
+        var x0=rx(0),x1=rx(33),x2=rx(66),x3=rx(100);
+        // Step1
+        s+='<line x1="'+x0.toFixed(1)+'" y1="100" x2="'+x1.toFixed(1)+'" y2="100" stroke="#c2410c" stroke-width="2.5"/>';
+        // Jump1
+        s+='<line x1="'+x1.toFixed(1)+'" y1="100" x2="'+x1.toFixed(1)+'" y2="76" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,2"/>';
+        // Step2
+        s+='<line x1="'+x1.toFixed(1)+'" y1="76" x2="'+x2.toFixed(1)+'" y2="76" stroke="#0f766e" stroke-width="2.5"/>';
+        // Jump2
+        s+='<line x1="'+x2.toFixed(1)+'" y1="76" x2="'+x2.toFixed(1)+'" y2="52" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,2"/>';
+        // Step3
+        s+='<line x1="'+x2.toFixed(1)+'" y1="52" x2="'+x3.toFixed(1)+'" y2="52" stroke="#c2410c" stroke-width="2.5"/>';
+        // Relevant range bracket
+        s+='<line x1="'+x1.toFixed(1)+'" y1="135" x2="'+x2.toFixed(1)+'" y2="135" stroke="#0f766e" stroke-width="2"/>';
+        s+='<line x1="'+x1.toFixed(1)+'" y1="131" x2="'+x1.toFixed(1)+'" y2="139" stroke="#0f766e" stroke-width="2"/>';
+        s+='<line x1="'+x2.toFixed(1)+'" y1="131" x2="'+x2.toFixed(1)+'" y2="139" stroke="#0f766e" stroke-width="2"/>';
+        s+='<text x="'+((x1+x2)/2).toFixed(1)+'" y="148" font-size="9" fill="#0f766e" text-anchor="middle" font-weight="bold">← 関連範囲 →</text>';
+        // Moving dot
+        var dotColor=inRange?'#0f766e':'#c2410c';
+        s+='<line x1="'+dotX.toFixed(1)+'" y1="'+dotY+'" x2="'+dotX.toFixed(1)+'" y2="125" stroke="'+dotColor+'" stroke-width="1" stroke-dasharray="2,2"/>';
+        s+='<circle cx="'+dotX.toFixed(1)+'" cy="'+dotY+'" r="5.5" fill="'+dotColor+'" stroke="#fff" stroke-width="1.5"/>';
+        s+='<text x="'+(dotX+7).toFixed(1)+'" y="'+(dotY-5)+'" font-size="8" fill="'+dotColor+'" font-weight="bold">'+lev+'%</text>';
+        // Labels
+        s+='<text x="5" y="103" font-size="8" fill="#334155">固</text>';
+        s+='<text x="5" y="79" font-size="8" fill="#334155">定</text>';
+        s+='<text x="5" y="55" font-size="8" fill="#334155">費</text>';
+        s+='<text x="185" y="118" font-size="8.5" fill="#334155" text-anchor="middle">操業度→</text>';
+        s+='<text x="'+x1.toFixed(1)+'" y="68" font-size="7.5" fill="#c2410c">設備増設①</text>';
+        s+='<text x="'+x2.toFixed(1)+'" y="44" font-size="7.5" fill="#c2410c">設備増設②</text>';
+        document.getElementById('rr_svg').innerHTML=s;
+      }
+      window.rrSim=rrSim;
+      rrSim();
+    })();
+    </script>
+
+    <div class="trap"><b>あなたが外した所</b>（関連範囲）：<br>
+    ・CVP分析（固定費一定・変動費比例）が成立するのは<b>関連範囲内</b>のみ。<br>
+    ・「固定費は操業度に関わらず常に一定」→ <b>誤り</b>（関連範囲外ではステップアップする）。</div>
+
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-left:5px solid #f59e0b;border-radius:8px;padding:.55rem .8rem;margin:10px 0;font-size:.82rem;color:#713f12;line-height:1.9;">
+      <b style="color:#b45309;">📌 過去問で問われるポイント</b><br>
+      ・「単価引下げで BEP は必ず上昇する」→ <b>誤り</b>（変動費も下がれば変化なし）。<br>
+      ・「DOL ＝ 限界利益 ÷ 営業利益」→ <b>正しい</b>（限界利益÷営業利益の倍率）。<br>
+      ・「DOL が高いほど売上変動に対して利益が大きく振れる」→ <b>正しい</b>。<br>
+      ・「CVP分析の固定費一定の前提は常に成立する」→ <b>誤り</b>（関連範囲内のみ）。
+    </div>
+  </div>
+
+  <div style="background:#fffdf7;border:1px solid #fde68a;border-radius:8px;padding:.45rem .7rem;margin:12px 0 4px;font-size:.77rem;color:#7c5a32;line-height:1.8;"><span style="font-weight:700;color:#b45309;font-size:.73rem;">🎵 ゴロ（補助）</span> 📉 <b>単価↓「変動費も一緒に下がれば BEP は変わらない」</b>（必ず上昇は嘘）。<br>📈 <b>DOL＝「限界÷営業（リミ÷えい）」</b>（限界利益を営業利益で割る）。<br>📐 <b>関連範囲＝「CVP の成立エリア（外れると固定費がジャンプ）」</b>。</div>
+
+  <div class="fill-section-title">✏️ 穴埋めチェック</div>
+  <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+  <div class="fill-card">
+    <div class="fill-head">感度分析・DOL・関連範囲</div>
+    <div class="fill-body">
+      <div>単価↓（変動費変わらず）→ 限界利益率<span class="blank">↓</span> → BEP <span class="blank">↑（上昇）</span>。</div>
+      <div>単価↓（変動費も同率↓）→ 変動費率変わらず → BEP は<span class="blank">変化なし</span>（「必ず上昇」は誤り）。</div>
+      <div>DOL ＝ <span class="blank">限界利益</span> ÷ <span class="blank">営業利益</span></div>
+      <div>DOL が高い ＝ <span class="blank">固定費</span>比率が高い ＝ 売上変動に対して利益が<span class="blank">大きく振れる</span>。</div>
+      <div>CVP分析の「固定費一定」は<span class="blank">関連範囲</span>内での前提（関連範囲外ではステップアップ）。</div>
+      <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /.tab-container -->
+
+<script>
+function sw(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.blank').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('show')));
+function rev(btn){
+  var blanks=btn.closest('.fill-body').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+function revAll(btn){
+  var blanks=btn.closest('.tab-panel').querySelectorAll('.blank');
+  var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
+  blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
+}
+(function(){
+  var KEY='hk_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  var blocks=[].slice.call(document.querySelectorAll('.fill-card, .fig > div, .fig > table'));
+  blocks.forEach(function(el,i){
+    var id='b'+i; var btn=document.createElement('button');
+    btn.className='mz-btn'; btn.type='button';
+    function set(on){ el.classList.toggle('mz-done',on); btn.textContent=on?'✓':'○'; }
+    set(!!st[id]);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); var on=!el.classList.contains('mz-done'); set(on); if(on)st[id]=1; else delete st[id]; save(); });
+    el.addEventListener('click',function(){ if(el.classList.contains('mz-done')){ set(false); delete st[id]; save(); } });
+    el.appendChild(btn);
+  });
+  var rows=[].slice.call(document.querySelectorAll('table tr')).filter(function(tr){
+    return tr.querySelector('td') && !tr.querySelector('th');
+  });
+  rows.forEach(function(tr,i){
+    var id='r'+i; var td=tr.cells[tr.cells.length-1]; if(!td) return;
+    function show(){ tr.style.display=''; var ph=document.querySelector('[data-ph="'+id+'"]'); if(ph)ph.remove(); delete st[id]; save(); }
+    function hide(){
+      tr.style.display='none';
+      if(!document.querySelector('[data-ph="'+id+'"]')){
+        var ph=document.createElement('tr'); ph.setAttribute('data-ph',id);
+        var ptd=document.createElement('td'); ptd.colSpan=tr.children.length||1;
+        ptd.style.cssText='text-align:center;background:#f8fafc;color:#94a3b8;font-size:.73rem;padding:2px;';
+        ptd.innerHTML='—（非表示）<button type="button" class="row-show-btn">👁 表示</button>';
+        ptd.querySelector('button').addEventListener('click',show);
+        ph.appendChild(ptd); tr.parentNode.insertBefore(ph,tr.nextSibling);
+      }
+      st[id]=1; save();
+    }
+    var b=document.createElement('button'); b.className='row-hk-btn'; b.type='button'; b.textContent='○'; b.title='この行を隠す';
+    b.addEventListener('click',function(e){ e.stopPropagation(); hide(); });
+    td.appendChild(b); if(st[id]) hide();
+  });
+  document.querySelectorAll('.tab-panel').forEach(function(panel){
+    var bar=document.createElement('div'); bar.style.cssText='text-align:right;margin:2px 0 8px;';
+    var mb=document.createElement('button'); mb.type='button'; mb.className='mz-all-btn';
+    function relabel(){
+      var bs=panel.querySelectorAll('.fig .mz-btn, .fill-card .mz-btn');
+      var anyOpen=[].slice.call(bs).some(function(x){return !x.parentNode.classList.contains('mz-done');});
+      mb.textContent=anyOpen?'🙈 この論点を全部かくす（思い出す）':'👁 全部表示する';
+    }
+    mb.addEventListener('click',function(){
+      var bs=[].slice.call(panel.querySelectorAll('.mz-btn'));
+      var anyOpen=bs.some(function(x){return !x.parentNode.classList.contains('mz-done');});
+      bs.forEach(function(x){ var done=x.parentNode.classList.contains('mz-done');
+        if(anyOpen && !done) x.click(); else if(!anyOpen && done) x.click(); });
+      relabel();
+    });
+    relabel(); bar.appendChild(mb);
+    var h2=panel.querySelector('h2');
+    if(h2) h2.insertAdjacentElement('afterend',bar); else panel.insertBefore(bar,panel.firstChild);
+  });
+})();
+</script>
+</body>
+</html>
