@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<script>
+(function(){
+  var cur='hk_'+location.pathname;
+  if(!localStorage.getItem(cur)){
+    var orig='hk_'+location.pathname.replace(/_m\.html$/,'.html');
+    var d=localStorage.getItem(orig);
+    if(d) localStorage.setItem(cur,d);
+  }
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>株式会社の機関と機関設計 総まとめ｜中小企業診断士 経営法務</title>
@@ -3001,6 +3011,7 @@ function resetZukai(tabId){
 </script>
 
 <!-- ===== ✏️ 注釈機能 ===== -->
+<!-- ===== ✏️ 注釈機能 ===== -->
 <style>
 #sz-bar{position:fixed;display:none;align-items:center;gap:2px;background:#1e293b;border-radius:9px;padding:4px;box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9999;transform:translateX(-50%)}
 #sz-bar.on{display:flex}
@@ -3008,7 +3019,7 @@ function resetZukai(tabId){
 #sz-bar button:hover{background:rgba(255,255,255,.18)}
 #sz-bar .sz-sep{width:1px;height:18px;background:rgba(255,255,255,.22);margin:0 1px;flex-shrink:0}
 mark.sz-ul{background:none;color:inherit;border-bottom:2.5px solid #ef4444;padding-bottom:1px;cursor:pointer}
-mark.sz-hl{background:#fef08a;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
+mark.sz-hl{background:#fde047;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
 mark.sz-cm{background:#bfdbfe;color:inherit;padding:0 1px;border-radius:2px;cursor:pointer}
 /* 選択 → 穴埋め化（クリックで答え表示／再クリックで隠す・トグル） */
 mark.sz-blank{background:#e0e7ff;color:transparent;border-bottom:2px dashed #6366f1;border-radius:3px;padding:0 3px;cursor:pointer;user-select:none}
@@ -3095,17 +3106,23 @@ mark.sz-search-hit.pulse{animation:szPulse 1.7s ease-out}
 #sz-filter input[type=checkbox]{accent-color:#3b82f6;width:15px;height:15px;cursor:pointer;flex-shrink:0}
 /* ---- 付箋（スティッキーメモ） ---- */
 .sz-note{position:absolute;width:204px;background:#fef9c3;border:1px solid rgba(0,0,0,.18);border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.22);z-index:40}
-.sz-note .sz-n-head{height:25px;background:rgba(0,0,0,.08);cursor:move;display:flex;align-items:center;gap:2px;padding:0 5px;border-radius:8px 8px 0 0;touch-action:none}
+.sz-note .sz-n-head{height:20px;background:rgba(0,0,0,.08);cursor:move;display:flex;align-items:center;gap:2px;padding:0 5px;border-radius:8px 8px 0 0;touch-action:none}
 .sz-note .sz-n-color{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.25);cursor:pointer;margin-right:auto}
 .sz-note .sz-n-head button{background:none;border:none;cursor:pointer;font-size:.78rem;color:#78350f;padding:0 4px;line-height:1}
 .sz-note .sz-n-head button:hover{color:#000}
-.sz-note textarea{display:block;width:100%;border:none;background:none;resize:vertical;padding:7px 9px;font-size:.82rem;font-family:inherit;line-height:1.55;outline:none;color:#422006;min-height:66px}
+.sz-note .sz-n-body{display:block;width:100%;border:none;background:none;padding:7px 9px;font-size:.82rem;font-family:inherit;line-height:1.55;outline:none;color:#422006;min-height:60px;word-break:break-word;white-space:pre-wrap;box-sizing:border-box;cursor:text}
+.sz-note .sz-n-body:focus{outline:none}
+.sz-note .sz-n-body[placeholder]:empty::before{content:attr(placeholder);opacity:.45;pointer-events:none;display:block}
 .sz-note.sz-n-min{width:auto;min-width:150px}
-.sz-note.sz-n-min textarea{display:none}
+.sz-note.sz-n-min .sz-n-body{display:none}
 .sz-note.sz-n-min .sz-n-head{border-radius:8px}
 .sz-note .sz-n-preview{display:none;font-size:.76rem;color:#78350f;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:6px}
 .sz-note.sz-n-min .sz-n-preview{display:block}
 body.sz-annot-off .sz-note{display:none !important}
+/* 付箋：右端リサイズハンドル */
+.sz-n-resize{position:absolute;top:0;right:0;width:7px;height:100%;cursor:ew-resize;z-index:2;border-radius:0 8px 8px 0;-webkit-tap-highlight-color:transparent}
+.sz-n-resize:hover,.sz-n-resize:active{background:rgba(0,0,0,.1)}
+.sz-note.sz-n-min .sz-n-resize{display:none}
 </style>
 
 <div id="sz-bar">
@@ -3129,12 +3146,12 @@ body.sz-annot-off .sz-note{display:none !important}
 </div>
 
 <div id="sz-hl-picker">
-  <div class="sz-hl-sw" style="background:#fef08a" title="黄" data-hlc="#fef08a" onclick="szApplyHl(this.dataset.hlc)"></div>
-  <div class="sz-hl-sw" style="background:#bbf7d0" title="緑" data-hlc="#bbf7d0" onclick="szApplyHl(this.dataset.hlc)"></div>
-  <div class="sz-hl-sw" style="background:#fecdd3" title="ピンク" data-hlc="#fecdd3" onclick="szApplyHl(this.dataset.hlc)"></div>
-  <div class="sz-hl-sw" style="background:#bfdbfe" title="水色" data-hlc="#bfdbfe" onclick="szApplyHl(this.dataset.hlc)"></div>
-  <div class="sz-hl-sw" style="background:#fed7aa" title="橙" data-hlc="#fed7aa" onclick="szApplyHl(this.dataset.hlc)"></div>
-  <div class="sz-hl-sw" style="background:#e9d5ff" title="紫" data-hlc="#e9d5ff" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#fde047" title="黄" data-hlc="#fde047" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#86efac" title="緑" data-hlc="#86efac" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#fda4af" title="ピンク" data-hlc="#fda4af" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#93c5fd" title="水色" data-hlc="#93c5fd" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#fdba74" title="橙" data-hlc="#fdba74" onclick="szApplyHl(this.dataset.hlc)"></div>
+  <div class="sz-hl-sw" style="background:#d8b4fe" title="紫" data-hlc="#d8b4fe" onclick="szApplyHl(this.dataset.hlc)"></div>
 </div>
 
 <div id="sz-del-pop">
@@ -3171,12 +3188,13 @@ body.sz-annot-off .sz-note{display:none !important}
   <div class="sz-f-title">表示する注釈</div>
   <label><input type="checkbox" data-f="ul" checked><span class="sz-f-chip" style="background:#fff;border-bottom:3px solid #ef4444"></span>赤線</label>
   <label><input type="checkbox" data-f="cm" checked><span class="sz-f-chip" style="background:#bfdbfe"></span>💬 メモ</label>
-  <label><input type="checkbox" data-f="hl:#fef08a" checked><span class="sz-f-chip" style="background:#fef08a"></span>蛍光 黄</label>
-  <label><input type="checkbox" data-f="hl:#bbf7d0" checked><span class="sz-f-chip" style="background:#bbf7d0"></span>蛍光 緑</label>
-  <label><input type="checkbox" data-f="hl:#fecdd3" checked><span class="sz-f-chip" style="background:#fecdd3"></span>蛍光 ピンク</label>
-  <label><input type="checkbox" data-f="hl:#bfdbfe" checked><span class="sz-f-chip" style="background:#bfdbfe"></span>蛍光 水色</label>
-  <label><input type="checkbox" data-f="hl:#fed7aa" checked><span class="sz-f-chip" style="background:#fed7aa"></span>蛍光 橙</label>
-  <label><input type="checkbox" data-f="hl:#e9d5ff" checked><span class="sz-f-chip" style="background:#e9d5ff"></span>蛍光 紫</label>
+  <label><input type="checkbox" data-f="note" checked><span class="sz-f-chip" style="background:#fef9c3;border:1px solid #d97706"></span>📝 付箋</label>
+  <label><input type="checkbox" data-f="hl:#fde047" checked><span class="sz-f-chip" style="background:#fde047"></span>蛍光 黄</label>
+  <label><input type="checkbox" data-f="hl:#86efac" checked><span class="sz-f-chip" style="background:#86efac"></span>蛍光 緑</label>
+  <label><input type="checkbox" data-f="hl:#fda4af" checked><span class="sz-f-chip" style="background:#fda4af"></span>蛍光 ピンク</label>
+  <label><input type="checkbox" data-f="hl:#93c5fd" checked><span class="sz-f-chip" style="background:#93c5fd"></span>蛍光 水色</label>
+  <label><input type="checkbox" data-f="hl:#fdba74" checked><span class="sz-f-chip" style="background:#fdba74"></span>蛍光 橙</label>
+  <label><input type="checkbox" data-f="hl:#d8b4fe" checked><span class="sz-f-chip" style="background:#d8b4fe"></span>蛍光 紫</label>
 </div>
 
 <script>
@@ -3199,6 +3217,8 @@ body.sz-annot-off .sz-note{display:none !important}
   var tipEditBtn=document.getElementById('sz-tip-edit-btn');
   var hlPicker=document.getElementById('sz-hl-picker');
   var savedRange=null, cmtCtx=null, tipTimer=null, tipTargetAid=null, delTarget=null;
+  /* モバイル：バーのボタンタップで選択が消えないよう mousedown をキャンセル */
+  bar.addEventListener('mousedown',function(e){e.preventDefault();});
 
   /* ---- 既存の.fill-blank「空欄解除」状態の保存・復元 ---- */
   var FBKEY='szFB_'+szFileKey();
@@ -3296,10 +3316,22 @@ body.sz-annot-off .sz-note{display:none !important}
   }
 
   /* ---- ツールバー位置 ---- */
+  var _isMobile=('ontouchstart' in window)||navigator.maxTouchPoints>0;
   function showBar(rect){
     var cx=(rect.left+rect.right)/2;
     bar.style.left=Math.max(80,Math.min(cx,window.innerWidth-80))+'px';
-    bar.style.top=Math.max(6,rect.top-52)+'px';
+    if(_isMobile){
+      // ネイティブPopupは選択範囲の上下どちらにも現れうる（~55px）→ 常に十分離す
+      var BAR_H=44, BROW_H=55, GAP=8;
+      var top=rect.bottom+BROW_H+GAP;
+      if(top+BAR_H>window.innerHeight){
+        // 下に入らない → 選択範囲の上方（Popupより大きく上）へ
+        top=Math.max(6,rect.top-BROW_H-BAR_H-GAP);
+      }
+      bar.style.top=top+'px';
+    } else {
+      bar.style.top=Math.max(6,rect.top-52)+'px';
+    }
     bar.classList.add('on');
   }
   window.szHideBar=function(){bar.classList.remove('on');};
@@ -3437,6 +3469,7 @@ body.sz-annot-off .sz-note{display:none !important}
         // 穴埋め／消去：クリックで表示⇔非表示をトグル（長押しで「元に戻す」メニュー）
         szHideBar();szHideCmt();hideTipNow();szHideDel();
         ann.classList.toggle('show');
+        if(ann.closest&&ann.closest('.sz-note')&&window.szSaveNoteOf) window.szSaveNoteOf(ann);
       } else if(ann){
         szHideBar();szHideCmt();hideTipNow();
         showDelPop(ann,e);
@@ -3448,6 +3481,23 @@ body.sz-annot-off .sz-note{display:none !important}
     szHideDel();szHideCmt();
     savedRange=sel.getRangeAt(0).cloneRange();
     showBar(savedRange.getBoundingClientRect());
+  });
+
+  /* ---- touchend: モバイル選択検知（mouseup はタッチデバイスで発火しないため） ---- */
+  document.addEventListener('touchend',function(e){
+    if(document.body.classList.contains('sz-annot-off')) return;
+    if(e.target.closest('#sz-bar,#sz-cmt-pop,#sz-del-pop,#sz-toggle,#sz-cmt-tip,#sz-hl-picker,#sz-toolbar,#sz-hide-tools')) return;
+    setTimeout(function(){
+      var sel=window.getSelection();
+      if(!sel||sel.isCollapsed||!sel.toString().trim()){
+        if(!szLPfired){szHideBar();szHideCmt();szHideDel();}
+        szLPfired=false;
+        return;
+      }
+      szHideDel();szHideCmt();
+      savedRange=sel.getRangeAt(0).cloneRange();
+      showBar(savedRange.getBoundingClientRect());
+    },80);
   });
 
   /* ---- 編集ボタン（削除ポップから） ---- */
@@ -3515,6 +3565,7 @@ body.sz-annot-off .sz-note{display:none !important}
         mark.dataset.comment=txt;
         var icon=mark.querySelector('.sz-cm-icon');
         if(icon) icon.title=txt;
+        if(window.szSaveNoteOf) window.szSaveNoteOf(mark);
       }
       var rec=db.find(function(a){return a.uid===aid;});
       if(rec){rec.comment=txt;save();}
@@ -3541,6 +3592,7 @@ body.sz-annot-off .sz-note{display:none !important}
     if(!aid) return;
     var mark=document.querySelector('mark[data-aid="'+aid+'"]');
     if(mark){
+      var inNote=mark.closest&&mark.closest('.sz-note');
       var parent=mark.parentNode;
       Array.from(mark.childNodes).forEach(function(n){
         if(n.classList&&n.classList.contains('sz-cm-icon')) return;
@@ -3548,6 +3600,7 @@ body.sz-annot-off .sz-note{display:none !important}
       });
       parent.removeChild(mark);
       parent.normalize();
+      if(inNote){if(window.szSaveNoteOf)window.szSaveNoteOf(parent);szHideDel();return;}
     }
     db=db.filter(function(a){return a.uid!==aid;});
     save();szHideDel();
@@ -3597,6 +3650,7 @@ body.sz-annot-off .sz-note{display:none !important}
     if(!ok) return;
 
     if(type==='cm'&&comment) addCmtIcon(mark,comment);
+    if(mark.closest&&mark.closest('.sz-note')){if(window.szSaveNoteOf)window.szSaveNoteOf(mark);return;}
     db.push({uid:id,panelId:panelId,parentAid:parentAid,selText:selText,ctxBefore:ctxBefore,ctxAfter:ctxAfter,occ:occ,type:type,comment:comment,color:color||''});
     save();
   }
@@ -3822,6 +3876,7 @@ body.sz-annot-off .sz-note{display:none !important}
     var css='';
     if(off['ul']) css+='mark.sz-ul{border-bottom:none !important}';
     if(off['cm']) css+='mark.sz-cm{background:none !important}mark.sz-cm .sz-cm-icon{display:none !important}';
+    if(off['note']) css+='.sz-note{display:none !important}';
     Object.keys(off).forEach(function(k){
       if(k.indexOf('hl:')===0 && off[k]) css+='mark[data-hlc="'+k.slice(3)+'"]{background:none !important}';
     });
@@ -3841,6 +3896,15 @@ body.sz-annot-off .sz-note{display:none !important}
     var on=fPanel.classList.toggle('on');
     fBtn.classList.toggle('active',on);
   });
+  /* 外クリックでフィルタ／検索パネルを閉じる */
+  document.addEventListener('click',function(e){
+    if(fPanel.classList.contains('on')&&!fPanel.contains(e.target)&&!fBtn.contains(e.target)){
+      fPanel.classList.remove('on'); fBtn.classList.remove('active');
+    }
+    if(sBox.classList.contains('on')&&!sBox.contains(e.target)&&!sBtn.contains(e.target)){
+      sBox.classList.remove('on'); sBtn.classList.remove('active'); clearHits();
+    }
+  });
 
   /* ============ ④ 付箋メモ ============ */
   var NKEY='szN_'+fileKey;
@@ -3848,37 +3912,57 @@ body.sz-annot-off .sz-note{display:none !important}
   var noteEls={};
   var NOTE_COLORS=['#fef9c3','#fecdd3','#bfdbfe','#bbf7d0','#e9d5ff','#fed7aa'];
   function saveNotes(){try{localStorage.setItem(NKEY,JSON.stringify(notes));}catch(e){}}
+  window.szSaveNoteOf=function(markEl){
+    var nb=markEl.closest&&markEl.closest('.sz-n-body');
+    if(!nb) return;
+    var nw=nb.closest('.sz-note');
+    if(!nw||!nw.dataset.nid) return;
+    var nd=notes.find(function(x){return x.id===nw.dataset.nid;});
+    if(nd){nd.text=nb.innerHTML;saveNotes();}
+  };
   function syncNotes(){
     var t=currentTab();
     notes.forEach(function(n){ var el=noteEls[n.id]; if(el) el.style.display=(n.tab===t)?'':'none'; });
   }
   function buildNote(n){
     var el=document.createElement('div');
-    el.className='sz-note';
+    el.className='sz-note'; el.dataset.nid=n.id;
     el.style.left=(n.x||120)+'px'; el.style.top=(n.y||120)+'px';
     el.style.background=n.color||'#fef9c3';
+    if(n.w) el.style.width=n.w+'px';
     var head=document.createElement('div'); head.className='sz-n-head';
     var dot=document.createElement('div'); dot.className='sz-n-color'; dot.style.background=n.color||'#fef9c3'; dot.title='色を変える';
     var preview=document.createElement('span'); preview.className='sz-n-preview';
     var min=document.createElement('button'); min.type='button'; min.title='最小化／展開';
     var del=document.createElement('button'); del.type='button'; del.textContent='🗑'; del.title='削除';
     head.appendChild(dot); head.appendChild(preview); head.appendChild(min); head.appendChild(del);
-    var ta=document.createElement('textarea'); ta.value=n.text||''; ta.placeholder='メモ…';
-    if(n.h) ta.style.height=n.h+'px';
+    var ta=document.createElement('div'); ta.className='sz-n-body'; ta.contentEditable='true';
+    ta.setAttribute('placeholder','メモ…');
+    ta.innerHTML=n.text||'';
     el.appendChild(head); el.appendChild(ta);
+    var rzh=document.createElement('div'); rzh.className='sz-n-resize'; rzh.title='横幅をドラッグで調整';
+    el.appendChild(rzh);
+    rzh.addEventListener('pointerdown',function(e){
+      e.preventDefault(); e.stopPropagation();
+      var sx=e.clientX, sw=el.offsetWidth;
+      function mv(ev){ el.style.width=Math.max(150,sw+ev.clientX-sx)+'px'; }
+      function up(){ n.w=el.offsetWidth; saveNotes(); document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); }
+      document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+    });
     document.body.appendChild(el);
     noteEls[n.id]=el;
 
     function syncMin(){
       el.classList.toggle('sz-n-min',!!n.min);
       min.textContent=n.min?'➕':'➖';
-      preview.textContent=n.min?((n.text||'メモ').replace(/\s+/g,' ').trim()||'メモ'):'';
+      var _pt=(n.text||'').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim()||'メモ';
+      preview.textContent=n.min?_pt:'';
+      if(n.min) el.style.width=''; else if(n.w) el.style.width=n.w+'px';
     }
     syncMin();
     min.addEventListener('click',function(){ n.min=!n.min; saveNotes(); syncMin(); });
 
-    ta.addEventListener('input',function(){n.text=ta.value;saveNotes();});
-    ta.addEventListener('mouseup',function(){var h=ta.offsetHeight;if(h&&h!==n.h){n.h=h;saveNotes();}});
+    ta.addEventListener('input',function(){n.text=ta.innerHTML;saveNotes();});
     del.addEventListener('click',function(){
       el.remove(); delete noteEls[n.id];
       notes=notes.filter(function(x){return x.id!==n.id;}); saveNotes();
@@ -3905,7 +3989,7 @@ body.sz-annot-off .sz-note{display:none !important}
     var sy=window.pageYOffset||document.documentElement.scrollTop||0;
     var n={id:uid(),tab:currentTab(),x:sx+90+(cnt%4)*22,y:sy+110+(cnt%4)*22,h:0,text:'',color:'#fef9c3'};
     notes.push(n); saveNotes(); buildNote(n);
-    var el=noteEls[n.id]; if(el) el.querySelector('textarea').focus();
+    var el=noteEls[n.id]; if(el) el.querySelector('.sz-n-body').focus();
   });
 })();
 </script>
@@ -4069,27 +4153,56 @@ body.szp-hide #szp-layer{display:none}
   }
   window.addEventListener('resize',sizeLayer);
 
-  function pathD(pts){
+  /* ---- 要素相対座標アンカーシステム ---- */
+  var ANCHOR_SEL='p,h1,h2,h3,h4,h5,h6,li,td,th,dt,dd';
+  function scrollXY(){return [window.pageXOffset||document.documentElement.scrollLeft||0,window.pageYOffset||document.documentElement.scrollTop||0];}
+  function getContentEls(tabIdx){
+    var panel=(panels&&panels[tabIdx]!=null)?panels[tabIdx]:document.body;
+    return [].slice.call(panel.querySelectorAll(ANCHOR_SEL));
+  }
+  function findAnchor(pt,tabIdx){
+    var els=getContentEls(tabIdx),s=scrollXY(),bestIdx=-1,bestDist=Infinity;
+    for(var i=0;i<els.length;i++){
+      var r=els[i].getBoundingClientRect(),ey=r.top+s[1],eh=Math.max(r.height,1);
+      var inY=(pt[1]>=ey-4&&pt[1]<=ey+eh+4);
+      var dist=inY?Math.abs(pt[1]-(ey+eh/2)):Math.abs(pt[1]-ey)+10000;
+      if(dist<bestDist){bestDist=dist;bestIdx=i;}
+    }
+    if(bestIdx<0) return null;
+    var r=els[bestIdx].getBoundingClientRect(),s2=scrollXY();
+    return {idx:bestIdx,ax:r.left+s2[0],ay:r.top+s2[1]};
+  }
+  function anchorOff(anchor,tabIdx){
+    if(!anchor) return {ox:0,oy:0};
+    var els=getContentEls(tabIdx!=null?tabIdx:currentTab());
+    var el=els[anchor.idx];
+    if(!el) return {ox:0,oy:0};
+    var r=el.getBoundingClientRect(),s=scrollXY();
+    return {ox:r.left+s[0],oy:r.top+s[1]};
+  }
+  function pathD(pts,ox,oy,sx){
+    ox=ox||0;oy=oy||0;sx=sx||1;
     if(!pts.length) return '';
-    if(pts.length===1){var p=pts[0];return 'M'+p[0]+' '+p[1]+' L'+(p[0]+0.1)+' '+p[1];}
-    var d='M'+pts[0][0]+' '+pts[0][1];
-    for(var i=1;i<pts.length;i++) d+=' L'+pts[i][0]+' '+pts[i][1];
+    if(pts.length===1){var p=pts[0];return 'M'+(p[0]*sx+ox)+' '+(p[1]+oy)+' L'+(p[0]*sx+ox+0.1)+' '+(p[1]+oy);}
+    var d='M'+(pts[0][0]*sx+ox)+' '+(pts[0][1]+oy);
+    for(var i=1;i<pts.length;i++) d+=' L'+(pts[i][0]*sx+ox)+' '+(pts[i][1]+oy);
     return d;
   }
-  function drawStroke(s){
+  function drawStroke(s,tabIdx){
+    var ox=0,oy=0,sx=1;
+    if(s.anchor){var off=anchorOff(s.anchor,tabIdx!=null?tabIdx:currentTab());ox=off.ox;oy=off.oy;}
+    else if(s.vw&&s.vw!==window.innerWidth){sx=window.innerWidth/s.vw;}
     var el=document.createElementNS(SVGNS,'path');
-    el.setAttribute('d',pathD(s.pts));
-    el.setAttribute('fill','none');
-    el.setAttribute('stroke',s.c);
-    el.setAttribute('stroke-width',s.w);
-    el.setAttribute('stroke-linecap','round');
+    el.setAttribute('d',pathD(s.pts,ox,oy,sx));
+    el.setAttribute('fill','none');el.setAttribute('stroke',s.c);
+    el.setAttribute('stroke-width',s.w);el.setAttribute('stroke-linecap','round');
     el.setAttribute('stroke-linejoin','round');
-    layer.appendChild(el);
-    return el;
+    layer.appendChild(el);return el;
   }
   function render(){
+    var ti=currentTab();
     while(layer.firstChild) layer.removeChild(layer.firstChild);
-    strokesFor(currentTab()).forEach(drawStroke);
+    strokesFor(ti).forEach(function(s){drawStroke(s,ti);});
     sizeLayer();
   }
 
@@ -4101,47 +4214,57 @@ body.szp-hide #szp-layer{display:none}
   var drawing=false, curPts=null, curEl=null;
 
   function pagePt(e){
-    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
-    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
-    return [Math.round(e.clientX+sx),Math.round(e.clientY+sy)];
+    var s=scrollXY();
+    return [Math.round(e.clientX+s[0]),Math.round(e.clientY+s[1])];
   }
   function eraseAt(pt){
-    var arr=strokesFor(currentTab()), th=Math.max(12,curWidth*2.2), removed=false;
+    var ti=currentTab(),arr=strokesFor(ti),th=Math.max(12,curWidth*2.2),removed=false;
     for(var i=arr.length-1;i>=0;i--){
-      var pts=arr[i].pts;
+      var s=arr[i],ox=0,oy=0,sx=1;
+      if(s.anchor){var off=anchorOff(s.anchor,ti);ox=off.ox;oy=off.oy;}
+      else if(s.vw&&s.vw!==window.innerWidth){sx=window.innerWidth/s.vw;}
+      var pts=s.pts;
       for(var j=0;j<pts.length;j++){
-        var dx=pts[j][0]-pt[0], dy=pts[j][1]-pt[1];
-        if(dx*dx+dy*dy<=th*th){ arr.splice(i,1); removed=true; break; }
+        var rpx=(pt[0]-ox)/sx,rpy=pt[1]-oy;
+        var dx=pts[j][0]-rpx,dy=pts[j][1]-rpy;
+        if(dx*dx+dy*dy<=th*th){arr.splice(i,1);removed=true;break;}
       }
     }
-    if(removed){ save(); render(); }
+    if(removed){save();render();}
   }
 
   layer.addEventListener('pointerdown',function(e){
     if(!penOn) return;
     e.preventDefault();
     layer.setPointerCapture&&layer.setPointerCapture(e.pointerId);
-    if(eraseOn){ drawing=true; eraseAt(pagePt(e)); return; }
+    if(eraseOn){drawing=true;eraseAt(pagePt(e));return;}
     drawing=true;
     curPts=[pagePt(e)];
-    curEl=drawStroke({c:curColor,w:curWidth,pts:curPts});
+    curEl=drawStroke({c:curColor,w:curWidth,pts:curPts}); // ライブ描画は絶対座標
   });
   layer.addEventListener('pointermove',function(e){
     if(!penOn||!drawing) return;
     e.preventDefault();
     var pt=pagePt(e);
-    if(eraseOn){ eraseAt(pt); return; }
+    if(eraseOn){eraseAt(pt);return;}
     curPts.push(pt);
-    curEl.setAttribute('d',pathD(curPts));
+    curEl.setAttribute('d',pathD(curPts)); // 絶対座標のまま更新
   });
   function endStroke(){
     if(!drawing) return;
     drawing=false;
-    if(!eraseOn && curPts && curPts.length){
-      strokesFor(currentTab()).push({c:curColor,w:curWidth,pts:curPts});
+    if(!eraseOn&&curPts&&curPts.length){
+      var ti=currentTab(),anch=findAnchor(curPts[0],ti),stroke;
+      if(anch){
+        var rel=curPts.map(function(p){return [p[0]-anch.ax,p[1]-anch.ay];});
+        stroke={c:curColor,w:curWidth,pts:rel,anchor:{idx:anch.idx}};
+      } else {
+        stroke={c:curColor,w:curWidth,pts:curPts,vw:window.innerWidth};
+      }
+      strokesFor(ti).push(stroke);
       save();
     }
-    curPts=null; curEl=null;
+    curPts=null;curEl=null;
   }
   layer.addEventListener('pointerup',endStroke);
   layer.addEventListener('pointercancel',endStroke);
@@ -4176,13 +4299,20 @@ body.szp-hide #szp-layer{display:none}
   });
 
   /* ---- 🖊 トグルボタン（⋮ツールバーに同居） ---- */
+  /* ペンON中は touchmove を {passive:false} でキャプチャしてスクロールを防止 */
+  function szpPreventScroll(e){ if(penOn) e.preventDefault(); }
   function setPen(on){
     penOn=on;
     layer.classList.toggle('szp-on',on);
     pal.classList.toggle('on',on);
     var btn=document.getElementById('szp-btn');
     if(btn) btn.classList.toggle('active',on);
-    if(on){ render(); }
+    if(on){
+      render();
+      document.addEventListener('touchmove',szpPreventScroll,{passive:false});
+    } else {
+      document.removeEventListener('touchmove',szpPreventScroll,{passive:false});
+    }
   }
   function ensureBtn(){
     var btn=document.getElementById('szp-btn');
@@ -4204,6 +4334,271 @@ body.szp-hide #szp-layer{display:none}
   function boot(){ sizeLayer(); render(); ensureBtn(); setTimeout(ensureBtn,120); setTimeout(ensureBtn,400); setTimeout(function(){ensureBtn();sizeLayer();},800); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,0);});
   else setTimeout(boot,0);
+  // Gist sync から呼べるペン全消し（キャッシュ対策：空データをlocalStorageに書いてから再描画）
+  window.__szpClearPen=function(){data={};save();render();};
+  // ダウンロード後用：localStorageから再読み込みして再描画（restoreLS後に呼ぶ）
+  window.__szpSync=function(){try{data=JSON.parse(localStorage.getItem(PKEY)||'{}');}catch(e){data={};}render();};
+})();
+</script>
+
+<!-- ===== ⋮ ツールバー長押しドラッグ移動 ===== -->
+<script>
+(function(){
+  'use strict';
+  function szTbKey(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);}
+  var POSKEY='szTPos_'+szTbKey();
+  var tb=null, lp=null, drag=false, suppress=false;
+  var sx=0,sy=0,sl=0,st=0;
+
+  function restorePos(){
+    try{
+      var p=JSON.parse(localStorage.getItem(POSKEY)||'null');
+      if(p&&typeof p.l==='number'){
+        tb.style.right='auto';
+        tb.style.left=Math.max(0,Math.min(window.innerWidth-30,p.l))+'px';
+        tb.style.top=Math.max(0,Math.min(window.innerHeight-30,p.t))+'px';
+      }
+    }catch(e){}
+  }
+
+  function init(){
+    tb=document.getElementById('sz-toolbar');
+    if(!tb) return;
+    restorePos();
+
+    document.addEventListener('pointerdown',function(e){
+      if(!e.target.closest('#sz-hide-tools')) return;
+      var tgt=e.target, pid=e.pointerId;
+      sx=e.clientX; sy=e.clientY; suppress=false;
+      lp=setTimeout(function(){
+        lp=null; drag=true;
+        var r=tb.getBoundingClientRect();
+        sl=r.left; st=r.top;
+        tb.style.right='auto';
+        tb.style.left=sl+'px';
+        tb.style.top=st+'px';
+        tb.style.opacity='0.7';
+        try{tgt.setPointerCapture(pid);}catch(ex){}
+      },450);
+    });
+
+    document.addEventListener('pointermove',function(e){
+      if(!drag) return;
+      var nl=Math.max(0,Math.min(window.innerWidth-96,sl+e.clientX-sx));
+      var nt=Math.max(0,Math.min(window.innerHeight-30,st+e.clientY-sy));
+      tb.style.left=nl+'px';
+      tb.style.top=nt+'px';
+      suppress=true;
+    });
+
+    document.addEventListener('pointerup',function(){
+      if(lp){clearTimeout(lp);lp=null;}
+      if(!drag) return;
+      drag=false;
+      tb.style.opacity='';
+      var r=tb.getBoundingClientRect();
+      try{localStorage.setItem(POSKEY,JSON.stringify({l:r.left,t:r.top}));}catch(ex){}
+    });
+
+    document.addEventListener('pointercancel',function(){
+      if(lp){clearTimeout(lp);lp=null;}
+      drag=false; tb.style.opacity='';
+    });
+
+    // ドラッグ後クリックを抑制（⋮トグルの誤発火防止）
+    document.addEventListener('click',function(e){
+      if(suppress&&e.target.closest('#sz-hide-tools')){
+        suppress=false;
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      }
+    },true);
+
+    window.addEventListener('resize',function(){
+      if(!tb||tb.style.left==='auto'||!tb.style.left) return;
+      tb.style.left=Math.max(0,Math.min(window.innerWidth-96,parseInt(tb.style.left)||0))+'px';
+      tb.style.top=Math.max(0,Math.min(window.innerHeight-30,parseInt(tb.style.top)||0))+'px';
+    });
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,150);});
+  else setTimeout(init,150);
+})();
+</script>
+
+<!-- ===== ☁️ Gist同期 ===== -->
+<script>
+(function(){
+  'use strict';
+  var PAT_KEY='szGistPAT', GID_KEY='szGistID';
+  function getPAT(){return localStorage.getItem(PAT_KEY)||'';}
+  function getGID(){return localStorage.getItem(GID_KEY)||'';}
+
+  function dumpLS(){
+    var o={};
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k===PAT_KEY||k===GID_KEY) continue;
+      o[k]=localStorage.getItem(k);
+    }
+    return JSON.stringify(o);
+  }
+  function restoreLS(json){
+    var o; try{o=JSON.parse(json);}catch(e){return;}
+    // PAT/GistID以外を全削除してからGistデータで完全上書き
+    var toDel=[];
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k!==PAT_KEY&&k!==GID_KEY)toDel.push(k);}
+    toDel.forEach(function(k){localStorage.removeItem(k);});
+    Object.keys(o).forEach(function(k){
+      if(k===PAT_KEY||k===GID_KEY) return;
+      try{localStorage.setItem(k,o[k]);}catch(e){}
+    });
+  }
+  function toast(msg){
+    var t=document.createElement('div');
+    t.style.cssText='position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:6px 15px;border-radius:20px;font-size:.78rem;z-index:99999;pointer-events:none;';
+    t.textContent=msg; document.body.appendChild(t);
+    setTimeout(function(){t.remove();},2800);
+  }
+  function upload(){
+    var gid=getGID();
+    return fetch(gid?'https://api.github.com/gists/'+gid:'https://api.github.com/gists',{
+      method:gid?'PATCH':'POST',
+      headers:{'Authorization':'token '+getPAT(),'Content-Type':'application/json'},
+      body:JSON.stringify({description:'shindanshi-matome notes',public:false,files:{'notes.json':{content:dumpLS()}}})
+    }).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(j){if(!gid)localStorage.setItem(GID_KEY,j.id);return j.id;});
+  }
+  function findGist(){
+    return fetch('https://api.github.com/gists',{headers:{'Authorization':'token '+getPAT()}})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(list){
+        var found=list.find(function(g){return g.description==='shindanshi-matome notes';});
+        if(found){localStorage.setItem(GID_KEY,found.id);return found.id;}
+        return null;
+      });
+  }
+  function doFetch(gid){
+    return fetch('https://api.github.com/gists/'+gid,{headers:{'Authorization':'token '+getPAT()}})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(j){
+        var c=j.files&&j.files['notes.json']&&j.files['notes.json'].content;
+        if(!c) throw new Error('notes.json が見つかりません');
+        restoreLS(c);
+      });
+  }
+  function download(){
+    var gid=getGID();
+    if(gid) return doFetch(gid);
+    return findGist().then(function(id){
+      if(!id) return Promise.reject(new Error('Gistが見つかりません。先にアップロードしてください'));
+      return doFetch(id);
+    });
+  }
+  function showPATModal(onSave){
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:20000;display:flex;align-items:center;justify-content:center;';
+    var box=document.createElement('div');
+    box.style.cssText='background:#fff;border-radius:12px;padding:20px;width:320px;max-width:92vw;box-shadow:0 8px 30px rgba(0,0,0,.3);font-size:.85rem;font-family:inherit;color:#1e293b;';
+    box.innerHTML='<div style="font-weight:700;margin-bottom:6px">☁️ GitHub Gist 連携設定</div>'
+      +'<div style="font-size:.75rem;color:#64748b;margin-bottom:12px;line-height:1.7">GitHub → Settings → Developer settings<br>→ Tokens (classic) → <b>gist</b> スコープだけONで発行</div>'
+      +'<input id="szGPinput" type="password" placeholder="ghp_xxxxxxxx" style="width:100%;border:1.5px solid #cbd5e1;border-radius:7px;padding:7px 10px;font-size:.85rem;font-family:inherit;outline:none;box-sizing:border-box;">'
+      +'<div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end;">'
+      +'<button id="szGPcancel" style="border:1px solid #e2e8f0;background:#f8fafc;color:#475569;border-radius:7px;padding:5px 14px;cursor:pointer;font-family:inherit;">キャンセル</button>'
+      +'<button id="szGPsave" style="background:#3b82f6;color:#fff;border:none;border-radius:7px;padding:5px 14px;font-weight:700;cursor:pointer;font-family:inherit;">保存</button>'
+      +'</div>';
+    ov.appendChild(box); document.body.appendChild(ov);
+    var inp=box.querySelector('#szGPinput');
+    var ex=getPAT(); if(ex) inp.value=ex;
+    setTimeout(function(){inp.focus();},60);
+    ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+    box.querySelector('#szGPcancel').onclick=function(){ov.remove();};
+    box.querySelector('#szGPsave').onclick=function(){
+      var v=inp.value.trim(); if(!v) return;
+      localStorage.setItem(PAT_KEY,v); ov.remove();
+      if(onSave) onSave();
+    };
+  }
+  function showMenu(btn){
+    var old=document.getElementById('szGmenu'); if(old){old.remove();return;}
+    var m=document.createElement('div'); m.id='szGmenu';
+    m.style.cssText='position:fixed;background:#1e293b;border-radius:10px;padding:6px;z-index:10100;box-shadow:0 4px 18px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:3px;min-width:148px;';
+    var r=btn.getBoundingClientRect();
+    m.style.top=(r.bottom+6)+'px';
+    m.style.right=(window.innerWidth-r.right)+'px';
+    function mBtn(lbl,fn){
+      var b=document.createElement('button'); b.type='button'; b.textContent=lbl;
+      b.style.cssText='background:none;border:none;color:#e2e8f0;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:.82rem;font-family:inherit;text-align:left;white-space:nowrap;';
+      b.onmouseenter=function(){b.style.background='rgba(255,255,255,.12)';};
+      b.onmouseleave=function(){b.style.background='none';};
+      b.onclick=function(){m.remove();fn();}; return b;
+    }
+    m.appendChild(mBtn('↑ Gistへ保存',function(){
+      toast('保存中…');
+      upload().then(function(){toast('✅ 保存しました');}).catch(function(e){toast('❌ '+e.message);});
+    }));
+    m.appendChild(mBtn('↓ Gistから読込',function(){
+      if(!confirm('Gistのデータで現在のデータを上書きします。よろしいですか？')) return;
+      toast('読込中…');
+      download().then(function(){
+        // restoredLS後のlocalStorageから再読込して即反映
+        if(window.__szpSync) window.__szpSync();
+        toast('✅ 読込完了。再読み込みします…');
+        setTimeout(function(){location.reload();},1200);
+      }).catch(function(e){toast('❌ '+e.message);});
+    }));
+    m.appendChild(mBtn('🔑 トークン変更',function(){showPATModal();}));
+    m.appendChild(mBtn('🔄 消去してGistから再読込',function(){
+      if(!confirm('ローカルデータを全消去してGistのデータで上書きします。よろしいですか？')) return;
+      // GistIDも含め全クリア → findGist()で再検索してダウンロード
+      var toDel=[];
+      for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k!==PAT_KEY)toDel.push(k);}
+      toDel.forEach(function(k){localStorage.removeItem(k);});
+      if(window.__szpClearPen) window.__szpClearPen(); // ↑消去直後は視覚的にも消す
+      toast('Gistを検索中…');
+      download().then(function(){
+        if(window.__szpSync) window.__szpSync(); // ↓復元後はGistの内容で再描画
+        toast('✅ 読込完了。再読み込みします…');
+        setTimeout(function(){location.reload();},1200);
+      }).catch(function(e){toast('❌ '+e.message);});
+    }));
+    m.appendChild(mBtn('🗑 ローカルデータ全消去',function(){
+      if(!confirm('このデバイスの注釈・描画・付箋などを全て削除します。よろしいですか？')) return;
+      var toDel=[];
+      for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k!==PAT_KEY&&k!==GID_KEY)toDel.push(k);}
+      toDel.forEach(function(k){localStorage.removeItem(k);});
+      if(window.__szpClearPen) window.__szpClearPen();
+      toast('🗑 削除しました。再読み込みします…');
+      setTimeout(function(){location.reload();},1000);
+    }));
+    document.body.appendChild(m);
+    setTimeout(function(){
+      document.addEventListener('click',function cl(e){
+        if(!m.contains(e.target)&&e.target!==btn){m.remove();document.removeEventListener('click',cl);}
+      });
+    },0);
+  }
+  function init(){
+    // ⋮の直左に常時表示（tools折りたたみ時も表示）
+    var sty=document.createElement('style');
+    sty.textContent='body.sz-tools-hidden #sz-gist-btn{display:flex!important}';
+    document.head.appendChild(sty);
+    var btn=document.createElement('button');
+    btn.id='sz-gist-btn'; btn.type='button'; btn.textContent='☁️';
+    btn.title='Gist同期（↑保存／↓読込）';
+    btn.style.cssText='background:#475569;color:#fff;font-size:.75rem;';
+    btn.addEventListener('click',function(){
+      if(!getPAT()) showPATModal(function(){showMenu(btn);}); else showMenu(btn);
+    });
+    function dock(){
+      var bar=document.getElementById('sz-toolbar');
+      var ht=document.getElementById('sz-hide-tools');
+      if(bar&&ht&&btn.parentNode!==bar) bar.insertBefore(btn,ht);
+    }
+    setTimeout(dock,250);setTimeout(dock,600);setTimeout(dock,1200);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,170);});
+  else setTimeout(init,170);
 })();
 </script>
 
@@ -4241,6 +4636,7 @@ body.szp-hide #szp-layer{display:none}
 <script>
 /* qz-hide-buttons-v4 : 多重適用ガード（このブロックが既に走っていたら全パスを中止） */
 if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
+var _qzPS=(document.querySelectorAll('.tab-panel').length?'.tab-panel':'.tab-content');
 /* === qz-lock: card-reveal button auto-injection === */
 (function(){
   function injectCardReveal(){
@@ -4271,7 +4667,7 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
 /* === qz-lock: section-hide v3 (STEP A2 + FINE_SEL, no lowContrast) === */
 (function(){
   // STEP A: h2.section-title 区切りで .hide-block 自動ラップ
-  document.querySelectorAll('.tab-panel').forEach(function(panel){
+  document.querySelectorAll(_qzPS).forEach(function(panel){
     var children=Array.from(panel.children);
     var sections=[];
     var start=-1;
@@ -4317,10 +4713,10 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
     });
   });
   // STEP B: ○ボタン付与対象を収集
-  var FINE_SEL=['.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.factor-card','.vs-card','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
+  var FINE_SEL=['.hide-subblock','.flow-box','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.factor-card','.vs-card','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
   var MEDIUM_SEL=['.hide-block','.card','.diagram','.alert-tip','.alert-exam','.alert-danger',
     '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet',
-    '.hide-subblock','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.factor-card','.vs-card','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card',
+    '.hide-subblock','.flow-box','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.factor-card','.vs-card','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card',
     '.vz-supplement','.goro-chip','.zu'].join(',');
   var LS_KEY='sec-hide:'+(location.pathname.split('/').pop()||'page')+':v3';
   function loadHidden(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(e){return{};}}
@@ -4328,7 +4724,7 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
   var targets=[];
   var seen=new Set();
   function addTarget(el){if(!seen.has(el)){seen.add(el);targets.push(el);}}
-  document.querySelectorAll('.tab-panel').forEach(function(panel){
+  document.querySelectorAll(_qzPS).forEach(function(panel){
     panel.querySelectorAll(MEDIUM_SEL).forEach(function(el){
       if(el.parentNode&&el.parentNode.classList&&el.parentNode.classList.contains('sec-hide-wrap')) return; // 旧ブロックでラップ済みなら二重化しない
       if(el.closest('.card')&&!el.classList.contains('card')&&!el.matches(FINE_SEL)) return;
@@ -4518,7 +4914,7 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
     return phR;
   }
   // (1) 全タブの表データ行（fill-body以外も対象・ヘッダ行は除外）
-  document.querySelectorAll('.tab-panel table tbody tr').forEach(function(tr,i){
+  document.querySelectorAll(_qzPS+' table tbody tr').forEach(function(tr,i){
     if(tr.classList.contains('tr-hidden-ph')) return;
     if(isPreview(tr)) return;
     if(tr.querySelector('.row-hide-btn')) return;            // 既存パスで処理済み
@@ -4533,7 +4929,7 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
     if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
   });
   // (2) 全タブのリスト項目（keepit等の既処理liは除外）
-  document.querySelectorAll('.tab-panel li').forEach(function(li,i){
+  document.querySelectorAll(_qzPS+' li').forEach(function(li,i){
     if(li.classList.contains('row-hidden-ph')||li.closest('.row-hidden-ph')) return;
     if(li.querySelector(':scope > .row-hide-btn')) return;     // keepit等 既存ボタン有
     if(isPreview(li)) return;
@@ -4547,7 +4943,7 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
     if(st[key]){ li.style.display='none'; li.parentNode.insertBefore(mkPh(li,key,'li'),li.nextSibling); }
   });
   // (3) 試験ポイント・引っかけポイント（.exam-pt / .trap-pt 各ブロック）
-  document.querySelectorAll('.tab-panel .exam-pt, .tab-panel .trap-pt').forEach(function(el,i){
+  document.querySelectorAll(_qzPS+' .exam-pt, '+_qzPS+' .trap-pt').forEach(function(el,i){
     if(el.querySelector(':scope > .row-hide-btn')) return;
     var key='fep:'+i+'|'+(el.textContent||'').replace(/\s+/g,'').slice(0,28);
     el.style.position='relative'; el.style.paddingRight='30px';
@@ -4585,7 +4981,7 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
     if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); }
   }
   // (1) 個別カード：factor-card / vs-card / goro-card
-  document.querySelectorAll('.tab-panel .factor-card, .tab-panel .vs-card, .tab-panel .goro-card').forEach(function(el,i){
+  document.querySelectorAll(_qzPS+' .factor-card, '+_qzPS+' .vs-card, '+_qzPS+' .goro-card').forEach(function(el,i){
     if(handled(el)||inAnim(el)) return;
     var key='c2:'+i+'|'+(el.textContent||'').replace(/\s+/g,'').slice(0,28);
     var cs=window.getComputedStyle(el); if(cs.position==='static') el.style.position='relative';
@@ -4593,7 +4989,7 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
     bind(el,key,'div');
   });
   // (2) 本文段落：tab-panel 内の <p>（アニメ・カード内既処理・表内・短文は除外）
-  document.querySelectorAll('.tab-panel p').forEach(function(p,i){
+  document.querySelectorAll(_qzPS+' p').forEach(function(p,i){
     if(inAnim(p)) return;
     if(p.classList.contains('row-hidden-ph')||p.closest('.row-hidden-ph')) return;
     if(p.querySelector(':scope > .row-hide-btn')) return;
@@ -4665,7 +5061,7 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
   }
   // (B) tab-panel 内の div / .hl を走査。視覚ボックス（inline border/background）or .hl を対象化
   var idx=0;
-  document.querySelectorAll('.tab-panel div, .tab-panel .hl').forEach(function(el){
+  document.querySelectorAll(_qzPS+' div, '+_qzPS+' .hl').forEach(function(el){
     if(inAnim(el)||inPh(el)||hasBtn(el)||wrappedBySec(el)) return;
     if(el.classList.contains('hb-line')||el.classList.contains('row-hide-btn')||el.classList.contains('sec-hide-btn-row')) return;
     var isHl=el.classList.contains('hl');
@@ -4740,6 +5136,88 @@ if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
       else { [].slice.call(card.querySelectorAll('.row-hidden-ph button,.tr-hidden-ph button')).forEach(function(b){ b.click(); }); } // 全部出す
       sync(card,btn);
     });
+  });
+})();
+
+// === h4 サブセクション単位の非表示（細粒度：カード内をさらに細分化） ===
+(function(){
+  var KEY='mz_h4sec_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  var idx=0;
+  document.querySelectorAll('.card-body,.fill-body').forEach(function(body){
+    if(body.dataset.h4done) return; body.dataset.h4done='1';
+    var kids=Array.from(body.children);
+    var groups=[];var s=-1;
+    for(var i=0;i<kids.length;i++){
+      if(kids[i].tagName==='H4'&&kids[i].parentNode===body){ if(s!==-1) groups.push([s,i-1]); s=i; }
+    }
+    if(s!==-1) groups.push([s,kids.length-1]);
+    groups.forEach(function(g){
+      var first=kids[g[0]];
+      if(!first||first.parentNode!==body) return;
+      var key='h4:'+idx++;
+      var wrap=document.createElement('div'); wrap.className='sec-hide-wrap';
+      first.parentNode.insertBefore(wrap,first);
+      for(var j=g[0];j<=g[1];j++){
+        if(kids[j]&&kids[j].parentNode===body) wrap.appendChild(kids[j]);
+      }
+      var btnRow=document.createElement('div'); btnRow.className='sec-hide-btn-row';
+      var btn=document.createElement('button'); btn.textContent='○'; btn.title='このh4セクションを非表示';
+      (function(w,k){
+        function getLabel(){ var h=w.querySelector('h4'); return h?(h.textContent||'').replace(/\s+/g,' ').trim().slice(0,40):'(セクション)'; }
+        function doHide(){
+          [].slice.call(w.children).forEach(function(c){if(c!==btnRow)c.style.display='none';});
+          btnRow.style.display='none';
+          var ph=document.createElement('div'); ph.className='sec-hidden-ph';
+          ph.innerHTML='（非表示：<span class="sec-hidden-label"></span>）<button>再表示 ○</button>';
+          ph.querySelector('.sec-hidden-label').textContent=getLabel();
+          ph.querySelector('button').addEventListener('click',function(){
+            [].slice.call(w.children).forEach(function(c){c.style.display='';});
+            btnRow.style.display=''; ph.remove(); var o=st; delete o[k]; save();
+          });
+          w.appendChild(ph); st[k]=1; save();
+        }
+        btn.addEventListener('click',function(e){ e.stopPropagation(); doHide(); });
+        btnRow.appendChild(btn); wrap.appendChild(btnRow);
+        if(st[k]) doHide();
+      })(wrap,key);
+    });
+  });
+})();
+// === タブ全体の非表示（大粒度：タブ一枚まるごと折りたたむ） ===
+(function(){
+  var KEY='mz_taball_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  [].slice.call(document.querySelectorAll(_qzPS)).forEach(function(panel,i){
+    if(panel.dataset.tabHideDone) return; panel.dataset.tabHideDone='1';
+    var key='taball:'+i;
+    var ph=null;
+    function doHide(){
+      [].slice.call(panel.children).forEach(function(c){
+        if(!c.dataset.tabBtnRow&&c!==ph) c.style.display='none';
+      });
+      if(!ph){
+        ph=document.createElement('div'); ph.className='sec-hidden-ph';
+        ph.style.cssText='text-align:center;padding:14px;';
+        ph.innerHTML='（タブ全体を非表示）<button>再表示 ○</button>';
+        ph.querySelector('button').addEventListener('click',function(){
+          [].slice.call(panel.children).forEach(function(c){ c.style.display=''; });
+          ph.remove(); ph=null; var o=st; delete o[key]; save();
+        });
+        panel.appendChild(ph);
+      }
+      st[key]=1; save();
+    }
+    var btnRow=document.createElement('div');
+    btnRow.dataset.tabBtnRow='1';
+    btnRow.className='sec-hide-btn-row';
+    var btn=document.createElement('button'); btn.textContent='○'; btn.title='このタブ全体を非表示にする';
+    btn.addEventListener('click',function(e){ e.stopPropagation(); doHide(); });
+    btnRow.appendChild(btn);
+    panel.insertBefore(btnRow, panel.firstChild);
+    if(st[key]) doHide();
   });
 })();
 } /* end __QZ_HIDE_V4__ guard */
