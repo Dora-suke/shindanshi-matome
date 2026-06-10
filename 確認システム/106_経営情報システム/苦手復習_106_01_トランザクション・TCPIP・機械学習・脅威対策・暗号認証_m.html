@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<script>
+(function(){
+  var cur='hk_'+location.pathname;
+  if(!localStorage.getItem(cur)){
+    var orig='hk_'+location.pathname.replace(/_m\.html$/,'.html');
+    var d=localStorage.getItem(orig);
+    if(d) localStorage.setItem(cur,d);
+  }
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>苦手復習 106-01 ｜ トランザクション・TCP/IP・機械学習・脅威対策・暗号認証</title>
@@ -853,20 +863,85 @@ td.l{text-align:left;}
       <p style="font-size:.82rem;background:#fef9c3;border-left:4px solid #f59e0b;border-radius:0 6px 6px 0;padding:.5rem .7rem;margin:.4rem 0;">⭐ <b>のマーク＝今回おさえる3層</b>（物理・データリンク・ネットワーク層）。全体のどこに当たるかを下の表で確認してください。</p>
 
       <table>
-        <tr><th>OSI 7階層</th><th>TCP/IP 4階層</th><th>主な機器・プロトコル</th><th>何で宛先を見る／役割</th></tr>
-        <tr><td class="l">⑦ アプリケーション層</td><td rowspan="3" style="background:#eef2ff!important;font-weight:700;color:#4338ca;vertical-align:middle;">アプリケーション層<br><small style="font-weight:400;color:#6366f1;">（OSIの上3つをまとめたもの）</small></td><td class="l">HTTP・FTP・SMTP・DNS<br><small>※PC上のソフトが担当（専用機器なし）</small></td><td class="l">人が使うサービスを提供</td></tr>
-        <tr><td class="l">⑥ プレゼンテーション層</td><td class="l">―</td><td class="l">文字コード変換・暗号化</td></tr>
-        <tr><td class="l">⑤ セッション層</td><td class="l">―</td><td class="l">通信の開始〜終了を管理</td></tr>
-        <tr><td class="l">④ トランスポート層</td><td style="background:#ecfeff!important;font-weight:700;color:#0e7490;">トランスポート層</td><td class="l">TCP・UDP<br><small>※ソフトが担当（専用機器なし）</small></td><td class="yes"><span class="blank">ポート番号</span>（どのアプリ宛か）</td></tr>
-        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐③ ネットワーク層</td><td style="background:#fefce8!important;font-weight:700;color:#a16207;">インターネット層</td><td class="l" style="background:#fffbeb!important;"><span class="blank">ルータ</span></td><td class="yes">IPアドレス（別ネットワークへ転送）</td></tr>
-        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐② データリンク層</td><td rowspan="2" style="background:#f0fdf4!important;font-weight:700;color:#15803d;vertical-align:middle;">ネットワーク<br>インターフェース層<br><small style="font-weight:400;color:#22c55e;">（OSIの下2つをまとめたもの）</small></td><td class="l" style="background:#fffbeb!important;"><span class="blank">L2スイッチ・ブリッジ</span></td><td class="yes"><span class="blank">MACアドレス</span>（宛先の差込口だけに転送）</td></tr>
-        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐① 物理層（最下位）</td><td class="l" style="background:#fffbeb!important;"><span class="blank">ハブ・リピータ</span></td><td>信号を増幅し全ポートへ流すだけ</td></tr>
+        <tr><th>OSI 7階層</th><th>TCP/IP 4階層</th><th>主な機器・プロトコル</th><th>🚚 一言イメージ（宅配便のたとえ）</th></tr>
+        <tr><td class="l">⑦ アプリケーション層</td><td rowspan="3" style="background:#eef2ff!important;font-weight:700;color:#4338ca;vertical-align:middle;">アプリケーション層<br><small style="font-weight:400;color:#6366f1;">（OSIの上3つをまとめたもの）</small></td><td class="l">HTTP・FTP・SMTP・DNS<br><small>※PC上のソフトが担当（専用機器なし）</small></td><td class="l">✍️ <b>手紙の中身を書く人</b><br><small style="color:#64748b;">ブラウザ・メールなど、人が直接さわるアプリ本体</small></td></tr>
+        <tr><td class="l">⑥ プレゼンテーション層</td><td class="l">―</td><td class="l">🔑 <b>封筒の中身を整える係</b><br><small style="color:#64748b;">文字化けを直し、中身に鍵をかける（暗号化）</small></td></tr>
+        <tr><td class="l">⑤ セッション層</td><td class="l">―</td><td class="l">☎️ <b>会話の進行役</b><br><small style="color:#64748b;">「もしもし〜さようなら」の始め〜終わりを管理</small></td></tr>
+        <tr><td class="l">④ トランスポート層</td><td style="background:#ecfeff!important;font-weight:700;color:#0e7490;">トランスポート層</td><td class="l">TCP・UDP<br><small>※ソフトが担当（専用機器なし）</small></td><td class="yes">🔢 <b>どのアプリ宛かを仕分ける人</b><br><small style="color:#64748b;"><span class="blank">ポート番号</span>で「同じPC内のどのソフト宛か」を区別（例：Web＝80）</small></td></tr>
+        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐③ ネットワーク層</td><td style="background:#fefce8!important;font-weight:700;color:#a16207;">インターネット層</td><td class="l" style="background:#fffbeb!important;"><span class="blank">ルータ</span><div style="margin-top:5px;text-align:center;"><svg width="76" height="50" viewBox="0 0 76 50" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><line x1="24" y1="24" x2="18" y2="5" stroke="#475569" stroke-width="3" stroke-linecap="round"/><line x1="52" y1="24" x2="58" y2="5" stroke="#475569" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="5" r="2.5" fill="#475569"/><circle cx="58" cy="5" r="2.5" fill="#475569"/><rect x="8" y="22" width="60" height="24" rx="5" fill="#1e293b"/><circle cx="20" cy="34" r="3" fill="#22c55e"/><circle cx="32" cy="34" r="3" fill="#22c55e"/><circle cx="44" cy="34" r="3" fill="#f59e0b"/><circle cx="56" cy="34" r="3" fill="#38bdf8"/></svg><div style="font-size:.62rem;color:#64748b;margin-top:1px;">家庭用ルータ（アンテナ付きの箱）</div></div></td><td class="yes">🚚 <b>別の町まで運ぶ配達トラック</b><br><small style="color:#64748b;"><b>IPアドレス</b>で「どのネットワーク（町）へ」を見て転送</small></td></tr>
+        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐② データリンク層</td><td rowspan="2" style="background:#f0fdf4!important;font-weight:700;color:#15803d;vertical-align:middle;">ネットワーク<br>インターフェース層<br><small style="font-weight:400;color:#22c55e;">（OSIの下2つをまとめたもの）</small></td><td class="l" style="background:#fffbeb!important;"><span class="blank">L2スイッチ・ブリッジ</span><div style="margin-top:5px;text-align:center;"><svg width="86" height="38" viewBox="0 0 86 38" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><rect x="4" y="9" width="78" height="22" rx="3" fill="#334155"/><rect x="10" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="19" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="28" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="37" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="46" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="55" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="64" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><circle cx="76" cy="14" r="2" fill="#22c55e"/></svg><div style="font-size:.62rem;color:#64748b;margin-top:1px;">L2スイッチ（差込口がずらり並ぶ箱）</div></div></td><td class="yes">📮 <b>町内で家を探す郵便屋</b><br><small style="color:#64748b;"><span class="blank">MACアドレス</span>で「どの家の差込口へ」を表札で見分ける</small></td></tr>
+        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐① 物理層（最下位）</td><td class="l" style="background:#fffbeb!important;"><span class="blank">ハブ・リピータ</span><div style="margin-top:5px;text-align:center;"><svg width="72" height="36" viewBox="0 0 72 36" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><rect x="6" y="9" width="60" height="20" rx="3" fill="#64748b"/><rect x="14" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="24" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="34" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="44" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><circle cx="58" cy="14" r="2" fill="#f59e0b"/></svg><div style="font-size:.62rem;color:#64748b;margin-top:1px;">ハブ（差込口の付いた箱）</div></div></td><td>📢 <b>拡声器</b><br><small style="color:#64748b;">宛先を見ず、信号を増幅して全ポートへそのまま流す</small></td></tr>
       </table>
       <p class="note">↑上＝人に近い（アプリ）／↓下＝配線に近い（物理）。TCP/IPの4階層は、OSIの7階層を実用的にまとめたもの。</p>
 
-      <div class="vz-supplement" style="background:#f5f3ff;border-left-color:#8b5cf6;margin-top:.8rem;">
-        <div class="vz-label" style="color:#7c3aed;">🗺️ いちばん大事：データは「どこから始まり、どこまで行く？」全体の流れ</div>
-        <p style="margin:0 0 .5rem;font-size:.85rem;">通信は<b>「あなたのPCのアプリ」から始まり、「相手のPCのアプリ」まで</b>届きます。途中で層を<b>下りながら“封筒”を重ね（カプセル化）</b>、相手側で<b>上りながら“封筒”をはがす（非カプセル化）</b>——これが全体像です。手紙を何重にも封筒へ入れて送り、相手が順にあける、とイメージしてください。</p>
+      <div class="vz-supplement" style="background:#f8fafc;border-left-color:#94a3b8;margin-top:.6rem;">
+        <div class="vz-label" style="color:#475569;">📎 補足：表のプロトコル・用語を“もう少し細かく”（表をスッキリさせるため、ここに逃がしました）</div>
+        <div style="font-size:.74rem;color:#334155;margin:.1rem 0 .25rem;font-weight:700;">⑦アプリの主なプロトコル（人が使うサービスの中身）</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.45rem;">
+          <span style="font-size:.66rem;background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:1px 6px;">🌐 HTTP＝ホームページ閲覧</span>
+          <span style="font-size:.66rem;background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:1px 6px;">📁 FTP＝ファイル転送</span>
+          <span style="font-size:.66rem;background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:1px 6px;">✉️ SMTP＝メール送信</span>
+          <span style="font-size:.66rem;background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:1px 6px;">📖 DNS＝名前→住所(IP)に変換</span>
+        </div>
+        <div style="font-size:.74rem;color:#334155;margin:.1rem 0 .25rem;font-weight:700;">④トランスポートの2人（どう運ぶか）</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.45rem;">
+          <span style="font-size:.66rem;background:#ecfeff;border:1px solid #a5f3fc;border-radius:5px;padding:1px 6px;">🤝 TCP＝届いたか確認して確実に（電話タイプ）</span>
+          <span style="font-size:.66rem;background:#ecfeff;border:1px solid #a5f3fc;border-radius:5px;padding:1px 6px;">📨 UDP＝確認せず速く投げる（はがきタイプ）</span>
+        </div>
+        <p style="margin:.2rem 0 0;font-size:.72rem;color:#475569;background:#fff;border-radius:6px;padding:.4rem .55rem;line-height:1.6;">📌 <b>ポート番号</b>の例：Web＝80/443、メール＝25。｜📌 <b>デフォルトゲートウェイ</b>＝別ネットワークへの“出口（ルータ）”。同じネットワーク内の相手には不要。｜📌 ②の「ポート（差込口）」と④の「ポート番号」は<b>別もの</b>（↓⚠️で詳しく）。</p>
+      </div>
+
+      <details style="margin-top:.8rem;">
+        <summary style="cursor:pointer;font-weight:800;color:#b45309;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:.55rem .7rem;font-size:.82rem;">🔎 もっと詳しく①：相手が「別の町（別ネットワーク）」にいるときの配達フル図（タップで開く）</summary>
+      <div class="vz-supplement" style="background:#fffbeb;border-left-color:#f59e0b;margin-top:.5rem;">
+        <div class="vz-label" style="color:#b45309;">🏙️ この表だけだと見えにくい「別の町（別ネットワーク）へ届くとき」を絵にしました</div>
+        <p style="margin:0 0 .6rem;font-size:.82rem;"><b>町＝ネットワーク</b>／<b>家＝PC（玄関＝差込口）</b>／<b>表札(MAC)＝“同じ町の中だけ”で通じる目印</b>／<b>住所(IP)＝“町をまたいでも”通じる最終あて先</b>。これで②ルータ・①L2スイッチの分担を見ます。</p>
+
+        <!-- 別の町（別ネットワーク）へ届くとき -->
+        <div style="background:#fff;border-radius:8px;padding:.6rem;border:1px solid #e5e7eb;">
+          <div style="font-size:.8rem;font-weight:800;color:#b45309;margin-bottom:.4rem;">相手が「別の町（別ネットワーク）」にいる → トラック（ルータ）が相手の町まで運ぶ → 着いた町の郵便屋が家へ</div>
+          <div style="display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;justify-content:center;">
+            <!-- A町 -->
+            <div style="flex:1 1 190px;min-width:165px;background:#eff6ff;border:2px dashed #93c5fd;border-radius:10px;padding:.5rem;">
+              <div style="text-align:center;font-size:.72rem;color:#1d4ed8;font-weight:700;margin-bottom:.3rem;">🏙️ A町（自分のネットワーク）</div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:.28rem;font-size:.7rem;text-align:center;">
+                <div>🏠 <b>自分PC</b></div>
+                <div style="font-size:.64rem;color:#15803d;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;padding:.22rem .4rem;line-height:1.4;">（もし相手が<b>同じA町</b>なら → ここで🧑‍✈️郵便屋＝L2スイッチが表札(MAC)を見て<b>そのまま隣の家へ届けて完了</b>。🚚ルータは出番なし）</div>
+                <div style="color:#1d4ed8;font-weight:800;">↓ でも今回は同じ町に相手がいない！</div>
+                <div style="background:#dbeafe;border-radius:6px;padding:.28rem .5rem;">🚪🚚 <b>町の出口＝ルータ</b><br><small>＝デフォルトゲートウェイ</small></div>
+              </div>
+            </div>
+            <!-- トラック移動 -->
+            <div style="flex:0 0 auto;text-align:center;font-size:.7rem;color:#b45309;font-weight:800;line-height:1.5;">🚚💨<br>住所(IP)を見て<br>B町まで運ぶ<br>➡</div>
+            <!-- B町 -->
+            <div style="flex:1 1 190px;min-width:165px;background:#f0fdf4;border:2px dashed #86efac;border-radius:10px;padding:.5rem;">
+              <div style="text-align:center;font-size:.72rem;color:#166534;font-weight:700;margin-bottom:.3rem;">🏘️ B町（相手のネットワーク）</div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:.28rem;font-size:.7rem;text-align:center;">
+                <div style="background:#dcfce7;border-radius:6px;padding:.28rem .5rem;">🚚🚪 <b>B町の入口＝ルータ</b></div>
+                <div style="color:#16a34a;font-weight:800;">↓ 着いた町の郵便屋にバトンタッチ</div>
+                <div style="background:#dcfce7;border-radius:6px;padding:.28rem .5rem;">🧑‍✈️ <b>郵便屋＝L2スイッチ</b><br><small>表札(MAC)で家を探す</small></div>
+                <div style="color:#16a34a;font-weight:800;">↓</div>
+                <div>🏠 <b>相手PC</b>🎉</div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#fffbeb;border-radius:6px;padding:.4rem .55rem;margin-top:.55rem;font-size:.72rem;color:#92400e;">
+            👉 大事なところ：<b>住所(IP)＝「どの家か」は最初から最後までずっと“相手PC”を指したまま</b>。いっぽう<b>表札(MAC)＝「いま手渡す相手」だけを指す</b>ので、A町では「出口ルータの表札」、B町では「相手PCの表札」と、<b>町を移るたびに貼り替わる</b>。
+          </div>
+        </div>
+
+        <p style="margin:.55rem 0 0;font-size:.78rem;color:#7c2d12;background:#fff7ed;border-radius:6px;padding:.45rem .55rem;">
+          🧠 ひとことで：<b>同じ町＝郵便屋(L2スイッチ・MAC)だけ</b>／<b>別の町＝トラック(ルータ・IP)が町まで運ぶ→着いた町の郵便屋が家へ</b>。だから試験では「<b>別ネットワークに出るときだけルータ（デフォルトゲートウェイ）が必要</b>」が問われます。
+        </p>
+      </div>
+
+      </details>
+
+      <details style="margin-top:.5rem;">
+        <summary style="cursor:pointer;font-weight:800;color:#7c3aed;background:#f3e8ff;border:1px solid #ddd6fe;border-radius:8px;padding:.55rem .7rem;font-size:.82rem;">🔎 もっと詳しく②：封筒を“重ねる／はがす”全7層の流れ＆STEP手順（タップで開く）</summary>
+      <div class="vz-supplement" style="background:#f5f3ff;border-left-color:#8b5cf6;margin-top:.5rem;">
+        <div class="vz-label" style="color:#7c3aed;">🗺️ さっきの「町の配達」を、今度は“封筒を重ねる／はがす”で全7層に広げる</div>
+        <p style="margin:0 0 .5rem;font-size:.85rem;">さっきは<b>「町（ネットワーク）」の地図</b>で<b>住所(IP)＝ルータ／表札(MAC)＝L2スイッチ</b>の分担を見ました。ここからは<b>同じ通信を“封筒の出し入れ（カプセル化）”の角度で、全7層に広げます</b>。通信は<b>「あなたのPCのアプリ」から始まり、「相手のPCのアプリ」まで</b>届き、途中で層を<b>下りながら“封筒”を重ね（カプセル化）</b>、相手側で<b>上りながら“封筒”をはがす（非カプセル化）</b>——手紙を何重にも封筒へ入れて送り、相手が順にあける、とイメージしてください。</p>
 
         <p style="margin:.2rem 0 .4rem;font-size:.8rem;color:#5b21b6;">下の図は<b>U字（Uの字）に読みます</b>：<b>左の送信側を上から下へ降りて（封筒を重ねる）→ 一番下のケーブルを旅して → 右の受信側を下から上へ昇る（封筒をはがす）</b>。同じ高さ＝同じ層です。</p>
 
@@ -941,7 +1016,7 @@ td.l{text-align:left;}
             <div style="font-size:.64rem;color:#cbd5e1;text-align:center;margin-top:.3rem;">「登る高さ」が上の階段図の層番号と対応。機器は自分の高さまで登ったら、また①物理に降りて次へ。</div>
           </div>
         </div>
-        <p style="margin:.4rem 0 0;font-size:.76rem;color:#475569;">💡 旅の途中：<b>ルータを通るたびに🏠MAC封筒（層②）は貼り替え</b>（次の機器宛に書き直す）。でも<b>🏙️IP封筒（層③）は最終目的地まで変わらない</b>。だから「IP＝最後まで届け先／MAC＝次の1区間だけ」。</p>
+        <p style="margin:.4rem 0 0;font-size:.76rem;color:#475569;">💡 この表のルータ行（🏠MAC封筒を貼り替え／🏙️IP封筒はそのまま）は、<b>上の「別の町」の図とまったく同じ動き</b>です（住所IPで町を選び、表札MACは1区間ごとに貼り替え）。</p>
 
         <!-- 通し手順（番号で呼べる） -->
         <div style="background:#fff;border:1.5px solid #c4b5fd;border-radius:8px;padding:.55rem .65rem;margin-top:.5rem;">
@@ -968,6 +1043,7 @@ td.l{text-align:left;}
 
         <p style="margin:.5rem 0 0;font-size:.82rem;background:#ede9fe;border-radius:6px;padding:.45rem .65rem;color:#5b21b6;">🔑 <b>ひとことで：</b>左を<b>降りながら封筒を重ね</b>（データ→＋ポート→＋IP→＋MAC→信号）、右を<b>昇りながら同じ封筒を逆順ではがす</b>。<b>左右の同じ高さ＝同じ層</b>で、付けた封筒をそこで外す。<b>途中の機器は自分の層まで登って判断→また降りる</b>ので層②③が顔を出す、と覚えると迷いません。</p>
       </div>
+      </details>
 
       <div class="vz-supplement" style="background:#fef2f2;border-left-color:#ef4444;margin-top:.8rem;">
         <div class="vz-label" style="color:#dc2626;">⚠️ まぎらわしい！「2つのポート」は別もの</div>
@@ -3254,6 +3330,644 @@ body.szp-hide #szp-layer{display:none}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,0);});
   else setTimeout(boot,0);
 })();
+</script>
+
+<!-- ===== qz hide-buttons v4 (full coverage: class-less inline boxes + <br> lines) =====
+     v4.1 追加: カード単位「まとめて隠す/出す」一括トグル＋中粒度「まとまり」(.fig/.vz-supplement内グループ)。
+     マーカー(__QZ_HIDE_V4__)は据置のため、既存ファイルは grep→置換で更新可。 -->
+<style>
+/* 非表示ボタン関連CSS（既存ファイルに定義があれば重複しても無害） */
+.fill-reveal-btn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.84rem;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
+.fill-reveal-btn:hover{opacity:.85}
+.sec-hide-wrap{position:relative}
+.sec-hide-btn-row{text-align:right;margin:-2px 0 6px}
+.sec-hide-btn-row button{background:none;border:2px solid #cbd5e1;border-radius:50%;width:26px;height:26px;font-size:.85rem;cursor:pointer;color:#94a3b8;line-height:1;transition:all .18s;vertical-align:middle}
+.sec-hide-btn-row button:hover{border-color:#64748b;color:#475569;background:#f1f5f9}
+.sec-hidden-ph{text-align:right;padding:3px 0;font-size:.78rem;color:#94a3b8}
+.sec-hidden-label{color:#64748b;font-style:italic}
+.sec-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:2px 9px;font-size:.76rem;cursor:pointer;color:#94a3b8;margin-left:4px;transition:all .15s}
+.sec-hidden-ph button:hover{background:#f8fafc;color:#475569;border-color:#94a3b8}
+.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
+.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
+.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
+.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
+.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
+.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
+.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+.hb-line{position:relative}
+/* v4.1: カード単位「まとめて隠す/出す」（カード見出しに同居） */
+.card-hide-all-btn{margin-left:8px;background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:7px;font-size:.72rem;font-weight:700;padding:3px 9px;cursor:pointer;font-family:inherit;line-height:1.2;white-space:nowrap;vertical-align:middle;}
+.card-hide-all-btn:hover{background:rgba(255,255,255,.38);}
+/* v4.1: 中粒度「まとまり」（図・解説ボックス内のグループ箱を一括非表示） */
+.group-hide-btn{position:absolute;top:0;right:22px;width:18px;height:18px;font-size:.62rem;line-height:1;padding:0;border:1.5px solid #c7d2fe;border-radius:5px;background:#eef2ff;color:#6366f1;cursor:pointer;z-index:7;}
+.group-hide-btn:hover{background:#e0e7ff;}
+.group-ph{display:inline-block;font-size:.68rem;color:#6366f1;border:1px dashed #c7d2fe;border-radius:5px;padding:1px 8px;margin:2px;cursor:pointer;background:#eef2ff;}
+</style>
+<script>
+/* qz-hide-buttons-v4 : 多重適用ガード（このブロックが既に走っていたら全パスを中止） */
+if(window.__QZ_HIDE_V4__){/* already applied */}else{window.__QZ_HIDE_V4__=1;
+var _qzPS=(document.querySelectorAll('.tab-panel').length?'.tab-panel':'.tab-content');
+/* === qz-lock: card-reveal button auto-injection === */
+(function(){
+  function injectCardReveal(){
+    document.querySelectorAll('.fill-card').forEach(function(card){
+      var header=card.querySelector('.fill-header');
+      if(!header) return;
+      if(header.querySelector('.ls-card-reveal')) return;
+      if(card.querySelectorAll('.fill-blank').length===0) return;
+      var btn=document.createElement('button');
+      btn.className='ls-card-reveal fill-reveal-btn';
+      btn.textContent='👁 ここだけ表示';
+      btn.style.cssText='font-size:.7rem;padding:.2rem .6rem;margin:0 0 0 auto;background:rgba(255,255,255,.25);color:#fff;border:1px solid rgba(255,255,255,.5);';
+      btn.addEventListener('click',function(ev){
+        ev.stopPropagation();
+        var blanks=card.querySelectorAll('.fill-blank');
+        var allShown=Array.prototype.every.call(blanks,function(b){return b.classList.contains('show');});
+        blanks.forEach(function(b){if(allShown) b.classList.remove('show'); else b.classList.add('show');});
+        btn.textContent=allShown?'👁 ここだけ表示':'🙈 隠す';
+      });
+      header.appendChild(btn);
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',injectCardReveal);
+  else injectCardReveal();
+  window.addEventListener('load', injectCardReveal);
+})();
+
+/* === qz-lock: section-hide v3 (STEP A2 + FINE_SEL, no lowContrast) === */
+(function(){
+  // STEP A: h2.section-title 区切りで .hide-block 自動ラップ
+  document.querySelectorAll(_qzPS).forEach(function(panel){
+    var children=Array.from(panel.children);
+    var sections=[];
+    var start=-1;
+    for(var i=0;i<children.length;i++){
+      var c=children[i];
+      if(c.matches&&c.matches('h2.section-title')){
+        if(start!==-1) sections.push([start,i-1]);
+        start=i;
+      }
+    }
+    if(start!==-1) sections.push([start,children.length-1]);
+    sections.forEach(function(sec){
+      var first=children[sec[0]];
+      if(!first||first.parentNode!==panel) return;
+      var wrap=document.createElement('div');
+      wrap.className='hide-block';
+      first.parentNode.insertBefore(wrap,first);
+      for(var j=sec[0];j<=sec[1];j++){
+        if(children[j]&&children[j].parentNode===panel) wrap.appendChild(children[j]);
+      }
+    });
+  });
+  // STEP A2: .card-body / .fill-body 内の <h3> 区切りで .hide-subblock 自動ラップ
+  document.querySelectorAll('.card-body, .fill-body').forEach(function(body){
+    var kids=Array.from(body.children);
+    var groups=[];var s=-1;
+    for(var i=0;i<kids.length;i++){
+      if(kids[i].tagName==='H3'){
+        if(s!==-1) groups.push([s,i-1]);
+        s=i;
+      }
+    }
+    if(s!==-1) groups.push([s,kids.length-1]);
+    groups.forEach(function(g){
+      var first=kids[g[0]];
+      if(!first||first.parentNode!==body) return;
+      var w=document.createElement('div');
+      w.className='hide-subblock';
+      first.parentNode.insertBefore(w,first);
+      for(var j=g[0];j<=g[1];j++){
+        if(kids[j]&&kids[j].parentNode===body) w.appendChild(kids[j]);
+      }
+    });
+  });
+  // STEP B: ○ボタン付与対象を収集
+  var FINE_SEL=['.hide-subblock','.flow-box','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.factor-card','.vs-card','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card'].join(',');
+  var MEDIUM_SEL=['.hide-block','.card','.diagram','.alert-tip','.alert-exam','.alert-danger',
+    '.support','.keepit','.goro-row','.bubble-wrap','.mnemonic','.vs-box','.quiz-item','.fill-card','.fill-card-quiet',
+    '.hide-subblock','.flow-box','.table-wrap','.chart-wrap','.chart-set','.icon-deck','.flash-deck','.factor-grid','.factor-card','.vs-card','.fill-section','.cross-ref','.chart-set-banner','.quiz-q','.flash-card',
+    '.vz-supplement','.goro-chip','.zu','.kotoba'].join(',');
+  var LS_KEY='sec-hide:'+(location.pathname.split('/').pop()||'page')+':v3';
+  function loadHidden(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(e){return{};}}
+  function saveHidden(obj){try{localStorage.setItem(LS_KEY,JSON.stringify(obj));}catch(e){}}
+  var targets=[];
+  var seen=new Set();
+  function addTarget(el){if(!seen.has(el)){seen.add(el);targets.push(el);}}
+  document.querySelectorAll(_qzPS).forEach(function(panel){
+    panel.querySelectorAll(MEDIUM_SEL).forEach(function(el){
+      if(el.parentNode&&el.parentNode.classList&&el.parentNode.classList.contains('sec-hide-wrap')) return; // 旧ブロックでラップ済みなら二重化しない
+      if(el.closest('.card')&&!el.classList.contains('card')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.fill-card')&&!el.classList.contains('fill-card')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.keepit')&&!el.classList.contains('keepit')) return;
+      if(el.closest('.hide-subblock')&&!el.classList.contains('hide-subblock')&&!el.matches(FINE_SEL)) return;
+      if(el.closest('.flash-deck')&&!el.classList.contains('flash-deck')&&!el.classList.contains('flash-card')) return;
+      if(el.closest('.icon-deck')&&!el.classList.contains('icon-deck')) return;
+      if(el.closest('.chart-set')&&!el.classList.contains('chart-set')&&!el.matches('.chart-wrap,.chart-set-banner')) return;
+      if(el.closest('.table-wrap')&&!el.classList.contains('table-wrap')) return;
+      if(el.closest('.chart-wrap')&&!el.classList.contains('chart-wrap')) return;
+      /* 穴埋めカード内の個別カードには細粒度ボタンを付けない（fill-card単位で完結） */
+      if((el.classList.contains('vs-card')||el.classList.contains('factor-card'))&&el.closest('.fill-card')) return;
+      if(el.classList.contains('hide-subblock')){
+        var kids2=Array.from(el.children);
+        var nonFineSig=false;
+        for(var k=0;k<kids2.length;k++){
+          var ch=kids2[k];
+          if(ch.tagName==='H3') continue;
+          if(ch.matches&&ch.matches(FINE_SEL)) continue;
+          var t=(ch.textContent||'').trim();
+          if(t.length>0||(ch.querySelector&&ch.querySelector('table,img,svg'))){nonFineSig=true;break;}
+        }
+        var fineCount=el.querySelectorAll(FINE_SEL).length;
+        if(!nonFineSig && fineCount>=1) return;
+      }
+      addTarget(el);
+    });
+  });
+  document.querySelectorAll('.hide-block').forEach(function(block){
+    Array.from(block.children).forEach(function(child){
+      var tag=child.tagName;
+      if(tag==='H1'||tag==='H2'||tag==='H3'||tag==='H4'||tag==='H5') return;
+      if(child.matches&&child.matches(MEDIUM_SEL)) return;
+      if(child.closest('.card')&&!child.classList.contains('card')) return;
+      if(child.closest('.keepit')&&!child.classList.contains('keepit')) return;
+      if(tag==='P'&&(child.textContent||'').trim().length<40) return;
+      if(tag!=='DIV'&&tag!=='TABLE'&&tag!=='P'&&tag!=='UL'&&tag!=='OL') return;
+      addTarget(child);
+    });
+  });
+  function stableId(el,fallback){
+    var h2=el.querySelector('h2.section-title');
+    var h3=el.querySelector(':scope > h3');
+    if(h3) return (el.classList[0]||'')+':h3:'+(h3.textContent||'').replace(/\s+/g,'').slice(0,40)+':'+fallback;
+    var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
+    var qNum=el.querySelector('.quiz-num');
+    var fh=el.querySelector('.fill-header, .card-header');
+    var tag=el.classList[0]||el.tagName.toLowerCase();
+    var txt='';
+    if(h2&&el.classList.contains('hide-block')) txt=h2.textContent;
+    else if(qNum){var qq=el.querySelector('.quiz-question');txt='q'+qNum.textContent+(qq?qq.textContent:'');}
+    else if(fh) txt=fh.textContent;
+    else if(h4) txt=h4.textContent;
+    else if(dt) txt=dt.textContent;
+    else txt=el.textContent;
+    txt=(txt||'').replace(/\s+/g,'').slice(0,40);
+    return tag+':'+txt+':'+fallback;
+  }
+  var hidden=loadHidden();
+  targets.forEach(function(el,idx){
+    var id=stableId(el,idx);
+    var wrap=document.createElement('div');
+    wrap.className='sec-hide-wrap';
+    el.parentNode.insertBefore(wrap,el);
+    wrap.appendChild(el);
+    var btnRow=document.createElement('div');
+    btnRow.className='sec-hide-btn-row';
+    var btn=document.createElement('button');
+    btn.textContent='○';
+    btn.title='この項目を非表示にする';
+    function getLabel(){
+      var qNum=el.querySelector('.quiz-num'),qQ=el.querySelector('.quiz-question');
+      var h2=el.querySelector('h2.section-title');
+      var h3=el.querySelector(':scope > h3');
+      var h4=el.querySelector('h4'),dt=el.querySelector('.diagram-title');
+      var fh=el.querySelector('.fill-header, .card-header');
+      var fc=el.querySelector(':scope > .fc-num');
+      if(h3) return h3.textContent.trim().slice(0,40);
+      if(qNum&&qQ) return qNum.textContent.trim()+' '+qQ.textContent.trim().slice(0,30)+'…';
+      if(h2&&el.classList.contains('hide-block')) return h2.textContent.trim().slice(0,40);
+      if(fh) return fh.textContent.trim().slice(0,30);
+      if(h4) return h4.textContent.trim().slice(0,30);
+      if(el.classList.contains('factor-card')&&fc) return fc.textContent.trim().slice(0,30);
+      if(dt) return dt.textContent.trim().slice(0,30);
+      return el.textContent.trim().slice(0,30)+'…';
+    }
+    function doHide(label){
+      el.style.display='none';btnRow.style.display='none';
+      var ph=document.createElement('div');
+      ph.className='sec-hidden-ph';
+      ph.innerHTML='（非表示：<span class="sec-hidden-label"></span>） <button>再表示 ○</button>';
+      ph.querySelector('.sec-hidden-label').textContent=label;
+      ph.querySelector('button').addEventListener('click',function(){
+        el.style.display='';btnRow.style.display='';ph.remove();
+        var obj=loadHidden();delete obj[id];saveHidden(obj);
+      });
+      wrap.appendChild(ph);
+    }
+    btn.addEventListener('click',function(){
+      var label=getLabel();
+      doHide(label);
+      var obj=loadHidden();obj[id]=1;saveHidden(obj);
+    });
+    btnRow.appendChild(btn);
+    wrap.appendChild(btnRow); /* 常に右下に配置 */
+    if(hidden[id]) doHide(getLabel());
+  });
+})();
+// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
+(function(){
+  var KEY='mz_row_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
+  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head,.fill-header'); return h?h.textContent.trim().slice(0,28):''; }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); return h&&(h.textContent.trim().startsWith('予習｜')||h.textContent.trim().startsWith('🔰')); }
+  function mkPh(e2,k2){
+    var ph=document.createElement('div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // fill-group 行
+  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
+    if(isPreview(el)) return;
+    var key='fg:'+cardHead(el)+'|'+i;
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
+    el.insertBefore(btn,el.firstChild);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+  });
+  // tbody tr 行
+  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
+    if(isPreview(tr)) return;
+    var key='tr:'+cardHead(tr)+'|'+i;
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
+    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+  // keepit li 行単位
+  document.querySelectorAll('.keepit li').forEach(function(el,i){
+    var key='kl:'+(el.textContent||'').replace(/\s+/g,'').slice(0,30)+'|'+i;
+    el.style.position='relative'; el.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:2px;transform:translateY(-50%);float:none;margin:0;'; btn.title='この項目を非表示'; btn.textContent='○';
+    el.appendChild(btn);
+    function mkLiPh(e2,k2){
+      var ph=document.createElement('li'); ph.className='row-hidden-ph';
+      ph.innerHTML='— <button>表示</button>';
+      ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+      return ph;
+    }
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkLiPh(el,key),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkLiPh(el,key),el.nextSibling); }
+  });
+})();
+// === 最細粒度 非表示（全タブの表行・リスト項目・試験ポイント）・localStorage保存 ===
+(function(){
+  var KEY='mz_fine_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head,.fill-header'); var t=h?h.textContent.trim():''; return t.indexOf('予習')===0||t.indexOf('🔰')===0; }
+  function mkPh(e2,k2,tag){
+    var ph=document.createElement(tag); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
+    return ph;
+  }
+  function mkTrPh(r,k){
+    var cols=r.querySelectorAll('td,th').length||1;
+    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
+    var phTd=document.createElement('td'); phTd.colSpan=cols;
+    phTd.innerHTML='— <button>表示</button>';
+    phR.appendChild(phTd);
+    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
+    return phR;
+  }
+  // (1) 全タブの表データ行（fill-body以外も対象・ヘッダ行は除外）
+  document.querySelectorAll(_qzPS+' table tbody tr').forEach(function(tr,i){
+    if(tr.classList.contains('tr-hidden-ph')) return;
+    if(isPreview(tr)) return;
+    if(tr.querySelector('.row-hide-btn')) return;            // 既存パスで処理済み
+    var tds=tr.querySelectorAll('td'); if(!tds.length) return; // ヘッダ専用行は除外
+    var key='ftr:'+i+'|'+(tr.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var last=tds[tds.length-1]; last.style.position='relative';
+    if(!/padding-right/.test(last.getAttribute('style')||'')) last.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この行を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;';
+    last.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
+    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
+  });
+  // (2) 全タブのリスト項目（keepit等の既処理liは除外）
+  document.querySelectorAll(_qzPS+' li').forEach(function(li,i){
+    if(li.classList.contains('row-hidden-ph')||li.closest('.row-hidden-ph')) return;
+    if(li.querySelector(':scope > .row-hide-btn')) return;     // keepit等 既存ボタン有
+    if(isPreview(li)) return;
+    if((li.textContent||'').trim().length<2) return;
+    var key='fli:'+i+'|'+(li.textContent||'').replace(/\s+/g,'').slice(0,28);
+    li.style.position='relative'; li.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:.15rem;right:2px;float:none;margin:0;';
+    li.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); li.style.display='none'; st[key]=1; save(); li.parentNode.insertBefore(mkPh(li,key,'li'),li.nextSibling); });
+    if(st[key]){ li.style.display='none'; li.parentNode.insertBefore(mkPh(li,key,'li'),li.nextSibling); }
+  });
+  // (3) 試験ポイント・引っかけポイント（.exam-pt / .trap-pt 各ブロック）
+  document.querySelectorAll(_qzPS+' .exam-pt, '+_qzPS+' .trap-pt').forEach(function(el,i){
+    if(el.querySelector(':scope > .row-hide-btn')) return;
+    var key='fep:'+i+'|'+(el.textContent||'').replace(/\s+/g,'').slice(0,28);
+    el.style.position='relative'; el.style.paddingRight='30px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この試験ポイントを非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:50%;right:6px;transform:translateY(-50%);float:none;margin:0;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,'div'),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,'div'),el.nextSibling); }
+  });
+  // (4) 定義リスト dl の用語（dt＋続く dd）を1語ずつ非表示（ことば欄など）
+  document.querySelectorAll(_qzPS+' dl > dt').forEach(function(dt,i){
+    if(dt.querySelector(':scope > .row-hide-btn')) return;
+    if(dt.closest('.row-hidden-ph')) return;
+    var dds=[],n=dt.nextElementSibling;
+    while(n&&n.tagName==='DD'){ dds.push(n); n=n.nextElementSibling; }
+    var key='dt:'+i+'|'+(dt.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var cs=window.getComputedStyle(dt); if(cs.position==='static') dt.style.position='relative';
+    dt.style.paddingRight='26px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この用語を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:.1rem;right:2px;float:none;margin:0;';
+    dt.appendChild(btn);
+    function hideTerm(){ dt.style.display='none'; dds.forEach(function(d){d.style.display='none';}); }
+    function mkDtPh(){ var p=document.createElement('dd'); p.className='row-hidden-ph'; p.innerHTML='— <button>表示</button>'; p.querySelector('button').addEventListener('click',function(){ dt.style.display=''; dds.forEach(function(d){d.style.display='';}); p.remove(); st[key]=0; save(); }); return p; }
+    btn.addEventListener('click',function(e){ e.stopPropagation(); hideTerm(); st[key]=1; save(); var last=dds.length?dds[dds.length-1]:dt; last.parentNode.insertBefore(mkDtPh(),last.nextSibling); });
+    if(st[key]){ hideTerm(); var last=dds.length?dds[dds.length-1]:dt; last.parentNode.insertBefore(mkDtPh(),last.nextSibling); }
+  });
+})();
+// === 最細粒度プラス v2：個別カード（factor/vs/goro）＋本文段落 単位の非表示 ===
+(function(){
+  var KEY='mz_fine2_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function inAnim(el){ return !!el.closest('.sa,.hosho-anim,.goro-scene'); }
+  function handled(el){
+    if(el.querySelector(':scope > .row-hide-btn')) return true;          // 既にボタン有
+    var p=el.parentNode;
+    if(p&&p.classList&&p.classList.contains('sec-hide-wrap')) return true; // section-hide ○ 対象
+    if(el.closest('.row-hidden-ph')) return true;
+    return false;
+  }
+  function mkPh(el,key,tag){
+    var ph=document.createElement(tag||'div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ el.style.display=''; ph.remove(); st[key]=0; save(); });
+    return ph;
+  }
+  function bind(el,key,phTag){
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:4px;right:4px;float:none;margin:0;z-index:3;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); }
+  }
+  // (1) 個別カード：factor-card / vs-card / goro-card
+  document.querySelectorAll(_qzPS+' .factor-card, '+_qzPS+' .vs-card, '+_qzPS+' .goro-card').forEach(function(el,i){
+    if(handled(el)||inAnim(el)) return;
+    var key='c2:'+i+'|'+(el.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var cs=window.getComputedStyle(el); if(cs.position==='static') el.style.position='relative';
+    el.style.paddingRight=(parseInt(cs.paddingRight,10)||10)+18+'px';
+    bind(el,key,'div');
+  });
+  // (2) 本文段落：tab-panel 内の <p>（アニメ・カード内既処理・表内・短文は除外）
+  document.querySelectorAll(_qzPS+' p').forEach(function(p,i){
+    if(inAnim(p)) return;
+    if(p.classList.contains('row-hidden-ph')||p.closest('.row-hidden-ph')) return;
+    if(p.querySelector(':scope > .row-hide-btn')) return;
+    if(p.closest('.factor-card,.vs-card,.goro-card,.sec-hidden-ph')) return; // カード本体側で対応済み
+    if(p.closest('td,th,li')) return;                                        // 行単位で対応済み
+    if((p.textContent||'').trim().length<(p.closest('.card-body')?8:25)) return;
+    var key='p2:'+i+'|'+(p.textContent||'').replace(/\s+/g,'').slice(0,28);
+    var cs=window.getComputedStyle(p); if(cs.position==='static') p.style.position='relative';
+    p.style.paddingRight=(parseInt(cs.paddingRight,10)||0)+20+'px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この段落を非表示'; btn.textContent='○';
+    btn.style.cssText='position:absolute;top:2px;right:2px;float:none;margin:0;';
+    p.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); p.style.display='none'; st[key]=1; save(); p.parentNode.insertBefore(mkPh(p,key,'p'),p.nextSibling); });
+    if(st[key]){ p.style.display='none'; p.parentNode.insertBefore(mkPh(p,key,'p'),p.nextSibling); }
+  });
+})();
+// === 最細粒度プラス v3：クラスレスのインライン視覚ボックス & <br>区切り箇条書きも非表示対象に ===
+(function(){
+  var KEY='mz_fine3_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function inAnim(el){ return !!el.closest('.sa,.hosho-anim,.goro-scene'); }
+  function inPh(el){ return !!el.closest('.row-hidden-ph,.sec-hidden-ph,.tr-hidden-ph'); }
+  function hasBtn(el){ return !!el.querySelector(':scope > .row-hide-btn'); }
+  function wrappedBySec(el){ var p=el.parentNode; return !!(p&&p.classList&&p.classList.contains('sec-hide-wrap')); }
+  function mkPh(el,key,tag){
+    var ph=document.createElement(tag||'div'); ph.className='row-hidden-ph';
+    ph.innerHTML='— <button>表示</button>';
+    ph.querySelector('button').addEventListener('click',function(){ el.style.display=''; ph.remove(); st[key]=0; save(); });
+    return ph;
+  }
+  function addBtn(el,key,phTag,style){
+    var cs=window.getComputedStyle(el);
+    if(cs.position==='static') el.style.position='relative';
+    var pr=parseInt(cs.paddingRight,10)||0; if(pr<20) el.style.paddingRight=(pr+20)+'px';
+    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この項目を非表示'; btn.textContent='○';
+    btn.style.cssText=style||'position:absolute;top:4px;right:4px;float:none;margin:0;z-index:3;';
+    el.appendChild(btn);
+    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); });
+    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key,phTag),el.nextSibling); }
+  }
+  // (A) <br>区切りの箇条書きを行ごとに分割し、各行へ非表示ボタンを付与
+  //     対象：.hl ハイライト or 「・」箇条書きを含む視覚ボックス
+  function splitBrLines(box,baseKey){
+    if(box.getAttribute('data-brsplit')) return false;
+    var nodes=Array.from(box.childNodes);
+    if(!nodes.some(function(n){return n.nodeName==='BR';})) return false;
+    var lines=[],cur=[];
+    nodes.forEach(function(n){ if(n.nodeName==='BR'){ lines.push(cur); cur=[]; } else cur.push(n); });
+    lines.push(cur);
+    var meaningful=lines.filter(function(l){ return l.some(function(n){return (n.textContent||'').trim().length>0;}); });
+    if(meaningful.length<2) return false;
+    box.setAttribute('data-brsplit','1');
+    box.textContent='';
+    lines.forEach(function(l,idx){
+      var hasText=l.some(function(n){return (n.textContent||'').trim().length>0;});
+      var line=document.createElement('div'); line.className='hb-line'; line.style.cssText='position:relative;padding-right:22px;';
+      l.forEach(function(n){ line.appendChild(n); });
+      box.appendChild(line);
+      if(!hasText) return;
+      var key='brl:'+baseKey+':'+idx+'|'+(line.textContent||'').replace(/\s+/g,'').slice(0,22);
+      var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='この行を非表示'; btn.textContent='○';
+      btn.style.cssText='position:absolute;top:1px;right:0;float:none;margin:0;';
+      line.appendChild(btn);
+      btn.addEventListener('click',function(e){ e.stopPropagation(); line.style.display='none'; st[key]=1; save(); line.parentNode.insertBefore(mkPh(line,key,'div'),line.nextSibling); });
+      if(st[key]){ line.style.display='none'; line.parentNode.insertBefore(mkPh(line,key,'div'),line.nextSibling); }
+    });
+    return true;
+  }
+  // (B) tab-panel 内の div / .hl を走査。視覚ボックス（inline border/background）or .hl を対象化
+  var idx=0;
+  document.querySelectorAll(_qzPS+' div, '+_qzPS+' .hl').forEach(function(el){
+    if(inAnim(el)||inPh(el)||hasBtn(el)||wrappedBySec(el)) return;
+    if(el.classList.contains('hb-line')||el.classList.contains('row-hide-btn')||el.classList.contains('sec-hide-btn-row')) return;
+    var isHl=el.classList.contains('hl');
+    var sty=el.getAttribute('style')||'';
+    var isBox=/border|background/.test(sty);
+    if(!isHl&&!isBox) return;
+    var txt=(el.textContent||'').trim();
+    if(txt.length<6) return;
+    var key=(isHl?'hlb:':'box:')+(idx++)+'|'+txt.replace(/\s+/g,'').slice(0,26);
+    // 箇条書き（・ を含む or .hl）は行分割を試みる
+    if((isHl||txt.indexOf('・')>=0)&&splitBrLines(el,key)) return; // 行ごとに付与したので箱全体ボタンは省略
+    addBtn(el,key,'div');
+  });
+})();
+// === v4.1 中粒度「まとまり」：図・解説ボックス(.fig/.vz-supplement)内のグループ箱を非表示（細かい○の一段上） ===
+(function(){
+  var KEY='mz_group_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+  function mkPh(el,key){
+    var p=document.createElement('span'); p.className='group-ph';
+    p.textContent='▢ まとまりを表示'; p.title='再表示';
+    p.addEventListener('click',function(){ el.style.display=''; p.remove(); st[key]=0; save(); });
+    return p;
+  }
+  var idx=0;
+  document.querySelectorAll('.fig, .vz-supplement').forEach(function(box){
+    [].slice.call(box.children).forEach(function(el){
+      if(el.nodeType!==1) return;
+      var tn=el.tagName;
+      if(tn==='BUTTON'||tn==='SCRIPT'||tn==='STYLE'||tn==='TABLE') return;
+      if(el.classList.contains('vz-label')||el.classList.contains('group-ph')||el.classList.contains('row-hidden-ph')||el.classList.contains('tr-hidden-ph')||el.classList.contains('sec-hidden-ph')||el.classList.contains('sec-hide-btn-row')) return;
+      if(el.classList.contains('sec-hide-wrap')||el.classList.contains('hide-block')||el.classList.contains('hide-subblock')) return; // section○のラッパは対象外
+      if(el.matches('.fig,.vz-supplement,.fill-card')) return;            // まるごとは section○/覚えた○ が担当
+      if(el.querySelector(':scope > .row-hide-btn')||el.querySelector(':scope > .group-hide-btn')) return; // 既設ボタン
+      if(!el.querySelector(':scope > div, :scope > ul, :scope > ol')) return; // 子に箱が無い＝最小単位（細かい○が担当）
+      if(!(el.textContent||'').trim()) return;
+      if(el.dataset.groupDone) return;
+      el.dataset.groupDone='1';
+      var key='gp:'+(idx++);
+      var cs=window.getComputedStyle(el); if(cs.position==='static') el.style.position='relative';
+      var btn=document.createElement('button');
+      btn.className='group-hide-btn'; btn.type='button'; btn.textContent='▢'; btn.title='このまとまりを非表示';
+      btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
+      el.appendChild(btn);
+      if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
+    });
+  });
+})();
+// === v4.1 カード単位「まとめて隠す/出す」：カード内の行ボタンを一括操作（最後に実行＝行ボタン生成後） ===
+(function(){
+  function visible(el){ return el.getClientRects().length>0; }
+  function isPreview(card){ var h=card.querySelector('.fill-head,.fill-header'); var t=h?h.textContent.trim():''; return t.indexOf('予習')===0||t.indexOf('🔰')===0; }
+  function sync(card,btn){
+    var rowBtns=[].slice.call(card.querySelectorAll('.row-hide-btn'));
+    btn.textContent=rowBtns.some(visible)?'👁 まとめて隠す':'👁 まとめて出す';
+  }
+  document.querySelectorAll('.fill-card').forEach(function(card){
+    if(card.closest('[id^="pre_"]')) return;                    // 予習クローン除外
+    if(isPreview(card)) return;                                 // 予習｜/🔰カード除外
+    var head=card.querySelector('.fill-head,.fill-header'); if(!head) return;
+    if(head.querySelector('.card-hide-all-btn')) return;        // 二重付与防止（ノート側既設も含む）
+    if(!card.querySelector('.row-hide-btn')) return;            // 隠せる行が無いカードは付けない
+    var btn=document.createElement('button');
+    btn.type='button'; btn.className='card-hide-all-btn';
+    head.appendChild(btn);
+    sync(card,btn);
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var vis=[].slice.call(card.querySelectorAll('.row-hide-btn')).filter(visible);
+      if(vis.length){ vis.forEach(function(b){ b.click(); }); }                                   // 表示中の行を全部隠す
+      else { [].slice.call(card.querySelectorAll('.row-hidden-ph button,.tr-hidden-ph button')).forEach(function(b){ b.click(); }); } // 全部出す
+      sync(card,btn);
+    });
+  });
+})();
+
+// === h4 サブセクション単位の非表示（細粒度：カード内をさらに細分化） ===
+(function(){
+  var KEY='mz_h4sec_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  var idx=0;
+  document.querySelectorAll('.card-body,.fill-body').forEach(function(body){
+    if(body.dataset.h4done) return; body.dataset.h4done='1';
+    var kids=Array.from(body.children);
+    var groups=[];var s=-1;
+    for(var i=0;i<kids.length;i++){
+      if(kids[i].tagName==='H4'&&kids[i].parentNode===body){ if(s!==-1) groups.push([s,i-1]); s=i; }
+    }
+    if(s!==-1) groups.push([s,kids.length-1]);
+    groups.forEach(function(g){
+      var first=kids[g[0]];
+      if(!first||first.parentNode!==body) return;
+      var key='h4:'+idx++;
+      var wrap=document.createElement('div'); wrap.className='sec-hide-wrap';
+      first.parentNode.insertBefore(wrap,first);
+      for(var j=g[0];j<=g[1];j++){
+        if(kids[j]&&kids[j].parentNode===body) wrap.appendChild(kids[j]);
+      }
+      var btnRow=document.createElement('div'); btnRow.className='sec-hide-btn-row';
+      var btn=document.createElement('button'); btn.textContent='○'; btn.title='このh4セクションを非表示';
+      (function(w,k){
+        function getLabel(){ var h=w.querySelector('h4'); return h?(h.textContent||'').replace(/\s+/g,' ').trim().slice(0,40):'(セクション)'; }
+        function doHide(){
+          [].slice.call(w.children).forEach(function(c){if(c!==btnRow)c.style.display='none';});
+          btnRow.style.display='none';
+          var ph=document.createElement('div'); ph.className='sec-hidden-ph';
+          ph.innerHTML='（非表示：<span class="sec-hidden-label"></span>）<button>再表示 ○</button>';
+          ph.querySelector('.sec-hidden-label').textContent=getLabel();
+          ph.querySelector('button').addEventListener('click',function(){
+            [].slice.call(w.children).forEach(function(c){c.style.display='';});
+            btnRow.style.display=''; ph.remove(); var o=st; delete o[k]; save();
+          });
+          w.appendChild(ph); st[k]=1; save();
+        }
+        btn.addEventListener('click',function(e){ e.stopPropagation(); doHide(); });
+        btnRow.appendChild(btn); wrap.appendChild(btnRow);
+        if(st[k]) doHide();
+      })(wrap,key);
+    });
+  });
+})();
+// === タブ全体の非表示（大粒度：タブ一枚まるごと折りたたむ） ===
+(function(){
+  var KEY='mz_taball_'+location.pathname;
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  [].slice.call(document.querySelectorAll(_qzPS)).forEach(function(panel,i){
+    if(panel.dataset.tabHideDone) return; panel.dataset.tabHideDone='1';
+    var key='taball:'+i;
+    var ph=null;
+    function doHide(){
+      [].slice.call(panel.children).forEach(function(c){
+        if(!c.dataset.tabBtnRow&&c!==ph) c.style.display='none';
+      });
+      if(!ph){
+        ph=document.createElement('div'); ph.className='sec-hidden-ph';
+        ph.style.cssText='text-align:center;padding:14px;';
+        ph.innerHTML='（タブ全体を非表示）<button>再表示 ○</button>';
+        ph.querySelector('button').addEventListener('click',function(){
+          [].slice.call(panel.children).forEach(function(c){ c.style.display=''; });
+          ph.remove(); ph=null; var o=st; delete o[key]; save();
+        });
+        panel.appendChild(ph);
+      }
+      st[key]=1; save();
+    }
+    var btnRow=document.createElement('div');
+    btnRow.dataset.tabBtnRow='1';
+    btnRow.className='sec-hide-btn-row';
+    var btn=document.createElement('button'); btn.textContent='○'; btn.title='このタブ全体を非表示にする';
+    btn.addEventListener('click',function(e){ e.stopPropagation(); doHide(); });
+    btnRow.appendChild(btn);
+    panel.insertBefore(btnRow, panel.firstChild);
+    if(st[key]) doHide();
+  });
+})();
+} /* end __QZ_HIDE_V4__ guard */
 </script>
 
 </body>

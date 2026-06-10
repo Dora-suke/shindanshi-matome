@@ -13,7 +13,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>苦手復習 103-03 ｜ 構造設計・動機づけ・採用教育</title>
+<title>苦手復習 104-03A ｜ 在庫公式・物流センター・商品コード S2周目</title>
 <style>
 :root{--p:#7b1fa2;--pl:#f3e5f5;--b:#1a5276;--bl:#eaf2f8;--g:#1e8449;--gl:#eafaf1;--o:#b9770e;--ol:#fef9e7;--r:#c0392b;--rl:#fdedec;--ink:#1e293b;--mut:#64748b;--line:#e2e8f0;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -22,18 +22,19 @@ body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color
 .header h1{font-size:1.25rem;}
 .header p{font-size:.82rem;opacity:.85;margin-top:4px;}
 .tab-container{max-width:900px;margin:18px auto 60px;padding:0 12px;}
-.tab-nav{display:flex;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
-.tab-btn{flex:1;padding:14px 6px;border:none;background:#fff;color:var(--mut);font-size:.92rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
+.tab-nav{display:flex;flex-wrap:wrap;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
+.tab-btn{flex:1;min-width:78px;padding:12px 4px;border:none;background:#fff;color:var(--mut);font-size:.85rem;font-weight:800;cursor:pointer;border-bottom:4px solid transparent;font-family:inherit;}
 .tab-btn.active[data-c=b]{color:var(--b);border-bottom-color:var(--b);background:var(--bl);}
 .tab-btn.active[data-c=o]{color:var(--o);border-bottom-color:var(--o);background:var(--ol);}
 .tab-btn.active[data-c=g]{color:var(--g);border-bottom-color:var(--g);background:var(--gl);}
+.tab-btn.active[data-c=t]{color:#0f766e;border-bottom-color:#0f766e;background:#ccfbf1;}
+.tab-btn.active[data-c=p]{color:var(--p);border-bottom-color:var(--p);background:var(--pl);}
+.tab-btn.active[data-c=r]{color:var(--r);border-bottom-color:var(--r);background:var(--rl);}
 .tab-panel{display:none;background:#fff;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-radius:0 0 12px 12px;}
 .tab-panel.active{display:block;animation:f .3s;}
 @keyframes f{from{opacity:0}to{opacity:1}}
 h2{font-size:1.05rem;margin:22px 0 10px;padding-left:10px;border-left:5px solid var(--b);}
 h2:first-of-type{margin-top:6px;}
-.weak{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;font-size:.86rem;margin-bottom:8px;}
-.weak b{color:#c2410c;}
 .fig{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfcfd;}
 .note{font-size:.8rem;text-align:center;color:var(--mut);margin-top:8px;}
 table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.84rem;}
@@ -48,576 +49,542 @@ td.l{text-align:left;}
 .cell b{display:block;color:var(--b);margin-bottom:2px;}
 .trap{background:var(--rl);border-left:4px solid var(--r);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.82rem;margin:10px 0;}
 .trap b{color:var(--r);}
-/* マズロー ピラミッド */
-.pyr{display:flex;flex-direction:column;align-items:center;gap:4px;margin:8px 0;}
-.pyr div{color:#7c2d12;font-weight:700;font-size:.8rem;text-align:center;padding:7px 4px;border-radius:6px;background:linear-gradient(135deg,#fdba74,#fff7ed);border:1.5px solid #f97316;}
-/* 機械的/有機的 */
-.mo{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.mo .s{border-radius:8px;padding:10px 12px;font-size:.82rem;}
-.mo .mech{background:var(--bl);border:2px solid var(--b);}
-.mo .org{background:var(--gl);border:2px solid var(--g);}
-.mo h4{font-size:.9rem;margin-bottom:5px;}
-/* 元ノート抜粋ブロック */
-.src-note{background:#fffaf0;border:1px solid #fbcf8f;border-left:5px solid #f59e0b;border-radius:10px;padding:12px 16px;margin:12px 0;}
-.src-note .src-tag{display:inline-block;font-size:.7rem;font-weight:800;color:#fff;background:#f59e0b;border-radius:5px;padding:2px 9px;margin-bottom:8px;}
-.src-note h4{font-size:.9rem;color:#b45309;margin:10px 0 4px;}
-.src-note .ex{font-size:.84rem;color:#475569;margin:6px 0;line-height:1.8;}
-.src-note .ex b{color:#b45309;}
-.src-note .mnemo{display:block;background:#fef3c7;border:2px dashed #f59e0b;border-radius:8px;padding:7px 12px;font-weight:800;color:#92400e;font-size:.85rem;margin:8px 0;text-align:center;}
-.memo-img{max-width:340px;width:100%;border-radius:6px;border:1px solid #ddd;display:block;margin:8px auto 2px;}
-.memo-cap{font-size:.74rem;color:#94a3b8;text-align:center;}
-/* 穴埋め */
+.formula{text-align:center;font-weight:800;color:var(--b);font-size:1.02rem;margin:6px 0;background:#eef6fb;border:1.5px solid #b6d4e6;border-radius:8px;padding:9px 8px;}
+.formula .ex{display:block;font-size:.82rem;font-weight:700;color:var(--g);margin-top:4px;}
+.vz-supplement{background:#f0f9ff;border-left:4px solid #38bdf8;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0 1rem;font-size:.88rem;}
+.vz-label{font-size:.72rem;font-weight:700;color:#0ea5e9;letter-spacing:.05em;margin-bottom:.4rem;}
+.vz-supplement p{margin:0 0 .6rem;line-height:1.7;color:#334155;}
 .fill-section-title{margin:24px 0 6px;font-size:1rem;font-weight:800;color:#7b1fa2;}
 .revall-btn{width:100%;padding:13px;font-size:.98rem;font-weight:800;background:#7b1fa2;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;}
 .revall-btn:hover{background:#6a1b9a;}
-.fill-card{background:#faf5ff;border:2px solid var(--p);border-radius:12px;margin-top:12px;overflow:hidden;position:relative;}
+.fill-card{background:#faf5ff;border:2px solid var(--p);border-radius:12px;margin-top:12px;overflow:hidden;}
 .fill-head{background:var(--p);color:#fff;padding:10px 16px;font-weight:800;font-size:.92rem;}
 .fill-body{padding:14px 18px;font-size:.9rem;line-height:2.2;}
-.fill-body table{margin:4px 0 6px;}
-.fill-body table .blank{min-width:84px;}
 .blank{display:inline-block;min-width:70px;border-bottom:2.5px solid #a855f7;text-align:center;padding:1px 8px;margin:0 2px;cursor:pointer;font-weight:800;color:transparent;background:#f3e8ff;border-radius:4px;user-select:none;}
 .blank.show{color:#c2410c;background:#fff7ed;border-color:#c2410c;}
 .revbtn{display:inline-block;background:#1a365d;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;}
-.fig,.fill-card,.src-note,.src-fig,.vz-supplement{position:relative;}
-.mz-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:2px solid #16a34a;background:#fff;color:#16a34a;font-weight:800;cursor:pointer;z-index:5;font-size:.95rem;line-height:1;padding:0;}
-.mz-btn:hover{background:#dcfce7;}
-.mz-done>:not(.mz-btn){display:none!important;}
-.mz-done{background:#f0fdf4!important;border-color:#16a34a!important;padding:12px 16px!important;cursor:pointer;}
-.mz-done::after{content:"✓ 覚えた（タップで再表示）";color:#16a34a;font-weight:700;font-size:.82rem;}
-.mz-done .mz-btn{background:#16a34a;color:#fff;}
-@media(max-width:600px){.grid2,.mo{grid-template-columns:1fr}.tab-btn{font-size:.78rem}table{font-size:.76rem}}
-/* ===== 行単位 非表示ボタン ===== */
-.row-hide-btn{background:none;border:1.5px solid #cbd5e1;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0;float:right;margin:0 0 3px 8px;transition:all .15s;}
-.row-hide-btn:hover{border-color:#64748b;color:#475569;background:#f1f5f9;}
-.row-hidden-ph{color:#94a3b8;font-size:.74rem;padding:3px 6px;margin:2px 0;background:#f8fafc;border-radius:4px;border:1px dashed #e2e8f0;}
-.row-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;transition:all .15s;}
-.row-hidden-ph button:hover{background:#f1f5f9;color:#475569;}
-.tr-hidden-ph td{color:#94a3b8;font-size:.74rem;padding:3px 6px;background:#f8fafc;text-align:center;}
-.tr-hidden-ph button{background:none;border:1px solid #cbd5e1;border-radius:4px;padding:1px 7px;font-size:.7rem;cursor:pointer;color:#94a3b8;font-family:inherit;}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.tab-btn{font-size:.72rem;min-width:64px}table{font-size:.76rem}}
 </style>
 </head>
 <body>
 <div class="header">
-  <h1>苦手復習 103-03</h1>
-  <p>企業経営理論 ティアAの🔁論点（構造設計・動機づけ・採用教育）／元ノート(qz_16/qz_17)の図解・手書きメモを流用＋ミラー穴埋め</p>
+  <h1>苦手復習 104-03A　在庫公式・物流センター・商品コード</h1>
+  <p>Sティア <b>2巡目</b>で残った △/× 観点だけに絞った図解＋穴埋め（2026-06-10 セッションの取りこぼし）</p>
 </div>
 
 <div class="tab-container">
   <nav class="tab-nav">
-    <button class="tab-btn active" data-c="b" onclick="sw(0)">🏢 構造設計</button>
-    <button class="tab-btn" data-c="o" onclick="sw(1)">🔥 動機づけ</button>
-    <button class="tab-btn" data-c="g" onclick="sw(2)">🎓 採用・教育</button>
+    <button class="tab-btn active" data-c="b" onclick="sw(0)">📊 在庫計算</button>
+    <button class="tab-btn" data-c="o" onclick="sw(1)">🧮 計数計算</button>
+    <button class="tab-btn" data-c="g" onclick="sw(2)">🚚 物流形態</button>
+    <button class="tab-btn" data-c="t" onclick="sw(3)">💰 物流コスト</button>
+    <button class="tab-btn" data-c="p" onclick="sw(4)">🏷️ マーキング</button>
+    <button class="tab-btn" data-c="r" onclick="sw(5)">📡 バーコード</button>
   </nav>
 
-  <!-- TAB0 構造設計 -->
+  <!-- ===== TAB0 在庫計算 ===== -->
   <div class="tab-panel active">
-    <a href="../参照ノート_103/qz_17.組織構造まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;margin:2px 0 8px;">🔗 元ノート全文：組織構造まとめ（qz_17）↗</a>
-
-    <h2>図1：機械的組織 vs 有機的組織（バーンズ＆ストーカー）</h2>
-    <div style="text-align:center;width:120px;margin:4px auto 0;">
-      <div style="width:58px;height:58px;border-radius:50%;background:#eaf2f8;border:2px solid #1a5276;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.9rem;position:relative;">🧑‍🔧<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.05rem;background:#fff;border-radius:50%;">⚙️🌿</span></div>
-      <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:2px;">バーンズ&ストーカー<br><span style="font-weight:500;color:#64748b;">機械的⚙️/有機的🌿</span></div>
-    </div>
+    <h2>図1：在庫回転率の分母は「売上原価」</h2>
     <div class="fig">
-      <div class="mo">
-        <div class="s mech"><h4 style="color:var(--b)">⚙ 機械的組織</h4>厳格なルール／集権・階層的／垂直命令<br><b>安定した環境</b>に適合</div>
-        <div class="s org"><h4 style="color:var(--g)">🌿 有機的組織</h4>柔軟な責任／分権・現場委譲／水平連携<br><b>不安定（変化の激しい）環境</b>に適合</div>
+      <div class="formula">在庫回転率 ＝ <span style="text-decoration:underline;text-decoration-color:#c0392b;">売上原価（出庫量）</span> ÷ 平均在庫高
+        <span class="ex">× 「売上高」ではない。粗利益分が乗って比較にならない。</span>
       </div>
-
-      <!-- 図解：階層ピラミッド vs ネットワーク -->
-      <div class="mo" style="margin-top:10px;">
-        <div class="s mech" style="text-align:center;">
-          <div style="font-size:.72rem;font-weight:700;color:var(--b);margin-bottom:6px;">⚙ タテの指揮系統（ピラミッド）</div>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
-            <div style="background:#fff;border:2px solid var(--b);border-radius:6px;padding:2px 14px;font-size:.72rem;font-weight:700;">社長</div>
-            <div style="color:var(--b);font-weight:800;line-height:.7;">↓</div>
-            <div style="display:flex;gap:6px;"><span style="background:#fff;border:2px solid var(--b);border-radius:6px;padding:2px 8px;font-size:.68rem;">部長</span><span style="background:#fff;border:2px solid var(--b);border-radius:6px;padding:2px 8px;font-size:.68rem;">部長</span></div>
-            <div style="color:var(--b);font-weight:800;line-height:.7;">↓</div>
-            <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;"><span style="background:#fff;border:1.5px solid var(--b);border-radius:5px;padding:1px 6px;font-size:.64rem;">担当</span><span style="background:#fff;border:1.5px solid var(--b);border-radius:5px;padding:1px 6px;font-size:.64rem;">担当</span><span style="background:#fff;border:1.5px solid var(--b);border-radius:5px;padding:1px 6px;font-size:.64rem;">担当</span><span style="background:#fff;border:1.5px solid var(--b);border-radius:5px;padding:1px 6px;font-size:.64rem;">担当</span></div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 なぜ売上高ではダメか？</div>
+        <p>原価100円の商品を150円で売る店と、原価100円を110円で売る店。<b>仕入れた量（在庫の動き）は同じ</b>なのに売上高は違う。在庫の回転の速さは「原価ベースの出庫量」で測らないと正しく比べられない。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.79rem;">
+          <div style="background:#fee2e2;border:1.5px solid #f87171;border-radius:8px;padding:.5rem;text-align:center;">
+            <b style="color:#991b1b;">✕ 誤り</b><br>在庫回転率 ＝ 売上高 ÷ 平均在庫<br><span style="color:#64748b;">粗利益率の高低が混入する</span>
           </div>
-          <div style="font-size:.66rem;color:#475569;margin-top:6px;">上から下へ命令が降りる<br>＝指示待ち・統制重視</div>
+          <div style="background:#dcfce7;border:1.5px solid #22c55e;border-radius:8px;padding:.5rem;text-align:center;">
+            <b style="color:#166534;">○ 正解</b><br>在庫回転率 ＝ <u>売上原価</u> ÷ 平均在庫<br><span style="color:#64748b;">在庫の動きを純粋に測れる</span>
+          </div>
         </div>
-        <div class="s org" style="text-align:center;">
-          <div style="font-size:.72rem;font-weight:700;color:var(--g);margin-bottom:6px;">🌿 ヨコの連携（ネットワーク）</div>
-          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;line-height:1;">
-            <span style="background:#fff;border:2px solid var(--g);border-radius:50%;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;">現場</span>
-            <span style="color:var(--g);font-weight:800;">↔</span>
-            <span style="background:#fff;border:2px solid var(--g);border-radius:50%;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;">専門</span>
-            <span style="color:var(--g);font-weight:800;">↔</span>
-            <span style="background:#fff;border:2px solid var(--g);border-radius:50%;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;">企画</span>
-          </div>
-          <div style="color:var(--g);font-weight:800;margin:2px 0;line-height:.8;">↕&nbsp;&nbsp;&nbsp;&nbsp;↕</div>
-          <div style="display:flex;align-items:center;justify-content:center;gap:5px;line-height:1;">
-            <span style="background:#fff;border:2px solid var(--g);border-radius:50%;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;">開発</span>
-            <span style="color:var(--g);font-weight:800;">↔</span>
-            <span style="background:#fff;border:2px solid var(--g);border-radius:50%;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;">営業</span>
-          </div>
-          <div style="font-size:.66rem;color:#475569;margin-top:6px;">現場どうしが直接つながる<br>＝自律・スピード重視</div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「在庫回転率の分子は売上高である」→誤。正しくは<b>売上原価</b>。値が高いほど在庫が速く回転しており効率的（「高い＝在庫が多い」も逆）。
         </div>
       </div>
+      <div class="trap"><b>急所（2巡目 ×）</b>：「在庫回転率の分子は売上高」は<b>誤り</b>。正しくは <b>売上原価（仕入原価ベースの出庫量）</b>。高いほど在庫が速く回転していて効率的。</div>
+    </div>
 
-      <!-- 具体例 -->
-      <div class="mo" style="margin-top:10px;">
-        <div class="s mech">
-          <div style="font-size:.72rem;font-weight:700;color:var(--b);margin-bottom:3px;">💼 機械的が向く例</div>
-          <div style="font-size:.78rem;line-height:1.75;">役所・銀行の事務／<b>マクドナルド</b>等のマニュアル運営／大量生産の工場ライン／軍隊。<br><small style="color:#475569;">→ 仕事が標準化でき、需要も安定。ミスを減らし効率を出すのが正解。</small></div>
+    <h2>図2：EOQ トレードオフの方向感</h2>
+    <div class="fig">
+      <div class="formula">EOQ（経済的発注量）＝ √(2DS/H)
+        <span class="ex">D=年間需要量　S=1回発注費　H=単位当たり年間保管費</span>
+      </div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 EOQ の意味＝2つのコストが均衡する発注量</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.8rem;">
+          <div style="background:#dbeafe;border:1.5px solid #3b82f6;border-radius:8px;padding:.5rem;">
+            <b style="color:#1e40af;">発注コスト（年間発注費）</b><br>
+            発注量 ↑ → 発注回数 ↓ → 発注費 <b style="color:#166534;">↓</b><br>
+            <span style="color:#64748b;font-size:.75rem;">1回で多く買えば何度も注文しなくていい</span>
+          </div>
+          <div style="background:#fef3c7;border:1.5px solid #f59e0b;border-radius:8px;padding:.5rem;">
+            <b style="color:#92400e;">保管コスト（年間保管費）</b><br>
+            発注量 ↑ → 平均在庫 ↑ → 保管費 <b style="color:#991b1b;">↑</b><br>
+            <span style="color:#64748b;font-size:.75rem;">大量に持つほど置き場・管理費がかかる</span>
+          </div>
         </div>
-        <div class="s org">
-          <div style="font-size:.72rem;font-weight:700;color:var(--g);margin-bottom:3px;">🚀 有機的が向く例</div>
-          <div style="font-size:.78rem;line-height:1.75;">ITスタートアップ／広告・コンサル／<b>新製品の研究開発チーム</b>／ゲーム・アプリ開発。<br><small style="color:#475569;">→ 変化が速く正解が読めない。現場judgmentと素早い連携が勝負。</small></div>
+        <div style="text-align:center;margin:.6rem 0 .3rem;font-size:.8rem;font-weight:700;color:#475569;">EOQ = 2つのコスト合計が最小になる発注量 ⬇</div>
+        <div style="background:#fff;border:1.5px solid #94a3b8;border-radius:8px;padding:.5rem;text-align:center;font-size:.78rem;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:1rem;">
+            <div style="color:#1e40af;">発注費 📉<br>（発注量↑で減る）</div>
+            <div style="font-size:1.4rem;color:#94a3b8;">⚖️</div>
+            <div style="color:#92400e;">保管費 📈<br>（発注量↑で増える）</div>
+          </div>
+          <div style="margin-top:.4rem;font-weight:800;color:#0f172a;">均衡点 = EOQ ← ここで総費用が最小</div>
+        </div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「EOQより多く発注すると発注費が増加する」→誤（逆）。発注量↑なら発注回数↓で発注費は<b>↓</b>。増えるのは保管費。EOQで2費用の<b>合計（総費用）が最小</b>になる均衡点。
         </div>
       </div>
+      <div class="trap"><b>急所（2巡目 △）</b>：「EOQ より多く発注すると発注費が上がる」は<b>逆</b>。多く発注 → 発注回数↓ → 発注費<b>↓</b>。でも保管費が↑になるので総費用は最小にならない。</div>
+    </div>
 
-      <div class="src-note">
-        <span class="src-tag">元ノート抜粋｜qz_17 組織構造</span>
-        <div class="ex">バーンズ＆ストーカー：<b>安定環境＝機械的／不安定環境＝有機的</b>。「<b>唯一最適は無い</b>」がコンティンジェンシー（条件適合）理論の核。</div>
-        <div class="trap" style="margin:4px 0 0;"><b>ひっかけ</b>：安定＝有機的／変動＝機械的、と逆にした選択肢が頻出。</div>
+    <h2>図3：安全在庫の計算</h2>
+    <div class="fig">
+      <div class="formula">安全在庫 ＝ 安全係数 k × 需要の標準偏差 σ × √調達期間 L
+        <span class="ex">例：k=1.65、σ=10個/日、L=4日 → 1.65×10×√4 ＝ 1.65×10×2 ＝ <b>33個</b></span>
+      </div>
+      <table>
+        <tr><th>記号</th><th>意味</th><th>ポイント</th></tr>
+        <tr><td><b>k</b></td><td class="l">安全係数（サービス水準）</td><td class="l">欠品率5%水準でk≈1.65。高いほど欠品しにくい分、在庫は増える</td></tr>
+        <tr><td><b>σ</b></td><td class="l">需要の標準偏差（ばらつき）</td><td class="l">需要の変動が大きいほど安全在庫が増える</td></tr>
+        <tr><td><b>√L</b></td><td class="l">調達期間の平方根</td><td class="l">調達期間が長いほど安全在庫↑。<b>LT短縮 → √L↓ → 安全在庫↓</b></td></tr>
+      </table>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 √L の直感的イメージ</div>
+        <p>調達リードタイムが4日から16日に4倍になると、安全在庫は4倍ではなく√4＝<b>2倍</b>にしかならない（増え方が穏やか）。逆に調達を短縮するほど安全在庫を削れる。</p>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「調達期間が4倍になれば安全在庫も4倍必要」→誤。<b>√倍</b>（4倍→2倍増）。「LTを短縮しても安全在庫は変わらない」も誤。LT↓→√L↓→安全在庫<b>↓</b>。
+        </div>
       </div>
     </div>
 
-    <h2>図2：4つの代表的な組織形態</h2>
+    <div class="fill-section-title">✏️ 穴埋め確認</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">在庫回転率の公式</div>
+      <div class="fill-body">
+        在庫回転率 ＝ <span class="blank">売上原価（出庫量）</span> ÷ <span class="blank">平均在庫高</span><br>
+        分子は「売上高」ではなく <span class="blank">売上原価</span>。売上高では<span class="blank">粗利益率</span>の差が混入するため比較にならない。<br>
+        値が高いほど在庫が<span class="blank">速く回転</span>していて効率的。
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">EOQ のトレードオフ</div>
+      <div class="fill-body">
+        <table>
+          <tr><th>発注量を増やすと</th><th>発注費</th><th>保管費</th></tr>
+          <tr><td>発注量 ↑</td><td class="yes"><span class="blank">↓（回数が減る）</span></td><td class="no"><span class="blank">↑（平均在庫が増える）</span></td></tr>
+        </table>
+        EOQ ＝ <span class="blank">√(2DS/H)</span>（D=年間需要、S=発注費、H=保管費）<br>
+        EOQ で <span class="blank">発注費と保管費の合計（総費用）</span>が最小になる。
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">安全在庫の計算</div>
+      <div class="fill-body">
+        安全在庫 ＝ <span class="blank">k</span> × <span class="blank">σ</span> × <span class="blank">√L</span><br>
+        k=1.65、σ=10、L=4 のとき：1.65 × 10 × <span class="blank">√4＝2</span> ＝ <span class="blank">33個</span><br>
+        調達リードタイム L が短くなると安全在庫は<span class="blank">減る（√L↓）</span>。
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB1 計数計算 ===== -->
+  <div class="tab-panel">
+    <h2>図1：消化率の意味と対応</h2>
+    <div class="fig">
+      <div class="formula">消化率 ＝ 実消化量 ÷ 計画数量 × 100（%）
+        <span class="ex">例：計画100個・実売120個 → 消化率120%（売れすぎ）</span>
+      </div>
+      <table>
+        <tr><th>消化率</th><th>意味</th><th>対応</th></tr>
+        <tr><td class="yes">100%超</td><td class="l">需要が予測を上回った（売れすぎ）</td><td class="l">追加発注・在庫補充を検討</td></tr>
+        <tr><td style="background:#f8fafc;">100%</td><td class="l">計画通り完売</td><td class="l">問題なし</td></tr>
+        <tr><td class="no">100%未満</td><td class="l">売れ残り（需要が予測を下回った）</td><td class="l">値引き・処分・発注削減を検討</td></tr>
+      </table>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 消化率のイメージ：通知表の達成度</div>
+        <p>消化率＝「計画した分のうち何%を売り切れたか」。通知表で「目標10問中12問解けた＝120%」なら目標超えで嬉しい。小売でも100%超えは「想定より売れた」＝補充シグナル。</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;font-size:.79rem;text-align:center;margin-top:.4rem;">
+          <div style="background:#fee2e2;border:1.5px solid #f87171;border-radius:8px;padding:.4rem .7rem;min-width:90px;"><b style="color:#991b1b;">100%未満</b><br>売れ残り<br>→ 処分・値引き</div>
+          <div style="background:#dcfce7;border:1.5px solid #22c55e;border-radius:8px;padding:.4rem .7rem;min-width:90px;"><b style="color:#166534;">100%</b><br>計画通り完売<br>→ OK</div>
+          <div style="background:#dbeafe;border:1.5px solid #3b82f6;border-radius:8px;padding:.4rem .7rem;min-width:90px;"><b style="color:#1e40af;">100%超</b><br>売れすぎ<br>→ 追加発注！</div>
+        </div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「消化率100%超は需要予測が正確だった証拠」→誤。100%超は<b>売れすぎ（実消化＞計画）</b>＝追加発注のサイン。「需要が低かった」は逆。
+        </div>
+      </div>
+      <div class="trap"><b>急所（2巡目 △）</b>：消化率100%超＝「需要が予測より低かった」は<b>誤り</b>。100%超は売れ<b>すぎ</b>（実消化＞計画）＝<b>追加発注</b>のサイン。</div>
+    </div>
+
+    <h2>図2：売価の逆算（原価から売価を求める）</h2>
+    <div class="fig">
+      <div class="formula">売価 ＝ 原価 ÷（1 − 売価値入率）
+        <span class="ex">例：原価720円・売価値入率40% → 売価 ＝ 720 ÷ 0.6 ＝ 1,200円</span>
+      </div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 なぜこの式になるか</div>
+        <p>売価値入率40%は「<b>売価の40%が利益</b>」という意味。なので原価＝売価の60%（＝1−0.4）。<br>逆算すると 売価 ＝ 原価 ÷ 0.6。</p>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:.6rem;font-size:.79rem;text-align:center;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;">
+            <div style="background:#dbeafe;border:1.5px solid #3b82f6;border-radius:6px;padding:4px 10px;"><b>売価</b><br><span style="font-size:.7rem;">1,200円（100%）</span></div>
+            <div style="font-size:.9rem;color:#64748b;">＝</div>
+            <div style="background:#fef3c7;border:1.5px solid #f59e0b;border-radius:6px;padding:4px 10px;"><b>原価</b><br><span style="font-size:.7rem;">720円（60%）</span></div>
+            <div style="font-size:.9rem;color:#64748b;">＋</div>
+            <div style="background:#dcfce7;border:1.5px solid #22c55e;border-radius:6px;padding:4px 10px;"><b>値入</b><br><span style="font-size:.7rem;">480円（40%）</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 売価値入率 vs 原価値入率の違い（混乱防止）</div>
+        <p>売価値入率40%のとき、原価値入率＝0.4÷0.6≒<b>66.7%</b>。同じ商品でも分母が違うと数値が変わる。試験は「どちらで聞かれているか」を確認してから計算。</p>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「売価値入率40%のとき売価＝原価×1.4」→誤。売価＝原価<b>÷0.6</b>（÷原価率）。「×（1＋値入率）」は原価値入率ベースの計算式であり別物。
+        </div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋め確認</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">消化率の意味</div>
+      <div class="fill-body">
+        消化率 ＝ <span class="blank">実消化量</span> ÷ <span class="blank">計画数量</span> × 100<br>
+        消化率が100%を<span class="blank">上回る</span>場合＝需要が予測より<span class="blank">高かった</span>（売れすぎ）→ <span class="blank">追加発注・補充</span>を検討する。<br>
+        消化率が100%を<span class="blank">下回る</span>場合＝売れ残り → <span class="blank">値引き・処分</span>を検討する。
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">売価の逆算</div>
+      <div class="fill-body">
+        売価 ＝ <span class="blank">原価</span> ÷ （1 − <span class="blank">売価値入率</span>）<br>
+        原価720円・売価値入率40%のとき：売価 ＝ 720 ÷ <span class="blank">0.6</span> ＝ <span class="blank">1,200円</span><br>
+        「1−売価値入率」は<span class="blank">原価率</span>（売価に占める原価の割合）を表す。
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB2 物流形態 ===== -->
+  <div class="tab-panel">
+    <h2>図1：ダブルトランザクション方式</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 ダブルトランザクションとは</div>
+        <p>入荷した商品を<b>保管エリアを経由せずにそのまま出荷エリアに移し</b>、店舗別に仕分けして出荷する方式。「入荷→保管→ピッキング→出荷」の4ステップを「入荷→仕分け→出荷」の3ステップに短縮できる。</p>
+        <div style="background:#fff;border-radius:8px;padding:.6rem;font-size:.78rem;">
+          <div style="text-align:center;font-weight:700;color:#0f766e;margin-bottom:.4rem;">ダブルトランザクションの流れ</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;">
+            <div style="background:#ccfbf1;border:1.5px solid #0f766e;border-radius:6px;padding:4px 8px;">📦 入荷</div>
+            <div style="color:#64748b;">→</div>
+            <div style="background:#ccfbf1;border:1.5px solid #0f766e;border-radius:6px;padding:4px 8px;">🔀 仕分け<br><span style="font-size:.68rem;">（店舗別）</span></div>
+            <div style="color:#64748b;">→</div>
+            <div style="background:#ccfbf1;border:1.5px solid #0f766e;border-radius:6px;padding:4px 8px;">🚚 出荷</div>
+          </div>
+          <div style="text-align:center;margin-top:.4rem;color:#0f766e;font-weight:700;font-size:.76rem;">保管エリアを経由しない（在庫を持たない通過型）</div>
+        </div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「ダブルトランザクション＝入荷と出荷を同一エリアで同時並行で行う方式」→誤。正しくは<b>保管を省いて</b>入荷→仕分け→即出荷に短縮する方式（TC型の考え方）。
+        </div>
+      </div>
+      <table>
+        <tr><th>方式</th><th>保管の有無</th><th>特徴</th></tr>
+        <tr><td><b>通常フロー</b></td><td class="l">入荷→<b>保管</b>→ピッキング→出荷</td><td class="l">在庫を持つ（DC型）</td></tr>
+        <tr><td class="yes"><b>ダブルトランザクション</b></td><td class="l">入荷→仕分け→<b>即出荷</b></td><td class="l">保管なし・TC型に近い考え方</td></tr>
+      </table>
+      <div class="trap"><b>急所（2巡目 △）</b>：「ダブルトランザクション＝入荷と出荷を同一エリアで同時並行」は<b>誤り</b>。正しくは<b>保管を省いて入荷→即仕分け→出荷</b>に短縮する方式。</div>
+    </div>
+
+    <h2>図2：3PL（サードパーティ・ロジスティクス）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 3PL とは「物流を丸ごと外注する」こと</div>
+        <p><b>荷主企業が自社の物流機能（倉庫・輸送・在庫管理など）を第三者の物流専門業者に委託</b>する形態。荷主は物流資産（倉庫・トラック）を持たなくてよくなり、コア事業に集中できる。</p>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「3PLでは荷主が自社倉庫を保有したまま、専門業者に輸送のみ委託する」→誤。3PLは倉庫・輸送・在庫管理を含む<b>物流機能ごとアウトソース</b>。輸送のみ委託は単なる運送会社活用。
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="cell" style="border-color:#dc2626;background:#fef2f2;">
+          <b style="color:#991b1b;">✕ 1PL（自社物流）</b>
+          荷主が倉庫・トラックを<b>自ら保有</b>して物流を運営する。<br>
+          <span style="font-size:.75rem;color:#64748b;">固定費が大きい・スケールアップが難しい</span>
+        </div>
+        <div class="cell" style="border-color:#0f766e;background:#f0fdf4;">
+          <b style="color:#0f766e;">○ 3PL（外部委託）</b>
+          専門業者に物流を<b>アウトソース</b>する。<br>
+          <span style="font-size:.75rem;color:#64748b;">物流資産不要・変動費化・専門知識の活用</span>
+        </div>
+      </div>
+      <div class="trap"><b>急所（2巡目 △）</b>：「3PLでは荷主が物流資産を保有したまま運営する」は<b>誤り</b>。3PL の本質は<b>物流のアウトソーシング</b>。自社保有・自社運営は1PL（自社物流）。</div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋め確認</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">ダブルトランザクション</div>
+      <div class="fill-body">
+        入荷した商品を<span class="blank">保管エリアを経由せず</span>にそのまま<span class="blank">仕分け→出荷</span>に回す方式。<br>
+        通常の「入荷→<span class="blank">保管</span>→ピッキング→出荷」を短縮し、<span class="blank">リードタイム</span>を削減できる。<br>
+        在庫を<span class="blank">持たない</span>（TC型に近い考え方）。
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+
+    <div class="fill-card">
+      <div class="fill-head">3PL の定義</div>
+      <div class="fill-body">
+        3PL ＝ 荷主企業が物流業務を<span class="blank">第三者の専門業者</span>に<span class="blank">アウトソーシング</span>する形態。<br>
+        荷主は倉庫・トラックなどの物流<span class="blank">資産を持たない</span>でよくなり、<span class="blank">コア事業</span>に集中できる。<br>
+        自社で倉庫・トラックを保有して運営するのは<span class="blank">1PL（自社物流）</span>。
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB3 物流コスト ===== -->
+  <div class="tab-panel">
+    <h2>図1：物流ABC（活動基準原価計算）</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 物流ABC とは</div>
+        <p>物流コストを「部門別」ではなく<b>「活動（アクティビティ）別」</b>に把握する手法。入荷・保管・ピッキング・出荷など活動ごとにコストを集計することで、どの作業が高コストかが見えて改善優先度を決めやすくなる。</p>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「物流ABCは物流コストを部門別（倉庫部門〇円など）に把握する手法」→誤。<b>活動（アクティビティ）別</b>が核心。ピッキング1件〇円・入荷1パレット〇円という粒度で把握する。
+        </div>
+      </div>
+      <table>
+        <tr><th>従来の管理</th><th>物流 ABC</th></tr>
+        <tr><td class="l">部門別コスト集計<br>（倉庫部門全体で〇円など）</td><td class="l">活動別コスト集計<br>（ピッキング1件あたり〇円・入荷1パレット〇円）</td></tr>
+        <tr><td class="l">どの作業が高コストかわからない</td><td class="yes l">改善ターゲットを特定できる</td></tr>
+      </table>
+      <div class="note">物流ABC ＝ Activity Based Costing を物流コストへ応用した手法。</div>
+    </div>
+
+    <h2>図2：保管の「回転対応の原則」</h2>
+    <div class="fig">
+      <div class="vz-supplement">
+        <div class="vz-label">💡 回転対応の原則（動線短縮）</div>
+        <p><b>出庫頻度の高い商品（A品目など）</b>を倉庫の<b>出入口に近い場所・下段・手前</b>に配置し、ピッキングの移動距離を最小にする原則。頻繁に動かすものほどアクセスしやすい場所に置く。</p>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:.6rem;font-size:.78rem;text-align:center;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
+            <div style="background:#dcfce7;border:1.5px solid #22c55e;border-radius:6px;padding:4px 10px;"><b>出入口</b><br>🚪</div>
+            <div style="color:#64748b;">←近い</div>
+            <div style="background:#fef3c7;border:1.5px solid #f59e0b;border-radius:6px;padding:4px 10px;"><b>A品目</b><br>高頻度品<br>（手前・下段）</div>
+            <div style="color:#64748b;">遠い→</div>
+            <div style="background:#f1f5f9;border:1.5px solid #94a3b8;border-radius:6px;padding:4px 10px;"><b>C品目</b><br>低頻度品<br>（奥・上段）</div>
+          </div>
+        </div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「回転対応の原則は重量の重い商品を出入口近くに配置する原則」→誤。<b>出庫頻度</b>（回転の速さ）基準で配置を決める。重量基準は「重量対応の原則」（別物）。
+        </div>
+      </div>
+      <div class="trap"><b>急所</b>：「重いものは下段に」（重量対応の原則）と混同しないこと。回転対応は<b>出庫頻度</b>基準で置き場を決める。</div>
+    </div>
+
+    <h2>図3：リードタイム短縮 → 安全在庫削減</h2>
+    <div class="fig">
+      <div class="formula">安全在庫 ＝ k × σ × √<span style="text-decoration:underline;text-decoration-color:#0f766e;">L（調達期間）</span>
+        <span class="ex">L↓（リードタイム短縮）→ √L↓ → 安全在庫↓ → 総在庫量↓ → 保管コスト↓</span>
+      </div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 物流効率化が在庫削減に直結する理由</div>
+        <p>リードタイムが4日から1日に短縮されると、安全在庫は√4→√1＝2倍→1倍に<b>半減</b>できる。物流の改善は単なる配送コスト削減だけでなく、<b>在庫そのものを減らす</b>効果も持つ。</p>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「リードタイムを短縮しても安全在庫の必要量は変わらない」→誤。LT↓→<b>√L↓→安全在庫↓</b>。物流改善は在庫削減（＝保管コスト削減）に直結する。
+        </div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋め確認</div>
+    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
+
+    <div class="fill-card">
+      <div class="fill-head">物流ABC・保管原則・LT短縮</div>
+      <div class="fill-body">
+        物流ABCは物流コストを<span class="blank">活動（アクティビティ）別</span>に把握する手法。どの<span class="blank">作業</span>が高コストかを特定して改善優先度を決める。<br><br>
+        保管の「回転対応の原則」：出庫<span class="blank">頻度の高い</span>商品を<span class="blank">出入口に近い</span>場所（手前・下段）に配置し、ピッキングの<span class="blank">移動距離</span>を短縮する。<br><br>
+        調達リードタイム L が短くなると安全在庫は<span class="blank">減少</span>する（安全在庫 ＝ k×σ×<span class="blank">√L</span> のため）。
+        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB4 マーキング ===== -->
+  <div class="tab-panel">
+    <h2>図1：ソースマーキング vs インストアマーキング</h2>
     <div class="fig">
       <table>
-        <tr><th>形態</th><th>特徴</th><th>短所</th></tr>
-        <tr><td>機能別（職能別）</td><td class="l">職能で分業・専門性◎</td><td class="l">調整がトップ集中</td></tr>
-        <tr><td>事業部制</td><td class="l">製品/地域別・独立採算・利益責任</td><td class="l">資源・機能が重複</td></tr>
-        <tr><td>カンパニー制</td><td class="l">社内分社・擬似独立（社内資本金）</td><td class="l">全社最適が崩れやすい</td></tr>
-        <tr><td>マトリックス</td><td class="l">職能×事業の2軸・専門性＋機動性</td><td class="l">ツーボスで指揮混乱</td></tr>
+        <tr><th>種類</th><th>誰が付けるか</th><th>有効範囲</th><th>用途</th></tr>
+        <tr>
+          <td class="yes"><b>ソースマーキング</b></td>
+          <td class="l"><b>メーカー</b>が製造・出荷段階で印刷・添付</td>
+          <td class="l">流通全体で共通利用可能</td>
+          <td class="l">一般消費財のほとんど（JAN コード）</td>
+        </tr>
+        <tr>
+          <td class="no"><b>インストアマーキング</b></td>
+          <td class="l"><b>小売店</b>が独自にラベルを貼る</td>
+          <td class="l">その店舗内のみ有効（他社では使えない）</td>
+          <td class="l">生鮮品・量り売り・惣菜など</td>
+        </tr>
       </table>
-      <div class="note">独立性の序列：機能別 ＜ 事業部制 ＜ カンパニー制 ＜ 純粋持株会社。</div>
-
-      <!-- 図解：4形態の組織図イメージ＋具体例 -->
-      <div class="grid2" style="margin-top:12px;">
-        <!-- 機能別 -->
-        <div class="cell" style="border-color:var(--b);">
-          <b style="color:var(--b);">🏢 機能別（職能別）</b>
-          <div style="text-align:center;margin:6px 0;">
-            <div style="background:#fff;border:2px solid var(--b);border-radius:6px;padding:2px 14px;font-size:.68rem;font-weight:700;display:inline-block;">社長</div>
-            <div style="color:var(--b);font-weight:800;line-height:.7;">↓</div>
-            <div style="display:flex;gap:4px;justify-content:center;">
-              <span style="background:var(--bl);border:1.5px solid var(--b);border-radius:5px;padding:1px 7px;font-size:.64rem;">製造</span>
-              <span style="background:var(--bl);border:1.5px solid var(--b);border-radius:5px;padding:1px 7px;font-size:.64rem;">営業</span>
-              <span style="background:var(--bl);border:1.5px solid var(--b);border-radius:5px;padding:1px 7px;font-size:.64rem;">経理</span>
-            </div>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;"><b>仕事の種類</b>で部門分け。<br>💼<b>例</b>：単一事業の中小製造業（製造部・営業部・総務部の縦割り）</div>
-        </div>
-        <!-- 事業部制 -->
-        <div class="cell" style="border-color:var(--g);">
-          <b style="color:var(--g);">📦 事業部制</b>
-          <div style="text-align:center;margin:6px 0;">
-            <div style="background:#fff;border:2px solid var(--g);border-radius:6px;padding:2px 14px;font-size:.68rem;font-weight:700;display:inline-block;">本社</div>
-            <div style="color:var(--g);font-weight:800;line-height:.7;">↓</div>
-            <div style="display:flex;gap:6px;justify-content:center;">
-              <span style="background:var(--gl);border:1.5px solid var(--g);border-radius:5px;padding:2px 6px;font-size:.6rem;line-height:1.3;">A事業部<br>製･営･経</span>
-              <span style="background:var(--gl);border:1.5px solid var(--g);border-radius:5px;padding:2px 6px;font-size:.6rem;line-height:1.3;">B事業部<br>製･営･経</span>
-            </div>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;"><b>製品/地域</b>で分け各自が利益責任。<br>💼<b>例</b>：パナソニック、トヨタ（製品別）。事業部ごとに機能を丸抱え＝重複</div>
-        </div>
-        <!-- カンパニー制 -->
-        <div class="cell" style="border-color:var(--p);">
-          <b style="color:var(--p);">🏦 カンパニー制</b>
-          <div style="text-align:center;margin:6px 0;">
-            <div style="background:#fff;border:2px solid var(--p);border-radius:6px;padding:2px 12px;font-size:.66rem;font-weight:700;display:inline-block;">本社（社内資本金💰を配分）</div>
-            <div style="color:var(--p);font-weight:800;line-height:.7;">↓</div>
-            <div style="display:flex;gap:6px;justify-content:center;">
-              <span style="background:var(--pl);border:1.5px solid var(--p);border-radius:5px;padding:2px 7px;font-size:.6rem;line-height:1.3;">A社内<br>カンパニー💰</span>
-              <span style="background:var(--pl);border:1.5px solid var(--p);border-radius:5px;padding:2px 7px;font-size:.6rem;line-height:1.3;">B社内<br>カンパニー💰</span>
-            </div>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;">事業部より<b>独立度が高い社内分社</b>（疑似的な会社）。<br>💼<b>例</b>：ソニー（1994年に国内初導入で有名）</div>
-        </div>
-        <!-- マトリックス -->
-        <div class="cell" style="border-color:var(--o);">
-          <b style="color:var(--o);">🔀 マトリックス</b>
-          <div style="display:flex;justify-content:center;margin:6px 0;">
-            <table style="width:auto;border-collapse:collapse;font-size:.58rem;">
-              <tr><td style="border:1px solid var(--o);padding:2px 5px;background:#fff;"></td><td style="border:1px solid var(--o);padding:2px 5px;background:var(--ol);font-weight:700;">事業X</td><td style="border:1px solid var(--o);padding:2px 5px;background:var(--ol);font-weight:700;">事業Y</td></tr>
-              <tr><td style="border:1px solid var(--o);padding:2px 5px;background:var(--ol);font-weight:700;">製造</td><td style="border:1px solid var(--o);padding:2px 7px;background:#fff;">●</td><td style="border:1px solid var(--o);padding:2px 7px;background:#fff;">●</td></tr>
-              <tr><td style="border:1px solid var(--o);padding:2px 5px;background:var(--ol);font-weight:700;">営業</td><td style="border:1px solid var(--o);padding:2px 7px;background:#fff;">●</td><td style="border:1px solid var(--o);padding:2px 7px;background:#fff;">●</td></tr>
-            </table>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;"><b>職能×事業の2軸</b>。各●が<b>上司2人（ツーボス）</b>＝指揮が混乱しやすい。<br>💼<b>例</b>：ABB、グローバル企業、建設・コンサルのプロジェクト型</div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 「ソース」の意味は「源泉（メーカー段階）」</div>
+        <p>「ソース（Source）」＝商品の源（製造段階）でバーコードを付ける。だから<b>メーカーが印刷</b>する。インストア（In-store）は「お店の中で」付ける。名前から判断できる。</p>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「ソースマーキングは小売店が独自に商品にラベルを貼る方式」→誤（逆）。<b>ソース＝メーカー段階</b>で印刷。小売店が独自に貼るのが<b>インストアマーキング</b>。
         </div>
       </div>
+      <div class="trap"><b>急所（2巡目 ×）</b>：「ソースマーキング＝小売店が独自に貼る」は<b>逆</b>。ソース＝<b>メーカー段階</b>で印刷。小売店が独自に貼るのが<b>インストアマーキング</b>。</div>
     </div>
 
-    <h2>図3：管理の幅（スパン・オブ・コントロール）とライン＆スタッフ</h2>
+    <h2>図2：インストアマーキングのプレフィックス</h2>
     <div class="fig">
-      <div class="grid2">
-        <div class="cell"><b>管理の幅＝統制範囲</b>1人の上司が直接管理できる部下数。<b>広い→階層は少なくフラット</b>／狭い→階層が増え高い組織</div>
-        <div class="cell"><b>ライン＆スタッフ</b>ライン＝指揮命令の本流／スタッフ＝助言・支援（<b>直接の命令権は持たない</b>）</div>
-      </div>
-      <!-- 図解：管理の幅（広い=フラット / 狭い=高い）＋ライン＆スタッフ -->
-      <div class="grid2" style="margin-top:12px;">
-        <!-- 管理の幅 -->
-        <div class="cell" style="border-color:var(--b);">
-          <b style="color:var(--b);">📏 管理の幅（広い vs 狭い）</b>
-          <div style="display:flex;gap:8px;justify-content:center;margin:8px 0 4px;text-align:center;">
-            <div>
-              <div style="font-size:.62rem;font-weight:700;color:var(--g);margin-bottom:3px;">広い→フラット</div>
-              <div style="background:#fff;border:2px solid var(--g);border-radius:6px;padding:1px 8px;font-size:.62rem;font-weight:700;">上司</div>
-              <div style="color:var(--g);font-weight:800;line-height:.7;">↙↓↘</div>
-              <div style="display:flex;gap:2px;justify-content:center;">
-                <span style="background:var(--gl);border:1px solid var(--g);border-radius:4px;padding:0 4px;font-size:.58rem;">部</span>
-                <span style="background:var(--gl);border:1px solid var(--g);border-radius:4px;padding:0 4px;font-size:.58rem;">部</span>
-                <span style="background:var(--gl);border:1px solid var(--g);border-radius:4px;padding:0 4px;font-size:.58rem;">部</span>
-                <span style="background:var(--gl);border:1px solid var(--g);border-radius:4px;padding:0 4px;font-size:.58rem;">部</span>
-                <span style="background:var(--gl);border:1px solid var(--g);border-radius:4px;padding:0 4px;font-size:.58rem;">部</span>
-              </div>
-              <div style="font-size:.56rem;color:#475569;margin-top:2px;">部下が多い<br>＝階層少ない</div>
-            </div>
-            <div style="width:1px;background:var(--line);"></div>
-            <div>
-              <div style="font-size:.62rem;font-weight:700;color:var(--r);margin-bottom:3px;">狭い→高い</div>
-              <div style="background:#fff;border:2px solid var(--r);border-radius:6px;padding:1px 8px;font-size:.62rem;font-weight:700;">上司</div>
-              <div style="color:var(--r);font-weight:800;line-height:.7;">↓</div>
-              <div style="background:#fff;border:1.5px solid var(--r);border-radius:5px;padding:0 6px;font-size:.58rem;display:inline-block;">中間</div>
-              <div style="color:var(--r);font-weight:800;line-height:.7;">↓</div>
-              <div style="background:#fdedec;border:1px solid var(--r);border-radius:4px;padding:0 4px;font-size:.58rem;display:inline-block;">担当</div>
-              <div style="font-size:.56rem;color:#475569;margin-top:2px;">部下が少ない<br>＝階層が増える</div>
-            </div>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;">1人の上司が<b>直接見られる部下数</b>＝管理の幅。広いほど組織は平たく、狭いほど縦に高くなる。</div>
-        </div>
-        <!-- ライン＆スタッフ -->
-        <div class="cell" style="border-color:var(--p);">
-          <b style="color:var(--p);">🧭 ライン＆スタッフ</b>
-          <div style="text-align:center;margin:8px 0 4px;">
-            <div style="background:#fff;border:2px solid var(--p);border-radius:6px;padding:2px 12px;font-size:.66rem;font-weight:700;display:inline-block;">社長</div>
-            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:3px;">
-              <span style="color:var(--p);font-weight:800;">↓</span>
-              <span style="border:1.5px dashed #94a3b8;border-radius:5px;padding:1px 7px;font-size:.6rem;color:#475569;">スタッフ<br><small>(企画・法務)</small></span>
-              <span style="font-size:.56rem;color:#94a3b8;">⋯助言⋯</span>
-            </div>
-            <div style="color:var(--p);font-weight:800;line-height:.7;">↓</div>
-            <div style="background:var(--pl);border:1.5px solid var(--p);border-radius:5px;padding:1px 8px;font-size:.62rem;font-weight:700;display:inline-block;">製造部（ライン）</div>
-            <div style="color:var(--p);font-weight:800;line-height:.7;">↓</div>
-            <div style="background:var(--pl);border:1.5px solid var(--p);border-radius:5px;padding:1px 8px;font-size:.62rem;font-weight:700;display:inline-block;">営業部（ライン）</div>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;"><b>ライン</b>＝指揮命令の本流（タテ実線）。<b>スタッフ</b>＝横から助言・支援するが<b style="color:var(--r);">命令権は持たない</b>（点線）。</div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 POSが「店内限定コード」と自動識別できる仕組み</div>
+        <p>インストアマーキングに使うJANコードの先頭2桁は <b>「02」または「20〜29」</b> が国際的に割り当てられている。POSシステムがこの番号を見て「これは店内限定コードだ（他店では使えない）」と判断する。</p>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「インストアマーキングのプレフィックスは01または10〜19」→誤。国際標準は<b>02・20〜29</b>。この番号でPOSが「店内限定コード」と自動識別する仕組み。
         </div>
       </div>
-
-      <div class="src-note">
-        <span class="src-tag">元ノート抜粋｜qz_17 組織構造</span>
-        <div class="ex">統制範囲（スパン・オブ・コントロール）は、<b>超えると階層が増える</b>。チャンドラー「<b>組織は戦略に従う</b>」（多角化→事業部制）。</div>
-      </div>
+      <table>
+        <tr><th>先頭桁</th><th>種類</th><th>用途</th></tr>
+        <tr><td class="yes"><b>02、20〜29</b></td><td>インストア用プレフィックス</td><td class="l">店内限定品（生鮮・量り売り）に小売店が付与</td></tr>
+        <tr><td style="background:#f8fafc;"><b>49、45（日本）</b></td><td>ソース用プレフィックス</td><td class="l">メーカーが付与する標準JANコード</td></tr>
+      </table>
     </div>
 
-    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <div class="fill-section-title">✏️ 穴埋め確認</div>
     <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
 
     <div class="fill-card">
-      <div class="fill-head">図1ミラー：機械的 vs 有機的</div>
+      <div class="fill-head">2種類のマーキング</div>
       <div class="fill-body">
         <table>
-          <tr><th>環境</th><th>適合する組織</th></tr>
-          <tr><td>安定</td><td><span class="blank">機械的</span>（集権・階層的）</td></tr>
-          <tr><td>不安定（変動）</td><td><span class="blank">有機的</span>（分権・柔軟）</td></tr>
+          <tr><th>種類</th><th>付ける主体</th><th>有効範囲</th></tr>
+          <tr><td>ソースマーキング</td><td><span class="blank">メーカー（製造・出荷段階）</span></td><td><span class="blank">流通全体で共通</span></td></tr>
+          <tr><td>インストアマーキング</td><td><span class="blank">小売店（店舗）</span></td><td><span class="blank">その店舗内のみ</span></td></tr>
         </table>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
-
-    <div class="fill-card">
-      <div class="fill-head">図2ミラー：組織形態</div>
-      <div class="fill-body">
-        <div>独立性：機能別 ＜ <span class="blank">事業部制</span> ＜ <span class="blank">カンパニー制</span> ＜ <span class="blank">純粋持株会社</span></div>
-        <div>事業部制の短所＝資源の<span class="blank">重複</span>／マトリックスの短所＝<span class="blank">命令一元化</span>に反しコンフリクト</div>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
-
-    <div class="fill-card">
-      <div class="fill-head">図3ミラー：管理の幅・ライン＆スタッフ</div>
-      <div class="fill-body">
-        <div>管理の幅が広い→階層は<span class="blank">少ない</span>（フラット）／狭い→階層は<span class="blank">多い</span></div>
-        <div>スタッフは直接の<span class="blank">命令権</span>を持たない／「組織は<span class="blank">戦略</span>に従う」＝チャンドラー</div>
+        インストア用プレフィックス（先頭2桁）は <span class="blank">02・20〜29</span>。<br>
+        生鮮品・量り売りなど<span class="blank">標準コードが付けにくい</span>商品に使われる。
         <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
       </div>
     </div>
   </div>
 
-  <!-- TAB1 動機づけ -->
+  <!-- ===== TAB5 バーコード規格 ===== -->
   <div class="tab-panel">
-    <a href="../参照ノート_103/qz_16.組織と人材まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;margin:2px 0 8px;">🔗 元ノート全文：組織と人材まとめ（qz_16）↗</a>
-
-    <h2>図1：ERG理論（アルダファ）＝マズローの「厳格な順序」を修正</h2>
-    <div style="text-align:center;width:100px;margin:4px auto 0;">
-      <div style="width:58px;height:58px;border-radius:50%;background:#fef3e2;border:2px solid #b9770e;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;">🧑‍🏫<span style="position:absolute;bottom:-4px;right:-4px;font-size:1.05rem;background:#fff;border-radius:50%;">↕️</span></div>
-      <div style="font-size:.74rem;font-weight:700;color:#334155;margin-top:2px;">アルダファ<br><span style="font-weight:500;color:#64748b;">ERG・退行↕️</span></div>
-    </div>
+    <h2>図1：JAN8 と ITF の違い（混同注意）</h2>
     <div class="fig">
-      <img class="memo-img" src="images/組織/IMG_2501.jpg" alt="アルダファーERG理論の手書きメモ">
-      <div class="memo-cap">元ノート手書きメモ（qz_16）</div>
-
-      <!-- 図解：マズロー(厳格に一段階ずつ) vs ERG(同時・退行あり) -->
-      <div class="grid2" style="margin-top:10px;">
-        <div class="cell" style="border-color:var(--mut);">
-          <b style="color:#475569;">📚 マズロー（厳格な順序）</b>
-          <div style="margin:8px 0 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.62rem;">
-            <span style="background:#f1f5f9;border:1px solid #94a3b8;border-radius:4px;padding:1px 10px;">自己実現</span>
-            <span style="color:#94a3b8;font-weight:800;line-height:.6;">↑</span>
-            <span style="background:#f1f5f9;border:1px solid #94a3b8;border-radius:4px;padding:1px 10px;">承認</span>
-            <span style="color:#94a3b8;font-weight:800;line-height:.6;">↑</span>
-            <span style="background:#f1f5f9;border:1px solid #94a3b8;border-radius:4px;padding:1px 10px;">社会的</span>
-            <span style="color:#94a3b8;font-weight:800;line-height:.6;">↑</span>
-            <span style="background:#f1f5f9;border:1px solid #94a3b8;border-radius:4px;padding:1px 10px;">安全</span>
-            <span style="color:#94a3b8;font-weight:800;line-height:.6;">↑</span>
-            <span style="background:#f1f5f9;border:1px solid #94a3b8;border-radius:4px;padding:1px 10px;">生理</span>
-          </div>
-          <div style="font-size:.68rem;color:#475569;line-height:1.6;"><b>下が満たされて初めて上へ</b>。一段階ずつ・上向き<b>一方通行</b>。同時には起きない。</div>
-        </div>
-        <div class="cell" style="border-color:var(--o);">
-          <b style="color:var(--o);">🔄 ERG（アルダファ・修正版）</b>
-          <div style="margin:8px 0 4px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.66rem;">
-            <span style="background:var(--ol);border:2px solid var(--o);border-radius:5px;padding:2px 12px;font-weight:700;">G 成長</span>
-            <span style="color:var(--o);font-weight:800;line-height:.6;">↑↓<small style="font-size:.5rem;">退行</small></span>
-            <span style="background:var(--ol);border:2px solid var(--o);border-radius:5px;padding:2px 12px;font-weight:700;">R 関係</span>
-            <span style="color:var(--o);font-weight:800;line-height:.6;">↑↓<small style="font-size:.5rem;">退行</small></span>
-            <span style="background:var(--ol);border:2px solid var(--o);border-radius:5px;padding:2px 12px;font-weight:700;">E 存在</span>
-          </div>
-          <div style="font-size:.68rem;color:#475569;line-height:1.6;"><b>複数が同時に作用</b>。上(G)が満たされないと下(R)へ<b style="color:var(--r);">退行＝逆戻り</b>もOK（行ったり来たり）。</div>
+      <table>
+        <tr><th>コード</th><th>桁数</th><th>貼る場所</th><th>用途</th></tr>
+        <tr>
+          <td class="yes"><b>JAN8（短縮タイプ）</b></td>
+          <td>8桁</td>
+          <td class="l"><b>小さな商品</b>の表面（個品）</td>
+          <td class="l">消費者向け・レジでスキャン</td>
+        </tr>
+        <tr>
+          <td class="no"><b>ITF</b></td>
+          <td>14桁（偶数桁）</td>
+          <td class="l"><b>段ボール外装</b>（集合包装）</td>
+          <td class="l">物流・在庫管理用（レジでは読まない）</td>
+        </tr>
+      </table>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 覚え方：JAN8 は「小さい商品の表」・ITF は「ダンボールの外側」</div>
+        <p>JAN8 ＝ スペースが少ない<b>小さい商品</b>（口紅・乾電池など）に使う短縮バーコード。<br>
+        ITF ＝ Interleaved Two of Five。<b>段ボール箱の側面</b>に印刷される物流用バーコード。偶数桁のみ対応（14桁が標準）。</p>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「JAN8は段ボール外装（集合包装）に印刷する物流コード」→誤。外装は<b>ITF</b>。JAN8は<b>小さな個品</b>向けの8桁短縮タイプ（消費者向け・レジスキャン）。
         </div>
       </div>
-      <div class="note" style="margin-top:6px;">💡<b>つまり</b>：マズローの「一段ずつ・戻らない」という硬さを、ERGは「同時に欲しい・戻ってもいい」と<b>現実に合わせて柔らかく</b>した。</div>
-
-      <div class="src-note">
-        <span class="src-tag">元ノート抜粋｜qz_16 組織と人材</span>
-        <div class="ex">E＝<b>存在</b>(Existence)／R＝<b>関係</b>(Relatedness)／G＝<b>成長</b>(Growth)。マズローが「<b>厳格に一段階ずつ</b>」としたのに対し、ERGは<b>複数の欲求が同時に作用</b>し、上が満たされないと下へ<b>退行（逆戻り）</b>することも認める。</div>
-        <div class="trap" style="margin:4px 0 0;"><b>急所（あなたが外したQ9）</b>：「マズローは複数欲求が同時に生じず必ず一段階ずつ」＝マズローの限界。これを修正したのがERG。</div>
-        <span class="mnemo">🎵 語呂（元ノートqz_16）：「アルダファーは 行ったり来たりする（ERG）」＝退行（逆戻り）あり</span>
-      </div>
+      <div class="trap"><b>急所（2巡目 △）</b>：「JAN8は外装（段ボール）に印刷する」は<b>誤り</b>。外装はITF。JAN8は<b>小さな消費者向け商品の表面</b>に印刷する短縮タイプ。</div>
     </div>
 
-    <h2>図2：ブルームの期待理論（E×I×V）・マクレランド・アンダーマイニング</h2>
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:4px 0;">
-      <div style="text-align:center;width:88px;">
-        <div style="width:54px;height:54px;border-radius:50%;background:#eaf2f8;border:2px solid #1a5276;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.8rem;position:relative;">🧑‍🏫<span style="position:absolute;bottom:-4px;right:-4px;font-size:1rem;background:#fff;border-radius:50%;">✖️</span></div>
-        <div style="font-size:.72rem;font-weight:700;color:#334155;margin-top:2px;">ブルーム<br><span style="font-weight:500;color:#64748b;">期待理論(掛け算)</span></div>
-      </div>
-      <div style="text-align:center;width:88px;">
-        <div style="width:54px;height:54px;border-radius:50%;background:#fdecea;border:2px solid #c0392b;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.8rem;position:relative;">🧑‍💼<span style="position:absolute;bottom:-4px;right:-4px;font-size:1rem;background:#fff;border-radius:50%;">🎯</span></div>
-        <div style="font-size:.72rem;font-weight:700;color:#334155;margin-top:2px;">マクレランド<br><span style="font-weight:500;color:#64748b;">達成動機🎯</span></div>
-      </div>
-      <div style="text-align:center;width:88px;">
-        <div style="width:54px;height:54px;border-radius:50%;background:#eafaf1;border:2px solid #1e8449;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:1.8rem;position:relative;">🧑‍🔬<span style="position:absolute;bottom:-4px;right:-4px;font-size:1rem;background:#fff;border-radius:50%;">🔥</span></div>
-        <div style="font-size:.72rem;font-weight:700;color:#334155;margin-top:2px;">デシ<br><span style="font-weight:500;color:#64748b;">内発・アンダーマイニング🔥</span></div>
-      </div>
-    </div>
+    <h2>図2：GS1-128 の用途（レジ用ではない）</h2>
     <div class="fig">
-      <div style="text-align:center;font-weight:800;color:var(--b);font-size:1.05rem;margin:4px 0;">やる気 ＝ E（期待）× I（道具性/手段性）× V（誘意性）</div>
-      <div class="note">1つでもゼロなら動機はゼロ（かけ算）。E＝頑張れば成果が出そうか／I＝成果が報酬につながるか／V＝<b>誘意性＝その報酬が自分にどれだけ魅力的か</b>。</div>
-      <img class="memo-img" src="images/組織/IMG_2506.jpg" alt="ブルーム期待理論・マクレランドの手書きメモ">
-
-      <!-- 図解：努力→成果→報酬→満足 の連鎖（E×I×V） -->
-      <div class="fig" style="background:#fcfcfd;margin:10px 0 0;">
-        <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;font-size:.66rem;text-align:center;">
-          <span style="background:#fff;border:2px solid var(--ink);border-radius:6px;padding:3px 8px;font-weight:700;">努力<br>(頑張る)</span>
-          <span style="display:flex;flex-direction:column;align-items:center;color:var(--b);font-weight:800;"><small style="font-size:.56rem;">E 期待</small>→</span>
-          <span style="background:var(--bl);border:2px solid var(--b);border-radius:6px;padding:3px 8px;font-weight:700;">成果<br>(業績)</span>
-          <span style="display:flex;flex-direction:column;align-items:center;color:var(--g);font-weight:800;"><small style="font-size:.56rem;">I 道具性</small>→</span>
-          <span style="background:var(--gl);border:2px solid var(--g);border-radius:6px;padding:3px 8px;font-weight:700;">報酬<br>(昇給等)</span>
-          <span style="display:flex;flex-direction:column;align-items:center;color:var(--o);font-weight:800;"><small style="font-size:.56rem;">V 誘意性</small>→</span>
-          <span style="background:var(--ol);border:2px solid var(--o);border-radius:6px;padding:3px 8px;font-weight:700;">満足<br>(嬉しい)</span>
-        </div>
-        <div style="text-align:center;font-weight:800;color:var(--p);font-size:.82rem;margin:8px 0 2px;">やる気 ＝ E × I × V　<span style="color:var(--r);">（1つでも0なら→0）</span></div>
-        <div class="note" style="margin-top:4px;">⛓ 連鎖のどこか1つでも「ムリ／関係ない／欲しくない」と切れたら、掛け算なのでやる気はゼロ。<br>E＝頑張れば成果が出そう？／I＝成果が報酬につながる？／V＝その報酬は自分に魅力的？</div>
-
-        <!-- 問題で気をつける点 -->
-        <div style="background:#fdedec;border:1.5px solid var(--r);border-radius:8px;padding:9px 12px;margin-top:10px;font-size:.78rem;line-height:1.85;">
-          <div style="font-weight:800;color:var(--r);margin-bottom:4px;">⚠️ 問題で気をつける点（ブルーム期待理論）</div>
-          <b>① 「足し算」は誤り</b>：E＋I＋V や 平均 と書いた選択肢はバツ。<b>必ず掛け算</b>（1つ0なら全体0）。<br>
-          <b>② E と I の取り違え</b>：E（期待）＝<u>努力→成果</u>が出る見込み／I（道具性・手段性）＝<u>成果→報酬</u>につながる度合い。「努力すれば報酬がもらえる確率」と一括りにした記述は引っかけ。<br>
-          <b>③ V（誘意性）は人それぞれ＆マイナスもあり</b>：同じ報酬でも価値は人で違う。罰など<b>マイナスの誘意性</b>もとり得る（「常に正」は誤り）。<br>
-          <b>④ 主観的・認知的な理論</b>：客観的な報酬額でなく<b>本人がどう知覚するか</b>で決まる。<br>
-          <b>⑤ 分類は「過程（プロセス）理論」</b>：ブルーム＝<b>過程理論</b>。マズロー・ハーズバーグ・アルダファ（ERG）・マクレランドの<b>内容理論</b>と混同させる出題が頻出。<br>
-          <b>⑥ 発展形＝ポーター＆ローラー</b>：期待理論を拡張し「<b>満足が業績を生むのでなく、業績（＋公正な報酬）が満足を生む</b>」とした点を問われることがある。
-        </div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 GS1-128 は「物流・企業間」向けの高機能バーコード</div>
+        <p>GS1-128（旧UCC/EAN-128）は、<b>ロット番号・有効期限・シリアル番号・重量</b>など多様な情報を1本のバーコードに格納できる。<b>スーパーのレジ</b>でスキャンするのはJANコード。GS1-128は<b>物流現場・製薬・食品トレーサビリティ</b>向け。</p>
       </div>
-
-      <div class="src-note">
-        <span class="src-tag">元ノート抜粋｜qz_16 組織と人材</span>
-        <div class="ex"><b>マクレランドの達成動機説</b>：達成・権力・親和の欲求。達成欲求が高い人ほど<b>中程度のリスク</b>を好む（自分の手で達成感を得られるから）。<b>アンダーマイニング効果</b>：金銭報酬が内発的動機を下げることがある（デシ）。</div>
-        <span class="mnemo">語呂：ブルーなローラ（ブルーム・ローラー）の逮捕（期待値×報酬）は、ランド（マクレランド）で達成</span>
-      </div>
-
-      <!-- 図解：デシ 内発的動機づけ & アンダーマイニング効果 -->
-      <h2 style="margin-top:14px;">🔥 デシ：内発的動機づけ と アンダーマイニング効果</h2>
       <div class="grid2">
-        <!-- 内発 vs 外発 -->
-        <div class="cell" style="border-color:var(--g);">
-          <b style="color:var(--g);">😊 内発 vs 外発的動機づけ</b>
-          <div style="display:flex;gap:8px;justify-content:center;margin:8px 0 4px;text-align:center;font-size:.62rem;">
-            <div style="flex:1;">
-              <div style="background:var(--gl);border:2px solid var(--g);border-radius:6px;padding:3px 4px;font-weight:700;color:var(--g);">内発的</div>
-              <div style="font-size:.66rem;color:#475569;line-height:1.5;margin-top:3px;">面白い・<br>成長したい<br><small>＝行動そのものが報酬</small></div>
-            </div>
-            <div style="flex:1;">
-              <div style="background:var(--bl);border:2px solid var(--b);border-radius:6px;padding:3px 4px;font-weight:700;color:var(--b);">外発的</div>
-              <div style="font-size:.66rem;color:#475569;line-height:1.5;margin-top:3px;">お金・賞罰・<br>評価のため<br><small>＝外からのアメとムチ</small></div>
-            </div>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.6;">デシ＝人は「自分で決めたい（自律）」「できる感（有能感）」が満たされると<b>内発的に</b>やる気が出る。</div>
+        <div class="cell" style="border-color:#3b82f6;">
+          <b>JAN コード</b>
+          消費者向け個品の識別。<br>レジで日常スキャンする。<br>
+          <span style="font-size:.74rem;color:#64748b;">商品名・価格の特定のみ</span>
         </div>
-        <!-- アンダーマイニング -->
-        <div class="cell" style="border-color:var(--r);">
-          <b style="color:var(--r);">📉 アンダーマイニング効果</b>
-          <div style="text-align:center;margin:8px 0 4px;font-size:.64rem;">
-            <div style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;">
-              <span style="background:var(--gl);border:1.5px solid var(--g);border-radius:5px;padding:2px 6px;">好きでやってた<br>(内発😊)</span>
-              <span style="color:var(--r);font-weight:800;">＋</span>
-              <span style="background:#fff;border:1.5px solid var(--o);border-radius:5px;padding:2px 6px;">外から金銭報酬💰</span>
-            </div>
-            <div style="color:var(--r);font-weight:800;line-height:.9;margin:2px 0;">↓ 報酬が止まると</div>
-            <div style="background:var(--rl);border:2px solid var(--r);border-radius:5px;padding:2px 8px;font-weight:700;color:var(--r);display:inline-block;">やる気ダウン📉<br><small>「報酬のためだった」に変質</small></div>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.6;"><b>外発的報酬が内発的動機を“掘り崩す”</b>現象（デシ）。例：好きで描いていた絵にお金を払い始めると、報酬目当てになり報酬が無いと描かなくなる。</div>
+        <div class="cell" style="border-color:#0f766e;">
+          <b>GS1-128</b>
+          物流・企業間向け。<br>ロット番号・有効期限など<b>追加情報</b>を格納。<br>
+          <span style="font-size:.74rem;color:#64748b;">食品・医薬品のトレーサビリティに必須</span>
         </div>
       </div>
-
-      <!-- 問題で気をつける点 -->
-      <div style="background:#fdedec;border:1.5px solid var(--r);border-radius:8px;padding:9px 12px;margin-top:10px;font-size:.78rem;line-height:1.85;">
-        <div style="font-weight:800;color:var(--r);margin-bottom:4px;">⚠️ 問題で気をつける点（デシ／アンダーマイニング）</div>
-        <b>① 向きを逆にする引っかけ</b>：「金銭報酬は<u>常に</u>動機を高める」は誤り。<b>内発的動機が高い行動</b>に外的報酬を与えると、かえって動機を<b>下げる</b>ことがある（＝アンダーマイニング）。<br>
-        <b>② 効きどころの限定</b>：もともと<b>内発的に楽しんでいる</b>活動が対象。最初から外発のみの単純作業ではあまり起きない。<br>
-        <b>③ 言語的報酬は別</b>：金銭など物的報酬は内発を下げやすいが、<b>褒め言葉・肯定的フィードバック（有能感を高める）</b>はむしろ内発を<b>高める</b>方向。「すべての報酬が内発を下げる」は誤り。<br>
-        <b>④ 提唱者の混同</b>：内発的動機づけ・アンダーマイニング＝<b>デシ（＆ライアン／自己決定理論）</b>。ブルーム（期待理論）やマクレランド（達成動機）と取り違えさせる出題に注意。
+      <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+        <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「GS1-128はスーパーのレジで消費者向けに商品を識別するために使われる」→誤。レジはJANコード。GS1-128は<b>物流・企業間向け</b>（ロット番号・有効期限などの追加情報を格納）。
       </div>
     </div>
 
-    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
+    <h2>図3：ITF コードの特徴</h2>
+    <div class="fig">
+      <table>
+        <tr><th>項目</th><th>内容</th></tr>
+        <tr><td><b>フルネーム</b></td><td class="l">Interleaved Two of Five</td></tr>
+        <tr><td><b>桁数</b></td><td class="l"><b>偶数桁のみ</b>（2桁1セットで表現）。標準は <b>14桁</b></td></tr>
+        <tr><td><b>使用場所</b></td><td class="l">段ボール箱などの集合包装（外装）</td></tr>
+        <tr><td><b>構成</b></td><td class="l">インジケータ（1桁）＋GS1事業者コード＋商品コード＋チェックデジット</td></tr>
+      </table>
+      <div class="note">ITF は「偶数桁しか使えない」点が試験で問われやすい特徴。</div>
+      <div class="vz-supplement">
+        <div class="vz-label">💡 ITFが「偶数桁のみ」の理由</div>
+        <p>ITF（Interleaved Two of Five）は「2桁を1セット」にして交互に組み合わせる方式。2桁×7セット＝14桁が標準。奇数桁では最後の1桁が余って対になれないため使えない。</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.77rem;flex-wrap:wrap;margin-top:.4rem;">
+          <div style="background:#dbeafe;border:1.5px solid #3b82f6;border-radius:6px;padding:.3rem .6rem;">2桁セット①</div>
+          <div style="color:#64748b;">+</div>
+          <div style="background:#dbeafe;border:1.5px solid #3b82f6;border-radius:6px;padding:.3rem .6rem;">2桁セット②</div>
+          <div style="color:#64748b;">+…+</div>
+          <div style="background:#dcfce7;border:1.5px solid #22c55e;border-radius:6px;padding:.3rem .6rem;font-weight:700;">計14桁（7セット）</div>
+        </div>
+        <div style="border:1.5px dashed #f59e0b;border-radius:6px;padding:.4rem .8rem;margin-top:.6rem;font-size:.8rem;color:#92400e;background:#fffbeb;">
+          <span style="font-weight:700;color:#b45309;">📝 過去問の問われ方：</span>「ITFコードは奇数桁でも偶数桁でも使用できる」→誤。<b>偶数桁のみ対応</b>（2桁1セット構造のため）。標準は<b>14桁</b>・段ボール外装に印刷。
+        </div>
+      </div>
+    </div>
+
+    <div class="fill-section-title">✏️ 穴埋め確認</div>
     <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
 
     <div class="fill-card">
-      <div class="fill-head">図1ミラー：ERG理論・マズローの限界</div>
-      <div class="fill-body">
-        <div>E＝<span class="blank">存在</span>／R＝<span class="blank">関係</span>／G＝<span class="blank">成長</span>（提唱＝<span class="blank">アルダファ</span>）</div>
-        <div>マズローの「厳格に一段階ずつ」を修正し、複数欲求が<span class="blank">同時</span>に作用し<span class="blank">退行</span>もある</div>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
-
-    <div class="fill-card">
-      <div class="fill-head">図2ミラー：期待理論・マクレランド・アンダーマイニング</div>
-      <div class="fill-body">
-        <div>やる気＝<span class="blank">E（期待）</span>×<span class="blank">I（道具性）</span>×<span class="blank">V（誘意性）</span>。1つでも0なら動機0</div>
-        <div>誘意性＝報酬の<span class="blank">魅力の度合い</span></div>
-        <div>マクレランド＝<span class="blank">達成</span>動機（中程度のリスク）／報酬が内発を下げる＝<span class="blank">アンダーマイニング</span>効果</div>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB2 採用・教育 -->
-  <div class="tab-panel">
-    <a href="../参照ノート_103/qz_16.組織と人材まとめ.html" target="_blank" rel="noopener" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:6px;margin:2px 0 8px;">🔗 元ノート全文：組織と人材まとめ（qz_16）↗</a>
-
-    <h2>図1：OJT / Off-JT の「長所」だけ確認（取り違え注意）</h2>
-    <div class="fig">
-      <div class="grid2">
-        <div class="cell"><b>OJTの長所</b>個々の能力・進度に合わせた<b>実践的・個別</b>指導</div>
-        <div class="cell"><b>Off-JTの長所</b><b>体系的・理論的</b>な知識をまとめて習得</div>
-      </div>
-      <div class="trap"><b>ひっかけ</b>：「OJT＝体系的」「Off-JT＝実践スキル直接」は逆。長所の入れ替えに注意。</div>
-    </div>
-
-    <h2>図2：CDP・自己啓発・コンピテンシー</h2>
-    <div class="fig">
-      <div class="grid2">
-        <div class="cell"><b>CDP</b>（キャリア・ディベロップメント・プログラム）長期視点で計画的に配置・育成</div>
-        <div class="cell"><b>自己啓発（SD）</b>従業員が<b>自発的</b>に行う学習（企業は支援。一律研修ではない）</div>
-        <div class="cell"><b>コンピテンシー</b>高業績者に共通する<b>行動特性</b>（能力そのものでなく成果につながる行動）</div>
-      </div>
-
-      <!-- 図解：3項目のイメージ＋具体例 -->
-      <div class="grid2" style="margin-top:12px;">
-        <!-- CDP -->
-        <div class="cell" style="border-color:var(--b);">
-          <b style="color:var(--b);">🗺 CDP（長期の育成計画）</b>
-          <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:3px;margin:8px 0 4px;font-size:.6rem;text-align:center;">
-            <span style="background:var(--bl);border:1.5px solid var(--b);border-radius:5px;padding:2px 6px;">入社<br>営業</span>
-            <span style="color:var(--b);font-weight:800;">→</span>
-            <span style="background:var(--bl);border:1.5px solid var(--b);border-radius:5px;padding:2px 6px;">企画<br>(経験)</span>
-            <span style="color:var(--b);font-weight:800;">→</span>
-            <span style="background:var(--bl);border:1.5px solid var(--b);border-radius:5px;padding:2px 6px;">海外<br>(挑戦)</span>
-            <span style="color:var(--b);font-weight:800;">→</span>
-            <span style="background:#fff;border:2px solid var(--b);border-radius:5px;padding:2px 6px;font-weight:700;">管理職👑</span>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;"><b>会社主導</b>で「どんな経験を順に積ませるか」を長期設計。<br>💼<b>例</b>：将来の幹部候補に営業→企画→海外と計画配置（ジョブローテの戦略版）</div>
-        </div>
-        <!-- 自己啓発 SD -->
-        <div class="cell" style="border-color:var(--g);">
-          <b style="color:var(--g);">📖 自己啓発（SD）</b>
-          <div style="display:flex;align-items:center;justify-content:center;gap:5px;margin:8px 0 4px;font-size:.62rem;text-align:center;">
-            <span style="background:#fff;border:2px solid var(--g);border-radius:50%;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem;">🙋</span>
-            <span style="color:var(--g);font-weight:800;">→</span>
-            <span style="background:var(--gl);border:1.5px solid var(--g);border-radius:5px;padding:2px 6px;">資格<br>勉強</span>
-            <span style="background:var(--gl);border:1.5px solid var(--g);border-radius:5px;padding:2px 6px;">通信<br>講座</span>
-            <span style="color:#94a3b8;">＋</span>
-            <span style="border:1.5px dashed #94a3b8;border-radius:5px;padding:2px 6px;color:#475569;">会社が<br>費用支援</span>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;"><b>本人が自発的に</b>学ぶ（会社は補助金等で支援するだけ）。<br>💼<b>例</b>：社員が自分で簿記やTOEICを勉強、会社は受験料を一部補助。<b style="color:var(--r);">一律の集合研修(OFF-JT)ではない</b></div>
-        </div>
-        <!-- コンピテンシー -->
-        <div class="cell" style="border-color:var(--p);">
-          <b style="color:var(--p);">🎯 コンピテンシー（成果を生む行動）</b>
-          <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin:8px 0 4px;font-size:.62rem;text-align:center;">
-            <span style="border:1.5px solid #94a3b8;border-radius:5px;padding:2px 6px;color:#475569;">能力<br>(知識･資格)</span>
-            <span style="color:#94a3b8;font-weight:800;">≠</span>
-            <span style="background:var(--pl);border:2px solid var(--p);border-radius:5px;padding:2px 6px;font-weight:700;">行動特性<br>(実際の動き)</span>
-            <span style="color:var(--p);font-weight:800;">→</span>
-            <span style="background:#fff;border:2px solid var(--p);border-radius:5px;padding:2px 6px;font-weight:700;">高成果🏆</span>
-          </div>
-          <div style="font-size:.7rem;color:#475569;line-height:1.65;"><b>「できる人」が共通してとる行動</b>を抜き出したもの。資格や学歴(＝能力)とは別。<br>💼<b>例</b>：トップ営業に共通する「事前に顧客を調べ込む」「断られても代案を出す」等の行動を基準化し評価・育成に使う</div>
-        </div>
-      </div>
-    </div>
-
-    <h2>図3：出向 vs 転籍（雇用関係の違い）</h2>
-    <div class="fig">
-      <div class="grid2">
-        <div class="cell" style="border-color:var(--b)"><b>在籍出向</b>元の会社との雇用関係を<b>維持</b>したまま出向先で働く</div>
-        <div class="cell" style="border-color:var(--r)"><b>転籍</b>元の会社との雇用関係を<b>終了</b>し、転籍先と新たに雇用契約</div>
-      </div>
-      <div class="trap"><b>ひっかけ</b>：「出向＝雇用関係を終了」は誤り。雇用を終えるのは転籍。</div>
-    </div>
-
-    <div class="fill-section-title">✏️ 図解ミラー穴埋め</div>
-    <button class="revall-btn" onclick="revAll(this)">🔓 このタブの空欄をすべて表示／隠す</button>
-
-    <div class="fill-card">
-      <div class="fill-head">図1ミラー：OJT / Off-JT</div>
+      <div class="fill-head">バーコード規格の整理</div>
       <div class="fill-body">
         <table>
-          <tr><th></th><th>長所</th></tr>
-          <tr><td>OJT</td><td><span class="blank">個別・実践的</span></td></tr>
-          <tr><td>Off-JT</td><td><span class="blank">体系的・理論的</span></td></tr>
+          <tr><th>コード</th><th>貼る場所</th><th>主な用途</th></tr>
+          <tr><td>JAN8</td><td><span class="blank">小さい商品の表面（個品）</span></td><td>消費者向け・レジ</td></tr>
+          <tr><td>ITF</td><td><span class="blank">段ボール外装（集合包装）</span></td><td><span class="blank">物流・在庫管理</span></td></tr>
+          <tr><td>GS1-128</td><td>物流現場・企業間</td><td><span class="blank">ロット番号・有効期限など追加情報の格納</span></td></tr>
         </table>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
-
-    <div class="fill-card">
-      <div class="fill-head">図2ミラー：育成・採用の用語</div>
-      <div class="fill-body">
-        <div>自発的な学習＝<span class="blank">自己啓発(SD)</span>／高業績者の行動特性＝<span class="blank">コンピテンシー</span></div>
-        <div>長期的・計画的な配置育成＝<span class="blank">CDP</span></div>
-        <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
-      </div>
-    </div>
-
-    <div class="fill-card">
-      <div class="fill-head">図3ミラー：出向 / 転籍</div>
-      <div class="fill-body">
-        <div>雇用関係を維持＝<span class="blank">在籍出向</span>／雇用関係を終了＝<span class="blank">転籍</span></div>
+        ITF は<span class="blank">偶数桁</span>のみ対応し、標準は<span class="blank">14桁</span>。<br>
+        GS1-128 はスーパーの<span class="blank">レジ（消費者向け）では使わない</span>。
         <button class="revbtn" onclick="rev(this)">この枠を表示／隠す</button>
       </div>
     </div>
   </div>
-</div>
+</div><!-- tab-container -->
 
 <script>
 function sw(i){
@@ -625,7 +592,6 @@ function sw(i){
   document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
   window.scrollTo({top:0,behavior:'instant'});
 }
-// 各タブ先頭に「予習」版の穴埋めを複製（約10%を事前表示・標準fill-cardのみ対象。.q04等は除外）
 (function(){
   document.querySelectorAll('.tab-panel').forEach(function(panel){
     var cards=[].slice.call(panel.querySelectorAll('.fill-card')).filter(function(c){
@@ -638,7 +604,6 @@ function sw(i){
     cards.forEach(function(card){
       var cl=card.cloneNode(true);
       var h=cl.querySelector('.fill-head'); if(h) h.textContent='予習｜'+h.textContent;
-      var mb=cl.querySelector('.mz-btn'); if(mb) mb.remove(); cl.classList.remove('mz-done');
       var bl=cl.querySelectorAll('.blank'), n=bl.length;
       var show=Math.min(Math.max(1,Math.round(n*0.1)),Math.max(0,n-1));
       for(var i=0;i<show;i++){ bl[i].classList.add('show'); }
@@ -659,78 +624,7 @@ function revAll(btn){
   var anyHidden=[].slice.call(blanks).some(function(b){return !b.classList.contains('show');});
   blanks.forEach(function(b){b.classList.toggle('show',anyHidden);});
 }
-// 覚えた→○ボタンで非表示（見出しベースの安定キーで保存）
-(function(){
-  var KEY='mz_'+location.pathname;
-  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
-  function keyFor(el){
-    if(el.classList.contains('fill-card')){
-      var h=el.querySelector('.fill-head');
-      return 'fc:'+(h?h.textContent.trim():'').slice(0,44);
-    }
-    var p=el.previousElementSibling, hd='';
-    while(p){ if(p.tagName==='H2'){hd=p.textContent.trim();break;} p=p.previousElementSibling; }
-    return 'b:'+hd.slice(0,18)+'|'+el.textContent.replace(/\s+/g,'').slice(0,26);
-  }
-  document.querySelectorAll('.fig,.fill-card,.src-note,.src-fig,.vz-supplement').forEach(function(el){
-    var id=keyFor(el);
-    var btn=document.createElement('button');
-    btn.className='mz-btn'; btn.type='button';
-    function set(on){ el.classList.toggle('mz-done',on); btn.textContent=on?'✓':'○'; }
-    function save(on){ st[id]=on; localStorage.setItem(KEY,JSON.stringify(st)); }
-    set(!!st[id]);
-    btn.addEventListener('click',function(e){ e.stopPropagation(); var on=!el.classList.contains('mz-done'); set(on); save(on); });
-    el.addEventListener('click',function(){ if(el.classList.contains('mz-done')){ set(false); save(false); } });
-    el.appendChild(btn);
-  });
-})();
-// 行単位の非表示（fill-group / tbody tr 内）・localStorage保存
-(function(){
-  var KEY='mz_row_'+location.pathname;
-  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
-  function save(){ localStorage.setItem(KEY,JSON.stringify(st)); }
-  function cardHead(el){ var c=el.closest('.fill-card'); if(!c) return ''; var h=c.querySelector('.fill-head'); return h?h.textContent.trim().slice(0,28):''; }
-  function isPreview(el){ var c=el.closest('.fill-card'); if(!c) return false; var h=c.querySelector('.fill-head'); return h&&h.textContent.trim().startsWith('予習｜'); }
-  function mkPh(e2,k2){
-    var ph=document.createElement('div'); ph.className='row-hidden-ph';
-    ph.innerHTML='— <button>表示</button>';
-    ph.querySelector('button').addEventListener('click',function(){ e2.style.display=''; ph.remove(); st[k2]=0; save(); });
-    return ph;
-  }
-  function mkTrPh(r,k){
-    var cols=r.querySelectorAll('td,th').length;
-    var phR=document.createElement('tr'); phR.className='tr-hidden-ph';
-    var phTd=document.createElement('td'); phTd.colSpan=cols;
-    phTd.innerHTML='— <button>表示</button>';
-    phR.appendChild(phTd);
-    phTd.querySelector('button').addEventListener('click',function(){ r.style.display=''; phR.remove(); st[k]=0; save(); });
-    return phR;
-  }
-  // fill-group 行
-  document.querySelectorAll('.fill-body .fill-group').forEach(function(el,i){
-    if(isPreview(el)) return;
-    var key='fg:'+cardHead(el)+'|'+i;
-    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.title='非表示'; btn.textContent='○';
-    el.insertBefore(btn,el.firstChild);
-    btn.addEventListener('click',function(e){ e.stopPropagation(); el.style.display='none'; st[key]=1; save(); el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); });
-    if(st[key]){ el.style.display='none'; el.parentNode.insertBefore(mkPh(el,key),el.nextSibling); }
-  });
-  // tbody tr 行
-  document.querySelectorAll('.fill-body table tbody tr').forEach(function(tr,i){
-    if(isPreview(tr)) return;
-    var key='tr:'+cardHead(tr)+'|'+i;
-    var tds=tr.querySelectorAll('td'); if(!tds.length) return;
-    var last=tds[tds.length-1]; last.style.position='relative'; last.style.paddingRight='26px';
-    var btn=document.createElement('button'); btn.className='row-hide-btn'; btn.style.cssText='position:absolute;top:50%;right:4px;transform:translateY(-50%);float:none;margin:0;'; btn.title='非表示'; btn.textContent='○';
-    last.appendChild(btn);
-    btn.addEventListener('click',function(e){ e.stopPropagation(); tr.style.display='none'; st[key]=1; save(); tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); });
-    if(st[key]){ tr.style.display='none'; tr.parentNode.insertBefore(mkTrPh(tr,key),tr.nextSibling); }
-  });
-})();
 </script>
-
-
-
 
 
 <!-- ===== ✏️ 注釈機能 ===== -->

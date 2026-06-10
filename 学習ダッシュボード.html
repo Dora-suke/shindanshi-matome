@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 1次試験 学習ダッシュボード（令和8年度）</title>
+<style>
+  :root{
+    --bg:#eef2f7; --card:#ffffff; --card2:#f1f5fb; --line:#dbe3ee;
+    --txt:#1e293b; --sub:#64748b; --accent:#0284c7; --track:#e6ecf4;
+    --p1:#dc2626; --p2:#ea580c; --p3:#ca8a04; --p4:#64748b; --done:#16a34a; --input:#7c3aed;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    background:var(--bg);color:var(--txt);line-height:1.55;padding:18px;}
+  .wrap{max-width:1100px;margin:0 auto;}
+  h1{font-size:1.15rem;margin:0 0 2px;}
+  .meta{color:var(--sub);font-size:.78rem;margin-bottom:14px;}
+  .meta b{color:var(--accent);}
+
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:14px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 16px;box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .stat .label{color:var(--sub);font-size:.78rem;}
+  .stat .val{font-size:1.7rem;font-weight:700;margin-top:2px;}
+  .stat .val small{font-size:.85rem;color:var(--sub);font-weight:400;}
+
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:4px;}
+  .topbar-left{flex:1 1 300px;min-width:260px;}
+  .next{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:7px 11px;font-size:.72rem;line-height:1.35;flex:1 1 420px;min-width:300px;}
+  .next b{color:#b45309;}
+  .next ol{margin:3px 0 0;padding-left:16px;}
+  .next li{margin:0;}
+
+  h2{font-size:1.05rem;margin:26px 0 12px;border-left:4px solid var(--accent);padding-left:10px;}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;}
+  .subj{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+    border-left:5px solid var(--line);box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .subj.r1{border-left-color:var(--p1);} .subj.r2{border-left-color:var(--p2);}
+  .subj.r3{border-left-color:var(--p3);} .subj.alt{border-left-color:var(--input);background:#faf8ff;}
+  .subj .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .subj .pri{font-size:.72rem;background:var(--card2);color:var(--sub);border-radius:20px;padding:2px 9px;white-space:nowrap;border:1px solid var(--line);}
+  .subj .nm{font-weight:700;font-size:1.05rem;}
+  .subj .role{font-size:.78rem;color:var(--sub);margin-left:6px;}
+  .subj .goal{display:flex;gap:14px;margin:8px 0 4px;font-size:.82rem;flex-wrap:wrap;}
+  .subj .goal span b{color:var(--accent);}
+  .bar{height:14px;background:var(--track);border-radius:8px;overflow:hidden;margin:6px 0 4px;position:relative;}
+  .bar > i{display:block;height:100%;border-radius:8px;}
+  .bar .pct{position:absolute;right:7px;top:-1px;font-size:.72rem;color:var(--txt);font-weight:600;}
+  .subj .detail{font-size:.78rem;color:var(--sub);margin-top:6px;}
+  .subj .detail b{color:var(--txt);font-weight:600;}
+
+  table{width:100%;border-collapse:collapse;font-size:.85rem;background:var(--card);}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{background:var(--card2);color:var(--sub);font-weight:600;font-size:.78rem;
+    position:sticky;top:0;z-index:3;box-shadow:0 1px 0 var(--line);}
+  .tasks-scroll{max-height:62vh;overflow:auto;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 0 12px;flex-wrap:wrap;}
+  .sec-head h2{margin:0;}
+  .head-btns{display:flex;gap:8px;flex-wrap:wrap;}
+  tr:last-child td{border-bottom:none;}
+  .band{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:2px;vertical-align:middle;}
+  .b-P1{background:var(--p1);} .b-P2{background:var(--p2);} .b-P3{background:var(--p3);}
+  .b-P4{background:var(--p4);} .b-OK{background:var(--done);} .b-IN{background:var(--input);}
+  .rank{color:var(--sub);font-weight:700;width:30px;}
+  .res{font-family:"SF Mono",ui-monospace,monospace;font-size:.8rem;color:var(--sub);white-space:nowrap;}
+  .tag{font-size:.72rem;padding:1px 6px;border-radius:4px;background:var(--card2);color:var(--sub);border:1px solid var(--line);}
+  textarea.rowmemo{width:100%;min-width:160px;min-height:34px;border:1px solid var(--line);border-radius:6px;
+    padding:5px 7px;font-family:inherit;font-size:.8rem;background:#fffdf3;resize:vertical;color:var(--txt);}
+  textarea.rowmemo:focus{outline:2px solid var(--accent);background:#fff;}
+  select.rowstate{font-size:.78rem;border:1px solid var(--line);border-radius:6px;padding:5px 6px;
+    font-family:inherit;color:var(--txt);cursor:pointer;min-width:108px;}
+  .table-bar{display:flex;justify-content:flex-end;gap:8px;margin:10px 0;align-items:center;flex-wrap:wrap;}
+  .table-bar .hint{margin:0;margin-right:auto;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.78rem;color:var(--sub);margin:10px 0 0;}
+  .legend span{display:flex;align-items:center;gap:5px;}
+
+  /* 学習ログ */
+  .log-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:760px){.log-wrap{grid-template-columns:1fr;}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .panel h3{margin:0 0 8px;font-size:.95rem;}
+  textarea{width:100%;min-height:160px;border:1px solid var(--line);border-radius:8px;padding:10px;
+    font-family:inherit;font-size:.88rem;color:var(--txt);background:#fcfdff;resize:vertical;}
+  .btns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  button{border:1px solid var(--line);background:var(--card2);color:var(--txt);border-radius:8px;
+    padding:7px 13px;font-size:.83rem;cursor:pointer;font-family:inherit;}
+  button.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+  button:hover{filter:brightness(.97);}
+  .hint{font-size:.74rem;color:var(--sub);margin-top:6px;}
+  .timeline{max-height:300px;overflow-y:auto;padding-right:6px;}
+  .log-date{margin-bottom:14px;}
+  .log-date > .d{font-size:.95rem;color:var(--txt);font-weight:700;border-bottom:2px solid var(--line);padding-bottom:4px;margin-bottom:8px;}
+  .log-subj{border-left:4px solid var(--accent);padding:3px 0 6px 12px;margin-bottom:10px;}
+  .subj-tag{display:inline-block;font-size:.82rem;font-weight:700;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:1px 9px;margin-bottom:5px;color:var(--accent);}
+  .timeline .b{font-size:1.05rem;line-height:1.65;margin:3px 0;}
+  .timeline .b b{color:#b45309;font-weight:700;}
+  .timeline .a{font-size:.98rem;line-height:1.6;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:9px 12px;margin-top:6px;}
+  .timeline .a b{color:var(--accent);font-weight:700;}
+  .timeline .a::before{content:"💬 助言：";color:var(--accent);font-weight:700;}
+
+  footer{margin-top:30px;color:var(--sub);font-size:.75rem;border-top:1px solid var(--line);padding-top:12px;}
+  code{background:var(--card2);padding:1px 5px;border-radius:4px;font-size:.9em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>📊 1次試験 学習ダッシュボード</h1>
+      <div class="meta" style="margin-bottom:0">令和8年度（2026）・全7科目　│　最終更新 <b id="updated"></b>　│　試験まで <b id="countdown"></b></div>
+    </div>
+    <div class="next" id="next"></div>
+  </div>
+
+  <h2 style="margin:2px 0 6px">🗂 記録済みログ＆助言</h2>
+  <div class="panel" style="padding:10px 14px"><div class="timeline" id="timeline"></div></div>
+
+  <div class="sec-head">
+    <h2>論点別 優先タスク（科目ミックス）</h2>
+    <div class="head-btns">
+      <button class="js-pickdir">📁 保存先フォルダ</button>
+      <button class="primary js-save">💾 保存</button>
+    </div>
+  </div>
+  <div class="legend">
+    <span><i class="band b-P1"></i>P1 最優先</span>
+    <span><i class="band b-P2"></i>P2 高</span>
+    <span><i class="band b-P3"></i>P3 中</span>
+    <span><i class="band b-P4"></i>P4 守り(深追い禁止)</span>
+    <span><i class="band b-OK"></i>仕上済</span>
+    <span><i class="band b-IN"></i>インプット先行</span>
+  </div>
+  <div class="tasks-scroll">
+    <table id="tasks"><thead><tr>
+      <th>#</th><th>論点</th><th>科目</th><th>確認○△×</th><th>理由</th><th>状態</th><th style="min-width:170px">📝 メモ（直接記入）</th>
+    </tr></thead><tbody></tbody></table>
+  </div>
+  <div class="hint" style="margin-top:8px">各行のメモ・状態はブラウザに自動保存。<b>「保存」</b>でファイル書き出し → チャットで「更新」と言えば私が読んで進捗反映＋助言します（コピペ不要）。</div>
+
+  <h2>📝 全体メモ・質問</h2>
+  <div class="panel">
+    <textarea id="memo" placeholder="行に紐づかない全体メモ・質問を記入。&#10;例）今週は法務に集中したい／経済のノートどこから？"></textarea>
+    <div class="btns">
+      <button id="clearBtn">全体メモをクリア</button>
+    </div>
+    <div class="hint">行メモ・全体メモとも、上の <b>「💾 メモをファイルに保存」</b> でファイルに書き出されます。</div>
+  </div>
+
+  <h2>📈 全体サマリ</h2>
+  <div class="summary" id="summary"></div>
+
+  <h2>科目別 進捗（優先順）</h2>
+  <div class="cards" id="cards"></div>
+
+  <div class="table-bar" style="margin-top:18px">
+    <span class="hint">記入が終わったら忘れず保存 → チャットで「更新」。</span>
+    <button class="js-pickdir">📁 保存先フォルダを選ぶ</button>
+    <button class="primary js-save">💾 メモをファイルに保存</button>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<!-- ============================================================== -->
+<!-- ★★★ データ部：更新はここだけ書き換える（表示は自動再描画）★★★ -->
+<!-- ============================================================== -->
+<script>
+const DATA = {
+  updated: "2026-06-10",
+  examDate: "2026-08-01",   // 令和8年度1次 1日目（8/1・2の2日間）
+  passLine: 420,
+
+  subjects: [
+    { rank:1, code:"103", name:"企業経営理論", role:"◎得点源・最重量", target:75, depth:"S＋A＋B上位",
+      progress:40, maru:45,
+      s:"Sティア9論点 一巡完了（全🔁）", a:"A・B 未着手",
+      review:"苦手復習 01〜04", note:"○率も低く伸びしろ最大" },
+    { rank:2, code:"106", name:"経営情報システム", role:"◎得点源・コスパ最強", target:70, depth:"S＋A全体",
+      progress:55, maru:63,
+      s:"S①〜⑤＋⑦⑧ 実施（⑥クラウドskip）", a:"A 未着手＋IPA過去問これから",
+      review:"苦手復習 01・02", note:"①②(DB/NW基礎)が最弱・直前で伸びる" },
+    { rank:3, code:"105", name:"経営法務", role:"○得点源", target:65, depth:"S＋A全体",
+      progress:45, maru:82,
+      s:"S④機関設計のみ実施。②商標・⑥b民法 作成済（未受験）", a:"①特許/③不競法/⑤組織再編/⑥a相続 飛ばし中・A未着手",
+      review:"苦手復習 01・01b・02・03", note:"○率は高いが母数1論点。飛ばしSの穴が最大リスク" },
+    { rank:4, code:"104", name:"運営管理", role:"○堅実", target:70, depth:"S＋A全体",
+      progress:50, maru:53,
+      s:"Sティア9論点 完走（全🔁）", a:"A 未着手（陳列/販売統計/ライン編成/PERT）",
+      review:"苦手復習 01・02", note:"②在庫・⑨SLPが最弱／④物流・⑥コードは未学習" },
+    { rank:5, code:"107", name:"中小企業経営・政策", role:"⚠難化・守り", target:60, depth:"S＋A前半（深追い禁止）",
+      progress:50, maru:46,
+      s:"S①③④⑤ 一巡（②振興法skip）", a:"A前半のみでOK",
+      review:"苦手復習 01", note:"今年最難化予想。足切り回避が至上命題" },
+    { rank:6, code:"102", name:"財務・会計", role:"△守り・最完成", target:60, depth:"S＋A前半",
+      progress:60, maru:58,
+      s:"S①〜⑧ 完走（⑦デリバティブskip）", a:"A前半のみでOK",
+      review:"苦手復習 01b・02・03・04", note:"S完成度は最高／⑤企業価値評価が最弱" },
+    { rank:"別", code:"101", name:"経済学・経済政策", role:"△守り・別トラック", target:55, depth:"Sを固める",
+      progress:15, maru:null, alt:true,
+      s:"確認システム未設定・ノート作成中", a:"—",
+      review:"なし", note:"S土台ゼロ・7科目で最遅。並行でS立ち上げ" }
+  ],
+
+  tasks: [
+    {r:1, band:"P1", topic:"①特許（飛ばしS）", subj:"法務", res:"未実施", reason:"得点源の穴・取的法改正で今年必出"},
+    {r:2, band:"P1", topic:"③不正競争防止法（飛ばしS）", subj:"法務", res:"未実施", reason:"得点源の穴・混同惹起頻出"},
+    {r:3, band:"P1", topic:"①トランザクション", subj:"情報", res:"○9 △17 ×2", reason:"○率最低・△17・得点源"},
+    {r:4, band:"P1", topic:"②TCP/IP", subj:"情報", res:"○10 △17 ×1", reason:"△17・DB/NW基礎・得点源"},
+    {r:5, band:"P1", topic:"構造設計", subj:"企業経営", res:"○3 △11 ×0", reason:"△11＝伸びしろ最大"},
+    {r:6, band:"P1", topic:"RBV/VRIO", subj:"企業経営", res:"○2 △5 ×1", reason:"○2＝最弱・頻出"},
+    {r:7, band:"P1", topic:"ファイブフォース", subj:"企業経営", res:"○3 △5 ×0", reason:"確信不足・頻出"},
+    {r:8, band:"P2", topic:"企業経営 A→B上位（成長/競争/組織行動→ブランド/国際/PPM）", subj:"企業経営", res:"未着手", reason:"目標75は深掘り必須・最重量"},
+    {r:9, band:"P2", topic:"意思決定", subj:"企業経営", res:"○3 △4 ×1", reason:"△多・得点源"},
+    {r:10, band:"P2", topic:"労働基準法", subj:"企業経営", res:"○3 △4 ×1", reason:"数値要件未定着"},
+    {r:11, band:"P2", topic:"④脅威対策", subj:"情報", res:"○16 △9 ×3", reason:"×3・防御技術の役割"},
+    {r:12, band:"P2", topic:"情報 A＋IPA過去問（データ基盤/IoT/OS/Web）", subj:"情報", res:"未着手", reason:"直前詰め込みでコスパ大"},
+    {r:13, band:"P2", topic:"⑤組織再編（飛ばしS）", subj:"法務", res:"未実施", reason:"得点源・会社法の柱"},
+    {r:14, band:"P2", topic:"②商標／⑥b民法（受験して確認）", subj:"法務", res:"作成済・未受験", reason:"定着をテストで確認"},
+    {r:15, band:"P3", topic:"②在庫管理", subj:"運営", res:"○5 △8 ×2", reason:"公式群が最弱"},
+    {r:16, band:"P3", topic:"⑨レイアウトSLP", subj:"運営", res:"○5 △7 ×2", reason:"手順・用語ほぼ未定着"},
+    {r:17, band:"P3", topic:"運営 A（陳列/販売統計/ライン編成/PERT）", subj:"運営", res:"未着手", reason:"目標70はA必要"},
+    {r:18, band:"P3", topic:"⑧生産合理化", subj:"運営", res:"○7 △6 ×1", reason:"平準化の逆理解"},
+    {r:19, band:"P3", topic:"アンゾフ多角化", subj:"企業経営", res:"○4 △4 ×0", reason:"型・方向があいまい"},
+    {r:20, band:"P3", topic:"⑥a相続（飛ばしS）", subj:"法務", res:"未実施", reason:"読んで覚え先行"},
+    {r:21, band:"P4", topic:"⑤企業価値評価", subj:"財務", res:"○4 △9 ×2", reason:"守り・A前半まで（深追い禁止）"},
+    {r:22, band:"P4", topic:"⑧CVP", subj:"財務", res:"○7 △5 ×3", reason:"守り・×3だけ潰す"},
+    {r:23, band:"P4", topic:"④金融支援", subj:"中小", res:"○8 △19 ×1", reason:"守り・頻出数値だけ"},
+    {r:24, band:"P4", topic:"⑤支援機関", subj:"中小", res:"○9 △19 ×0", reason:"守り・頻出だけ"},
+    {r:25, band:"P4", topic:"③統計", subj:"中小", res:"○12 △15 ×1", reason:"守り・白書頻出数値だけ"},
+    {r:26, band:"OK", topic:"③機械学習/⑤暗号/⑦統計/⑧SQL", subj:"情報", res:"○率高", reason:"仕上がり済・直前確認のみ"},
+    {r:27, band:"OK", topic:"②投資評価/④経営分析", subj:"財務", res:"○率高", reason:"維持のみ"},
+    {r:28, band:"OK", topic:"③計数管理", subj:"運営", res:"○13 △1 ×1", reason:"ほぼ✅・維持"},
+    {r:29, band:"IN", topic:"④物流・⑥商品コード", subj:"運営", res:"未学習", reason:"インプット先行・別トラック"},
+    {r:30, band:"IN", topic:"⑥クラウド／⑦デリバティブ", subj:"情報/財務", res:"未学習", reason:"インプット先行・別トラック"}
+  ],
+
+  // --- 記録済みログ（私が会話の報告を受けて追記。新しい順）---
+  logs: [
+    { date:"2026-06-10", subj:"情報", body:"📖 <b>①トランザクション（最弱・P1）</b>学習開始。<b>苦手復習_106_01</b>の内容を修正しつつインプット。確認は前回<b>○9△17×2</b>。",
+      advice:"△17の山は <b>分離レベルの梯子／2相コミット(2PC)／ロック詳細(2PL・粒度・MVCC)／回復のbefore-after</b>と、×の<b>ファントムvs反復不能・WALの向き</b>。修正後に <b>📝テスト待ち</b>→再テスト→<b>「更新」</b>で○率がどれだけ上がるか測れます。" },
+    { date:"2026-06-10", subj:"法務", body:"📖 <b>③不正競争防止法</b>学習開始。<b>qz_22不競法</b>を修正しつつ、<b>混同惹起まで</b>。確認テストは<b>未実施</b>。",
+      advice:"③の山は <b>混同惹起／著名表示冒用／営業秘密(3要件=秘密管理性・有用性・非公知性)／形態模倣(デッドコピー・3年)</b>。①特許と読了したら <b>2論点まとめて📝テスト待ち</b>→確認システム→<b>「更新」</b>で両方の○率反映。" },
+    { date:"2026-06-10", subj:"法務", body:"📖 <b>①特許（最優先P1）</b>学習中。<b>qz_19特許法</b>を修正しつつインプット、<b>②登録要件まで到達</b>。確認テストは<b>未実施</b>。",
+      advice:"残りは<b>職務発明・実施権(専用/通常)・侵害・存続期間(出願日から20年)</b>が頻出の山。読了したら <b>📝テスト待ち</b>→確認システムで特許テスト→<b>「更新」</b>で○率反映。" },
+    { date:"2026-06-10", subj:"全体戦略", body:"動画(残り60日予想)を踏まえ<b>目標を再配分</b>。<b>中小80→60(守り)</b>／<b>企業経営60→75・情報60→70・法務50→65(得点源)</b>に入替。ダッシュボード作成。",
+      advice:"まず<b>法務の飛ばしS(特許・不競法)</b>と<b>情報①②</b>の最弱から着手を。経済は<b>Sゼロ</b>なので並行でノート→確認立ち上げ。" }
+  ]
+};
+</script>
+
+<!-- ============================================================== -->
+<!-- 表示部（基本さわらない）                                        -->
+<!-- ============================================================== -->
+<script>
+function barColor(p){ return p>=60?'var(--done)': p>=40?'var(--p2)':'var(--p1)'; }
+
+const STATES = ['⬜未着手','📖学習中','📝テスト待ち','🔁要再訪','✅済'];
+function stateSelect(r){
+  return `<select class="rowstate" data-r="${r}">`+
+    STATES.map(s=>`<option value="${s}">${s}</option>`).join('')+`</select>`;
+}
+function applyStateColor(sel){
+  const m={'⬜未着手':'#ffffff','📖学習中':'#eff6ff','📝テスト待ち':'#fef9c3','🔁要再訪':'#ffedd5','✅済':'#dcfce7'};
+  sel.style.background = m[sel.value]||'#fff';
+}
+
+function render(){
+  document.getElementById('updated').textContent = DATA.updated;
+
+  const ex = new Date(DATA.examDate), now = new Date();
+  const days = Math.ceil((ex - now)/86400000);
+  document.getElementById('countdown').textContent = (days>=0? `あと ${days} 日` : '試験日経過') + `（${DATA.examDate}・02 の2日間）`;
+
+  const main = DATA.subjects.filter(s=>!s.alt);
+  const targetSum = DATA.subjects.reduce((a,s)=>a+s.target,0);
+  const avgProg = Math.round(main.reduce((a,s)=>a+s.progress,0)/main.length);
+  const sd = [
+    {label:"目標合計", val:`${targetSum}<small> / 合格 ${DATA.passLine}・余裕+${targetSum-DATA.passLine}</small>`},
+    {label:"主要6科目 平均進捗", val:`${avgProg}<small>%</small>`},
+    {label:"得点源(深掘り)", val:`3<small>科目（経営・情報・法務）</small>`},
+    {label:"要注意の穴", val:`<small>法務・飛ばしS／経済・S未着手</small>`}
+  ];
+  document.getElementById('summary').innerHTML = sd.map(s=>
+    `<div class="stat"><div class="label">${s.label}</div><div class="val">${s.val}</div></div>`).join('');
+
+  // 次の一手（P1上位3つ）
+  const p1 = DATA.tasks.filter(t=>t.band==='P1').slice(0,3);
+  document.getElementById('next').innerHTML =
+    `<b>▶ 次の一手（最優先）</b><ol>`+ p1.map(t=>`<li>${t.subj}：${t.topic}　<span style="color:var(--sub)">— ${t.reason}</span></li>`).join('') +`</ol>`;
+
+  document.getElementById('cards').innerHTML = DATA.subjects.map(s=>{
+    const cls = s.alt?'alt': (typeof s.rank==='number' && s.rank<=3?('r'+s.rank):'');
+    const maru = s.maru==null?'—':(s.maru+'%');
+    return `<div class="subj ${cls}">
+      <div class="top">
+        <div><span class="nm">${s.code} ${s.name}</span><span class="role">${s.role}</span></div>
+        <span class="pri">優先 ${s.rank}</span>
+      </div>
+      <div class="goal">
+        <span>目標 <b>${s.target}</b>点</span>
+        <span>到達 <b>${s.depth}</b></span>
+        <span>確認○率 <b>${maru}</b></span>
+      </div>
+      <div class="bar"><i style="width:${s.progress}%;background:${barColor(s.progress)}"></i><span class="pct">${s.progress}%</span></div>
+      <div class="detail"><b>S：</b>${s.s}<br><b>A以降：</b>${s.a}<br><b>復習：</b>${s.review}<br>💡 ${s.note}</div>
+    </div>`;
+  }).join('');
+
+  document.querySelector('#tasks tbody').innerHTML = DATA.tasks.map(t=>
+    `<tr>
+      <td class="rank"><i class="band b-${t.band}"></i>${t.r}</td>
+      <td>${t.topic}</td>
+      <td><span class="tag">${t.subj}</span></td>
+      <td class="res">${t.res}</td>
+      <td style="color:var(--sub)">${t.reason}</td>
+      <td>${stateSelect(t.r)}</td>
+      <td><textarea class="rowmemo" data-r="${t.r}" placeholder="メモ"></textarea></td>
+    </tr>`).join('');
+  document.querySelectorAll('#tasks textarea.rowmemo').forEach(t=>{ t.value = localStorage.getItem('dash_tm_'+t.dataset.r)||''; });
+  document.querySelectorAll('#tasks select.rowstate').forEach(s=>{ s.value = localStorage.getItem('dash_st_'+s.dataset.r)||STATES[0]; applyStateColor(s); });
+
+  // 日付でまとめ → 各日付内で科目でまとめ
+  const byDate={};
+  DATA.logs.forEach(l=>{ (byDate[l.date]=byDate[l.date]||[]).push(l); });
+  const dates=Object.keys(byDate).sort().reverse();
+  document.getElementById('timeline').innerHTML = dates.length ? dates.map(d=>{
+    const bySubj={};
+    byDate[d].forEach(l=>{ const s=l.subj||'その他'; (bySubj[s]=bySubj[s]||[]).push(l); });
+    const subs=Object.keys(bySubj).map(s=>{
+      const es=bySubj[s].map(l=>`<div class="b">${l.body}</div>`+(l.advice?`<div class="a">${l.advice}</div>`:'')).join('');
+      return `<div class="log-subj"><span class="subj-tag">${s}</span>${es}</div>`;
+    }).join('');
+    return `<div class="log-date"><div class="d">${d}</div>${subs}</div>`;
+  }).join('') : '<div style="color:var(--sub);font-size:.85rem">まだ記録がありません。</div>';
+
+  document.getElementById('foot').innerHTML =
+    `データはClaude Codeが確認テスト結果・進捗に応じて随時更新します（このHTMLの「データ部」を書き換え）。`+
+    `元データ：<code>確認システム/進捗.md</code>／メモリ <code>project_1ji_target_depth_r8</code>`;
+}
+render();
+
+// 行メモ・状態（localStorage 自動保存・委譲）
+function tmKey(r){ return 'dash_tm_'+r; }
+function stKey(r){ return 'dash_st_'+r; }
+const _tb = document.querySelector('#tasks tbody');
+_tb.addEventListener('input', e=>{
+  const t=e.target; if(t.classList.contains('rowmemo')) localStorage.setItem(tmKey(t.dataset.r), t.value);
+});
+_tb.addEventListener('change', e=>{
+  const t=e.target; if(t.classList.contains('rowstate')){ localStorage.setItem(stKey(t.dataset.r), t.value); applyStateColor(t); }
+});
+
+// 全体メモ（localStorage 自動保存）
+const memo = document.getElementById('memo');
+const KEY = 'shindanshi_dashboard_memo';
+memo.value = localStorage.getItem(KEY) || '';
+memo.addEventListener('input', ()=> localStorage.setItem(KEY, memo.value));
+document.getElementById('clearBtn').onclick = ()=>{ if(confirm('全体メモをクリアしますか？')){ memo.value=''; localStorage.removeItem(KEY);} };
+
+// 💾 メモをファイルに保存（Claudeが読む dashboard_memos.json）
+// 初回に保存フォルダ（=まとめ）を選ぶと、以降はダイアログ無しでそこへ書き込む。
+function flashSave(msg){ document.querySelectorAll('.js-save').forEach(b=>{ const o=b.dataset.o||b.textContent; b.dataset.o=o; b.textContent=msg; setTimeout(()=>b.textContent=o,2000); }); }
+
+// 選んだフォルダのハンドルをIndexedDBに永続化
+function idbOpen(){ return new Promise((res,rej)=>{ const o=indexedDB.open('dash_fs',1);
+  o.onupgradeneeded=()=>o.result.createObjectStore('kv'); o.onsuccess=()=>res(o.result); o.onerror=()=>rej(o.error); }); }
+async function idbSet(k,v){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction('kv','readwrite');
+  tx.objectStore('kv').put(v,k); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+async function idbGet(k){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction('kv','readonly');
+  const rq=tx.objectStore('kv').get(k); rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error); }); }
+
+async function ensurePerm(h){
+  const opt={mode:'readwrite'};
+  if((await h.queryPermission(opt))==='granted') return true;
+  if((await h.requestPermission(opt))==='granted') return true;
+  return false;
+}
+async function getSaveDir(forcePick){
+  if(!forcePick && window._dir) return window._dir;
+  if(!forcePick){
+    const saved=await idbGet('dir');
+    if(saved && await ensurePerm(saved)){ window._dir=saved; return saved; }
+  }
+  // フォルダ選択（まとめ を選んでもらう）。startInでデスクトップ起点に
+  const h=await window.showDirectoryPicker({id:'matome', mode:'readwrite', startIn:'desktop'});
+  await idbSet('dir',h); window._dir=h; return h;
+}
+// 学習日：深夜4時までは前日扱い（study-day はAM4:00ロールオーバー）
+function studyDate(){
+  const d=new Date();
+  if(d.getHours()<4) d.setDate(d.getDate()-1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function buildJSON(){
+  const rows=[];
+  DATA.tasks.forEach(t=>{ const v=(localStorage.getItem(tmKey(t.r))||'').trim();
+    const st=localStorage.getItem(stKey(t.r))||STATES[0];
+    if(v || st!==STATES[0]) rows.push({ '#':t.r, 論点:t.topic, 科目:t.subj, 状態:st, 確認:t.res, メモ:v }); });
+  return JSON.stringify({ savedAt:new Date().toISOString(), 学習日:studyDate(), 全体メモ:(memo.value||'').trim(), 行メモ:rows }, null, 2);
+}
+async function doSave(forcePick){
+  const json=buildJSON();
+  if(window.showDirectoryPicker){
+    try{
+      const dir=await getSaveDir(forcePick);
+      const fh=await dir.getFileHandle('dashboard_memos.json',{create:true});
+      const w=await fh.createWritable(); await w.write(json); await w.close();
+      flashSave(`✓ ${dir.name}/ に保存`); return;
+    }catch(err){ if(err.name==='AbortError') return; }
+  }
+  // 非対応ブラウザ（Safari等）はダウンロード
+  const blob=new Blob([json],{type:'application/json'}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='dashboard_memos.json'; a.click(); URL.revokeObjectURL(a.href);
+  flashSave('✓ 書き出しました（DL）');
+}
+document.querySelectorAll('.js-save').forEach(b=> b.onclick=()=>doSave(false));
+document.querySelectorAll('.js-pickdir').forEach(b=> b.onclick=()=>doSave(true));
+</script>
+</body>
+</html>
