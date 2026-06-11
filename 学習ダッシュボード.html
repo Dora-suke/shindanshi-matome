@@ -71,6 +71,9 @@
   textarea.rowmemo:focus{outline:2px solid var(--accent);background:#fff;}
   select.rowstate{font-size:.78rem;border:1px solid var(--line);border-radius:6px;padding:5px 6px;
     font-family:inherit;color:var(--txt);cursor:pointer;min-width:108px;}
+  input.rowdone{width:20px;height:20px;cursor:pointer;accent-color:var(--accent);}
+  td.done-cell{text-align:center;vertical-align:middle;}
+  tr.done-row{background:#f0fdf4;}
   .table-bar{display:flex;justify-content:flex-end;gap:8px;margin:10px 0;align-items:center;flex-wrap:wrap;}
   .table-bar .hint{margin:0;margin-right:auto;}
 
@@ -135,10 +138,10 @@
   </div>
   <div class="tasks-scroll">
     <table id="tasks"><thead><tr>
-      <th>#</th><th>論点</th><th>科目</th><th>確認○△×</th><th>理由</th><th>状態</th><th style="min-width:170px">📝 メモ（直接記入）</th>
+      <th>#</th><th>論点</th><th>科目</th><th>確認○△×</th><th>理由</th><th>状態</th><th style="min-width:170px">📝 メモ（直接記入）</th><th>✓本日<br>実施</th>
     </tr></thead><tbody></tbody></table>
   </div>
-  <div class="hint" style="margin-top:8px">各行のメモ・状態はブラウザに自動保存。<b>「保存」</b>でファイル書き出し → チャットで「更新」と言えば私が読んで進捗反映＋助言します（コピペ不要）。</div>
+  <div class="hint" style="margin-top:8px"><b>今日やった行は「✓本日実施」にチェック</b> → <b>「保存」</b>で<u>チェックした行だけ</u>が当日の記録として書き出されます。チャットで「更新」と言えば私が読んで進捗反映＋助言（コピペ不要）。チェックはリロードで毎回クリア（保存直前に付けて保存）。</div>
 
   <h2>📝 全体メモ・質問</h2>
   <div class="panel">
@@ -310,7 +313,7 @@ function render(){
   }).join('');
 
   document.querySelector('#tasks tbody').innerHTML = DATA.tasks.map(t=>
-    `<tr>
+    `<tr data-r="${t.r}">
       <td class="rank"><i class="band b-${t.band}"></i>${t.r}</td>
       <td>${t.topic}</td>
       <td><span class="tag">${t.subj}</span></td>
@@ -318,9 +321,11 @@ function render(){
       <td style="color:var(--sub)">${t.reason}</td>
       <td>${stateSelect(t.r)}</td>
       <td><textarea class="rowmemo" data-r="${t.r}" placeholder="メモ"></textarea></td>
+      <td class="done-cell"><input type="checkbox" class="rowdone" data-r="${t.r}"></td>
     </tr>`).join('');
   document.querySelectorAll('#tasks textarea.rowmemo').forEach(t=>{ t.value = localStorage.getItem('dash_tm_'+t.dataset.r)||''; });
   document.querySelectorAll('#tasks select.rowstate').forEach(s=>{ s.value = localStorage.getItem('dash_st_'+s.dataset.r)||STATES[0]; applyStateColor(s); });
+  // ✓本日実施はリロードで毎回クリア（保存時のその場の状態だけを使う）
 
   // 日付でまとめ → 各日付内で科目でまとめ
   const byDate={};
@@ -350,7 +355,9 @@ _tb.addEventListener('input', e=>{
   const t=e.target; if(t.classList.contains('rowmemo')) localStorage.setItem(tmKey(t.dataset.r), t.value);
 });
 _tb.addEventListener('change', e=>{
-  const t=e.target; if(t.classList.contains('rowstate')){ localStorage.setItem(stKey(t.dataset.r), t.value); applyStateColor(t); }
+  const t=e.target;
+  if(t.classList.contains('rowstate')){ localStorage.setItem(stKey(t.dataset.r), t.value); applyStateColor(t); }
+  if(t.classList.contains('rowdone')){ t.closest('tr').classList.toggle('done-row', t.checked); }
 });
 
 // 全体メモ（localStorage 自動保存）
@@ -395,11 +402,16 @@ function studyDate(){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 function buildJSON(){
+  const sd=studyDate();
   const rows=[];
-  DATA.tasks.forEach(t=>{ const v=(localStorage.getItem(tmKey(t.r))||'').trim();
+  DATA.tasks.forEach(t=>{
+    const cb=document.querySelector('#tasks input.rowdone[data-r="'+t.r+'"]');  // その場のチェック状態のみ
+    if(!cb || !cb.checked) return;
+    const v=(localStorage.getItem(tmKey(t.r))||'').trim();
     const st=localStorage.getItem(stKey(t.r))||STATES[0];
-    if(v || st!==STATES[0]) rows.push({ '#':t.r, 論点:t.topic, 科目:t.subj, 状態:st, 確認:t.res, メモ:v }); });
-  return JSON.stringify({ savedAt:new Date().toISOString(), 学習日:studyDate(), 全体メモ:(memo.value||'').trim(), 行メモ:rows }, null, 2);
+    rows.push({ '#':t.r, 論点:t.topic, 科目:t.subj, 状態:st, 確認:t.res, メモ:v });
+  });
+  return JSON.stringify({ savedAt:new Date().toISOString(), 学習日:sd, 本日実施件数:rows.length, 全体メモ:(memo.value||'').trim(), 本日の記録:rows }, null, 2);
 }
 async function doSave(forcePick){
   const json=buildJSON();
