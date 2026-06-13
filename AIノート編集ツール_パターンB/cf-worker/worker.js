@@ -24,6 +24,11 @@ const MODELS = {
 const DEFAULT_MODEL = "gemini-2.0-flash";
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
+// 保存先リポジトリ（固定。クライアントには触らせない＝書込先の悪用防止）
+const GH_OWNER = "Dora-suke";
+const GH_REPO = "shindanshi-matome";
+const GH_BRANCH = "main";
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "content-type",
@@ -35,6 +40,34 @@ function json(obj, status = 200) {
     status,
     headers: { "content-type": "application/json; charset=utf-8", ...CORS },
   });
+}
+
+// UTF-8文字列 → base64（GitHub APIはbase64で受け取る）
+function b64utf8(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+
+// GitHubへcommitして保存（トークンはWorker側だけが持つ）
+async function ghSave(env, path, content) {
+  if (!env.GITHUB_TOKEN) throw new Error("Worker側に GITHUB_TOKEN が未設定です");
+  if (!path) throw new Error("保存パスが空です");
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path.split("/").map(encodeURIComponent).join("/")}`;
+  const head = {
+    "Authorization": "token " + env.GITHUB_TOKEN,
+    "Accept": "application/vnd.github+json",
+    "User-Agent": "aiep-worker",   // GitHub APIはUser-Agent必須
+  };
+  let sha = null;
+  const cur = await fetch(url + "?ref=" + GH_BRANCH, { headers: head });
+  if (cur.ok) sha = (await cur.json()).sha;
+  const put = await fetch(url, {
+    method: "PUT", headers: head,
+    body: JSON.stringify({ message: "aiep: edit " + path, content: b64utf8(content), sha, branch: GH_BRANCH }),
+  });
+  if (!put.ok) throw new Error("GitHub保存失敗: " + (await put.text()));
 }
 
 export default {
@@ -50,6 +83,13 @@ export default {
     // 合言葉チェック（タダ乗り防止）
     if (!env.AIEP_SECRET || req.secret !== env.AIEP_SECRET)
       return json({ ok: false, error: "合言葉が違います（設定を確認してください）" }, 401);
+
+    // 保存（commit）。GitHubトークンはWorkerのみが保持＝ブラウザに置かない
+    if (req.action === "save") {
+      try { await ghSave(env, req.path, req.content); return json({ ok: true, msg: "GitHubにcommitしました" }); }
+      catch (e) { return json({ ok: false, error: String(e.message || e) }, 502); }
+    }
+
     if (!env.GEMINI_API_KEY)
       return json({ ok: false, error: "Worker側に GEMINI_API_KEY が未設定です" }, 500);
 

@@ -8,12 +8,12 @@
  *   ● ローカル（file:// もしくは 127.0.0.1:8780 = server.py）
  *       AI呼び＝server.py /api/fragment ／ 保存＝server.py /api/save（実ファイルに書込）
  *   ● クラウド（github.io 等）
- *       AI呼び＝Cloudflare Worker（合言葉付き）／ 保存＝GitHubにcommit（PAT）
+ *       AI呼び＝Cloudflare Worker（合言葉付き）／ 保存＝Worker経由でGitHubにcommit（トークンはWorker側）
  *
  * クラウド利用に必要な設定（パネルの⚙️から入力・localStorage保存）：
  *   - Worker URL（https://xxxx.workers.dev）
  *   - 合言葉（Workerの AIEP_SECRET と一致させる）
- *   - GitHub PAT（Contents:write もしくは repo スコープ）
+ *   （GitHubトークンはWorkerのシークレット GITHUB_TOKEN に保管。ブラウザには置かない）
  * ========================================================================== */
 (function () {
   if (window.__aiepLoaded) return; window.__aiepLoaded = true;
@@ -86,7 +86,6 @@
       <div class="setbox" id="aiep-set" style="display:none">
         <label>Worker URL</label><input id="aiep-cfg-worker" placeholder="https://xxxx.workers.dev">
         <label>合言葉（AIEP_SECRET）</label><input id="aiep-cfg-secret" type="password" placeholder="合言葉">
-        <label>GitHub PAT（保存用・Contents:write）</label><input id="aiep-cfg-pat" type="password" placeholder="github_pat_...">
         <button class="b-edit" id="aiep-cfg-save" style="margin-top:4px">設定を保存</button>
       </div>
       <div class="hint">① 直したい文を<b>ドラッグ選択</b> → ② 指示 → ③「選択をAIで直す」→ ④「💾保存」</div>
@@ -161,21 +160,17 @@
     const j = await (await fetch(w, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ html: before, instruction: inst, model, history, secret: s }) })).json();
     if (!j.ok) throw new Error(j.error); return j;
   }
-  function b64utf8(str) { return btoa(unescape(encodeURIComponent(str))); }
   async function ioSave(out) {
     if (LOCAL) {
       const j = await (await fetch(LOCAL_SERVER + "/api/save", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ path: FILE_PATH, html: out }) })).json();
       if (!j.ok) throw new Error(j.error); return "💾 ローカルに保存しました（.bak作成）";
     }
-    const pat = getLS(K.pat); if (!pat) throw new Error("⚙️でGitHub PATを設定してください");
+    // 保存はWorker経由でcommit（GitHubトークンはWorker側だけが持つ＝ブラウザに置かない）
+    const w = getLS(K.worker), s = getLS(K.secret);
+    if (!w || !s) throw new Error("⚙️でWorker URLと合言葉を設定してください");
     const g = ghInfo();
-    const api = `https://api.github.com/repos/${g.owner}/${g.repo}/contents/${g.path.split("/").map(encodeURIComponent).join("/")}`;
-    const head = { "Authorization": "token " + pat, "Accept": "application/vnd.github+json" };
-    let sha = null;
-    const cur = await fetch(api + "?ref=" + g.branch, { headers: head });
-    if (cur.ok) sha = (await cur.json()).sha;
-    const put = await fetch(api, { method: "PUT", headers: head, body: JSON.stringify({ message: "aiep: edit " + g.path, content: b64utf8(out), sha, branch: g.branch }) });
-    if (!put.ok) throw new Error("GitHub保存失敗: " + (await put.text()));
+    const j = await (await fetch(w, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "save", path: g.path, content: out, secret: s }) })).json();
+    if (!j.ok) throw new Error(j.error);
     return "💾 GitHubにcommitしました（Pagesに反映されるまで数十秒）";
   }
 
@@ -201,7 +196,7 @@
     } catch (e) {
       dot("off");
       if (LOCAL) $("aiep-info").innerHTML = "接続：<b style='color:#dc2626'>未接続 ⚠️</b><br>ターミナルで server.py を起動してください。";
-      else { $("aiep-info").innerHTML = "接続：<b style='color:#dc2626'>未設定 ⚠️</b><br>⚙️ で Worker URL・合言葉・PAT を設定してください。"; $("aiep-set").style.display = "flex"; }
+      else { $("aiep-info").innerHTML = "接続：<b style='color:#dc2626'>未設定 ⚠️</b><br>⚙️ で Worker URL・合言葉 を設定してください。"; $("aiep-set").style.display = "flex"; }
     }
   }
 
@@ -223,8 +218,8 @@
   $("aiep-rl").onclick = () => location.reload();
   $("aiep-gear").onclick = () => { const s = $("aiep-set"); s.style.display = s.style.display === "none" ? "flex" : "none"; };
   $("aiep-clr").onclick = () => { history = []; try { localStorage.removeItem(HKEY); } catch (e) {} updHist(); log("sys", "🧠 文脈をクリアしました"); };
-  $("aiep-cfg-save").onclick = () => { setLS(K.worker, $("aiep-cfg-worker").value.trim()); setLS(K.secret, $("aiep-cfg-secret").value.trim()); setLS(K.pat, $("aiep-cfg-pat").value.trim()); log("sys", "⚙️ 設定を保存しました"); loadModels(); loadSrc(); };
-  $("aiep-cfg-worker").value = getLS(K.worker); $("aiep-cfg-secret").value = getLS(K.secret); $("aiep-cfg-pat").value = getLS(K.pat);
+  $("aiep-cfg-save").onclick = () => { setLS(K.worker, $("aiep-cfg-worker").value.trim()); setLS(K.secret, $("aiep-cfg-secret").value.trim()); log("sys", "⚙️ 設定を保存しました"); loadModels(); loadSrc(); };
+  $("aiep-cfg-worker").value = getLS(K.worker); $("aiep-cfg-secret").value = getLS(K.secret);
 
   $("aiep-widen").onclick = () => {
     if (!targetEl) { log("sys", "⚠️ 先に本文の一部を選択してください"); return; }
