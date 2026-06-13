@@ -124,20 +124,28 @@
   function setHi(el) { clearHi(); hiEl = el; el.dataset._ao = el.style.outline || ""; el.style.outline = "2px solid #4f46e5"; }
   function replaceEl(el, html) { const t = document.createElement("div"); t.innerHTML = html; const n = t.firstElementChild || document.createTextNode(html); el.replaceWith(n); return n; }
 
-  // ---------- 正本DOM側の対応要素特定（最寄りid起点＋タグ＋テキスト一致） ----------
+  // ---------- 正本DOM側の対応要素特定（最寄りid起点＋テキスト一致／数のズレに寛容） ----------
+  // qz-memo等が実行時にDOMへ要素を差し込むため、ライブと正本で要素数がズレる。
+  // 「同タグ＋同テキストで一意」を最優先に採用し、位置合わせは数が一致する時だけ使う。
+  let lastDiag = "";
   function findSrcEl(live) {
+    lastDiag = "";
     if (live.id && srcDoc.getElementById(live.id)) return srcDoc.getElementById(live.id);
     const anchor = live.closest("[id]");
-    let srcAnchor, scopeLive;
-    if (anchor && anchor.id && srcDoc.getElementById(anchor.id)) { srcAnchor = srcDoc.getElementById(anchor.id); scopeLive = anchor; }
-    else { srcAnchor = srcDoc.body; scopeLive = document.body; }
-    if (!srcAnchor) return null;
+    const hasAnchor = anchor && anchor.id && srcDoc.getElementById(anchor.id);
+    const srcAnchor = hasAnchor ? srcDoc.getElementById(anchor.id) : srcDoc.body;
+    const scopeLive = hasAnchor ? anchor : document.body;
     const tag = live.tagName, key = norm(live.textContent);
-    const lc = [...scopeLive.querySelectorAll(tag)].filter(e => norm(e.textContent) === key);
+    if (!key) { lastDiag = "選択が空"; return null; }
     const sc = [...srcAnchor.querySelectorAll(tag)].filter(e => norm(e.textContent) === key);
+    if (sc.length === 1) return sc[0];                       // ① 一意→安全に確定
+    const lc = [...scopeLive.querySelectorAll(tag)].filter(e => norm(e.textContent) === key);
     const i = lc.indexOf(live);
-    if (i < 0 || sc.length !== lc.length || !sc[i]) return null;
-    return sc[i];
+    if (sc.length === lc.length && i >= 0 && sc[i]) return sc[i];   // ② 数一致なら位置合わせ
+    const any = [...srcAnchor.querySelectorAll("*")].filter(e => norm(e.textContent) === key);
+    if (any.length === 1) return any[0];                     // ③ タグ不問で一意なら採用
+    lastDiag = `anchor=${hasAnchor ? "#" + anchor.id : "body"}, src一致=${sc.length}, live一致=${lc.length}`;
+    return null;
   }
 
   // ---------- IO（環境で切替） ----------
@@ -233,7 +241,7 @@
     if (!targetEl) { log("sys", "⚠️ 先にノート本文で直したい箇所を選択してください"); return; }
     const inst = $("aiep-inp").value.trim(); if (!inst) { log("sys", "⚠️ 指示を入力してください"); return; }
     const srcEl = findSrcEl(targetEl);
-    if (!srcEl) { log("sys", "⚠️ 正本側の対応箇所を特定できませんでした。もう少し狭く選び直してください"); return; }
+    if (!srcEl) { log("sys", "⚠️ 正本側の対応箇所を特定できませんでした（" + (lastDiag || "") + "）。もう少し狭く選び直してください"); return; }
     const before = srcEl.outerHTML;
     log("me", "<" + targetEl.tagName.toLowerCase() + "> (" + before.length.toLocaleString() + "字)\n→ " + inst);
     $("aiep-edit").disabled = true;
