@@ -25,12 +25,10 @@ BASE_DIR  = os.path.abspath(os.path.dirname(__file__))            # このフォ
 SAFE_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))         # まとめ/ 配下のみ書込許可（安全弁）
 # 画面のプルダウンから選べるモデル（許可リスト）。 値 = 出力トークン上限
 MODELS = {
-    "gemini-2.0-flash-lite": 8192,
-    "gemini-2.0-flash":      8192,
     "gemini-2.5-flash":      32768,
     "gemini-2.5-pro":        32768,
 }
-DEFAULT_MODEL = "gemini-2.0-flash"   # 未指定/不正な指定のときに使う
+DEFAULT_MODEL = "gemini-2.5-flash"   # 未指定/不正な指定のときに使う（2.0系はlimit:0で除外）
 API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 # --------------------------------------------------------------------
 

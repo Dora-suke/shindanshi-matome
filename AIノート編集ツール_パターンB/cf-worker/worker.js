@@ -15,13 +15,13 @@
  *   4. 発行された https://xxxx.workers.dev を aiep.js / パネル設定に登録
  */
 
+// 無料枠で実際に使えるモデルのみ許可（2.0系は limit:0 で弾かれるため除外）。
+// パネルが古い既定(2.0)を送ってきても、許可外は DEFAULT_MODEL に倒れて確実に動く。
 const MODELS = {
-  "gemini-2.0-flash-lite": 8192,
-  "gemini-2.0-flash":      8192,
   "gemini-2.5-flash":      32768,
   "gemini-2.5-pro":        32768,
 };
-const DEFAULT_MODEL = "gemini-2.0-flash";
+const DEFAULT_MODEL = "gemini-2.5-flash";
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
 // 保存先リポジトリ（固定。クライアントには触らせない＝書込先の悪用防止）
