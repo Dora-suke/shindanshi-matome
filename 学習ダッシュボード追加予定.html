@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習ダッシュボード 追加予定</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#fff; --ink:#1f2933; --sub:#5a6675;
+    --line:#e3e8ef; --accent:#2563eb; --accent2:#1e40af;
+    --ok:#16a34a; --warn:#ea580c; --okbg:#eafaf0; --warnbg:#fff3e9;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.6;}
+  header.title{padding:20px 18px 12px;}
+  header.title h1{margin:0;font-size:1.35rem;}
+  header.title p{margin:4px 0 0;color:var(--sub);font-size:.85rem;}
+
+  /* スティッキータブ */
+  nav.tabs{position:sticky;top:0;z-index:20;background:var(--card);
+           border-bottom:2px solid var(--line);box-shadow:0 2px 6px rgba(0,0,0,.05);
+           display:flex;gap:4px;overflow-x:auto;padding:8px 10px;}
+  nav.tabs button{flex:0 0 auto;border:1px solid var(--line);background:#f8fafc;
+           color:var(--sub);padding:8px 14px;border-radius:999px;font-size:.85rem;
+           cursor:pointer;white-space:nowrap;transition:.15s;}
+  nav.tabs button:hover{background:#eef2f7;}
+  nav.tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent2);font-weight:700;}
+
+  main{padding:16px 14px 60px;max-width:1100px;margin:0 auto;}
+  .panel{display:none;}
+  .panel.active{display:block;animation:fade .2s;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  h2.sec{font-size:1.1rem;margin:6px 0 14px;padding-bottom:6px;border-bottom:2px solid var(--accent);}
+  .lead{color:var(--sub);font-size:.88rem;margin:-6px 0 16px;}
+
+  table{width:100%;border-collapse:collapse;background:var(--card);
+        border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);font-size:.83rem;}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;}
+  th{background:var(--accent2);color:#fff;font-weight:600;white-space:nowrap;}
+  tr:last-child td{border-bottom:none;}
+  td.c{text-align:center;white-space:nowrap;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.74rem;font-weight:700;}
+  .b-ok{background:var(--okbg);color:var(--ok);}
+  .b-new{background:var(--warnbg);color:var(--warn);}
+  tr.todo{background:#fffaf4;}
+  code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:.78rem;}
+  .kw{color:var(--sub);font-size:.8rem;}
+  .kw b{color:var(--ink);}
+
+  .empty{padding:40px 16px;text-align:center;color:var(--sub);
+         background:var(--card);border:1px dashed var(--line);border-radius:10px;}
+
+  /* 詳細（問題作成ネタ帳） */
+  details.dtl{margin-top:8px;border-top:1px dashed var(--line);padding-top:6px;}
+  details.dtl summary{cursor:pointer;color:var(--accent);font-weight:700;font-size:.82rem;
+                      list-style:none;display:inline-block;padding:3px 0;}
+  details.dtl summary::-webkit-details-marker{display:none;}
+  details.dtl summary::before{content:"▶ ";font-size:.7rem;}
+  details.dtl[open] summary::before{content:"▼ ";}
+  details.dtl[open]{background:#fbfdff;border:1px solid var(--line);border-radius:8px;
+                    padding:6px 10px 10px;margin-top:8px;}
+  details.dtl h4{margin:12px 0 6px;font-size:.85rem;color:var(--accent2);
+                 border-left:3px solid var(--accent);padding-left:7px;}
+  table.inner{font-size:.78rem;box-shadow:none;border:1px solid var(--line);}
+  table.inner th{background:#5a6c8a;}
+  table.inner td{padding:6px 8px;}
+  ul.pts{margin:4px 0 4px;padding-left:18px;font-size:.8rem;color:var(--ink);}
+  ul.pts li{margin:3px 0;}
+  p.x{margin:6px 0 2px;font-size:.78rem;color:var(--warn);background:var(--warnbg);
+      padding:5px 8px;border-radius:6px;}
+  button.cpy{margin-left:10px;border:1px solid var(--line);background:#fff;color:var(--accent);
+             font-size:.74rem;padding:2px 9px;border-radius:6px;cursor:pointer;font-weight:600;}
+  button.cpy:hover{background:#eef2f7;}
+  button.cpy.done{background:var(--okbg);color:var(--ok);border-color:var(--ok);}
+</style>
+</head>
+<body>
+
+<header class="title">
+  <h1>📌 学習ダッシュボード ― 追加予定（カテゴリ × ノート対応）</h1>
+  <p>各科目のカテゴリと既存ノートの対応／未作成ノート／学習観点・キーワードの一覧。今回は<strong>企業経営理論</strong>のみ記載。</p>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-t="all" class="active">🏠 全体</button>
+  <button data-t="s101">経済学・経済政策</button>
+  <button data-t="s102">財務・会計</button>
+  <button data-t="s103">企業経営理論</button>
+  <button data-t="s104">運営管理</button>
+  <button data-t="s105">経営法務</button>
+  <button data-t="s106">経営情報システム</button>
+  <button data-t="s107">中小企業経営・政策</button>
+</nav>
+
+<main>
+  <!-- 全体 -->
+  <section class="panel active" id="all">
+    <h2 class="sec">🏠 全体サマリー</h2>
+    <p class="lead">科目ごとの記載状況。今回は企業経営理論のみ着手。各科目タブで詳細を確認。</p>
+    <table>
+      <thead><tr><th>科目</th><th class="c">記載状況</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td>経済学・経済政策</td><td class="c">―</td><td class="kw">未着手</td></tr>
+        <tr><td>財務・会計</td><td class="c">―</td><td class="kw">未着手</td></tr>
+        <tr><td><strong>企業経営理論</strong></td><td class="c"><span class="badge b-ok">記載済</span></td>
+            <td class="kw">A・B上位 9カテゴリ／既存ノート対応・<b>要作成2件</b>（経営計画・BSC／ベンチャー）</td></tr>
+        <tr><td>運営管理</td><td class="c">―</td><td class="kw">未着手</td></tr>
+        <tr><td>経営法務</td><td class="c">―</td><td class="kw">未着手</td></tr>
+        <tr><td>経営情報システム</td><td class="c">―</td><td class="kw">未着手</td></tr>
+        <tr><td>中小企業経営・政策</td><td class="c">―</td><td class="kw">未着手</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 101 -->
+  <section class="panel" id="s101"><h2 class="sec">経済学・経済政策</h2><div class="empty">今回は未記載。</div></section>
+  <!-- 102 -->
+  <section class="panel" id="s102"><h2 class="sec">財務・会計</h2><div class="empty">今回は未記載。</div></section>
+
+  <!-- 103 企業経営理論 -->
+  <section class="panel" id="s103">
+    <h2 class="sec">企業経営理論 ― 追加予定カテゴリ（目標75：A全体＋B上位3）</h2>
+    <p class="lead">qz番号の小さい順。未作成ノートは下にまとめて表示。状態 ✅=既存ファイルあり／🆕=要作成。</p>
+    <table>
+      <thead>
+        <tr>
+          <th>qz</th><th>#</th><th>カテゴリ</th><th class="c">状態</th>
+          <th>該当ファイル</th><th>学習で必要な観点・キーワード</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="c">qz_01</td><td class="c">28</td><td>セグメンテーション</td>
+          <td class="c"><span class="badge b-ok">あり</span></td>
+          <td><code>qz_01.市場細分化とターゲットマーケティング</code></td>
+          <td class="kw"><b>STP</b>の流れ／細分化基準（地理・人口統計・心理・行動）／<b>4R</b>／ターゲティング型（無差別・差別化・集中）／ポジショニング・知覚マップ
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+
+              <h4>① 細分化基準（4分類）― 分類当てが頻出</h4>
+              <table class="inner">
+                <thead><tr><th>基準</th><th>具体変数</th><th>ひっかけポイント</th></tr></thead>
+                <tbody>
+                  <tr><td>地理的</td><td>地域・気候・都市規模・人口密度</td><td>最も基礎的。単独では弱い</td></tr>
+                  <tr><td>人口統計的<br>（デモグラ）</td><td>年齢・性別・所得・職業・家族構成</td><td><b>ライフステージ（家族周期）はここ</b>。心理的と混同させる</td></tr>
+                  <tr><td>心理的<br>（サイコグラ）</td><td>ライフスタイル・価値観・パーソナリティ</td><td><b>VALS</b>／「価値観＝心理的」が論点</td></tr>
+                  <tr><td>行動的</td><td>使用率・使用機会・ベネフィット・ロイヤルティ</td><td><b>ベネフィット・セグメンテーションはここ</b>。デモグラと誤らせる</td></tr>
+                </tbody>
+              </table>
+              <p class="x">✕典型ひっかけ：「ライフスタイルは人口統計的変数」「使用頻度は心理的変数」＝帰属先のすり替え</p>
+
+              <h4>② 細分化が有効な条件（4R）― 語の取り違え</h4>
+              <ul class="pts">
+                <li><b>Rank</b>（優先順位）＝自社にとっての重要度</li>
+                <li><b>Realistic</b>（規模の有効性）＝利益が出る十分な大きさ</li>
+                <li><b>Reach</b>（到達可能性）＝チャネル・広告で届くか</li>
+                <li><b>Response</b>（測定・反応の差異）＝施策に異なる反応を示すか</li>
+                <li>別系統で<b>「測定可能性・接近可能性・維持可能性・実行可能性」</b>版あり → 両方の語彙で答えられるように</li>
+              </ul>
+
+              <h4>③ ターゲティングの3類型 ― 戦略との対応</h4>
+              <table class="inner">
+                <thead><tr><th>類型</th><th>内容</th><th>結びつく概念</th></tr></thead>
+                <tbody>
+                  <tr><td>無差別型（マス）</td><td>全市場に同一MIX</td><td>コスト最小・大量生産</td></tr>
+                  <tr><td>差別化型</td><td>複数セグメントに個別MIX</td><td>売上↑だがコスト↑</td></tr>
+                  <tr><td>集中型（ニッチ）</td><td>単一セグメントに集中</td><td><b>中小企業向き・経営資源限定時</b></td></tr>
+                </tbody>
+              </table>
+              <p class="x">論点：「経営資源が限られる中小企業に適するのは？」→ <b>集中型</b>（差別化型と誤らせる）</p>
+
+              <h4>④ ポジショニング ― 周辺概念との接続</h4>
+              <ul class="pts">
+                <li><b>知覚マップ（ポジショニングマップ）</b>：2軸で競合との相対位置</li>
+                <li>差別化の軸：製品・サービス・チャネル・イメージ</li>
+                <li>ひっかけ：ポジショニングは<b>STPの最終段階</b>（細分化→標的→位置づけ）。順序入れ替え出題</li>
+              </ul>
+
+              <h4>⑤ 発展・例外論点</h4>
+              <ul class="pts">
+                <li><b>逆セグメンテーション</b>（カウンターセグメンテーション）：細分化しすぎを統合し直す</li>
+                <li><b>マイクロマーケティング／One-to-One</b>：個客単位までの細分化</li>
+                <li><b>マス・カスタマイゼーション</b>：標準化と個別化の両立</li>
+              </ul>
+            </details>
+          </td>
+        </tr>
+        <tr>
+          <td class="c">qz_03</td><td class="c">25</td><td>購買意思決定・消費者行動</td>
+          <td class="c"><span class="badge b-ok">あり</span></td>
+          <td><code>qz_03.消費者購買行動と生産財マーケティング</code></td>
+          <td class="kw">購買意思決定<b>5段階</b>／<b>関与水準</b>×情報処理／準拠集団・オピニオンリーダー／生産財＝<b>組織購買</b>（バイイングセンター・新規/修正/単純再購買）
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+              <h4>① 購買意思決定プロセス5段階 ― 順序と各段階の現象</h4>
+              <ul class="pts">
+                <li>問題認識 → 情報探索 → 代替案評価 → 購買決定 → <b>購買後行動</b></li>
+                <li><b>認知的不協和（購買後の後悔）</b>は最終段階。「評価段階で起きる」と誤らせる</li>
+                <li>情報源：内部探索（記憶）／外部探索（人的・商業・公共・経験）</li>
+              </ul>
+              <h4>② 関与とアサエルの購買行動類型</h4>
+              <table class="inner">
+                <thead><tr><th></th><th>ブランド差・大</th><th>ブランド差・小</th></tr></thead>
+                <tbody>
+                  <tr><td>高関与</td><td>複雑な購買行動</td><td>不協和低減型</td></tr>
+                  <tr><td>低関与</td><td>バラエティ・シーキング</td><td>習慣的購買行動</td></tr>
+                </tbody>
+              </table>
+              <p class="x">高関与＝精緻化（中心ルート）／低関与＝周辺ルート（ELM）。関与の高低と類型の取り違えが頻出</p>
+              <h4>③ 購買に影響する要因（4層）</h4>
+              <ul class="pts">
+                <li>文化的／社会的（<b>準拠集団・オピニオンリーダー・家族・役割</b>）／個人的／心理的</li>
+                <li>準拠集団の影響：所属集団・願望集団・拒否集団</li>
+              </ul>
+              <h4>④ 生産財マーケティング（組織購買）</h4>
+              <ul class="pts">
+                <li><b>バイイングセンター</b>：使用者・影響者・決定者・承認者・購買者・窓口（ゲートキーパー）</li>
+                <li>購買状況：<b>新規購買 / 修正再購買 / 単純再購買</b>（関与・情報量が逆順）</li>
+                <li><b>派生需要</b>（最終需要から派生）・少数大口・専門的購買・長期的関係</li>
+              </ul>
+              <p class="x">消費財との対比（多数小口 ⇔ 少数大口／本源需要 ⇔ 派生需要）が定番論点</p>
+            </details>
+          </td>
+        </tr>
+        <tr>
+          <td class="c">qz_11</td><td class="c">27</td><td>ブランド戦略</td>
+          <td class="c"><span class="badge b-ok">あり</span></td>
+          <td><code>qz_11.ブランド</code>＋<code>qz_11b</code>・<code>qz_11c</code></td>
+          <td class="kw"><b>ブランド・エクイティ</b>（アーカー：知名・知覚品質・連想・ロイヤルティ）／ブランド体系（個別/統一/分割）／<b>ライン拡張・カテゴリー拡張</b>／NB対PB
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+              <h4>① ブランド・エクイティ（アーカー）の構成要素</h4>
+              <ul class="pts">
+                <li><b>ブランド認知</b>（再認・再生）／<b>知覚品質</b>／<b>ブランド連想</b>／<b>ブランド・ロイヤルティ</b>（＋他の所有資産＝特許・商標）</li>
+                <li>ロイヤルティの分類：行動的ロイヤルティ ⇔ 態度的ロイヤルティ</li>
+              </ul>
+              <h4>② ブランド体系（採用戦略）― 取り違え頻出</h4>
+              <table class="inner">
+                <thead><tr><th>戦略</th><th>内容</th><th>例</th></tr></thead>
+                <tbody>
+                  <tr><td>個別ブランド</td><td>製品ごとに別名</td><td>共食い回避・コスト大</td></tr>
+                  <tr><td>統一（ファミリー）</td><td>全製品に企業名等を統一</td><td>波及効果・リスク連鎖</td></tr>
+                  <tr><td>ブランドプラス</td><td>企業名＋個別名</td><td>両者の折衷</td></tr>
+                </tbody>
+              </table>
+              <h4>③ ブランド拡張 ― 最重要ひっかけ</h4>
+              <ul class="pts">
+                <li><b>ライン拡張</b>＝<u>同一カテゴリー</u>内で展開（味・サイズ違い）</li>
+                <li><b>カテゴリー拡張（ブランド拡張）</b>＝<u>異なるカテゴリー</u>へ展開</li>
+                <li>リスク：<b>ブランド希釈</b>・カニバリゼーション（共食い）</li>
+              </ul>
+              <p class="x">「ライン拡張＝別カテゴリーへ展開」は✕。同一/別カテゴリーの入れ替えが定番</p>
+              <h4>④ NB / PB・その他</h4>
+              <ul class="pts">
+                <li><b>NB</b>（ナショナル）⇔ <b>PB</b>（プライベート＝流通業者ブランド、低価格・高粗利）</li>
+                <li>ブランド要素：ネーム・ロゴ・シンボル・スローガン・キャラクター</li>
+                <li>ケラーの<b>CBBE（顧客ベース）</b>：認知→意味→反応→関係（レゾナンス）</li>
+              </ul>
+            </details>
+          </td>
+        </tr>
+        <tr>
+          <td class="c">qz_13</td><td class="c">21</td><td>R&amp;D・製品開発</td>
+          <td class="c"><span class="badge b-ok">あり</span></td>
+          <td><code>qz_13.イノベーション・技術経営</code>＋<code>qz_04.製品戦略とプロダクトミックス</code></td>
+          <td class="kw"><b>イノベのジレンマ</b>／プロダクト/プロセス・<b>ドミナントデザイン</b>／<b>死の谷・ダーウィンの海</b>／オープン/クローズド・標準化／製品開発プロセス・デカップリングポイント
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+              <h4>① イノベーションの分類軸</h4>
+              <ul class="pts">
+                <li><b>プロダクト ⇔ プロセス</b>／漸進的（インクリメンタル）⇔ 急進的（ラディカル）</li>
+                <li><b>持続的 ⇔ 破壊的</b>（クリステンセン）／アーキテクチャル・モジュラー</li>
+              </ul>
+              <h4>② 主要理論・現象</h4>
+              <table class="inner">
+                <thead><tr><th>概念</th><th>内容</th></tr></thead>
+                <tbody>
+                  <tr><td>イノベーションのジレンマ</td><td>優良企業が破壊的技術に対応できず敗れる</td></tr>
+                  <tr><td>ドミナントデザイン</td><td>業界標準仕様の確立→競争がプロセスへ移行（脱成熟）</td></tr>
+                  <tr><td>生産性のジレンマ</td><td>プロセス効率化が進むとプロダクト革新が停滞</td></tr>
+                  <tr><td>Sカーブ</td><td>技術は成熟で限界→次の技術へ不連続にジャンプ</td></tr>
+                </tbody>
+              </table>
+              <h4>③ 事業化の「3つの障壁」― 順序が論点</h4>
+              <ul class="pts">
+                <li><b>魔の川</b>（研究→開発）→ <b>死の谷</b>（開発→事業化／資金不足）→ <b>ダーウィンの海</b>（事業化→市場で生き残り）</li>
+              </ul>
+              <p class="x">3障壁の順序・意味の入れ替えが頻出。死の谷＝資金、ダーウィンの海＝市場競争</p>
+              <h4>④ 技術経営（MOT）</h4>
+              <ul class="pts">
+                <li><b>オープン ⇔ クローズドイノベーション</b>（チェスブロウ）</li>
+                <li>標準化：<b>デファクト</b>（事実上）／<b>デジュリ</b>（公的）／フォーラム標準</li>
+                <li>ネットワーク外部性・先発優位／<b>キャズム</b>（普及の溝）</li>
+              </ul>
+              <h4>⑤ 製品開発・プロダクトミックス（qz_04）</h4>
+              <ul class="pts">
+                <li>ステージゲート法／<b>デカップリングポイント</b>（受注と生産の分岐点）</li>
+                <li>プロダクトミックス：<b>幅・深さ・長さ・整合性</b></li>
+              </ul>
+            </details>
+          </td>
+        </tr>
+        <tr>
+          <td class="c">qz_16</td><td class="c">24</td><td>人事制度・評価・賃金</td>
+          <td class="c"><span class="badge b-ok">あり</span></td>
+          <td><code>qz_16.組織と人材</code>＋<code>qz_14.労働関連法規_補強</code></td>
+          <td class="kw"><b>MBO（目標管理）</b>／<b>360度評価・ハロー効果</b>等の評価誤差／職務/職能/役割給／コンピテンシー／<b>動機づけ理論</b>（マズロー・ハーズバーグ・期待理論）との接続
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+              <h4>① 人事評価制度</h4>
+              <ul class="pts">
+                <li><b>MBO（目標管理）</b>：本人参加で目標設定→自己統制／<b>コンピテンシー</b>評価（高業績者の行動特性）</li>
+                <li><b>360度（多面）評価</b>：上司・同僚・部下・本人が評価</li>
+                <li>評価要素：能力・情意（態度）・業績</li>
+              </ul>
+              <h4>② 評価エラー（誤差）― 用語当てが頻出</h4>
+              <table class="inner">
+                <thead><tr><th>誤差</th><th>内容</th></tr></thead>
+                <tbody>
+                  <tr><td>ハロー効果</td><td>一つの優れた点で全体を高評価</td></tr>
+                  <tr><td>寛大化／厳格化</td><td>全体的に甘く／辛くなる</td></tr>
+                  <tr><td>中心化傾向</td><td>無難に中央へ集める</td></tr>
+                  <tr><td>論理誤差</td><td>関連ありそうな項目を同一視</td></tr>
+                  <tr><td>対比誤差</td><td>評価者自身と比べてしまう</td></tr>
+                </tbody>
+              </table>
+              <h4>③ 賃金制度 ― 基準の取り違え</h4>
+              <ul class="pts">
+                <li><b>職能給</b>＝<u>人（職務遂行能力）</u>基準／<b>職務給</b>＝<u>仕事（職務価値）</u>基準／<b>役割給</b>＝役割の大きさ</li>
+                <li>年功序列 ⇔ 成果主義／トータルリワード（金銭＋非金銭）</li>
+              </ul>
+              <p class="x">「職務給＝能力に応じた賃金」は✕（それは職能給）。人基準/仕事基準の入れ替え定番</p>
+              <h4>④ 動機づけ理論との接続</h4>
+              <ul class="pts">
+                <li>マズロー欲求5段階／<b>ハーズバーグ</b>（衛生要因＝不満防止／動機づけ要因＝満足）</li>
+                <li>ブルーム<b>期待理論</b>（期待×手段性×誘意性）／アルダファERG</li>
+                <li>マクレガーX理論・Y理論／内発的動機・アンダーマイニング効果</li>
+              </ul>
+              <h4>⑤ 能力開発</h4>
+              <ul class="pts"><li><b>OJT / Off-JT / 自己啓発</b>／CDP（キャリア開発）／ジョブローテーション</li></ul>
+            </details>
+          </td>
+        </tr>
+        <tr>
+          <td class="c">qz_20</td><td class="c">23</td><td>CSR・ステークホルダー</td>
+          <td class="c"><span class="badge b-ok">あり</span></td>
+          <td><code>qz_20.M&amp;A・国際経営・CSR_ESG</code></td>
+          <td class="kw"><b>CSR</b>（経済/法/倫理/社会貢献）／<b>ステークホルダー</b>理論／<b>ESG・SDGs・CSV</b>（ポーター）／コーポレートガバナンス・コンプライアンス
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+              <h4>① CSRピラミッド（キャロル）― 4階層の順序</h4>
+              <ul class="pts">
+                <li>下から <b>経済的責任 → 法的責任 → 倫理的責任 → 社会貢献的（フィランソロピー）責任</b></li>
+                <li>「社会貢献が土台」は✕。土台は<b>経済的責任</b></li>
+              </ul>
+              <h4>② CSR ⇔ CSV ― 最重要ひっかけ</h4>
+              <table class="inner">
+                <thead><tr><th></th><th>CSR</th><th>CSV（ポーター）</th></tr></thead>
+                <tbody>
+                  <tr><td>位置づけ</td><td>本業とは別の社会貢献も含む</td><td><b>本業で</b>社会価値と経済価値を同時創出</td></tr>
+                  <tr><td>コスト観</td><td>コスト・義務になりがち</td><td>競争優位の源泉</td></tr>
+                </tbody>
+              </table>
+              <p class="x">「CSV＝慈善活動」は✕。CSV＝本業を通じた価値共創</p>
+              <h4>③ ステークホルダーとガバナンス</h4>
+              <ul class="pts">
+                <li><b>ステークホルダー理論</b>（株主だけでなく従業員・顧客・地域等）⇔ 株主第一主義</li>
+                <li>コーポレートガバナンス：社外取締役・監査役（会）・指名/報酬委員会</li>
+                <li><b>コンプライアンス・内部統制</b>（COSO）／ディスクロージャー</li>
+              </ul>
+              <h4>④ ESG・SDGs・関連概念</h4>
+              <ul class="pts">
+                <li><b>ESG</b>（環境・社会・ガバナンス）投資／<b>SDGs</b>（17目標）</li>
+                <li>メセナ（文化）・フィランソロピー（慈善）／トリプルボトムライン（経済・社会・環境）</li>
+              </ul>
+            </details>
+          </td>
+        </tr>
+        <tr>
+          <td class="c">qz_20</td><td class="c">26</td><td>国際経営</td>
+          <td class="c"><span class="badge b-ok">あり</span></td>
+          <td><code>qz_20.M&amp;A・国際経営・CSR_ESG</code></td>
+          <td class="kw"><b>I-Rフレーム</b>（グローバル/マルチナショナル/インターナショナル/トランスナショナル）／参入モード（輸出・ライセンス・合弁・直接投資）／<b>OLI理論</b>／EPRG（本国/現地志向）
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+              <h4>① I-Rフレーム（バートレット&amp;ゴシャール）― 2軸×4類型</h4>
+              <table class="inner">
+                <thead><tr><th></th><th>現地適応・低</th><th>現地適応・高</th></tr></thead>
+                <tbody>
+                  <tr><td>統合・低</td><td>インターナショナル</td><td>マルチナショナル（現地適応重視）</td></tr>
+                  <tr><td>統合・高</td><td>グローバル（世界標準・効率）</td><td><b>トランスナショナル</b>（統合と適応の両立）</td></tr>
+                </tbody>
+              </table>
+              <p class="x">トランスナショナル＝統合"も"適応"も"高。マルチナショナルとの取り違え定番</p>
+              <h4>② 海外参入モード ― コミットメント順</h4>
+              <ul class="pts">
+                <li>輸出 → <b>ライセンス／フランチャイズ</b> → <b>合弁（JV）</b> → 完全子会社（M&amp;A／グリーンフィールド）</li>
+                <li>右にいくほど<b>コントロール↑・リスク/コミットメント↑</b></li>
+              </ul>
+              <h4>③ OLI理論（ダニング）＝対外直接投資の説明</h4>
+              <ul class="pts">
+                <li><b>O</b>＝所有優位／<b>L</b>＝立地優位／<b>I</b>＝内部化優位。3つ揃うとFDIを選択</li>
+              </ul>
+              <h4>④ EPRG（パールミュッター）＝経営者の志向</h4>
+              <ul class="pts">
+                <li><b>E</b>本国志向 / <b>P</b>現地志向 / <b>R</b>地域志向 / <b>G</b>世界志向</li>
+              </ul>
+            </details>
+          </td>
+        </tr>
+        <tr class="todo">
+          <td class="c">―</td><td class="c">20</td><td>経営計画・BSC</td>
+          <td class="c"><span class="badge b-new">要作成</span></td>
+          <td class="kw">専用ノートなし（BSC等ヒット0）</td>
+          <td class="kw"><b>BSC4視点</b>（財務・顧客・内部業務・学習と成長）／<b>戦略マップ・KPI/KGI</b>／経営計画体系（長期/中期/短期）／PDCA・<b>MBO連動</b>／方針管理
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+              <h4>① BSC（バランスト・スコアカード）4視点 ― 因果連鎖の順序</h4>
+              <table class="inner">
+                <thead><tr><th>視点</th><th>問い</th><th>因果上の位置</th></tr></thead>
+                <tbody>
+                  <tr><td>学習と成長</td><td>変化・改善する能力は？</td><td><b>起点（最下層）</b></td></tr>
+                  <tr><td>内部業務プロセス</td><td>何に秀でるべきか？</td><td>↑</td></tr>
+                  <tr><td>顧客</td><td>顧客にどう見られるか？</td><td>↑</td></tr>
+                  <tr><td>財務</td><td>株主にどう見られるか？</td><td><b>結果（最上層）</b></td></tr>
+                </tbody>
+              </table>
+              <p class="x">因果は<b>学習と成長→…→財務</b>。「財務が起点」は✕。財務は遅行指標（結果）</p>
+              <h4>② 関連ツール</h4>
+              <ul class="pts">
+                <li><b>戦略マップ</b>：4視点を因果でつなぐ／<b>KGI（目標）・CSF（成功要因）・KPI（指標）</b></li>
+                <li>財務指標（遅行）と非財務指標（先行）のバランスが主眼</li>
+              </ul>
+              <h4>③ 経営計画体系・マネジメントサイクル</h4>
+              <ul class="pts">
+                <li>経営理念 → ビジョン → 経営戦略 → 長期/中期/短期計画</li>
+                <li><b>PDCA・方針管理・MBO</b>との連動／予算管理との接続</li>
+              </ul>
+            </details>
+          </td>
+        </tr>
+        <tr class="todo">
+          <td class="c">―</td><td class="c">22</td><td>ベンチャー・中小企業戦略</td>
+          <td class="c"><span class="badge b-new">要作成</span></td>
+          <td class="kw">専用ノートなし（他ノートに断片のみ）</td>
+          <td class="kw"><b>アントレプレナーシップ</b>／資金調達（<b>VC・エンジェル・IPO/M&amp;A出口</b>）／<b>死の谷・ダーウィンの海</b>／ニッチ戦略・先発/後発優位／産学連携・MBO/MBI
+            <details class="dtl"><summary>📖 問題作成ネタ帳（論点・ひっかけ）<button class="cpy" onclick="copyNeta(event,this)">📋 コピー</button></summary>
+              <h4>① 資金調達ステージ ― 出資主体の順序</h4>
+              <ul class="pts">
+                <li>自己資金 → <b>エンジェル（個人投資家）</b> → <b>VC（ベンチャーキャピタル）</b> → 上場前後</li>
+                <li>出口（<b>Exit</b>）：<b>IPO（株式公開）</b> または <b>M&amp;A（売却）</b></li>
+                <li>デットファイナンス（借入）⇔ エクイティファイナンス（出資）の区別</li>
+              </ul>
+              <h4>② 成長の障壁（R&amp;Dと共通）</h4>
+              <ul class="pts">
+                <li><b>魔の川 → 死の谷 → ダーウィンの海</b>（死の谷＝事業化前の資金不足）</li>
+              </ul>
+              <h4>③ ベンチャー/中小の競争戦略</h4>
+              <table class="inner">
+                <thead><tr><th>論点</th><th>内容</th></tr></thead>
+                <tbody>
+                  <tr><td>ニッチ戦略</td><td>限られた経営資源を単一セグメントへ集中</td></tr>
+                  <tr><td>先発優位</td><td>経験効果・スイッチングコスト・標準確立</td></tr>
+                  <tr><td>後発優位</td><td>研究開発費の節約・市場の不確実性低減</td></tr>
+                </tbody>
+              </table>
+              <h4>④ 関連手法・概念</h4>
+              <ul class="pts">
+                <li><b>MBO</b>（経営陣による買収）／<b>MBI</b>（外部経営陣による買収）／スピンオフ・スピンアウト</li>
+                <li>産学連携・インキュベーション／リーンスタートアップ・ピボット</li>
+              </ul>
+              <p class="x">人事の MBO（目標管理）と買収の MBO（Management Buyout）の同名異義に注意</p>
+            </details>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 104〜107 -->
+  <section class="panel" id="s104"><h2 class="sec">運営管理</h2><div class="empty">今回は未記載。</div></section>
+  <section class="panel" id="s105"><h2 class="sec">経営法務</h2><div class="empty">今回は未記載。</div></section>
+  <section class="panel" id="s106"><h2 class="sec">経営情報システム</h2><div class="empty">今回は未記載。</div></section>
+  <section class="panel" id="s107"><h2 class="sec">中小企業経営・政策</h2><div class="empty">今回は未記載。</div></section>
+</main>
+
+<script>
+  const tabs = document.getElementById('tabs');
+  tabs.addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.t).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  // ネタ帳のテキストをコピー
+  function copyNeta(ev, btn){
+    ev.preventDefault(); ev.stopPropagation();
+    const det = btn.closest('details');
+    const clone = det.cloneNode(true);
+    clone.querySelector('summary')?.remove();
+    // 表は「セル | セル」形式に整形
+    clone.querySelectorAll('tr').forEach(tr=>{
+      const cells=[...tr.children].map(c=>c.innerText.trim().replace(/\n+/g,' ')).join(' | ');
+      tr.replaceWith(document.createTextNode(cells+'\n'));
+    });
+    let txt = (clone.innerText||'').replace(/\n{3,}/g,'\n\n').trim();
+    const head = det.closest('tr')?.querySelector('td:nth-child(3)')?.innerText.trim() || '';
+    txt = '【'+head+'】問題作成ネタ帳\n\n'+txt;
+    navigator.clipboard.writeText(txt).then(()=>{
+      const o=btn.textContent; btn.textContent='✅ コピー済'; btn.classList.add('done');
+      setTimeout(()=>{btn.textContent=o; btn.classList.remove('done');},1500);
+    }).catch(()=>{ btn.textContent='⚠ 失敗'; });
+  }
+</script>
+</body>
+</html>

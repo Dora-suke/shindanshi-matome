@@ -446,31 +446,9 @@ details.ls-scheduler .ls-sched-body{padding:1rem 1.2rem}
       '</div>';
     document.body.appendChild(panel);
 
-    /* 1b. management header above tab-nav (sticky together) */
-    const tabNav=document.querySelector('.tab-nav');
-    if(tabNav){
-      const wasSticky=tabNav.classList.contains('tab-nav-sticky');
-      const wrap=document.createElement('div');
-      wrap.className='ls-sticky-wrap'+(wasSticky?' ls-is-sticky':'');
-      const mgmt=document.createElement('div');
-      mgmt.className='ls-mgmt-header';
-      mgmt.innerHTML=
-        '<div class="ls-mgmt-info">'+
-          '<span class="ls-mgmt-label">📅 今日</span>'+
-          '<div class="ls-mgmt-chips" id="lsMgmtChips"><span style="font-size:.72rem;color:#94a3b8;font-style:italic">読み込み中…</span></div>'+
-        '</div>'+
-        '<div class="ls-mgmt-actions">'+
-          '<button onclick="lsClipCopy_()" title="評定データをクリップボードにコピー（モバイル↔PC同期用）">📋 コピー</button>'+
-          '<button onclick="lsClipPaste_()" title="クリップボードから取込（モバイル↔PC同期用）">📋 貼付け</button>'+
-          '<button onclick="lsExport_()" title="このノートのデータをJSON出力">📥 出力</button>'+
-          '<button onclick="document.getElementById(\'lsImportInput\').click()" title="JSONインポート">📤 取込</button>'+
-          '<button class="home" onclick="window.open(\'../index.html\',\'_blank\')" title="まとめindexを別タブで開く">🏠 index</button>'+
-        '</div>';
-      tabNav.parentNode.insertBefore(wrap,tabNav);
-      wrap.appendChild(mgmt);
-      wrap.appendChild(tabNav);
-      tabNav.classList.remove('tab-nav-sticky');
-    }
+    /* 1b. management header removed (unnecessary toolbar).
+       No wrapper is inserted — leave the page's original tab-nav (and its own
+       sticky styling) untouched, so dark-themed navs aren't covered by a white box. */
 
     /* 2. mask buttons in topic tabs */
     C.TOPICS.forEach(t=>{

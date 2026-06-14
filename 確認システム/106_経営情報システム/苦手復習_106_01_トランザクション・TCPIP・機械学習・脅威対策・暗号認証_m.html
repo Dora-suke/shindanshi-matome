@@ -128,7 +128,7 @@ td.l{text-align:left;}
       <div style="display:grid;gap:.6rem;">
 
         <div style="background:#fff;border:2px solid #94a3b8;border-radius:10px;padding:.6rem .8rem;">
-          <div style="font-weight:800;color:#334155;font-size:.92rem;">⓪ 基本：トランザクションとは（ACID）</div>
+          <div style="font-weight:800;color:#334155;font-size:.92rem;">⓪ 基本：トランザクションとは（ACID（Atomicity Consistency Isolation Durability・トランザクションの4原則））</div>
           <div style="font-size:.8rem;color:#475569;margin-top:.2rem;">「全部やるか・全部やめるか」のルール。確定＝<b>コミット</b>／取消＝<b>ロールバック</b>。性質の頭文字が<b>ACID</b>。</div>
         </div>
 
@@ -689,7 +689,7 @@ td.l{text-align:left;}
         <tr><td>チェックポイント</td><td class="l">バッファの更新をディスクへ反映＝復旧で見るログ範囲を狭める</td></tr>
         <tr><td>2相コミット(2PC)</td><td class="l">①全サイトに可否を問う→②全員可ならコミット。1つでも不可なら全アボート</td></tr>
       </table>
-      <div class="trap"><b>外したQ</b>：①<b>WALはログが先</b>。②<b>before→ロールバック／after→ロールフォワード</b>（逆に注意）。③2PCは<b>勝手にコミットできない</b>（全員の合意）。</div>
+      <div class="trap"><b>外したQ</b>：①<b>WAL（Write Ahead Logging・先行書き込みログ）はログが先</b>。②<b>before→ロールバック／after→ロールフォワード</b>（逆に注意）。③2PCは<b>勝手にコミットできない</b>（全員の合意）。</div>
 
       <!-- ▼▼ 小学生でもわかる補足 ▼▼ -->
       <div class="vz-supplement" style="background:#fffbeb;border-left-color:#f59e0b;">
@@ -762,7 +762,7 @@ td.l{text-align:left;}
 
             <div style="background:#f8fafc;border-radius:8px;padding:.5rem .55rem;margin-top:.4rem;">
               <div style="background:#dcfce7;border-radius:6px;padding:.4rem .5rem;margin-bottom:.35rem;">
-                <div style="font-size:.74rem;font-weight:800;color:#15803d;margin-bottom:.25rem;">✅ 正しい順番（WAL）</div>
+                <div style="font-size:.74rem;font-weight:800;color:#15803d;margin-bottom:.25rem;">✅ 正しい順番（WAL（Write Ahead Logging・先行書き込みログ））</div>
                 <div style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;font-size:.72rem;">
                   <span style="background:#fff;border:1px solid #22c55e;border-radius:5px;padding:.25rem .45rem;font-weight:700;">①📝 ログを書く<br><small>(下書き＝先)</small></span>
                   <span style="color:#16a34a;font-weight:800;">→</span>
@@ -862,49 +862,480 @@ td.l{text-align:left;}
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>通信は<b>「役割ごとの階段（層）」</b>に分かれています。世界共通の細かいモデルが<b>OSI 7階層</b>、実際のネットでよく使う簡略版が<b>TCP/IP 4階層</b>。下に行くほど“物理的な配線”に近く、上に行くほど“人が使うアプリ”に近づきます。<br><b>住所の種類で担当が変わる</b>のがポイント：<b>下＝MACアドレス（機器固有）で近所に配る／中＝IPアドレス（場所）で別の町へ送る／上＝ポート番号でアプリへ渡す</b>。</p>
+        <p>通信は<b>「役割ごとの階段（層）」</b>に分かれています。世界共通の細かいモデルが<b>OSI（Open Systems Interconnection・国際標準の通信7階層モデル） 7階層</b>、実際のネットでよく使う簡略版が<b>TCP/IP 4階層</b>。下に行くほど“物理的な配線”に近く、上に行くほど“人が使うアプリ”に近づきます。<br><b>住所の種類で担当が変わる</b>のがポイント：<b>下＝MAC（Media Access Control・機器固有の物理アドレス）アドレス（機器固有）で近所に配る／中＝IP（Internet Protocol・インターネットの住所の仕組み）アドレス（場所）で別の町へ送る／上＝ポート番号でアプリへ渡す</b>。</p>
       </div>
 
       <p style="font-size:.82rem;background:#fef9c3;border-left:4px solid #f59e0b;border-radius:0 6px 6px 0;padding:.5rem .7rem;margin:.4rem 0;">⭐ <b>のマーク＝今回おさえる3層</b>（物理・データリンク・ネットワーク層）。全体のどこに当たるかを下の表で確認してください。</p>
 
-      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:.5rem .55rem;margin:.4rem 0;">
-        <div style="font-weight:800;color:#c2410c;font-size:.8rem;margin-bottom:.4rem;">🚚 まず全体の旅：手紙は【どこから出て → どこを通って → どこへ着く】？（下の表の①〜⑦＝この旅の各ポイント）</div>
-        <div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:.3rem;font-size:.7rem;text-align:center;">
-          <div style="flex:1 1 150px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.4rem;">
-            <div style="font-weight:800;color:#b91c1c;">📤 スタート＝自分のPC</div>
-            <div style="color:#7f1d1d;margin-top:.2rem;line-height:1.5;">⑦で手紙を作り、④③②①と<b>封筒を重ねて</b>⚡ケーブルへ出す</div>
-          </div>
-          <div style="flex:0 0 auto;align-self:center;font-weight:800;color:#c2410c;font-size:1rem;">➡</div>
-          <div style="flex:1 1 175px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:.4rem;">
-            <div style="font-weight:800;color:#b45309;">🛻 経由地＝ケーブルの途中の中継機器</div>
-            <div style="color:#92400e;margin-top:.2rem;line-height:1.5;">📢ハブ① → 📮L2スイッチ② → 🚦ルータ③ …必要なだけ<b>くり返し</b><br><small>各機器は自分の層まで読んで次へ送る</small></div>
-          </div>
-          <div style="flex:0 0 auto;align-self:center;font-weight:800;color:#c2410c;font-size:1rem;">➡</div>
-          <div style="flex:1 1 150px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:.4rem;">
-            <div style="font-weight:800;color:#15803d;">📥 ゴール＝相手のPC</div>
-            <div style="color:#166534;margin-top:.2rem;line-height:1.5;">⚡受け取り、①②③④と<b>封筒をはがして</b>⑦で手紙を読む🎉</div>
-          </div>
+      <!-- ▼ 階段イメージ：手紙の旅を本物の階段シルエットで描く -->
+      <div style="background:#fff;border:2px solid #c7d2fe;border-radius:12px;padding:.6rem .5rem .7rem;margin:.4rem 0;">
+        <div style="font-weight:800;color:#4338ca;font-size:.82rem;margin-bottom:.15rem;">🪜 手紙の旅＝階段の上り下り</div>
+        <div style="font-size:.68rem;color:#6b7280;margin-bottom:.5rem;line-height:1.6;">
+          色のマスを<b>階段だと思って</b>左から目で追ってください。<br>
+          📤<b style="color:#7c3aed;">出発PC＝⑦から①へ7段降りる</b>（封筒を重ねる）→ 経由地は<b style="color:#f59e0b;">自分の層まで登って①に戻る小さな山</b>（ハブ平ら・スイッチ2段・ルータ3段）→ 📥<b style="color:#16a34a;">着信PC＝①から⑦へ7段登る</b>（封筒をはがす）。
+        </div>
+
+        <div style="overflow-x:auto;">
+        <table style="border-collapse:separate;border-spacing:2px;table-layout:fixed;min-width:640px;font-size:.6rem;text-align:center;">
+          <colgroup><col style="width:52px;"><col span="23" style="width:24px;"></colgroup>
+          <!-- 段7（上） → 段1（下）。色マス＝その地点でその段に到達 -->
+          <tr><th style="text-align:right;padding-right:4px;color:#4338ca;font-size:.6rem;">⑦応用</th>
+            <td style="background:#7c3aed;color:#fff;font-weight:800;border-radius:3px;">7</td><td></td><td></td><td></td><td></td><td></td><td></td>  <td></td>  <td></td><td></td><td></td>  <td></td><td></td><td></td><td></td><td></td>  <td></td><td></td><td></td><td></td><td></td><td></td><td style="background:#16a34a;color:#fff;font-weight:800;border-radius:3px;">7</td></tr>
+          <tr><th style="text-align:right;padding-right:4px;color:#4338ca;">⑥表現</th>
+            <td></td><td style="background:#7c3aed;color:#fff;font-weight:800;border-radius:3px;">6</td><td></td><td></td><td></td><td></td><td></td>  <td></td>  <td></td><td></td><td></td>  <td></td><td></td><td></td><td></td><td></td>  <td></td><td></td><td></td><td></td><td></td><td style="background:#16a34a;color:#fff;font-weight:800;border-radius:3px;">6</td><td></td></tr>
+          <tr><th style="text-align:right;padding-right:4px;color:#4338ca;">⑤セッション</th>
+            <td></td><td></td><td style="background:#7c3aed;color:#fff;font-weight:800;border-radius:3px;">5</td><td></td><td></td><td></td><td></td>  <td></td>  <td></td><td></td><td></td>  <td></td><td></td><td></td><td></td><td></td>  <td></td><td></td><td></td><td></td><td style="background:#16a34a;color:#fff;font-weight:800;border-radius:3px;">5</td><td></td><td></td></tr>
+          <tr><th style="text-align:right;padding-right:4px;color:#4338ca;">④トランスポート</th>
+            <td></td><td></td><td></td><td style="background:#7c3aed;color:#fff;font-weight:800;border-radius:3px;">4</td><td></td><td></td><td></td>  <td></td>  <td></td><td></td><td></td>  <td></td><td></td><td></td><td></td><td></td>  <td></td><td></td><td></td><td style="background:#16a34a;color:#fff;font-weight:800;border-radius:3px;">4</td><td></td><td></td><td></td></tr>
+          <tr><th style="text-align:right;padding-right:4px;color:#4338ca;">③ネットワーク<br>(IP·ルータ)</th>
+            <td></td><td></td><td></td><td></td><td style="background:#7c3aed;color:#fff;font-weight:800;border-radius:3px;">3</td><td></td><td></td>  <td></td>  <td></td><td></td><td></td>  <td></td><td></td><td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">3</td><td></td><td></td>  <td></td><td></td><td style="background:#16a34a;color:#fff;font-weight:800;border-radius:3px;">3</td><td></td><td></td><td></td><td></td></tr>
+          <tr><th style="text-align:right;padding-right:4px;color:#4338ca;">②データリンク<br>(MAC·スイッチ)</th>
+            <td></td><td></td><td></td><td></td><td></td><td style="background:#7c3aed;color:#fff;font-weight:800;border-radius:3px;">2</td><td></td>  <td></td>  <td></td><td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">2</td><td></td>  <td></td><td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">2</td><td></td><td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">2</td><td></td>  <td></td><td style="background:#16a34a;color:#fff;font-weight:800;border-radius:3px;">2</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><th style="text-align:right;padding-right:4px;color:#4338ca;">①物理<br>(⚡·ハブ)</th>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td style="background:#7c3aed;color:#fff;font-weight:800;border-radius:3px;">1</td>  <td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">1</td>  <td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">1</td><td></td><td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">1</td>  <td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">1</td><td></td><td></td><td></td><td style="background:#f59e0b;color:#fff;font-weight:800;border-radius:3px;">1</td>  <td style="background:#16a34a;color:#fff;font-weight:800;border-radius:3px;">1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <!-- 地点ラベル -->
+          <tr style="font-size:.58rem;font-weight:700;">
+            <th></th>
+            <td colspan="7" style="color:#7c3aed;border-top:2px solid #7c3aed;padding-top:2px;">📤出発PC ⑦→①降りる</td>
+            <td colspan="1" style="color:#b45309;border-top:2px solid #f59e0b;">📢ハブ</td>
+            <td colspan="3" style="color:#b45309;border-top:2px solid #f59e0b;">📮スイッチ</td>
+            <td colspan="5" style="color:#b45309;border-top:2px solid #f59e0b;">🚦ルータ</td>
+            <td colspan="7" style="color:#16a34a;border-top:2px solid #16a34a;">📥着信PC ①→⑦登る</td>
+          </tr>
+        </table>
+        </div>
+        <div style="font-size:.62rem;color:#6b7280;margin-top:.45rem;line-height:1.6;">
+          🟣降りる＝封筒を④③②①と重ねる／🟢登る＝封筒を①②③④とはがして⑦で読む🎉。<br>
+          🟠経由地の山が <b>ハブ①→スイッチ②→ルータ③ と一段ずつ高くなる</b>のがポイント。山のてっぺん＝その機器が読む層。読んだら必ず①物理⚡に降ろしてケーブルへ送り出します（だから山は①に戻る）。
         </div>
       </div>
+      <!-- ▲ 階段イメージ ここまで -->
 
-      <table>
-        <tr><th>OSI 7階層</th><th>TCP/IP 4階層</th><th>主な機器・プロトコル</th><th>🚚 一言イメージ（<b>送信側＝自分のPC</b>がやること）</th></tr>
-        <tr><td class="l">⑦ アプリケーション層</td><td rowspan="3" style="background:#eef2ff!important;font-weight:700;color:#4338ca;vertical-align:middle;">アプリケーション層<br><small style="font-weight:400;color:#6366f1;">（OSIの上3つをまとめたもの）</small></td><td class="l">HTTP・FTP・SMTP・DNS<br><small style="color:#475569;line-height:1.55;display:inline-block;margin:.2rem 0;">🌐 HTTP＝ホームページ閲覧<br>📁 FTP＝ファイル転送<br>✉️ SMTP＝メール送信<br>📖 DNS＝名前→住所(IP)に変換</small><br><small>※PC上のソフトが担当（専用機器なし）</small></td><td class="l">✍️ <b>自分のPCで手紙の中身を書く</b><br><small style="color:#64748b;">ブラウザ・メールなど、人が直接さわるアプリ本体が「送る中身」を作る</small></td></tr>
-        <tr><td class="l">⑥ プレゼンテーション層</td><td class="l">―</td><td class="l">🔑 <b>自分のPCで中身を整え鍵をかける</b><br><small style="color:#64748b;">文字化けを直し、暗号化してから封筒に入れる</small></td></tr>
-        <tr><td class="l">⑤ セッション層</td><td class="l">―</td><td class="l">☎️ <b>自分のPCで会話の始め〜終わりを仕切る</b><br><small style="color:#64748b;">「もしもし〜さようなら」の開始から終了までを管理</small></td></tr>
-        <tr><td class="l">④ トランスポート層</td><td style="background:#ecfeff!important;font-weight:700;color:#0e7490;">トランスポート層</td><td class="l">TCP・UDP<br><small style="color:#475569;line-height:1.55;display:inline-block;margin:.2rem 0;">🤝 TCP＝届いたか確認して確実に（電話タイプ）<br>📨 UDP＝確認せず速く投げる（はがきタイプ）</small><br><small>※ソフトが担当（専用機器なし）</small></td><td class="yes">🔢 <b>自分のPCが封筒に「宛先ポート」を書く</b><br><small style="color:#64748b;"><span class="blank">ポート番号</span>で「<b>届いた先＝相手PC</b>の、どのソフトに渡すか」を指定（例：<b>Web＝80・443／メール＝25</b>）</small></td></tr>
-        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐③ ネットワーク層</td><td style="background:#fefce8!important;font-weight:700;color:#a16207;">インターネット層</td><td class="l" style="background:#fffbeb!important;"><span class="blank">ルータ</span><div style="margin-top:5px;text-align:center;"><svg width="76" height="50" viewBox="0 0 76 50" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><line x1="24" y1="24" x2="18" y2="5" stroke="#475569" stroke-width="3" stroke-linecap="round"/><line x1="52" y1="24" x2="58" y2="5" stroke="#475569" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="5" r="2.5" fill="#475569"/><circle cx="58" cy="5" r="2.5" fill="#475569"/><rect x="8" y="22" width="60" height="24" rx="5" fill="#1e293b"/><circle cx="20" cy="34" r="3" fill="#22c55e"/><circle cx="32" cy="34" r="3" fill="#22c55e"/><circle cx="44" cy="34" r="3" fill="#f59e0b"/><circle cx="56" cy="34" r="3" fill="#38bdf8"/></svg><div style="font-size:.62rem;color:#64748b;margin-top:1px;">家庭用ルータ（アンテナ付きの箱）</div><div style="font-size:.6rem;color:#a16207;margin-top:3px;line-height:1.4;text-align:left;">🚪 別ネットワークへの<b>出口＝デフォルトゲートウェイ</b>（同じ町内の相手なら通らない＝不要）</div></div></td><td class="yes">🚚 <b>自分のPCが封筒に「宛先IP」を書く</b><br><small style="color:#64748b;"><b>IPアドレス</b>で「相手PC（どの町）宛か」を記入。途中はルータが町へ運ぶ</small></td></tr>
-        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐② データリンク層</td><td rowspan="2" style="background:#f0fdf4!important;font-weight:700;color:#15803d;vertical-align:middle;">ネットワーク<br>インターフェース層<br><small style="font-weight:400;color:#22c55e;">（OSIの下2つをまとめたもの）</small></td><td class="l" style="background:#fffbeb!important;"><span class="blank">L2スイッチ・ブリッジ</span><div style="margin-top:5px;text-align:center;"><svg width="86" height="38" viewBox="0 0 86 38" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><rect x="4" y="9" width="78" height="22" rx="3" fill="#334155"/><rect x="10" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="19" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="28" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="37" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="46" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="55" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="64" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><circle cx="76" cy="14" r="2" fill="#22c55e"/></svg><div style="font-size:.62rem;color:#64748b;margin-top:1px;">L2スイッチ（差込口がずらり並ぶ箱）</div></div></td><td class="yes">📮 <b>自分のPCが封筒の外側に「次に手渡す1台」の名札を貼る</b><br><small style="color:#64748b;">③で書いた最終ゴール（相手のIP）まで運ぶには、まず<b>すぐ隣の1台</b>に手渡す。別の町宛なら、その相手は<b>③で出てきた出口＝自宅のルータ（デフォルトゲートウェイ）</b>。そこへ手渡すための名札が<span class="blank">MACアドレス</span>。<br>👉 <b>最終ゴール＝IP（ずっと変わらない）／いま手渡す相手＝MAC（1台進むごとに書き換わる）</b>。相手が同じ町内ならL2スイッチがこのMACを見て相手の家へ直接届ける。</small></td></tr>
-        <tr><td class="l" style="background:#fef9c3!important;font-weight:700;">⭐① 物理層（最下位）</td><td class="l" style="background:#fffbeb!important;"><span class="blank">ハブ・リピータ</span><div style="margin-top:5px;text-align:center;"><svg width="72" height="36" viewBox="0 0 72 36" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><rect x="6" y="9" width="60" height="20" rx="3" fill="#64748b"/><rect x="14" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="24" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="34" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="44" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><circle cx="58" cy="14" r="2" fill="#f59e0b"/></svg><div style="font-size:.62rem;color:#64748b;margin-top:1px;">ハブ（差込口の付いた箱）</div></div></td><td>📢 <b>自分のPCが電気信号にしてケーブルへ出す</b><br><small style="color:#64748b;">ここまで重ねた封筒を信号化（←ここが自分のPCの出口）。途中のハブは宛先を見ず増幅して全部に流す</small></td></tr>
-        <tr><td colspan="4" style="background:#fffbeb;font-size:.7rem;color:#475569;text-align:left;line-height:1.55;padding:.5rem .6rem;">⚠️ <b>「ポート」という言葉が2つあって紛らわしい</b>：②の機器の「ポート」＝スイッチの<b>物理的な差込口（穴）</b>／④の「ポート番号」＝<b>ソフトを区別する番号</b>。<u>言葉は同じでも別もの</u>（↓⚠️でさらに詳しく）</td></tr>
-      </table>
+      <div style="font-size:.8rem;font-weight:800;color:#7c3aed;margin:.2rem 0 .3rem;">👇 まず直感的に（初心者向け）— この下の表は"早見表"として使ってください</div>
+<div class="vz-supplement" style="max-width:520px;margin:18px auto;padding:0;font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;color:#1f2937;line-height:1.7;font-size:15px;-webkit-text-size-adjust:100%;">
+
+  <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:16px 18px;border-radius:14px 14px 0 0;">
+    <div style="font-size:13px;opacity:.85;">📨 ネットワークでデータが届くまで</div>
+    <div style="font-size:18px;font-weight:700;margin-top:4px;">ブラウザで「Webを見たい」とき、何が起きてる？</div>
+    <div style="font-size:12.5px;opacity:.9;margin-top:6px;">この1つの例だけで最後まで通します。素朴な疑問に順番に答えます。</div>
+  </div>
+
+  <div style="background:#faf9ff;border:1px solid #e5e0f7;border-top:none;padding:16px 14px;border-radius:0 0 14px 14px;">
+
+    <!-- 大前提の図：場所は2つだけ -->
+    <div style="background:#fff;border:1px dashed #c7b8f0;border-radius:12px;padding:12px;margin-bottom:18px;">
+      <div style="font-size:12.5px;font-weight:700;color:#6d28d9;margin-bottom:8px;">まず「場所」はたった2つ</div>
+      <div style="display:flex;align-items:stretch;gap:8px;text-align:center;font-size:12px;">
+        <div style="flex:1;background:#eef2ff;border-radius:10px;padding:10px 6px;">
+          <div style="font-size:22px;">💻</div>
+          <div style="font-weight:700;color:#4338ca;">①自分のPCの中</div>
+          <div style="color:#555;margin-top:3px;">封筒を<b>重ねて</b>準備する</div>
+        </div>
+        <div style="align-self:center;font-size:18px;color:#7c3aed;">➡️</div>
+        <div style="flex:1;background:#f0fdf4;border-radius:10px;padding:10px 6px;">
+          <div style="font-size:22px;">🌐</div>
+          <div style="font-weight:700;color:#15803d;">②PCの外（ケーブル・機器）</div>
+          <div style="color:#555;margin-top:3px;">機器に<b>出会って</b>中継される</div>
+        </div>
+      </div>
+      <div style="font-size:11.5px;color:#777;margin-top:8px;text-align:center;">準備（PCの中）が全部終わってから、外へ送り出します。<b>最後にもう1つ、届いた"相手PCの中"でも開封作業があります（→Q5）</b>。</div>
+    </div>
+
+    <!-- Q1 -->
+    <div style="margin-bottom:16px;">
+      <div style="background:#dbeafe;color:#1e40af;font-weight:700;border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:13.5px;display:inline-block;max-width:90%;">
+        🙋 Q1．宛先に送るだけなのに、なんで封筒を<b>重ねる</b>の？
+      </div>
+      <div style="margin:10px 0 0;font-size:13.5px;">
+        <div style="color:#6d28d9;font-weight:700;margin-bottom:6px;">📍自分のPCの中　🔧手紙に封筒を外側へ1枚ずつ重ねる</div>
+        中身（手紙＝見たいWebの要求）に、<b>「役目の違う宛名」を1枚ずつ足す</b>から重なるんです。1枚で全部は書けないので分担します👇
+      </div>
+
+      <!-- 重ねる図 -->
+      <div style="margin-top:12px;">
+        <div style="text-align:center;font-size:11.5px;color:#888;margin-bottom:4px;">⑦ 上（中身）から ↓ 1枚ずつ重ねていく ↓ ①</div>
+        <div style="border-radius:10px;overflow:hidden;border:1px solid #e5e0f7;">
+          <div style="background:#fff7ed;padding:9px 11px;font-size:12.5px;border-bottom:1px solid #f1e8df;"><b>⑦ 手紙を書く</b>　🔧見たいWebの中身を用意（HTTP）</div>
+          <div style="background:#fff;padding:9px 11px;font-size:12.5px;border-bottom:1px solid #f3f1fb;"><b>⑥ 暗号にする</b>　🔧盗み見されても読めなくする</div>
+          <div style="background:#faf9ff;padding:9px 11px;font-size:12.5px;border-bottom:1px solid #f3f1fb;"><b>⑤ 会話の開始/終了の管理</b>　🔧電話の「もしもし〜じゃあね」係。封筒は足さず、つながりの始め〜終わりを見張るだけ</div>
+          <div style="background:#eef2ff;padding:9px 11px;font-size:12.5px;border-bottom:1px solid #e5e7fb;">🟦<b>④ ポート番号</b>　🔧相手PCの「どのソフト宛か」（例：Web係＝443）</div>
+          <div style="background:#e0f2fe;padding:9px 11px;font-size:12.5px;border-bottom:1px solid #d4e9f7;">🟦<b>③ IPアドレス</b>　🔧相手PCの<b>住所＝最終あて先（変わらない）</b></div>
+          <div style="background:#dcfce7;padding:9px 11px;font-size:12.5px;border-bottom:1px solid #c9efd5;">🟩<b>② MACアドレス</b>　🔧<b>次に手渡す1台</b>のあて名（まず家の出口のルータ）<br><span style="color:#888;font-size:11.5px;">※このあて名だけ中継のたびに書き換わります→Q2</span></div>
+          <div style="background:#fef9c3;padding:9px 11px;font-size:12.5px;">🟨<b>① 電気信号にする</b>　🔧ケーブルへ「ピッ」と送り出す</div>
+        </div>
+        <div style="font-size:11.5px;color:#777;margin-top:6px;">⑦〜①は<b>ぜんぶ自分のPC1台</b>がやります（ソフト＋ネットワークカード）。PCの中にルータやスイッチは居ません。</div>
+      </div>
+    </div>
+
+    <!-- Q2 ③と②の違い -->
+    <div style="margin-bottom:16px;">
+      <div style="background:#dbeafe;color:#1e40af;font-weight:700;border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:13.5px;display:inline-block;max-width:90%;">
+        🙋 Q2．③IPと②MAC、どっちも「あて名」じゃないの？
+      </div>
+      <div style="margin-top:10px;font-size:13.5px;">
+        役目が違います。荷物の配達でたとえると…
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;font-size:12px;text-align:center;">
+        <div style="flex:1;background:#e0f2fe;border-radius:10px;padding:10px 7px;">
+          <div style="font-size:20px;">🏠</div>
+          <div style="font-weight:700;color:#0369a1;">③ IP</div>
+          <div style="margin-top:3px;color:#555;"><b>最終の住所</b><br>ずっと変わらない</div>
+        </div>
+        <div style="flex:1;background:#dcfce7;border-radius:10px;padding:10px 7px;">
+          <div style="font-size:20px;">🤝</div>
+          <div style="font-weight:700;color:#15803d;">② MAC</div>
+          <div style="margin-top:3px;color:#555;"><b>今すぐ手渡す相手</b><br>1台ごとに書き換わる</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#555;background:#fff;border:1px solid #eee;border-radius:8px;padding:9px 11px;margin-top:10px;">
+        🔧相手が別のネットワークなら、③で「<b>出口のルータに託す</b>」と決め、②に「<b>まず出口のルータ</b>」と書きます。中継する<b>ルータが、次に渡す相手のMACへ②だけ貼り替えます</b>（③IPの住所はそのまま）。だからMACは中継のたびに書き換わり、IPは最後まで変わりません。
+      </div>
+    </div>
+
+    <!-- Q3 機器は何する -->
+    <div style="margin-bottom:16px;">
+      <div style="background:#dbeafe;color:#1e40af;font-weight:700;border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:13.5px;display:inline-block;max-width:90%;">
+        🙋 Q3．送り出した後の「機器」は何をしてる？
+      </div>
+      <div style="margin-top:10px;font-size:13.5px;">
+        <div style="color:#15803d;font-weight:700;margin-bottom:6px;">📍PCの外（ケーブル上）　🔧中身は読まず、必要な封筒だけ見て次へ流す</div>
+        機器は手紙の中身に興味なし。<b>「どこまで封筒をはがして読めるか」</b>だけが違います👇<div style="font-size:11px;color:#92400e;background:#fffbeb;border:1px dashed #fcd34d;border-radius:6px;padding:6px 9px;margin-top:8px;">⚠️ この3つは「順番に通る道」ではなく「<b>読める深さの違うタイプ</b>」（家にあるのは普通スイッチとルータ）。</div>
+      </div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:7px;font-size:12.5px;">
+        <div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:6px;padding:8px 10px;">
+          📡 <b>ハブ</b>　🟨①だけ　🔧中身を見ず、信号を増幅してそのまま全員へ流すだけ
+        </div>
+        <div style="background:#f0fdf4;border-left:4px solid #22c55e;border-radius:6px;padding:8px 10px;">
+          🔀 <b>スイッチ</b>　🟨①＋🟩②　🔧MACを見て、<b>同じLAN内</b>の正しい1台へ渡す
+        </div>
+        <div style="background:#eff6ff;border-left:4px solid #3b82f6;border-radius:6px;padding:8px 10px;">
+          🚪 <b>ルータ</b>　🟨①＋🟩②＋🟦③　🔧IPを見て、<b>別のネットワーク</b>へ橋渡し（家の出口）
+        </div>
+      </div>
+      <div style="font-size:11.5px;color:#777;margin-top:7px;">読むときも①→上へ「はがして」読みます。<b>読める深さ＝届けられる範囲</b>：ハブ＝同じ部屋にバラまくだけ／スイッチ＝同じLAN（家）の正しい1台へ／ルータ＝家の外（別ネットワーク）へ。</div>
+    </div>
+
+    <!-- Q4 順番に通る？ -->
+    <div style="margin-bottom:16px;">
+      <div style="background:#dbeafe;color:#1e40af;font-weight:700;border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:13.5px;display:inline-block;max-width:90%;">
+        🙋 Q4．ハブ→スイッチ→ルータの<b>順番に通る</b>の？
+      </div>
+      <div style="margin-top:10px;font-size:13.5px;">
+        いいえ。それは「<b>通る順番</b>」ではなく「<b>どこまで読めるか</b>」の違いです。<br>
+        実際に外のWebへ出るときは、家のLANの中を通って<b>家の出口＝ルータ</b>から外へ出ます。そこから先は道中の機器がバトンを繋いで相手まで運びます。
+      </div>
+      <div style="background:#fff;border:1px solid #eee;border-radius:8px;padding:9px 11px;margin-top:9px;font-size:12px;color:#555;text-align:center;">
+        💻自分のPC → 🔀スイッチ/ハブ → 🚪出口のルータ → 〜道中〜 → 🖥️相手のWebサーバー
+      </div>
+      <div style="font-size:11px;color:#777;margin-top:6px;">※これは「<b>通り道の一例</b>」。Q3の3機器を必ず全部通るわけではありません（家では普通「スイッチ（かハブ）→出口のルータ」）。</div>
+    </div>
+
+    <!-- Q5 着いたら -->
+    <div style="margin-bottom:6px;">
+      <div style="background:#dbeafe;color:#1e40af;font-weight:700;border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:13.5px;display:inline-block;max-width:90%;">
+        🙋 Q5．相手PCに着いたらどうなる？
+      </div>
+      <div style="margin-top:10px;font-size:13.5px;">
+        <div style="color:#15803d;font-weight:700;margin-bottom:6px;">📍相手PCの中　🔧封筒を①→⑦へ1枚ずつ「はがす」</div>
+        重ねた逆順（①→⑦）で封筒を外し、最後に⑦で<b>手紙の中身を読む</b>。これで「Webを見せて」が届きます。
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;text-align:center;font-size:12px;">
+        <div style="flex:1;background:#eef2ff;border-radius:10px;padding:10px;">
+          <div style="font-size:18px;">📦⬇️</div>
+          <div style="font-weight:700;color:#4338ca;">送る＝重ねる</div>
+          <div style="color:#555;">⑦ → ① （下へ）</div>
+        </div>
+        <div style="flex:1;background:#f0fdf4;border-radius:10px;padding:10px;">
+          <div style="font-size:18px;">📂⬆️</div>
+          <div style="font-weight:700;color:#15803d;">受け取る＝はがす</div>
+          <div style="color:#555;">① → ⑦ （上へ）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 試験用語 小さく添える -->
+    <div style="margin-top:16px;background:#f3f4f6;border-radius:10px;padding:10px 12px;font-size:11px;color:#6b7280;line-height:1.6;">
+      <b style="color:#374151;">📕 試験用語（小さくメモ）</b><br>
+      ⑦〜①＝<b>OSI参照モデル7階層</b>（⑦アプリ⑥プレゼン⑤セッション④トランスポート③ネットワーク②データリンク①物理）。実務は<b>TCP/IP 4階層</b>に対応。封筒の中身の例＝HTTP/FTP/SMTP/DNS、④のやり方＝TCP（確実）/UDP（速さ重視）。
+    </div>
+
+  </div>
+</div>
+
+<div class="vz-supplement" style="max-width:360px;margin:18px auto;padding:14px 12px;font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;color:#1f2937;line-height:1.65;font-size:14px;-webkit-text-size-adjust:100%;background:#fcfcfd;border-left:4px solid #38bdf8;border-radius:10px;box-sizing:border-box;">
+
+  <div style="font-weight:800;font-size:1.0rem;color:#0f172a;text-align:center;line-height:1.4;">🏠➡️🌐➡️🏠 ネットの送受信ぜんぶ１枚<br><span style="font-size:.78rem;font-weight:600;color:#64748b;">封筒✉️が上から下へ「降りて」相手の家まで旅する</span></div>
+
+  <!-- 凡例 -->
+  <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:10px 0 6px;font-size:.66rem;">
+    <span style="background:#fff7ed;border:1px solid #fed7aa;border-radius:5px;padding:2px 6px;">🟧家・PCの中=自分の作業</span>
+    <span style="background:#eff6ff;border:1px solid #93c5fd;border-radius:5px;padding:2px 6px;">🟦外・機器=送り出した後</span>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:4px;font-size:.66rem;">
+    <span style="background:#fef9c3;border-radius:4px;padding:2px 5px;">📝手紙(中身)</span>
+    <span style="background:#cffafe;border-radius:4px;padding:2px 5px;">🔢ポート④</span>
+    <span style="background:#ffedd5;border-radius:4px;padding:2px 5px;">🚚IP③</span>
+    <span style="background:#dcfce7;border-radius:4px;padding:2px 5px;">📮MAC②</span>
+  </div>
+
+  <!-- ===== STOP 1: 自分の家・PCの中 ===== -->
+  <div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:10px;margin-bottom:2px;">
+    <div style="font-weight:800;color:#c2410c;font-size:.92rem;">🏠 あなたの家（＝1つのネットワーク＝同じ町）</div>
+    <div style="font-size:.74rem;color:#9a3412;margin:3px 0 7px;">💻PC・📱・📺 が <b>1本ずつ</b> 📦家庭用ルータの挿し口に挿さっている</div>
+
+    <!-- PCの中＝封筒を重ねる -->
+    <div style="background:#fff;border:1.5px dashed #fdba74;border-radius:9px;padding:8px;">
+      <div style="font-size:.78rem;font-weight:700;color:#c2410c;">💻 PC1台だけで⑦→①を全部やる<br><span style="font-weight:500;font-size:.7rem;color:#9a3412;">（PCの中にルータ・スイッチ・ハブは無い）</span></div>
+      <div style="font-size:.74rem;margin:6px 0 4px;color:#7c2d12;">📝手紙の外側へ封筒を重ねる＝<b>カプセル化</b></div>
+      <!-- 封筒を重ねる図：内側→外側 -->
+      <div style="display:flex;flex-direction:column;gap:3px;align-items:stretch;">
+        <div style="background:#fef9c3;border:1px solid #fde047;border-radius:6px;padding:4px 7px;font-size:.72rem;text-align:center;">📝手紙（中身）<small style="color:#92400e;"> ⑦⑥⑤で作成・暗号化・接続</small></div>
+        <div style="text-align:center;color:#f97316;font-size:.7rem;">＋ 外へ重ねる ⬇️</div>
+        <div style="background:#cffafe;border:1px solid #67e8f9;border-radius:6px;padding:4px 7px;font-size:.72rem;text-align:center;">🔢ポート④<small style="color:#155e75;"> 相手のどのソフト宛</small></div>
+        <div style="background:#ffedd5;border:1px solid #fdba74;border-radius:6px;padding:4px 7px;font-size:.72rem;text-align:center;">🚚IP③<small style="color:#9a3412;"> 相手PCの住所=最終あて先・<b>不変</b></small></div>
+        <div style="background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:4px 7px;font-size:.72rem;text-align:center;">📮MAC②<small style="color:#166534;"> 次に手渡す1台=まず家の出口</small></div>
+      </div>
+      <div style="text-align:center;margin-top:6px;font-size:.78rem;font-weight:800;color:#0f766e;background:#ecfeff;border-radius:6px;padding:4px;">✉️完成パケット<br><span style="font-size:.68rem;font-weight:600;">[📮MAC｜🚚IP｜🔢ポート｜📝手紙]</span></div>
+      <div style="font-size:.68rem;color:#9a3412;margin-top:5px;">①電気信号にしてケーブルへ送り出す ⤵️</div>
+    </div>
+  </div>
+
+  <!-- ケーブル矢印 -->
+  <div style="text-align:center;color:#60a5fa;font-size:1.1rem;line-height:1;">🔌<br>┃<small style="font-size:.6rem;color:#64748b;">LANケーブル</small><br>⬇️</div>
+
+  <!-- 旅注記バー -->
+  <div style="background:#fffbeb;border:1px dashed #fcd34d;border-radius:7px;padding:5px 8px;font-size:.68rem;color:#92400e;margin:2px 0 6px;text-align:center;">🚚IP(住所)は<b>端から端まで不変</b>／📮MAC(次の手渡し先)は中継ルータが<b>1ホップごとに貼り替える</b></div>
+
+  <!-- ===== STOP 2: 家庭用ルータ ===== -->
+  <div style="display:flex;gap:8px;align-items:stretch;margin-bottom:2px;">
+    <div style="flex:1;background:#eff6ff;border:2px solid #93c5fd;border-radius:12px;padding:9px;">
+      <div style="font-weight:800;color:#1d4ed8;font-size:.88rem;">📦 家庭用ルータ（1つの箱）</div>
+      <div style="font-size:.72rem;color:#1e40af;margin:4px 0;">中で2つが合体👇</div>
+      <div style="background:#dcfce7;border:1px solid #86efac;border-radius:7px;padding:4px 6px;font-size:.72rem;margin-bottom:3px;">🔀スイッチ部分🟩②<br><small style="color:#166534;">＝挿し口（家の中）</small></div>
+      <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:7px;padding:4px 6px;font-size:.72rem;">🚦ルータ部分🟦③<br><small style="color:#1e40af;">＝家の玄関（町の境界）</small></div>
+      <div style="font-size:.64rem;color:#475569;margin-top:5px;">🟨ハブ/リピータ①は家の中に足す追加機（箱は📦1つだけ）</div>
+    </div>
+    <div style="width:104px;flex-shrink:0;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:7px 5px;font-size:.64rem;">
+      <div style="font-weight:800;color:#334155;text-align:center;border-bottom:1px solid #e2e8f0;padding-bottom:3px;margin-bottom:4px;">ここで<br>見るのは</div>
+      <div style="text-align:center;color:#1d4ed8;font-weight:800;">🟦③IP</div>
+      <div style="text-align:center;font-size:.6rem;color:#64748b;margin:2px 0 5px;">玄関で住所を見て外へ</div>
+      <div style="background:#ecfeff;border-radius:5px;padding:3px;text-align:center;">✉️状態<br>📮MAC<span style="color:#dc2626;">貼替</span>｜🚚IPそのまま</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:#60a5fa;font-size:1rem;line-height:1;">⬇️ 🔌ONU/モデム → 🧵光ファイバ</div>
+
+  <!-- ===== STOP 3: ISP・インターネット ===== -->
+  <div style="display:flex;gap:8px;align-items:stretch;margin:5px 0 2px;">
+    <div style="flex:1;background:#eff6ff;border:2px solid #93c5fd;border-radius:12px;padding:9px;">
+      <div style="font-weight:800;color:#1d4ed8;font-size:.88rem;">🏢 ISP → 🌐 インターネット</div>
+      <div style="font-size:.72rem;color:#1e40af;margin:5px 0;">無数の <b>🚦ルータ③</b> が並ぶ広い世界。各ルータが✉️の🚚IP(住所)だけ見て、次の1台へ<b>バケツリレー</b>🪣🪣🪣</div>
+      <div style="font-size:.64rem;color:#475569;">通るたびに📮MACは貼り替え／🚚IPは変えない</div>
+    </div>
+    <div style="width:104px;flex-shrink:0;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:7px 5px;font-size:.64rem;">
+      <div style="font-weight:800;color:#334155;text-align:center;border-bottom:1px solid #e2e8f0;padding-bottom:3px;margin-bottom:4px;">ここで<br>見るのは</div>
+      <div style="text-align:center;color:#1d4ed8;font-weight:800;">🟦③IP</div>
+      <div style="text-align:center;font-size:.6rem;color:#64748b;margin:2px 0 5px;">住所で次の町へ</div>
+      <div style="background:#ecfeff;border-radius:5px;padding:3px;text-align:center;">✉️中身は<br>開けない<br>📝手紙は封のまま</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:#60a5fa;font-size:1rem;line-height:1;">⬇️ 🏢相手ISP →</div>
+
+  <!-- ===== STOP 4: 相手の家・相手PC ===== -->
+  <div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:10px;margin:5px 0 2px;">
+    <div style="font-weight:800;color:#c2410c;font-size:.9rem;">🏠 相手の家（別の町）</div>
+    <div style="font-size:.72rem;color:#9a3412;margin:4px 0;">📦相手ルータ［🚦③▸🔀②］ をくぐって 🖥️相手PCへ到着</div>
+
+    <div style="background:#fff;border:1.5px dashed #fdba74;border-radius:9px;padding:8px;">
+      <div style="font-size:.78rem;font-weight:700;color:#c2410c;">🖥️ 相手PCで封筒を<b>はがす</b>（カプセル化の逆）</div>
+      <div style="font-size:.7rem;color:#9a3412;margin:3px 0 5px;">受け取り＝①から上へ１枚ずつ「はがす」⬆️</div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <div style="background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:3px 7px;font-size:.7rem;text-align:center;text-decoration:line-through;color:#166534;">📮MAC② はがす</div>
+        <div style="background:#ffedd5;border:1px solid #fdba74;border-radius:6px;padding:3px 7px;font-size:.7rem;text-align:center;text-decoration:line-through;color:#9a3412;">🚚IP③ はがす</div>
+        <div style="background:#cffafe;border:1px solid #67e8f9;border-radius:6px;padding:3px 7px;font-size:.7rem;text-align:center;text-decoration:line-through;color:#155e75;">🔢ポート④ はがす（正しいソフトへ渡す）</div>
+        <div style="background:#fef9c3;border:1px solid #fde047;border-radius:6px;padding:5px 7px;font-size:.74rem;text-align:center;font-weight:800;color:#854d0e;">📝手紙が読めた！🎉</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 各機器が読める天井 -->
+  <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:9px;margin:9px 0 6px;">
+    <div style="font-size:.76rem;font-weight:800;color:#334155;text-align:center;margin-bottom:6px;">📡 機器ごとに「読める天井」がちがう</div>
+    <div style="display:flex;flex-direction:column;gap:4px;font-size:.72rem;">
+      <div style="display:flex;align-items:center;gap:6px;"><span style="background:#fef08a;border-radius:5px;padding:2px 6px;white-space:nowrap;">🟨ハブ/リピータ</span><span style="color:#475569;">①だけ（電気信号をそのまま流す）</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><span style="background:#86efac;border-radius:5px;padding:2px 6px;white-space:nowrap;">🟩スイッチ/ブリッジ</span><span style="color:#475569;">①→②（📮MACを見て手渡し）</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><span style="background:#93c5fd;border-radius:5px;padding:2px 6px;white-space:nowrap;">🟦ルータ</span><span style="color:#475569;">①→②→③（🚚IPを見て町を越える）</span></div>
+    </div>
+    <div style="font-size:.64rem;color:#64748b;margin-top:6px;text-align:center;">機器に出会うのは<b>PCの外（送り出した後）</b>／玄関＝🟦ルータ③だけが町の境界</div>
+  </div>
+
+  <!-- 試験用語の対応（小さく） -->
+  <div style="font-size:.64rem;color:#64748b;text-align:center;border-top:1px dashed #cbd5e1;padding-top:6px;">📖試験用語：OSI7階層 ⑦⑥⑤④③②① ＝ ②MAC ③IP ④ポート … ↔ TCP/IP4階層<br>送る＝重ねる（下へ）／受け取る＝はがす（上へ）</div>
+
+</div>
+
+      <table style="border-collapse:collapse;width:100%;font-size:.74rem;line-height:1.45;table-layout:fixed;">
+<colgroup><col style="width:13%"><col style="width:13%"><col style="width:37%"><col style="width:37%"></colgroup>
+<tr>
+<th colspan="2" style="background:#334155;border:1px solid #1e293b;padding:.3rem;font-size:.68rem;color:#fff;">階層（OSI↔TCP/IP）</th>
+<th style="background:#334155;border:1px solid #1e293b;padding:.35rem;color:#fff;font-size:.72rem;">📤 送るとき＝<u>自分のPCの中</u><br><span style="font-weight:400;font-size:.62rem;color:#cbd5e1;">⑦→①を全部PCが自分でやる<br>（下へ行くほど封筒を1枚ずつ足す＝中身は変えない）</span></th>
+<th style="background:#334155;border:1px solid #1e293b;padding:.35rem;color:#fff;font-size:.72rem;">📥 着いたとき＝この層を<u>"読む"のは誰か</u><br><span style="font-weight:400;font-size:.62rem;color:#cbd5e1;">⑦④＝両端のPC（端点）／③②①＝中継機器（ハブ①・スイッチ②・ルータ③）<br>各機器は最上位の層まで(下位も全部)読む・送出後に出会う</span></th>
+</tr>
+
+<tr>
+<td style="border:1px solid #cbd5e1;background:#eef2ff;padding:.3rem;font-weight:700;color:#4338ca;">⑦アプリ<br>⑥プレゼン<br>⑤セッション</td>
+<td style="border:1px solid #cbd5e1;background:#eef2ff;padding:.3rem;font-weight:700;color:#4338ca;font-size:.66rem;vertical-align:middle;">アプリケーション層<br><span style="font-weight:400;color:#6366f1;font-size:.6rem;">（上3つをまとめたもの）</span></td>
+<td style="border:1px solid #fed7aa;background:#fff7ed;padding:.35rem;color:#7c2d12;">✍️<b>手紙を書く→🔒暗号化→☎️接続管理</b><br><span style="color:#78716c;font-size:.64rem;">アプリが中身そのものを作る。⑤の接続管理では封筒は増えない。</span><br><span style="display:inline-block;margin-top:.2rem;background:#fffbeb;border:1px solid #fcd34d;border-radius:5px;padding:.1rem .3rem;font-size:.6rem;color:#92400e;">例：HTTP(Web)・FTP・SMTP(メール)・DNS</span></td>
+<td style="border:1px solid #bfdbfe;background:#eff6ff;padding:.35rem;color:#334155;vertical-align:middle;">🖥️<b>両端のPCだけ</b>がここまで読む<br><span style="color:#64748b;font-size:.64rem;">途中の機器はこの層を見ない。受け取る側のアプリが封筒を全部はがして中身を読む。</span></td>
+</tr>
+
+<tr>
+<td style="border:1px solid #cbd5e1;background:#ecfeff;padding:.3rem;font-weight:700;color:#0e7490;">④トランス<br>ポート</td>
+<td style="border:1px solid #cbd5e1;background:#ecfeff;padding:.3rem;font-weight:700;color:#0e7490;font-size:.66rem;vertical-align:middle;">トランスポート層</td>
+<td style="border:1px solid #fed7aa;background:#fff7ed;padding:.35rem;color:#7c2d12;">🔢<b>「相手のどのソフト宛か」を足す</b><br><span style="color:#78716c;font-size:.64rem;">相手PCでは複数ソフトが動く。渡し先を示すのが<span class="blank">ポート番号</span>（例:Web=80/443、メール=25）。</span><br><span style="display:inline-block;margin-top:.2rem;background:#fffbeb;border:1px solid #fcd34d;border-radius:5px;padding:.1rem .3rem;font-size:.6rem;color:#92400e;">例：TCP(確実)・UDP(速い)</span></td>
+<td style="border:1px solid #bfdbfe;background:#eff6ff;padding:.35rem;color:#334155;vertical-align:middle;">🖥️<b>両端のPCだけ</b>がポート番号を見る<br><span style="color:#64748b;font-size:.64rem;">中継機器はここを読まない。</span></td>
+</tr>
+
+<tr>
+<td style="border:1px solid #cbd5e1;background:#fef9c3;padding:.3rem;font-weight:700;color:#854d0e;">⭐③ネット<br>ワーク</td>
+<td style="border:1px solid #cbd5e1;background:#fefce8;padding:.3rem;font-weight:700;color:#a16207;font-size:.66rem;vertical-align:middle;">インター<br>ネット層</td>
+<td style="border:1px solid #fed7aa;background:#fff7ed;padding:.35rem;color:#7c2d12;">🚚<b>「最終の宛先IP」を足す＝住所</b><br><span style="color:#78716c;font-size:.64rem;"><b>端から端まで変わらない</b>。別の町なら「出口のルータ(=デフォルトGW)に託す」と<b>方針を決めるだけ</b>。⚠️ここではまだルータを通らない。</span></td>
+<td style="border:1px solid #bfdbfe;background:#eff6ff;padding:.35rem;color:#334155;">
+<div style="font-weight:700;color:#a16207;"><span class="blank">ルータ</span>＝③まで読む</div>
+<svg width="62" height="40" viewBox="0 0 76 50" xmlns="http://www.w3.org/2000/svg" style="margin:.15rem 0;"><line x1="24" y1="24" x2="18" y2="5" stroke="#475569" stroke-width="3" stroke-linecap="round"/><line x1="52" y1="24" x2="58" y2="5" stroke="#475569" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="5" r="2.5" fill="#475569"/><circle cx="58" cy="5" r="2.5" fill="#475569"/><rect x="8" y="22" width="60" height="24" rx="5" fill="#1e293b"/><circle cx="20" cy="34" r="3" fill="#22c55e"/><circle cx="32" cy="34" r="3" fill="#22c55e"/><circle cx="44" cy="34" r="3" fill="#f59e0b"/><circle cx="56" cy="34" r="3" fill="#38bdf8"/></svg>
+<div style="color:#64748b;font-size:.62rem;">①②③を全部やる。<b>左📤で"託す先"を決め→送出後にここで実際に通る</b>。IPを見て次の町へ中継（着くたびMACは付替え／IPは不変）。</div></td>
+</tr>
+
+<tr>
+<td style="border:1px solid #cbd5e1;background:#fef9c3;padding:.3rem;font-weight:700;color:#854d0e;">⭐②データ<br>リンク</td>
+<td rowspan="2" style="border:1px solid #cbd5e1;background:#f0fdf4;padding:.3rem;font-weight:700;color:#15803d;font-size:.64rem;vertical-align:middle;">ネットワーク<br>インター<br>フェース層<br><span style="font-weight:400;color:#22c55e;font-size:.58rem;">（下2つをまとめたもの）</span></td>
+<td style="border:1px solid #fed7aa;background:#fff7ed;padding:.35rem;color:#7c2d12;">📮<b>「次に渡す1台」の名札を足す</b><br><span style="color:#78716c;font-size:.64rem;">まず出口のルータの<span class="blank">MACアドレス</span>を書く（バケツリレーの1歩目）。⚠️これもPCの中の準備。1歩ごとに書き換わる。</span></td>
+<td style="border:1px solid #bfdbfe;background:#eff6ff;padding:.35rem;color:#334155;">
+<div style="font-weight:700;color:#15803d;"><span class="blank">L2スイッチ・ブリッジ</span>＝②まで読む</div>
+<svg width="70" height="30" viewBox="0 0 86 38" xmlns="http://www.w3.org/2000/svg" style="margin:.15rem 0;"><rect x="4" y="9" width="78" height="22" rx="3" fill="#334155"/><rect x="10" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="19" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="28" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="37" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="46" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="55" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><rect x="64" y="20" width="6" height="7" rx="1" fill="#cbd5e1"/><circle cx="76" cy="14" r="2" fill="#22c55e"/></svg>
+<div style="color:#64748b;font-size:.62rem;">①②をやる。MACを見て同じ町内の正しい差込口へ。</div></td>
+</tr>
+
+<tr>
+<td style="border:1px solid #cbd5e1;background:#fef9c3;padding:.3rem;font-weight:700;color:#854d0e;">⭐①物理<br><span style="font-size:.6rem;font-weight:400;">(最下位)</span></td>
+<td style="border:1px solid #fed7aa;background:#fff7ed;padding:.35rem;color:#7c2d12;">📢<b>封筒ごと電気信号にして送出</b><br><span style="color:#78716c;font-size:.64rem;">ここが自分のPCの出口。…01011…に変えてケーブルへ。<b>これより右(機器)は送出後の世界</b>。</span></td>
+<td style="border:1px solid #bfdbfe;background:#eff6ff;padding:.35rem;color:#334155;">
+<div style="font-weight:700;color:#475569;"><span class="blank">ハブ・リピータ</span>＝①だけ読む</div>
+<svg width="60" height="30" viewBox="0 0 72 36" xmlns="http://www.w3.org/2000/svg" style="margin:.15rem 0;"><rect x="6" y="9" width="60" height="20" rx="3" fill="#64748b"/><rect x="14" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="24" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="34" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><rect x="44" y="19" width="6" height="7" rx="1" fill="#e2e8f0"/><circle cx="58" cy="14" r="2" fill="#f59e0b"/></svg>
+<div style="color:#64748b;font-size:.62rem;">宛先を見ず、信号を増幅して全員へ流すだけ。</div></td>
+</tr>
+
+<tr>
+<td colspan="4" style="border:1px solid #fcd34d;background:#fffbeb;padding:.4rem .5rem;font-size:.66rem;color:#92400e;line-height:1.5;text-align:left;">⚠️<b>「ポート」が2つあって紛らわしい</b>：②機器の「ポート」＝スイッチの<b>物理の差込口(穴)</b>／④の「ポート番号」＝<b>ソフトを区別する番号</b>。言葉は同じでも別もの。<br>📥<b>受け取る側は逆順</b>：①で受信→②③④…と封筒を<u>はがして</u>⑦で中身を読む（送る＝重ねる／受け取る＝はがす）。</td>
+</tr>
+</table>
       <p class="note">↑上＝人に近い（アプリ）／↓下＝配線に近い（物理）。TCP/IPの4階層は、OSIの7階層を実用的にまとめたもの。</p>
+
+      <div class="vz-supplement" style="background:#f8fafc;border-left-color:#8b5cf6;margin-top:.7rem;">
+        <div class="vz-label" style="color:#7c3aed;">🏠 図解：上＝家の💻パソコン1台で封筒を重ね（⑦→①）／下＝送り出した"後"に外の機器に出会う</div>
+        <div style="font-size:.7rem;color:#475569;margin:.1rem 0 .55rem;line-height:1.6;"><b style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:4px;padding:0 .25rem;color:#9a3412;">オレンジ＝家・PCの中</b>でやること（送信側PC1台が⑦→①まで全部やる）。<b style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:4px;padding:0 .25rem;color:#1e40af;">青＝送り出した後の世界</b>（ケーブル→外の機器→相手PC）。<b>機器（ルータ/スイッチ/ハブ）はPCの中には無い</b>。①で送出した"後"にネットワーク上で出会う。</div>
+
+        <!-- 凡例 -->
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;font-size:.62rem;color:#475569;background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:.4rem .55rem;margin-bottom:.6rem;">
+          <b style="color:#334155;">🔖 見方：</b>
+          <span><span style="background:#ecfeff;border:1.5px solid #0e7490;color:#0e7490;border-radius:5px;padding:.05rem .35rem;font-weight:800;">＋色つき</span> ＝その層が<b>新しく足した封筒</b></span>
+          <span><span style="background:#f1f5f9;border:1px solid #e5e7eb;color:#9ca3af;border-radius:5px;padding:.05rem .35rem;font-weight:600;">グレー</span> ＝上から<b>運ばれてきた封筒</b>（中身は変えない）</span>
+        </div>
+
+        <!-- ===== 上段：オレンジ＝家・PCの中（カプセル化） ===== -->
+        <div style="border:3px solid #fdba74;background:#fff7ed;border-radius:12px 12px 0 0;padding:.6rem .6rem .7rem;">
+          <div style="display:flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:800;color:#9a3412;margin-bottom:.5rem;"><span style="font-size:.95rem;">🏠</span>家（自分のいる場所）の中＝💻 このパソコン1台が、上から下へ封筒を重ねる（＝<span style="color:#7c3aed;">カプセル化</span>）</div>
+
+          <!-- PC本体 -->
+          <div style="border:5px solid #334155;border-radius:12px;background:#334155;box-shadow:0 3px 10px rgba(0,0,0,.2);">
+            <div style="display:flex;align-items:center;gap:5px;padding:.3rem .5rem;">
+              <span style="width:9px;height:9px;border-radius:50%;background:#ef4444;display:inline-block;"></span><span style="width:9px;height:9px;border-radius:50%;background:#f59e0b;display:inline-block;"></span><span style="width:9px;height:9px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+              <span style="color:#e2e8f0;font-size:.58rem;font-weight:700;margin-left:.3rem;">💻 PCの中だけで⑦→①を全部やる（ルータ・スイッチ・ハブは入っていない）</span>
+            </div>
+            <div style="background:#fff;border-radius:3px;margin:0 .35rem .35rem;padding:.5rem;">
+              <div style="display:grid;grid-template-columns:14px 44px 1fr;gap:.28rem .4rem;align-items:stretch;">
+                <div style="grid-column:1;grid-row:1 / span 7;display:flex;flex-direction:column;align-items:center;"><div style="width:0;flex:1;border-left:3px dashed #fdba74;"></div><div style="color:#fb923c;font-size:.8rem;line-height:.4;">▼</div></div>
+                <div style="grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:.7rem;color:#4338ca;background:#eef2ff;border-radius:6px;padding:.28rem .05rem;line-height:1.1;">⑦<br><span style="font-size:.5rem;font-weight:600;">アプリ</span></div>
+                <div style="grid-column:3;grid-row:1;display:flex;flex-wrap:wrap;gap:3px;align-items:center;font-size:.62rem;padding:.1rem 0;"><span style="background:#fef9c3;border:1.5px solid #854d0e;color:#854d0e;border-radius:5px;padding:.1rem .4rem;font-weight:800;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15);">＋📝 手紙</span></div>
+                <div style="grid-column:2;grid-row:2;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:.7rem;color:#4338ca;background:#eef2ff;border-radius:6px;padding:.28rem .05rem;line-height:1.1;">⑥<br><span style="font-size:.5rem;font-weight:600;">プレゼン</span></div>
+                <div style="grid-column:3;grid-row:2;display:flex;flex-wrap:wrap;gap:3px;align-items:center;font-size:.62rem;padding:.1rem 0;"><span style="background:#fef9c3;border:1.5px solid #854d0e;color:#854d0e;border-radius:5px;padding:.1rem .4rem;font-weight:800;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15);">＋🔒 暗号化</span><span style="color:#d1d5db;font-size:.6rem;">+</span><span style="background:#f1f5f9;border:1px solid #e5e7eb;color:#9ca3af;border-radius:5px;padding:.1rem .4rem;font-weight:600;white-space:nowrap;">📝 手紙</span></div>
+                <div style="grid-column:2;grid-row:3;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:.7rem;color:#4338ca;background:#eef2ff;border-radius:6px;padding:.28rem .05rem;line-height:1.1;">⑤<br><span style="font-size:.5rem;font-weight:600;">セッション</span></div>
+                <div style="grid-column:3;grid-row:3;display:flex;flex-wrap:wrap;gap:3px;align-items:center;font-size:.62rem;padding:.1rem 0;"><span style="background:#eef2ff;border:1.5px solid #4338ca;color:#4338ca;border-radius:5px;padding:.1rem .4rem;font-weight:800;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15);">＋☎️ 接続管理</span><span style="font-size:.52rem;color:#94a3b8;">（封筒は増やさない）</span></div>
+                <div style="grid-column:2;grid-row:4;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:.7rem;color:#0e7490;background:#ecfeff;border-radius:6px;padding:.28rem .05rem;line-height:1.1;">④<br><span style="font-size:.5rem;font-weight:600;">トランス</span></div>
+                <div style="grid-column:3;grid-row:4;display:flex;flex-wrap:wrap;gap:3px;align-items:center;font-size:.62rem;padding:.1rem 0;"><span style="background:#ecfeff;border:1.5px solid #0e7490;color:#0e7490;border-radius:5px;padding:.1rem .4rem;font-weight:800;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15);">＋🔢 ポート</span><span style="color:#d1d5db;font-size:.6rem;">+</span><span style="background:#f1f5f9;border:1px solid #e5e7eb;color:#9ca3af;border-radius:5px;padding:.1rem .4rem;font-weight:600;white-space:nowrap;">手紙</span></div>
+                <div style="grid-column:2;grid-row:5;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:.7rem;color:#a16207;background:#fefce8;border-radius:6px;padding:.28rem .05rem;line-height:1.1;">③<br><span style="font-size:.5rem;font-weight:600;">ネット</span></div>
+                <div style="grid-column:3;grid-row:5;display:flex;flex-wrap:wrap;gap:3px;align-items:center;font-size:.62rem;padding:.1rem 0;"><span style="background:#fffbeb;border:1.5px solid #a16207;color:#a16207;border-radius:5px;padding:.1rem .4rem;font-weight:800;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15);">＋🚚 IP（宛先を書く）</span><span style="color:#d1d5db;font-size:.6rem;">+</span><span style="background:#f1f5f9;border:1px solid #e5e7eb;color:#9ca3af;border-radius:5px;padding:.1rem .4rem;font-weight:600;white-space:nowrap;">🔢 ポート</span></div>
+                <div style="grid-column:3;grid-row:6;grid-row:6;font-size:.55rem;color:#9a3412;background:#fff7ed;border:1px dashed #fdba74;border-radius:5px;padding:.18rem .35rem;line-height:1.45;margin:-.05rem 0;">💡 ③は「<b>どの出口（ルータ）に託すか方針を決めて宛先を書く</b>」だけ。<b>まだルータは通らない</b>。実際に機器に出会うのは①で送り出した後。</div>
+                <div style="grid-column:2;grid-row:7;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:.7rem;color:#15803d;background:#f0fdf4;border-radius:6px;padding:.28rem .05rem;line-height:1.1;">②<br><span style="font-size:.5rem;font-weight:600;">データ<br>リンク</span></div>
+                <div style="grid-column:3;grid-row:7;display:flex;flex-wrap:wrap;gap:3px;align-items:center;font-size:.62rem;padding:.1rem 0;"><span style="background:#f0fdf4;border:1.5px solid #15803d;color:#15803d;border-radius:5px;padding:.1rem .4rem;font-weight:800;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15);">＋📮 MAC</span><span style="color:#d1d5db;font-size:.6rem;">+</span><span style="background:#f1f5f9;border:1px solid #e5e7eb;color:#9ca3af;border-radius:5px;padding:.1rem .4rem;font-weight:600;white-space:nowrap;">🚚 IP</span><span style="color:#d1d5db;font-size:.6rem;">+</span><span style="background:#f1f5f9;border:1px solid #e5e7eb;color:#9ca3af;border-radius:5px;padding:.1rem .4rem;font-weight:600;white-space:nowrap;">🔢 ポート</span></div>
+              </div>
+              <!-- ①物理 行（封筒ごと信号化） -->
+              <div style="display:flex;align-items:center;gap:.4rem;margin-top:.3rem;padding-top:.35rem;border-top:1px dashed #e2e8f0;">
+                <div style="flex:0 0 44px;text-align:center;font-weight:800;font-size:.7rem;color:#475569;background:#e2e8f0;border-radius:6px;padding:.28rem .05rem;line-height:1.1;">①<br><span style="font-size:.5rem;font-weight:600;">物理</span></div>
+                <div style="flex:1;display:flex;flex-wrap:wrap;gap:3px;align-items:center;"><span style="background:#1e293b;color:#e2e8f0;border:1.5px solid #0f172a;border-radius:5px;padding:.1rem .4rem;font-weight:800;font-family:monospace;font-size:.55rem;box-shadow:0 1px 3px rgba(0,0,0,.15);">＋📢 …01011… 電気信号</span><span style="font-size:.52rem;color:#9ca3af;">封筒ごと信号化して送出</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ①の線が家の外へ -->
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:.2rem;margin-top:.4rem;">
+            <span style="font-size:.56rem;color:#9a3412;font-weight:800;white-space:nowrap;">①から線が家の外へ直接のびる</span>
+            <span style="border-top:4px solid #fb923c;width:26px;display:inline-block;"></span><span style="color:#fb923c;font-size:1.05rem;line-height:1;">▼</span>
+          </div>
+        </div>
+
+        <!-- ===== 境界：①＝PCの出口 ===== -->
+        <div style="text-align:center;font-size:.66rem;font-weight:800;color:#fff;background:linear-gradient(90deg,#fb923c,#60a5fa);padding:.4rem .5rem;line-height:1.4;border-left:3px solid #fdba74;border-right:3px solid #93c5fd;">⛔ ここが①＝PCの出口。<b>ここから先はネットワーク</b>（信号は送り出された後）</div>
+
+        <!-- ===== 下段：青＝送り出した後の世界 ===== -->
+        <div style="border:3px solid #93c5fd;background:#eff6ff;border-radius:0 0 12px 12px;padding:.7rem .6rem;">
+          <div style="display:flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:800;color:#1e40af;margin-bottom:.55rem;"><span style="font-size:.95rem;">🌐</span>送り出した後の世界（PCの外）＝信号はケーブルを旅し、外の機器に出会って中継される</div>
+
+          <!-- ケーブル -->
+          <div style="display:flex;align-items:center;gap:.35rem;justify-content:center;margin-bottom:.5rem;font-size:.62rem;color:#1e40af;background:#fff;border:1px solid #bfdbfe;border-radius:8px;padding:.4rem .5rem;">
+            <span style="font-size:1rem;">⚡</span><b>LANケーブル / Wi-Fi</b>（①の線がそのまま外へ続く）<span style="color:#60a5fa;font-size:1.1rem;line-height:1;">►</span>
+          </div>
+
+          <!-- 機器3種：読める"天井"の比較（順番ではない） -->
+          <div style="font-size:.62rem;color:#1e40af;background:#dbeafe;border:1px solid #93c5fd;border-radius:7px;padding:.45rem .5rem;margin-bottom:.5rem;line-height:1.6;">📥 出会う機器は<b>どれも①から上へ封筒をはがして読む</b>（送信の「⑦→①で重ねる」の<b>ちょうど逆向き</b>＝外側から1枚ずつ外すから）。違うのは<b>読める"天井"の高さだけ</b>。<br>⚠️ <b>これは「信号が通る順番」ではありません</b>。3種類を「どこまで読めるか」で並べた<b>比較</b>です（実際に別の町へ出るときは、まず<b>出口のルータ＝ゲートウェイ</b>を通る。ハブ・スイッチは同じ町＝LANの中で使う）。</div>
+          <div style="display:flex;flex-direction:column;gap:.4rem;">
+            <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:2px solid #bfdbfe;border-radius:10px;padding:.45rem .5rem;">
+              <div style="flex:0 0 auto;text-align:center;"><svg width="50" height="24" viewBox="0 0 50 24"><rect x="4" y="6" width="42" height="13" rx="2" fill="#64748b"/><rect x="9" y="14" width="5" height="6" rx="1" fill="#e2e8f0"/><rect x="16" y="14" width="5" height="6" rx="1" fill="#e2e8f0"/><rect x="23" y="14" width="5" height="6" rx="1" fill="#e2e8f0"/><rect x="30" y="14" width="5" height="6" rx="1" fill="#e2e8f0"/><circle cx="41" cy="9" r="1.5" fill="#f59e0b"/></svg><div style="font-size:.56rem;font-weight:800;color:#334155;">📡 ハブ</div></div>
+              <div style="flex:1;font-size:.62rem;line-height:1.5;color:#334155;"><span style="font-weight:800;color:#475569;">↑ ① まで読む</span><br><span style="color:#475569;">①だけ。信号をそのまま全ポートへ流すだけ（封筒は開けない）。</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:2px solid #bfdbfe;border-radius:10px;padding:.45rem .5rem;">
+              <div style="flex:0 0 auto;text-align:center;"><svg width="60" height="26" viewBox="0 0 60 26"><rect x="3" y="6" width="54" height="15" rx="2" fill="#334155"/><rect x="8" y="14" width="5" height="6" rx="1" fill="#cbd5e1"/><rect x="15" y="14" width="5" height="6" rx="1" fill="#cbd5e1"/><rect x="22" y="14" width="5" height="6" rx="1" fill="#cbd5e1"/><rect x="29" y="14" width="5" height="6" rx="1" fill="#cbd5e1"/><rect x="36" y="14" width="5" height="6" rx="1" fill="#cbd5e1"/><rect x="43" y="14" width="5" height="6" rx="1" fill="#cbd5e1"/><rect x="50" y="14" width="5" height="6" rx="1" fill="#cbd5e1"/><circle cx="52" cy="10" r="1.6" fill="#22c55e"/></svg><div style="font-size:.56rem;font-weight:800;color:#334155;">🔀 スイッチ</div></div>
+              <div style="flex:1;font-size:.62rem;line-height:1.5;color:#334155;"><span style="font-weight:800;color:#15803d;">↑ ①→② まで読む</span><br><span style="color:#475569;">①の上に②まで。②📮MACを見て、同じ町の相手ポートへ送る。</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:2px solid #bfdbfe;border-radius:10px;padding:.45rem .5rem;">
+              <div style="flex:0 0 auto;text-align:center;"><svg width="56" height="38" viewBox="0 0 56 38"><line x1="17" y1="19" x2="13" y2="4" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/><line x1="39" y1="19" x2="43" y2="4" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/><circle cx="13" cy="4" r="2" fill="#475569"/><circle cx="43" cy="4" r="2" fill="#475569"/><rect x="6" y="17" width="44" height="17" rx="4" fill="#1e293b"/><circle cx="15" cy="26" r="2.2" fill="#22c55e"/><circle cx="25" cy="26" r="2.2" fill="#22c55e"/><circle cx="35" cy="26" r="2.2" fill="#f59e0b"/><circle cx="44" cy="26" r="2.2" fill="#38bdf8"/></svg><div style="font-size:.56rem;font-weight:800;color:#334155;">🚦 ルータ</div></div>
+              <div style="flex:1;font-size:.62rem;line-height:1.5;color:#334155;"><span style="font-weight:800;color:#a16207;">↑ ①→②→③ まで読む</span><br><span style="color:#475569;">①②の上に③まで。③🚚IPを見て、別の町（別ネットワーク）へ中継。</span></div>
+            </div>
+          </div>
+
+          <div style="text-align:center;color:#60a5fa;font-size:.9rem;line-height:.4;margin:.45rem 0;">▼</div>
+
+          <!-- 相手PC：逆順ではがす -->
+          <div style="display:flex;align-items:center;gap:.55rem;background:#fff;border:2px solid #60a5fa;border-radius:10px;padding:.5rem .55rem;">
+            <span style="font-size:1.6rem;">🌐💻</span>
+            <div style="flex:1;font-size:.62rem;line-height:1.5;color:#334155;"><b style="color:#1e40af;">別ネットワーク／相手PC</b>に到着。相手PCだけ<b>①〜⑦を全部</b>やる＝<b>逆順ではがす</b>（①受信→封筒を1枚ずつはがす→⑦で手紙を読む）。</div>
+          </div>
+        </div>
+
+        <!-- まとめ -->
+        <div style="display:flex;gap:.4rem;margin-top:.6rem;flex-wrap:wrap;">
+          <div style="flex:1 1 130px;font-size:.66rem;color:#9a3412;background:#fff7ed;border:1.5px solid #fed7aa;border-radius:8px;padding:.5rem .55rem;line-height:1.5;">📤 <b>送る＝重ねる</b><br>自分のPCの中で⑦→①へ封筒を1枚ずつ足す。</div>
+          <div style="flex:1 1 130px;font-size:.66rem;color:#1e40af;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:.5rem .55rem;line-height:1.5;">📥 <b>受け取る＝はがす</b><br>相手PCで①→⑦へ封筒を1枚ずつ外す。</div>
+        </div>
+        <div style="font-size:.66rem;color:#334155;background:#fef9c3;border:1px solid #fde047;border-radius:7px;padding:.45rem .55rem;margin-top:.5rem;line-height:1.6;">🔑 <b>機器＝その機器が読める"最上位の層"で分類</b>。ハブ＝①／スイッチ＝①②／ルータ＝①②③。<b>両端のPCだけ①〜⑦の全部</b>をやる。機器はみんな<b>PCの外（ネットワーク上）</b>で、信号を送り出した"後"に出会う。</div>
+      </div>
 
       <details style="margin-top:.8rem;">
         <summary style="cursor:pointer;font-weight:800;color:#b45309;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:.55rem .7rem;font-size:.82rem;">🔎 もっと詳しく①：相手が「別の町（別ネットワーク）」にいるときの配達フル図（タップで開く）</summary>
       <div class="vz-supplement" style="background:#fffbeb;border-left-color:#f59e0b;margin-top:.5rem;">
         <div class="vz-label" style="color:#b45309;">🏙️ この表だけだと見えにくい「別の町（別ネットワーク）へ届くとき」を絵にしました</div>
-        <p style="margin:0 0 .6rem;font-size:.82rem;"><b>町＝ネットワーク</b>／<b>家＝PC（玄関＝差込口）</b>／<b>表札(MAC)＝“同じ町の中だけ”で通じる目印</b>／<b>住所(IP)＝“町をまたいでも”通じる最終あて先</b>。これで②ルータ・①L2スイッチの分担を見ます。</p>
+        <p style="margin:0 0 .6rem;font-size:.82rem;"><b>町＝ネットワーク</b>／<b>家＝PC（玄関＝差込口）</b>／<b>表札(MAC（Media Access Control・機器固有の物理アドレス）)＝“同じ町の中だけ”で通じる目印</b>／<b>住所(IP（Internet Protocol・インターネットの住所の仕組み）)＝“町をまたいでも”通じる最終あて先</b>。これで②ルータ・①L2（Layer 2・通信第2層＝データリンク層）スイッチの分担を見ます。</p>
 
         <!-- 別の町（別ネットワーク）へ届くとき -->
         <div style="background:#fff;border-radius:8px;padding:.6rem;border:1px solid #e5e7eb;">
@@ -915,7 +1346,7 @@ td.l{text-align:left;}
               <div style="text-align:center;font-size:.72rem;color:#1d4ed8;font-weight:700;margin-bottom:.3rem;">🏙️ A町（自分のネットワーク）</div>
               <div style="display:flex;flex-direction:column;align-items:center;gap:.28rem;font-size:.7rem;text-align:center;">
                 <div>🏠 <b>自分PC</b></div>
-                <div style="font-size:.64rem;color:#15803d;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;padding:.22rem .4rem;line-height:1.4;">（もし相手が<b>同じA町</b>なら → ここで🧑‍✈️郵便屋＝L2スイッチが表札(MAC)を見て<b>そのまま隣の家へ届けて完了</b>。🚚ルータは出番なし）</div>
+                <div style="font-size:.64rem;color:#15803d;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;padding:.22rem .4rem;line-height:1.4;">（もし相手が<b>同じA町</b>なら → ここで🧑‍✈️郵便屋＝L2（Layer 2・通信第2層＝データリンク層）スイッチが表札(MAC)を見て<b>そのまま隣の家へ届けて完了</b>。🚚ルータは出番なし）</div>
                 <div style="color:#1d4ed8;font-weight:800;">↓ でも今回は同じ町に相手がいない！</div>
                 <div style="background:#dbeafe;border-radius:6px;padding:.28rem .5rem;">🚪🚚 <b>町の出口＝ルータ</b><br><small>＝デフォルトゲートウェイ</small></div>
               </div>
@@ -1059,7 +1490,7 @@ td.l{text-align:left;}
         <p style="margin:0 0 .4rem;font-size:.83rem;">同じ「ポート」でも、層が違うと意味がまったく違います。混同注意！</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.8rem;">
           <div style="background:#fff;border:2px solid #22c55e;border-radius:8px;padding:.5rem .6rem;">
-            <b style="color:#15803d;">🔌 ②データリンク層の「ポート」</b><br>＝スイッチの<b>差込口（物理的な穴）</b>。LANケーブルを挿す口のこと。<br><small style="color:#64748b;">「宛先のポートだけに転送」＝正しい差込口にだけ流す</small>
+            <b style="color:#15803d;">🔌 ②データリンク層の「ポート」</b><br>＝スイッチの<b>差込口（物理的な穴）</b>。LAN（Local Area Network・構内ネットワーク）ケーブルを挿す口のこと。<br><small style="color:#64748b;">「宛先のポートだけに転送」＝正しい差込口にだけ流す</small>
           </div>
           <div style="background:#fff;border:2px solid #0e7490;border-radius:8px;padding:.5rem .6rem;">
             <b style="color:#0e7490;">🔢 ④トランスポート層の「ポート番号」</b><br>＝<b>アプリを区別する番号</b>（0〜65535）。物理的な穴ではなく“番号”。<br><small style="color:#64748b;">例：Web=80/443、メール=25。届いた先＝相手PCのどのソフトに渡すか</small>
@@ -1091,7 +1522,7 @@ td.l{text-align:left;}
               <line x1="94" y1="52" x2="132" y2="52" stroke="#a16207" stroke-width="2.5" marker-end="url(#arN)"/>
               <line x1="226" y1="52" x2="264" y2="52" stroke="#a16207" stroke-width="2.5" marker-end="url(#arN)"/>
             </svg>
-            <div style="background:#fffbeb;border:1px dashed #f59e0b;border-radius:6px;padding:.4rem .6rem;font-size:.76rem;color:#92400e;margin-top:.3rem;">📌 <b>自宅のWi-Fiルータとの違い：</b>役割は同じ「ルータ（IPで別NWへ転送）」ですが、家庭用は<b>1台に複数機能が同居</b>＝ルータ＋L2スイッチ（LANポート）＋無線AP（Wi-Fi）＋NAPT＋DHCPの<b>詰め合わせ</b>。試験の「ルータ」はそのうち<b>ルーティング部分だけ</b>を指します。</div>
+            <div style="background:#fffbeb;border:1px dashed #f59e0b;border-radius:6px;padding:.4rem .6rem;font-size:.76rem;color:#92400e;margin-top:.3rem;">📌 <b>自宅のWi-Fiルータとの違い：</b>役割は同じ「ルータ（IPで別NW（Network・ネットワーク）へ転送）」ですが、家庭用は<b>1台に複数機能が同居</b>＝ルータ＋L2スイッチ（LAN（Local Area Network・構内ネットワーク）ポート）＋無線AP（Wi-Fi）＋NAPT（Network Address Port Translation・IPとポートをまとめて変換）＋DHCP（Dynamic Host Configuration Protocol・IPアドレス自動割当）の<b>詰め合わせ</b>。試験の「ルータ」はそのうち<b>ルーティング部分だけ</b>を指します。</div>
           </div>
 
           <div style="background:#fff;border-left:4px solid #15803d;border-radius:6px;padding:.5rem .7rem;">
@@ -1146,10 +1577,10 @@ td.l{text-align:left;}
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>TCPは「届いたか確認しながら送る丁寧な宅配便」、UDPは「確認しない速達ハガキ」。確実さのTCP、速さのUDP、とおさえます。</p>
+        <p>TCP（Transmission Control Protocol・確実に届ける通信手順）は「届いたか確認しながら送る丁寧な宅配便」、UDP（User Datagram Protocol・速さ優先の通信手順）は「確認しない速達ハガキ」。確実さのTCP（Transmission Control Protocol・確実に届ける通信手順）、速さのUDP（User Datagram Protocol・速さ優先の通信手順）、とおさえます。</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
-          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📦✅</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">TCP＝丁寧な宅配便</div><div style="font-size:.7rem;color:#3b82f6;font-weight:700;">Transmission Control Protocol</div><div style="font-size:.75rem;color:#1e3a8a;">届いたか確認・確実</div></div>
-          <div style="background:#fefce8;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📮💨</div><div style="font-size:.78rem;font-weight:700;color:#854d0e;">UDP＝速達ハガキ</div><div style="font-size:.7rem;color:#a16207;font-weight:700;">User Datagram Protocol</div><div style="font-size:.75rem;color:#713f12;">確認なし・高速</div></div>
+          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📦✅</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">TCP（Transmission Control Protocol・確実に届ける通信手順）＝丁寧な宅配便</div><div style="font-size:.7rem;color:#3b82f6;font-weight:700;">Transmission Control Protocol</div><div style="font-size:.75rem;color:#1e3a8a;">届いたか確認・確実</div></div>
+          <div style="background:#fefce8;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📮💨</div><div style="font-size:.78rem;font-weight:700;color:#854d0e;">UDP（User Datagram Protocol・速さ優先の通信手順）＝速達ハガキ</div><div style="font-size:.7rem;color:#a16207;font-weight:700;">User Datagram Protocol</div><div style="font-size:.75rem;color:#713f12;">確認なし・高速</div></div>
         </div>
         <div style="background:#dbeafe;border-radius:6px;padding:.5rem .7rem;margin-top:.5rem;font-size:.83rem;color:#1e40af;">🧒 <b>覚え方：「<u>T</u>akuhaibin（宅配便）の T ＝ <u>T</u>CP」</b>。宅配便は「届きました」とハンコをもらう（＝届いたか確認＝信頼性が高い）。残ったUDPが速いハガキの方、と消去法でOK。</div>
       </div>
@@ -1198,7 +1629,7 @@ td.l{text-align:left;}
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>IPアドレスは「ネット上の住所」。前半が町名（ネットワーク部）、後半が番地（ホスト部）で、その境目をサブネットマスクが決めます。</p>
+        <p>IP（Internet Protocol・インターネットの住所の仕組み）アドレスは「ネット上の住所」。前半が町名（ネットワーク部）、後半が番地（ホスト部）で、その境目をサブネットマスクが決めます。</p>
         <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;">
           <div style="background:#dbeafe;border-radius:6px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;color:#1e40af;">ネットワーク部（町名）</div>
           <span style="color:#94a3b8;font-weight:800;">｜</span>
@@ -1237,7 +1668,7 @@ td.l{text-align:left;}
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>家の中だけの住所（プライベートIP）のままでは外に出られないので、玄関（ルータ）で外向けの住所に変えます。ポート番号は「部屋番号」のイメージ。<b>外へ送り出すまでの流れ</b>を順番に見てみましょう。</p>
+        <p>家の中だけの住所（プライベートIP（Internet Protocol・インターネットの住所の仕組み））のままでは外に出られないので、玄関（ルータ）で外向けの住所に変えます。ポート番号は「部屋番号」のイメージ。<b>外へ送り出すまでの流れ</b>を順番に見てみましょう。</p>
 
         <div style="background:#fff;border-radius:8px;padding:.6rem .7rem;margin-top:.4rem;font-size:.82rem;">
           <div style="font-weight:800;color:#0f766e;margin-bottom:.4rem;">📨 自分のPCから外のサーバへ送るまでの流れ</div>
@@ -1247,11 +1678,11 @@ td.l{text-align:left;}
             <div style="display:flex;align-items:stretch;gap:.3rem;overflow-x:auto;">
               <!-- 家（LAN） -->
               <div style="flex:0 0 auto;border:2px dashed #f59e0b;border-radius:8px;padding:.4rem .35rem;background:#fffbeb;">
-                <div style="font-size:.66rem;font-weight:800;color:#b45309;text-align:center;margin-bottom:.3rem;">🏠 家の中（LAN・プライベートIP）</div>
+                <div style="font-size:.66rem;font-weight:800;color:#b45309;text-align:center;margin-bottom:.3rem;">🏠 家の中（LAN（Local Area Network・構内ネットワーク）・プライベートIP（Internet Protocol・インターネットの住所の仕組み））</div>
                 <div style="display:flex;align-items:center;gap:.2rem;">
                   <div style="background:#fff;border:1.5px solid #ef4444;border-radius:6px;padding:.3rem;text-align:center;font-size:.64rem;">💻<br>自分PC<br><small>192.168.1.5</small></div>
                   <div style="text-align:center;font-size:.6rem;color:#0f766e;font-weight:700;">①荷物<br>→</div>
-                  <div style="background:#eafaf1;border:1.5px solid #22c55e;border-radius:6px;padding:.3rem;text-align:center;font-size:.64rem;">🔍<br><b>ARP</b><br><small>IP→MAC<br>を調べる</small></div>
+                  <div style="background:#eafaf1;border:1.5px solid #22c55e;border-radius:6px;padding:.3rem;text-align:center;font-size:.64rem;">🔍<br><b>ARP</b><br><small>IP（Internet Protocol・インターネットの住所の仕組み）→MAC<br>を調べる</small></div>
                   <div style="text-align:center;font-size:.6rem;color:#0f766e;font-weight:700;">②MAC<br>判明→</div>
                   <div style="background:#ede9fe;border:1.5px solid #8b5cf6;border-radius:6px;padding:.3rem;text-align:center;font-size:.64rem;">🚪<br>ルータ<br><small>(玄関)</small></div>
                 </div>
@@ -1271,19 +1702,19 @@ td.l{text-align:left;}
                 </div>
               </div>
             </div>
-            <div style="font-size:.64rem;color:#64748b;text-align:center;margin-top:.3rem;">家の中＝🔍ARPでMACを調べて玄関まで運ぶ／玄関＝🚪ルータで⇒NAPT住所書換／外＝🌐グローバルIPで相手へ</div>
+            <div style="font-size:.64rem;color:#64748b;text-align:center;margin-top:.3rem;">家の中＝🔍ARP（Address Resolution Protocol・IPからMACを調べる手順）でMAC（Media Access Control・機器固有の物理アドレス）を調べて玄関まで運ぶ／玄関＝🚪ルータで⇒NAPT（Network Address Port Translation・IPとポートをまとめて変換）住所書換／外＝🌐グローバルIPで相手へ</div>
           </div>
 
           <div style="display:grid;gap:.45rem;">
             <div style="display:flex;gap:.5rem;align-items:flex-start;">
               <span style="background:#0f766e;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.78rem;">1</span>
-              <div style="background:#fef2f2;border-radius:6px;padding:.35rem .6rem;flex:1;"><b style="color:#b91c1c;">🏠 自分のPC（プライベートIP）</b><br>相手の住所（IP）はDNSで分かった。でも、まず<b>家の玄関＝ルータ</b>に荷物を渡したい。</div>
+              <div style="background:#fef2f2;border-radius:6px;padding:.35rem .6rem;flex:1;"><b style="color:#b91c1c;">🏠 自分のPC（プライベートIP）</b><br>相手の住所（IP）はDNS（Domain Name System・名前をIPに変換する仕組み）で分かった。でも、まず<b>家の玄関＝ルータ</b>に荷物を渡したい。</div>
             </div>
             <div style="text-align:center;color:#94a3b8;font-weight:800;line-height:.6;">↓</div>
 
             <div style="display:flex;gap:.5rem;align-items:flex-start;">
               <span style="background:#0f766e;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.78rem;">2</span>
-              <div style="background:#eafaf1;border-radius:6px;padding:.35rem .6rem;flex:1;border:1.5px solid #22c55e;"><b style="color:#15803d;">🔍 ARP でルータのMACを調べる</b><br>同じLAN内で渡すには<b>表札＝MACアドレス</b>が要る。「ルータのIP→MACは？」と聞いて宛先MACを知る。<br><small style="color:#16a34a;">★ここがARP（IP→MAC変換）。これがないとLAN内で荷物を渡せない</small></div>
+              <div style="background:#eafaf1;border-radius:6px;padding:.35rem .6rem;flex:1;border:1.5px solid #22c55e;"><b style="color:#15803d;">🔍 ARP（Address Resolution Protocol・IPからMACを調べる手順） でルータのMAC（Media Access Control・機器固有の物理アドレス）を調べる</b><br>同じLAN（Local Area Network・構内ネットワーク）内で渡すには<b>表札＝MAC（Media Access Control・機器固有の物理アドレス）アドレス</b>が要る。「ルータのIP→MACは？」と聞いて宛先MACを知る。<br><small style="color:#16a34a;">★ここがARP（IP→MAC変換）。これがないとLAN（Local Area Network・構内ネットワーク）内で荷物を渡せない</small></div>
             </div>
             <div style="text-align:center;color:#94a3b8;font-weight:800;line-height:.6;">↓</div>
 
@@ -1299,13 +1730,13 @@ td.l{text-align:left;}
             </div>
           </div>
         </div>
-        <p style="margin:.5rem 0 0;font-size:.8rem;background:#ccfbf1;border-radius:6px;padding:.4rem .6rem;color:#0f766e;">🔑 <b>2つの「変換」を区別：</b>ARP＝<b>IP→MAC</b>（LAN内で“表札”を調べる）／NAPT＝<b>プライベートIP→グローバルIP</b>（玄関で“外向け住所”に直す）。</p>
+        <p style="margin:.5rem 0 0;font-size:.8rem;background:#ccfbf1;border-radius:6px;padding:.4rem .6rem;color:#0f766e;">🔑 <b>2つの「変換」を区別：</b>ARP（Address Resolution Protocol・IPからMACを調べる手順）＝<b>IP→MAC</b>（LAN内で“表札”を調べる）／NAPT（Network Address Port Translation・IPとポートをまとめて変換）＝<b>プライベートIP→グローバルIP</b>（玄関で“外向け住所”に直す）。</p>
       </div>
       <div class="grid2">
         <div class="cell" style="border-color:var(--g)"><b>ARP</b>IP→MAC を解決（同一LANで宛先MACを知る）</div>
         <div class="cell" style="border-color:var(--b)"><b>NAPT（IPマスカレード）</b>1つのグローバルIPをポートで使い分け複数端末で共有</div>
         <div class="cell" style="border-color:var(--o)"><b>ポート番号</b>0〜65535。相手の“アプリ/サービス”を識別（PCはIPで識別）</div>
-        <div class="cell" style="border-color:var(--p)"><b>プライベートIP</b>そのままでは外部と通信不可→NATでグローバルに変換</div>
+        <div class="cell" style="border-color:var(--p)"><b>プライベートIP</b>そのままでは外部と通信不可→NAT（Network Address Translation・IPアドレス変換）でグローバルに変換</div>
       </div>
     </div>
 
@@ -1333,7 +1764,7 @@ td.l{text-align:left;}
       </div>
       <div class="vz-supplement" style="background:#f0fdf4;border-left-color:#22c55e;">
         <div class="vz-label" style="color:#16a34a;">🧪 共通の具体例：病気の検査（100人）で4指標を計算してみる</div>
-        <p style="margin:0 0 .4rem;font-size:.84rem;"><b>100人</b>を検査。<b>本当に病気＝10人</b>／<b>健康＝90人</b>。あるAIが「病気かどうか」を判定した結果が下の表（混同行列）。この数字を使って、各指標を実際に計算します。</p>
+        <p style="margin:0 0 .4rem;font-size:.84rem;"><b>100人</b>を検査。<b>本当に病気＝10人</b>／<b>健康＝90人</b>。あるAI（Artificial Intelligence・人工知能）が「病気かどうか」を判定した結果が下の表（混同行列）。この数字を使って、各指標を実際に計算します。</p>
 
         <table style="font-size:.76rem;">
           <tr><th rowspan="2" colspan="2" style="background:#475569;">　</th><th colspan="2">本当はどうだった？（正解）</th><th rowspan="2" style="background:#7c3aed;">→ 行から分かる指標</th></tr>
@@ -1408,10 +1839,10 @@ td.l{text-align:left;}
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>CNNは「写真を見るのが得意な目」、RNNは「順番に話を聞くのが得意な耳」。画像はCNN、時系列や言葉はRNN、と役割で分けます。</p>
+        <p>CNN（Convolutional Neural Network・畳み込みニューラルネットワーク）は「写真を見るのが得意な目」、RNN（Recurrent Neural Network・再帰型ニューラルネットワーク）は「順番に話を聞くのが得意な耳」。画像はCNN（Convolutional Neural Network・畳み込みニューラルネットワーク）、時系列や言葉はRNN（Recurrent Neural Network・再帰型ニューラルネットワーク）、と役割で分けます。</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
-          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🖼👁</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">CNN＝目</div><div style="font-size:.75rem;color:#1e3a8a;">画像が得意</div></div>
-          <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🗣👂</div><div style="font-size:.78rem;font-weight:700;color:#15803d;">RNN＝耳</div><div style="font-size:.75rem;color:#14532d;">順番・言葉が得意</div></div>
+          <div style="background:#eff6ff;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🖼👁</div><div style="font-size:.78rem;font-weight:700;color:#1d4ed8;">CNN（Convolutional Neural Network・畳み込みニューラルネットワーク）＝目</div><div style="font-size:.75rem;color:#1e3a8a;">画像が得意</div></div>
+          <div style="background:#f0fdf4;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🗣👂</div><div style="font-size:.78rem;font-weight:700;color:#15803d;">RNN（Recurrent Neural Network・再帰型ニューラルネットワーク）＝耳</div><div style="font-size:.75rem;color:#14532d;">順番・言葉が得意</div></div>
         </div>
       </div>
       <div class="grid2">
@@ -1439,10 +1870,10 @@ td.l{text-align:left;}
           <!-- 下部ニュースバー -->
           <div style="background:#1e293b;color:#fff;padding:5px 0;">
             <div style="background:#dc2626;display:inline-block;font-weight:800;font-size:.7rem;padding:2px 8px;margin-left:6px;border-radius:3px;">速報</div>
-            <span style="font-size:.74rem;margin-left:8px;">CNN（畳み込み）＝“画像（映像）を見る目”が得意なAI　／　RNNは“言葉・時系列を聞く耳”担当 …</span>
+            <span style="font-size:.74rem;margin-left:8px;">CNN（畳み込み）＝“画像（映像）を見る目”が得意なAI（Artificial Intelligence・人工知能）　／　RNNは“言葉・時系列を聞く耳”担当 …</span>
           </div>
         </div>
-        <p style="margin:.5rem 0 0;font-size:.8rem;text-align:center;color:#92400e;">🧠 <b>テレビのCNN＝映像（画像）</b> → だから <b>AIのCNN＝画像認識が得意</b>、と結びつけて記憶！</p>
+        <p style="margin:.5rem 0 0;font-size:.8rem;text-align:center;color:#92400e;">🧠 <b>テレビのCNN＝映像（画像）</b> → だから <b>AI（Artificial Intelligence・人工知能）のCNN＝画像認識が得意</b>、と結びつけて記憶！</p>
       </div>
 
       <div class="trap"><b>△だったQ</b>：<b>CNN＝画像／RNN＝時系列・言語</b>。CNNを時系列用と取り違えない。</div>
@@ -1492,7 +1923,7 @@ td.l{text-align:left;}
             <div style="font-weight:800;color:#1d4ed8;font-size:.82rem;">可用性 A</div>
             <div style="font-size:.66rem;color:#64748b;">Availability</div>
             <div style="font-size:.72rem;margin-top:.25rem;">使いたい時に使える<br><b>＝止まらない</b></div>
-            <div style="background:#dbeafe;border-radius:5px;padding:.25rem;margin-top:.3rem;font-size:.66rem;color:#1d4ed8;">💥やぶられると<br>サイト停止（DDoS等）</div>
+            <div style="background:#dbeafe;border-radius:5px;padding:.25rem;margin-top:.3rem;font-size:.66rem;color:#1d4ed8;">💥やぶられると<br>サイト停止（DDoS（Distributed Denial of Service・分散型サービス妨害攻撃）等）</div>
           </div>
         </div>
 
@@ -1549,11 +1980,11 @@ td.l{text-align:left;}
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>守りの道具は役割分担。FW＝門番（通す/通さない）、IDS＝見張り（気づいて知らせるだけ）、IPS＝見張り＋自分で止める、です。</p>
+        <p>守りの道具は役割分担。FW（FireWall・ファイアウォール＝防火壁）＝門番（通す/通さない）、IDS（Intrusion Detection System・侵入検知システム）＝見張り（気づいて知らせるだけ）、IPS（Intrusion Prevention System・侵入防止システム）＝見張り＋自分で止める、です。</p>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem;">
-          <div style="background:#ede9fe;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">🚪</div><div style="font-size:.74rem;font-weight:600;color:#5b21b6;">FW＝門番<br>通す/通さない</div></div>
-          <div style="background:#fce7f3;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">👁</div><div style="font-size:.74rem;font-weight:600;color:#9d174d;">IDS＝見張り<br>気づいて知らせる</div></div>
-          <div style="background:#ecfdf5;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">✋</div><div style="font-size:.74rem;font-weight:600;color:#065f46;">IPS＝見張り<br>＋自分で止める</div></div>
+          <div style="background:#ede9fe;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">🚪</div><div style="font-size:.74rem;font-weight:600;color:#5b21b6;">FW（FireWall・ファイアウォール＝防火壁）＝門番<br>通す/通さない</div></div>
+          <div style="background:#fce7f3;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">👁</div><div style="font-size:.74rem;font-weight:600;color:#9d174d;">IDS（Intrusion Detection System・侵入検知システム）＝見張り<br>気づいて知らせる</div></div>
+          <div style="background:#ecfdf5;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.3rem;">✋</div><div style="font-size:.74rem;font-weight:600;color:#065f46;">IPS（Intrusion Prevention System・侵入防止システム）＝見張り<br>＋自分で止める</div></div>
         </div>
       </div>
       <!-- 防御技術の配置マップ -->
@@ -1569,7 +2000,7 @@ td.l{text-align:left;}
           <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;font-size:.66rem;margin-bottom:.45rem;">
             <span style="background:#fff;border-radius:6px;padding:.3rem .5rem;">😈 攻撃者</span>
             <span style="background:#fff;border-radius:6px;padding:.3rem .5rem;">🧑‍💼 リモート社員</span>
-            <span style="background:#dcfce7;border-radius:6px;padding:.3rem .5rem;color:#15803d;font-weight:700;">🔐 VPN＝外から中へ“暗号トンネル”で安全に入る道</span>
+            <span style="background:#dcfce7;border-radius:6px;padding:.3rem .5rem;color:#15803d;font-weight:700;">🔐 VPN（Virtual Private Network・仮想専用線）＝外から中へ“暗号トンネル”で安全に入る道</span>
           </div>
 
           <!-- ② DMZ（外と中の“間”：この中に関所→社内がある）-->
@@ -1577,7 +2008,7 @@ td.l{text-align:left;}
             <div style="font-weight:800;color:#b45309;font-size:.72rem;margin-bottom:.35rem;">🟧 DMZ（外と中の“間”の緩衝地帯）</div>
             <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;font-size:.64rem;margin-bottom:.45rem;">
               <span style="background:#fff;border-radius:6px;padding:.3rem .5rem;">🌐🖥️ 公開Webサーバ<br><small>（外に見せる用。社内とは分けて置く）</small></span>
-              <span style="background:#fee2e2;border-radius:6px;padding:.3rem .5rem;color:#b91c1c;font-weight:700;">🛡️ WAF＝公開サーバの前で<br>Webアプリ攻撃(SQLi/XSS)を防ぐ盾</span>
+              <span style="background:#fee2e2;border-radius:6px;padding:.3rem .5rem;color:#b91c1c;font-weight:700;">🛡️ WAF（Web Application Firewall・Webアプリ用の防御壁）＝公開サーバの前で<br>Webアプリ攻撃(SQLi/XSS)を防ぐ盾</span>
             </div>
 
             <!-- ③ 関所（FW/IDS/IPS）：この壁の中に社内LANがある -->
@@ -1591,7 +2022,7 @@ td.l{text-align:left;}
 
               <!-- ④ 社内LAN（関所の内側）：この中にPCがある -->
               <div style="border:2px solid #22c55e;border-radius:12px;background:#f0fdf4;padding:.5rem .5rem;">
-                <div style="font-weight:800;color:#15803d;font-size:.72rem;margin-bottom:.35rem;">🏢 会社の中（社内LAN）＝関所の内側</div>
+                <div style="font-weight:800;color:#15803d;font-size:.72rem;margin-bottom:.35rem;">🏢 会社の中（社内LAN（Local Area Network・構内ネットワーク））＝関所の内側</div>
                 <div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:stretch;">
                   <!-- ⑤ PCの中（いちばん奥の枠）-->
                   <div style="flex:1;min-width:170px;border:2px solid #94a3b8;border-radius:10px;background:#fff;padding:.45rem .5rem;">
@@ -1608,7 +2039,7 @@ td.l{text-align:left;}
           </div>
         </div>
 
-        <div style="font-size:.62rem;color:#64748b;text-align:center;margin-top:.45rem;">外→<b>DMZ</b>→<b>関所(FW/IDS/IPS)</b>→<b>社内LAN</b>→<b>PCの中</b>と<b>枠の中の枠</b>。奥へ行くほど何重もの壁で守られる（多層防御）。VPN＝外から入る道／WAF＝公開サーバの前。</div>
+        <div style="font-size:.62rem;color:#64748b;text-align:center;margin-top:.45rem;">外→<b>DMZ</b>→<b>関所(FW/IDS/IPS)</b>→<b>社内LAN</b>→<b>PCの中</b>と<b>枠の中の枠</b>。奥へ行くほど何重もの壁で守られる（多層防御）。VPN（Virtual Private Network・仮想専用線）＝外から入る道／WAF（Web Application Firewall・Webアプリ用の防御壁）＝公開サーバの前。</div>
       </div>
 
       <table>
@@ -1622,7 +2053,7 @@ td.l{text-align:left;}
         <tr><td>サンドボックス</td><td class="l">疑わしいプログラムを隔離環境で動かし挙動を分析</td></tr>
         <tr><td>DMZ</td><td class="l">公開サーバを内部LANから隔離する緩衝地帯</td></tr>
       </table>
-      <div class="trap"><b>外した／△Q</b>：<b>IDS＝検知のみ／IPS＝検知＋遮断</b>。<b>FW＝通信制御</b>（ウイルス駆除はアンチウイルス）。<b>サンドボックス＝隔離実行で分析</b>。</div>
+      <div class="trap"><b>外した／△Q</b>：<b>IDS（Intrusion Detection System・侵入検知システム）＝検知のみ／IPS（Intrusion Prevention System・侵入防止システム）＝検知＋遮断</b>。<b>FW（FireWall・ファイアウォール＝防火壁）＝通信制御</b>（ウイルス駆除はアンチウイルス）。<b>サンドボックス＝隔離実行で分析</b>。</div>
     </div>
 
     <div class="fill-section-title">✏️ 穴埋めチェック（防御技術）</div>
@@ -1651,7 +2082,7 @@ td.l{text-align:left;}
     <div class="fig">
       <div class="vz-supplement">
         <div class="vz-label">💡 かんたん解説</div>
-        <p>XSSは「他人のブラウザに悪い貼り紙をして実行させる」攻撃。ボットネットは「乗っ取った大勢のPCを遠隔操作する軍団」です。</p>
+        <p>XSS（Cross Site Scripting・クロスサイトスクリプティング攻撃）は「他人のブラウザに悪い貼り紙をして実行させる」攻撃。ボットネットは「乗っ取った大勢のPCを遠隔操作する軍団」です。</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;">
           <div style="background:#fef2f2;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">📝💉</div><div style="font-size:.78rem;font-weight:700;color:#b91c1c;">XSS</div><div style="font-size:.75rem;color:#7f1d1d;">他人のブラウザに悪い貼り紙</div></div>
           <div style="background:#fff7ed;border-radius:6px;padding:.5rem;text-align:center;"><div style="font-size:1.4rem;">🤖🕸</div><div style="font-size:.78rem;font-weight:700;color:#c2410c;">ボットネット</div><div style="font-size:.75rem;color:#7c2d12;">乗っ取った大勢のPC軍団</div></div>
@@ -1659,7 +2090,7 @@ td.l{text-align:left;}
 
         <!-- XSS 攻撃の流れ -->
         <div style="background:#fff;border:1.5px solid #fca5a5;border-radius:8px;padding:.5rem .55rem;margin-top:.5rem;">
-          <div style="font-weight:800;color:#b91c1c;font-size:.8rem;margin-bottom:.35rem;">📝💉 XSSの流れ（“悪い貼り紙”作戦）</div>
+          <div style="font-weight:800;color:#b91c1c;font-size:.8rem;margin-bottom:.35rem;">📝💉 XSS（Cross Site Scripting・クロスサイトスクリプティング攻撃）の流れ（“悪い貼り紙”作戦）</div>
           <div style="display:flex;align-items:center;gap:.2rem;flex-wrap:wrap;font-size:.68rem;justify-content:center;">
             <span style="background:#fee2e2;border-radius:5px;padding:.3rem .4rem;text-align:center;font-weight:700;color:#b91c1c;">😈攻撃者</span>
             <span style="color:#b91c1c;">①悪いスクリプトを<br>掲示板に貼る→</span>
@@ -1684,14 +2115,14 @@ td.l{text-align:left;}
               <span style="background:#fff7ed;border-radius:5px;padding:.25rem .35rem;text-align:center;">🤖<br><small>感染PC</small></span>
             </span>
             <span style="color:#c2410c;font-weight:700;">②一斉攻撃→</span>
-            <span style="background:#fee2e2;border-radius:5px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#b91c1c;">🎯標的サーバ<br><small>DDoSで停止</small></span>
+            <span style="background:#fee2e2;border-radius:5px;padding:.3rem .45rem;text-align:center;font-weight:700;color:#b91c1c;">🎯標的サーバ<br><small>DDoS（Distributed Denial of Service・分散型サービス妨害攻撃）で停止</small></span>
           </div>
           <div style="font-size:.66rem;color:#64748b;text-align:center;margin-top:.25rem;">※多数の感染PC（ゾンビ）を司令塔から操り、まとめて攻撃に悪用</div>
         </div>
       </div>
       <div class="grid2">
         <div class="cell" style="border-color:var(--r)"><b>XSS（クロスサイトスクリプティング）</b>悪意あるスクリプトを<b>他の利用者のブラウザ</b>で実行させる（DB物理破壊ではない）</div>
-        <div class="cell" style="border-color:var(--o)"><b>ボットネット</b><b>多数の感染PC</b>を攻撃者が遠隔操作する網。指令(C&C)からDDoS等に悪用</div>
+        <div class="cell" style="border-color:var(--o)"><b>ボットネット</b><b>多数の感染PC</b>を攻撃者が遠隔操作する網。指令(C&C)からDDoS（Distributed Denial of Service・分散型サービス妨害攻撃）等に悪用</div>
       </div>
     </div>
 
@@ -1817,7 +2248,7 @@ td.l{text-align:left;}
 
           <!-- STEP5 -->
           <div style="border:2px solid #22c55e;border-radius:8px;padding:.4rem .5rem;background:#f0fdf4;">
-            <div style="font-weight:800;color:#15803d;margin-bottom:.3rem;"><span style="background:#15803d;color:#fff;border-radius:4px;padding:0 .35rem;">STEP5</span> 以降は⚡共通鍵で本文を高速にやりとり（＝HTTPS🎉）</div>
+            <div style="font-weight:800;color:#15803d;margin-bottom:.3rem;"><span style="background:#15803d;color:#fff;border-radius:4px;padding:0 .35rem;">STEP5</span> 以降は⚡共通鍵で本文を高速にやりとり（＝HTTPS（HyperText Transfer Protocol Secure・暗号化されたHTTP通信）🎉）</div>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:.3rem;">
               <span style="background:#dcfce7;border-radius:6px;padding:.3rem .45rem;font-weight:700;color:#15803d;flex-shrink:0;">🧑‍💻<br>🗝️暗号/復号</span>
               <span style="flex:1;text-align:center;color:#15803d;font-weight:700;">◀━ ⚡🔒本文 ━▶</span>
@@ -1901,7 +2332,7 @@ td.l{text-align:left;}
 
       <!-- PKI 信頼の連鎖 -->
       <div style="background:#f5f3ff;border-radius:10px;padding:.6rem .5rem;margin-top:.4rem;">
-        <div style="font-weight:800;color:#6d28d9;font-size:.8rem;text-align:center;margin-bottom:.1rem;">🏛️ PKI＝「公開鍵が本物」を保証する仕組み（信頼の連鎖）</div>
+        <div style="font-weight:800;color:#6d28d9;font-size:.8rem;text-align:center;margin-bottom:.1rem;">🏛️ PKI（Public Key Infrastructure・公開鍵基盤）＝「公開鍵が本物」を保証する仕組み（信頼の連鎖）</div>
         <div style="font-size:.68rem;color:#64748b;text-align:center;margin-bottom:.4rem;">「その公開鍵、本当にAのもの？」を上位の認証局(CA)が保証していく親子関係</div>
         <div style="display:flex;align-items:center;gap:.25rem;justify-content:center;flex-wrap:wrap;font-size:.72rem;">
           <span style="background:#ede9fe;border:1.5px solid #8b5cf6;border-radius:6px;padding:.35rem .5rem;text-align:center;font-weight:700;color:#5b21b6;">👑ルートCA<br><small>最上位・自分で証明</small></span>
@@ -2284,15 +2715,42 @@ body.sz-annot-off .sz-note{display:none !important}
 .sz-n-resize{position:absolute;top:0;right:0;width:7px;height:100%;cursor:ew-resize;z-index:2;border-radius:0 8px 8px 0;-webkit-tap-highlight-color:transparent}
 .sz-n-resize:hover,.sz-n-resize:active{background:rgba(0,0,0,.1)}
 .sz-note.sz-n-min .sz-n-resize{display:none}
+/* ---- 図形テキスト枠（選択箇所に置く横長長方形） ---- */
+.sz-shape{position:absolute;z-index:8;box-sizing:border-box;min-width:28px;background:rgba(255,255,255,.9);border:2px solid #2563eb;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.18);overflow:hidden;cursor:move}
+.sz-shape .sz-sh-body{padding:6px 10px;outline:none;min-height:24px;font-size:16px;line-height:1.45;color:#0f172a;word-break:break-word;overflow-wrap:anywhere;white-space:pre-wrap;cursor:move}
+.sz-shape .sz-sh-body:focus{cursor:text}
+.sz-shape .sz-sh-body[placeholder]:empty::before{content:attr(placeholder);opacity:.4;pointer-events:none}
+.sz-shape .sz-sh-resize{position:absolute;top:0;right:0;width:8px;height:100%;cursor:ew-resize;z-index:2;border-radius:0 6px 6px 0;-webkit-tap-highlight-color:transparent}
+.sz-shape .sz-sh-resize:hover,.sz-shape .sz-sh-resize:active{background:rgba(37,99,235,.18)}
+body.sz-annot-off .sz-shape{display:none !important}
+/* ---- 囲み枠（選択範囲を四角で囲む＋非表示ボタン） ---- */
+.sz-frame{position:absolute;z-index:9;box-sizing:border-box;border:2px solid #ef4444;border-radius:5px;background:transparent;pointer-events:none}
+.sz-frame.sz-frame-masked{background:#e2e8f0;border-color:#94a3b8}
+.sz-frame .sz-fr-btn{position:absolute;top:-11px;right:-11px;width:21px;height:21px;border-radius:50%;border:none;background:#ef4444;color:#fff;font-size:.66rem;line-height:1;cursor:pointer;pointer-events:auto;z-index:2;box-shadow:0 1px 4px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;padding:0}
+.sz-frame.sz-frame-masked .sz-fr-btn{background:#64748b}
+.sz-frame .sz-fr-move{position:absolute;top:-11px;left:-11px;width:21px;height:21px;border-radius:50%;border:none;background:#ef4444;color:#fff;font-size:.7rem;line-height:1;cursor:move;pointer-events:auto;z-index:2;box-shadow:0 1px 4px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;padding:0;touch-action:none}
+.sz-frame.sz-frame-masked .sz-fr-move{background:#64748b}
+body.sz-annot-off .sz-frame{display:none !important}
+/* 選択バー：図形内テキスト選択時だけ A−/A+/🗑 を出し、図形に無関係なボタンを隠す */
+#sz-bar .sz-bar-shape{display:none}
+#sz-bar.sz-shape-mode .sz-bar-doc{display:none}
+#sz-bar.sz-shape-mode .sz-bar-shape{display:inline-block}
 </style>
 
 <div id="sz-bar">
   <button type="button" onclick="szAnnot('ul')">赤線</button>
   <button type="button" onclick="szShowHlPicker(this)">蛍光</button>
   <button type="button" onclick="szAnnot('cm')">メモ</button>
-  <button type="button" onclick="szAnnot('blank')">穴埋め</button>
+  <button type="button" class="sz-bar-doc" onclick="szAnnot('blank')">穴埋め</button>
+  <button type="button" class="sz-bar-doc" onclick="szShapeFromSel()">コメント</button>
+  <button type="button" class="sz-bar-doc" onclick="szFrameFromSel()" title="選択範囲を枠で囲む（非表示ボタン付き）">囲み枠</button>
   <button type="button" onclick="szAnnot('erase')">消去</button>
-  <button type="button" onclick="szUnblankSelection()">穴埋解除</button>
+  <button type="button" class="sz-bar-doc" onclick="szUnblankSelection()">穴埋解除</button>
+  <button type="button" class="sz-bar-shape" onclick="szShapeBold()" title="太字"><b>B</b></button>
+  <button type="button" class="sz-bar-shape" onclick="szAnnot('blank')" title="空欄穴埋め（クリックで答え表示⇔空欄）">穴埋</button>
+  <button type="button" class="sz-bar-shape" onclick="szShapeFontFromBar(-2)" title="文字を小さく">A−</button>
+  <button type="button" class="sz-bar-shape" onclick="szShapeFontFromBar(2)" title="文字を大きく">A+</button>
+  <button type="button" class="sz-bar-shape" onclick="szShapeDeleteFromBar()" title="このコメント枠を削除" style="color:#fca5a5">🗑</button>
   <button type="button" id="sz-bar-fb-btn" onclick="szToggleFbFromBar()" style="display:none;color:#c4b5fd">空欄やめる</button>
   <button type="button" onclick="szHideBar()" style="color:#94a3b8;font-size:.72rem;padding:4px 7px">✕</button>
 </div>
@@ -2377,7 +2835,7 @@ body.sz-annot-off .sz-note{display:none !important}
   var tipBody=document.getElementById('sz-tip-body');
   var tipEditBtn=document.getElementById('sz-tip-edit-btn');
   var hlPicker=document.getElementById('sz-hl-picker');
-  var savedRange=null, cmtCtx=null, tipTimer=null, tipTargetAid=null, delTarget=null, fbBarTarget=null;
+  var savedRange=null, cmtCtx=null, tipTimer=null, tipTargetAid=null, delTarget=null, fbBarTarget=null, szShapeBarTarget=null;
   var fbBtn=document.getElementById('sz-bar-fb-btn');
   /* モバイル：バーのボタンタップで選択が消えないよう mousedown をキャンセル */
   bar.addEventListener('mousedown',function(e){e.preventDefault();});
@@ -2504,6 +2962,14 @@ body.sz-annot-off .sz-note{display:none !important}
   function showBar(rect,forFb){
     if(!forFb&&savedRange&&szInSVG(savedRange)){showToast('⚠ SVG内のテキストは注釈不可');window.getSelection&&window.getSelection().removeAllRanges();return;}
     if(!forFb){fbBarTarget=null;if(fbBtn)fbBtn.style.display='none';}
+    // 図形（コメント枠）内のテキスト選択か判定 → 専用ボタン（A−/A+/🗑）に切替
+    szShapeBarTarget=null;
+    if(!forFb&&savedRange){
+      var _cac=savedRange.commonAncestorContainer;
+      var _ce=_cac&&_cac.nodeType===1?_cac:(_cac?_cac.parentElement:null);
+      szShapeBarTarget=_ce&&_ce.closest?_ce.closest('.sz-shape'):null;
+    }
+    bar.classList.toggle('sz-shape-mode',!!szShapeBarTarget);
     var cx=(rect.left+rect.right)/2;
     bar.style.left=cx+'px';
     bar.style.bottom='';
@@ -2522,7 +2988,7 @@ body.sz-annot-off .sz-note{display:none !important}
     // 選択範囲への影響を避けるため rAF で非同期クランプ
     requestAnimationFrame(function(){ clampBarToViewport(); });
   }
-  window.szHideBar=function(){bar.classList.remove('on');bar.style.bottom='';fbBarTarget=null;if(fbBtn)fbBtn.style.display='none';};
+  window.szHideBar=function(){bar.classList.remove('on');bar.classList.remove('sz-shape-mode');bar.style.bottom='';fbBarTarget=null;szShapeBarTarget=null;if(fbBtn)fbBtn.style.display='none';};
   function szShowBarForFb(fb){
     if(document.body.classList.contains('sz-annot-off')) return;
     fbBarTarget=fb;
@@ -2692,7 +3158,7 @@ body.sz-annot-off .sz-note{display:none !important}
         } else {
           ann.classList.toggle('show');
         }
-        if(ann.closest&&ann.closest('.sz-note')&&window.szSaveNoteOf) window.szSaveNoteOf(ann);
+        if(ann.closest&&ann.closest('.sz-note,.sz-shape')&&window.szSaveNoteOf) window.szSaveNoteOf(ann);
       } else if(ann){
         szHideBar();szHideCmt();hideTipNow();
         showDelPop(ann,e);
@@ -2752,6 +3218,41 @@ body.sz-annot-off .sz-note{display:none !important}
     }
     window.getSelection().removeAllRanges();
   };
+
+  /* ---- 選択箇所に図形（テキスト枠）を置く ---- */
+  window.szShapeFromSel=function(){
+    if(!savedRange){ return; }
+    var rect=savedRange.getBoundingClientRect();
+    szHideBar();
+    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
+    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
+    var px=rect.left+sx, py=rect.top+sy, w=rect.width;
+    window.getSelection().removeAllRanges();
+    if(window.szAddShape) window.szAddShape(px,py,w);
+    else showToast('図形機能の初期化待ちです。もう一度お試しください');
+  };
+  /* ---- 選択範囲を四角で囲む（複数行は外接矩形＝全体を覆う最小の枠） ---- */
+  window.szFrameFromSel=function(){
+    if(!savedRange) return;
+    var rect=savedRange.getBoundingClientRect();
+    szHideBar();
+    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
+    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
+    var pad=3;
+    var px=rect.left+sx-pad, py=rect.top+sy-pad, w=rect.width+pad*2, h=rect.height+pad*2;
+    window.getSelection().removeAllRanges();
+    if(window.szAddFrame) window.szAddFrame(px,py,w,h);
+    else showToast('枠機能の初期化待ちです。もう一度お試しください');
+  };
+  /* ---- 図形バー：太字／文字サイズ変更／枠削除 ---- */
+  window.szShapeBold=function(){
+    if(!szShapeBarTarget) return;
+    try{ document.execCommand('bold'); }catch(e){}
+    var b=szShapeBarTarget.querySelector('.sz-sh-body');
+    if(b&&window.szSaveNoteOf) window.szSaveNoteOf(b);
+  };
+  window.szShapeFontFromBar=function(d){ if(szShapeBarTarget&&window.szShapeFontDelta) window.szShapeFontDelta(szShapeBarTarget,d); };
+  window.szShapeDeleteFromBar=function(){ if(szShapeBarTarget&&window.szShapeDelete){ window.szShapeDelete(szShapeBarTarget); } szHideBar(); window.getSelection&&window.getSelection().removeAllRanges(); };
 
   /* ---- 選択範囲内の既存穴埋を一括解除／復活 ---- */
   window.szUnblankSelection=function(){
@@ -2824,7 +3325,7 @@ body.sz-annot-off .sz-note{display:none !important}
     var _inNote=false;
     allMarks.forEach(function(mark){
       if(!mark.parentNode) return;
-      if(mark.closest&&mark.closest('.sz-note')) _inNote=true;
+      if(mark.closest&&mark.closest('.sz-note,.sz-shape')) _inNote=true;
       var parent=mark.parentNode;
       Array.from(mark.childNodes).forEach(function(n){
         if(n.classList&&n.classList.contains('sz-cm-icon')) return;
@@ -2832,7 +3333,7 @@ body.sz-annot-off .sz-note{display:none !important}
       });
       parent.removeChild(mark);
       parent.normalize();
-      if(mark.closest&&mark.closest('.sz-note')&&window.szSaveNoteOf) window.szSaveNoteOf(parent);
+      if(mark.closest&&mark.closest('.sz-note,.sz-shape')&&window.szSaveNoteOf) window.szSaveNoteOf(parent);
     });
     if(_inNote){szHideDel();return;}
     db=db.filter(function(a){return a.uid!==aid;});
@@ -2896,7 +3397,7 @@ body.sz-annot-off .sz-note{display:none !important}
     if(!ok) return;
 
     if(type==='cm'&&comment) addCmtIcon(mark,comment);
-    if(mark.closest&&mark.closest('.sz-note')){if(window.szSaveNoteOf)window.szSaveNoteOf(mark);return;}
+    if(mark.closest&&mark.closest('.sz-note,.sz-shape')){if(window.szSaveNoteOf)window.szSaveNoteOf(mark);return;}
     db.push({uid:id,panelId:panelId,parentAid:parentAid,selText:selText,ctxBefore:ctxBefore,ctxAfter:ctxAfter,occ:occ,type:type,comment:comment,color:color||''});
     save();
   }
@@ -3015,7 +3516,10 @@ body.sz-annot-off .sz-note{display:none !important}
 <script>
 (function(){
   'use strict';
-  var fileKey=(function(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);})();
+  function szHashStr(s){var h=5381;for(var i=0;i<s.length;i++){h=((h*33)^s.charCodeAt(i))>>>0;}return h.toString(36);}
+  /* 保存キーは「ファイル名だけ」から生成 → フォルダ経由やパス表記の違いで保存先がズレない */
+  var fileKey=(function(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}return szHashStr((p.split('/').pop()||p));})();
+  var fileKeyOld=(function(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}return szHashStr(p);})(); /* 旧：フルパスハッシュ（自動移行用） */
   var panels=Array.prototype.slice.call(document.querySelectorAll('.tab-panel'));
   if(!panels.length) panels=Array.prototype.slice.call(document.querySelectorAll('.tab-content'));
   var tabBtns=Array.prototype.slice.call(document.querySelectorAll('.tab-nav .tab-btn'));
@@ -3034,7 +3538,7 @@ body.sz-annot-off .sz-note{display:none !important}
         if(!n.nodeValue||!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
         var p=n.parentElement;
         if(!p) return NodeFilter.FILTER_REJECT;
-        if(p.closest('#sz-search,#sz-filter,.sz-note,script,style')) return NodeFilter.FILTER_REJECT;
+        if(p.closest('#sz-search,#sz-filter,.sz-note,.sz-shape,script,style')) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     });
@@ -3170,14 +3674,15 @@ body.sz-annot-off .sz-note{display:none !important}
 
   /* ============ ④ 付箋メモ ============ */
   var NKEY='szN_'+fileKey;
+  try{ if(!localStorage.getItem(NKEY)){ var _oldN=localStorage.getItem('szN_'+fileKeyOld); if(_oldN) localStorage.setItem(NKEY,_oldN); } }catch(e){} /* 旧キー（フルパス）からの自動移行 */
   var notes=[]; try{notes=JSON.parse(localStorage.getItem(NKEY)||'[]');}catch(e){}
   var noteEls={};
   var NOTE_COLORS=['#fef9c3','#fecdd3','#bfdbfe','#bbf7d0','#e9d5ff','#fed7aa'];
   function saveNotes(){try{localStorage.setItem(NKEY,JSON.stringify(notes));}catch(e){}}
   window.szSaveNoteOf=function(markEl){
-    var nb=markEl.closest&&markEl.closest('.sz-n-body');
+    var nb=markEl.closest&&markEl.closest('.sz-n-body,.sz-sh-body');
     if(!nb) return;
-    var nw=nb.closest('.sz-note');
+    var nw=nb.closest('.sz-note,.sz-shape');
     if(!nw||!nw.dataset.nid) return;
     var nd=notes.find(function(x){return x.id===nw.dataset.nid;});
     if(nd){nd.text=nb.innerHTML;saveNotes();}
@@ -3243,7 +3748,185 @@ body.sz-annot-off .sz-note{display:none !important}
       document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
     });
   }
-  notes.forEach(buildNote);
+  /* ---- 図形テキスト枠 ---- */
+  var SH_FS_MIN=10, SH_FS_MAX=48;
+  function buildShape(n){
+    var el=document.createElement('div');
+    el.className='sz-shape'; el.dataset.nid=n.id;
+    el.style.left=(n.x||120)+'px'; el.style.top=(n.y||120)+'px';
+    el.style.width=(n.w||180)+'px';
+    var body=document.createElement('div'); body.className='sz-sh-body'; body.contentEditable='true';
+    body.setAttribute('placeholder','文字を入力…');
+    body.style.fontSize=(n.fs||16)+'px';
+    body.innerHTML=n.text||'';
+    /* リロード時は枠内の穴埋め／消去を必ず空欄（非表示）状態に戻す */
+    [].forEach.call(body.querySelectorAll('mark.sz-blank.show,mark.sz-erase.show'),function(m){m.classList.remove('show');});
+    var rzh=document.createElement('div'); rzh.className='sz-sh-resize'; rzh.title='右端をドラッグで幅を調整';
+    el.appendChild(body); el.appendChild(rzh);
+    document.body.appendChild(el);
+    noteEls[n.id]=el;
+
+    body.addEventListener('input',function(){ n.text=body.innerHTML; saveNotes(); });
+    /* 右端リサイズ（幅） */
+    rzh.addEventListener('pointerdown',function(e){
+      e.preventDefault(); e.stopPropagation();
+      var sx=e.clientX, sw=el.offsetWidth;
+      function mv(ev){ el.style.width=Math.max(28,sw+ev.clientX-sx)+'px'; }
+      function up(){ n.w=el.offsetWidth; saveNotes(); document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); }
+      document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+    });
+    /* 枠全体をドラッグで移動。動かさず離せば編集フォーカス。編集中（フォーカス済）は文字選択を優先 */
+    el.addEventListener('pointerdown',function(e){
+      if(e.target===rzh) return;
+      if(e.button!==undefined&&e.button!==0) return;
+      if(document.activeElement===body) return; // 編集中は移動しない（文字選択優先）
+      var sx=e.clientX, sy=e.clientY, ox=parseInt(el.style.left)||0, oy=parseInt(el.style.top)||0, moved=false, dx=e.clientX, dy=e.clientY;
+      function mv(ev){
+        if(!moved){ if(Math.abs(ev.clientX-sx)<4&&Math.abs(ev.clientY-sy)<4) return; moved=true; document.body.style.userSelect='none'; }
+        ev.preventDefault();
+        el.style.left=Math.max(0,ox+ev.clientX-sx)+'px'; el.style.top=Math.max(0,oy+ev.clientY-sy)+'px';
+      }
+      function up(){
+        document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up);
+        document.body.style.userSelect='';
+        if(moved){ n.x=parseInt(el.style.left)||0; n.y=parseInt(el.style.top)||0; saveNotes(); }
+        else { body.focus(); try{ var cr=document.caretRangeFromPoint?document.caretRangeFromPoint(dx,dy):null; if(cr){var s=window.getSelection();s.removeAllRanges();s.addRange(cr);} }catch(_){} }
+      }
+      document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+    });
+  }
+  /* 選択バーから呼ばれる：図形の文字サイズ変更／削除 */
+  window.szShapeFontDelta=function(shapeEl,delta){
+    if(!shapeEl||!shapeEl.dataset.nid) return;
+    var nd=notes.find(function(x){return x.id===shapeEl.dataset.nid;});
+    if(!nd) return;
+    nd.fs=Math.max(SH_FS_MIN,Math.min(SH_FS_MAX,(nd.fs||16)+delta));
+    var b=shapeEl.querySelector('.sz-sh-body'); if(b) b.style.fontSize=nd.fs+'px';
+    saveNotes();
+  };
+  window.szShapeDelete=function(shapeEl){
+    if(!shapeEl||!shapeEl.dataset.nid) return;
+    var id=shapeEl.dataset.nid;
+    shapeEl.remove(); delete noteEls[id];
+    notes=notes.filter(function(x){return x.id!==id;}); saveNotes();
+  };
+  window.szAddShape=function(px,py,w){
+    var n={id:uid(),tab:currentTab(),x:Math.max(0,Math.round(px)),y:Math.max(0,Math.round(py)),w:Math.max(120,Math.round(w||180)),text:'',fs:16,shape:true};
+    notes.push(n); saveNotes(); buildShape(n);
+    var el=noteEls[n.id]; if(el){ var b=el.querySelector('.sz-sh-body'); if(b) b.focus(); }
+  };
+
+  /* ===== コメント枠のコピー／ペースト（右クリック or Ctrl+C / Ctrl+V） ===== */
+  var CLIPKEY='szClip_'+fileKey;
+  function shClipGet(){ try{return JSON.parse(localStorage.getItem(CLIPKEY)||'null');}catch(e){return null;} }
+  function shClipSet(o){ try{localStorage.setItem(CLIPKEY,JSON.stringify(o));}catch(e){} }
+  function shToast(msg){ var t=document.createElement('div'); t.className='sz-toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(function(){t.remove();},2000); }
+  var shLastMouse={x:90,y:110};
+  document.addEventListener('mousemove',function(e){ shLastMouse.x=e.clientX; shLastMouse.y=e.clientY; },true);
+  function shCopy(shapeEl){
+    if(!shapeEl||!shapeEl.dataset.nid) return;
+    var nd=notes.find(function(x){return x.id===shapeEl.dataset.nid;});
+    if(!nd) return;
+    shClipSet({text:nd.text||'',fs:nd.fs||16,w:nd.w||180});
+    shToast('📋 コメントをコピーしました');
+  }
+  function shPasteAt(clientX,clientY){
+    var clip=shClipGet();
+    if(!clip){ shToast('コピーされたコメントがありません'); return; }
+    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
+    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
+    var n={id:uid(),tab:currentTab(),x:Math.max(0,Math.round(clientX+sx)),y:Math.max(0,Math.round(clientY+sy)),w:clip.w||180,text:clip.text||'',fs:clip.fs||16,shape:true};
+    notes.push(n); saveNotes(); buildShape(n);
+    shToast('📌 ここに貼り付けました');
+  }
+  var shMenu=document.createElement('div'); shMenu.id='sz-shape-menu';
+  shMenu.style.cssText='position:fixed;display:none;z-index:10000;background:#1e293b;border-radius:8px;padding:4px;box-shadow:0 4px 18px rgba(0,0,0,.45)';
+  document.body.appendChild(shMenu);
+  function shMkBtn(label,fn){
+    var b=document.createElement('button'); b.type='button'; b.textContent=label;
+    b.style.cssText='display:block;width:100%;text-align:left;background:none;border:none;color:#fff;cursor:pointer;padding:7px 14px;border-radius:6px;font-size:.85rem;font-weight:700;font-family:inherit;white-space:nowrap';
+    b.addEventListener('mouseover',function(){b.style.background='rgba(255,255,255,.18)';});
+    b.addEventListener('mouseout',function(){b.style.background='none';});
+    b.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();fn();shHideMenu();});
+    return b;
+  }
+  function shHideMenu(){ shMenu.style.display='none'; }
+  function shShowMenu(cx,cy,shapeEl){
+    shMenu.innerHTML='';
+    if(shapeEl) shMenu.appendChild(shMkBtn('📋 コピー',function(){ shCopy(shapeEl); }));
+    if(shClipGet()) shMenu.appendChild(shMkBtn('📌 ここに貼り付け',function(){ shPasteAt(cx,cy); }));
+    if(!shMenu.children.length) return;
+    shMenu.style.left=cx+'px'; shMenu.style.top=cy+'px'; shMenu.style.display='block';
+    requestAnimationFrame(function(){
+      var r=shMenu.getBoundingClientRect();
+      if(r.right>window.innerWidth) shMenu.style.left=Math.max(2,window.innerWidth-r.width-4)+'px';
+      if(r.bottom>window.innerHeight) shMenu.style.top=Math.max(2,window.innerHeight-r.height-4)+'px';
+    });
+  }
+  document.addEventListener('contextmenu',function(e){
+    if(document.body.classList.contains('sz-annot-off')) return;
+    if(e.target.closest('#sz-shape-menu,#sz-toolbar,#sz-bar,#sz-cmt-pop,#sz-del-pop,#sz-search,#sz-filter,#sz-hl-picker')) return;
+    var shapeEl=e.target.closest?e.target.closest('.sz-shape'):null;
+    if(shapeEl){ e.preventDefault(); shShowMenu(e.clientX,e.clientY,shapeEl); }
+    else if(shClipGet()){ e.preventDefault(); shShowMenu(e.clientX,e.clientY,null); }
+  },true);
+  document.addEventListener('mousedown',function(e){ if(!e.target.closest('#sz-shape-menu')) shHideMenu(); },true);
+  window.addEventListener('scroll',shHideMenu,true);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){ shHideMenu(); return; }
+    if(document.body.classList.contains('sz-annot-off')) return;
+    if(!(e.ctrlKey||e.metaKey)) return;
+    var k=(e.key||'').toLowerCase();
+    if(k==='c'){
+      var sel=window.getSelection(), ae=document.activeElement;
+      var shapeEl=ae&&ae.closest?ae.closest('.sz-shape'):null;
+      if(shapeEl && (!sel||sel.isCollapsed||!String(sel).trim())){ shCopy(shapeEl); e.preventDefault(); }
+    } else if(k==='v'){
+      if(!shClipGet()) return;
+      var ae2=document.activeElement;
+      if(ae2&&ae2.closest&&ae2.closest('.sz-sh-body,.sz-n-body,input,textarea')) return; // 編集中は通常の貼り付け
+      shPasteAt(shLastMouse.x,shLastMouse.y); e.preventDefault();
+    }
+  },true);
+
+  /* ===== 囲み枠（選択範囲を四角で囲む＋非表示ボタン） ===== */
+  function shFrameMenu(anchorBtn,n,el,applyMask){
+    shMenu.innerHTML='';
+    shMenu.appendChild(shMkBtn(n.masked?'👁 中身を出す':'🙈 中身を隠す',function(){ n.masked=!n.masked; saveNotes(); applyMask(); }));
+    shMenu.appendChild(shMkBtn('🗑 枠を削除',function(){ el.remove(); delete noteEls[n.id]; notes=notes.filter(function(x){return x.id!==n.id;}); saveNotes(); }));
+    var r=anchorBtn.getBoundingClientRect();
+    shMenu.style.left=r.left+'px'; shMenu.style.top=(r.bottom+4)+'px'; shMenu.style.display='block';
+    requestAnimationFrame(function(){
+      var rr=shMenu.getBoundingClientRect();
+      if(rr.right>window.innerWidth) shMenu.style.left=Math.max(2,window.innerWidth-rr.width-4)+'px';
+      if(rr.bottom>window.innerHeight) shMenu.style.top=Math.max(2,window.innerHeight-rr.height-4)+'px';
+    });
+  }
+  function buildFrame(n){
+    var el=document.createElement('div'); el.className='sz-frame'; el.dataset.nid=n.id;
+    el.style.left=(n.x||0)+'px'; el.style.top=(n.y||0)+'px';
+    el.style.width=(n.w||120)+'px'; el.style.height=(n.h||24)+'px';
+    var mvh=document.createElement('button'); mvh.type='button'; mvh.className='sz-fr-move'; mvh.textContent='✥'; mvh.title='ドラッグで枠を移動';
+    var btn=document.createElement('button'); btn.type='button'; btn.className='sz-fr-btn'; btn.title='非表示メニュー';
+    el.appendChild(mvh); el.appendChild(btn);
+    document.body.appendChild(el); noteEls[n.id]=el;
+    function applyMask(){ el.classList.toggle('sz-frame-masked',!!n.masked); btn.textContent=n.masked?'🙈':'👁'; }
+    applyMask();
+    btn.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); shFrameMenu(btn,n,el,applyMask); });
+    /* 移動ハンドルをドラッグ → 枠を移動、離した位置を保存 */
+    mvh.addEventListener('pointerdown',function(e){
+      e.preventDefault(); e.stopPropagation();
+      var sx=e.clientX, sy=e.clientY, ox=parseInt(el.style.left)||0, oy=parseInt(el.style.top)||0;
+      function mv(ev){ el.style.left=Math.max(0,ox+ev.clientX-sx)+'px'; el.style.top=Math.max(0,oy+ev.clientY-sy)+'px'; }
+      function up(){ document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); n.x=parseInt(el.style.left)||0; n.y=parseInt(el.style.top)||0; saveNotes(); }
+      document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+    });
+  }
+  window.szAddFrame=function(px,py,w,h){
+    var n={id:uid(),tab:currentTab(),x:Math.max(0,Math.round(px)),y:Math.max(0,Math.round(py)),w:Math.max(16,Math.round(w||120)),h:Math.max(12,Math.round(h||24)),masked:false,frame:true};
+    notes.push(n); saveNotes(); buildFrame(n);
+  };
+  notes.forEach(function(n){ if(n.frame) buildFrame(n); else if(n.shape) buildShape(n); else buildNote(n); });
   syncNotes();
   document.getElementById('sz-btn-note').addEventListener('click',function(){
     var cnt=notes.filter(function(x){return x.tab===currentTab();}).length;
@@ -3958,27 +4641,38 @@ body.szp-hide #szp-layer{display:none}
     });
     return cs;
   }
-  function contKey(cont){
+  function baseKey(cont){
     var pi=panels.indexOf(cont); if(pi>=0) return 'P'+pi;
     var blk=cont.closest?cont.closest('.sz-drag-block'):null;
     if(blk&&blk!==cont) return 'B:'+secId(blk);
     var pn=cont.closest?cont.closest('.tab-panel,.tab-content'):null;
     return 'X'+(pn?panels.indexOf(pn):-1)+':'+((cont.className||'')+'').replace(/\s+/g,'').slice(0,16);
   }
+  /* 同一 baseKey の容器（例：複数の div.fig／クラス無しdiv）が衝突するとスナップショットで
+     上書きされ1つ分しか保存されず、復元時に取り違えて並びが戻ってしまう。容器自体は並べ替えで
+     動かない（中の子ブロックだけが動く）ので、文書順の出現番号(#0,#1…)を付けて一意化する。 */
+  function keyMap(){
+    var seen={},m=[];
+    dragContainers().forEach(function(cont){
+      var b=baseKey(cont),i=(b in seen?seen[b]+1:0); seen[b]=i;
+      m.push([cont,b+'#'+i]);
+    });
+    return m;
+  }
   function directBlocks(cont){
     return [].slice.call(cont.children).filter(function(c){return c.classList&&c.classList.contains('sz-drag-block');});
   }
   function snapshot(){
     var o={};
-    dragContainers().forEach(function(cont){o[contKey(cont)]=directBlocks(cont).map(secId);});
+    keyMap().forEach(function(p){o[p[1]]=directBlocks(p[0]).map(secId);});
     return o;
   }
   function saveOrder(){try{localStorage.setItem(DKEY,JSON.stringify(snapshot()));}catch(e){}}
   function loadOrder(){try{return JSON.parse(localStorage.getItem(DKEY)||'null');}catch(e){return null;}}
     function applyOrderAll(saved){
     if(!saved) return;
-    dragContainers().forEach(function(cont){
-      var key=contKey(cont),want=saved[key]; if(!want) return;
+    keyMap().forEach(function(p){
+      var cont=p[0],want=saved[p[1]]; if(!want) return;
       var byId={};directBlocks(cont).forEach(function(b){var id=secId(b);if(id&&!(id in byId))byId[id]=b;});
       want.forEach(function(id){var b=byId[id];if(b)cont.appendChild(b);});
     });
