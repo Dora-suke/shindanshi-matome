@@ -3,15 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>確認システム</title>
+<title>確認システム｜104 運営 Aティア連続</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
 .card{background:#1e293b;border-radius:18px;max-width:860px;width:100%;padding:36px 40px;box-shadow:0 8px 40px rgba(0,0,0,.5);border:3px solid #ffffff;}
-.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.topic{font-size:.95em;color:#fcd34d;font-weight:800;letter-spacing:.05em;}
-.prog{font-size:.95em;color:#94a3b8;}
-.bar{height:7px;background:#334155;border-radius:4px;margin:14px 0 28px;overflow:hidden;}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:12px;}
+.topic{font-size:.95em;color:#fcd34d;font-weight:800;letter-spacing:.03em;}
+.prog{font-size:.95em;color:#94a3b8;white-space:nowrap;}
+.lbar{height:5px;background:#334155;border-radius:4px;margin:8px 0 4px;overflow:hidden;}
+.lbar i{display:block;height:100%;background:#fbbf24;width:0;transition:width .3s;}
+.lbarlabel{font-size:.72em;color:#64748b;margin-bottom:8px;}
+.bar{height:7px;background:#334155;border-radius:4px;margin:6px 0 28px;overflow:hidden;}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#818cf8);width:0;transition:width .3s;}
 .q{font-size:1.45em;line-height:1.85;margin-bottom:32px;min-height:3em;font-weight:600;}
 .qnum{color:#fbbf24;font-weight:800;margin-right:8px;}
@@ -38,9 +41,14 @@ body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#0f172a;color
 .btns button.sel{outline:4px solid #fbbf24;outline-offset:2px;}
 .restart{margin-top:18px;padding:14px 24px;font-size:1.05em;font-weight:800;background:#334155;color:#e2e8f0;border:none;border-radius:12px;cursor:pointer;font-family:inherit;}
 .summary{text-align:center;}
-.summary h2{font-size:1.4em;margin-bottom:12px;}
-.score{font-size:2.6em;font-weight:800;color:#38bdf8;margin:10px 0;}
+.summary h2{font-size:1.3em;margin-bottom:12px;}
+.score{font-size:2.4em;font-weight:800;color:#38bdf8;margin:10px 0;}
 .miss{text-align:left;background:#0f172a;border-radius:10px;padding:14px;margin:14px 0;font-size:.88em;line-height:1.7;}
+.gtable{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9em;}
+.gtable th,.gtable td{border:1px solid #334155;padding:7px 9px;text-align:left;}
+.gtable th{background:#0f172a;color:#94a3b8;}
+.gtable td.v{text-align:center;font-weight:800;white-space:nowrap;}
+.tonext{flex:1;padding:18px;font-size:1.2em;font-weight:800;background:#22c55e;color:#0f172a;border:none;border-radius:14px;cursor:pointer;font-family:inherit;}
 .code{background:#0f172a;border:1px dashed #475569;border-radius:8px;padding:12px;font-family:monospace;font-size:.9em;color:#fbbf24;margin:10px 0;word-break:break-all;}
 .copy{padding:12px 20px;background:#818cf8;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;}
 .hint{font-size:.78em;color:#94a3b8;margin-top:10px;}
@@ -49,9 +57,11 @@ body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#0f172a;color
 <body>
 <div class="card" id="card">
   <div class="head">
-    <span class="topic" id="topic">104 運営管理 ｜ Sティア⑨ レイアウト・SLP</span>
+    <span class="topic" id="topic">104 運営管理 ｜ Aティア</span>
     <span class="prog" id="prog"></span>
   </div>
+  <div class="lbar"><i id="lbarfill"></i></div>
+  <div class="lbarlabel" id="lbarlabel"></div>
   <div class="bar"><i id="barfill"></i></div>
   <div id="quiz">
     <div class="q" id="q"></div>
@@ -73,42 +83,50 @@ body{font-family:'Hiragino Kaku Gothic ProN',sans-serif;background:#0f172a;color
 </div>
 
 <script>
-// 論点ID（結果コード用）
+// 104 運営管理 Aティア13論点（#36〜#48）を1セッションで連続出題。
+// 1論点終了ごとに /save へPOST（_results_104.jsonl に1行追記）→ 次論点へ。
 const SUBJECT = "104";
-const LOGIC = "レイアウトSLP";
-const TOPIC = "レイアウト・工場計画（SLP・P-Q分析・DI分析・活性示数）";
-// 識別ポイント：q=設問, a=正解(正/誤), e=急所解説。計算問題は過程を文中に明示し正誤を一目で判定。
-const Q = [
-  {q:"SLP（Systematic Layout Planning：体系的レイアウト計画）は、マザー（Muther）が提唱したレイアウト計画の手法で、決まった手順に従って工場・施設のレイアウトを設計する。", a:"正", e:"SLP＝Systematic Layout Planning。リチャード・マザー考案。感覚的でなく体系的な手順でレイアウトを決める。"},
-  {q:"SLPの基礎データはP（Products：製品）・Q（Quantity：数量）・R（Route：経路・工程）・S（Supporting services：補助サービス）・T（Time：時間）の5要素で、まずPとQの分析から始める。", a:"正", e:"P-Q-R-S-T。出発点はP（何を作るか）とQ（どれだけ作るか）のP-Q分析。"},
-  {q:"SLPの手順は「①P-Q分析 → ②物の流れ分析 → ③アクティビティ相互関係分析 → ④面積算定 → ⑤レイアウト案作成」の順で進む。", a:"正", e:"この順序がSLPの核心。P-Qで方向性を決め、物の流れと関係性を重ね、面積を割り付けてレイアウン案にまとめる。"},
-  {q:"SLPでは、最初に「アクティビティ相互関係分析」を行い、その後に「P-Q分析」で製品と数量の関係を確認する。", a:"誤", e:"ひっかけ・逆。SLPの出発点はP-Q分析。アクティビティ相互関係分析は物の流れ分析の後。"},
-  {q:"P-Q分析の結果、少品種多量の生産には製品別レイアウト（ライン）が、多品種少量の生産には機能別（工程別）レイアウトが適すると判断できる。", a:"正", e:"P-Q分析の結論＝レイアウト方向性の決定。少多量→製品別、多品種少量→機能別。"},
-  {q:"物の流れが複雑で経路が多品種にわたる場合、「フロムツーチャート（From-To Chart）」を使って各工程間の運搬量・頻度を一覧表で把握する。", a:"正", e:"フロムツーチャート＝多品種の複雑な物流を行列（マトリックス）で可視化。どの工程間の運搬が多いかが一目でわかる。"},
-  {q:"アクティビティ相互関係図表では、部門間の近接必要度をA（絶対必要）・E（特に重要）・I（重要）・O（普通）・U（不要）・X（近接不可）の6段階で評価する。", a:"正", e:"母音評価A・E・I・O・U＋X。AとEは近づける、Xは離す必要がある関係。"},
-  {q:"アクティビティ相互関係図表のX評価は「近接が普通でよい」ことを意味し、距離にこだわらず配置できることを示す。", a:"誤", e:"ひっかけ。X＝「近接してはいけない（近接不可）」。騒音・振動・危険物など相互に悪影響がある部門間に付ける。普通はO（Ordinary）。"},
-  {q:"DI分析（ディスタンス・インテンシティ分析）は、工程間の「運搬距離（D）」と「物流量（I：強度）」を図上にプロットし、距離が長くかつ物流量が多い（右上）の工程ペアを改善対象として特定する。", a:"正", e:"DI分析＝距離×物流量で改善優先度を視覚化。右上（遠くて多い）が最優先改善対象。"},
-  {q:"運搬活性示数は、モノの「動かしやすさ」を0〜4の5段階で表す。バラで床置き（0）が最も動かしにくく、移動中（4）が最も動かしやすい。", a:"正", e:"活性示数0＝バラ床置き（最も手間）→1＝容器入り→2＝パレット→3＝台車→4＝コンベヤ移動中（手間ゼロ）。"},
-  {q:"活性示数が高いほど荷役のための前作業（積み替え・荷造りなど）が多く必要になり、運搬コストが上がる。", a:"誤", e:"ひっかけ・逆。活性示数が高い＝すでに動かしやすい状態＝荷役の手間が少ない。低いほど前作業が多く必要。"},
-  {q:"固定式レイアウト（プロジェクト型）は、製品（対象物）が大きく重いため動かさず、人・設備・材料を対象物のまわりに集めて作業する方式で、船舶・航空機・大型設備の製造に使われる。", a:"正", e:"固定式＝製品不動・資源が動く。最も大型・重量物の生産に対応したレイアウト型。"},
-  {q:"グループテクノロジー（GT）レイアウトは、類似した部品・製品のグループごとにセルを形成し、多品種少量でもライン生産に近い効率を実現する。SLPで多品種少量と判定されたとき候補となるレイアウトの一つである。", a:"正", e:"GT＝類似部品のグループ化＋セル化。機能別Lの運搬複雑さをセルで解消。P-Q分析で多品種少量と出たときの選択肢。"},
-  {q:"SLPにおけるレイアウト改善の基本的なねらいは、物の流れの直線化・逆行・交差の排除と運搬距離の最小化である。", a:"正", e:"レイアウト改善のゴール＝流れをスムーズに・運搬を最小に。逆行・交差は非効率の元。"},
-  {q:"P-Q分析で「少品種多量」と判定された場合は、同種機械・設備を機能別にまとめた機能別（工程別）レイアウトが最も効率的である。", a:"誤", e:"ひっかけ。少品種多量→製品別レイアウト（ライン）が最適。機能別は多品種少量向き。"},
-  {q:"SLPの面積算定ステップでは、各アクティビティに必要な面積を算定し、相互関係の強さ（A-Xの評価）と物の流れを考慮しながら、スペース関係図（ブロックプラン）にまとめる。", a:"正", e:"面積算定→スペース関係図→詳細レイアウト案の流れ。相互関係の強さが近接距離を規定する。"}
+const LOGICS = [
+ {logic:"EDI流通情報", num:48, name:"EDI・流通情報システム", topic:"EDI・流通情報システム（流通BMS・EOS・SCM・GS1）", Q:[
+  {q:"EDI（Electronic Data Interchange）は、企業間で受発注・請求などの取引データを、標準化された規約に基づき電子的に交換する仕組みである。", a:"正", e:"紙・電話に代わり、取引データをコンピュータ間で直接やり取り。標準化が肝。"},
+  {q:"EDIの標準化には、伝送制御手順・データ形式（フォーマット）・情報表現（コード）・取引基本規約の4階層（レベル）の取り決めが必要とされる。", a:"正", e:"通信手順／メッセージ形式／コード体系／業務ルールの4層を揃えて初めて疎通する。"},
+  {q:"流通BMS（流通ビジネスメッセージ標準）は、インターネット（Web）回線を使う流通業界標準のEDIで、従来のJCA手順より高速・低コストな通信を実現する。", a:"正", e:"旧来の電話回線EDIをインターネットEDI化。速く安く。"},
+  {q:"EOS（Electronic Ordering System：電子発注システム）は、小売店から卸・メーカーへ発注データをオンラインで送る受発注システムである。", a:"正", e:"店頭発注をデータ化して送信。EDIの代表的な業務の一つ。"},
+  {q:"EDIは取引先ごとに独自の様式・回線を個別に用意することを前提とした仕組みで、標準化はそぐわない。", a:"誤", e:"逆。取引先ごとにバラバラだと多端末問題が起きる。共通化（標準化）こそEDIの目的。"},
+  {q:"SCM（サプライチェーンマネジメント）は、調達から販売までの情報を共有し、在庫・リードタイムの最適化と欠品・過剰の削減を図る考え方である。", a:"正", e:"鎖全体で情報を共有し、ムダ（在庫・欠品）を減らす。EDIがその基盤。"},
+  {q:"POSデータをメーカー・卸と共有し需要に合わせて自動補充するQR（クイックレスポンス）やECR（効率的消費者対応）の基盤としてEDIが使われる。", a:"正", e:"売れたデータを即共有→自動補充。情報連携の土台がEDI。"},
+  {q:"GS1標準（JAN/GTIN・GLN・GS1-128など）は、商品・事業所・物流単位を世界共通で識別するコード体系で、EDIや在庫管理の共通言語となる。", a:"正", e:"GTIN＝商品、GLN＝事業所、を世界共通で識別。データ連携の共通ID。"},
+  {q:"CRP（連続補充）やVMI（ベンダー主導型在庫管理）は、仕入先が小売の在庫・販売データに基づいて補充を主導する仕組みで、情報共有が前提となる。", a:"正", e:"発注を小売でなく仕入先が主導。小売のデータ開示が条件。"},
+  {q:"従来のJCA手順（J手順）は電話回線を用いた旧来のEDI通信手順で、流通BMS（インターネットEDI）への移行が進められてきた。", a:"正", e:"低速・高コストのJCA手順から、Web標準の流通BMSへ。"},
+  {q:"EDIの導入により、伝票の手入力・郵送・電話発注が減り、入力ミス・リードタイム・事務コストの削減につながる。", a:"正", e:"自動データ交換＝転記ミスと時間のムダを排除。"},
+  {q:"EDIの『情報表現規約』では、商品コードや取引先コードに何を使うか（コード体系）を取り決める。", a:"正", e:"4階層のうちコード（情報表現）レベル。GS1等の標準コードを採用する。"}
+ ]}
 ];
 
-let i = 0;
-const results = []; // '○' '×' '△'
-const QUIZ_HTML = document.getElementById('quiz').innerHTML; // 「最初からやり直す」用に初期状態を保持
+let li = 0;          // 論点インデックス
+let i = 0;           // 設問インデックス
+let results = [];    // 現論点の '○''×''△'
+const grand = [];    // 各論点の集計 {logic,topic,o,d,x,verdict,seq}
+const QUIZ_HTML = document.getElementById('quiz').innerHTML;
 
-// 記録マーク(○/△/×)から、実際に押された選択肢(正/誤/△)を逆算（強調表示用）
+function curQ(){ return LOGICS[li].Q; }
+
+function setHead(){
+  document.getElementById('topic').textContent = '104 運営 ｜ #'+LOGICS[li].num+' '+LOGICS[li].name;
+  document.getElementById('lbarfill').style.width = (li/LOGICS.length*100)+'%';
+  document.getElementById('lbarlabel').textContent = '論点 '+(li+1)+' / '+LOGICS.length+'（運営Aティア #'+LOGICS[li].num+'）';
+}
+
+// 記録マーク(○/△/×)から、押された選択肢(正/誤/△)を逆算（強調表示用）
 function btnFor(item, mark){
   if(mark==='△') return '△';
   return (mark==='○') ? item.a : (item.a==='正'?'誤':'正');
 }
 
 function render(){
+  const Q = curQ();
   const item = Q[i];
+  setHead();
   document.getElementById('q').innerHTML = '<span class="qnum">'+(i+1)+'.</span>'+item.q;
   document.getElementById('prog').textContent = (i+1)+' / '+Q.length;
   document.getElementById('backbtn').disabled = (i===0);
@@ -118,7 +136,6 @@ function render(){
 
   const mark = results[i];
   if(mark){
-    // 既に回答済み（＝戻ってきた／回答直後）：正解・急所を表示し、選び直しも可能
     const correct = (mark==='○');
     r.className = 'result show ' + (correct?'correct':'wrong');
     document.getElementById('verdict').textContent = correct?'✅ 正解（絞れた）':(mark==='△'?'△ あいまい → 要再訪':'❌ 不正解');
@@ -126,7 +143,7 @@ function render(){
     document.getElementById('exp').textContent = '急所：'+item.e;
     const nb = document.getElementById('nextbtn');
     nb.className = 'next show';
-    nb.textContent = (i+1<Q.length) ? '次の問題へ →' : '結果を見る →';
+    nb.textContent = (i+1<Q.length) ? '次の問題へ →' : 'この論点の結果へ →';
     const chosen = btnFor(item, mark);
     buttons.forEach(b=>{
       if((chosen==='正'&&b.classList.contains('b-o')) ||
@@ -135,7 +152,6 @@ function render(){
     });
     document.getElementById('barfill').style.width = ((i+1)/Q.length*100)+'%';
   } else {
-    // 未回答
     r.className = 'result';
     document.getElementById('nextbtn').className = 'next';
     document.getElementById('barfill').style.width = (i/Q.length*100)+'%';
@@ -143,72 +159,98 @@ function render(){
 }
 
 function answer(choice){
-  const item = Q[i];
+  const item = curQ()[i];
   if(choice==='△'){ results[i]='△'; }
   else if(choice===item.a){ results[i]='○'; }
   else { results[i]='×'; }
-  render(); // 結果表示・選択肢の強調・次へボタンを一括反映（選び直しも同じ経路）
-}
-
-function prev(){
-  if(i>0){ i--; render(); }
-}
-
-function next(){
-  if(results[i]===undefined) return; // 未回答では進めない（nextは回答後のみ表示）
-  i++;
-  if(i < Q.length){ render(); }
-  else { summary(); }
-}
-
-function restart(){
-  i = 0;
-  results.length = 0;
-  document.getElementById('quiz').innerHTML = QUIZ_HTML; // 初期状態に復元（inline onclick はグローバル関数を参照するため維持される）
   render();
 }
 
-function summary(){
+function prev(){ if(i>0){ i--; render(); } }
+
+function next(){
+  if(results[i]===undefined) return;
+  i++;
+  if(i < curQ().length){ render(); }
+  else { logicSummary(); }
+}
+
+function logicSummary(){
+  const Q = curQ();
   const o = results.filter(x=>x==='○').length;
   const d = results.filter(x=>x==='△').length;
   const x = results.filter(x=>x==='×').length;
   const missList = [];
   results.forEach((m,idx)=>{ if(m!=='○') missList.push((idx+1)+'('+m+')'); });
   const seq = results.join('');
-  const code = LOGIC+" ["+seq+"] ○"+o+" △"+d+" ×"+x + (missList.length? " / 要再訪:"+missList.join(',') : " / 全問クリア");
   const verdict = (x===0 && d<=1) ? "✅ クリア" : "🔁 要再訪";
+  const code = LOGICS[li].logic+" ["+seq+"] ○"+o+" △"+d+" ×"+x + (missList.length? " / 要再訪:"+missList.join(',') : " / 全問クリア");
+  grand.push({logic:LOGICS[li].logic, num:LOGICS[li].num, name:LOGICS[li].name, o:o, d:d, x:x, verdict:verdict, seq:seq});
+
+  const isLast = (li+1 >= LOGICS.length);
   const items = Q.map((it,idx)=>({q:it.q, a:it.a, mark:results[idx]}));
   const base =
     '<div class="summary">'+
-    '<h2>'+TOPIC+'</h2>'+
-    '<div class="score">○'+o+' △'+d+' ×'+x+'</div>'+
-    '<div style="font-size:1.1em;font-weight:700;margin-bottom:8px;">判定：'+verdict+'</div>'+
-    (missList.length?'<div class="miss"><b>復習ポイント：</b><br>'+missList.map(m=>'設問'+m).join('<br>')+'</div>':'<div class="miss">全問○。選択肢で戦えるレベル到達。</div>');
-  document.getElementById('quiz').innerHTML = base
-    + '<p id="savemsg" style="font-size:1em;color:#94a3b8;margin-top:14px;">記録中…</p>'
-    + '<button class="restart" onclick="restart()">🔄 最初からやり直す</button>'
-    + '</div>';
-  document.getElementById('prog').textContent = '完了';
+    '<h2>'+LOGICS[li].name+'</h2>'+
+    '<div class="score">○'+o+' △'+d+' ×'+x+'　'+verdict+'</div>'+
+    (missList.length?'<div class="miss"><b>復習ポイント：</b>'+missList.map(m=>'設問'+m).join('・')+'</div>':'<div class="miss">全問○。選択肢で戦えるレベル到達。</div>')+
+    '<p id="savemsg" style="font-size:.95em;color:#94a3b8;margin:12px 0;">記録中…</p>';
+  const navBtn = isLast
+    ? '<button class="tonext" onclick="grandSummary()">▶ 全13論点の結果を見る</button>'
+    : '<button class="tonext" onclick="nextLogic()">次の論点へ →（残り'+(LOGICS.length-li-1)+'論点）</button>';
+  document.getElementById('quiz').innerHTML = base + '<div class="nav">'+navBtn+'</div>'
+    + '<button class="restart" onclick="restart()">🔄 最初の論点からやり直す</button></div>';
+  document.getElementById('prog').textContent = '論点完了';
   document.getElementById('barfill').style.width = '100%';
+  document.getElementById('lbarfill').style.width = ((li+1)/LOGICS.length*100)+'%';
 
-  // サーバへ自動保存（http経由のとき）。失敗時はコピーコードにフォールバック
+  // サーバへ自動保存（論点ごとに1行追記）。失敗時はコピーコードへフォールバック
   fetch('/save', {method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({subject:SUBJECT, logic:LOGIC, topic:TOPIC, items:items})})
+    body: JSON.stringify({subject:SUBJECT, logic:LOGICS[li].logic, topic:LOGICS[li].topic, items:items})})
     .then(r=>{ if(!r.ok) throw 0; return r.json(); })
     .then(()=>{ document.getElementById('savemsg').innerHTML =
-        '<span style="color:#34d399;font-weight:800;">✅ 自動記録しました</span><br>'+
-        '<span style="font-size:.85em;">チャットで「次へ」と伝えれば次の論点に進みます。</span>'; })
+        '<span style="color:#34d399;font-weight:800;">✅ この論点を自動記録しました</span>'; })
     .catch(()=>{ document.getElementById('savemsg').outerHTML =
         '<p style="font-size:.85em;color:#fbbf24;margin:12px 0 6px;">⚠ サーバ未起動。下の1行をチャットに貼ってください</p>'+
         '<div class="code" id="codebox">'+code+'</div>'+
         '<button class="copy" onclick="copyCode()">📋 結果コードをコピー</button>'; });
 }
 
+function nextLogic(){
+  li++; i=0; results = [];
+  document.getElementById('quiz').innerHTML = QUIZ_HTML;
+  render();
+}
+
+function grandSummary(){
+  let to=0, td=0, tx=0;
+  const rows = grand.map((g,n)=>{
+    to+=g.o; td+=g.d; tx+=g.x;
+    return '<tr><td>'+g.num+'</td><td>'+g.name+'</td><td class="v">○'+g.o+' △'+g.d+' ×'+g.x+'</td><td class="v">'+g.verdict+'</td></tr>';
+  }).join('');
+  document.getElementById('quiz').innerHTML =
+    '<div class="summary">'+
+    '<h2>運営 Aティア13論点 完走</h2>'+
+    '<div class="score">合計 ○'+to+' △'+td+' ×'+tx+'</div>'+
+    '<table class="gtable"><tr><th>#</th><th>論点</th><th>結果</th><th>判定</th></tr>'+rows+'</table>'+
+    '<div class="miss">各論点は <code>_results_104.jsonl</code> に自動記録済み。チャットで「次へ」と伝えれば、私が結果を読んで傾向分析＋ダッシュボード反映します。</div>'+
+    '<button class="restart" onclick="restart()">🔄 最初からやり直す</button></div>';
+  document.getElementById('topic').textContent = '104 運営 ｜ Aティア 完走';
+  document.getElementById('prog').textContent = '完了';
+  document.getElementById('barfill').style.width = '100%';
+  document.getElementById('lbarfill').style.width = '100%';
+  document.getElementById('lbarlabel').textContent = '全13論点 終了';
+}
+
+function restart(){
+  li=0; i=0; results=[]; grand.length=0;
+  document.getElementById('quiz').innerHTML = QUIZ_HTML;
+  render();
+}
+
 function copyCode(){
   const t = document.getElementById('codebox').textContent;
-  navigator.clipboard.writeText(t).then(()=>{
-    document.querySelector('.copy').textContent='✓ コピーしました';
-  });
+  navigator.clipboard.writeText(t).then(()=>{ document.querySelector('.copy').textContent='✓ コピーしました'; });
 }
 
 render();

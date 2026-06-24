@@ -92,7 +92,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;hei
     <div class="canvas-wrap h-cml">
       <h2>CML（資本市場線）<span class="badge">最適配分</span></h2>
       <canvas id="cvCML" width="600" height="380"></canvas>
-      <div class="canvas-legend">横軸 σ（標準偏差・総リスク）／対象：<strong>効率的ポートフォリオのみ</strong>／傾き：(rM − rf) / σM（シャープレシオ）</div>
+      <div class="canvas-legend">横軸 σ（標準偏差・総リスク）／対象：<strong>効率的ポートフォリオのみ</strong>／傾き：(rM − rf) / σM（シャープレシオ）<br><span style="color:#d35400;font-weight:700;">🟠 効率的フロンティア</span>（リスク資産のみの双曲線）に <strong>CMLがM点で接する</strong>＝接点が市場PF（M）</div>
     </div>
   </div>
 
@@ -211,7 +211,15 @@ function draw(){
     zones:[
       {from:0, to:sm, color:'rgba(39,174,96,0.08)', label:'貸出ゾーン'},
       {from:sm, to:40, color:'rgba(231,76,60,0.08)', label:'借入ゾーン'},
-    ]
+    ],
+    // 効率的フロンティア（リスク資産のみ）：CMLがM点で接する双曲線
+    // r0=最小分散点の収益率, σ0=その標準偏差, s2 を「M を通り・M で接線勾配=シャープ」になるよう決定
+    frontier: (rm>rf) ? (function(){
+      const r0=(rf+rm)/2;                 // 最小分散点の期待収益率
+      const sigma0=sm/Math.SQRT2;         // σ0² = σM²·(r0−rf)/(rM−rf) = σM²/2
+      const s2=Math.pow(rm-rf,2)/(2*sm*sm);
+      return {r0,sigma0,s2,markX:sm,markY:rm};
+    })() : null
   });
 }
 
@@ -263,6 +271,41 @@ function drawChart(canvasId, p){
   ctx.fillText(p.xLabel, padL+plotW/2, H-8);
   ctx.save(); ctx.translate(14,padT+plotH/2); ctx.rotate(-Math.PI/2);
   ctx.fillText('期待収益率 (%)',0,0); ctx.restore();
+
+  // 効率的フロンティア（双曲線）— CMLがM点で接する
+  if(p.frontier){
+    const f=p.frontier;
+    const sig=r=>Math.sqrt(Math.max(0, f.sigma0*f.sigma0 + (r-f.r0)*(r-f.r0)/f.s2));
+    // 上側＝効率的フロンティア（実線）
+    ctx.strokeStyle='#e67e22'; ctx.lineWidth=2.5; ctx.setLineDash([]);
+    ctx.beginPath(); let started=false;
+    for(let r=f.r0; r<=yMax; r+=(yMax-f.r0)/240){
+      const sx=sig(r); if(sx>xMax) break;
+      const px=X(sx), py=Y(r);
+      started ? ctx.lineTo(px,py) : (ctx.moveTo(px,py), started=true);
+    }
+    ctx.stroke();
+    // 下側＝非効率な部分（最小分散フロンティアの下枝・破線）
+    ctx.strokeStyle='#e8b48a'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+    ctx.beginPath(); started=false;
+    for(let r=f.r0; r>=yMin; r-=(f.r0-yMin)/240){
+      const sx=sig(r); if(sx>xMax) break;
+      const px=X(sx), py=Y(r);
+      started ? ctx.lineTo(px,py) : (ctx.moveTo(px,py), started=true);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    // 最小分散点（MVP）
+    ctx.fillStyle='#e67e22';
+    ctx.beginPath(); ctx.arc(X(f.sigma0),Y(f.r0),4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#a85a12'; ctx.font='9px sans-serif'; ctx.textAlign='right';
+    ctx.fillText('最小分散点', X(f.sigma0)-6, Y(f.r0)+3);
+    // フロンティアのラベル
+    const lr=Math.min(yMax, f.r0+(yMax-f.r0)*0.82), ls=sig(lr);
+    if(ls<=xMax){
+      ctx.fillStyle='#d35400'; ctx.font='bold 10px sans-serif'; ctx.textAlign='left';
+      ctx.fillText('効率的フロンティア', X(ls)+6, Y(lr));
+    }
+  }
 
   // line
   ctx.strokeStyle=p.color; ctx.lineWidth=2.5;

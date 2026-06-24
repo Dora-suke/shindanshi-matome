@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>令和8年度 合格模試 財務・会計</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f0f2f7; color: #222; font-size: 15px; }
+  header { background: linear-gradient(135deg,#1a3a5c,#2d6a9f); color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 17px; font-weight: bold; }
+  header .sub { font-size: 12px; opacity: .75; }
+  .progress-bar { background: #c8d4e0; height: 5px; }
+  .progress-inner { height: 5px; background: #3adb76; transition: width .4s; }
+
+  .cat-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px; background: #fff; border-bottom: 1px solid #dde1e8; }
+  .cat-tab { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; border: 2px solid transparent; transition: all .15s; user-select: none; }
+  .cat-tab[data-cat="all"]      { background:#6c757d;color:#fff; }
+  .cat-tab[data-cat="会計理論"] { border-color:#3a9bd5;color:#1a6fa0; }
+  .cat-tab[data-cat="会計理論"].active { background:#3a9bd5;color:#fff; }
+  .cat-tab[data-cat="原価計算"] { border-color:#27ae60;color:#1a7a42; }
+  .cat-tab[data-cat="原価計算"].active { background:#27ae60;color:#fff; }
+  .cat-tab[data-cat="財務分析"] { border-color:#e67e22;color:#b05e10; }
+  .cat-tab[data-cat="財務分析"].active { background:#e67e22;color:#fff; }
+  .cat-tab[data-cat="管理会計"] { border-color:#8e44ad;color:#6c2f8a; }
+  .cat-tab[data-cat="管理会計"].active { background:#8e44ad;color:#fff; }
+  .cat-tab[data-cat="企業財務"] { border-color:#c0392b;color:#922b21; }
+  .cat-tab[data-cat="企業財務"].active { background:#c0392b;color:#fff; }
+
+  .q-list { display: flex; flex-wrap: wrap; gap: 5px; padding: 10px 16px; background: #f0f2f7; border-bottom: 1px solid #dde1e8; }
+  .q-btn { width: 36px; height: 36px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; background: #fff; color: #555; border: 1px solid #ccc; transition: all .15s; }
+  .q-btn.hidden { display: none; }
+  .q-btn.current { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+  .q-btn[data-cat="会計理論"] { border-left: 3px solid #3a9bd5; }
+  .q-btn[data-cat="原価計算"] { border-left: 3px solid #27ae60; }
+  .q-btn[data-cat="財務分析"] { border-left: 3px solid #e67e22; }
+  .q-btn[data-cat="管理会計"] { border-left: 3px solid #8e44ad; }
+  .q-btn[data-cat="企業財務"] { border-left: 3px solid #c0392b; }
+
+  main { max-width: 800px; margin: 20px auto; padding: 0 16px 60px; }
+  .q-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.09); overflow: hidden; }
+  .q-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid #eee; }
+  .q-num { font-size: 22px; font-weight: bold; color: #1a3a5c; min-width: 65px; }
+  .cat-badge { font-size: 11px; font-weight: bold; padding: 3px 10px; border-radius: 12px; color: #fff; }
+  .cat-badge.会計理論 { background:#3a9bd5; }
+  .cat-badge.原価計算 { background:#27ae60; }
+  .cat-badge.財務分析 { background:#e67e22; }
+  .cat-badge.管理会計 { background:#8e44ad; }
+  .cat-badge.企業財務 { background:#c0392b; }
+
+  .q-body { padding: 20px 24px; }
+  .q-text { line-height: 1.85; margin-bottom: 16px; }
+  .shiryou { background:#f8f9fb; border:1px solid #dde1e8; border-radius:8px; padding:14px 18px; margin-bottom:16px; font-size:14px; line-height:1.8; }
+  .shiryou h4 { font-weight:bold; margin-bottom:8px; color:#444; }
+  .shiryou table { border-collapse:collapse; width:100%; margin-top:8px; font-size:13px; }
+  .shiryou th, .shiryou td { border:1px solid #ccc; padding:5px 10px; text-align:center; }
+  .shiryou th { background:#e8ecf4; }
+
+  .choices { list-style:none; }
+  .choices li { padding:10px 14px; margin:6px 0; border-radius:8px; border:1px solid #dde1e8; line-height:1.7; cursor:pointer; transition:background .12s; }
+  .choices li:hover { background:#f0f5ff; }
+  .choices li .cho-label { font-weight:bold; margin-right:8px; color:#555; }
+
+  .answer-section { margin-top:20px; }
+  .btn-answer { background:#1a3a5c; color:#fff; font-weight:bold; font-size:13px; padding:9px 22px; border-radius:8px; border:none; cursor:pointer; transition:background .15s; }
+  .btn-answer:hover { background:#122a45; }
+  .answer-box { display:none; margin-top:14px; }
+
+  .nav-btns { display:flex; justify-content:space-between; align-items:center; margin-top:20px; }
+  .nav-btn { padding:10px 24px; border-radius:8px; border:none; font-weight:bold; font-size:14px; cursor:pointer; transition:all .15s; }
+  .nav-btn.prev { background:#e8ecf0; color:#555; }
+  .nav-btn.prev:hover { background:#d0d5de; }
+  .nav-btn.next { background:#1a3a5c; color:#fff; }
+  .nav-btn.next:hover { background:#122a45; }
+  .nav-btn:disabled { opacity:.35; cursor:default; }
+  .q-count { font-size:13px; color:#888; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="sub">令和8年度 第1次試験合格模試問題</div>
+    <h1>財務・会計　全25問</h1>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-inner" id="progressBar" style="width:4%"></div></div>
+
+<div class="cat-tabs">
+  <div class="cat-tab active" data-cat="all">すべて（25）</div>
+  <div class="cat-tab" data-cat="会計理論">財務会計・会計理論（7）</div>
+  <div class="cat-tab" data-cat="原価計算">原価計算（1）</div>
+  <div class="cat-tab" data-cat="財務分析">財務分析（3）</div>
+  <div class="cat-tab" data-cat="管理会計">管理会計・意思決定（9）</div>
+  <div class="cat-tab" data-cat="企業財務">企業財務・資本市場（5）</div>
+</div>
+
+<div class="q-list" id="qList"></div>
+
+<main>
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num" id="qNum">第1問</div>
+      <div class="cat-badge" id="catBadge"></div>
+    </div>
+    <div class="q-body">
+      <div class="q-text" id="qText"></div>
+      <div class="shiryou" id="qShiryou" style="display:none"></div>
+      <ul class="choices" id="qChoices"></ul>
+      <div class="answer-section">
+        <button class="btn-answer" onclick="toggleAnswer()">解答・解説を確認する ▼</button>
+        <div class="answer-box" id="answerBox"></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="nav-btn prev" id="btnPrev" onclick="move(-1)">← 前の問題</button>
+    <span class="q-count" id="qCount"></span>
+    <button class="nav-btn next" id="btnNext" onclick="move(1)">次の問題 →</button>
+  </div>
+</main>
+
+<script>
+const CAT_COLORS = { "会計理論":"#3a9bd5","原価計算":"#27ae60","財務分析":"#e67e22","管理会計":"#8e44ad","企業財務":"#c0392b" };
+
+const QUESTIONS = [
+  { num:1, cat:"会計理論",
+    text:"税効果会計に関する記述として、最も適切なものはどれか。",
+    choices:["受取配当金のうち益金に算入されない金額は、繰延税金負債を増加させる。","税法の損金算入限度額を超える貸倒引当金繰入額は、繰延税金資産を増加させる。","寄付金のうち損金に算入されない金額は、繰延税金資産を増加させる。","税法の損金算入限度額を超える減価償却費は、繰延税金資産を減少させる。"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"益金不算入は永久差異→将来も差異が解消しない→繰延税金負債は生じない"},
+        {ok:true, r:"損金算入超過の繰入額は将来減算一時差異→将来損金算入が見込まれる→繰延税金資産が増加"},
+        {ok:false,r:"損金不算入の寄付金は永久差異（永遠に解消しない）→繰延税金資産は生じない"},
+        {ok:false,r:"損金算入超過の減価償却費も将来減算一時差異→繰延税金資産が増加（減少ではない）"}
+      ],
+      detail:"税効果会計は「一時差異」（将来解消する差異）にのみ繰延税金を計上する。貸倒引当金の損金算入限度超過額は将来に損金として認められる将来減算一時差異。一方、受取配当の益金不算入・寄付金の損金不算入は「永久差異」で将来も解消しないため繰延税金は計上しない。",
+      point:"一時差異（将来解消）→繰延税金あり ／ 永久差異（永遠解消しない）→繰延税金なし"
+    }
+  },
+  { num:2, cat:"会計理論",
+    text:"収益認識基準に関する記述として、最も適切なものはどれか。",
+    choices:["引渡基準とは、商品が取引先に到着した時点で収益として認識する考え方である。","引渡基準よりも収益認識のタイミングが遅いのは、出荷基準である。","検収基準は、契約の解消や返品リスクがない場合に採用される。","出荷基準とは、取引先が納品された商品の内容を確認し、問題ないことを書面などで通知した時点で収益として認識する考え方である。"],
+    answer:"ア",
+    kaisetsu:{
+      cr:[
+        {ok:true, r:"引渡基準=商品が取引先に到着した時点で収益認識→正しい定義"},
+        {ok:false,r:"引渡基準より遅いのは検収基準（出荷→引渡→検収の順）。出荷基準は最も早い"},
+        {ok:false,r:"検収基準は返品・解消リスクがある場合に採用される（リスクがない場合は不要）"},
+        {ok:false,r:"これは検収基準の説明。出荷基準は「出荷した時点」で認識"}
+      ],
+      detail:"収益認識のタイミング早い順：①出荷基準（出荷した瞬間）→②引渡基準（商品が到着した時点）→③検収基準（取引先が書面等で確認した時点）。選択肢イ・エが混同しやすい典型的ひっかけ。",
+      point:"出荷→引渡（到着）→検収 の順に収益認識が遅くなる"
+    }
+  },
+  { num:3, cat:"原価計算",
+    text:"以下の資料は、工場の直接費と間接費のデータである。\nこのとき、製造指図書#1 の製造原価として、最も適切なものを下記の解答群から選べ。",
+    shiryou:`<h4>（1）直接費</h4><table><tr><th>製造指図書</th><th>材料消費量</th><th>材料単価</th><th>直接作業時間</th><th>賃率</th></tr><tr><td>#1</td><td>50kg</td><td>@4,000円/kg</td><td>200時間</td><td>1,200円/時</td></tr><tr><td>#2</td><td>60kg</td><td>@5,000円/kg</td><td>220時間</td><td>1,200円/時</td></tr><tr><td>#3</td><td>60kg</td><td>@3,000円/kg</td><td>180時間</td><td>1,200円/時</td></tr></table><br><h4>（2）間接費</h4><p>製造間接費実際発生額：300,000円</p><p>製造間接費は直接作業時間を配賦基準として各製品に配賦する。</p>`,
+    choices:["400,000円","440,000円","540,000円","600,000円"],
+    answer:"ウ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"直接材料費のみの計算（間接費配賦を忘れている）"},
+        {ok:false,r:"直接費合計は440,000円だが間接費配賦100,000円を加算していない"},
+        {ok:true, r:"直接費440,000円＋間接費配賦100,000円＝540,000円"},
+        {ok:false,r:"間接費全額300,000円を#1に配賦した誤り"}
+      ],
+      detail:"製造原価＝直接費（材料費＋労務費）＋間接費配賦額。間接費は作業時間比で按分する。",
+      calc:["直接材料費：50kg × @4,000円 ＝ 200,000円","直接労務費：200時間 × 1,200円 ＝ 240,000円","直接費合計：440,000円","─","総作業時間：200＋220＋180 ＝ 600時間","#1への間接費配賦：300,000 × (200÷600) ＝ 100,000円","─","製造原価：440,000 ＋ 100,000 ＝ 540,000円 →ウ"],
+      point:"間接費配賦額＝間接費総額×(#1の作業時間÷全体の作業時間)"
+    }
+  },
+  { num:4, cat:"会計理論",
+    text:"貸借対照表の資産・負債の表示に関する記述として、最も適切なものはどれか。",
+    choices:["不動産販売業者が販売目的で保有している土地は、その企業の主たる営業活動における商品であるため、有形固定資産として表示する。","長期借入金は、決算日の翌日から１年以内に返済期限が到来する部分があっても、当初の契約に基づき全額を固定負債として表示する。","貸倒引当金が複数の金銭債権（例：売掛金、受取手形）に対して設定されている場合、対象となる債権が流動資産に属するものであれば、流動資産の区分に一括して控除形式で表示することができる。","資産除去債務は、将来の支出額の割引現在価値で負債計上され、関連する有形固定資産の控除項目として表示する。"],
+    answer:"ウ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"販売業者の販売目的土地は「商品」（棚卸資産・流動資産）→有形固定資産ではない"},
+        {ok:false,r:"ワンイヤールール：1年以内返済部分は流動負債へ振り替えが必要"},
+        {ok:true, r:"流動資産に属する複数債権への引当金→流動資産の区分で一括控除表示が可能"},
+        {ok:false,r:"資産除去債務の対応資産は有形固定資産に「加算」（控除ではない）"}
+      ],
+      detail:"ウ：複数の売掛金・受取手形等に設定された貸倒引当金は、一括して流動資産区分から控除表示できる。エの誤りポイント：資産除去債務は有形固定資産の取得原価に加算計上（コストの一部として上乗せ）される。",
+      point:"ワンイヤールール：1年以内返済→流動負債へ。資産除去債務→固定資産に加算（控除ではない）"
+    }
+  },
+  { num:5, cat:"会計理論",
+    text:"無形固定資産の会計処理に関する記述として、最も適切なものはどれか。",
+    choices:["自社利用のソフトウェアの制作費は、その利用により将来の収益獲得が見込まれる場合でも、全額を研究開発費として費用処理する。","M&Aにより発生したのれんは、20年以内のその効果が及ぶ期間にわたって、定額法または定率法により償却する。","長年の事業活動で築き上げたブランド価値は、自己創設のれんとして公正な時価で評価し、無形固定資産に計上することができる。","自社利用のソフトウェアは、無形固定資産として計上された後、その利用可能期間にわたって定額法などの合理的な方法で償却される。"],
+    answer:"エ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"将来収益獲得が見込まれる場合→資産計上（研究開発費として費用処理は誤り）"},
+        {ok:false,r:"M&Aのれんの償却→定額法のみ（定率法は認められていない）"},
+        {ok:false,r:"自己創設のれん（内部創出のれん）は計上禁止→外部取得のれんのみ計上可"},
+        {ok:true, r:"自社利用ソフトウェアは無形固定資産として計上後、利用可能期間にわたり定額法等で償却"}
+      ],
+      detail:"のれんは「定額法のみ・20年以内」がルール。自己創設のれんは主観的・恣意的になるため計上禁止。自社利用ソフトウェアは、将来の収益獲得が見込まれる場合は無形固定資産として計上し、利用可能期間で償却する。",
+      point:"のれん＝定額法のみ・20年以内。自己創設のれん＝計上禁止。ソフトウェア＝利用可能期間で償却"
+    }
+  },
+  { num:6, cat:"会計理論",
+    text:"連結会計に関する記述として、最も適切なものはどれか。",
+    choices:["連結貸借対照表は、親会社、子会社の個別貸借対照表を合算し、必要な調整を加えて作成される。","非支配株主持分は、連結貸借対照表の総資産の部に表示される。","A社によるB社の議決権の所有割合が40%未満であっても、B社の財務および営業または事業の方針決定に対して影響を与えることができる場合には、B社は子会社と判定される。","持分法による投資利益（または損失）は、連結損益計算書の特別利益（または特別損失）の区分に表示される。"],
+    answer:"ア",
+    kaisetsu:{
+      cr:[
+        {ok:true, r:"連結B/S＝親会社・子会社の個別B/Sを合算＋連結調整（内部取引消去等）→正しい"},
+        {ok:false,r:"非支配株主持分→純資産の部に表示（総資産の部ではない）"},
+        {ok:false,r:"影響を与えられるが支配できない→関連会社（子会社ではない）"},
+        {ok:false,r:"持分法による投資損益→営業外損益（特別損益ではない）"}
+      ],
+      detail:"子会社の判定基準は「支配」（財務・営業方針を実質的に決定できるか）。単に影響を与えられるだけなら「関連会社」として持分法を適用。非支配株主持分は純資産の部・持分法投資損益は営業外区分。",
+      point:"子会社＝支配。関連会社＝重要な影響。非支配株主持分→純資産の部。持分法損益→営業外"
+    }
+  },
+  { num:7, cat:"会計理論",
+    text:"会社法における計算書類及び会計帳簿に関する記述として、最も適切なものはどれか。",
+    choices:["株式会社は、作成した計算書類を、その作成の時から５年間保存しなければならない。","会計帳簿には、会社のすべての取引を損益計算書と同様の形式で記録しなければならない。","会計帳簿は、書面又は電磁的記録をもって作成することができる。","株主は、理由を問わず、いつでも株式会社の会計帳簿を閲覧するよう請求できる。"],
+    answer:"ウ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"会計帳簿の保存は10年。計算書類は備置5年だが「作成の時から」という表現は正確でない"},
+        {ok:false,r:"会計帳簿は複式簿記で記録（損益計算書形式ではない）"},
+        {ok:true, r:"会社法第432条第2項：会計帳簿は書面または電磁的記録で作成可→正しい"},
+        {ok:false,r:"株主の会計帳簿閲覧には理由の記載と議決権・持株比率（総株主の議決権3%以上等）の要件あり"}
+      ],
+      detail:"会計帳簿（会社法432条）：書面or電磁的記録で作成可、10年間保存義務。株主閲覧請求（433条）：理由の明示＋3%以上の持株比率が要件。計算書類の主たる事務所備置は定時株主総会の1週間前から5年間。",
+      point:"会計帳簿＝書面orデータOK・10年保存。閲覧請求には理由＋3%以上の要件が必要"
+    }
+  },
+  { num:8, cat:"会計理論",
+    text:"キャッシュ・フロー計算書における各取引の表示区分に関する記述として、最も適切なものはどれか。",
+    choices:["受取利息及び受取配当金は、投資活動によるキャッシュ・フローとして表示される。","自己株式の取得による支出は、財務活動によるキャッシュ・フローとして表示される。","固定資産の売却による収入は、その売却損益が損益計算書に計上されるため、営業活動によるキャッシュ・フローとして表示される。","取得日から満期日までの期間が３ヶ月以内の定期預金の預け入れによる支出は、投資活動によるキャッシュ・フローとして表示される。"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"受取利息・配当金は営業活動または投資活動（日本基準では両方認められる）→投資活動と断定するのは誤り"},
+        {ok:true, r:"自己株式の取得＝株主への資金返還→財務活動によるCF"},
+        {ok:false,r:"固定資産売却収入→PL計上とは無関係に投資活動のCF（PL損益が出ても投資活動）"},
+        {ok:false,r:"3ヶ月以内定期預金＝現金同等物→CF計算書の「現金及び現金同等物」に含まれ投資活動には表示しない"}
+      ],
+      detail:"CF計算書の分類：自己株式取得は株主への返還＝財務CF。固定資産の取得・売却は設備投資＝投資CF（PL損益の区分とは独立）。3ヶ月以内定期預金は現金同等物として「現金残高」の一部に含まれる。",
+      point:"自己株式取得→財務CF ／ 固定資産売却→投資CF ／ 3ヶ月以内定期預金→現金同等物（CFなし）"
+    }
+  },
+  { num:9, cat:"管理会計",
+    text:"X社（決算日：3月31日）は、X1年7月1日に機械装置を5,000千円で取得した。この機械装置について、次の資料に基づき、定額法を用いて減価償却を月割りで計算する場合、X3年3月31日における帳簿価額として、最も適切なものはどれか。",
+    shiryou:`<h4>【資料】</h4><p>耐用年数：5年</p><p>残存価額：取得原価の10%</p><p>減価償却方法：定額法</p>`,
+    choices:["3,200千円","3,425千円","3,650千円","4,325千円"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"年間900千円×2年計算の誤り（月割りを考慮していない）"},
+        {ok:true, r:"X1年度9ヶ月＋X2年度12ヶ月の計1,575千円を控除→3,425千円"},
+        {ok:false,r:"計算誤り"},
+        {ok:false,r:"X1年度のみの計算（年度数が不足）"}
+      ],
+      detail:"月割りで計算。X1年7月〜翌3月＝9ヶ月分、X2年4月〜X3年3月＝12ヶ月分。X3年3月31日時点で2期分が経過。",
+      calc:["年間償却額：(5,000 − 5,000×10%) ÷ 5 ＝ 900千円/年","─","X1年度（9ヶ月）：900 × 9/12 ＝ 675千円","X2年度（12ヶ月）：900千円","累計償却額：675 ＋ 900 ＝ 1,575千円","─","帳簿価額：5,000 − 1,575 ＝ 3,425千円 →イ"],
+      point:"月割計算：取得月（7月）〜期末（3月）＝9ヶ月。X1年度は9ヶ月分のみ計上"
+    }
+  },
+  { num:10, cat:"財務分析",
+    text:"以下の資料に基づき、付加価値率として、最も適切なものはどれか。ただし、金額の単位は万円とする。",
+    shiryou:`<h4>【資料】</h4><table><tr><th>項目</th><th>金額</th></tr><tr><td>資産合計</td><td>128,000</td></tr><tr><td>売上額</td><td>96,000</td></tr><tr><td>付加価値</td><td>24,000</td></tr><tr><td>　うち人件費</td><td>15,600</td></tr><tr><td>従業員数</td><td>40人</td></tr></table>`,
+    choices:["20%","23%","25%","30%"],
+    answer:"ウ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"20%＝付加価値÷資産合計（分母が誤り）"},
+        {ok:false,r:"計算誤り"},
+        {ok:true, r:"付加価値率＝付加価値÷売上高＝24,000÷96,000＝25%"},
+        {ok:false,r:"30%＝人件費÷売上高（分子が誤り）"}
+      ],
+      detail:"付加価値率は企業が売上高からどれだけの付加価値を生み出したかを示す指標。分母は売上高（資産や人件費で割らない点に注意）。",
+      calc:["付加価値率 ＝ 付加価値 ÷ 売上高","＝ 24,000万円 ÷ 96,000万円 ＝ 0.25 ＝ 25% →ウ"],
+      point:"付加価値率＝付加価値÷売上高。資産や人件費で割る指標と混同しないこと"
+    }
+  },
+  { num:11, cat:"管理会計",
+    text:"ある製品の販売予算が以下のとおり編成されており、第3四半期（Q3）の実際販売量が3,200個、実際販売価格が98,000円であった。予算実績差異を販売数量差異と販売価格差異に分割する場合、最も適切な組み合わせを下記の解答群から選べ。",
+    shiryou:`<table><tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>合計</th></tr><tr><td>販売量（個）</td><td>2,400</td><td>2,800</td><td>3,000</td><td>2,800</td><td>11,000</td></tr><tr><td>売上高（万円）</td><td>24,000</td><td>28,000</td><td>30,000</td><td>28,000</td><td>110,000</td></tr></table>`,
+    choices:["販売数量差異 2,000万円（有利差異）と販売価格差異 600万円（不利差異）","販売数量差異 2,000万円（有利差異）と販売価格差異 640万円（不利差異）","販売数量差異 2,000万円（不利差異）と販売価格差異 600万円（不利差異）","販売数量差異 2,000万円（不利差異）と販売価格差異 640万円（不利差異）"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"価格差異が600万円になっているが正しくは640万円"},
+        {ok:true, r:"数量差異2,000万（有利）・価格差異640万（不利）→正解"},
+        {ok:false,r:"実際3,200&gt;予算3,000なので数量差異は有利（不利ではない）"},
+        {ok:false,r:"数量差異の方向（有利/不利）が逆"}
+      ],
+      detail:"数量差異：実際&gt;予算なので有利差異。価格差異：実際単価98,000円&lt;予算単価100,000円なので不利差異。掛け算に使う数量（実際数量）を間違えると600万になってしまう典型的な誤り。",
+      calc:["Q3予算単価：30,000万円 ÷ 3,000個 ＝ 100,000円/個","─","販売数量差異 ＝ (実際数量 − 予算数量) × 予算単価","＝ (3,200 − 3,000) × 100,000円 ＝ 200万円 → 2,000万円（有利）","─","販売価格差異 ＝ (実際価格 − 予算価格) × 実際数量","＝ (98,000 − 100,000) × 3,200個 ＝ −6,400,000円 ＝ −640万円（不利）"],
+      point:"数量差異＝差分数量×予算単価。価格差異＝価格差×実際数量（実際数量を使う点に注意）"
+    }
+  },
+  { num:12, cat:"管理会計",
+    text:"A社とB社の損益計算書は次のように要約される。A社とB社の損益分岐点比率の組み合わせとして最も適切なものはどれか。",
+    shiryou:`<h4>損益計算書（要約）（単位：千円）</h4><table><tr><th></th><th colspan="2">A社</th><th colspan="2">B社</th></tr><tr><td>売上高</td><td></td><td>2,400</td><td></td><td>2,800</td></tr><tr><td>変動費</td><td>1,440</td><td rowspan="2">2,160</td><td>1,540</td><td rowspan="2">2,440</td></tr><tr><td>固定費</td><td>720</td><td>900</td></tr><tr><td>営業利益</td><td></td><td>240</td><td></td><td>360</td></tr></table>`,
+    choices:["A社:75%　B社:71%","A社:75%　B社:58%","A社:50%　B社:58%","A社:50%　B社:71%"],
+    answer:"ア",
+    kaisetsu:{
+      cr:[
+        {ok:true, r:"A社75%・B社71%→正解"},
+        {ok:false,r:"B社の計算誤り（限界利益率の算出ミス）"},
+        {ok:false,r:"A社の計算誤り（変動費率を誤認）"},
+        {ok:false,r:"A社の計算誤り"}
+      ],
+      detail:"損益分岐点比率＝損益分岐点売上高÷実際売上高。低いほど安全余裕が大きい。",
+      calc:["【A社】","変動費率＝1,440÷2,400＝60%　限界利益率＝40%","損益分岐点売上高＝固定費÷限界利益率＝720÷40%＝1,800千円","損益分岐点比率＝1,800÷2,400＝75%","─","【B社】","変動費率＝1,540÷2,800＝55%　限界利益率＝45%","損益分岐点売上高＝900÷45%＝2,000千円","損益分岐点比率＝2,000÷2,800≒71.4%≒71%"],
+      point:"損益分岐点比率＝固定費÷(売上高×限界利益率)÷売上高。低いほど安全余裕大"
+    }
+  },
+  { num:13, cat:"財務分析",
+    text:"企業の安全性分析に関する記述として、最も適切なものはどれか。",
+    choices:["自己資本比率は、企業の短期的な支払能力を示す代表的な指標である。","固定比率は、固定資産が長期資本（自己資本と固定負債の合計）によって、どの程度まかなわれているかを示す指標である。","当座比率は、流動資産から棚卸資産を控除した当座資産を用いて計算するため、流動比率よりも厳しく短期的な支払能力を評価する指標である。","自己資本比率が低いほど、他人資本への依存度が低く、長期的な安全性が高いと判断できる。"],
+    answer:"ウ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"自己資本比率→長期の財務安全性指標（短期ではない）"},
+        {ok:false,r:"固定比率＝固定資産÷自己資本。固定資産÷長期資本は「固定長期適合率」"},
+        {ok:true, r:"当座比率＝当座資産÷流動負債。棚卸資産を除き流動比率より厳格な短期支払能力指標"},
+        {ok:false,r:"自己資本比率が高いほど他人資本依存が低く安全性が高い（低いは逆）"}
+      ],
+      detail:"固定比率と固定長期適合率の混同に注意。固定比率＝固定資産÷自己資本のみ（固定負債は含まない）。当座比率は流動資産から換金性の低い棚卸資産を除くため、より保守的な指標。",
+      point:"流動比率&gt;当座比率（当座は棚卸資産除外で厳格）。固定比率＝固定÷自己資本のみ"
+    }
+  },
+  { num:14, cat:"管理会計",
+    text:"以下の資料のとき、税引後目標利益 3,500,000円を達成するために必要となる販売数量として、最も適切なものはどれか。",
+    shiryou:`<h4>【資料】</h4><p>販売単価：1,000円</p><p>単位当たり変動費：600円</p><p>年間固定費：8,000,000円</p><p>実効税率：30%</p>`,
+    choices:["13,000個","20,000個","28,750個","32,500個"],
+    answer:"エ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"計算誤り"},
+        {ok:false,r:"税引後目標利益をそのまま税引前利益として計算した誤り"},
+        {ok:false,r:"計算誤り"},
+        {ok:true, r:"税引後目標利益を税引前に変換してから逆算→32,500個"}
+      ],
+      detail:"税引後目標利益が与えられた場合、まず税引前目標利益に変換してから販売数量を求める。この手順を飛ばすと誤答になる。",
+      calc:["Step1：税引前目標利益に変換","税引前目標利益 ＝ 3,500,000 ÷ (1 − 0.30) ＝ 5,000,000円","─","Step2：販売数量を逆算","(1,000 − 600) × Q ＝ 8,000,000 ＋ 5,000,000","400 × Q ＝ 13,000,000","Q ＝ 32,500個 →エ"],
+      point:"税引後→税引前：税引後÷(1−税率)。次に貢献利益で固定費＋税引前目標利益を割る"
+    }
+  },
+  { num:15, cat:"管理会計",
+    text:"以下の資料に基づき計算したサステナブル成長率（内部留保のみを事業に投資した場合の純資産の成長率）として、最も適切なものを下記の解答群から選べ。",
+    shiryou:`<h4>【資料】</h4><table><tr><td>売上高</td><td>10,000万円</td></tr><tr><td>当期純利益</td><td>400万円</td></tr><tr><td>総資産</td><td>8,000万円</td></tr><tr><td>純資産</td><td>2,000万円</td></tr><tr><td>配当</td><td>160万円</td></tr></table>`,
+    choices:["10%","12%","13%","14%"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"ROE＝20%を使わず誤った値で計算"},
+        {ok:true, r:"ROE20%×内部留保率60%＝12%→正解"},
+        {ok:false,r:"計算誤り"},
+        {ok:false,r:"計算誤り"}
+      ],
+      detail:"サステナブル成長率＝ROE×内部留保率（プラウバック比率）。配当を出さず内部留保だけで成長する場合の最大成長率を示す。",
+      calc:["ROE ＝ 当期純利益 ÷ 純資産 ＝ 400 ÷ 2,000 ＝ 20%","内部留保率 ＝ (400 − 160) ÷ 400 ＝ 240 ÷ 400 ＝ 60%","─","サステナブル成長率 ＝ 20% × 60% ＝ 12% →イ"],
+      point:"サステナブル成長率＝ROE×(1−配当性向)＝ROE×内部留保率"
+    }
+  },
+  { num:16, cat:"管理会計",
+    text:"X社は、取得原価8,000千円の機械の購入を検討している。この機械の耐用年数は5年であり、導入した場合、毎期末に一定額のキャッシュ・フローがもたらされると期待されている。割引率を年4%とした場合、この投資案が有利であると判断できるために最低限必要となる、毎年のキャッシュ・フローの金額として最も適切なものはどれか。",
+    shiryou:`<h4>【資料】</h4><p>割引率：4%</p><p>期間5年の複利現価係数：0.822</p><p>期間5年の年金現価係数：4.452</p>`,
+    choices:["1,600千円","1,797千円","3,562千円","9,732千円"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"8,000÷5年の単純な割り算（割引を考慮していない）"},
+        {ok:true, r:"8,000÷年金現価係数4.452≒1,797千円→NPV≥0の最低CF"},
+        {ok:false,r:"複利現価係数を使った誤り"},
+        {ok:false,r:"8,000×年金現価係数の誤り（逆算していない）"}
+      ],
+      detail:"毎期均等なCFの場合は年金現価係数を使用。NPV＝0となる（投資額と等しくなる）CF×年金現価係数＝8,000から逆算する。",
+      calc:["NPV ≥ 0 となる最低年間CF ＝ X とすると","X × 年金現価係数 ≥ 投資額","X × 4.452 ≥ 8,000千円","X ≥ 8,000 ÷ 4.452 ≒ 1,797千円 →イ"],
+      point:"均等CF→年金現価係数。最低CF＝投資額÷年金現価係数（NPV＝0となる点）"
+    }
+  },
+  { num:17, cat:"管理会計",
+    text:"Z社は、生産性向上を目的とした新しい機械設備の導入を検討している。この投資案の採否を正味現在価値法（NPV法）で評価することになった。なお、税金は考慮しないものとする。この投資案の正味現在価値として、最も適切なものを下記の解答群から選べ。",
+    shiryou:`<h4>【資料】</h4><p>初期投資額は5,000万円であり、第1期首に支出される。</p><p>投資による各期末のキャッシュ・フローは、第1期末が1,500万円、第2期末が2,000万円、第3期末が2,500万円と予測されている。</p><p>機械の経済命数は3年であり、3年目の期末に300万円で売却できる見込みである。</p><p>Z社の資本コストは年4%である。</p><table><tr><th></th><th>1年</th><th>2年</th><th>3年</th></tr><tr><td>複利現価係数(4%)</td><td>0.96</td><td>0.92</td><td>0.89</td></tr></table>`,
+    choices:["572万円","692万円","772万円","800万円"],
+    answer:"ウ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"売却収入300万円を含めない、または係数の使い方が誤り"},
+        {ok:false,r:"計算誤り"},
+        {ok:true, r:"CF現在価値合計5,772万円−初期投資5,000万円＝772万円"},
+        {ok:false,r:"割引係数を四捨五入した近似値での計算誤り"}
+      ],
+      detail:"NPV法：各期のCFを現在価値に割引いて合計し、初期投資を差し引く。売却収入は3年目のCFに加算することを忘れずに。第1期首の投資は割引不要（現在価値のまま）。",
+      calc:["第3期末CF：2,500 ＋ 300（売却）＝ 2,800万円","─","PV合計：","1,500 × 0.96 ＝ 1,440","2,000 × 0.92 ＝ 1,840","2,800 × 0.89 ＝ 2,492","合計：5,772万円","─","NPV ＝ 5,772 − 5,000 ＝ 772万円 →ウ"],
+      point:"NPV＝各期CF×割引係数の合計−初期投資額。売却額は最終期CFに含めること"
+    }
+  },
+  { num:18, cat:"管理会計",
+    text:"投資の評価基準に関する各方法の特徴についての記述として、最も不適切なものはどれか。",
+    choices:["正味現在価値法において、正味現在価値がプラスとなる投資案は、投資家が期待する最低限の利益率（資本コスト）を上回る収益性を有するため、採用すべきと判断される。","回収期間法は、投資から得られるキャッシュ・フローの総額が最も大きい投資案を選択するための指標である。","相互排他的な投資案の評価において、正味現在価値法と内部収益率法で評価が異なる場合、一般に正味現在価値法の結論が優先される。","回収期間法は、その計算の簡便さから実務で利用されることがあるが、貨幣の時間価値を考慮しないという欠点がある。"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"（適切）NPV&gt;0→資本コストを上回る収益性あり→採用が妥当"},
+        {ok:true, r:"（最も不適切）回収期間法は「回収期間が最短の案」を選ぶ指標。CF総額最大は誤り"},
+        {ok:false,r:"（適切）相互排他的投資ではNPV法が優先される"},
+        {ok:false,r:"（適切）回収期間法の欠点＝時間価値を無視する"}
+      ],
+      detail:"回収期間法：投資を何年で回収できるかを測る指標で「最短回収期間の案を採択」。CF総額や収益性は判断しない。時間価値を考慮しない点が最大の欠点。問題は「最も不適切」を選ぶ点に注意。",
+      point:"回収期間法＝投資回収期間が最短の案を選択。CF総額最大を選ぶ指標ではない"
+    }
+  },
+  { num:19, cat:"企業財務",
+    text:"MM理論において法人税の存在を許容する場合の最適資本構成に関する記述として最も適切なものはどれか。",
+    choices:["一定以上の負債比率を高めると、デフォルト・リスクが高まり、債権者、株主からより高いリターンを求められるようになることをトレード・オフという。","負債の増加は、支払利息の節税効果により常に企業価値を高める。","負債をゼロとした場合、企業の信用力は高まり加重平均資本コストを低下させ、企業価値を最大化する。","法人税の存在を考慮しても、資本コストは負債と株主資本の割合の影響を受けない。"],
+    answer:"ア",
+    kaisetsu:{
+      cr:[
+        {ok:true, r:"財務的困難コスト（デフォルトリスク→高リターン要求）がトレードオフ理論の核心→適切"},
+        {ok:false,r:"「常に」が誤り。財務的困難コストが大きくなると一定以上の負債では企業価値が下落"},
+        {ok:false,r:"負債ゼロ＝節税効果なし→企業価値は最大化されない"},
+        {ok:false,r:"法人税ありの世界ではWACCは負債比率の影響を受ける（MM無税の仮定の話）"}
+      ],
+      detail:"MM理論（法人税あり）：負債のタックスシールドが企業価値を高めるが、財務的困難コスト（デフォルトリスク・倒産コスト等）が大きくなると逆転。節税効果と財務困難コストのトレードオフで最適な負債比率が存在するのがトレードオフ理論。",
+      point:"節税効果（タックスシールド）vs財務困難コスト（デフォルトリスク）のトレードオフ→最適負債比率が存在"
+    }
+  },
+  { num:20, cat:"企業財務",
+    text:"ポートフォリオ理論に関する記述として、最も適切なものはどれか。",
+    choices:["ポートフォリオを組む目的は、個別の証券が持つシステマティック・リスクを低減させることにある。","2つの証券の相関係数が＋１の場合、ポートフォリオを組むことによるリスク低減効果は最大となる。","効率的フロンティアとは、同じリスク水準のポートフォリオの中では最も期待収益率が高く、同じ期待収益率のポートフォリオの中では最もリスクが低いポートフォリオの集合のことである。","ポートフォリオのリスクとは、市場全体の影響を受ける非システマティック・リスクのことを指す。"],
+    answer:"ウ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"分散投資で低減できるのは非システマティックリスク（個別固有リスク）。市場リスクは低減不可"},
+        {ok:false,r:"相関係数＋1＝完全正相関→分散効果ゼロ（最大ではなく最小）"},
+        {ok:true, r:"効率的フロンティアの正確な定義→最大リターン・最小リスクの集合"},
+        {ok:false,r:"非システマティックリスクは個別固有リスク。市場全体の影響はシステマティックリスク（逆）"}
+      ],
+      detail:"相関係数と分散効果：+1→効果なし / 0→部分的効果 / −1→最大効果（完全な分散）。システマティックリスク（市場リスク）は分散投資で消せない残留リスク。",
+      point:"相関係数−1→最大分散。＋1→分散効果ゼロ。システマリスク＝市場全体→分散で低減不可"
+    }
+  },
+  { num:21, cat:"企業財務",
+    text:"以下の資料に基づき、加重平均資本コスト（WACC）として、最も適切なものを下記の解答群から選べ。",
+    shiryou:`<h4>【資料】</h4><p>資本構成（時価）：株主資本：600百万円、負債：400百万円</p><p>負債コスト（税引前）：3%</p><p>安全資産の利子率：1%</p><p>マーケット・リスクプレミアム：5%</p><p>β値：1.2</p><p>実効税率：30%</p>`,
+    choices:["4.44%","5.04%","5.40%","7.00%"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"計算誤り（CAPMの計算が誤り）"},
+        {ok:true, r:"Ke＝7%、税引後Kd＝2.1%、WACC＝4.2%＋0.84%＝5.04%"},
+        {ok:false,r:"計算誤り"},
+        {ok:false,r:"株主資本コスト7%のみを使った誤り（負債コストを加重していない）"}
+      ],
+      detail:"WACCはCAPMで株主資本コストを求めてから加重平均する2ステップ計算。負債コストには節税効果(1−税率)を掛ける点がポイント。",
+      calc:["【Step1：CAPM→株主資本コスト(Ke)】","Ke ＝ 安全資産利子率 ＋ β × マーケットリスクプレミアム","＝ 1% ＋ 1.2 × 5% ＝ 7%","─","【Step2：税引後負債コスト(Kd)】","Kd(税後) ＝ 3% × (1 − 30%) ＝ 2.1%","─","【Step3：WACC計算】","WACC ＝ 7% × (600÷1,000) ＋ 2.1% × (400÷1,000)","＝ 4.2% ＋ 0.84% ＝ 5.04% →イ"],
+      point:"WACC＝Ke×E/V＋Kd(1−t)×D/V。株主資本コストはCAPMで算出"
+    }
+  },
+  { num:22, cat:"企業財務",
+    text:"証券投資論に関する記述として、最も適切なものはどれか。ただし、投資家はリスク回避的であるとする。",
+    choices:["分散投資を行う際に、投資家が同じリスクで最大のリターンを得られる、または同じリターンで最小のリスクとなるポートフォリオの集合を効率的フロンティアと呼ぶ。","無リスク資産が存在する場合、均衡状態においては、すべての投資家が所有する危険資産と無リスク資産の比率は同じである。","無リスク資産が存在しない場合、均衡状態においては、すべての投資家が同一のポートフォリオを所有する。","すべてのリスク回避的な投資家は無リスク資産のみに投資する。"],
+    answer:"ア",
+    kaisetsu:{
+      cr:[
+        {ok:true, r:"効率的フロンティアの正確な定義→最大リターン・最小リスクの集合"},
+        {ok:false,r:"危険資産の中の構成比（市場ポートフォリオの割合）は同じだが、危険資産と無リスク資産の配分比はリスク選好で異なる"},
+        {ok:false,r:"無リスク資産なしの場合→各投資家のリスク選好に応じて異なるポートフォリオを保有"},
+        {ok:false,r:"リスク回避的でも収益を求めて危険資産にも投資する（無リスクのみではない）"}
+      ],
+      detail:"分離定理（Tobin）：無リスク資産がある場合、全投資家は市場ポートフォリオ（危険資産の組み合わせ）を共通して保有し、無リスク資産との配分比率だけが個人のリスク選好によって異なる。",
+      point:"分離定理：危険資産の構成は全員同じ市場ポートフォリオ。無リスク資産との比率が個人差"
+    }
+  },
+  { num:23, cat:"企業財務",
+    text:"ポートフォリオのリスクヘッジに関する記述として、最も適切なものはどれか。",
+    choices:["非システマティック・リスクは、市場全体の要因によるリスクであり、リスクを低減することができない。","システマティック・リスクは、分散投資によって低減することが可能であり、組込銘柄数の増加に伴ってリスク低減幅は逓減する。","非システマティック・リスクは、分散投資によって低減することが可能であり、組込銘柄数の増加に伴ってリスク低減幅は逓減する。","システマティック・リスクは、組込銘柄数を増やすことでゼロにすることが可能である。"],
+    answer:"ウ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"非システマティックは個別企業固有のリスク（市場全体要因はシステマティック）"},
+        {ok:false,r:"システマティックリスクは分散投資で低減できない（市場リスクは残り続ける）"},
+        {ok:true, r:"非システマティックリスク→分散投資で低減可能・銘柄数増加でリスク低減幅は逓減"},
+        {ok:false,r:"システマティックリスクは銘柄を増やしてもゼロにならない（市場全体の影響は除けない）"}
+      ],
+      detail:"2種類のリスク：①システマティック（市場全体・景気・金利等）→分散で除けない残留リスク ②非システマティック（個別企業の業績・不祥事等）→分散投資で低減可能。銘柄数が増えるほど低減幅は小さくなる（逓減）。",
+      point:"非システマ（固有）＝分散で低減可。システマ（市場）＝分散してもゼロにならない"
+    }
+  },
+  { num:24, cat:"管理会計",
+    text:"日本の輸入業者が、米国から商品を仕入れ、3ヶ月後に10万ドルの買掛金を支払う義務を負っている。将来、円安（ドル高）が進行することによる支払額の増加を懸念している。このとき、この輸入業者が銀行とドル買いの為替予約を締結する最大のメリットとして、最も適切なものはどれか。",
+    choices:["将来の支払額を日本円で確定させ、為替レートの変動リスクを回避できる。","将来、予想に反して円高になった場合に、為替差益を得ることができる。","為替リスクを管理している姿勢が評価され、銀行からの信用格付けが向上する。","3ヶ月後のドル支払いを、為替予約を締結した時点ですぐに完了させることができる。"],
+    answer:"ア",
+    kaisetsu:{
+      cr:[
+        {ok:true, r:"為替予約の本質的メリット＝将来の円建て支払額を今の時点で確定→変動リスクを完全排除"},
+        {ok:false,r:"為替予約は将来レートを固定するため、円高になっても差益は生じない（機会損失になる）"},
+        {ok:false,r:"信用格付けへの影響は副次的・間接的なもので「最大のメリット」ではない"},
+        {ok:false,r:"為替予約は将来の特定日に決済する契約→締結時点では決済されない"}
+      ],
+      detail:"為替予約はヘッジ取引。ドル買い為替予約を結ぶことで3ヶ月後の支払レートを今日確定できる。円安が進んでも想定外の損失がなくなるが、逆に円高になっても差益を得られないのが特徴（リスク消去＝機会利益も消去）。",
+      point:"為替予約＝将来の為替レートを今の時点で固定。リスクも機会利益もゼロにする"
+    }
+  },
+  { num:25, cat:"財務分析",
+    text:"次のデータに基づき、PERとして最も適切なものはどれか。",
+    shiryou:`<table><tr><th>PBR</th><th>ROE</th><th>自己資本比率</th><th>配当性向</th><th>配当利回り</th></tr><tr><td>2.0</td><td>20%</td><td>30%</td><td>20%</td><td>2%</td></tr></table>`,
+    choices:["8倍","10倍","20倍","25倍"],
+    answer:"イ",
+    kaisetsu:{
+      cr:[
+        {ok:false,r:"計算誤り"},
+        {ok:true, r:"PER＝PBR÷ROE＝2.0÷20%＝10倍"},
+        {ok:false,r:"ROE20%の逆数（1÷0.2＝5）を掛けた誤り"},
+        {ok:false,r:"計算誤り"}
+      ],
+      detail:"PBR＝PER×ROEの関係式から逆算。PER＝PBR÷ROE。自己資本比率・配当性向・配当利回りはこの計算では不要（ひっかけ情報）。",
+      calc:["PBR ＝ PER × ROE","PER ＝ PBR ÷ ROE","＝ 2.0 ÷ 0.20 ＝ 10倍 →イ"],
+      point:"PBR＝PER×ROE。この関係式を逆算するだけ。余分な情報に惑わされない"
+    }
+  }
+];
+
+function makeKaisetsuHtml(q) {
+  const labels = ["ア","イ","ウ","エ"];
+  const catColor = CAT_COLORS[q.cat] || "#1a3a5c";
+
+  let choiceHtml = q.kaisetsu.cr.map((c,i) => `
+    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 14px;border-bottom:1px solid #f0f0f0;background:${c.ok ? '#eafaf1' : '#fff'};">
+      <span style="font-size:17px;font-weight:bold;min-width:22px;color:${c.ok ? '#22c55e' : '#e74c3c'};">${c.ok ? '○' : '✗'}</span>
+      <span style="font-weight:bold;min-width:22px;color:#333;">${labels[i]}</span>
+      <span style="font-size:13px;line-height:1.65;color:${c.ok ? '#15803d' : '#666'};${c.ok ? 'font-weight:600;' : ''}">${c.r}</span>
+    </div>
+  `).join('');
+
+  let calcHtml = '';
+  if (q.kaisetsu.calc) {
+    const rows = q.kaisetsu.calc.map(line =>
+      line === '─' ? `<div style="border-top:1px dashed #b0c4e8;margin:4px 0;"></div>`
+                   : `<div style="padding:1px 0;color:${line.includes('→') ? '#1a3a7c' : '#333'};font-weight:${line.includes('→') ? 'bold' : 'normal'}">${line}</div>`
+    ).join('');
+    calcHtml = `
+      <div style="background:#f0f5ff;border:1px solid #c7d5f0;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:'Courier New',monospace;font-size:13px;line-height:1.85;">
+        <div style="font-family:'Hiragino Sans',sans-serif;font-weight:bold;font-size:12px;color:#3a5ca8;margin-bottom:8px;">🧮 計算過程</div>
+        ${rows}
+      </div>`;
+  }
+
+  return `
+    <div style="border-radius:10px;overflow:hidden;border:1px solid #dde1e8;margin-top:4px;">
+      <div style="background:${catColor};padding:10px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="background:#fff;color:${catColor};font-size:16px;font-weight:bold;padding:4px 18px;border-radius:20px;">✓ 正解：${q.answer}</div>
+        <span style="color:rgba(255,255,255,.85);font-size:13px;font-weight:bold;">｜ ${q.cat}</span>
+      </div>
+      <div style="background:#f8fafb;">
+        <div style="font-size:11px;font-weight:bold;color:#888;padding:10px 14px 2px;">📋 選択肢チェック</div>
+        ${choiceHtml}
+      </div>
+      <div style="padding:14px 18px;background:#fff;">
+        <div style="background:#f0f5ff;border-left:4px solid ${catColor};border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;line-height:1.8;color:#333;margin-bottom:10px;">
+          <div style="font-weight:bold;color:#1a3a5c;margin-bottom:6px;">📝 解説</div>
+          ${q.kaisetsu.detail}
+        </div>
+        ${calcHtml}
+        <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:10px 16px;font-size:13px;color:#78350f;font-weight:600;line-height:1.7;">
+          🔑 ${q.kaisetsu.point}
+        </div>
+      </div>
+    </div>`;
+}
+
+let currentCat = "all";
+let filteredQs = [...QUESTIONS];
+let currentIdx = 0;
+
+function buildQList() {
+  const el = document.getElementById("qList");
+  el.innerHTML = "";
+  QUESTIONS.forEach((q, i) => {
+    const btn = document.createElement("button");
+    btn.className = "q-btn";
+    btn.textContent = q.num;
+    btn.dataset.cat = q.cat;
+    btn.dataset.idx = i;
+    if (currentCat !== "all" && q.cat !== currentCat) btn.classList.add("hidden");
+    btn.onclick = () => {
+      const fi = filteredQs.indexOf(q);
+      if (fi < 0) return;
+      currentIdx = fi;
+      render();
+    };
+    el.appendChild(btn);
+  });
+}
+
+function render() {
+  const q = filteredQs[currentIdx];
+  if (!q) return;
+  document.getElementById("qNum").textContent = "第" + q.num + "問";
+  const badge = document.getElementById("catBadge");
+  badge.textContent = q.cat;
+  badge.className = "cat-badge " + q.cat;
+  document.getElementById("qText").innerHTML = q.text.replace(/\n/g, "<br>");
+  const se = document.getElementById("qShiryou");
+  if (q.shiryou) { se.style.display=""; se.innerHTML=q.shiryou; } else { se.style.display="none"; }
+  const ul = document.getElementById("qChoices");
+  const labs = ["ア","イ","ウ","エ"];
+  ul.innerHTML = q.choices.map((c,i) => `<li><span class="cho-label">${labs[i]}</span>${c}</li>`).join("");
+  document.getElementById("answerBox").style.display = "none";
+  document.getElementById("answerBox").innerHTML = "";
+  document.getElementById("btnPrev").disabled = currentIdx === 0;
+  document.getElementById("btnNext").disabled = currentIdx === filteredQs.length - 1;
+  document.getElementById("qCount").textContent = (currentIdx+1) + " / " + filteredQs.length + "問";
+  document.getElementById("progressBar").style.width = ((currentIdx+1)/filteredQs.length*100) + "%";
+  document.querySelectorAll(".q-btn").forEach(btn => {
+    btn.classList.toggle("current", parseInt(btn.dataset.idx) === QUESTIONS.indexOf(q));
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function toggleAnswer() {
+  const box = document.getElementById("answerBox");
+  if (box.style.display === "none") {
+    box.innerHTML = makeKaisetsuHtml(filteredQs[currentIdx]);
+    box.style.display = "block";
+  } else {
+    box.style.display = "none";
+  }
+}
+
+function move(dir) {
+  currentIdx = Math.max(0, Math.min(filteredQs.length-1, currentIdx+dir));
+  render();
+}
+
+document.querySelectorAll(".cat-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    currentCat = tab.dataset.cat;
+    document.querySelectorAll(".cat-tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    filteredQs = currentCat==="all" ? [...QUESTIONS] : QUESTIONS.filter(q => q.cat===currentCat);
+    currentIdx = 0;
+    buildQList();
+    render();
+  });
+});
+
+buildQList();
+render();
+</script>
+</body>
+</html>

@@ -2682,6 +2682,11 @@ body.sz-annot-off .sz-frame{display:none !important}
 <script>
 (function(){
   'use strict';
+  // 二重注入ガード：qz-memo が同一ファイルに2回挿入されても注釈システムは1回だけ初期化する。
+  // 無いと mouseup リスナーが二重に付いてクリックでトグルが2回発火し「押しても表示されない」、
+  // restoreAll も2回走って同一注釈を再ラップして入れ子になる。
+  if(window.__SZ_MEMO_INIT__) return;
+  window.__SZ_MEMO_INIT__=1;
   function szFileKey(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}var h=5381;for(var i=0;i<p.length;i++){h=((h*33)^p.charCodeAt(i))>>>0;}return h.toString(36);}
   var KEY='szA_'+szFileKey();
   var db=[];
@@ -2749,11 +2754,18 @@ body.sz-annot-off .sz-frame{display:none !important}
     var n; while((n=w.nextNode())){ nodes.push({node:n,start:full.length}); full+=n.nodeValue; }
     return {nodes:nodes,full:full};
   }
-  function szLocate(stream,gpos){
-    for(var i=0;i<stream.nodes.length;i++){
-      var s=stream.nodes[i],len=s.node.nodeValue.length;
-      if(gpos>=s.start&&gpos<=s.start+len) return {node:s.node,offset:gpos-s.start};
+  function szLocate(stream,gpos,bias){
+    /* 境界（gpos がノード末尾＝次ノード先頭に一致）で寄せ方を変える：
+       start＝後ろのノードの offset0／end＝前のノードの offset len。
+       これを誤ると <b>語</b> 等“語＝1テキストノード”の選択で a.node≠b.node になり復元が別の同一語へ流れる。 */
+    var i,s,len;
+    for(i=0;i<stream.nodes.length;i++){
+      s=stream.nodes[i];len=s.node.nodeValue.length;
+      if(bias==='end'){ if(gpos>s.start&&gpos<=s.start+len) return {node:s.node,offset:gpos-s.start}; }
+      else if(bias==='start'){ if(gpos>=s.start&&gpos<s.start+len) return {node:s.node,offset:gpos-s.start}; }
+      else { if(gpos>=s.start&&gpos<=s.start+len) return {node:s.node,offset:gpos-s.start}; }
     }
+    for(i=0;i<stream.nodes.length;i++){ s=stream.nodes[i];len=s.node.nodeValue.length; if(gpos>=s.start&&gpos<=s.start+len) return {node:s.node,offset:gpos-s.start}; }
     return null;
   }
   function szOccOf(root,node,offset,selText){
@@ -2774,7 +2786,7 @@ body.sz-annot-off .sz-frame{display:none !important}
     var stream=szTextStream(root),seen=0,from=0,idx;
     while((idx=stream.full.indexOf(selText,from))!==-1){
       if(seen===occ){
-        var a=szLocate(stream,idx),b=szLocate(stream,idx+selText.length);
+        var a=szLocate(stream,idx,'start'),b=szLocate(stream,idx+selText.length,'end');
         if(a&&b&&a.node===b.node) return {node:a.node,offset:a.offset,end:b.offset};
         return null;
       }
@@ -2798,6 +2810,55 @@ body.sz-annot-off .sz-frame{display:none !important}
       if(idx===-1) idx=txt.indexOf(ann.selText);
       if(idx===-1) continue;
       return {node:node,offset:idx,end:idx+ann.selText.length};
+    }
+    return null;
+  }
+  /* ---- 文脈優先＋occ着地の統合解決 ----
+     occ は「上に同じ語があると間違った同一語にヒットしても必ず何かを返す」ため、
+     occ 単独だと誤った箇所へ復元され得る。そこで stream.full（root内テキストを文書順連結）上で
+     selText の全出現を列挙し、各出現の前後を保存済み ctxBefore/ctxAfter と突き合わせて
+     「文脈が最も合う出現」を選ぶ。stream.full はノードをまたいで連結されているので、
+     <b> や境界をまたぐ文脈もそのまま照合できる。
+     ・文脈が弱い（前後合計4字未満／旧データで空）→ 検証せず保存 occ をそのまま信用。
+     ・文脈が全く合う場所が無い（本文が作り直された等）→ 注釈を消さず保存 occ で着地。
+     ・同点 → 保存 occ 番号に近い出現を採用。
+     occ の意味は従来どおり「stream内の全出現中の何番目か」のまま（番号の付け替えはしない）。
+     さらに候補を順位付けして返し、restore 側で「既に別注釈の mark 内に入る候補」を飛ばす
+     ＝同一語の別エントリが同じ出現へ衝突して入れ子（二重穴埋め・押しても表示されない）に
+     なるのを防ぐ。文脈で一意に決まる場合は最良候補が必ず選ばれるので挙動は変わらない。 */
+  function szCtxSuffix(stored,actual){ var i=0; while(i<stored.length&&i<actual.length&&stored.charAt(stored.length-1-i)===actual.charAt(actual.length-1-i)) i++; return i; }
+  function szCtxPrefix(stored,actual){ var i=0; while(i<stored.length&&i<actual.length&&stored.charAt(i)===actual.charAt(i)) i++; return i; }
+  /* root内の selText 全出現を「文脈スコア降順→保存occに近い順」でランクした候補配列を返す */
+  function szRankLocs(root,ann){
+    var sel=ann.selText; if(!sel) return [];
+    var stream=szTextStream(root),full=stream.full,L=sel.length;
+    var cb=ann.ctxBefore||'',ca=ann.ctxAfter||'',weak=(cb.length+ca.length<4);
+    var occs=[],from=0,idx;
+    while((idx=full.indexOf(sel,from))!==-1){ occs.push(idx); from=idx+L; }
+    if(!occs.length) return [];
+    var storedOcc=(typeof ann.occ==='number')?ann.occ:0;
+    var scored=occs.map(function(gi,k){
+      var score=weak?0:szCtxSuffix(cb,full.slice(Math.max(0,gi-cb.length),gi))+szCtxPrefix(ca,full.slice(gi+L,gi+L+ca.length));
+      return {gi:gi,k:k,score:score};
+    });
+    scored.sort(function(a,b){ return (b.score-a.score)||(Math.abs(a.k-storedOcc)-Math.abs(b.k-storedOcc))||(a.k-b.k); });
+    var out=[];
+    scored.forEach(function(c){
+      var a=szLocate(stream,c.gi,'start'),b=szLocate(stream,c.gi+L,'end');
+      if(a&&b&&a.node===b.node) out.push({node:a.node,offset:a.offset,end:b.offset});
+    });
+    return out;
+  }
+  /* 既存の別注釈 mark 内に入る候補をスキップして、空いている最良位置を返す */
+  function szResolveLoc(root,ann,scoped){
+    var cands=szRankLocs(root,ann);
+    for(var i=0;i<cands.length;i++){
+      var c=cands[i];
+      if(!scoped){
+        var cover=c.node.parentElement&&c.node.parentElement.closest?c.node.parentElement.closest('mark[data-aid]'):null;
+        if(cover&&cover.dataset&&cover.dataset.aid!==ann.uid) continue; // 別注釈に占有済み→次候補へ
+      }
+      return c;
     }
     return null;
   }
@@ -3291,6 +3352,10 @@ body.sz-annot-off .sz-frame{display:none !important}
     db.forEach(function(ann){restoreOne(ann);});
   }
   function restoreOne(ann){
+    // 冪等ガード：この注釈が既にDOM上にあれば再描画しない。
+    // qz-memo が二重注入されたファイルで restoreAll が2回走っても、同一uidを再ラップして
+    // 自己入れ子（二重穴埋め・押しても表示されない）になるのを防ぐ。
+    if(ann.uid&&document.querySelector('mark[data-aid="'+ann.uid+'"]')) return false;
     var root=null,scoped=false;
     if(ann.parentAid){
       var pm=document.querySelector('mark[data-aid="'+ann.parentAid+'"]');
@@ -3299,9 +3364,9 @@ body.sz-annot-off .sz-frame{display:none !important}
     if(!root) root=ann.panelId==='body'?document.body:document.getElementById(ann.panelId);
     if(!root) return false;
     if(root.closest&&root.closest('svg')) return false; // SVG内は復元不可
-    // ① 出現位置インデックスで一意に特定（新方式）。無ければ ② 文脈付き検索（旧データ用）。
-    var loc=null;
-    if(typeof ann.occ==='number') loc=szFindByOcc(root,ann.selText,ann.occ);
+    // 文脈優先＋occ着地で一意化（szResolveLoc）。selText がノード跨ぎで解決不能な時だけ
+    // 旧経路（単一ノード内の文脈/語句検索）にフォールバック。
+    var loc=szResolveLoc(root,ann,scoped);
     if(!loc) loc=szFindByContext(root,ann,scoped);
     if(!loc) return false;
     var range=document.createRange();
@@ -3368,6 +3433,18 @@ body.sz-annot-off .sz-frame{display:none !important}
       if(c.id && c.id.indexOf('pre_')===0) return;   // 既に pre_ id
       c.id='pre_yoshu_'+(seq++);
     });
+  })();
+
+  /* 完全重複エントリ（同panel・同type・同occ・同selText・同文脈）を1件へ統合。
+     旧バージョンの誤復元期に同じ穴埋めを作り直して二重登録された分を除去し、
+     「2か所が空欄＋押しても表示されない（入れ子）」を根本から防ぐ。記録も掃除。 */
+  (function(){
+    var seen={},out=[];
+    for(var i=0;i<db.length;i++){ var a=db[i];
+      var sig=(a.panelId||'')+'|'+(a.type||'')+'|'+(a.occ)+'|'+(a.selText||'')+'|'+(a.ctxBefore||'')+'|'+(a.ctxAfter||'')+'|'+(a.parentAid||'');
+      if(seen[sig]) continue; seen[sig]=1; out.push(a);
+    }
+    if(out.length!==db.length){ db=out; save(); }
   })();
 
   fbInit();
