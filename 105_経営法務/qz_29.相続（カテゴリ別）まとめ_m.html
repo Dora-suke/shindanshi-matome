@@ -185,19 +185,359 @@ body{font-family:"Hiragino Maru Gothic ProN","M PLUS Rounded 1c","Hiragino Kaku 
 
 <div class="tabwrap">
   <nav class="tabnav" role="tablist">
-    <button class="tabbtn tab-btn active" onclick="go(0)">①全体像</button>
-    <button class="tabbtn tab-btn" onclick="go(1)">②相続人と順位</button>
-    <button class="tabbtn tab-btn" onclick="go(2)">③法定相続分</button>
-    <button class="tabbtn tab-btn" onclick="go(3)">④遺言</button>
-    <button class="tabbtn tab-btn" onclick="go(4)">⑤遺留分</button>
-    <button class="tabbtn tab-btn" onclick="go(5)">⑥承認・放棄</button>
-    <button class="tabbtn tab-btn" onclick="go(6)">⑦遺産分割</button>
-    <button class="tabbtn tab-btn" onclick="go(7)">⑧横断比較</button>
+    <button class="tabbtn tab-btn active" onclick="go(0)">⚡速攻一覧</button>
+    <button class="tabbtn tab-btn" onclick="go(1)">①全体像</button>
+    <button class="tabbtn tab-btn" onclick="go(2)">②相続人と順位</button>
+    <button class="tabbtn tab-btn" onclick="go(3)">③法定相続分</button>
+    <button class="tabbtn tab-btn" onclick="go(4)">④遺言</button>
+    <button class="tabbtn tab-btn" onclick="go(5)">⑤遺留分</button>
+    <button class="tabbtn tab-btn" onclick="go(6)">⑥承認・放棄</button>
+    <button class="tabbtn tab-btn" onclick="go(7)">⑦遺産分割</button>
+    <button class="tabbtn tab-btn" onclick="go(8)">⑧横断比較</button>
   </nav>
 </div>
 
+<!-- ============ ⚡ 速攻まとめ ============ -->
+<section class="pane tab-content active" id="p-quick">
+<div class="sec-h"><div class="no" style="font-size:.85rem">⚡</div><h2>相続 速攻まとめ ─ 全論点を一枚で確認</h2></div>
+<p style="font-size:.78rem;color:var(--ink-soft);margin:.2rem 0 10px">8カテゴリ凝縮版。試験前の最終確認に。</p>
+
+<style>
+.qs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:620px){.qs-grid{grid-template-columns:1fr}}
+.qs-box{background:#fff;border-radius:13px;overflow:hidden;font-size:.79rem;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.qs-h{font-weight:900;font-size:.82rem;padding:7px 12px;color:#fff;display:flex;align-items:center;gap:6px;letter-spacing:.03em}
+.qs-h .qs-no{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(255,255,255,.25);border-radius:50%;font-size:.72rem;font-weight:900;flex-shrink:0}
+.qs-body{padding:9px 11px;line-height:1.7}
+.qs-tbl{width:100%;border-collapse:collapse;margin:5px 0;font-size:.76rem;border-radius:8px;overflow:hidden}
+.qs-tbl th{padding:4px 7px;font-weight:800;text-align:left;white-space:nowrap}
+.qs-tbl td{padding:4px 7px;border-top:1px solid #f0f0f0}
+.qs-alert{border-radius:7px;padding:5px 9px;margin:5px 0;font-size:.76rem;line-height:1.65}
+.qs-kw{font-weight:900}
+.qs-span2{grid-column:1/-1}
+/* 相続人順位ビジュアル */
+.heir-rank{display:flex;flex-direction:column;gap:5px;margin:6px 0}
+.heir-row{display:flex;align-items:center;gap:6px}
+.heir-badge{background:#f3ddb0;border:2px solid #a9743c;border-radius:8px;font-weight:900;font-size:.72rem;color:#7a5c2e;padding:2px 7px;flex-shrink:0;min-width:42px;text-align:center}
+.heir-badge.sp{background:#fce7c0;border-color:#caa033;color:#7a5000}
+.heir-content{font-size:.78rem;font-weight:700;color:#2f3b30;flex:1}
+.heir-note{font-size:.69rem;color:#7a6149;font-style:italic}
+/* 法定相続分 数字強調 */
+.share-row{display:flex;align-items:center;background:#fff;border:1.5px solid #c3e6c3;border-radius:8px;padding:5px 8px;margin:3px 0;gap:8px}
+.share-who{font-size:.76rem;font-weight:700;color:#2f6b46;flex:1}
+.share-num{display:flex;gap:5px}
+.share-pill{background:#3f7d54;color:#fff;font-weight:900;font-size:.78rem;border-radius:999px;padding:2px 10px}
+.share-pill.alt{background:#e8b54a}
+/* 遺言3方式カード */
+.will-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:5px 0}
+.will-card{border-radius:8px;overflow:hidden;font-size:.73rem}
+.will-card-h{font-weight:900;padding:4px 7px;color:#fff;font-size:.74rem;text-align:center}
+.will-card-body{padding:5px 7px;line-height:1.6}
+.will-card-row{display:flex;gap:3px;align-items:flex-start;margin:1px 0}
+.will-card-lbl{font-weight:800;color:#555;flex-shrink:0;font-size:.69rem}
+/* 承認放棄3択 */
+.choice-cards{display:flex;flex-direction:column;gap:4px;margin:5px 0}
+.choice-card{border-radius:7px;padding:5px 9px;font-size:.77rem}
+.choice-name{font-weight:900;font-size:.8rem;margin-bottom:2px}
+/* ⑧数字表 */
+.num-tbl{width:100%;border-collapse:collapse;font-size:.74rem}
+.num-tbl th{padding:4px 7px;font-weight:800;text-align:left;background:#e8f3e2;color:#2f6b46}
+.num-tbl td{padding:4px 7px;border-top:1px solid #e8f3e2}
+.num-tbl .ans{font-weight:900;color:#2f6b46}
+/* ひっかけ比較 */
+.hk-item{display:grid;grid-template-columns:auto 1fr;gap:3px 7px;align-items:start;margin:4px 0;border-radius:6px;padding:4px 8px;font-size:.74rem}
+.hk-ng{background:#fff5f5}
+.hk-ok{background:#f0fdf4}
+</style>
+
+<div class="qs-grid">
+
+  <!-- ① 相続の基本・全体像 -->
+  <div class="qs-box">
+    <div class="qs-h" style="background:#3d7a50"><span class="qs-no">①</span> 相続の基本・全体像</div>
+    <div class="qs-body">
+      <div class="qs-alert" style="background:#e8f6ec;border:1.5px solid #86c89b">
+        <span class="qs-kw">🕐 開始：</span>被相続人の<b>死亡と同時</b>に自動開始（手続き不要）
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:6px 0">
+        <div style="background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:8px;padding:5px 8px;font-size:.75rem">
+          <div style="font-weight:900;color:#065f46;margin-bottom:2px">📈 積極財産（プラス）</div>
+          不動産・債権・預貯金<br>株式・著作権 等
+        </div>
+        <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:8px;padding:5px 8px;font-size:.75rem">
+          <div style="font-weight:900;color:#991b1b;margin-bottom:2px">📉 消極財産（マイナス）</div>
+          借金・ローン<br>保証債務 等
+        </div>
+      </div>
+      <div style="background:#fff5f5;border:1.5px solid #fca5a5;border-radius:8px;padding:6px 9px;font-size:.75rem">
+        <div style="font-weight:900;color:#dc2626;margin-bottom:3px">❌ 相続財産に含まれないもの</div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div>🚫 <span class="qs-kw">一身専属権</span>…扶養請求権・生活保護受給権・親権</div>
+          <div>🚫 <span class="qs-kw">受取人指定の生命保険金</span>…受取人の固有財産</div>
+          <div>🚫 <span class="qs-kw">祭祀財産</span>…墓・仏壇・霊廟（祭祀主宰者が別途承継）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 相続人と順位 -->
+  <div class="qs-box">
+    <div class="qs-h" style="background:#6b4423"><span class="qs-no">②</span> 相続人と順位</div>
+    <div class="qs-body">
+      <div class="qs-alert" style="background:#fef3c7;border:1.5px solid #fcd34d">
+        <b>👑 配偶者：</b>常に相続人（第1〜3順位に関わらず、常時）
+      </div>
+      <div class="heir-rank" style="margin-top:6px">
+        <div class="heir-row">
+          <div class="heir-badge" style="background:#dbeafe;border-color:#3b82f6;color:#1d4ed8">第1順位</div>
+          <div>
+            <div class="heir-content">子（嫡出子・非嫡出子・養子を含む）</div>
+            <div class="heir-note">代襲：孫→曾孫…<b style="color:#1d4ed8">無制限</b></div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:.7rem;color:#94a3b8;margin:-2px 0">↓ 子がいなければ</div>
+        <div class="heir-row">
+          <div class="heir-badge" style="background:#dcfce7;border-color:#22c55e;color:#15803d">第2順位</div>
+          <div>
+            <div class="heir-content">直系尊属（父母・祖父母）</div>
+            <div class="heir-note">親等の近い者が優先</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:.7rem;color:#94a3b8;margin:-2px 0">↓ 直系尊属もいなければ</div>
+        <div class="heir-row">
+          <div class="heir-badge" style="background:#fef9c3;border-color:#eab308;color:#854d0e">第3順位</div>
+          <div>
+            <div class="heir-content">兄弟姉妹</div>
+            <div class="heir-note">代襲：甥・姪まで（<b style="color:#dc2626">1代のみ</b>）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 法定相続分 -->
+  <div class="qs-box">
+    <div class="qs-h" style="background:#1e6b40"><span class="qs-no">③</span> 法定相続分（でる！）</div>
+    <div class="qs-body">
+      <div class="share-row" style="background:#e8f3e2;border-color:#86c89b">
+        <div class="share-who">配偶者 ＋ 子</div>
+        <div class="share-num">
+          <span class="share-pill">配偶者 1/2</span>
+          <span class="share-pill">子 1/2</span>
+        </div>
+      </div>
+      <div class="share-row">
+        <div class="share-who">配偶者 ＋ 直系尊属</div>
+        <div class="share-num">
+          <span class="share-pill">配偶者 2/3</span>
+          <span class="share-pill" style="background:#a9743c">尊属 1/3</span>
+        </div>
+      </div>
+      <div class="share-row">
+        <div class="share-who">配偶者 ＋ 兄弟姉妹</div>
+        <div class="share-num">
+          <span class="share-pill">配偶者 3/4</span>
+          <span class="share-pill" style="background:#7a6149">兄弟 1/4</span>
+        </div>
+      </div>
+      <div class="qs-alert" style="background:#f0fdf4;border-left:3px solid #15803d;font-size:.74rem;margin-top:4px">
+        📌 <b>半血兄弟</b>（父か母が同じ）＝全血の <b style="font-size:.9rem">1/2</b><br>
+        📌 嫡出子 ＝ 非嫡出子（違憲判決→現在は同等）<br>
+        📌 代襲相続：被代襲者の取り分をそのまま引き継ぐ
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 遺言 -->
+  <div class="qs-box">
+    <div class="qs-h" style="background:#6d28d9"><span class="qs-no">④</span> 遺言（3方式比較）</div>
+    <div class="qs-body">
+      <!-- 3種のバッジを横並び -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:6px">
+        <div style="background:#4c1d95;color:#fff;font-weight:900;font-size:.78rem;border-radius:8px;padding:5px 0;text-align:center">📝 自筆証書</div>
+        <div style="background:#1e40af;color:#fff;font-weight:900;font-size:.78rem;border-radius:8px;padding:5px 0;text-align:center">⭐ 公正証書</div>
+        <div style="background:#374151;color:#fff;font-weight:900;font-size:.78rem;border-radius:8px;padding:5px 0;text-align:center">🔒 秘密証書</div>
+      </div>
+      <!-- 比較表（行：項目 × 列：3方式） -->
+      <table style="width:100%;border-collapse:collapse;font-size:.76rem">
+        <colgroup><col style="width:15%"><col style="width:28%"><col style="width:29%"><col style="width:28%"></colgroup>
+        <thead>
+          <tr>
+            <th style="padding:4px 6px;background:#f3f0ff;color:#5b21b6;font-weight:800;border:1.5px solid #ddd6fe;text-align:center">項目</th>
+            <th style="padding:4px 6px;background:#f3f0ff;color:#4c1d95;font-weight:800;border:1.5px solid #ddd6fe;text-align:center">自筆証書</th>
+            <th style="padding:4px 6px;background:#dbeafe;color:#1e40af;font-weight:800;border:1.5px solid #bfdbfe;text-align:center">公正証書 ⭐</th>
+            <th style="padding:4px 6px;background:#f3f4f6;color:#374151;font-weight:800;border:1.5px solid #e5e7eb;text-align:center">秘密証書</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:5px 6px;font-weight:800;color:#555;border:1px solid #e5e7eb;background:#fafafa;white-space:nowrap">作成</td>
+            <td style="padding:5px 6px;border:1px solid #e5e7eb;line-height:1.55">全文<b>自書</b>・日付・押印<br><span style="font-size:.7rem;color:#6d28d9">財産目録のみPC可</span><br><span style="font-size:.7rem;color:#6d28d9">（署名押印は必要）</span></td>
+            <td style="padding:5px 6px;border:1px solid #bfdbfe;background:#f0f7ff;line-height:1.55">公証役場で作成<br><b>証人2名以上</b>の立会</td>
+            <td style="padding:5px 6px;border:1px solid #e5e7eb;line-height:1.55">署名押印後に封入<br>公証人が確認・証人2名</td>
+          </tr>
+          <tr>
+            <td style="padding:5px 6px;font-weight:800;color:#555;border:1px solid #e5e7eb;background:#fafafa;white-space:nowrap">保管</td>
+            <td style="padding:5px 6px;border:1px solid #e5e7eb">自分 or <span style="color:#0d7a5f;font-weight:700">法務局</span></td>
+            <td style="padding:5px 6px;border:1px solid #bfdbfe;background:#f0f7ff"><b>公証役場</b>（原本）</td>
+            <td style="padding:5px 6px;border:1px solid #e5e7eb">自分</td>
+          </tr>
+          <tr>
+            <td style="padding:5px 6px;font-weight:800;color:#555;border:1px solid #e5e7eb;background:#fafafa;white-space:nowrap">検認</td>
+            <td style="padding:5px 6px;border:1px solid #e5e7eb"><span style="color:#dc2626;font-weight:900">必要</span><br><span style="font-size:.69rem;color:#059669">法務局保管なら不要</span></td>
+            <td style="padding:5px 6px;border:1px solid #bfdbfe;background:#f0f7ff;text-align:center"><span style="color:#059669;font-weight:900;font-size:.9rem">不要 ✅</span></td>
+            <td style="padding:5px 6px;border:1px solid #e5e7eb"><span style="color:#dc2626;font-weight:900">必要</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="qs-alert" style="background:#fff5f5;border-left:3px solid #dc2626;margin-top:5px;font-size:.74rem">
+        ⚠️ <b>共同遺言は禁止</b>（2人以上で1通は無効）&emsp;⚠️ 複数遺言→<b>最後の日付のもの</b>が有効
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 遺留分 -->
+  <div class="qs-box">
+    <div class="qs-h" style="background:#b91c1c"><span class="qs-no">⑤</span> 遺留分</div>
+    <div class="qs-body">
+      <div style="background:#fef2f2;border:2px solid #fca5a5;border-radius:9px;padding:6px 10px;margin-bottom:7px">
+        <div style="font-weight:900;color:#b91c1c;font-size:.82rem;margin-bottom:3px">⚠️ 兄弟姉妹に遺留分はない！ ← 最頻出</div>
+        <div style="font-size:.76rem">対象者：<b>配偶者・子（直系卑属）・直系尊属</b></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px">
+        <div style="background:#fff5f5;border:1.5px solid #fca5a5;border-radius:8px;padding:6px 9px;text-align:center">
+          <div style="font-size:.72rem;color:#7f1d1d;font-weight:800">直系尊属のみ</div>
+          <div style="font-size:1.4rem;font-weight:900;color:#b91c1c;line-height:1.2">1/3</div>
+          <div style="font-size:.7rem;color:#999">遺産総体の</div>
+        </div>
+        <div style="background:#fff5f5;border:1.5px solid #fca5a5;border-radius:8px;padding:6px 9px;text-align:center">
+          <div style="font-size:.72rem;color:#7f1d1d;font-weight:800">それ以外</div>
+          <div style="font-size:1.4rem;font-weight:900;color:#b91c1c;line-height:1.2">1/2</div>
+          <div style="font-size:.7rem;color:#999">遺産総体の</div>
+        </div>
+      </div>
+      <div class="qs-alert" style="background:#fff7ed;border-left:3px solid #b45309;font-size:.74rem">
+        各自の遺留分＝法定相続分 × 遺留分割合<br>
+        侵害 → <b>遺留分侵害額請求</b>（金銭請求）現物返還ではない！<br>
+        放棄：生前に<b>家庭裁判所の許可</b>で可能<br>
+        時効：<b>知った時から1年</b>（全体で10年）
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ 承認・放棄 -->
+  <div class="qs-box">
+    <div class="qs-h" style="background:#0f766e"><span class="qs-no">⑥</span> 承認・放棄</div>
+    <div class="qs-body">
+      <div class="qs-alert" style="background:#ccfbf1;border:1.5px solid #5eead4;font-size:.8rem">
+        ⏱️ <b>熟慮期間：知った時から 3ヶ月以内</b>
+      </div>
+      <div class="choice-cards" style="margin-top:6px">
+        <div class="choice-card" style="background:#f0fdf4;border:1.5px solid #86efac">
+          <div class="choice-name" style="color:#166534">単純承認</div>
+          <div style="font-size:.76rem">プラス・マイナスを全承継。<b>何もしないと自動的に単純承認</b>（熟慮期間経過）</div>
+        </div>
+        <div class="choice-card" style="background:#fffbeb;border:1.5px solid #fcd34d">
+          <div class="choice-name" style="color:#92400e">限定承認 <span style="font-size:.72rem;color:#dc2626;font-weight:900">⚠️全員で申述</span></div>
+          <div style="font-size:.76rem">プラスの範囲内でのみマイナスを承継。相続人全員で家庭裁判所へ申述</div>
+        </div>
+        <div class="choice-card" style="background:#fff5f5;border:1.5px solid #fca5a5">
+          <div class="choice-name" style="color:#991b1b">相続放棄</div>
+          <div style="font-size:.76rem">プラス・マイナスともに放棄。<b>各自で単独</b>に家庭裁判所へ申述可</div>
+        </div>
+      </div>
+      <div class="qs-alert" style="background:#fff5f5;border-left:3px solid #dc2626;margin-top:4px;font-size:.74rem">
+        ⚠️ 相続財産を処分→<b>法定単純承認</b>（放棄・限定承認できなくなる）
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑦ 遺産分割 -->
+  <div class="qs-box">
+    <div class="qs-h" style="background:#1d4ed8"><span class="qs-no">⑦</span> 遺産分割</div>
+    <div class="qs-body">
+      <div class="qs-alert" style="background:#dbeafe;border:1.5px solid #93c5fd">
+        📋 遺産分割協議：<b>相続人全員の合意</b>が必要（1人でも欠けると無効）
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:6px 0">
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:5px 8px;font-size:.75rem">
+          <b style="color:#1d4ed8">現物分割</b><br>
+          財産をそのままの形で分ける
+        </div>
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:5px 8px;font-size:.75rem">
+          <b style="color:#1d4ed8">換価分割</b><br>
+          売却→現金化して分ける
+        </div>
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:5px 8px;font-size:.75rem">
+          <b style="color:#1d4ed8">代償分割</b><br>
+          1人が取得→他者に代償金
+        </div>
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:5px 8px;font-size:.75rem">
+          <b style="color:#1d4ed8">共有分割</b><br>
+          全員で共有とする
+        </div>
+      </div>
+      <div class="qs-alert" style="background:#f0fdf4;border-left:3px solid #15803d;font-size:.74rem">
+        📌 遺言の指定 ＞ 遺産分割協議<br>
+        📌 代償分割：取得者が非取得者へ<b>代償金</b>を支払う<br>
+        📌 協議前でも法定相続分の権利は主張可
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑧ 頻出比較・即答ポイント -->
+  <div class="qs-box qs-span2">
+    <div class="qs-h" style="background:#1a2e1a"><span class="qs-no">⑧</span> 頻出比較・即答ポイント（試験直前チェック）</div>
+    <div class="qs-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <!-- 数字まとめ -->
+        <div>
+          <div style="font-weight:900;font-size:.77rem;color:#2f6b46;border-bottom:2px solid #a3d4a3;padding-bottom:3px;margin-bottom:5px">⚡ 即答！数字まとめ</div>
+          <table class="num-tbl">
+            <tr><th>論点</th><th>正解</th></tr>
+            <tr><td>配偶者＋子</td><td class="ans">1/2 : 1/2</td></tr>
+            <tr><td>配偶者＋直系尊属</td><td class="ans">2/3 : 1/3</td></tr>
+            <tr><td>配偶者＋兄弟姉妹</td><td class="ans">3/4 : 1/4</td></tr>
+            <tr><td>直系尊属のみの遺留分</td><td class="ans">1/3</td></tr>
+            <tr><td>その他の遺留分</td><td class="ans">1/2</td></tr>
+            <tr><td>半血兄弟の相続分</td><td class="ans">全血の 1/2</td></tr>
+            <tr><td>熟慮期間（承認・放棄）</td><td class="ans">3ヶ月</td></tr>
+            <tr><td>遺留分の時効</td><td class="ans">知った時から 1年</td></tr>
+          </table>
+        </div>
+        <!-- ひっかけ -->
+        <div>
+          <div style="font-weight:900;font-size:.77rem;color:#b91c1c;border-bottom:2px solid #fca5a5;padding-bottom:3px;margin-bottom:5px">⚠️ ひっかけ対策</div>
+          <div class="hk-item hk-ng">
+            <span style="color:#dc2626;font-weight:900;font-size:.72rem">❌</span>
+            <span>「兄弟姉妹に遺留分がある」<br><b style="color:#dc2626">→ 兄弟姉妹に遺留分はない</b></span>
+          </div>
+          <div class="hk-item hk-ng">
+            <span style="color:#dc2626;font-weight:900;font-size:.72rem">❌</span>
+            <span>「遺留分侵害→現物を返還」<br><b style="color:#dc2626">→ 金銭請求（侵害額請求）</b></span>
+          </div>
+          <div class="hk-item hk-ng">
+            <span style="color:#dc2626;font-weight:900;font-size:.72rem">❌</span>
+            <span>「兄弟の代襲は曾甥まで続く」<br><b style="color:#dc2626">→ 甥姪まで（1代のみ）</b></span>
+          </div>
+          <div class="hk-item hk-ng">
+            <span style="color:#dc2626;font-weight:900;font-size:.72rem">❌</span>
+            <span>「限定承認は各自でできる」<br><b style="color:#dc2626">→ 相続人全員で申述</b></span>
+          </div>
+          <div class="hk-item hk-ng">
+            <span style="color:#dc2626;font-weight:900;font-size:.72rem">❌</span>
+            <span>「秘密証書遺言は検認不要」<br><b style="color:#dc2626">→ 検認不要は公正証書のみ</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /qs-grid -->
+</section><!-- /p-quick -->
+
 <!-- ============ ① 相続の全体像 ============ -->
-<section class="pane tab-content active" id="p0">
+<section class="pane tab-content" id="p0">
   <div class="sec-h"><div class="no">①</div><h2>相続の全体像 ― 引き継ぐのはプラスもマイナスも</h2><svg class="chara"><use href="#c-rabbit"/></svg></div>
 
   <div class="mode read">📖 読みもの</div>

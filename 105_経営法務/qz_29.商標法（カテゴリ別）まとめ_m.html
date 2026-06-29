@@ -1011,7 +1011,18 @@ body.sz-annot-off mark[data-aid]:hover{filter:none;outline:none}
 .sz-toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:6px 15px;border-radius:20px;font-size:.78rem;z-index:99999;pointer-events:none;opacity:0;animation:szFI .25s forwards}
 @keyframes szFI{from{opacity:0;transform:translate(-50%,-5px)}to{opacity:1;transform:translateX(-50%)}}
 /* ---- コメントツールチップ ---- */
-#sz-cmt-tip{position:fixed;display:none;background:#1e293b;color:#e2e8f0;padding:8px 12px;border-radius:9px;max-width:520px;min-width:150px;min-height:54px;font-size:.83rem;line-height:1.6;z-index:10001;box-shadow:0 4px 18px rgba(0,0,0,.32);pointer-events:auto;word-break:break-word;resize:both;overflow:auto}
+#sz-cmt-tip{position:fixed;display:none;background:#1e293b;color:#e2e8f0;padding:8px 12px;border-radius:9px;max-width:none;min-width:150px;min-height:54px;font-size:.83rem;line-height:1.6;z-index:10001;box-shadow:0 4px 18px rgba(0,0,0,.32);pointer-events:auto;word-break:break-word;overflow:auto;box-sizing:border-box}
+/* ---- コメントボックス 全方向リサイズハンドル ---- */
+#sz-cmt-tip .sz-rs{position:absolute;z-index:2;-webkit-tap-highlight-color:transparent;touch-action:none}
+#sz-cmt-tip .sz-rs-n{top:0;left:10px;right:10px;height:4px;cursor:n-resize}
+#sz-cmt-tip .sz-rs-s{bottom:0;left:10px;right:10px;height:4px;cursor:s-resize}
+#sz-cmt-tip .sz-rs-e{right:0;top:10px;bottom:10px;width:4px;cursor:e-resize}
+#sz-cmt-tip .sz-rs-w{left:0;top:10px;bottom:10px;width:4px;cursor:w-resize}
+#sz-cmt-tip .sz-rs-nw{top:0;left:0;width:10px;height:10px;cursor:nw-resize}
+#sz-cmt-tip .sz-rs-ne{top:0;right:0;width:10px;height:10px;cursor:ne-resize}
+#sz-cmt-tip .sz-rs-sw{bottom:0;left:0;width:10px;height:10px;cursor:sw-resize}
+#sz-cmt-tip .sz-rs-se{bottom:0;right:0;width:10px;height:10px;cursor:se-resize}
+#sz-cmt-tip .sz-rs:hover,#sz-cmt-tip .sz-rs:active{background:rgba(255,255,255,.15)}
 #sz-cmt-tip.on{display:block}
 #sz-cmt-tip #sz-tip-body{white-space:pre-wrap;overflow-wrap:anywhere}
 #sz-cmt-tip .sz-tip-label{font-size:.7rem;color:#94a3b8;margin-bottom:4px;display:block;cursor:move;user-select:none}
@@ -1598,6 +1609,37 @@ body.sz-annot-off .sz-frame{display:none !important}
     tip.addEventListener('pointerdown',function(){ clearTimeout(tipTimer); });
     tip.addEventListener('pointerup',function(){ if(!tipTargetAid) return; var cur=tipBoxGet(tipTargetAid)||{}; cur.w=tip.offsetWidth; cur.h=tip.offsetHeight; tipBoxSet(tipTargetAid,cur); });
   })();
+
+  /* ===== コメントボックス 全方向リサイズハンドル ===== */
+  (function(){
+    if(tip.querySelector('.sz-rs')) return;
+    ['nw','n','ne','e','se','s','sw','w'].forEach(function(d){
+      var h=document.createElement('div');
+      h.className='sz-rs sz-rs-'+d;
+      h.addEventListener('pointerdown',function(e){
+        e.preventDefault(); e.stopPropagation(); clearTimeout(tipTimer);
+        var r=tip.getBoundingClientRect();
+        var sx=e.clientX, sy=e.clientY, ol=r.left, ot=r.top, ow=r.width, oh=r.height;
+        h.setPointerCapture(e.pointerId);
+        function mv(ev){
+          var dx=ev.clientX-sx, dy=ev.clientY-sy, nw, nh;
+          if(d.indexOf('e')>-1){ nw=Math.max(150,ow+dx); tip.style.width=nw+'px'; }
+          if(d.indexOf('s')>-1){ nh=Math.max(54,oh+dy); tip.style.height=nh+'px'; }
+          if(d.indexOf('w')>-1){ nw=Math.max(150,ow-dx); tip.style.width=nw+'px'; tip.style.left=(ol+ow-nw)+'px'; }
+          if(d.indexOf('n')>-1){ nh=Math.max(54,oh-dy); tip.style.height=nh+'px'; tip.style.top=(ot+oh-nh)+'px'; }
+        }
+        function up(){
+          h.removeEventListener('pointermove',mv);
+          h.removeEventListener('pointerup',up);
+          if(tipTargetAid){ var cur=tipBoxGet(tipTargetAid)||{}; cur.w=tip.offsetWidth; cur.h=tip.offsetHeight; tipBoxSet(tipTargetAid,cur); }
+        }
+        h.addEventListener('pointermove',mv);
+        h.addEventListener('pointerup',up);
+      });
+      tip.appendChild(h);
+    });
+  })();
+  /* ===== /コメントボックス 全方向リサイズハンドル ===== */
 
   /* ---- ツールチップの「編集する」ボタン ---- */
   tipEditBtn.addEventListener('click',function(){
