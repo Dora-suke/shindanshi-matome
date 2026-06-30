@@ -5265,6 +5265,458 @@ var _qzPS=(document.querySelectorAll('.tab-panel').length?'.tab-panel':'.tab-con
 })();
 </script>
 <!-- ===== /qz-memo enhance ===== -->
+<!-- ===== qz-memo 行間挿入（インライン編集ブロック） ===== -->
+<style>
+.szins-add{position:absolute;z-index:120;width:22px;height:22px;border-radius:50%;border:none;background:#38bdf8;color:#fff;font-size:15px;font-weight:800;line-height:22px;text-align:center;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.25);padding:0;font-family:inherit;opacity:.92}
+.szins-add:hover{background:#0ea5e9}
+.szins-block{position:relative;border-left:3px solid #f59e0b;border-radius:6px;padding:.45rem 1.8rem .45rem .7rem;margin:.45rem 0;box-sizing:border-box;display:flex;flex-direction:column}
+.szins-ed{outline:none;min-height:1.5em;line-height:1.7;font-family:inherit;font-size:inherit;color:inherit;cursor:text;-webkit-user-modify:read-write;-webkit-user-select:text;user-select:text;white-space:pre-wrap;word-break:break-word;flex:1 1 auto;overflow:auto}
+/* 枠の自由リサイズ用つまみ（幅＝右端 / 高さ＝下端 / 両方＝右下角）。
+   タッチ端末は hover が無いので常時表示。掴みやすいよう枠の少し外側・大きめの当たり判定にする。 */
+.szins-rz{position:absolute;z-index:6;-webkit-tap-highlight-color:transparent;touch-action:none}
+.szins-rz.e{top:50%;transform:translateY(-50%);height:40px;right:-5px;width:16px;cursor:ew-resize}
+.szins-rz.w{top:50%;transform:translateY(-50%);height:40px;left:-5px;width:16px;cursor:ew-resize}
+.szins-rz.s{left:50%;transform:translateX(-50%);width:40px;bottom:-5px;height:16px;cursor:ns-resize}
+.szins-rz.n{left:50%;transform:translateX(-50%);width:40px;top:-5px;height:16px;cursor:ns-resize}
+.szins-rz.se{right:-5px;bottom:-5px;width:24px;height:24px;cursor:nwse-resize}
+/* グリップ線は表示しない（当たり判定だけ・カーソル形状でドラッグ可能を示す） */
+body.sz-annot-off .szins-rz{display:none}
+.szins-ed:empty:before{content:'ここに入力…';color:#cbd5e1;pointer-events:none}
+.szins-del{position:absolute;top:4px;right:4px;width:20px;height:20px;border:none;background:#f1f5f9;color:#ef4444;border-radius:50%;font-size:12px;font-weight:800;line-height:20px;cursor:pointer;padding:0;opacity:0;transition:opacity .15s;font-family:inherit}
+/* 横↔下 切替ボタン */
+.szins-side{position:absolute;top:4px;right:52px;width:24px;height:20px;border:none;background:#f1f5f9;color:#0369a1;border-radius:6px;font-size:12px;line-height:20px;cursor:pointer;padding:0;opacity:0;transition:opacity .15s;font-family:inherit}
+.szins-side:hover{background:#e0f2fe}
+.szins-block:hover .szins-side{opacity:1}
+/* 「横」モードの行ラッパー（宿主=左で縮む / 枠=右） */
+.szins-row{display:flex;align-items:flex-start;gap:8px;width:100%;box-sizing:border-box}
+.szins-img{position:absolute;top:4px;right:28px;width:22px;height:20px;border:none;background:#f1f5f9;border-radius:6px;font-size:12px;line-height:20px;cursor:pointer;padding:0;opacity:0;transition:opacity .15s;font-family:inherit}
+.szins-img:hover{background:#e0f2fe}
+.szins-block:hover .szins-del,.szins-block:hover .szins-img{opacity:1}
+.szins-ed img.szins-pic-sel{outline:2px solid #38bdf8;outline-offset:1px}
+.szins-block.szins-drop{box-shadow:0 0 0 2px #38bdf8;background:#f0f9ff !important}
+.szins-block.szins-drop:after{content:'📥 画像をドロップ';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#0ea5e9;font-weight:800;font-size:.85rem;background:rgba(240,249,255,.7);border-radius:6px;pointer-events:none}
+body.sz-annot-off .szins-add{display:none}
+</style>
+<script>
+(function(){
+  if(window.__SZ_INLINE_INS__) return; window.__SZ_INLINE_INS__=1;
+  /* 動的ページ用：window.__SZ_QKEY__() があれば保存キーに問題ごとの接尾辞（静的ページでは無害） */
+  function insQSuffix(){try{return (typeof window.__SZ_QKEY__==='function')?('_'+window.__SZ_QKEY__()):'';}catch(e){return '';}}
+  function curLS(){return 'szins_'+location.pathname+insQSuffix();}
+  /* 挿入先候補＝行レベル要素（その文の直下に入れるため、カテゴリ全体の.fill-cardは対象にしない） */
+  var SEL='p, li, h2, h3, h4, .ronten-q, td, dd, dt';
+  function hosts(){return Array.prototype.slice.call(document.querySelectorAll(SEL))
+    .filter(function(el){return !el.classList.contains('szins-block') && !el.closest('.szins-block');});}
+  /* 子要素のうち szins-block を除いた論理インデックス（挿入ブロックが兄弟にあっても安定） */
+  function childIdx(par,el){var i=0;for(var k=0;k<par.children.length;k++){var c=par.children[k];if(c.classList&&c.classList.contains('szins-block'))continue;if(c===el)return i;i++;}return -1;}
+  function nthChild(par,idx){var i=0;for(var k=0;k<par.children.length;k++){var c=par.children[k];if(c.classList&&c.classList.contains('szins-block'))continue;if(i===idx)return c;i++;}return null;}
+  function sig(el){
+    var list=hosts(), idx=list.indexOf(el);
+    var t=(el.textContent||'').replace(/\s+/g,' ').trim().slice(0,40);
+    /* id無しの div 等（解説内のサブ要素）も復元できるよう、最寄りの id 付き祖先からの
+       子インデックス経路を保存（makeKaisetsuHtml は同じDOMを再生成するので経路は安定）。 */
+    var parts=[], n=el, root='';
+    while(n && n.nodeType===1 && n!==document.body){
+      if(n.id){ root=n.id; break; }
+      var par=n.parentElement; if(!par) break;
+      var ci=childIdx(par,n); if(ci<0){ root=''; parts=null; break; }
+      parts.unshift(ci); n=par;
+    }
+    return {id:el.id||'', root:root, path:parts, i:idx, t:t};
+  }
+  function findHost(s){
+    if(s.id){ var byId=document.getElementById(s.id); if(byId) return byId; }
+    /* 経路で解決（id無しサブ要素用） */
+    if(s.path){
+      var base=s.root?document.getElementById(s.root):document.body;
+      if(base){ var n=base,ok=true;
+        for(var i=0;i<s.path.length;i++){ n=n?nthChild(n,s.path[i]):null; if(!n){ok=false;break;} }
+        if(ok&&n&&!(n.classList&&n.classList.contains('szins-block'))) return n;
+      }
+    }
+    var list=hosts();
+    /* テキスト先頭一致 → index（静的ノート用フォールバック） */
+    if(s.t){for(var k=0;k<list.length;k++){var tt=(list[k].textContent||'').replace(/\s+/g,' ').trim().slice(0,40);if(tt===s.t) return list[k];}}
+    return (s.i!=null&&s.i>=0)?(list[s.i]||null):null;
+  }
+  function load(){try{return JSON.parse(localStorage.getItem(curLS()))||[];}catch(e){return[];}}
+  function save(arr){try{localStorage.setItem(curLS(),JSON.stringify(arr));}catch(e){}}
+
+  /* 画像を縮小・再圧縮してdataURLに（qz-memo踏襲：最大幅1000px・JPEG0.7） */
+  function compressImg(file, cb){
+    var fr=new FileReader();
+    fr.onload=function(){
+      var img=new Image();
+      img.onload=function(){
+        var mw=1000, w=img.width, h=img.height;
+        if(w>mw){h=Math.round(h*mw/w);w=mw;}
+        var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+        var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
+        ctx.drawImage(img,0,0,w,h);
+        try{cb(cv.toDataURL('image/jpeg',0.7));}catch(e){cb(fr.result);}
+      };
+      img.onerror=function(){cb(fr.result);};
+      img.src=fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
+  function insertImgAtCursor(ed, dataUrl){
+    var im=document.createElement('img');
+    im.src=dataUrl; im.className='szins-pic'; im.style.maxWidth='100%'; im.style.borderRadius='4px'; im.style.display='block'; im.style.margin='.3rem 0'; im.style.cursor='pointer';
+    var sel=window.getSelection();
+    if(sel && sel.rangeCount && ed.contains(sel.anchorNode)){
+      var r=sel.getRangeAt(0); r.deleteContents(); r.insertNode(im);
+      r.setStartAfter(im); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
+    } else { ed.appendChild(im); }
+  }
+
+  /* 画像コピー用の内部クリップボード（Ctrl+C/Ctrl+V）＋ 選択中画像の管理 */
+  var szImgClip=null, szSelImg=null, szPasteHandled=false;
+  function selectImg(im){
+    if(szSelImg) szSelImg.classList.remove('szins-pic-sel');
+    szSelImg=im; if(im) im.classList.add('szins-pic-sel');
+  }
+  function dataUrlToBlob(u){
+    try{var p=u.split(','),mime=p[0].match(/:(.*?);/)[1],bin=atob(p[1]),n=bin.length,arr=new Uint8Array(n);
+      while(n--) arr[n]=bin.charCodeAt(n); return new Blob([arr],{type:mime});}catch(e){return null;}
+  }
+  document.addEventListener('click',function(e){
+    var im=e.target.closest&&e.target.closest('.szins-ed img');
+    if(im){selectImg(im);} else if(szSelImg && !(e.target.closest&&e.target.closest('.szins-ed'))){selectImg(null);}
+  });
+  document.addEventListener('keydown',function(e){
+    if(!(e.ctrlKey||e.metaKey)) return;
+    var k=(e.key||'').toLowerCase();
+    if(k==='c' && szSelImg){
+      szImgClip=szSelImg.src;
+      /* システムクリップボードにも（対応環境のみ） */
+      try{var bl=dataUrlToBlob(szImgClip);
+        if(bl&&navigator.clipboard&&window.ClipboardItem){var it={};it[bl.type]=bl;navigator.clipboard.write([new ClipboardItem(it)]).catch(function(){});}
+      }catch(_){}
+    } else if(k==='v' && szImgClip){
+      var ae=document.activeElement;
+      var ed=ae&&ae.closest?ae.closest('.szins-ed'):null;
+      if(ed){ /* システム画像で貼れた場合は二重挿入しない。pasteイベントが処理したらskip */
+        szPasteHandled=false;
+        setTimeout(function(){if(!szPasteHandled){insertImgAtCursor(ed,szImgClip);persist();}},140);
+      }
+    }
+  },false);
+
+  function mkBlock(html, bg, onChange, onDelete, w, h, ml, mt){
+    var b=document.createElement('div');
+    b.className='szins-block';
+    if(bg) b.style.background=bg;
+    if(w) b.style.width=w;
+    if(h) b.style.height=h;
+    if(ml) b.style.marginLeft=ml;
+    if(mt) b.style.marginTop=mt;
+    var ed=document.createElement('div');
+    ed.className='szins-ed'; ed.setAttribute('contenteditable','true');
+    ed.innerHTML=html||'';
+    b.__ed=ed;
+    /* 削除ボタン */
+    var del=document.createElement('button');
+    del.className='szins-del'; del.textContent='×'; del.title='この挿入を削除';
+    del.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();onDelete(b);});
+    /* 横↔下 切替ボタン */
+    var sideBtn=document.createElement('button');
+    sideBtn.className='szins-side'; sideBtn.textContent='⬌'; sideBtn.title='横に並べる';
+    function syncSideBtn(){ sideBtn.textContent=b.__side?'⬍':'⬌'; sideBtn.title=b.__side?'下にフル幅へ戻す':'宿主の横に並べる'; }
+    sideBtn.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();b.__side=!b.__side;applyLayout(b);syncSideBtn();onChange(b);});
+    b.__syncSideBtn=syncSideBtn;
+    /* 画像ボタン */
+    var imgBtn=document.createElement('button');
+    imgBtn.className='szins-img'; imgBtn.textContent='🖼'; imgBtn.title='画像を挿入';
+    var fileIn=document.createElement('input'); fileIn.type='file'; fileIn.accept='image/*'; fileIn.style.display='none';
+    imgBtn.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();fileIn.click();});
+    fileIn.addEventListener('change',function(){
+      if(fileIn.files&&fileIn.files[0]){ed.focus();compressImg(fileIn.files[0],function(u){insertImgAtCursor(ed,u);onChange(b);});}
+      fileIn.value='';
+    });
+    b.appendChild(ed); b.appendChild(sideBtn); b.appendChild(imgBtn); b.appendChild(del); b.appendChild(fileIn);
+    var t=null;
+    ed.addEventListener('input',function(){clearTimeout(t);t=setTimeout(function(){onChange(b);},300);});
+    /* 画像のペースト対応 */
+    ed.addEventListener('paste',function(e){
+      var items=(e.clipboardData||{}).items||[];
+      for(var i=0;i<items.length;i++){
+        if(items[i].type&&items[i].type.indexOf('image')===0){
+          e.preventDefault();szPasteHandled=true;
+          var f=items[i].getAsFile();
+          if(f) compressImg(f,function(u){insertImgAtCursor(ed,u);onChange(b);});
+          return;
+        }
+      }
+    });
+    /* 画像のドラッグ&ドロップ対応 */
+    ed.addEventListener('dragover',function(e){
+      if(e.dataTransfer&&Array.prototype.slice.call(e.dataTransfer.items||[]).some(function(it){return it.type&&it.type.indexOf('image')===0;})){
+        e.preventDefault();e.stopPropagation();b.classList.add('szins-drop');
+      }
+    });
+    ed.addEventListener('dragleave',function(e){b.classList.remove('szins-drop');});
+    ed.addEventListener('drop',function(e){
+      var files=e.dataTransfer&&e.dataTransfer.files;
+      if(files&&files.length){
+        var imgs=Array.prototype.slice.call(files).filter(function(f){return f.type&&f.type.indexOf('image')===0;});
+        if(imgs.length){
+          e.preventDefault();e.stopPropagation();b.classList.remove('szins-drop');ed.focus();
+          imgs.forEach(function(f){compressImg(f,function(u){insertImgAtCursor(ed,u);onChange(b);});});
+        }
+      }
+    });
+    /* qz-memoのツールバーは選択時に出したいので mouseup/keyup は止めない。
+       ただし文書のクリック系トグル誤爆を防ぐためクリックの伝播のみ抑える。
+       例外：ブロック内に付けた注釈（穴埋め/消去/コメントアイコン等）はクリックで
+       表示トグルさせたいので、injectの文書ハンドラまで伝播させる。 */
+    ed.addEventListener('click',function(e){
+      if(e.target.closest&&e.target.closest('mark.sz-blank,mark.sz-erase,mark[data-aid],.sz-cm-icon,.fill-blank,.blank')) return;
+      e.stopPropagation();
+    },false);
+    /* 枠の自由リサイズ。e=右/w=左/s=下/n=上/se=右下角。
+       左(w)は右端を、上(n)は下端を固定したまま幅/高さを変える（margin で位置補正）。離した時に保存。 */
+    function addHandle(cls,mode){
+      var hd=document.createElement('div'); hd.className='szins-rz '+cls; b.appendChild(hd);
+      hd.addEventListener('pointerdown',function(e){
+        e.preventDefault(); e.stopPropagation();
+        try{hd.setPointerCapture(e.pointerId);}catch(_){}
+        var sx=e.clientX, sy=e.clientY, rc=b.getBoundingClientRect(), sw=rc.width, sh=rc.height;
+        var cs=getComputedStyle(b);
+        var sml=parseFloat(b.style.marginLeft||cs.marginLeft)||0;
+        var smt=parseFloat(b.style.marginTop||cs.marginTop)||0;
+        var maxW=b.parentElement?b.parentElement.clientWidth:99999;
+        function applyGeom(ev){
+          var dx=ev.clientX-sx, dy=ev.clientY-sy;
+          if(b.__side){
+            /* 横モード：margin は使わず幅・高さを直接変える（宿主は flex で連動して縮む・折り返す） */
+            if(mode.indexOf('e')>=0) b.style.width=Math.max(80, sw+dx)+'px';
+            if(mode.indexOf('w')>=0) b.style.width=Math.max(80, sw-dx)+'px';
+            if(mode.indexOf('s')>=0) b.style.height=Math.max(32, sh+dy)+'px';
+            if(mode.indexOf('n')>=0) b.style.height=Math.max(32, sh-dy)+'px';
+            return;
+          }
+          /* 下モード。いずれの辺もセル（親）の内側・フロー内に収める＝既存の文字に被らない。
+             右=幅拡大（左端固定・親幅まで）/ 下=高さ拡大（上端固定・下を押し下げる） */
+          if(mode.indexOf('e')>=0){ b.style.width=Math.max(80,Math.min(maxW-sml,sw+dx))+'px'; }
+          if(mode.indexOf('s')>=0){ b.style.height=Math.max(32,sh+dy)+'px'; }
+          /* 左=左端をポインタに追従（右端固定）。marginは0以上＝セル左端より外へ出さない */
+          if(mode.indexOf('w')>=0){ var rightEdge=sml+sw; var nl=Math.min(rightEdge-80, Math.max(0, sml+dx)); b.style.marginLeft=nl+'px'; b.style.width=(rightEdge-nl)+'px'; }
+          /* 上=上端をポインタに追従（下端固定）。marginは0以上＝上の文字に被せない */
+          if(mode.indexOf('n')>=0){ var botEdge=smt+sh; var nt=Math.min(botEdge-32, Math.max(0, smt+dy)); b.style.marginTop=nt+'px'; b.style.height=(botEdge-nt)+'px'; }
+          /* 幅を変えたら宿主セルも同じ幅・左位置に連動＝元の文字も折り返し直す */
+          if(mode.indexOf('e')>=0||mode.indexOf('w')>=0) syncHostW(b);
+        }
+        /* スピード対策：pointermove ごとに reflow させず requestAnimationFrame で1フレーム1回に間引く */
+        var lastEv=null, raf=0;
+        function frame(){ raf=0; if(lastEv) applyGeom(lastEv); }
+        function move(ev){ lastEv=ev; if(!raf) raf=requestAnimationFrame(frame); }
+        function up(){ if(raf){cancelAnimationFrame(raf);raf=0;} if(lastEv) applyGeom(lastEv); hd.removeEventListener('pointermove',move); hd.removeEventListener('pointerup',up); onChange(b); }
+        hd.addEventListener('pointermove',move); hd.addEventListener('pointerup',up);
+      });
+    }
+    addHandle('e','e'); addHandle('w','w'); addHandle('s','s'); addHandle('n','n'); addHandle('se','es');
+    return b;
+  }
+  /* 宿主セルをブロックと同じ幅・左位置に連動させる（元の文字も折り返し直る）。
+     宿主は再生成され得る/共有され得る(#qText等)ので data-szins-host で印を付け、restore でリセット・再適用する。 */
+  function syncHostW(b){
+    var host=b.__szhost; if(!host) return;
+    var w=b.style.width, ml=b.style.marginLeft;
+    if(w){ host.style.boxSizing='border-box'; host.style.width=w; } else { host.style.width=''; }
+    host.style.marginLeft=ml||'';
+    if(w||ml){ host.setAttribute('data-szins-host','1'); } else { host.removeAttribute('data-szins-host'); }
+  }
+  function clearHost(host){ if(!host) return; host.style.width=''; host.style.marginLeft=''; host.removeAttribute('data-szins-host'); }
+  /* 「横」モード＝宿主と枠を flex 行ラッパーに入れて横並び（宿主は flex:1 で縮み・折り返し）。
+     「下」モード＝ラッパーを解いて、宿主の直後にフル幅ブロックとして戻す。 */
+  function unwrapRow(b){
+    var row=b.parentElement;
+    if(!row||!row.classList.contains('szins-row')) return;
+    var host=b.__szhost;
+    if(host&&host.parentElement===row){ host.style.flex=host.__szPrevFlex||''; host.style.minWidth=host.__szPrevMinW||''; row.parentNode.insertBefore(host,row); }
+    row.parentNode.insertBefore(b,row);
+    row.remove();
+  }
+  function applyLayout(b){
+    var host=b.__szhost; if(!host) return;
+    var inRow=b.parentElement&&b.parentElement.classList.contains('szins-row');
+    if(b.__side){
+      if(!inRow){
+        /* 横モードでは宿主連動の幅指定(syncHostW)は無効化（flexで自動調整） */
+        clearHost(host);
+        /* flexアイテムに残った margin は隙間/宿主潰れの原因。横モードでは消す */
+        b.style.marginLeft=''; b.style.marginTop='';
+        var row=document.createElement('div'); row.className='szins-row';
+        host.parentNode.insertBefore(row,host);
+        host.__szPrevFlex=host.style.flex; host.__szPrevMinW=host.style.minWidth;
+        /* 宿主は最小幅を確保して潰れない（枠を広げると宿主が連動して縮む・折り返す） */
+        host.style.flex='1 1 0'; host.style.minWidth='96px';
+        row.appendChild(host); row.appendChild(b);
+        b.style.flex='0 1 auto';  /* 枠は自分の幅を持ちつつ、入り切らない時は縮む（宿主を潰さない） */
+      }
+    } else {
+      if(inRow) unwrapRow(b);
+      b.style.flex='';
+    }
+  }
+  /* 挿入元の実効背景色を取得（透明なら親を辿る） */
+  function effBg(el){
+    var n=el;
+    while(n && n!==document.body){
+      var c=getComputedStyle(n).backgroundColor;
+      if(c && c!=='rgba(0, 0, 0, 0)' && c!=='transparent') return c;
+      n=n.parentElement;
+    }
+    return '#fff';
+  }
+
+  /* データ構造: [{host:{i,t}, html:"..."}] / 同一hostに複数挿入可（配列順で連続配置） */
+  function persist(){
+    /* いま DOM にあるブロックを集める */
+    var present=[];
+    document.querySelectorAll('.szins-block').forEach(function(b){
+      var hostEl=b.__szhost; if(!hostEl) return;
+      var html=b.__ed?b.__ed.innerHTML:'';
+      present.push({host:b.__hostSig||sig(hostEl), html:html, bg:b.style.background||'', w:b.style.width||'', h:b.style.height||'', ml:b.style.marginLeft||'', mt:b.style.marginTop||'', hostW:hostEl.style.width||'', hostML:hostEl.style.marginLeft||'', side:!!b.__side});
+    });
+    /* 動的ページ対策：今表示していない host のレコード（＝別問題・折りたたみ中の解説など）は
+       DOM に無くても保存から落とさず温存する。host が現在 DOM に見つからないものだけ残してマージ。 */
+    var stored=load();
+    var kept=stored.filter(function(rec){ return !findHost(rec.host); });
+    save(kept.concat(present));
+  }
+
+  function insertAfterHost(hostEl, text, bg, w, h, ml, mt, side){
+    /* 救済：host の親がブロックフローでない（flex/grid 等＝横並びになる）場合は、
+       フロー安全な祖先まで引き上げる。古い保存（span 等の flex アイテム）も下にフル幅で入る。 */
+    var safe=hostEl;
+    while(safe && safe!==document.body && !parentIsBlockFlow(safe)) safe=safe.parentElement;
+    var migrated=(safe && safe!==document.body && safe!==hostEl);
+    if(safe && safe!==document.body) hostEl=safe;
+    /* 引き上げた＝旧・横並び時代の残骸サイズ/位置は今のレイアウトでは無効。捨ててフレッシュ（下・フル幅）にする。 */
+    if(migrated){ w=''; h=''; ml=''; mt=''; }
+    var b=mkBlock(text, bg, persist, function(node){
+      var hs=node.__szhost, row=node.parentElement;
+      if(row&&row.classList.contains('szins-row')&&hs&&hs.parentElement===row){ hs.style.flex=hs.__szPrevFlex||''; hs.style.minWidth=hs.__szPrevMinW||''; row.parentNode.insertBefore(hs,row); }
+      node.remove();
+      if(row&&row.classList.contains('szins-row')&&!row.querySelector('.szins-block')) row.remove();
+      clearHost(hs);persist();
+    }, w, h, ml, mt);
+    b.__szhost=hostEl;
+    b.__migrated=migrated;
+    /* 既存の同host挿入塊の末尾の後ろに入れる */
+    var ref=hostEl, nx=hostEl.nextElementSibling;
+    while(nx && nx.classList.contains('szins-block') && nx.__szhost===hostEl){ref=nx;nx=nx.nextElementSibling;}
+    ref.parentNode.insertBefore(b, ref.nextSibling);
+    /* host の sig は“ラップ前の自然位置”で確定して保持（横モードで行ラッパーに入れても経路が壊れない） */
+    b.__hostSig=sig(hostEl);
+    b.__side=!!side && !migrated;  /* 救済された枠は下に戻す */
+    if(b.__syncSideBtn) b.__syncSideBtn();
+    if(b.__side) applyLayout(b);
+    return b;
+  }
+
+  function restore(){
+    /* べき等＝既存ブロックを一旦すべて外してから現在キーの保存分を貼り直す。
+       問題切替（szInsRestore 再呼び出し）でも重複せず、表示中の host を持つレコードだけ復活する。
+       host が現在 DOM に無いレコードは貼られないが localStorage には残る（temp で消えない）。 */
+    /* 「横」モードの行ラッパーを解いて宿主を元の位置へ戻す（block は中身ごと除去して作り直す） */
+    document.querySelectorAll('.szins-row').forEach(function(row){
+      Array.prototype.slice.call(row.children).forEach(function(ch){
+        if(ch.classList&&ch.classList.contains('szins-block')) return;
+        ch.style.flex=ch.__szPrevFlex||''; ch.style.minWidth=ch.__szPrevMinW||'';
+        row.parentNode.insertBefore(ch,row);
+      });
+      row.remove();
+    });
+    /* 連動で変形させた宿主セルを一旦すべて元に戻す（共有/再生成される #qText 等のため） */
+    document.querySelectorAll('[data-szins-host]').forEach(function(el){ clearHost(el); });
+    document.querySelectorAll('.szins-block').forEach(function(b){ b.remove(); });
+    var arr=load();
+    arr.forEach(function(rec){
+      var hostEl=findHost(rec.host);
+      if(hostEl){
+        var b=insertAfterHost(hostEl, rec.html!=null?rec.html:(rec.text||''), rec.bg, rec.w, rec.h, rec.ml, rec.mt, rec.side);
+        var realHost=b.__szhost||hostEl;  /* insertAfterHost がフロー安全な親へ引き上げている場合あり */
+        /* 引き上げ救済された枠・横モードは、宿主の旧サイズを適用しない（横はflexで自動・救済は残骸） */
+        if(!b.__migrated && !b.__side){
+          if(rec.hostW){ realHost.style.boxSizing='border-box'; realHost.style.width=rec.hostW; realHost.setAttribute('data-szins-host','1'); }
+          if(rec.hostML){ realHost.style.marginLeft=rec.hostML; realHost.setAttribute('data-szins-host','1'); }
+        }
+      }
+    });
+  }
+
+  /* ＋ボタン（テキスト選択時に選択箇所の右下へ表示） */
+  var addBtn=document.createElement('button');
+  addBtn.className='szins-add'; addBtn.textContent='＋';
+  addBtn.title='選択した行の下に文章を挿入'; addBtn.style.display='none';
+  document.body.appendChild(addBtn);
+  var curHost=null;
+
+  /* 選択範囲を含む「挿入先ブロック」を探す。
+     重要：host の“親”が通常のブロックフロー（flex/grid/table 行でない）である要素を選ぶ。
+     こうすると host の直後に挿入したブロックが必ず自分の行（フル幅）になり、
+     選択肢チェックのような display:flex 行の中で“横並びの flex アイテム”にならない。 */
+  function parentIsBlockFlow(el){
+    var par=el.parentElement; if(!par) return false;
+    var pd=getComputedStyle(par).display;
+    return pd==='block'||pd==='list-item'||pd==='flow-root';
+  }
+  function hostFromSelection(){
+    var sel=window.getSelection();
+    if(!sel || sel.rangeCount===0 || sel.isCollapsed) return null;
+    var node=sel.getRangeAt(0).commonAncestorContainer;
+    if(node.nodeType===3) node=node.parentNode;
+    if(!node || !node.closest) return null;
+    if(node.closest('.szins-block')) return null;
+    var SKIP='body,html,.card,.tab-panel,.tab-content,.pane';
+    /* SEL一致を優先（ただし親がブロックフローのときだけ）。それ以外は祖先を遡る。 */
+    var sl=node.closest(SEL);
+    if(sl && !sl.matches(SKIP) && parentIsBlockFlow(sl)) return sl;
+    var n=node;
+    while(n && n!==document.body){
+      if(n.nodeType===1 && !n.matches(SKIP) && parentIsBlockFlow(n)) return n;
+      n=n.parentElement;
+    }
+    return null;
+  }
+  function showBtnAtSelection(){
+    if(document.body.classList.contains('sz-annot-off')){addBtn.style.display='none';return;}
+    var host=hostFromSelection();
+    if(!host){addBtn.style.display='none';curHost=null;return;}
+    var sel=window.getSelection();
+    var rects=sel.getRangeAt(0).getClientRects();
+    var r=rects.length?rects[rects.length-1]:host.getBoundingClientRect();
+    curHost=host;
+    addBtn.style.left=(window.scrollX+r.right+6)+'px';
+    addBtn.style.top=(window.scrollY+r.bottom-8)+'px';
+    addBtn.style.display='block';
+  }
+  /* 選択確定（マウス・キーボード）で表示。少し遅延してselectionを確定させる */
+  document.addEventListener('mouseup',function(){setTimeout(showBtnAtSelection,10);});
+  document.addEventListener('keyup',function(e){if(e.shiftKey||e.key==='Shift')setTimeout(showBtnAtSelection,10);});
+
+  addBtn.addEventListener('mousedown',function(e){
+    /* mousedownで処理：clickだと選択解除が先に走るのを防ぐ */
+    e.preventDefault();
+    if(!curHost) return;
+    var b=insertAfterHost(curHost, '', effBg(curHost));
+    addBtn.style.display='none';
+    setTimeout(function(){if(b.__ed) b.__ed.focus();},0);
+  });
+  /* スクロール時は隠す（位置ズレ防止） */
+  window.addEventListener('scroll',function(){addBtn.style.display='none';},{passive:true});
+
+  window.szInsRestore=restore;
+  window.szInsPersist=persist;  /* ブロック内に注釈(穴埋め等)を付けた時、inject から呼んでHTMLごと保存 */
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',restore);
+  else restore();
+})();
+</script>
+<!-- ===== /qz-memo 行間挿入 ===== -->
+
 
 <!-- ===== fill-blank クリック切替 v2 ===== -->
 <style>
