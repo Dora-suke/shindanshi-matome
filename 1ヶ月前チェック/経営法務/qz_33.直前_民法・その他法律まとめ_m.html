@@ -3298,11 +3298,19 @@ body.sz-annot-off .sz-frame{display:none !important}
     if(!ok){ notes.pop(); shToast('⚠ 保存容量オーバー：画像が多すぎます（古い画像を消すか枚数を減らしてください）'); return; }
     buildImage(n);
   }
+  /* モバイル幅で画像が画面の右外に出ないよう、表示時だけ左位置を画面内にクランプ
+     （保存値 n.x は変えない＝端末ごとに最適配置。縦はスクロールで見えるので据え置き）。 */
+  function szClampImg(n,el){
+    var w=n.w||el.offsetWidth||240;
+    var maxL=Math.max(0, window.innerWidth-w-4);
+    el.style.left=Math.max(0, Math.min((n.x||120), maxL))+'px';
+    el.style.top=(n.y||120)+'px';
+  }
   function buildImage(n){
     var el=document.createElement('div');
     el.className='sz-img'; el.dataset.nid=n.id;
-    el.style.left=(n.x||120)+'px'; el.style.top=(n.y||120)+'px';
     el.style.width=(n.w||240)+'px'; el.style.height=(n.h||160)+'px';
+    szClampImg(n,el);
     var img=document.createElement('img'); img.src=n.src||''; img.alt='';
     var del=document.createElement('button'); del.type='button'; del.className='sz-img-del'; del.textContent='🗑'; del.title='画像を削除';
     el.appendChild(img); el.appendChild(del);
@@ -3352,6 +3360,8 @@ body.sz-annot-off .sz-frame{display:none !important}
       });
     });
   }
+  /* 画面回転・リサイズで画像を画面内に再クランプ */
+  window.addEventListener('resize',function(){ try{ notes.forEach(function(n){ if(n.img){ var el=noteEls[n.id]; if(el) szClampImg(n,el); } }); }catch(e){} });
   /* ① ファイル選択 */
   (function(){
     var imgInput=document.getElementById('sz-img-input');
@@ -6000,6 +6010,10 @@ body.sz-annot-off .szins-add{display:none}
   function parentIsBlockFlow(el){
     var par=el.parentElement; if(!par) return false;
     var pd=getComputedStyle(par).display;
+    /* 折りたたみ中(display:none)の親＝解説パネル等は、いま横並びレイアウトをしていないので
+       「ブロックフロー扱い」にして引き上げない。こうしないと復元時にブロックがパネル外へ
+       持ち出され、閉じている解説の画像/文章がリロード後に表示されてしまう。 */
+    if(pd==='none') return true;
     return pd==='block'||pd==='list-item'||pd==='flow-root';
   }
   function hostFromSelection(){
