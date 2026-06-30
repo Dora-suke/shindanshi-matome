@@ -2751,6 +2751,7 @@ function toggleExplain(btn,id){
   var p=document.getElementById(id);if(!p) return;
   var h=(p.style.display==='none'||p.style.display==='');
   p.style.display=h?'block':'none';btn.classList.toggle('open',h);
+  try{var _ep=document.getElementById(id); if(_ep&&_ep.style.display!=='none') window.__szLastOpenPanel=id;}catch(e){}
   if(window.__szRefreshImgs) window.__szRefreshImgs();
 }
 /* ===== カテゴリ進捗管理 ===== */
@@ -4529,23 +4530,20 @@ body.sz-annot-off .sz-frame{display:none !important}
       im.src=url;
     }catch(e){ shToast('⚠ 画像処理に失敗しました'); }
   }
-  /* 配置点が「開いている解説パネル」内なら、そのパネルidを返す（画像をパネルに紐づけて開閉連動） */
-  function szPanelAtPage(px,py){
-    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
-    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
+  /* 画像作成時に「開いている解説パネル」へ紐づける。座標に依存せず、直近に開いたパネルを優先。
+     ファイル選択(中央配置)・ペースト・D&Dのどれでも、解説を開いた状態で入れた画像は連動する。 */
+  function szCurOpenPanel(){
+    var last=window.__szLastOpenPanel;
+    if(last){ var le=document.getElementById(last); if(le&&le.style.display!=='none') return last; }
     var found=null;
-    document.querySelectorAll('.explain-panel').forEach(function(ep){
-      if(!ep.id||ep.style.display==='none') return;
-      var r=ep.getBoundingClientRect();
-      if(px>=r.left+sx&&px<=r.right+sx&&py>=r.top+sy&&py<=r.bottom+sy) found=ep.id;
-    });
+    document.querySelectorAll('.explain-panel').forEach(function(ep){ if(!found&&ep.id&&ep.style.display!=='none') found=ep.id; });
     return found;
   }
   function szAddImage(src, pageX, pageY, natW, natH){
     var ratio=(natW&&natH)?(natH/natW):0.66;
     var dispW=Math.min(natW||260, 280); if(dispW<60) dispW=Math.min(260,natW||260);
     var dispH=Math.max(40,Math.round(dispW*ratio));
-    var _exid=szPanelAtPage(Math.round(pageX),Math.round(pageY));
+    var _exid=szCurOpenPanel();
     var n={id:uid(),tab:currentTab(),pk:curKey(),x:Math.max(0,Math.round(pageX)),y:Math.max(0,Math.round(pageY)),w:dispW,h:dispH,src:src,img:true};
     if(_exid) n.exid=_exid;
     notes.push(n);
