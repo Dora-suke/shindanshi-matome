@@ -4487,9 +4487,25 @@ body.szp-hide #szp-pred{display:none}
     }
     layer.appendChild(g); return g;
   }
+  /* モバイル幅対策：anchor付きストロークが現在の表示幅をはみ出す場合、横方向を圧縮して
+     全ストロークを画面内に収める（形は崩れるが描いた内容は全て見える）。draw時の幅を保存して
+     いない既存データでも、保存済みの相対X最大値から「収まる倍率」を算出して救済する。 */
+  var __maxXByAnchor={};
+  function computeMaxX(ti){
+    var arr=strokesFor(ti),m={};
+    arr.forEach(function(s){ if(s.anchor){ var mx=0,p=s.pts; for(var i=0;i<p.length;i++){ if(p[i][0]>mx) mx=p[i][0]; } if(mx>(m[s.anchor.idx]||0)) m[s.anchor.idx]=mx; } });
+    __maxXByAnchor=m;
+  }
+  function fitScaleFor(s,ti){
+    if(!s.anchor) return (s.vw&&s.vw!==window.innerWidth)?window.innerWidth/s.vw:1;
+    var el=getContentEls(ti)[s.anchor.idx]; if(!el) return 1;
+    var r=el.getBoundingClientRect(), avail=window.innerWidth-r.left-6, mx=__maxXByAnchor[s.anchor.idx]||0;
+    return (mx>avail && avail>20)?avail/mx:1;
+  }
   function drawStroke(s,tabIdx){
+    var _ti=(tabIdx!=null?tabIdx:currentTab());
     var ox=0,oy=0,sx=1;
-    if(s.anchor){var off=anchorOff(s.anchor,tabIdx!=null?tabIdx:currentTab());ox=off.ox;oy=off.oy;}
+    if(s.anchor){var off=anchorOff(s.anchor,_ti);ox=off.ox;oy=off.oy;sx=fitScaleFor(s,_ti);}
     else if(s.vw&&s.vw!==window.innerWidth){sx=window.innerWidth/s.vw;}
     if(s['var'] && hasPressure(s.pts)) return drawVarStroke(s,ox,oy,sx);   // ペン＝筆圧可変幅
     var el=mkPath(s.c,s.w); el.setAttribute('d',pathD(s.pts,ox,oy,sx));     // 指/マウス＝従来どおり一定幅（後方互換）
@@ -4497,6 +4513,7 @@ body.szp-hide #szp-pred{display:none}
   }
   function render(){
     var ti=currentTab();
+    computeMaxX(ti);
     while(layer.firstChild) layer.removeChild(layer.firstChild);
     strokesFor(ti).forEach(function(s){drawStroke(s,ti);});
     sizeLayer();
@@ -4517,9 +4534,10 @@ body.szp-hide #szp-pred{display:none}
   }
   function eraseAt(pt){
     var ti=currentTab(),arr=strokesFor(ti),th=Math.max(12,curWidth*2.2),removed=false;
+    computeMaxX(ti);
     for(var i=arr.length-1;i>=0;i--){
       var s=arr[i],ox=0,oy=0,sx=1;
-      if(s.anchor){var off=anchorOff(s.anchor,ti);ox=off.ox;oy=off.oy;}
+      if(s.anchor){var off=anchorOff(s.anchor,ti);ox=off.ox;oy=off.oy;sx=fitScaleFor(s,ti);}
       else if(s.vw&&s.vw!==window.innerWidth){sx=window.innerWidth/s.vw;}
       var pts=s.pts;
       for(var j=0;j<pts.length;j++){
