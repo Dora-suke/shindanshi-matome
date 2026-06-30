@@ -1172,6 +1172,7 @@ function toggleExplain(btn,id){
   el.style.display=v?'block':'none';
   btn.textContent=v?'🙈 閉じる':'💡 解説';
   btn.classList.toggle('open',v);
+  if(window.__szRefreshImgs) window.__szRefreshImgs();
 }
 
 /* ===== カテゴリ進捗管理 ===== */
@@ -2558,7 +2559,9 @@ body.sz-annot-off .sz-frame{display:none !important}
   function tabKeyOf(i){ var p=panels[i]; return (p&&p.id)?p.id:('t'+i); }
   function curKey(){ return tabKeyOf(currentTab()); }
   /* このメモ/枠/画像が今のタブに表示されるべきか。pk があれば pk（安定）で、無ければ旧 tab で判定。 */
-  function noteShownNow(n){ return (n.pk!=null)?(n.pk===curKey()):(n.tab===currentTab()); }
+  function noteShownNow(n){ if(n.exid){ var ep=document.getElementById(n.exid); if(ep && ep.style.display==='none') return false; } return (n.pk!=null)?(n.pk===curKey()):(n.tab===currentTab()); }
+  /* 解説パネルの開閉から画像表示を再評価するためのフック（toggleExplainから呼ぶ） */
+  window.__szRefreshImgs=function(){ try{ syncNotes(); }catch(e){} };
   function uid(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
   function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -3007,11 +3010,25 @@ body.sz-annot-off .sz-frame{display:none !important}
       im.src=url;
     }catch(e){ shToast('⚠ 画像処理に失敗しました'); }
   }
+  /* 配置点が「開いている解説パネル」内なら、そのパネルidを返す（画像をパネルに紐づけて開閉連動） */
+  function szPanelAtPage(px,py){
+    var sx=window.pageXOffset||document.documentElement.scrollLeft||0;
+    var sy=window.pageYOffset||document.documentElement.scrollTop||0;
+    var found=null;
+    document.querySelectorAll('.explain-panel').forEach(function(ep){
+      if(!ep.id||ep.style.display==='none') return;
+      var r=ep.getBoundingClientRect();
+      if(px>=r.left+sx&&px<=r.right+sx&&py>=r.top+sy&&py<=r.bottom+sy) found=ep.id;
+    });
+    return found;
+  }
   function szAddImage(src, pageX, pageY, natW, natH){
     var ratio=(natW&&natH)?(natH/natW):0.66;
     var dispW=Math.min(natW||260, 280); if(dispW<60) dispW=Math.min(260,natW||260);
     var dispH=Math.max(40,Math.round(dispW*ratio));
+    var _exid=szPanelAtPage(Math.round(pageX),Math.round(pageY));
     var n={id:uid(),tab:currentTab(),pk:curKey(),x:Math.max(0,Math.round(pageX)),y:Math.max(0,Math.round(pageY)),w:dispW,h:dispH,src:src,img:true};
+    if(_exid) n.exid=_exid;
     notes.push(n);
     var ok=true; try{ localStorage.setItem(NKEY,JSON.stringify(notes)); }catch(e){ ok=false; }
     if(!ok){ notes.pop(); shToast('⚠ 保存容量オーバー：画像が多すぎます（古い画像を消すか枚数を減らしてください）'); return; }
