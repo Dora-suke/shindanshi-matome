@@ -6147,7 +6147,9 @@ body.sz-annot-off .szins-rz{display:none}
 .szins-row{display:flex;align-items:flex-start;gap:8px;width:100%;box-sizing:border-box}
 .szins-img{position:absolute;top:4px;right:28px;width:22px;height:20px;border:none;background:#f1f5f9;border-radius:6px;font-size:12px;line-height:20px;cursor:pointer;padding:0;opacity:0;transition:opacity .15s;font-family:inherit}
 .szins-img:hover{background:#e0f2fe}
-.szins-block:hover .szins-del,.szins-block:hover .szins-img{opacity:1}
+.szins-link{position:absolute;top:4px;right:76px;width:22px;height:20px;border:none;background:#f1f5f9;border-radius:6px;font-size:13px;line-height:20px;cursor:pointer;padding:0;opacity:0;transition:opacity .15s;font-family:inherit;color:#0369a1}
+.szins-link:hover{background:#e0f2fe}
+.szins-block:hover .szins-del,.szins-block:hover .szins-img,.szins-block:hover .szins-link{opacity:1}
 .szins-ed img.szins-pic-sel{outline:2px solid #38bdf8;outline-offset:1px}
 .szins-block.szins-drop{box-shadow:0 0 0 2px #38bdf8;background:#f0f9ff !important}
 .szins-block.szins-drop:after{content:'📥 画像をドロップ';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#0ea5e9;font-weight:800;font-size:.85rem;background:rgba(240,249,255,.7);border-radius:6px;pointer-events:none}
@@ -6290,7 +6292,28 @@ body.sz-annot-off .szins-add{display:none}
       if(fileIn.files&&fileIn.files[0]){ed.focus();compressImg(fileIn.files[0],function(u){insertImgAtCursor(ed,u);onChange(b);});}
       fileIn.value='';
     });
-    b.appendChild(ed); b.appendChild(sideBtn); b.appendChild(imgBtn); b.appendChild(del); b.appendChild(fileIn);
+    /* リンクボタン */
+    var linkBtn=document.createElement('button');
+    linkBtn.className='szins-link'; linkBtn.textContent='🔗'; linkBtn.title='リンクを挿入';
+    linkBtn.addEventListener('mousedown',function(e){
+      e.preventDefault();e.stopPropagation();
+      var url=window.prompt('リンク先URL（コピー&ペーストしてください）','https://');
+      if(!url||url==='https://')return;
+      var text=window.prompt('リンクのテキスト（省略するとURLをそのまま表示）','');
+      text=text||url;
+      var a=document.createElement('a');
+      a.href=url; a.target='_blank'; a.rel='noopener'; a.textContent=text;
+      a.style.color='#0369a1'; a.style.textDecoration='underline';
+      ed.focus();
+      var sel=window.getSelection();
+      if(sel&&sel.rangeCount){
+        var r=sel.getRangeAt(0);
+        if(ed.contains(r.commonAncestorContainer)){r.deleteContents();r.insertNode(a);r.setStartAfter(a);r.collapse(true);sel.removeAllRanges();sel.addRange(r);}
+        else{ed.appendChild(a);}
+      } else {ed.appendChild(a);}
+      onChange(b);
+    });
+    b.appendChild(ed); b.appendChild(sideBtn); b.appendChild(imgBtn); b.appendChild(linkBtn); b.appendChild(del); b.appendChild(fileIn);
     var t=null;
     ed.addEventListener('input',function(){clearTimeout(t);t=setTimeout(function(){onChange(b);},300);});
     /* 画像のペースト対応 */
