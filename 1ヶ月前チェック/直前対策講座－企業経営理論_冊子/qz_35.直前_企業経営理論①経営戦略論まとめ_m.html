@@ -5032,8 +5032,6 @@ body.szp-hide #szp-pred{display:none}
     if(e.pointerType==='pen') penSeen=true;
     if(penSeen && e.pointerType==='touch') return;        // パームリジェクション：ペンを使った後は指/手のひらを無視
     if(drawing) return;                                   // 既に別ポインタで描画中なら追加接触は無視
-    // パレット内タッチは素通り（PencilでもUI操作できるよう e.preventDefault を呼ばない）
-    if(pal&&pal.classList.contains('on')){var _pr=pal.getBoundingClientRect();if(e.clientX>=_pr.left&&e.clientX<=_pr.right&&e.clientY>=_pr.top&&e.clientY<=_pr.bottom)return;}
     e.preventDefault();
     layer.setPointerCapture&&layer.setPointerCapture(e.pointerId);
     activePid=e.pointerId; curIsPen=(e.pointerType==='pen');
@@ -5088,32 +5086,34 @@ body.szp-hide #szp-pred{display:none}
   var COLORS=['#ef4444','#2563eb','#16a34a','#111827','#f59e0b','#db2777'];
   var WIDTHS=[2,4,7];
   var colWrap=document.getElementById('szp-colors');
+  /* Pencil/タッチ/マウス全対応タップ：pointerupとclickを束ね、二重発火は400msガード */
+  function szpTap(el,fn){ if(!el) return; var lock=false; function go(e){ if(lock) return; lock=true; setTimeout(function(){lock=false;},400); if(e&&e.preventDefault)e.preventDefault(); if(e&&e.stopPropagation)e.stopPropagation(); fn(e); } el.addEventListener('pointerup',go); el.addEventListener('click',go); }
   COLORS.forEach(function(c){
     var d=document.createElement('div'); d.className='szp-c'+(c===curColor?' sel':''); d.style.background=c; d.dataset.c=c;
-    d.addEventListener('click',function(){curColor=c;eraseOn=false;syncEraser();colWrap.querySelectorAll('.szp-c').forEach(function(x){x.classList.toggle('sel',x.dataset.c===c);});});
+    szpTap(d,function(){curColor=c;eraseOn=false;syncEraser();colWrap.querySelectorAll('.szp-c').forEach(function(x){x.classList.toggle('sel',x.dataset.c===c);});});
     colWrap.appendChild(d);
   });
   var wWrap=document.getElementById('szp-widths');
   WIDTHS.forEach(function(w){
     var d=document.createElement('div'); d.className='szp-w'+(w===curWidth?' sel':''); d.dataset.w=w;
     var bar=document.createElement('span'); bar.style.width='16px'; bar.style.height=w+'px'; d.appendChild(bar);
-    d.addEventListener('click',function(){curWidth=w;wWrap.querySelectorAll('.szp-w').forEach(function(x){x.classList.toggle('sel',+x.dataset.w===w);});});
+    szpTap(d,function(){curWidth=w;wWrap.querySelectorAll('.szp-w').forEach(function(x){x.classList.toggle('sel',+x.dataset.w===w);});});
     wWrap.appendChild(d);
   });
   var eraserBtn=document.getElementById('szp-eraser');
   function syncEraser(){ eraserBtn.classList.toggle('on',eraseOn); eraserBtn.textContent=eraseOn?'🧹 消しゴム ON':'🧹 消しゴム'; }
-  eraserBtn.addEventListener('click',function(){ eraseOn=!eraseOn; syncEraser(); });
-  document.getElementById('szp-undo').addEventListener('click',function(){
+  szpTap(eraserBtn,function(){ eraseOn=!eraseOn; syncEraser(); });
+  szpTap(document.getElementById('szp-undo'),function(){
     var arr=strokesFor(currentTab()); if(arr.length){ arr.pop(); save(); render(); }
   });
-  document.getElementById('szp-clear').addEventListener('click',function(){
+  szpTap(document.getElementById('szp-clear'),function(){
     var arr=strokesFor(currentTab()); if(!arr.length) return;
     if(confirm('このタブの落書きを全て消しますか？')){ data[tabKeyOf(currentTab())]=[]; save(); render(); }
   });
 
   /* ---- 🖊 トグルボタン（⋮ツールバーに同居） ---- */
   /* ペンON中は touchmove を {passive:false} でキャプチャしてスクロールを防止 */
-  function szpPreventScroll(e){ if(penOn) e.preventDefault(); }
+  function szpPreventScroll(e){ if(!penOn) return; var t=e.target; if(t&&t.closest&&t.closest('#szp-pal,#szp-btn,#sz-toolbar')) return; e.preventDefault(); }
   function setPen(on){
     penOn=on;
     layer.classList.toggle('szp-on',on);
@@ -5138,7 +5138,7 @@ body.szp-hide #szp-pred{display:none}
       btn=document.createElement('button');
       btn.id='szp-btn'; btn.type='button'; btn.className='sz-tool-btn'; btn.title='🖊 ペン（自由描画）ON/OFF';
       btn.textContent='🖊';
-      btn.addEventListener('click',function(e){ e.stopPropagation(); setPen(!penOn); });
+      szpTap(btn,function(e){ setPen(!penOn); });
       btn.style.position='fixed'; btn.style.right='12px'; btn.style.bottom='232px'; btn.style.zIndex='201';
       document.body.appendChild(btn);
     }
@@ -5154,11 +5154,10 @@ body.szp-hide #szp-pred{display:none}
   else setTimeout(boot,0);
   /* 「ペンを閉じる」＝パネル内の確実に押せるOFFボタン（ツールバーの小さな🖊に頼らない） */
   var offBtn=document.getElementById('szp-off');
-  if(offBtn) offBtn.addEventListener('click',function(e){ e.stopPropagation(); setPen(false); });
+  if(offBtn) szpTap(offBtn,function(e){ setPen(false); });
   /* 「−／＋」＝パネルを最小化／展開（ペンはONのまま・下の描画エリアが空く） */
   var minBtn=document.getElementById('szp-min');
-  if(minBtn) minBtn.addEventListener('click',function(e){
-    e.stopPropagation();
+  if(minBtn) szpTap(minBtn,function(e){
     var min=pal.classList.toggle('szp-min');
     minBtn.textContent=min?'＋':'−';
     minBtn.title=min?'展開（ペン設定を開く）':'最小化（ペンは使えるまま）';
