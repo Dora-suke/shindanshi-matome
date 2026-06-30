@@ -3138,7 +3138,7 @@ body.szp-hide #szp-live{display:none}
 #szp-pred.szp-on{display:block}
 body.szp-hide #szp-pred{display:none}
 /* ペンのパレット（色・太さ・消しゴム・取消・全消し） */
-#szp-pal{position:fixed;top:64px;left:8px;background:#1e293b;border-radius:11px;padding:9px 10px;z-index:310;box-shadow:0 6px 22px rgba(0,0,0,.36);display:none;width:150px}
+#szp-pal{position:fixed;top:64px;left:8px;background:#1e293b;border-radius:11px;padding:9px 10px;z-index:310;box-shadow:0 6px 22px rgba(0,0,0,.36);display:none;width:150px;touch-action:auto}
 #szp-pal.on{display:block}
 /* 描画中はパネルを薄く透過（じゃまにならない・指を離すと戻る） */
 #szp-pal.on.szp-drawing{opacity:0;pointer-events:none}
@@ -3422,6 +3422,8 @@ body.szp-hide #szp-pred{display:none}
     if(e.pointerType==='pen') penSeen=true;
     if(penSeen && e.pointerType==='touch') return;        // パームリジェクション：ペンを使った後は指/手のひらを無視
     if(drawing) return;                                   // 既に別ポインタで描画中なら追加接触は無視
+    // パレット内タッチは素通り（PencilでもUI操作できるよう e.preventDefault を呼ばない）
+    if(pal&&pal.classList.contains('on')){var _pr=pal.getBoundingClientRect();if(e.clientX>=_pr.left&&e.clientX<=_pr.right&&e.clientY>=_pr.top&&e.clientY<=_pr.bottom)return;}
     e.preventDefault();
     layer.setPointerCapture&&layer.setPointerCapture(e.pointerId);
     activePid=e.pointerId; curIsPen=(e.pointerType==='pen');
