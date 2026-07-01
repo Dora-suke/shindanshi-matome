@@ -5723,6 +5723,21 @@ body.sz-annot-off .szins-add{display:none}
 @media (hover:none){
   .szins-del,.szins-side,.szins-img,.szins-fold,.szins-link{opacity:.9 !important}
 }
+/* ---- 画像の穴埋め（インライン画像を相対ラッパで包み、上に空欄を重ねる／保存はinnerHTML＝リロード復元） ---- */
+.szins-pic-wrap{position:relative;display:inline-block;max-width:100%;line-height:0}
+.szins-pic-wrap img.szins-pic{margin:0 !important}
+.szins-imgbl{position:absolute;background:#c7d2fe;border:1px solid #6366f1;border-radius:3px;cursor:pointer;box-shadow:inset 0 0 0 1px #fff;box-sizing:border-box;z-index:3;touch-action:none}
+.szins-imgbl.show{background:transparent;border-style:dashed;box-shadow:none}
+.szins-imgbl .szins-imgbl-rz{position:absolute;right:-6px;bottom:-6px;width:13px;height:13px;background:#fff;border:1.5px solid #6366f1;border-radius:2px;cursor:se-resize;display:none;z-index:2;touch-action:none}
+.szins-imgbl:hover .szins-imgbl-rz{display:block}
+.szins-imgbl .szins-imgbl-del{position:absolute;left:-7px;top:-9px;width:13px;height:13px;border:none;background:none;color:#ef4444;font-size:13px;font-weight:800;line-height:13px;text-align:center;cursor:pointer;display:none;padding:0;z-index:2;text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 2px #fff}
+.szins-imgbl:hover .szins-imgbl-del{display:block}
+@media (hover:none){ .szins-imgbl .szins-imgbl-rz{display:block} }
+body.sz-annot-off .szins-imgbl{display:none !important}
+/* 画像穴埋め追加ボタン＝ツールバーの一員（🔗の左＝right:100px。画像があるブロックのみ表示） */
+.szins-imgblk{position:absolute;top:4px;right:100px;width:22px;height:20px;border:none;background:#f1f5f9;color:#4338ca;border-radius:6px;font-size:12px;line-height:20px;cursor:pointer;padding:0;opacity:0;transition:opacity .15s;font-family:inherit}
+.szins-block:hover:has(.szins-pic) .szins-imgblk{opacity:1}
+@media (hover:none){ .szins-block:has(.szins-pic) .szins-imgblk{opacity:.9} }
 </style>
 <script>
 (function(){
@@ -5805,6 +5820,45 @@ body.sz-annot-off .szins-add{display:none}
     if(szSelImg) szSelImg.classList.remove('szins-pic-sel');
     szSelImg=im; if(im) im.classList.add('szins-pic-sel');
   }
+  /* ===== 画像の穴埋め（ツールバーの⬜ボタンで画像上に空欄を重ねる） ===== */
+  function picWrap(im){
+    var p=im.parentElement;
+    if(p&&p.classList&&p.classList.contains('szins-pic-wrap')) return p;
+    var w=document.createElement('span'); w.className='szins-pic-wrap'; w.setAttribute('contenteditable','false');
+    im.parentNode.insertBefore(w,im); w.appendChild(im);
+    return w;
+  }
+  function mkImgBlank(bx,by,bw,bh){
+    var bl=document.createElement('span'); bl.className='szins-imgbl'; bl.setAttribute('contenteditable','false');
+    bl.style.left=bx+'%'; bl.style.top=by+'%'; bl.style.width=bw+'%'; bl.style.height=bh+'%';
+    var rz=document.createElement('span'); rz.className='szins-imgbl-rz';
+    var del=document.createElement('span'); del.className='szins-imgbl-del'; del.textContent='×';
+    bl.appendChild(rz); bl.appendChild(del);
+    return bl;
+  }
+  function addImgBlank(im){
+    var w=picWrap(im);
+    w.appendChild(mkImgBlank(30,40,38,16));
+    persist();
+  }
+  /* 委譲：復元後も含めどの .szins-imgbl でも動く（移動＋クリックでトグル／右下リサイズ／🗑削除） */
+  document.addEventListener('pointerdown',function(e){
+    var bl=e.target.closest&&e.target.closest('.szins-imgbl');
+    if(!bl) return;
+    e.preventDefault(); e.stopPropagation();
+    if(e.target.classList&&e.target.classList.contains('szins-imgbl-del')){ bl.remove(); persist(); return; }
+    var wrap=bl.parentElement, iw=wrap.offsetWidth||1, ih=wrap.offsetHeight||1, sx=e.clientX, sy=e.clientY;
+    if(e.target.classList&&e.target.classList.contains('szins-imgbl-rz')){
+      var obw=parseFloat(bl.style.width)||20, obh=parseFloat(bl.style.height)||12;
+      var mvR=function(ev){ bl.style.width=Math.max(4,Math.min(obw+(ev.clientX-sx)/iw*100,100-(parseFloat(bl.style.left)||0)))+'%'; bl.style.height=Math.max(3,Math.min(obh+(ev.clientY-sy)/ih*100,100-(parseFloat(bl.style.top)||0)))+'%'; };
+      var upR=function(){ document.removeEventListener('pointermove',mvR); document.removeEventListener('pointerup',upR); persist(); };
+      document.addEventListener('pointermove',mvR); document.addEventListener('pointerup',upR); return;
+    }
+    var obx=parseFloat(bl.style.left)||0, oby=parseFloat(bl.style.top)||0, moved=false;
+    var mv=function(ev){ if(!moved){ if(Math.abs(ev.clientX-sx)<3&&Math.abs(ev.clientY-sy)<3) return; moved=true; } var bw=parseFloat(bl.style.width)||20, bh=parseFloat(bl.style.height)||12; bl.style.left=Math.max(0,Math.min(obx+(ev.clientX-sx)/iw*100,100-bw))+'%'; bl.style.top=Math.max(0,Math.min(oby+(ev.clientY-sy)/ih*100,100-bh))+'%'; };
+    var up=function(){ document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); if(moved) persist(); else bl.classList.toggle('show'); };
+    document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+  },true);
   function dataUrlToBlob(u){
     try{var p=u.split(','),mime=p[0].match(/:(.*?);/)[1],bin=atob(p[1]),n=bin.length,arr=new Uint8Array(n);
       while(n--) arr[n]=bin.charCodeAt(n); return new Blob([arr],{type:mime});}catch(e){return null;}
@@ -5857,6 +5911,13 @@ body.sz-annot-off .szins-add{display:none}
     /* 画像ボタン */
     var imgBtn=document.createElement('button');
     imgBtn.className='szins-img'; imgBtn.textContent='🖼'; imgBtn.title='画像を挿入';
+    /* 画像に穴埋めを追加するツールバーボタン（🔗の左・アイコン群の一員。画像があるブロックのみ表示） */
+    var blkImgBtn=document.createElement('button');
+    blkImgBtn.className='szins-imgblk'; blkImgBtn.textContent='⬜'; blkImgBtn.title='画像に穴埋めを追加';
+    onTap(blkImgBtn,function(e){ e.preventDefault(); e.stopPropagation();
+      var im=(szSelImg&&b.contains(szSelImg))?szSelImg:b.querySelector('.szins-pic');
+      if(im) addImgBlank(im); });
+    b.appendChild(blkImgBtn);
     var fileIn=document.createElement('input'); fileIn.type='file'; fileIn.accept='image/*'; fileIn.style.display='none';
     onTap(imgBtn,function(e){e.preventDefault();e.stopPropagation();fileIn.click();});
     fileIn.addEventListener('change',function(){
@@ -6027,7 +6088,9 @@ body.sz-annot-off .szins-add{display:none}
     var present=[];
     document.querySelectorAll('.szins-block').forEach(function(b){
       var hostEl=b.__szhost; if(!hostEl) return;
-      var html=b.__ed?b.__ed.innerHTML:'';
+      /* 穴埋めの「答え表示中(show)」は一時状態＝保存しない（リロードで空欄に戻す） */
+      var html='';
+      if(b.__ed){ var _rv=b.__ed.querySelectorAll('.szins-imgbl.show'); _rv.forEach(function(x){x.classList.remove('show');}); html=b.__ed.innerHTML; _rv.forEach(function(x){x.classList.add('show');}); }
       present.push({host:b.__hostSig||sig(hostEl), html:html, bg:b.style.background||'', w:b.style.width||'', h:b.style.height||'', ml:b.style.marginLeft||'', mt:b.style.marginTop||'', hostW:hostEl.style.width||'', hostML:hostEl.style.marginLeft||'', side:!!b.__side});
     });
     /* 動的ページ対策：今表示していない host のレコード（＝別問題・折りたたみ中の解説など）は
