@@ -5524,6 +5524,7 @@ body.sz-annot-off .szins-add{display:none}
 .szins-pic-wrap img.szins-pic{margin:0 !important}
 .szins-imgbl{position:absolute;background:#c7d2fe;border:1px solid #6366f1;border-radius:3px;cursor:pointer;box-shadow:inset 0 0 0 1px #fff;box-sizing:border-box;z-index:3;touch-action:none}
 .szins-imgbl.show{background:transparent;border-style:dashed;box-shadow:none}
+.szins-imgbl.szins-imgbl-active{outline:2px solid #f59e0b;outline-offset:1px}
 .szins-imgbl .szins-imgbl-rz{position:absolute;right:-6px;bottom:-6px;width:13px;height:13px;background:#fff;border:1.5px solid #6366f1;border-radius:2px;cursor:se-resize;display:none;z-index:2;touch-action:none}
 .szins-imgbl:hover .szins-imgbl-rz{display:block}
 .szins-imgbl .szins-imgbl-del{position:absolute;left:-7px;top:-9px;width:13px;height:13px;border:none;background:none;color:#ef4444;font-size:13px;font-weight:800;line-height:13px;text-align:center;cursor:pointer;display:none;padding:0;z-index:2;text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 2px #fff}
@@ -5651,12 +5652,19 @@ body.sz-annot-off .szins-imgbl{display:none !important}
     w.appendChild(mkImgBlank(10+off, 16+off, 34, 15));
     persist();
   }
+  /* 穴埋めのコピー対象／クリップボード */
+  var szBlankClip=null, szActiveBlank=null;
+  function szSetActiveBlank(bl){
+    [].forEach.call(document.querySelectorAll('.szins-imgbl-active'),function(x){x.classList.remove('szins-imgbl-active');});
+    szActiveBlank=bl; if(bl) bl.classList.add('szins-imgbl-active');
+  }
   /* 委譲：復元後も含めどの .szins-imgbl でも動く（移動＋クリックでトグル／右下リサイズ／🗑削除） */
   document.addEventListener('pointerdown',function(e){
     var bl=e.target.closest&&e.target.closest('.szins-imgbl');
     if(!bl) return;
     e.preventDefault(); e.stopPropagation();
-    if(e.target.classList&&e.target.classList.contains('szins-imgbl-del')){ bl.remove(); persist(); return; }
+    if(e.target.classList&&e.target.classList.contains('szins-imgbl-del')){ if(szActiveBlank===bl)szActiveBlank=null; bl.remove(); persist(); return; }
+    szSetActiveBlank(bl);
     var wrap=bl.parentElement, iw=wrap.offsetWidth||1, ih=wrap.offsetHeight||1, sx=e.clientX, sy=e.clientY;
     if(e.target.classList&&e.target.classList.contains('szins-imgbl-rz')){
       var obw=parseFloat(bl.style.width)||20, obh=parseFloat(bl.style.height)||12;
@@ -5682,6 +5690,7 @@ body.sz-annot-off .szins-imgbl{display:none !important}
   /* 画像クリックで選択（ハンドル表示）。ブロックのclick停止を避けるため capture 段で。 */
   document.addEventListener('click',function(e){
     if(e.target.closest&&e.target.closest('.szins-pic-rz,.szins-imgbl,.szins-imgblk')) return;
+    if(szActiveBlank) szSetActiveBlank(null);
     var im=e.target.closest&&e.target.closest('.szins-ed img.szins-pic');
     var selWrap=im?ensureRzHandles(im):null;
     [].forEach.call(document.querySelectorAll('.szins-pic-wrap.sel'),function(w){ if(w!==selWrap) w.classList.remove('sel'); });
@@ -5703,6 +5712,25 @@ body.sz-annot-off .szins-imgbl{display:none !important}
     }
     function up(){ document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); persist(); }
     document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+  },true);
+  /* ===== 穴埋めのコピー＆ペースト（対象穴埋めをクリック→Ctrl/Cmd+Cでコピー、+Vで複製貼り付け） ===== */
+  document.addEventListener('keydown',function(e){
+    if(!(e.ctrlKey||e.metaKey)) return;
+    var k=(e.key||'').toLowerCase();
+    if(k==='c' && szActiveBlank && document.body.contains(szActiveBlank)){
+      szBlankClip={ l:parseFloat(szActiveBlank.style.left)||10, t:parseFloat(szActiveBlank.style.top)||10, w:parseFloat(szActiveBlank.style.width)||34, h:parseFloat(szActiveBlank.style.height)||15 };
+      e.preventDefault(); e.stopPropagation();
+    } else if(k==='v' && szBlankClip){
+      var wrap=(szActiveBlank && document.body.contains(szActiveBlank) && szActiveBlank.parentElement) || document.querySelector('.szins-pic-wrap.sel') || document.querySelector('.szins-pic-wrap');
+      if(wrap){
+        var nl=Math.max(0,Math.min(100-szBlankClip.w, szBlankClip.l+6)), nt=Math.max(0,Math.min(100-szBlankClip.h, szBlankClip.t+6));
+        var bl=mkImgBlank(nl, nt, szBlankClip.w, szBlankClip.h);
+        wrap.appendChild(bl); szSetActiveBlank(bl);
+        szBlankClip={l:nl,t:nt,w:szBlankClip.w,h:szBlankClip.h};
+        persist();
+        e.preventDefault(); e.stopPropagation();
+      }
+    }
   },true);
   function dataUrlToBlob(u){
     try{var p=u.split(','),mime=p[0].match(/:(.*?);/)[1],bin=atob(p[1]),n=bin.length,arr=new Uint8Array(n);
