@@ -4024,16 +4024,16 @@ body.szp-hide #szp-pred{display:none}
     m.appendChild(mBtn('↩ 直前の取込を取り消す',undoBackup));
     // ▾ 詳細（初期は折りたたみ）
     var adv=document.createElement('div'); adv.style.cssText='display:none;flex-direction:column;gap:3px;';
-    var tog=document.createElement('button'); tog.type='button'; tog.textContent='▾ 詳細';
+    var tog=document.createElement('button'); tog.type='button'; tog.textContent='▾ その他の操作';
     tog.style.cssText='background:none;border:none;color:#94a3b8;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:.78rem;font-family:inherit;text-align:left;white-space:nowrap;';
     tog.onmouseenter=function(){tog.style.background='rgba(255,255,255,.10)';};
     tog.onmouseleave=function(){tog.style.background='none';};
-    tog.onclick=function(e){e.stopPropagation();var willOpen=(adv.style.display==='none');adv.style.display=willOpen?'flex':'none';tog.textContent=(willOpen?'▴':'▾')+' 詳細';};
+    tog.onclick=function(e){e.stopPropagation();var willOpen=(adv.style.display==='none');adv.style.display=willOpen?'flex':'none';tog.textContent=(willOpen?'▴':'▾')+' その他の操作';};
     m.appendChild(tog); m.appendChild(adv);
-    adv.appendChild(mBtn('💾 ファイルに書き出し',exportFile));
-    adv.appendChild(mBtn('🕘 クラウドの履歴を見る',openHistory));
-    adv.appendChild(mBtn('🔑 トークン変更',function(){showPATModal();}));
-    adv.appendChild(mBtn('🔍 この端末の診断',function(){
+    adv.appendChild(mBtn('💾 バックアップをファイルに保存',exportFile));
+    adv.appendChild(mBtn('🕘 過去の状態に戻す（履歴）',openHistory));
+    adv.appendChild(mBtn('🔑 接続キー（トークン）を変更',function(){showPATModal();}));
+    adv.appendChild(mBtn('🔍 保存状態をチェック',function(){
       var fn=(location.pathname.split('/').pop()||location.pathname);
       try{fn=decodeURIComponent(fn);}catch(e){}
       var h=5381;for(var i=0;i<fn.length;i++){h=((h*33)^fn.charCodeAt(i))>>>0;}
@@ -4045,7 +4045,7 @@ body.szp-hide #szp-pred{display:none}
       var szKeys=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.startsWith('szP_')||k.startsWith('szA_')||k.startsWith('szSvg')||k.startsWith('szins_')))szKeys.push(k);}
       alert('【診断情報】\nファイル名: '+fn+'\nペンキー(PKEY): '+pkey+'\nペンデータ: '+(penRaw?'あり ('+penCount+'ストローク)':'なし')+'\n\nlocalStorage内のszキー('+szKeys.length+'件):\n'+szKeys.slice(0,10).join('\n')+(szKeys.length>10?'\n...他'+(szKeys.length-10)+'件':''));
     }));
-    adv.appendChild(mBtn('🔄 消去してGistから再読込',function(){
+    adv.appendChild(mBtn('🔄 この端末を消してクラウドから入れ直す',function(){
       if(!confirm('ローカルデータを全消去してGistのデータで上書きします。よろしいですか？')) return;
       var toDel=[];
       for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k!==PAT_KEY)toDel.push(k);}
@@ -4058,7 +4058,7 @@ body.szp-hide #szp-pred{display:none}
         window.addEventListener('pageshow',function(e){if(e.persisted){location.reload(true);}},{once:true});setTimeout(function(){location.reload(true);},1200);
       }).catch(function(e){toast('❌ '+e.message);});
     }));
-    adv.appendChild(mBtn('🗑 ローカルデータ全消去',function(){
+    adv.appendChild(mBtn('🗑 この端末の書き込みを全部消す',function(){
       if(!confirm('このデバイスの注釈・描画・付箋などを全て削除します。よろしいですか？')) return;
       var toDel=[];
       for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k!==PAT_KEY&&k!==GID_KEY)toDel.push(k);}
