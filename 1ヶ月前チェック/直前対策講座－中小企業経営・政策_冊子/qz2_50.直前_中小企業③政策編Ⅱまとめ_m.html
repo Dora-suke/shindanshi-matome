@@ -1686,6 +1686,16 @@ body.sz-annot-off .sz-shape{display:none !important}
 .sz-img .sz-img-rz.ne{right:-6px;top:-6px;cursor:nesw-resize}
 .sz-img .sz-img-rz.sw{left:-6px;bottom:-6px;cursor:nesw-resize}
 .sz-img .sz-img-rz.se{right:-6px;bottom:-6px;cursor:nwse-resize}
+/* ---- 🖼 画像内の穴埋め（画像の子＝一緒に動く・％座標でリサイズ連動・クリックで答え表示⇔隠す） ---- */
+.sz-img .sz-img-blk{position:absolute;top:3px;right:27px;width:21px;height:21px;border:none;border-radius:4px;background:rgba(99,102,241,.88);color:#fff;font-size:.68rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:4;padding:0;line-height:1}
+.sz-img:hover .sz-img-blk{display:flex}
+.sz-img .sz-imgbl{position:absolute;background:#c7d2fe;border:1px solid #6366f1;border-radius:3px;cursor:pointer;z-index:5;box-shadow:inset 0 0 0 1px #fff;box-sizing:border-box;touch-action:none}
+.sz-img .sz-imgbl.show{background:transparent;border-style:dashed;box-shadow:none}
+.sz-img .sz-imgbl .sz-imgbl-rz{position:absolute;right:-6px;bottom:-6px;width:12px;height:12px;background:#fff;border:1.5px solid #6366f1;border-radius:2px;cursor:se-resize;display:none;touch-action:none;z-index:2}
+.sz-img:hover .sz-imgbl .sz-imgbl-rz{display:block}
+.sz-img .sz-imgbl .sz-imgbl-del{position:absolute;left:-8px;top:-8px;width:18px;height:18px;border:none;border-radius:50%;background:#ef4444;color:#fff;font-size:.6rem;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;line-height:1;z-index:2}
+.sz-img:hover .sz-imgbl .sz-imgbl-del{display:flex}
+body.sz-annot-off .sz-imgbl{display:none !important}
 /* ---- 囲み枠（選択範囲を四角で囲む＋非表示ボタン） ---- */
 .sz-frame{position:absolute;z-index:9;box-sizing:border-box;border:2px solid #ef4444;border-radius:5px;background:transparent;pointer-events:none}
 .sz-frame.sz-frame-masked{background:#e2e8f0;border-color:#94a3b8}
@@ -3212,6 +3222,42 @@ body.sz-annot-off .sz-frame{display:none !important}
     el.style.left=Math.max(0, Math.min((n.x||120), maxL))+'px';
     el.style.top=(n.y||120)+'px';
   }
+  /* 画像内の穴埋め矩形を1つ描画（b={bx,by,bw,bh}＝画像に対する比率0..1／リサイズしても追従） */
+  function buildImageBlank(n,el,b){
+    var bl=document.createElement('div'); bl.className='sz-imgbl';
+    function place(){ bl.style.left=(b.bx*100)+'%'; bl.style.top=(b.by*100)+'%'; bl.style.width=(b.bw*100)+'%'; bl.style.height=(b.bh*100)+'%'; }
+    place();
+    var rz=document.createElement('div'); rz.className='sz-imgbl-rz'; rz.title='ドラッグでサイズ変更';
+    var del=document.createElement('button'); del.type='button'; del.className='sz-imgbl-del'; del.textContent='🗑'; del.title='穴埋めを削除';
+    bl.appendChild(rz); bl.appendChild(del); el.appendChild(bl);
+    del.addEventListener('click',function(e){ e.stopPropagation(); bl.remove(); n.blanks=(n.blanks||[]).filter(function(x){return x!==b;}); saveNotes(); });
+    /* 移動＋クリックでトグル：3px以内なら答え表示⇔空欄、動かしたら位置を保存 */
+    bl.addEventListener('pointerdown',function(e){
+      e.stopPropagation();
+      if(e.target===rz||e.target===del) return;
+      e.preventDefault();
+      var iw=el.offsetWidth||1, ih=el.offsetHeight||1, sx=e.clientX, sy=e.clientY, obx=b.bx, oby=b.by, moved=false;
+      function mv(ev){
+        if(!moved){ if(Math.abs(ev.clientX-sx)<3&&Math.abs(ev.clientY-sy)<3) return; moved=true; }
+        b.bx=Math.max(0,Math.min(obx+(ev.clientX-sx)/iw, 1-b.bw));
+        b.by=Math.max(0,Math.min(oby+(ev.clientY-sy)/ih, 1-b.bh)); place();
+      }
+      function up(){ document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); if(moved) saveNotes(); else bl.classList.toggle('show'); }
+      document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+    });
+    /* リサイズ（右下・比率で保存） */
+    rz.addEventListener('pointerdown',function(e){
+      e.stopPropagation(); e.preventDefault();
+      var iw=el.offsetWidth||1, ih=el.offsetHeight||1, sx=e.clientX, sy=e.clientY, obw=b.bw, obh=b.bh;
+      function mv(ev){
+        b.bw=Math.max(0.04,Math.min(obw+(ev.clientX-sx)/iw, 1-b.bx));
+        b.bh=Math.max(0.03,Math.min(obh+(ev.clientY-sy)/ih, 1-b.by)); place();
+      }
+      function up(){ document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); saveNotes(); }
+      document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
+    });
+    return bl;
+  }
   function buildImage(n){
     var el=document.createElement('div');
     el.className='sz-img'; el.dataset.nid=n.id;
@@ -3219,10 +3265,13 @@ body.sz-annot-off .sz-frame{display:none !important}
     szClampImg(n,el);
     var img=document.createElement('img'); img.src=n.src||''; img.alt='';
     var del=document.createElement('button'); del.type='button'; del.className='sz-img-del'; del.textContent='🗑'; del.title='画像を削除';
-    el.appendChild(img); el.appendChild(del);
+    var addbl=document.createElement('button'); addbl.type='button'; addbl.className='sz-img-blk'; addbl.textContent='⬜'; addbl.title='穴埋めを追加（この画像の上に空欄を置く）';
+    el.appendChild(img); el.appendChild(del); el.appendChild(addbl);
     document.body.appendChild(el); noteEls[n.id]=el;
     if(!noteShownNow(n)) el.style.display='none';
     del.addEventListener('click',function(e){ e.stopPropagation(); el.remove(); delete noteEls[n.id]; notes=notes.filter(function(x){return x.id!==n.id;}); saveNotes(); });
+    addbl.addEventListener('click',function(e){ e.stopPropagation(); if(!n.blanks) n.blanks=[]; var b={bx:0.30,by:0.42,bw:0.40,bh:0.16}; n.blanks.push(b); saveNotes(); buildImageBlank(n,el,b); });
+    if(n.blanks&&n.blanks.length) n.blanks.forEach(function(b){ buildImageBlank(n,el,b); });
     /* リサイズ：四隅すべて（縦横比維持・つかんだ角の対角を固定） */
     ['nw','ne','sw','se'].forEach(function(corner){
       var rz=document.createElement('div'); rz.className='sz-img-rz '+corner; rz.title='ドラッグでサイズ変更（縦横比維持）';
@@ -3245,7 +3294,8 @@ body.sz-annot-off .sz-frame{display:none !important}
     });
     /* 移動（枠全体ドラッグ。閾値3pxで誤クリック移動を防止） */
     el.addEventListener('pointerdown',function(e){
-      if(e.target.classList&&(e.target.classList.contains('sz-img-rz')||e.target.classList.contains('sz-img-del'))) return;
+      if(e.target.classList&&(e.target.classList.contains('sz-img-rz')||e.target.classList.contains('sz-img-del')||e.target.classList.contains('sz-img-blk'))) return;
+      if(e.target.closest&&e.target.closest('.sz-imgbl')) return;
       if(e.button!==undefined&&e.button!==0) return;
       var sx=e.clientX, sy=e.clientY, ox=parseInt(el.style.left)||0, oy=parseInt(el.style.top)||0, moved=false;
       function mv(ev){ if(!moved){ if(Math.abs(ev.clientX-sx)<3&&Math.abs(ev.clientY-sy)<3) return; moved=true; document.body.style.userSelect='none'; } ev.preventDefault(); el.style.left=Math.max(0,ox+ev.clientX-sx)+'px'; el.style.top=Math.max(0,oy+ev.clientY-sy)+'px'; }
@@ -5669,6 +5719,10 @@ body.sz-annot-off .szins-rz{display:none}
 .szins-block.szins-drop{box-shadow:0 0 0 2px #38bdf8;background:#f0f9ff !important}
 .szins-block.szins-drop:after{content:'📥 画像をドロップ';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#0ea5e9;font-weight:800;font-size:.85rem;background:rgba(240,249,255,.7);border-radius:6px;pointer-events:none}
 body.sz-annot-off .szins-add{display:none}
+/* タッチ端末（hover無し＝iPad/iPhone）：管理ボタンを常時表示（PCはホバー表示のまま）。 */
+@media (hover:none){
+  .szins-del,.szins-side,.szins-img,.szins-fold,.szins-link{opacity:.9 !important}
+}
 /* ---- 画像の穴埋め（インライン画像を相対ラッパで包み、上に空欄を重ねる／保存はinnerHTML＝リロード復元） ---- */
 .szins-pic-wrap{position:relative;display:inline-block;max-width:100%;line-height:0}
 .szins-pic-wrap img.szins-pic{margin:0 !important}
@@ -5700,6 +5754,8 @@ body.sz-annot-off .szins-imgbl{display:none !important}
 <script>
 (function(){
   if(window.__SZ_INLINE_INS__) return; window.__SZ_INLINE_INS__=1;
+  /* タップ（タッチ）とマウス両対応。ハンドラ内 preventDefault で合成 mousedown を抑止＝二重実行しない。 */
+  function onTap(el,fn){ el.addEventListener('mousedown',fn); el.addEventListener('touchstart',fn,{passive:false}); }
   /* 動的ページ用：window.__SZ_QKEY__() があれば保存キーに問題ごとの接尾辞（静的ページでは無害） */
   function insQSuffix(){try{return (typeof window.__SZ_QKEY__==='function')?('_'+window.__SZ_QKEY__()):'';}catch(e){return '';}}
   function curLS(){var _p=location.pathname;try{_p=decodeURIComponent(_p);}catch(e){}return 'szins_'+(_p.split('/').pop()||_p)+insQSuffix();}
@@ -5894,12 +5950,12 @@ body.sz-annot-off .szins-imgbl{display:none !important}
     /* 削除ボタン */
     var del=document.createElement('button');
     del.className='szins-del'; del.textContent='×'; del.title='この挿入を削除';
-    del.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();onDelete(b);});
+    onTap(del,function(e){e.preventDefault();e.stopPropagation();onDelete(b);});
     /* 横↔下 切替ボタン */
     var sideBtn=document.createElement('button');
     sideBtn.className='szins-side'; sideBtn.textContent='⬌'; sideBtn.title='横に並べる';
     function syncSideBtn(){ sideBtn.textContent=b.__side?'⬍':'⬌'; sideBtn.title=b.__side?'下にフル幅へ戻す':'宿主の横に並べる'; }
-    sideBtn.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();b.__side=!b.__side;applyLayout(b);syncSideBtn();onChange(b);});
+    onTap(sideBtn,function(e){e.preventDefault();e.stopPropagation();b.__side=!b.__side;applyLayout(b);syncSideBtn();onChange(b);});
     b.__syncSideBtn=syncSideBtn;
     /* 画像ボタン */
     var imgBtn=document.createElement('button');
@@ -5912,7 +5968,7 @@ body.sz-annot-off .szins-imgbl{display:none !important}
       if(im) addImgBlank(im); });
     b.appendChild(blkImgBtn);
     var fileIn=document.createElement('input'); fileIn.type='file'; fileIn.accept='image/*'; fileIn.style.display='none';
-    imgBtn.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();fileIn.click();});
+    onTap(imgBtn,function(e){e.preventDefault();e.stopPropagation();fileIn.click();});
     fileIn.addEventListener('change',function(){
       if(fileIn.files&&fileIn.files[0]){ed.focus();compressImg(fileIn.files[0],function(u){insertImgAtCursor(ed,u);onChange(b);});}
       fileIn.value='';
@@ -5920,7 +5976,7 @@ body.sz-annot-off .szins-imgbl{display:none !important}
     /* リンクボタン */
     var linkBtn=document.createElement('button');
     linkBtn.className='szins-link'; linkBtn.textContent='🔗'; linkBtn.title='リンクを挿入';
-    linkBtn.addEventListener('mousedown',function(e){
+    onTap(linkBtn,function(e){
       e.preventDefault();e.stopPropagation();
       var url=window.prompt('リンク先URL（コピー&ペーストしてください）','https://');
       if(!url||url==='https://')return;
@@ -6080,6 +6136,7 @@ body.sz-annot-off .szins-imgbl{display:none !important}
     /* いま DOM にあるブロックを集める */
     var present=[];
     document.querySelectorAll('.szins-block').forEach(function(b){
+      var hostEl=b.__szhost; if(!hostEl) return;
       /* 一時状態（穴埋めの答え表示中show／画像選択sel／リサイズハンドル）はcloneから除いて保存 */
       var html='';
       if(b.__ed){
@@ -6212,8 +6269,12 @@ body.sz-annot-off .szins-imgbl{display:none !important}
   /* 選択確定（マウス・キーボード）で表示。少し遅延してselectionを確定させる */
   document.addEventListener('mouseup',function(){setTimeout(showBtnAtSelection,10);});
   document.addEventListener('keyup',function(e){if(e.shiftKey||e.key==='Shift')setTimeout(showBtnAtSelection,10);});
+  /* タッチ選択（iPad/iPhone）はmouseupが不安定なので touchend と selectionchange でも判定（デバウンス）。 */
+  document.addEventListener('touchend',function(){setTimeout(showBtnAtSelection,60);});
+  var szSelT=null;
+  document.addEventListener('selectionchange',function(){clearTimeout(szSelT);szSelT=setTimeout(showBtnAtSelection,320);});
 
-  addBtn.addEventListener('mousedown',function(e){
+  onTap(addBtn,function(e){
     /* mousedownで処理：clickだと選択解除が先に走るのを防ぐ */
     e.preventDefault();
     if(!curHost) return;
