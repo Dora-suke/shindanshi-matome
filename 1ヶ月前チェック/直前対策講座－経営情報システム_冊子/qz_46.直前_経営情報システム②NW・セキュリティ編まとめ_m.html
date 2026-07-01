@@ -3768,6 +3768,11 @@ body.szp-hide #szp-pred{display:none}
 (function(){
   'use strict';
   var PAT_KEY='szGistPAT', GID_KEY='szGistID';
+  // 同期メタ情報（端末ローカル・Gistには上げない）
+  var MT_KEY='szLocalMTime', UP_KEY='szLastUpload', SEEN_KEY='szLastSeenGist',
+      VER_KEY='szBaseVersion', SIG_KEY='szCleanSig', BK_KEY='szPresyncBackup', BKT_KEY='szPresyncTime';
+  var META=[PAT_KEY,GID_KEY,MT_KEY,UP_KEY,SEEN_KEY,VER_KEY,SIG_KEY,BK_KEY,BKT_KEY];
+  function isMeta(k){return META.indexOf(k)>=0;}
   function getPAT(){return localStorage.getItem(PAT_KEY)||'';}
   function getGID(){return localStorage.getItem(GID_KEY)||'';}
 
@@ -3775,7 +3780,7 @@ body.szp-hide #szp-pred{display:none}
     var o={};
     for(var i=0;i<localStorage.length;i++){
       var k=localStorage.key(i);
-      if(k===PAT_KEY||k===GID_KEY) continue;
+      if(isMeta(k)) continue;
       o[k]=localStorage.getItem(k);
     }
     /* メモリ直読み：localStorage未書込みのデータも確実に含める */
@@ -3785,34 +3790,65 @@ body.szp-hide #szp-pred{display:none}
     return JSON.stringify(o);
   }
   function restoreLS(json){
-    var o; try{o=JSON.parse(json);}catch(e){return;}
-    // PAT/GistID以外を全削除してからGistデータで完全上書き
+    var o; try{o=JSON.parse(json);}catch(e){return false;}
+    // メタ情報以外を全削除してからGistデータで完全上書き
     var toDel=[];
-    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k!==PAT_KEY&&k!==GID_KEY)toDel.push(k);}
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!isMeta(k))toDel.push(k);}
     toDel.forEach(function(k){localStorage.removeItem(k);});
     Object.keys(o).forEach(function(k){
-      if(k===PAT_KEY||k===GID_KEY) return;
+      if(isMeta(k)) return;
       try{localStorage.setItem(k,o[k]);}catch(e){}
     });
     /* メモリ直書き：リロード前にも即表示される */
     (window.__szMemHooks||[]).forEach(function(h){
       if(h.key&&h.restore&&o[h.key]) h.restore(o[h.key]);
     });
+    return true;
   }
+  // ---- 安全策ユーティリティ ----
+  // 署名（現在の注釈状態のハッシュ）→ 前回同期時と変わっていれば「未保存あり(dirty)」
+  function sig(str){var h=5381;for(var i=0;i<str.length;i++){h=((h*33)^str.charCodeAt(i))>>>0;}return str.length+'_'+h.toString(36);}
+  function curSig(){return sig(dumpLS());}
+  // 注釈の“実データ件数”（空 {} [] null は数えない）
+  function annCount(o){var n=0;for(var k in o){if(o.hasOwnProperty(k)&&!isMeta(k)){var v=o[k];if(v&&v!=='{}'&&v!=='[]'&&v!=='null')n++;}}return n;}
+  function localCount(){try{return annCount(JSON.parse(dumpLS()));}catch(e){return 0;}}
+  // このデバイスに「まだクラウドへ保存していない変更」があるか
+  function isDirty(){
+    var base=localStorage.getItem(SIG_KEY);
+    if(base===null){ return localCount()>0; } // 未同期端末：守るべき注釈があれば dirty
+    return base!==curSig();
+  }
+  // 上書き前の1世代バックアップ（#7の“取り消し”用の保険）
+  function saveBackup(){try{localStorage.setItem(BK_KEY,dumpLS());localStorage.setItem(BKT_KEY,String(Date.now()));}catch(e){}}
+  // 同期成功後：現在状態を「クリーン」として記録
+  function markClean(remoteUpdated,remoteVersion){
+    try{
+      localStorage.setItem(SIG_KEY,curSig());
+      localStorage.setItem(MT_KEY,String(Date.now()));
+      localStorage.setItem(UP_KEY,String(Date.now()));
+      if(remoteUpdated) localStorage.setItem(SEEN_KEY,remoteUpdated);
+      if(remoteVersion) localStorage.setItem(VER_KEY,remoteVersion);
+    }catch(e){}
+  }
+  function gistVer(j){return (j&&j.history&&j.history[0]&&j.history[0].version)||'';}
   function toast(msg){
     var t=document.createElement('div');
     t.style.cssText='position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:6px 15px;border-radius:20px;font-size:.78rem;z-index:99999;pointer-events:none;';
     t.textContent=msg; document.body.appendChild(t);
     setTimeout(function(){t.remove();},2800);
   }
-  function upload(){
-    var gid=getGID();
-    return fetch(gid?'https://api.github.com/gists/'+gid:'https://api.github.com/gists',{
-      method:gid?'PATCH':'POST',
-      headers:{'Authorization':'token '+getPAT(),'Content-Type':'application/json'},
-      body:JSON.stringify({description:'shindanshi-matome notes',public:false,files:{'notes.json':{content:dumpLS()}}})
-    }).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-      .then(function(j){if(!gid)localStorage.setItem(GID_KEY,j.id);return j.id;});
+  function banner(msg,tone){
+    var old=document.getElementById('sz-sync-banner'); if(old)old.remove();
+    var bg=tone==='new'?'#059669':(tone==='warn'?'#b45309':'#475569');
+    var b=document.createElement('div'); b.id='sz-sync-banner';
+    b.style.cssText='position:fixed;top:8px;left:50%;transform:translateX(-50%);background:'+bg+';color:#fff;padding:6px 14px;border-radius:20px;font-size:.76rem;z-index:99998;box-shadow:0 3px 12px rgba(0,0,0,.25);font-family:inherit;max-width:92vw;text-align:center;';
+    b.textContent=msg; document.body.appendChild(b);
+    setTimeout(function(){b.style.transition='opacity .6s';b.style.opacity='0';setTimeout(function(){b.remove();},700);},4200);
+  }
+  function fmtTime(iso){try{var d=new Date(iso);var p=function(n){return(n<10?'0':'')+n;};return p(d.getMonth()+1)+'/'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}catch(e){return iso;}}
+  function fetchGist(gid){
+    return fetch('https://api.github.com/gists/'+gid,{headers:{'Authorization':'token '+getPAT()}})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
   }
   function findGist(){
     return fetch('https://api.github.com/gists',{headers:{'Authorization':'token '+getPAT()}})
@@ -3823,22 +3859,148 @@ body.szp-hide #szp-pred{display:none}
         return null;
       });
   }
-  function doFetch(gid){
-    return fetch('https://api.github.com/gists/'+gid,{headers:{'Authorization':'token '+getPAT()}})
-      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-      .then(function(j){
-        var c=j.files&&j.files['notes.json']&&j.files['notes.json'].content;
-        if(!c) throw new Error('notes.json が見つかりません');
-        restoreLS(c);
-      });
+  function resolveGID(){var g=getGID();if(g)return Promise.resolve(g);return findGist();}
+  // 実際にGistへ書き込む（成功後クリーン記録）
+  function rawUpload(gid){
+    return fetch(gid?'https://api.github.com/gists/'+gid:'https://api.github.com/gists',{
+      method:gid?'PATCH':'POST',
+      headers:{'Authorization':'token '+getPAT(),'Content-Type':'application/json'},
+      body:JSON.stringify({description:'shindanshi-matome notes',public:false,files:{'notes.json':{content:dumpLS()}}})
+    }).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(j){if(!gid)localStorage.setItem(GID_KEY,j.id);markClean(j.updated_at,gistVer(j));return j.id;});
+  }
+  // #1 縮小ガード ＋ #4 コンフリクト検知 を通してから上げる
+  function guardedUpload(gid){
+    return fetchGist(gid).then(function(j){
+      var remote={};try{remote=JSON.parse((j.files&&j.files['notes.json']&&j.files['notes.json'].content)||'{}');}catch(e){}
+      var rCount=annCount(remote), lCount=localCount(), rVer=gistVer(j), base=localStorage.getItem(VER_KEY);
+      // #4 別デバイスが後から更新している
+      if(base&&rVer&&base!==rVer){
+        if(!confirm('⚠️ 別のデバイスがクラウドを更新しています。\nこのまま保存すると、その変更が失われる可能性があります。\n先に「↓ クラウドから読込」で取り込むことを推奨します。\n\nこのまま上書きしますか？')) return Promise.reject(new Error('保存を中止しました'));
+      }
+      // #1 注釈が減る方向の上書き
+      if(rCount>0&&lCount<rCount){
+        if(!confirm('⚠️ 注釈の数が減ります（クラウド '+rCount+' 件 → この端末 '+lCount+' 件）。\nこの端末の内容でクラウドを上書きしますか？')) return Promise.reject(new Error('保存を中止しました'));
+      }
+      return rawUpload(gid);
+    });
+  }
+  function upload(){
+    var gid=getGID();
+    if(gid) return guardedUpload(gid);
+    return findGist().then(function(id){return id?guardedUpload(id):rawUpload('');});
+  }
+  // #3 壊れ/空データは適用しない・上書き前にバックアップ
+  function applyRemote(j,opts){
+    var c=j.files&&j.files['notes.json']&&j.files['notes.json'].content;
+    if(!c) throw new Error('notes.json が見つかりません');
+    var o; try{o=JSON.parse(c);}catch(e){throw new Error('クラウドデータが壊れています');}
+    if(opts&&opts.guardEmpty){
+      if(annCount(o)===0&&localCount()>0) throw new Error('クラウドが空のため取込を中止');
+    }
+    saveBackup();
+    restoreLS(c);
+    markClean(j.updated_at,gistVer(j));
   }
   function download(){
-    var gid=getGID();
-    if(gid) return doFetch(gid);
-    return findGist().then(function(id){
+    return resolveGID().then(function(id){
       if(!id) return Promise.reject(new Error('Gistが見つかりません。先にアップロードしてください'));
-      return doFetch(id);
+      return fetchGist(id).then(function(j){applyRemote(j,{});});
     });
+  }
+  // ↩ 直前の取込を取り消す
+  function undoBackup(){
+    var bk=localStorage.getItem(BK_KEY);
+    if(!bk){toast('取り消せる履歴がありません');return;}
+    restoreLS(bk);
+    localStorage.setItem(SIG_KEY,'undo_'+Date.now()); // 以後は自動上書き対象にしない
+    if(window.__szpSync) window.__szpSync();
+    toast('↩ 直前の状態に戻しました。再読み込みします…');
+    setTimeout(function(){location.reload(true);},1000);
+  }
+  // 💾 ファイルに書き出し（コールドバックアップ #5）
+  function exportFile(){
+    try{
+      var blob=new Blob([dumpLS()],{type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var d=new Date(),p=function(n){return(n<10?'0':'')+n;};
+      var name='notes-backup-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.json';
+      var a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();
+      setTimeout(function(){a.remove();URL.revokeObjectURL(url);},1000);
+      toast('💾 バックアップを書き出しました');
+    }catch(e){toast('❌ '+e.message);}
+  }
+  // 🕘 Gistのリビジョン履歴（#2）
+  function openHistory(){
+    var gid=getGID();
+    if(!gid){toast('まだクラウドに保存していません');return;}
+    window.open('https://gist.github.com/'+gid+'/revisions','_blank','noopener');
+  }
+  // 3択モーダル（未保存ありのとき用）
+  function choiceModal(text,choices){
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:20050;display:flex;align-items:center;justify-content:center;';
+    var box=document.createElement('div');
+    box.style.cssText='background:#fff;border-radius:12px;padding:18px 18px 14px;width:360px;max-width:92vw;box-shadow:0 8px 30px rgba(0,0,0,.3);font-size:.85rem;font-family:inherit;color:#1e293b;line-height:1.6;';
+    var h=document.createElement('div'); h.style.cssText='margin-bottom:12px;white-space:pre-wrap;'; h.textContent=text; box.appendChild(h);
+    var wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:7px;';
+    choices.forEach(function(c){
+      var b=document.createElement('button'); b.type='button'; b.textContent=c.label;
+      b.style.cssText='border:none;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.8rem;text-align:left;'+(c.style||'background:#f1f5f9;color:#334155;');
+      b.onclick=function(){ov.remove();c.fn&&c.fn();};
+      wrap.appendChild(b);
+    });
+    box.appendChild(wrap); ov.appendChild(box); document.body.appendChild(ov);
+    ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  }
+  // 表示時オートプル（base A案 ＋ #3 ＋ #6バナー ＋ dirtyガード）
+  function autoPull(){
+    if(!getPAT()) return; // 未設定端末は静かにスキップ
+    resolveGID().then(function(id){
+      if(!id) return; // クラウドにまだ何も無い
+      return fetchGist(id).then(function(j){
+        var remoteUpdated=j.updated_at, seen=localStorage.getItem(SEEN_KEY);
+        if(seen&&seen===remoteUpdated) return; // 最新＝何もしない
+        // ★初回（今回の改修を入れた直後）：既存の状態を壊さない
+        var firstRun=(localStorage.getItem(SIG_KEY)===null&&seen===null);
+        if(firstRun){
+          if(localCount()>0){
+            // 既に注釈がある端末＝この端末を尊重。プルも上書きもせず追跡だけ開始
+            markClean(remoteUpdated,gistVer(j));
+            return;
+          }
+          // 空の端末＝失うものが無いので静かに取り込む
+          try{applyRemote(j,{guardEmpty:true});}catch(e){return;}
+          if(window.__szpSync) window.__szpSync();
+          banner('☁️ クラウドの注釈を取り込みました（'+fmtTime(remoteUpdated)+' の版）','new');
+          setTimeout(function(){location.reload(true);},1100);
+          return;
+        }
+        if(!isDirty()){
+          // クリーン → 自動取込
+          try{applyRemote(j,{guardEmpty:true});}
+          catch(e){banner('⚠️ 自動同期を見送り：'+e.message,'warn');return;}
+          if(window.__szpSync) window.__szpSync();
+          banner('☁️ クラウド最新を取り込みました（'+fmtTime(remoteUpdated)+' の版）','new');
+          setTimeout(function(){location.reload(true);},1100);
+        }else{
+          // 未保存あり → 3択（自動上書きしない）
+          choiceModal('☁️ クラウドに新しい注釈があります（'+fmtTime(remoteUpdated)+' の版）。\nこの端末には、まだ保存していない書き込みがあります。\nどうしますか？',[
+            {label:'⬇ クラウドを取り込む（この端末の未保存分は消えます）',style:'background:#2563eb;color:#fff;',fn:function(){
+              try{applyRemote(j,{guardEmpty:true});}catch(e){banner('⚠️ '+e.message,'warn');return;}
+              if(window.__szpSync) window.__szpSync();
+              banner('☁️ 取り込みました（'+fmtTime(remoteUpdated)+' の版）','new');
+              setTimeout(function(){location.reload(true);},1000);
+            }},
+            {label:'⬆ この端末を優先（クラウドへ上書き保存）',style:'background:#b45309;color:#fff;',fn:function(){
+              toast('保存中…');
+              upload().then(function(){banner('☁️ この端末の内容でクラウドを更新しました','new');}).catch(function(e){toast('❌ '+e.message);});
+            }},
+            {label:'今はどちらもしない',fn:function(){banner('☁️ 未同期：クラウドに新しい版があります','warn');}}
+          ]);
+        }
+      });
+    }).catch(function(e){ if((''+e.message).indexOf('HTTP')>=0) banner('⚠️ 同期確認に失敗（'+e.message+'）','warn'); });
   }
   function showPATModal(onSave){
     var ov=document.createElement('div');
@@ -3895,7 +4057,7 @@ body.szp-hide #szp-pred{display:none}
       alert('【診断情報】\nファイル名: '+fn+'\nペンキー(PKEY): '+pkey+'\nペンデータ: '+(penRaw?'あり ('+penCount+'ストローク)':'なし')+'\n\nlocalStorage内のszキー('+szKeys.length+'件):\n'+szKeys.slice(0,10).join('\n')+(szKeys.length>10?'\n...他'+(szKeys.length-10)+'件':''));
     }));
     m.appendChild(mBtn('↓ クラウドから読込',function(){
-      if(!confirm('Gistのデータで現在のデータを上書きします。よろしいですか？')) return;
+      if(!confirm('クラウドのデータで現在のデータを上書きします。よろしいですか？\n（上書き前に自動でバックアップを取ります）')) return;
       toast('読込中…');
       download().then(function(){
         // restoredLS後のlocalStorageから再読込して即反映
@@ -3904,6 +4066,9 @@ body.szp-hide #szp-pred{display:none}
         window.addEventListener('pageshow',function(e){if(e.persisted){location.reload(true);}},{once:true});setTimeout(function(){location.reload(true);},1200);
       }).catch(function(e){toast('❌ '+e.message);});
     }));
+    m.appendChild(mBtn('↩ 直前の取込を取り消す',undoBackup));
+    m.appendChild(mBtn('💾 ファイルに書き出し',exportFile));
+    m.appendChild(mBtn('🕘 クラウドの履歴を見る',openHistory));
     m.appendChild(mBtn('🔑 トークン変更',function(){showPATModal();}));
     m.appendChild(mBtn('🔄 消去してGistから再読込',function(){
       if(!confirm('ローカルデータを全消去してGistのデータで上書きします。よろしいですか？')) return;
@@ -3953,6 +4118,8 @@ body.szp-hide #szp-pred{display:none}
       if(bar&&ht&&btn.parentNode!==bar) bar.insertBefore(btn,ht);
     }
     setTimeout(dock,250);setTimeout(dock,600);setTimeout(dock,1200);
+    // 表示時オートプル：メモリフック等が揃う頃に実行
+    setTimeout(autoPull,700);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,170);});
   else setTimeout(init,170);
