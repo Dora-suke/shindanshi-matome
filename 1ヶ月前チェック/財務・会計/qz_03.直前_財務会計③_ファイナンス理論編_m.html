@@ -4903,6 +4903,41 @@ body.szp-hide #szp-pred{display:none}
       }).catch(function(e){toast('❌ '+e.message);});
     }));
     m.appendChild(mBtn('↩ 直前の取込を取り消す',undoBackup));
+    // ===== 復旧：クラウドが壊れたときの作り直し／再接続（コンソール不要） =====
+    // ① 正常な端末で押す：この端末のデータで“新しいクラウド”を作り直す（壊れた旧gistは切り離すだけで消さない）
+    m.appendChild(mBtn('☁️ この端末のデータでクラウドを作り直す',function(){
+      if(!getPAT()){alert('先に「🔑 接続キー（トークン）」の設定が必要です');return;}
+      if(!confirm('この端末のデータで新しいクラウドを作り直します。\n壊れた古いクラウドは切り離します（削除はしません）。\nよろしいですか？')) return;
+      toast('作り直し中…');
+      var oldId=getGID();
+      var step = oldId
+        ? fetch('https://api.github.com/gists/'+oldId,{method:'PATCH',headers:{'Authorization':'token '+getPAT(),'Content-Type':'application/json'},body:JSON.stringify({description:'shindanshi-matome notes (OLD-broken)'})}).then(function(){}).catch(function(){})
+        : Promise.resolve();
+      step.then(function(){
+        [GID_KEY,VER_KEY,SIG_KEY,SEEN_KEY].forEach(function(k){localStorage.removeItem(k);});
+        return rawUpload(''); // 新規POST→GIDを新しく設定・markClean
+      }).then(function(newId){
+        // 自動検証：作った新クラウドをそのまま読み直してparseできるか（大きすぎて壊れないか）
+        return fetchGist(newId).then(function(j){
+          var c=j.files&&j.files['notes.json']&&j.files['notes.json'].content, ok=false;
+          try{JSON.parse(c);ok=true;}catch(e){}
+          if(ok){ alert('✅ 新しいクラウドを作成し、読み直し検証もOKでした（'+((c.length/1024/1024).toFixed(2))+'MB）。\n\n他の端末（PC等）では「🔗 クラウドを再接続して取り込む」を押してください。'); }
+          else { alert('⚠️ 新クラウドは作成できましたが、読み直すとデータが大きすぎて壊れます（画像が多い可能性）。\n画像を減らすか、分割保存への改修が必要です。'); }
+        });
+      }).catch(function(e){ toast('❌ '+e.message); });
+    }));
+    // ② PC/壊れている端末で押す：旧IDを忘れて“新しいクラウド”を探し直して取り込む
+    m.appendChild(mBtn('🔗 クラウドを再接続して取り込む',function(){
+      if(!confirm('古いクラウドの紐付けを解除し、新しいクラウドを探して取り込みます。\nこの端末の未保存の書き込みは上書きされます。よろしいですか？')) return;
+      [GID_KEY,VER_KEY,SIG_KEY,SEEN_KEY].forEach(function(k){localStorage.removeItem(k);});
+      toast('新しいクラウドを探しています…');
+      download().then(function(warn){
+        if(window.__szpSync) window.__szpSync();
+        if(warn){ alert(warn); }
+        toast('✅ 取り込み完了。再読み込みします…');
+        window.addEventListener('pageshow',function(e){if(e.persisted){location.reload(true);}},{once:true});setTimeout(function(){location.reload(true);},1200);
+      }).catch(function(e){toast('❌ '+e.message);});
+    }));
     // ▾ 詳細（初期は折りたたみ）
     var adv=document.createElement('div'); adv.style.cssText='display:none;flex-direction:column;gap:3px;';
     var tog=document.createElement('button'); tog.type='button'; tog.textContent='▾ その他の操作';
