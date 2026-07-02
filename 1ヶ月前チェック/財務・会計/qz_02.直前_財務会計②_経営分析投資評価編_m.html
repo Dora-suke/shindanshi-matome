@@ -3613,6 +3613,27 @@ body.sz-annot-off .sz-frame{display:none !important}
 (function(){
   'use strict';
   function szHashStr(s){var h=5381;for(var i=0;i<s.length;i++){h=((h*33)^s.charCodeAt(i))>>>0;}return h.toString(36);}
+  /* ===== 画像本体の保存先を IndexedDB へ（iPad の localStorage 約5MB制限対策） =====
+     メタデータ(位置・サイズ等)は従来どおり localStorage。画像dataURLだけ IndexedDB＋メモリキャッシュに置き、
+     localStorage には 'idb:<id>' の参照だけ残す。クラウド同期は __szMemHooks(szNIdb) 経由で画像も含める。 */
+  if(!window.__szIdb){
+    window.__szIdbCache={};                       /* id → dataURL（同期処理から同期的に読むためのキャッシュ） */
+    window.__szIdbLoaded=false;
+    window.__szIdbResolvers=[];                   /* キャッシュ充填後に画像を貼り直す関数群 */
+    window.__szIdb=new Promise(function(res){ try{ var rq=indexedDB.open('szImgDB',1); rq.onupgradeneeded=function(){ try{rq.result.createObjectStore('imgs');}catch(e){} }; rq.onsuccess=function(){res(rq.result);}; rq.onerror=function(){res(null);}; }catch(e){res(null);} });
+    window.__szIdbPut=function(id,val){ window.__szIdbCache[id]=val; window.__szIdb.then(function(db){ if(!db)return; try{ db.transaction('imgs','readwrite').objectStore('imgs').put(val,id); }catch(e){} }); };
+    window.__szIdbLoadAll=function(cb){ window.__szIdb.then(function(db){ if(!db){cb();return;} try{ var rq=db.transaction('imgs').objectStore('imgs').openCursor(); rq.onsuccess=function(e){ var c=e.target.result; if(c){ if(window.__szIdbCache[c.key]==null) window.__szIdbCache[c.key]=c.value; c.continue(); } else cb(); }; rq.onerror=function(){cb();}; }catch(e){cb();} }); };
+    /* 長大dataURL用の高速ハッシュ（97文字おきサンプリング＋長さ） */
+    window.__szHash=function(s){var h=5381;for(var i=0;i<s.length;i+=97){h=((h*33)^s.charCodeAt(i))>>>0;}return h.toString(36)+'_'+s.length;};
+    /* HTML文字列中の <img src="data:..."> を IndexedDB 参照(data-szidb)に置換（行間ブロックの保存用） */
+    window.__szSlimHTML=function(html){ return String(html).replace(/<img\b[^>]*>/g, function(tag){ var mm=tag.match(/src="(data:image\/[^"]*)"/); if(!mm) return tag; var id='h_'+window.__szHash(mm[1]); window.__szIdbPut(id,mm[1]); return tag.replace(/\sdata-szidb="[^"]*"/g,'').replace(/src="data:image\/[^"]*"/,'src="" data-szidb="'+id+'"'); }); };
+    /* szins_（行間ブロック）のJSON値を痩せさせる（クラウド取込時にも使用） */
+    window.__szSlimInsJSON=function(json){ try{ var arr=JSON.parse(json); if(!Array.isArray(arr)) return json; arr.forEach(function(rec){ if(rec&&typeof rec.html==='string'&&rec.html.indexOf('data:image/')>=0) rec.html=window.__szSlimHTML(rec.html); }); return JSON.stringify(arr); }catch(e){ return json; } };
+    /* szN_（フロート画像・付箋）のJSON値を痩せさせる（クラウド取込時にも使用）。
+       付箋に貼った画像は n.text のHTML内に入るので、そちらも __szSlimHTML で参照化する */
+    window.__szSlimNoteJSON=function(json){ try{ var arr=JSON.parse(json); if(!Array.isArray(arr)) return json; arr.forEach(function(n){ if(!n) return; if(n.img&&typeof n.src==='string'&&n.src.indexOf('data:')===0){ var id='n_'+(n.id||window.__szHash(n.src)); window.__szIdbPut(id,n.src); n.src='idb:'+id; } if(typeof n.text==='string'&&n.text.indexOf('data:image/')>=0) n.text=window.__szSlimHTML(n.text); }); return JSON.stringify(arr); }catch(e){ return json; } };
+    window.__szIdbLoadAll(function(){ window.__szIdbLoaded=true; window.__szIdbResolvers.forEach(function(f){ try{f();}catch(e){} }); });
+  }
   /* 保存キーは「ファイル名だけ」から生成 → フォルダ経由やパス表記の違いで保存先がズレない */
   var fileKey=(function(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}return szHashStr((p.split('/').pop()||p));})();
   var fileKeyOld=(function(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}return szHashStr(p);})(); /* 旧：フルパスハッシュ（自動移行用） */
@@ -3780,10 +3801,41 @@ body.sz-annot-off .sz-frame{display:none !important}
   /* ============ ④ 付箋メモ ============ */
   var NKEY='szN_'+fileKey;
   try{ if(!localStorage.getItem(NKEY)){ var _oldN=localStorage.getItem('szN_'+fileKeyOld); if(_oldN) localStorage.setItem(NKEY,_oldN); } }catch(e){} /* 旧キー（フルパス）からの自動移行 */
+  /* 既存データの一括移行：全ファイル分の szN_（フロート画像）／szins_（行間ブロック画像）の
+     dataURL を IndexedDB へ退避して localStorage を痩せさせる（一度移行すれば以後は参照のみ） */
+  (function(){ var ks=[]; for(var i=0;i<localStorage.length;i++) ks.push(localStorage.key(i));
+    ks.forEach(function(k){ if(!k) return; try{
+      var v=localStorage.getItem(k)||''; if(v.indexOf('data:image/')<0) return;
+      if(k.indexOf('szN_')===0) localStorage.setItem(k,window.__szSlimNoteJSON(v));
+      else if(k.indexOf('szins_')===0) localStorage.setItem(k,window.__szSlimInsJSON(v));
+    }catch(e){} });
+  })();
   var notes=[]; try{notes=JSON.parse(localStorage.getItem(NKEY)||'[]');}catch(e){}
   var noteEls={};
   var NOTE_COLORS=['#fef9c3','#fecdd3','#bfdbfe','#bbf7d0','#e9d5ff','#fed7aa'];
-  function saveNotes(){try{localStorage.setItem(NKEY,JSON.stringify(notes));}catch(e){}}
+  /* 保存前に画像dataURLを IndexedDB へ退避し、localStorage には参照だけ入れる（iPad容量対策）。
+     付箋(n.text)内に貼られた画像も参照化する */
+  function szExtractImgs(){ notes.forEach(function(n){ if(!n) return; if(n.img&&typeof n.src==='string'&&n.src.indexOf('data:')===0){ var id='n_'+n.id; window.__szIdbPut(id,n.src); n.src='idb:'+id; } if(typeof n.text==='string'&&n.text.indexOf('data:image/')>=0) n.text=window.__szSlimHTML(n.text); }); }
+  function szImgSrcOf(n){ var s=(n&&n.src)||''; if(s.indexOf('idb:')===0) return window.__szIdbCache[s.slice(4)]||''; return s; }
+  var szImgPending=[];  /* IndexedDB 読込前に組み立てた画像＝キャッシュ充填後に貼る */
+  window.__szIdbResolvers.push(function(){ szImgPending.forEach(function(p){ try{ var s=szImgSrcOf(p.n); if(s) p.img.src=s; }catch(e){} }); szImgPending=[];
+    /* 付箋などHTML内の参照画像(data-szidb)も文書全体で解決する */
+    document.querySelectorAll('img[data-szidb]').forEach(function(im){ if(im.getAttribute('src')) return; var v=window.__szIdbCache[im.getAttribute('data-szidb')]; if(v) im.src=v; });
+  });
+  function saveNotes(){ szExtractImgs(); try{localStorage.setItem(NKEY,JSON.stringify(notes));}catch(e){}}
+  /* クラウド同期に IndexedDB 内の画像を含める（noLS=localStorage には書かない。取込時は restore が IDB へ書く）。
+     dump は「現在参照されている画像」だけ集める＝削除済み画像はクラウドに残らない。 */
+  (window.__szMemHooks=window.__szMemHooks||[]).push({key:'szNIdb', noLS:true,
+    dump:function(){ var o={};
+      for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(!k) continue;
+        try{
+          if(k.indexOf('szN_')===0){ JSON.parse(localStorage.getItem(k)||'[]').forEach(function(n){ if(!n) return; if(typeof n.src==='string'&&n.src.indexOf('idb:')===0){ var id=n.src.slice(4); if(window.__szIdbCache[id]!=null) o[id]=window.__szIdbCache[id]; } String(n.text||'').replace(/data-szidb="([^"]+)"/g,function(m,id2){ if(window.__szIdbCache[id2]!=null) o[id2]=window.__szIdbCache[id2]; return m; }); }); }
+          else if(k.indexOf('szins_')===0){ JSON.parse(localStorage.getItem(k)||'[]').forEach(function(rec){ String((rec&&rec.html)||'').replace(/data-szidb="([^"]+)"/g,function(m,id){ if(window.__szIdbCache[id]!=null) o[id]=window.__szIdbCache[id]; return m; }); }); }
+        }catch(e){}
+      }
+      return JSON.stringify(o); },
+    restore:function(v){ var o={}; try{o=JSON.parse(v||'{}');}catch(e){} Object.keys(o).forEach(function(id){ window.__szIdbPut(id,o[id]); }); }
+  });
   /* 既存メモ（pk無し）を、作成時の数値 tab から安定キー pk へ一度だけバックフィル。
      並べ替え前の今の順序＝作成時の順序なので、通常はそのまま正しい panel id に対応する。 */
   (function(){var ch=false;notes.forEach(function(n){ if(n.pk==null&&typeof n.tab==='number'){ n.pk=tabKeyOf(n.tab); ch=true; } }); if(ch) saveNotes();})();
@@ -4065,19 +4117,21 @@ body.sz-annot-off .sz-frame{display:none !important}
     var n={id:uid(),tab:currentTab(),pk:curKey(),x:Math.max(0,Math.round(px)),y:Math.max(0,Math.round(py)),w:Math.max(16,Math.round(w||120)),h:Math.max(12,Math.round(h||24)),masked:false,frame:true};
     notes.push(n); saveNotes(); buildFrame(n);
   };
-  /* ============ 🖼 画像（フローティング：D&D／ファイル選択／ペースト・自動縮小1000px・JPEG0.7） ============ */
+  /* ============ 🖼 画像（フローティング：D&D／ファイル選択／ペースト・自動縮小700px・JPEG0.5＝iPad容量対策） ============ */
+  /* iPad(1サイト約5MB)でも収まりやすいよう圧縮を強化。数値は共有設定で一括変更可 */
+  var SZ_IMG_MAXW=(window.__SZ_IMG_MAXW||700), SZ_IMG_Q=(window.__SZ_IMG_Q||0.5);
   function szCompressImage(blob, cb){
     try{
       var url=URL.createObjectURL(blob);
       var im=new Image();
       im.onload=function(){
-        var MAXW=1000, w=im.naturalWidth||1, h=im.naturalHeight||1, nw=im.naturalWidth||1, nh=im.naturalHeight||1;
+        var MAXW=SZ_IMG_MAXW, w=im.naturalWidth||1, h=im.naturalHeight||1, nw=im.naturalWidth||1, nh=im.naturalHeight||1;
         if(w>MAXW){ h=Math.round(h*MAXW/w); w=MAXW; }
         var cv=document.createElement('canvas'); cv.width=w; cv.height=h;
         var ctx=cv.getContext('2d');
         ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
         ctx.drawImage(im,0,0,w,h);
-        var out=null; try{ out=cv.toDataURL('image/jpeg',0.7); }catch(e){ out=null; }
+        var out=null; try{ out=cv.toDataURL('image/jpeg',SZ_IMG_Q); }catch(e){ out=null; }
         URL.revokeObjectURL(url);
         if(out) cb(out, nw, nh); else shToast('⚠ 画像を変換できませんでした');
       };
@@ -4155,7 +4209,8 @@ body.sz-annot-off .sz-frame{display:none !important}
     el.className='sz-img'; el.dataset.nid=n.id;
     el.style.width=(n.w||240)+'px'; el.style.height=(n.h||160)+'px';
     szClampImg(n,el);
-    var img=document.createElement('img'); img.src=n.src||''; img.alt='';
+    var img=document.createElement('img'); img.src=szImgSrcOf(n)||''; img.alt='';
+    if(!img.getAttribute('src')&&n.src&&n.src.indexOf('idb:')===0&&!window.__szIdbLoaded) szImgPending.push({n:n,img:img}); /* IDB読込後に貼る */
     var del=document.createElement('button'); del.type='button'; del.className='sz-img-del'; del.textContent='🗑'; del.title='画像を削除';
     var addbl=document.createElement('button'); addbl.type='button'; addbl.className='sz-img-blk'; addbl.textContent='⬜'; addbl.title='穴埋めを追加（この画像の上に空欄を置く）';
     el.appendChild(img); el.appendChild(del); el.appendChild(addbl);
@@ -4969,9 +5024,24 @@ body.szp-hide #szp-pred{display:none}
     var toDel=[];
     for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!isMeta(k))toDel.push(k);}
     toDel.forEach(function(k){localStorage.removeItem(k);});
-    Object.keys(o).forEach(function(k){
-      if(isMeta(k)) return;
-      try{localStorage.setItem(k,o[k]);}catch(e){}
+    // 大きいデータ（画像szN_ 等）から先に書いて、容量が厳しい端末でも重要データを優先確保する
+    var keys=Object.keys(o).filter(function(k){return !isMeta(k);});
+    keys.sort(function(a,b){return (o[b]?o[b].length:0)-(o[a]?o[a].length:0);});
+    // noLS フック（画像=IndexedDB行き）のキーは localStorage に書かない（下の hook restore が IDB へ書く）
+    var noLS={}; (window.__szMemHooks||[]).forEach(function(h){ if(h&&h.noLS&&h.key) noLS[h.key]=1; });
+    var fail=[]; window.__szRestoreFail=fail;
+    keys.forEach(function(k){
+      if(noLS[k]) return;
+      var v=o[k];
+      try{
+        // 旧形式（画像dataURL入り）の値は IndexedDB へ振り分けて痩せさせてから書く（iPad容量対策）
+        if(typeof v==='string'&&v.indexOf('data:image/')>=0){
+          if(k.indexOf('szN_')===0&&window.__szSlimNoteJSON) v=window.__szSlimNoteJSON(v);
+          else if(k.indexOf('szins_')===0&&window.__szSlimInsJSON) v=window.__szSlimInsJSON(v);
+        }
+        localStorage.setItem(k,v);
+      }
+      catch(e){ fail.push({k:k,bytes:(v?v.length:0)}); } // クォータ超過など：黙って捨てずに記録
     });
     /* メモリ直書き：リロード前にも即表示される */
     (window.__szMemHooks||[]).forEach(function(h){
@@ -4993,7 +5063,8 @@ body.szp-hide #szp-pred{display:none}
     return base!==curSig();
   }
   // 上書き前の1世代バックアップ（#7の“取り消し”用の保険）
-  function saveBackup(){try{localStorage.setItem(BK_KEY,dumpLS());localStorage.setItem(BKT_KEY,String(Date.now()));}catch(e){}}
+  /* バックアップには画像ペイロード(szNIdb)を含めない＝クォータ回避。画像はIndexedDBに残っているのでundoでも表示できる */
+  function saveBackup(){try{var o=JSON.parse(dumpLS());delete o.szNIdb;localStorage.setItem(BK_KEY,JSON.stringify(o));localStorage.setItem(BKT_KEY,String(Date.now()));}catch(e){}}
   // 同期成功後：現在状態を「クリーン」として記録
   function markClean(remoteUpdated,remoteVersion){
     try{
@@ -5022,7 +5093,24 @@ body.szp-hide #szp-pred{display:none}
   function fmtTime(iso){try{var d=new Date(iso);var p=function(n){return(n<10?'0':'')+n;};return p(d.getMonth()+1)+'/'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}catch(e){return iso;}}
   function fetchGist(gid){
     return fetch('https://api.github.com/gists/'+gid,{headers:{'Authorization':'token '+getPAT()}})
-      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      // 1MB超のAPIのcontentは途中で切れる(truncated)ので raw_url から全文取得して差し替える。
+      // truncatedフラグが無くても、contentがJSONとして壊れていれば同様に raw を取りにいく。
+      .then(function(j){
+        var f=j.files&&j.files['notes.json'];
+        if(!f) return j;
+        var needRaw=f.truncated;
+        if(!needRaw&&typeof f.content==='string'){
+          try{JSON.parse(f.content);}catch(e){needRaw=true;} // APIのcontentが壊れている→rawで取り直す
+        }
+        if(needRaw&&f.raw_url){
+          // raw(gist.githubusercontent.com)はハッシュURLで認証不要。Authヘッダを付けるとCORSプリフライトで弾かれるため付けない
+          return fetch(f.raw_url)
+            .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status+' (raw)');return r.text();})
+            .then(function(txt){f.content=txt;f.truncated=false;return j;});
+        }
+        return j;
+      });
   }
   function findGist(){
     return fetch('https://api.github.com/gists',{headers:{'Authorization':'token '+getPAT()}})
@@ -5068,18 +5156,29 @@ body.szp-hide #szp-pred{display:none}
   function applyRemote(j,opts){
     var c=j.files&&j.files['notes.json']&&j.files['notes.json'].content;
     if(!c) throw new Error('notes.json が見つかりません');
-    var o; try{o=JSON.parse(c);}catch(e){throw new Error('クラウドデータが壊れています');}
+    var o; try{o=JSON.parse(c);}catch(e){
+      var tail=(typeof c==='string')?(' [len='+c.length+' 末尾:'+JSON.stringify(c.slice(-40))+']'):'';
+      throw new Error('クラウドデータが壊れています'+tail);
+    }
     if(opts&&opts.guardEmpty){
       if(annCount(o)===0&&localCount()>0) throw new Error('クラウドが空のため取込を中止');
     }
     saveBackup();
     restoreLS(c);
     markClean(j.updated_at,gistVer(j));
+    // 容量オーバーで取り込めなかったキー（画像など）があれば警告文を返す（データ自体は復元済みなので throw せず継続）。
+    // 黙って画像が消える事故を防ぐ。呼び出し側でこの戻り値を表示する。
+    var fail=window.__szRestoreFail||[];
+    if(fail.length){
+      var mb=Math.round(fail.reduce(function(s,x){return s+x.bytes;},0)/1024/1024*10)/10;
+      return '⚠️ 取込は完了しましたが '+fail.length+' 件（約'+mb+'MB・画像など）がこの端末の保存容量上限を超え取り込めませんでした。PCなど容量に余裕のある端末で開くか、元の端末で画像を減らしてください。';
+    }
+    return '';
   }
   function download(){
     return resolveGID().then(function(id){
       if(!id) return Promise.reject(new Error('Gistが見つかりません。先にアップロードしてください'));
-      return fetchGist(id).then(function(j){applyRemote(j,{});});
+      return fetchGist(id).then(function(j){return applyRemote(j,{});});
     });
   }
   // ↩ 直前の取込を取り消す
@@ -5144,26 +5243,27 @@ body.szp-hide #szp-pred{display:none}
             return;
           }
           // 空の端末＝失うものが無いので静かに取り込む
-          try{applyRemote(j,{guardEmpty:true});}catch(e){return;}
+          var w1;try{w1=applyRemote(j,{guardEmpty:true});}catch(e){return;}
           if(window.__szpSync) window.__szpSync();
-          banner('☁️ クラウドの注釈を取り込みました（'+fmtTime(remoteUpdated)+' の版）','new');
+          if(w1){ banner(w1,'warn'); } else { banner('☁️ クラウドの注釈を取り込みました（'+fmtTime(remoteUpdated)+' の版）','new'); }
           setTimeout(function(){location.reload(true);},1100);
           return;
         }
         if(!isDirty()){
           // クリーン → 自動取込
-          try{applyRemote(j,{guardEmpty:true});}
+          var w2;
+          try{w2=applyRemote(j,{guardEmpty:true});}
           catch(e){banner('⚠️ 自動同期を見送り：'+e.message,'warn');return;}
           if(window.__szpSync) window.__szpSync();
-          banner('☁️ クラウド最新を取り込みました（'+fmtTime(remoteUpdated)+' の版）','new');
+          if(w2){ banner(w2,'warn'); } else { banner('☁️ クラウド最新を取り込みました（'+fmtTime(remoteUpdated)+' の版）','new'); }
           setTimeout(function(){location.reload(true);},1100);
         }else{
           // 未保存あり → 3択（自動上書きしない）
           choiceModal('☁️ クラウドに新しい注釈があります（'+fmtTime(remoteUpdated)+' の版）。\nこの端末には、まだ保存していない書き込みがあります。\nどうしますか？',[
             {label:'⬇ クラウドを取り込む（この端末の未保存分は消えます）',style:'background:#2563eb;color:#fff;',fn:function(){
-              try{applyRemote(j,{guardEmpty:true});}catch(e){banner('⚠️ '+e.message,'warn');return;}
+              var w3;try{w3=applyRemote(j,{guardEmpty:true});}catch(e){banner('⚠️ '+e.message,'warn');return;}
               if(window.__szpSync) window.__szpSync();
-              banner('☁️ 取り込みました（'+fmtTime(remoteUpdated)+' の版）','new');
+              if(w3){ banner(w3,'warn'); } else { banner('☁️ 取り込みました（'+fmtTime(remoteUpdated)+' の版）','new'); }
               setTimeout(function(){location.reload(true);},1000);
             }},
             {label:'⬆ この端末を優先（クラウドへ上書き保存）',style:'background:#b45309;color:#fff;',fn:function(){
@@ -5221,13 +5321,90 @@ body.szp-hide #szp-pred{display:none}
     m.appendChild(mBtn('↓ クラウドから読込',function(){
       if(!confirm('クラウドのデータで現在のデータを上書きします。よろしいですか？\n（上書き前に自動でバックアップを取ります）')) return;
       toast('読込中…');
-      download().then(function(){
+      download().then(function(warn){
         if(window.__szpSync) window.__szpSync();
+        if(warn){ alert(warn); } // 容量超過で画像等が入らなかった場合はモーダルで確実に知らせてからリロード
         toast('✅ 読込完了。再読み込みします…');
         window.addEventListener('pageshow',function(e){if(e.persisted){location.reload(true);}},{once:true});setTimeout(function(){location.reload(true);},1200);
       }).catch(function(e){toast('❌ '+e.message);});
     }));
     m.appendChild(mBtn('↩ 直前の取込を取り消す',undoBackup));
+    // ===== 復旧：クラウドが壊れたときの作り直し／再接続（コンソール不要） =====
+    // ① 正常な端末で押す：この端末のデータで“新しいクラウド”を作り直す（壊れた旧gistは切り離すだけで消さない）
+    m.appendChild(mBtn('☁️ この端末のデータでクラウドを作り直す',function(){
+      if(!getPAT()){alert('先に「🔑 接続キー（トークン）」の設定が必要です');return;}
+      if(!confirm('この端末のデータで新しいクラウドを作り直します。\n壊れた古いクラウドは切り離します（削除はしません）。\nよろしいですか？')) return;
+      toast('作り直し中…');
+      var oldId=getGID();
+      var step = oldId
+        ? fetch('https://api.github.com/gists/'+oldId,{method:'PATCH',headers:{'Authorization':'token '+getPAT(),'Content-Type':'application/json'},body:JSON.stringify({description:'shindanshi-matome notes (OLD-broken)'})}).then(function(){}).catch(function(){})
+        : Promise.resolve();
+      step.then(function(){
+        [GID_KEY,VER_KEY,SIG_KEY,SEEN_KEY].forEach(function(k){localStorage.removeItem(k);});
+        return rawUpload(''); // 新規POST→GIDを新しく設定・markClean
+      }).then(function(newId){
+        // 自動検証：作った新クラウドをそのまま読み直してparseできるか（大きすぎて壊れないか）
+        return fetchGist(newId).then(function(j){
+          var c=j.files&&j.files['notes.json']&&j.files['notes.json'].content, ok=false;
+          try{JSON.parse(c);ok=true;}catch(e){}
+          if(ok){ alert('✅ 新しいクラウドを作成し、読み直し検証もOKでした（'+((c.length/1024/1024).toFixed(2))+'MB）。\n\n他の端末（PC等）では「🔗 クラウドを再接続して取り込む」を押してください。'); }
+          else { alert('⚠️ 新クラウドは作成できましたが、読み直すとデータが大きすぎて壊れます（画像が多い可能性）。\n画像を減らすか、分割保存への改修が必要です。'); }
+        });
+      }).catch(function(e){ toast('❌ '+e.message); });
+    }));
+    // ② PC/壊れている端末で押す：旧IDを忘れて“新しいクラウド”を探し直して取り込む
+    m.appendChild(mBtn('🔗 クラウドを再接続して取り込む',function(){
+      if(!confirm('古いクラウドの紐付けを解除し、新しいクラウドを探して取り込みます。\nこの端末の未保存の書き込みは上書きされます。よろしいですか？')) return;
+      [GID_KEY,VER_KEY,SIG_KEY,SEEN_KEY].forEach(function(k){localStorage.removeItem(k);});
+      toast('新しいクラウドを探しています…');
+      download().then(function(warn){
+        if(window.__szpSync) window.__szpSync();
+        if(warn){ alert(warn); }
+        toast('✅ 取り込み完了。再読み込みします…');
+        window.addEventListener('pageshow',function(e){if(e.persisted){location.reload(true);}},{once:true});setTimeout(function(){location.reload(true);},1200);
+      }).catch(function(e){toast('❌ '+e.message);});
+    }));
+    // ③ 既存の画像を再圧縮して容量を下げる（iPadで取り込めない対策）。正常端末で押す→作り直しで軽い状態を同期
+    m.appendChild(mBtn('🗜 既存の画像を軽くする（iPad対応）',function(){
+      if(!confirm('保存済みのすべての画像を再圧縮して容量を下げます。\n解像度は下がりますが表示はできます（文字は影響なし）。\nよろしいですか？')) return;
+      var MAXW=(window.__SZ_IMG_MAXW||700), Q=(window.__SZ_IMG_Q||0.5);
+      // 対象：全ファイル分の szN_*（フロート画像）を横断
+      var keys=[]; for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i); if(k&&k.indexOf('szN_')===0) keys.push(k);}
+      var totalBefore=0,totalAfter=0,imgCount=0,ki=0;
+      function recomp(dataUrl,done){
+        var im=new Image();
+        im.onload=function(){ var w=im.naturalWidth||1,h=im.naturalHeight||1; if(w>MAXW){h=Math.round(h*MAXW/w);w=MAXW;} var cv=document.createElement('canvas');cv.width=w;cv.height=h; var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(im,0,0,w,h); var out=null;try{out=cv.toDataURL('image/jpeg',Q);}catch(e){out=null;} done(out); };
+        im.onerror=function(){ done(null); };
+        im.src=dataUrl;
+      }
+      function nextKey(){
+        if(ki>=keys.length){ finish(); return; }
+        var k=keys[ki++], arr;
+        try{arr=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){ nextKey(); return; }
+        if(!Array.isArray(arr)){ nextKey(); return; }
+        var imgs=arr.filter(function(n){return n&&n.img&&typeof n.src==='string'&&/^data:image\//.test(n.src);});
+        var ii=0;
+        function nextImg(){
+          if(ii>=imgs.length){ try{localStorage.setItem(k,JSON.stringify(arr));}catch(e){} nextKey(); return; }
+          var n=imgs[ii++], before=n.src.length; totalBefore+=before;
+          recomp(n.src,function(out){
+            if(out&&out.length<n.src.length){ n.src=out; }
+            totalAfter+=n.src.length; imgCount++;
+            toast('画像を軽量化中… '+imgCount);
+            nextImg();
+          });
+        }
+        nextImg();
+      }
+      function finish(){
+        var mb=function(b){return (b/1024/1024).toFixed(2);};
+        if(!imgCount){ toast('再圧縮できる画像がありませんでした'); return; }
+        alert('✅ '+imgCount+'枚を軽量化しました。\n画像データ量：約'+mb(totalBefore)+'MB → 約'+mb(totalAfter)+'MB\n\n次に「☁️ この端末のデータでクラウドを作り直す」を押すと、この軽い状態でクラウドへ保存されます。\n画面を再読み込みします…');
+        setTimeout(function(){location.reload();},500);
+      }
+      toast('画像を軽量化中…');
+      nextKey();
+    }));
     // ▾ 詳細（初期は折りたたみ）
     var adv=document.createElement('div'); adv.style.cssText='display:none;flex-direction:column;gap:3px;';
     var tog=document.createElement('button'); tog.type='button'; tog.textContent='▾ その他の操作';
@@ -5258,8 +5435,9 @@ body.szp-hide #szp-pred{display:none}
       toDel.forEach(function(k){localStorage.removeItem(k);});
       if(window.__szpClearPen) window.__szpClearPen();
       toast('Gistを検索中…');
-      download().then(function(){
+      download().then(function(warn){
         if(window.__szpSync) window.__szpSync();
+        if(warn){ alert(warn); } // 容量超過で画像等が入らなかった場合はモーダルで確実に知らせてからリロード
         toast('✅ 読込完了。再読み込みします…');
         window.addEventListener('pageshow',function(e){if(e.persisted){location.reload(true);}},{once:true});setTimeout(function(){location.reload(true);},1200);
       }).catch(function(e){toast('❌ '+e.message);});
@@ -6081,18 +6259,18 @@ body.sz-annot-off .szins-imgbl{display:none !important}
   function load(){try{return JSON.parse(localStorage.getItem(curLS()))||[];}catch(e){return[];}}
   function save(arr){try{localStorage.setItem(curLS(),JSON.stringify(arr));}catch(e){}}
 
-  /* 画像を縮小・再圧縮してdataURLに（qz-memo踏襲：最大幅1000px・JPEG0.7） */
+  /* 画像を縮小・再圧縮してdataURLに（qz-memo踏襲：最大幅700px・JPEG0.5＝iPad容量対策） */
   function compressImg(file, cb){
     var fr=new FileReader();
     fr.onload=function(){
       var img=new Image();
       img.onload=function(){
-        var mw=1000, w=img.width, h=img.height;
+        var mw=(window.__SZ_IMG_MAXW||700), w=img.width, h=img.height;
         if(w>mw){h=Math.round(h*mw/w);w=mw;}
         var cv=document.createElement('canvas');cv.width=w;cv.height=h;
         var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
         ctx.drawImage(img,0,0,w,h);
-        try{cb(cv.toDataURL('image/jpeg',0.7));}catch(e){cb(fr.result);}
+        try{cb(cv.toDataURL('image/jpeg',(window.__SZ_IMG_Q||0.5)));}catch(e){cb(fr.result);}
       };
       img.onerror=function(){cb(fr.result);};
       img.src=fr.result;
@@ -6543,6 +6721,8 @@ body.sz-annot-off .szins-imgbl{display:none !important}
         [].forEach.call(cl.querySelectorAll('.szins-pic-rz'),function(x){x.remove();});
         /* 穴埋め／消去の「答え表示中(show)」は一時状態なので保存しない（既定は隠した状態で復元） */
         [].forEach.call(cl.querySelectorAll('mark.sz-blank.show,mark.sz-erase.show'),function(x){x.classList.remove('show');});
+        /* 画像dataURLは IndexedDB へ退避して参照(data-szidb)だけ保存（iPad容量対策。表示中のDOMは触らない） */
+        [].forEach.call(cl.querySelectorAll('img'),function(im){ var s=im.getAttribute('src')||''; if(s.indexOf('data:image/')===0&&window.__szIdbPut&&window.__szHash){ var id='h_'+window.__szHash(s); window.__szIdbPut(id,s); im.setAttribute('data-szidb',id); im.setAttribute('src',''); } });
         html=cl.innerHTML;
       }
       present.push({host:b.__hostSig||sig(hostEl), html:html, bg:b.style.background||'', w:b.style.width||'', h:b.style.height||'', ml:b.style.marginLeft||'', mt:b.style.marginTop||'', hostW:hostEl.style.width||'', hostML:hostEl.style.marginLeft||'', side:!!b.__side});
@@ -6614,8 +6794,19 @@ body.sz-annot-off .szins-imgbl{display:none !important}
         }
       }
     });
+    szInsResolveImgs();  /* IndexedDB 参照(data-szidb)の画像を貼る（キャッシュ未充填分は充填後に再解決） */
     setTimeout(function(){ szInsRestoring=false; },0);  /* 復元由来のMutationが流れ切ってから解除 */
   }
+  /* data-szidb 参照の <img> に IndexedDB キャッシュから dataURL を貼る */
+  function szInsResolveImgs(){
+    document.querySelectorAll('.szins-block img[data-szidb]').forEach(function(im){
+      if(im.getAttribute('src')) return;
+      var v=window.__szIdbCache&&window.__szIdbCache[im.getAttribute('data-szidb')];
+      if(v) im.src=v;
+    });
+  }
+  if(window.__szIdbResolvers) window.__szIdbResolvers.push(szInsResolveImgs);
+  if(window.__szIdbLoaded) szInsResolveImgs();
 
   /* ＋ボタン（テキスト選択時に選択箇所の右下へ表示） */
   var addBtn=document.createElement('button');
