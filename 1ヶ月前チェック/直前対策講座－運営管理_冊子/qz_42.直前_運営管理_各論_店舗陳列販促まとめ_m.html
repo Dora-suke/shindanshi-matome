@@ -3211,7 +3211,11 @@ body.sz-annot-off .sz-frame{display:none !important}
     } else if(k==='v'){
       if(!shClipGet()) return;
       var ae2=document.activeElement;
-      if(ae2&&ae2.closest&&ae2.closest('.sz-sh-body,.sz-n-body,input,textarea')) return; // 編集中は通常の貼り付け
+      /* 編集中（コメント枠/付箋/行間挿入ブロック/その他contenteditable/入力欄）は
+         コメント枠の貼り付けを発火させず、通常のテキスト貼り付けを通す。
+         ※ .szins-ed を除外しないと、枠コピー後に行間ブロックへ Ctrl+V したとき
+           preventDefault でテキスト貼り付けが潰れる不具合になる。 */
+      if(ae2&&ae2.closest&&ae2.closest('.sz-sh-body,.sz-n-body,.szins-ed,[contenteditable="true"],[contenteditable=""],input,textarea')) return;
       shPasteAt(shLastMouse.x,shLastMouse.y); e.preventDefault();
     }
   },true);
@@ -3418,6 +3422,9 @@ body.sz-annot-off .sz-frame{display:none !important}
   /* ③ ペースト（コピーした画像） */
   document.addEventListener('paste',function(e){
     var cd=e.clipboardData; if(!cd) return;
+    /* 行間挿入ブロック内での貼り付けは、ブロック自身の paste ハンドラに任せる
+       （画像はインライン挿入・テキストはネイティブ貼り付け）。ここでフロート画像化しない。 */
+    var _ae=document.activeElement; if(_ae&&_ae.closest&&_ae.closest('.szins-ed')) return;
     var blobs=[];
     (cd.items?[].slice.call(cd.items):[]).forEach(function(it){ if(it.kind==='file'&&it.type&&it.type.indexOf('image/')===0){ var b=it.getAsFile(); if(b) blobs.push(b); } });
     if(!blobs.length) return;

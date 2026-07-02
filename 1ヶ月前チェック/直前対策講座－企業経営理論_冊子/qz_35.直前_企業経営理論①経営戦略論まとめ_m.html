@@ -3844,10 +3844,13 @@ body.sz-annot-off .sz-frame{display:none !important}
     if(!aid) return;
     var marks=Array.prototype.slice.call(document.querySelectorAll('mark.sz-size[data-aid="'+aid+'"]'));
     marks.forEach(function(m){ m.dataset.lv=level; });
-    var inNote=false;
+    var inNote=false,inIns=false;
     db.forEach(function(a){ if(a.uid===aid&&a.type==='size') a.level=level; });
     marks.forEach(function(m){ if(m.closest&&m.closest('.sz-note,.sz-shape')){inNote=true;if(window.szSaveNoteOf)window.szSaveNoteOf(m);} });
-    if(!inNote) save();
+    /* 行間挿入ブロック内のサイズはブロックHTMLとして保存（レベル変更もリロードで復元される） */
+    marks.forEach(function(m){ if(m.closest&&m.closest('.szins-ed')){inIns=true;} });
+    if(inIns&&window.szInsPersist) window.szInsPersist();
+    if(!inNote&&!inIns) save();
     Array.prototype.forEach.call(delPop.querySelectorAll('.sz-d-size button'),function(b){ b.classList.toggle('on',b.dataset.lv===level); });
   };
 
@@ -4509,7 +4512,11 @@ body.sz-annot-off .sz-frame{display:none !important}
     } else if(k==='v'){
       if(!shClipGet()) return;
       var ae2=document.activeElement;
-      if(ae2&&ae2.closest&&ae2.closest('.sz-sh-body,.sz-n-body,input,textarea')) return; // 編集中は通常の貼り付け
+      /* 編集中（コメント枠/付箋/行間挿入ブロック/その他contenteditable/入力欄）は
+         コメント枠の貼り付けを発火させず、通常のテキスト貼り付けを通す。
+         ※ .szins-ed を除外しないと、枠コピー後に行間ブロックへ Ctrl+V したとき
+           preventDefault でテキスト貼り付けが潰れる不具合になる。 */
+      if(ae2&&ae2.closest&&ae2.closest('.sz-sh-body,.sz-n-body,.szins-ed,[contenteditable="true"],[contenteditable=""],input,textarea')) return;
       shPasteAt(shLastMouse.x,shLastMouse.y); e.preventDefault();
     }
   },true);
@@ -4720,6 +4727,9 @@ body.sz-annot-off .sz-frame{display:none !important}
   /* ③ ペースト（コピーした画像） */
   document.addEventListener('paste',function(e){
     var cd=e.clipboardData; if(!cd) return;
+    /* 行間挿入ブロック内での貼り付けは、ブロック自身の paste ハンドラに任せる
+       （画像はインライン挿入・テキストはネイティブ貼り付け）。ここでフロート画像化しない。 */
+    var _ae=document.activeElement; if(_ae&&_ae.closest&&_ae.closest('.szins-ed')) return;
     var blobs=[];
     (cd.items?[].slice.call(cd.items):[]).forEach(function(it){ if(it.kind==='file'&&it.type&&it.type.indexOf('image/')===0){ var b=it.getAsFile(); if(b) blobs.push(b); } });
     if(!blobs.length) return;
@@ -7184,6 +7194,8 @@ body.sz-annot-off .szins-imgbl{display:none !important}
 <script>
 (function(){
   if(window.__SZ_INLINE_INS__) return; window.__SZ_INLINE_INS__=1;
+  /* 復元中フラグ：MutationObserver がブロック再構築中のDOM変化で persist を走らせないためのガード */
+  var szInsRestoring=false;
   /* タップ（タッチ）とマウス両対応。ハンドラ内 preventDefault で合成 mousedown を抑止＝二重実行しない。 */
   function onTap(el,fn){ el.addEventListener('mousedown',fn); el.addEventListener('touchstart',fn,{passive:false}); }
   /* 動的ページ用：window.__SZ_QKEY__() があれば保存キーに問題ごとの接尾辞（静的ページでは無害） */
@@ -7472,6 +7484,18 @@ body.sz-annot-off .szins-imgbl{display:none !important}
     ed.className='szins-ed'; ed.setAttribute('contenteditable','true');
     ed.innerHTML=html||'';
     b.__ed=ed;
+    /* ★恒久対策：エディタ内のあらゆるDOM変化（注釈mark追加/削除・穴埋め・サイズのdata-lv変更・
+       コメント/色のdata属性・style）を MutationObserver で捕捉し、自動でHTMLを保存する。
+       inject 側が個別に szInsPersist を呼び忘れても（例: szSetSize のレベル変更）確実に永続化される。
+       class は穴埋めの表示/非表示トグル(.show)で頻発するため除外し、書き込み churn を避ける。 */
+    var moT=null;
+    var mo=new MutationObserver(function(){
+      if(szInsRestoring) return;
+      clearTimeout(moT);
+      moT=setTimeout(function(){ if(!szInsRestoring) onChange(b); },250);
+    });
+    mo.observe(ed,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['data-lv','data-comment','data-hlc','data-aid','style']});
+    b.__mo=mo;
     /* 削除ボタン */
     var del=document.createElement('button');
     del.className='szins-del'; del.textContent='×'; del.title='この挿入を削除';
@@ -7676,6 +7700,8 @@ body.sz-annot-off .szins-imgbl{display:none !important}
         [].forEach.call(cl.querySelectorAll('.szins-imgbl.show'),function(x){x.classList.remove('show');});
         [].forEach.call(cl.querySelectorAll('.szins-pic-wrap.sel'),function(x){x.classList.remove('sel');});
         [].forEach.call(cl.querySelectorAll('.szins-pic-rz'),function(x){x.remove();});
+        /* 穴埋め／消去の「答え表示中(show)」は一時状態なので保存しない（既定は隠した状態で復元） */
+        [].forEach.call(cl.querySelectorAll('mark.sz-blank.show,mark.sz-erase.show'),function(x){x.classList.remove('show');});
         html=cl.innerHTML;
       }
       present.push({host:b.__hostSig||sig(hostEl), html:html, bg:b.style.background||'', w:b.style.width||'', h:b.style.height||'', ml:b.style.marginLeft||'', mt:b.style.marginTop||'', hostW:hostEl.style.width||'', hostML:hostEl.style.marginLeft||'', side:!!b.__side});
@@ -7718,6 +7744,7 @@ body.sz-annot-off .szins-imgbl{display:none !important}
   }
 
   function restore(){
+    szInsRestoring=true;  /* 再構築中のMutationは persist させない（clobber防止） */
     /* べき等＝既存ブロックを一旦すべて外してから現在キーの保存分を貼り直す。
        問題切替（szInsRestore 再呼び出し）でも重複せず、表示中の host を持つレコードだけ復活する。
        host が現在 DOM に無いレコードは貼られないが localStorage には残る（temp で消えない）。 */
@@ -7746,6 +7773,7 @@ body.sz-annot-off .szins-imgbl{display:none !important}
         }
       }
     });
+    setTimeout(function(){ szInsRestoring=false; },0);  /* 復元由来のMutationが流れ切ってから解除 */
   }
 
   /* ＋ボタン（テキスト選択時に選択箇所の右下へ表示） */
