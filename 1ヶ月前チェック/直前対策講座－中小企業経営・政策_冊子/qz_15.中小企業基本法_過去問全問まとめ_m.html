@@ -30,7 +30,7 @@ body{font-family:"Hiragino Kaku Gothic ProN","Meiryo","Noto Sans JP",sans-serif;
 .tab-content.active{display:block}
 .intro-box{background:var(--accent-light);border:1px solid #ddd6fe;border-radius:14px;padding:16px 18px;margin-bottom:18px}
 .intro-box h3{color:#7c3aed;font-size:1.02rem;margin-bottom:8px}
-.def-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.88rem;background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.def-table{width:100%;table-layout:fixed;border-collapse:collapse;margin:10px 0;font-size:.88rem;background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm);word-break:break-word}
 .def-table th{background:#7c3aed;color:#fff;padding:8px 6px;text-align:center}
 .def-table td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
 .def-table tr:nth-child(even){background:#faf7ff}
@@ -79,8 +79,8 @@ body{font-family:"Hiragino Kaku Gothic ProN","Meiryo","Noto Sans JP",sans-serif;
 <body>
 
 <div class="page-header">
-  <h1>中小企業基本法まとめ｜過去問全問(H19〜R07)</h1>
-  <div class="subtitle">中小企業経営・中小企業政策｜定義・理念系 全20問(37設問)</div>
+  <h1>中小企業基本法まとめ</h1>
+  <div class="subtitle">過去問全問 H19〜R07／定義・理念系 全20問37設問</div>
   <div class="header-badges"><span>中小企業者の範囲</span><span>小規模企業者の範囲</span><span>基本理念</span><span>飲食店＝小売業</span></div>
 </div>
 
@@ -1066,14 +1066,17 @@ function jumpToCard(cid){
 function reorderCards(){
   ['t1','t2'].forEach(function(tabId){
     var tab=document.getElementById(tabId);
-    var intro=tab.querySelector('.intro-box');
-    var cards=Array.prototype.slice.call(tab.querySelectorAll('.card'));
     var r=ls('recheck_v1');
-    var flagged=cards.filter(function(c){return r[c.id];});
-    var rest=cards.filter(function(c){return !r[c.id];});
-    var ordered=flagged.concat(rest);
-    ordered.forEach(function(c){tab.appendChild(c);});
-    if(intro) tab.insertBefore(intro, tab.firstChild);
+    /* qz-hide がカードを .sec-hide-wrap 等で包む場合があるため、tab直下の「単位（ラッパー）」ごと動かす。
+       カード本体だけを移動すると空のラッパーが取り残されて巨大な余白ができる不具合を防ぐ。 */
+    function unitOf(el){ var u=el; while(u && u.parentElement && u.parentElement!==tab){ u=u.parentElement; } return (u&&u.parentElement===tab)?u:el; }
+    var introEl=tab.querySelector('.intro-box');
+    var introUnit=introEl?unitOf(introEl):null;
+    var cards=Array.prototype.slice.call(tab.querySelectorAll('.card'));
+    var flagged=[],rest=[];
+    cards.forEach(function(c){ var u=unitOf(c); (r[c.id]?flagged:rest).push(u); });
+    flagged.concat(rest).forEach(function(u){ if(u) tab.appendChild(u); });
+    if(introUnit) tab.insertBefore(introUnit, tab.firstChild);
   });
 }
 function updateProgress(){
@@ -5885,6 +5888,30 @@ body.sz-annot-off .szins-imgbl{display:none !important}
 })();
 </script>
 <!-- ===== /qz-memo 行間挿入 ===== -->
+
+<!-- ===== qz_15 表示調整（ヘッダー折返し・移動ハンドル抑止・横スクロール防止） ===== -->
+<style>
+/* 暗記ページなのでカード並べ替えの▲⠿▼移動ハンドルは出さない（多数のcardで縦列になり不自然） */
+.fzm-ctrl{display:none !important}
+/* 右外に隠れる注釈検索パネル(#sz-search)は固定配置で横スクロールを生むため、閉じ時は非表示に */
+#sz-search:not(.on){display:none !important}
+/* 横スクロール（ヘッダーが端に寄る原因）を抑止 */
+html,body{overflow-x:hidden}
+/* 長いタイトル・サブタイトルはビュー幅で折り返す（右で見切れない） */
+.page-header{padding-left:14px;padding-right:14px}
+.page-header h1{font-size:clamp(1.05rem,4.6vw,1.5rem);line-height:1.32;word-break:break-word;overflow-wrap:anywhere}
+.page-header .subtitle{font-size:.82rem;word-break:break-word;overflow-wrap:anywhere}
+.header-badges{flex-wrap:wrap;gap:6px}
+.header-badges span{font-size:.78rem;padding:4px 11px}
+/* 4列の定義表・判定表はスマホでビュー幅に必ず収める */
+.def-table,.judge-table{table-layout:fixed;width:100%;word-break:break-word}
+@media (max-width:430px){
+  .page-header .subtitle{font-size:.74rem}
+  .def-table{font-size:.74rem}
+  .def-table th,.def-table td{padding:6px 3px}
+  .tab-content{padding-left:10px;padding-right:10px}
+}
+</style>
 
 </body>
 </html>
