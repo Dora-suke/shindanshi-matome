@@ -3706,19 +3706,21 @@ body.sz-annot-off .sz-frame{display:none !important}
     var n={id:uid(),tab:currentTab(),pk:curKey(),x:Math.max(0,Math.round(px)),y:Math.max(0,Math.round(py)),w:Math.max(16,Math.round(w||120)),h:Math.max(12,Math.round(h||24)),masked:false,frame:true};
     notes.push(n); saveNotes(); buildFrame(n);
   };
-  /* ============ 🖼 画像（フローティング：D&D／ファイル選択／ペースト・自動縮小1000px・JPEG0.7） ============ */
+  /* ============ 🖼 画像（フローティング：D&D／ファイル選択／ペースト・自動縮小700px・JPEG0.5＝iPad容量対策） ============ */
+  /* iPad(1サイト約5MB)でも収まりやすいよう圧縮を強化。数値は共有設定で一括変更可 */
+  var SZ_IMG_MAXW=(window.__SZ_IMG_MAXW||700), SZ_IMG_Q=(window.__SZ_IMG_Q||0.5);
   function szCompressImage(blob, cb){
     try{
       var url=URL.createObjectURL(blob);
       var im=new Image();
       im.onload=function(){
-        var MAXW=1000, w=im.naturalWidth||1, h=im.naturalHeight||1, nw=im.naturalWidth||1, nh=im.naturalHeight||1;
+        var MAXW=SZ_IMG_MAXW, w=im.naturalWidth||1, h=im.naturalHeight||1, nw=im.naturalWidth||1, nh=im.naturalHeight||1;
         if(w>MAXW){ h=Math.round(h*MAXW/w); w=MAXW; }
         var cv=document.createElement('canvas'); cv.width=w; cv.height=h;
         var ctx=cv.getContext('2d');
         ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
         ctx.drawImage(im,0,0,w,h);
-        var out=null; try{ out=cv.toDataURL('image/jpeg',0.7); }catch(e){ out=null; }
+        var out=null; try{ out=cv.toDataURL('image/jpeg',SZ_IMG_Q); }catch(e){ out=null; }
         URL.revokeObjectURL(url);
         if(out) cb(out, nw, nh); else shToast('⚠ 画像を変換できませんでした');
       };
@@ -4938,6 +4940,47 @@ body.szp-hide #szp-pred{display:none}
         window.addEventListener('pageshow',function(e){if(e.persisted){location.reload(true);}},{once:true});setTimeout(function(){location.reload(true);},1200);
       }).catch(function(e){toast('❌ '+e.message);});
     }));
+    // ③ 既存の画像を再圧縮して容量を下げる（iPadで取り込めない対策）。正常端末で押す→作り直しで軽い状態を同期
+    m.appendChild(mBtn('🗜 既存の画像を軽くする（iPad対応）',function(){
+      if(!confirm('保存済みのすべての画像を再圧縮して容量を下げます。\n解像度は下がりますが表示はできます（文字は影響なし）。\nよろしいですか？')) return;
+      var MAXW=(window.__SZ_IMG_MAXW||700), Q=(window.__SZ_IMG_Q||0.5);
+      // 対象：全ファイル分の szN_*（フロート画像）を横断
+      var keys=[]; for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i); if(k&&k.indexOf('szN_')===0) keys.push(k);}
+      var totalBefore=0,totalAfter=0,imgCount=0,ki=0;
+      function recomp(dataUrl,done){
+        var im=new Image();
+        im.onload=function(){ var w=im.naturalWidth||1,h=im.naturalHeight||1; if(w>MAXW){h=Math.round(h*MAXW/w);w=MAXW;} var cv=document.createElement('canvas');cv.width=w;cv.height=h; var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(im,0,0,w,h); var out=null;try{out=cv.toDataURL('image/jpeg',Q);}catch(e){out=null;} done(out); };
+        im.onerror=function(){ done(null); };
+        im.src=dataUrl;
+      }
+      function nextKey(){
+        if(ki>=keys.length){ finish(); return; }
+        var k=keys[ki++], arr;
+        try{arr=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){ nextKey(); return; }
+        if(!Array.isArray(arr)){ nextKey(); return; }
+        var imgs=arr.filter(function(n){return n&&n.img&&typeof n.src==='string'&&/^data:image\//.test(n.src);});
+        var ii=0;
+        function nextImg(){
+          if(ii>=imgs.length){ try{localStorage.setItem(k,JSON.stringify(arr));}catch(e){} nextKey(); return; }
+          var n=imgs[ii++], before=n.src.length; totalBefore+=before;
+          recomp(n.src,function(out){
+            if(out&&out.length<n.src.length){ n.src=out; }
+            totalAfter+=n.src.length; imgCount++;
+            toast('画像を軽量化中… '+imgCount);
+            nextImg();
+          });
+        }
+        nextImg();
+      }
+      function finish(){
+        var mb=function(b){return (b/1024/1024).toFixed(2);};
+        if(!imgCount){ toast('再圧縮できる画像がありませんでした'); return; }
+        alert('✅ '+imgCount+'枚を軽量化しました。\n画像データ量：約'+mb(totalBefore)+'MB → 約'+mb(totalAfter)+'MB\n\n次に「☁️ この端末のデータでクラウドを作り直す」を押すと、この軽い状態でクラウドへ保存されます。\n画面を再読み込みします…');
+        setTimeout(function(){location.reload();},500);
+      }
+      toast('画像を軽量化中…');
+      nextKey();
+    }));
     // ▾ 詳細（初期は折りたたみ）
     var adv=document.createElement('div'); adv.style.cssText='display:none;flex-direction:column;gap:3px;';
     var tog=document.createElement('button'); tog.type='button'; tog.textContent='▾ その他の操作';
@@ -5792,18 +5835,18 @@ body.sz-annot-off .szins-imgbl{display:none !important}
   function load(){try{return JSON.parse(localStorage.getItem(curLS()))||[];}catch(e){return[];}}
   function save(arr){try{localStorage.setItem(curLS(),JSON.stringify(arr));}catch(e){}}
 
-  /* 画像を縮小・再圧縮してdataURLに（qz-memo踏襲：最大幅1000px・JPEG0.7） */
+  /* 画像を縮小・再圧縮してdataURLに（qz-memo踏襲：最大幅700px・JPEG0.5＝iPad容量対策） */
   function compressImg(file, cb){
     var fr=new FileReader();
     fr.onload=function(){
       var img=new Image();
       img.onload=function(){
-        var mw=1000, w=img.width, h=img.height;
+        var mw=(window.__SZ_IMG_MAXW||700), w=img.width, h=img.height;
         if(w>mw){h=Math.round(h*mw/w);w=mw;}
         var cv=document.createElement('canvas');cv.width=w;cv.height=h;
         var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
         ctx.drawImage(img,0,0,w,h);
-        try{cb(cv.toDataURL('image/jpeg',0.7));}catch(e){cb(fr.result);}
+        try{cb(cv.toDataURL('image/jpeg',(window.__SZ_IMG_Q||0.5)));}catch(e){cb(fr.result);}
       };
       img.onerror=function(){cb(fr.result);};
       img.src=fr.result;
