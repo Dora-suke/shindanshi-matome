@@ -3270,8 +3270,9 @@ body.sz-annot-off .sz-frame{display:none !important}
     window.__szSlimHTML=function(html){ return String(html).replace(/<img\b[^>]*>/g, function(tag){ var mm=tag.match(/src="(data:image\/[^"]*)"/); if(!mm) return tag; var id='h_'+window.__szHash(mm[1]); window.__szIdbPut(id,mm[1]); return tag.replace(/\sdata-szidb="[^"]*"/g,'').replace(/src="data:image\/[^"]*"/,'src="" data-szidb="'+id+'"'); }); };
     /* szins_（行間ブロック）のJSON値を痩せさせる（クラウド取込時にも使用） */
     window.__szSlimInsJSON=function(json){ try{ var arr=JSON.parse(json); if(!Array.isArray(arr)) return json; arr.forEach(function(rec){ if(rec&&typeof rec.html==='string'&&rec.html.indexOf('data:image/')>=0) rec.html=window.__szSlimHTML(rec.html); }); return JSON.stringify(arr); }catch(e){ return json; } };
-    /* szN_（フロート画像）のJSON値を痩せさせる（クラウド取込時にも使用） */
-    window.__szSlimNoteJSON=function(json){ try{ var arr=JSON.parse(json); if(!Array.isArray(arr)) return json; arr.forEach(function(n){ if(n&&n.img&&typeof n.src==='string'&&n.src.indexOf('data:')===0){ var id='n_'+(n.id||window.__szHash(n.src)); window.__szIdbPut(id,n.src); n.src='idb:'+id; } }); return JSON.stringify(arr); }catch(e){ return json; } };
+    /* szN_（フロート画像・付箋）のJSON値を痩せさせる（クラウド取込時にも使用）。
+       付箋に貼った画像は n.text のHTML内に入るので、そちらも __szSlimHTML で参照化する */
+    window.__szSlimNoteJSON=function(json){ try{ var arr=JSON.parse(json); if(!Array.isArray(arr)) return json; arr.forEach(function(n){ if(!n) return; if(n.img&&typeof n.src==='string'&&n.src.indexOf('data:')===0){ var id='n_'+(n.id||window.__szHash(n.src)); window.__szIdbPut(id,n.src); n.src='idb:'+id; } if(typeof n.text==='string'&&n.text.indexOf('data:image/')>=0) n.text=window.__szSlimHTML(n.text); }); return JSON.stringify(arr); }catch(e){ return json; } };
     window.__szIdbLoadAll(function(){ window.__szIdbLoaded=true; window.__szIdbResolvers.forEach(function(f){ try{f();}catch(e){} }); });
   }
   /* 保存キーは「ファイル名だけ」から生成 → フォルダ経由やパス表記の違いで保存先がズレない */
@@ -3453,11 +3454,15 @@ body.sz-annot-off .sz-frame{display:none !important}
   var notes=[]; try{notes=JSON.parse(localStorage.getItem(NKEY)||'[]');}catch(e){}
   var noteEls={};
   var NOTE_COLORS=['#fef9c3','#fecdd3','#bfdbfe','#bbf7d0','#e9d5ff','#fed7aa'];
-  /* 保存前に画像dataURLを IndexedDB へ退避し、localStorage には参照だけ入れる（iPad容量対策） */
-  function szExtractImgs(){ notes.forEach(function(n){ if(n&&n.img&&typeof n.src==='string'&&n.src.indexOf('data:')===0){ var id='n_'+n.id; window.__szIdbPut(id,n.src); n.src='idb:'+id; } }); }
+  /* 保存前に画像dataURLを IndexedDB へ退避し、localStorage には参照だけ入れる（iPad容量対策）。
+     付箋(n.text)内に貼られた画像も参照化する */
+  function szExtractImgs(){ notes.forEach(function(n){ if(!n) return; if(n.img&&typeof n.src==='string'&&n.src.indexOf('data:')===0){ var id='n_'+n.id; window.__szIdbPut(id,n.src); n.src='idb:'+id; } if(typeof n.text==='string'&&n.text.indexOf('data:image/')>=0) n.text=window.__szSlimHTML(n.text); }); }
   function szImgSrcOf(n){ var s=(n&&n.src)||''; if(s.indexOf('idb:')===0) return window.__szIdbCache[s.slice(4)]||''; return s; }
   var szImgPending=[];  /* IndexedDB 読込前に組み立てた画像＝キャッシュ充填後に貼る */
-  window.__szIdbResolvers.push(function(){ szImgPending.forEach(function(p){ try{ var s=szImgSrcOf(p.n); if(s) p.img.src=s; }catch(e){} }); szImgPending=[]; });
+  window.__szIdbResolvers.push(function(){ szImgPending.forEach(function(p){ try{ var s=szImgSrcOf(p.n); if(s) p.img.src=s; }catch(e){} }); szImgPending=[];
+    /* 付箋などHTML内の参照画像(data-szidb)も文書全体で解決する */
+    document.querySelectorAll('img[data-szidb]').forEach(function(im){ if(im.getAttribute('src')) return; var v=window.__szIdbCache[im.getAttribute('data-szidb')]; if(v) im.src=v; });
+  });
   function saveNotes(){ szExtractImgs(); try{localStorage.setItem(NKEY,JSON.stringify(notes));}catch(e){}}
   /* クラウド同期に IndexedDB 内の画像を含める（noLS=localStorage には書かない。取込時は restore が IDB へ書く）。
      dump は「現在参照されている画像」だけ集める＝削除済み画像はクラウドに残らない。 */
@@ -3465,7 +3470,7 @@ body.sz-annot-off .sz-frame{display:none !important}
     dump:function(){ var o={};
       for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(!k) continue;
         try{
-          if(k.indexOf('szN_')===0){ JSON.parse(localStorage.getItem(k)||'[]').forEach(function(n){ if(n&&typeof n.src==='string'&&n.src.indexOf('idb:')===0){ var id=n.src.slice(4); if(window.__szIdbCache[id]!=null) o[id]=window.__szIdbCache[id]; } }); }
+          if(k.indexOf('szN_')===0){ JSON.parse(localStorage.getItem(k)||'[]').forEach(function(n){ if(!n) return; if(typeof n.src==='string'&&n.src.indexOf('idb:')===0){ var id=n.src.slice(4); if(window.__szIdbCache[id]!=null) o[id]=window.__szIdbCache[id]; } String(n.text||'').replace(/data-szidb="([^"]+)"/g,function(m,id2){ if(window.__szIdbCache[id2]!=null) o[id2]=window.__szIdbCache[id2]; return m; }); }); }
           else if(k.indexOf('szins_')===0){ JSON.parse(localStorage.getItem(k)||'[]').forEach(function(rec){ String((rec&&rec.html)||'').replace(/data-szidb="([^"]+)"/g,function(m,id){ if(window.__szIdbCache[id]!=null) o[id]=window.__szIdbCache[id]; return m; }); }); }
         }catch(e){}
       }
@@ -4699,7 +4704,8 @@ body.szp-hide #szp-pred{display:none}
     return base!==curSig();
   }
   // 上書き前の1世代バックアップ（#7の“取り消し”用の保険）
-  function saveBackup(){try{localStorage.setItem(BK_KEY,dumpLS());localStorage.setItem(BKT_KEY,String(Date.now()));}catch(e){}}
+  /* バックアップには画像ペイロード(szNIdb)を含めない＝クォータ回避。画像はIndexedDBに残っているのでundoでも表示できる */
+  function saveBackup(){try{var o=JSON.parse(dumpLS());delete o.szNIdb;localStorage.setItem(BK_KEY,JSON.stringify(o));localStorage.setItem(BKT_KEY,String(Date.now()));}catch(e){}}
   // 同期成功後：現在状態を「クリーン」として記録
   function markClean(remoteUpdated,remoteVersion){
     try{
