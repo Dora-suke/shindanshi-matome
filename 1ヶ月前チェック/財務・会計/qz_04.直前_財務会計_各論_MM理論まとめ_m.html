@@ -3078,7 +3078,37 @@ body.sz-annot-off .sz-frame{display:none !important}
     /* szN_（フロート画像・付箋）のJSON値を痩せさせる（クラウド取込時にも使用）。
        付箋に貼った画像は n.text のHTML内に入るので、そちらも __szSlimHTML で参照化する */
     window.__szSlimNoteJSON=function(json){ try{ var arr=JSON.parse(json); if(!Array.isArray(arr)) return json; arr.forEach(function(n){ if(!n) return; if(n.img&&typeof n.src==='string'&&n.src.indexOf('data:')===0){ var id='n_'+(n.id||window.__szHash(n.src)); window.__szIdbPut(id,n.src); n.src='idb:'+id; } if(typeof n.text==='string'&&n.text.indexOf('data:image/')>=0) n.text=window.__szSlimHTML(n.text); }); return JSON.stringify(arr); }catch(e){ return json; } };
-    window.__szIdbLoadAll(function(){ window.__szIdbLoaded=true; window.__szIdbResolvers.forEach(function(f){ try{f();}catch(e){} }); });
+    /* IndexedDB内の画像で「幅が上限超のものだけ」再圧縮して容量を下げる共通関数。
+       挿入・取込・既存すべての画像がIDBに集約されているので、ここを1回通せば全部軽くなる。 */
+    window.__szShrinkIdb=function(opts,done){
+      opts=opts||{}; var MAXW=(window.__SZ_IMG_MAXW||700), Q=(window.__SZ_IMG_Q||0.5);
+      var ids=Object.keys(window.__szIdbCache||{}); var before=0, after=0, changed=0, i=0;
+      function next(){
+        if(i>=ids.length){ if(done) done(changed,before,after); return; }
+        var id=ids[i++], data=window.__szIdbCache[id];
+        if(typeof data!=='string'||data.indexOf('data:image/')!==0){ next(); return; }
+        var im=new Image();
+        im.onload=function(){
+          before+=data.length;
+          if((im.naturalWidth||0)<=MAXW){ after+=data.length; next(); return; } /* 既に十分小さい→触らない＝冪等 */
+          var w=im.naturalWidth,h=im.naturalHeight; h=Math.round(h*MAXW/w); w=MAXW;
+          var cv=document.createElement('canvas');cv.width=w;cv.height=h;var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(im,0,0,w,h);
+          var out=null; try{out=cv.toDataURL('image/jpeg',Q);}catch(e){out=null;}
+          if(out&&out.length<data.length){ window.__szIdbPut(id,out); after+=out.length; changed++;
+            try{ document.querySelectorAll('img[data-szidb="'+id+'"]').forEach(function(g){g.src=out;}); }catch(e){}
+          } else { after+=data.length; }
+          next();
+        };
+        im.onerror=function(){ after+=data.length; next(); };
+        im.src=data;
+      }
+      next();
+    };
+    window.__szIdbLoadAll(function(){ window.__szIdbLoaded=true; window.__szIdbResolvers.forEach(function(f){ try{f();}catch(e){} });
+      /* ページを開いた時に一度だけ、既存の大きい画像を自動で軽量化（背景・無音・冪等）。
+         新規挿入は既に700px圧縮済みなので、この自動実行は主に旧データを縮める。 */
+      setTimeout(function(){ try{ if(!localStorage.getItem('szImgShrunk_v1')){ window.__szShrinkIdb({silent:true},function(ch){ try{localStorage.setItem('szImgShrunk_v1','1');}catch(e){} }); } }catch(e){} }, 1500);
+    });
   }
   /* 保存キーは「ファイル名だけ」から生成 → フォルダ経由やパス表記の違いで保存先がズレない */
   var fileKey=(function(){var p=location.pathname;try{p=decodeURIComponent(p);}catch(e){}return szHashStr((p.split('/').pop()||p));})();
@@ -4769,9 +4799,30 @@ body.szp-hide #szp-pred{display:none}
       }).catch(function(e){toast('❌ '+e.message);});
     }));
     m.appendChild(mBtn('↩ 直前の取込を取り消す',undoBackup));
-    // ===== 復旧：クラウドが壊れたときの作り直し／再接続（コンソール不要） =====
-    // ① 正常な端末で押す：この端末のデータで“新しいクラウド”を作り直す（壊れた旧gistは切り離すだけで消さない）
-    m.appendChild(mBtn('☁️ この端末のデータでクラウドを作り直す',function(){
+    // ▾ 詳細（初期は折りたたみ）
+    var adv=document.createElement('div'); adv.style.cssText='display:none;flex-direction:column;gap:3px;';
+    var tog=document.createElement('button'); tog.type='button'; tog.textContent='▾ その他の操作';
+    tog.style.cssText='background:none;border:none;color:#94a3b8;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:.78rem;font-family:inherit;text-align:left;white-space:nowrap;';
+    tog.onmouseenter=function(){tog.style.background='rgba(255,255,255,.10)';};
+    tog.onmouseleave=function(){tog.style.background='none';};
+    tog.onclick=function(e){e.stopPropagation();var willOpen=(adv.style.display==='none');adv.style.display=willOpen?'flex':'none';tog.textContent=(willOpen?'▴':'▾')+' その他の操作';};
+    m.appendChild(tog); m.appendChild(adv);
+    // ===== 復旧・メンテ系（その他の操作へ集約） =====
+    // 画像を今すぐ軽くする（通常はページを開いた時に自動実行。手動再実行用）
+    adv.appendChild(mBtn('🗜 画像を今すぐ軽くする',function(){
+      if(!window.__szShrinkIdb){ toast('画像システム未初期化'); return; }
+      if(!confirm('保存済みの大きい画像を再圧縮して容量を下げます。\n解像度は下がりますが表示はできます（文字は影響なし）。\nよろしいですか？')) return;
+      toast('画像を軽量化中…');
+      window.__szShrinkIdb({silent:false},function(changed,before,after){
+        var mb=function(b){return (b/1024/1024).toFixed(2);};
+        try{localStorage.setItem('szImgShrunk_v1','1');}catch(e){}
+        if(!changed){ toast('すでに軽量化済みでした（対象なし）'); return; }
+        alert('✅ '+changed+'枚を軽量化しました。\n画像データ量：約'+mb(before)+'MB → 約'+mb(after)+'MB\n画面を再読み込みします…');
+        setTimeout(function(){location.reload();},600);
+      });
+    }));
+    // クラウドが壊れたとき：この端末のデータで新しいクラウドを作り直す（旧gistは切り離すだけ）
+    adv.appendChild(mBtn('☁️ この端末のデータでクラウドを作り直す',function(){
       if(!getPAT()){alert('先に「🔑 接続キー（トークン）」の設定が必要です');return;}
       if(!confirm('この端末のデータで新しいクラウドを作り直します。\n壊れた古いクラウドは切り離します（削除はしません）。\nよろしいですか？')) return;
       toast('作り直し中…');
@@ -4781,9 +4832,8 @@ body.szp-hide #szp-pred{display:none}
         : Promise.resolve();
       step.then(function(){
         [GID_KEY,VER_KEY,SIG_KEY,SEEN_KEY].forEach(function(k){localStorage.removeItem(k);});
-        return rawUpload(''); // 新規POST→GIDを新しく設定・markClean
+        return rawUpload('');
       }).then(function(newId){
-        // 自動検証：作った新クラウドをそのまま読み直してparseできるか（大きすぎて壊れないか）
         return fetchGist(newId).then(function(j){
           var c=j.files&&j.files['notes.json']&&j.files['notes.json'].content, ok=false;
           try{JSON.parse(c);ok=true;}catch(e){}
@@ -4792,8 +4842,8 @@ body.szp-hide #szp-pred{display:none}
         });
       }).catch(function(e){ toast('❌ '+e.message); });
     }));
-    // ② PC/壊れている端末で押す：旧IDを忘れて“新しいクラウド”を探し直して取り込む
-    m.appendChild(mBtn('🔗 クラウドを再接続して取り込む',function(){
+    // 別端末で：旧IDを忘れて新しいクラウドを探し直して取り込む
+    adv.appendChild(mBtn('🔗 クラウドを再接続して取り込む',function(){
       if(!confirm('古いクラウドの紐付けを解除し、新しいクラウドを探して取り込みます。\nこの端末の未保存の書き込みは上書きされます。よろしいですか？')) return;
       [GID_KEY,VER_KEY,SIG_KEY,SEEN_KEY].forEach(function(k){localStorage.removeItem(k);});
       toast('新しいクラウドを探しています…');
@@ -4804,55 +4854,6 @@ body.szp-hide #szp-pred{display:none}
         window.addEventListener('pageshow',function(e){if(e.persisted){location.reload(true);}},{once:true});setTimeout(function(){location.reload(true);},1200);
       }).catch(function(e){toast('❌ '+e.message);});
     }));
-    // ③ 既存の画像を再圧縮して容量を下げる（iPadで取り込めない対策）。正常端末で押す→作り直しで軽い状態を同期
-    m.appendChild(mBtn('🗜 既存の画像を軽くする（iPad対応）',function(){
-      if(!confirm('保存済みのすべての画像を再圧縮して容量を下げます。\n解像度は下がりますが表示はできます（文字は影響なし）。\nよろしいですか？')) return;
-      var MAXW=(window.__SZ_IMG_MAXW||700), Q=(window.__SZ_IMG_Q||0.5);
-      // 対象：全ファイル分の szN_*（フロート画像）を横断
-      var keys=[]; for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i); if(k&&k.indexOf('szN_')===0) keys.push(k);}
-      var totalBefore=0,totalAfter=0,imgCount=0,ki=0;
-      function recomp(dataUrl,done){
-        var im=new Image();
-        im.onload=function(){ var w=im.naturalWidth||1,h=im.naturalHeight||1; if(w>MAXW){h=Math.round(h*MAXW/w);w=MAXW;} var cv=document.createElement('canvas');cv.width=w;cv.height=h; var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(im,0,0,w,h); var out=null;try{out=cv.toDataURL('image/jpeg',Q);}catch(e){out=null;} done(out); };
-        im.onerror=function(){ done(null); };
-        im.src=dataUrl;
-      }
-      function nextKey(){
-        if(ki>=keys.length){ finish(); return; }
-        var k=keys[ki++], arr;
-        try{arr=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){ nextKey(); return; }
-        if(!Array.isArray(arr)){ nextKey(); return; }
-        var imgs=arr.filter(function(n){return n&&n.img&&typeof n.src==='string'&&/^data:image\//.test(n.src);});
-        var ii=0;
-        function nextImg(){
-          if(ii>=imgs.length){ try{localStorage.setItem(k,JSON.stringify(arr));}catch(e){} nextKey(); return; }
-          var n=imgs[ii++], before=n.src.length; totalBefore+=before;
-          recomp(n.src,function(out){
-            if(out&&out.length<n.src.length){ n.src=out; }
-            totalAfter+=n.src.length; imgCount++;
-            toast('画像を軽量化中… '+imgCount);
-            nextImg();
-          });
-        }
-        nextImg();
-      }
-      function finish(){
-        var mb=function(b){return (b/1024/1024).toFixed(2);};
-        if(!imgCount){ toast('再圧縮できる画像がありませんでした'); return; }
-        alert('✅ '+imgCount+'枚を軽量化しました。\n画像データ量：約'+mb(totalBefore)+'MB → 約'+mb(totalAfter)+'MB\n\n次に「☁️ この端末のデータでクラウドを作り直す」を押すと、この軽い状態でクラウドへ保存されます。\n画面を再読み込みします…');
-        setTimeout(function(){location.reload();},500);
-      }
-      toast('画像を軽量化中…');
-      nextKey();
-    }));
-    // ▾ 詳細（初期は折りたたみ）
-    var adv=document.createElement('div'); adv.style.cssText='display:none;flex-direction:column;gap:3px;';
-    var tog=document.createElement('button'); tog.type='button'; tog.textContent='▾ その他の操作';
-    tog.style.cssText='background:none;border:none;color:#94a3b8;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:.78rem;font-family:inherit;text-align:left;white-space:nowrap;';
-    tog.onmouseenter=function(){tog.style.background='rgba(255,255,255,.10)';};
-    tog.onmouseleave=function(){tog.style.background='none';};
-    tog.onclick=function(e){e.stopPropagation();var willOpen=(adv.style.display==='none');adv.style.display=willOpen?'flex':'none';tog.textContent=(willOpen?'▴':'▾')+' その他の操作';};
-    m.appendChild(tog); m.appendChild(adv);
     adv.appendChild(mBtn('💾 バックアップをファイルに保存',exportFile));
     adv.appendChild(mBtn('🕘 過去の状態に戻す（履歴）',openHistory));
     adv.appendChild(mBtn('🔑 接続キー（トークン）を変更',function(){showPATModal();}));
@@ -6334,5 +6335,11 @@ body.sz-annot-off .szins-imgbl{display:none !important}
 </script>
 <!-- ===== /qz-memo 行間挿入 ===== -->
 
+<!-- ===== 表示調整（移動ハンドル抑止・横スクロール防止） ===== -->
+<style>
+.fzm-ctrl{display:none !important}
+#sz-search:not(.on){display:none !important}
+html,body{overflow-x:hidden}
+</style>
 </body>
 </html>
